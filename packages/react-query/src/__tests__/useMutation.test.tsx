@@ -99,6 +99,332 @@ describe('useMutation', () => {
     expect(queryByRole('heading')).toBeNull()
   })
 
+  it('should call mutate callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'mutateAsync.onSuccess',
+      'mutateAsync.onSettled',
+    ])
+  })
+
+  it('should call mutate error callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync error callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutateAsync.onSettled')
+              },
+            })
+          } catch {}
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+  })
+
+  it('should call only mutate onSuccess when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSuccess'])
+  })
+
+  it('should call only mutate onError when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onError'])
+  })
+
+  it('should call only mutate onSettled when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSettled'])
+  })
+
+  it('should call only mutateAsync onSuccess when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+  })
+
+  it('should call only mutateAsync onError when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+            })
+          } catch {}
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError'])
+  })
+
+  it('should call only mutateAsync onSettled when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSettled'])
+  })
+
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     let count = 0
     const onSuccessMock = vi.fn()
@@ -263,6 +589,215 @@ describe('useMutation', () => {
     )
   })
 
+  it('should be able to call `onSuccess` callback after successful mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess: () => {
+          callbacks.push('useMutation.onSuccess')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
+  })
+
+  it('should be able to call `onError` callback after failed mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+        onError: () => {
+          callbacks.push('useMutation.onError')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onError', 'mutate.onError'])
+  })
+
+  it('should be able to call `onSettled` callback after mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onSettled', 'mutate.onSettled'])
+  })
+
+  it('should be able to call `onSuccess` callback after successful mutateAsync', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess: () => {
+          callbacks.push('useMutation.onSuccess')
+        },
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onSuccess',
+      'mutateAsync.onSuccess',
+    ])
+  })
+
+  it('should be able to call `onError` callback after failed mutateAsync', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+        onError: () => {
+          callbacks.push('useMutation.onError')
+        },
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+            })
+          } catch {}
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+  })
+
+  it('should be able to call `onSettled` callback after mutateAsync', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onSettled',
+      'mutateAsync.onSettled',
+    ])
+  })
+
   it('should be able to override the useMutation success callbacks', async () => {
     const callbacks: Array<string> = []
 
@@ -361,6 +896,97 @@ describe('useMutation', () => {
       'mutateAsync.onError',
       'mutateAsync.onSettled',
       'mutateAsync.error:oops',
+    ])
+  })
+
+  it('should be able to override the error callbacks when using mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => Promise.reject(new Error('oops'))),
+        onError: () => {
+          callbacks.push('useMutation.onError')
+        },
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onError',
+      'useMutation.onSettled',
+      'mutate.onError',
+      'mutate.onSettled',
+    ])
+  })
+
+  it('should be able to override the settled callbacks when using mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess: () => {
+          callbacks.push('useMutation.onSuccess')
+        },
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onSuccess',
+      'useMutation.onSettled',
+      'mutate.onSuccess',
+      'mutate.onSettled',
     ])
   })
 
@@ -782,6 +1408,83 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not throw an error when throwOnError is set to false', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+        throwOnError: false,
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
+  it('should not throw an error when throwOnError is a function that returns false', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+        throwOnError: () => false,
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
+  it('should not throw an error when throwOnError is not set', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
   it('should pass meta to mutation', async () => {
     const errorMock = vi.fn()
     const successMock = vi.fn()
@@ -1187,6 +1890,460 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('data: custom client, status: success'),
+    ).toBeInTheDocument()
+  })
+
+  it('should be able to chain mutateAsync calls sequentially', async () => {
+    function Page() {
+      const [result, setResult] = React.useState<string>('idle')
+
+      const { mutateAsync: createUserAsync } = useMutation({
+        mutationFn: (name: string) => sleep(10).then(() => ({ id: '1', name })),
+      })
+
+      const { mutateAsync: updateProfileAsync } = useMutation({
+        mutationFn: (userId: string) =>
+          sleep(10).then(() => `profile updated for ${userId}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const user = await createUserAsync('John')
+              const profile = await updateProfileAsync(user.id)
+              setResult(profile)
+            }}
+          >
+            chain
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: profile updated for 1'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle error in chained mutateAsync calls', async () => {
+    function Page() {
+      const [result, setResult] = React.useState<string>('idle')
+
+      const { mutateAsync: createUserAsync } = useMutation({
+        mutationFn: (_name: string) =>
+          sleep(10).then<{ id: string }>(() => {
+            throw new Error('create failed')
+          }),
+      })
+
+      const { mutateAsync: updateProfileAsync } = useMutation({
+        mutationFn: (userId: string) =>
+          sleep(10).then(() => `profile updated for ${userId}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              try {
+                const user = await createUserAsync('John')
+                const profile = await updateProfileAsync(user.id)
+                setResult(profile)
+              } catch (error) {
+                setResult(`error: ${(error as Error).message}`)
+              }
+            }}
+          >
+            chain
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: create failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle conditional logic based on mutate success or failure', async () => {
+    function Page() {
+      const [message, setMessage] = React.useState<string>('idle')
+
+      const { mutate } = useMutation({
+        mutationFn: async (shouldFail: boolean) => {
+          await sleep(10)
+          if (shouldFail) {
+            throw new Error('submission failed')
+          }
+          return 'submitted successfully'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              mutate(false, {
+                onSuccess: (result) => setMessage(`success: ${result}`),
+                onError: (error) => setMessage(`error: ${error.message}`),
+              })
+            }
+          >
+            submit
+          </button>
+          <button
+            onClick={() =>
+              mutate(true, {
+                onSuccess: (result) => setMessage(`success: ${result}`),
+                onError: (error) => setMessage(`error: ${error.message}`),
+              })
+            }
+          >
+            submit fail
+          </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: error: submission failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle conditional error with retry using mutate', async () => {
+    let attempt = 0
+
+    function Page() {
+      const [message, setMessage] = React.useState<string>('idle')
+
+      const { mutate } = useMutation({
+        mutationFn: async () => {
+          await sleep(10)
+          attempt++
+          if (attempt < 2) {
+            throw new Error('temporary failure')
+          }
+          return 'success'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              mutate(undefined, {
+                onSuccess: (result) => setMessage(`result: ${result}`),
+                onError: () => setMessage('failed, retrying...'),
+              })
+            }
+          >
+            submit
+          </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: failed, retrying...'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('message: result: success')).toBeInTheDocument()
+  })
+
+  it('should support optimistic update on success', async () => {
+    function Page() {
+      const [items, setItems] = React.useState<Array<string>>([
+        'item1',
+        'item2',
+        'item3',
+      ])
+
+      const [successMessage, setSuccessMessage] = React.useState<string>('')
+
+      const { mutate } = useMutation({
+        mutationFn: (item: string) => sleep(10).then(() => item),
+        onMutate: (item) => {
+          const previousItems = [...items]
+          setItems((prev) => prev.filter((i) => i !== item))
+          return { previousItems }
+        },
+        onSuccess: (deletedItem) => {
+          setSuccessMessage(`deleted: ${deletedItem}`)
+        },
+        onError: (_error, _item, context) => {
+          if (context?.previousItems) {
+            setItems(context.previousItems)
+          }
+        },
+      })
+
+      return (
+        <div>
+          {items.map((item) => (
+            <button key={item} onClick={() => mutate(item)}>
+              delete {item}
+            </button>
+          ))}
+          <div>items: {items.join(', ')}</div>
+          <div>success: {successMessage || 'none'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('success: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /delete item2/i }))
+
+    // optimistic update: item2 removed immediately
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    // success: item2 stays removed and onSuccess called
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+    expect(rendered.getByText('success: deleted: item2')).toBeInTheDocument()
+  })
+
+  it('should support optimistic update and rollback on error', async () => {
+    function Page() {
+      const [items, setItems] = React.useState<Array<string>>([
+        'item1',
+        'item2',
+        'item3',
+      ])
+
+      const [message, setMessage] = React.useState<string>('')
+
+      const { mutate } = useMutation({
+        mutationFn: (item: string) =>
+          sleep(10).then(() => {
+            throw new Error(`Failed to delete ${item}`)
+          }),
+        onMutate: (item) => {
+          const previousItems = [...items]
+          setItems((prev) => prev.filter((i) => i !== item))
+          return { previousItems }
+        },
+        onSuccess: (deletedItem) => {
+          setMessage(`deleted: ${deletedItem}`)
+        },
+        onError: (_error, _item, context) => {
+          setMessage('rollback')
+          if (context?.previousItems) {
+            setItems(context.previousItems)
+          }
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          {items.map((item) => (
+            <button key={item} onClick={() => mutate(item)}>
+              delete {item}
+            </button>
+          ))}
+          <div>items: {items.join(', ')}</div>
+          <div>message: {message || 'none'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('message: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /delete item2/i }))
+
+    // optimistic update: item2 removed immediately
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    // rollback: item2 restored after error, onSuccess not called
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('message: rollback')).toBeInTheDocument()
+  })
+
+  it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
+    function Page() {
+      const [result, setResult] = React.useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: (file: string) => sleep(10).then(() => `uploaded: ${file}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.all([
+                mutateAsync('file1'),
+                mutateAsync('file2'),
+                mutateAsync('file3'),
+              ])
+              setResult(results.join(', '))
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle Promise.all rejection when one parallel mutateAsync call fails', async () => {
+    function Page() {
+      const [result, setResult] = React.useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              try {
+                const results = await Promise.all([
+                  mutateAsync('file1'),
+                  mutateAsync('file2'),
+                  mutateAsync('file3'),
+                ])
+                setResult(results.join(', '))
+              } catch (error) {
+                setResult(`error: ${(error as Error).message}`)
+              }
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: upload failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle partial failure in parallel mutateAsync calls with Promise.allSettled', async () => {
+    function Page() {
+      const [result, setResult] = React.useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.allSettled([
+                mutateAsync('file1'),
+                mutateAsync('file2'),
+                mutateAsync('file3'),
+              ])
+              const summary = results
+                .map((r) =>
+                  r.status === 'fulfilled'
+                    ? r.value
+                    : `error: ${r.reason.message}`,
+                )
+                .join(', ')
+              setResult(summary)
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
     ).toBeInTheDocument()
   })
 })

@@ -12,7 +12,7 @@ import {
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
-import IsRestoringExample from './IsRestoringExample.svelte'
+import IsRestoring from './IsRestoring.svelte'
 import type { CreateQueryResult, QueryCache } from '../../src/index.js'
 
 describe('createQuery', () => {
@@ -1923,7 +1923,7 @@ describe('createQuery', () => {
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
-    const rendered = render(IsRestoringExample, {
+    const rendered = render(IsRestoring, {
       props: { queryClient, queryFn },
     })
 

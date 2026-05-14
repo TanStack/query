@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { MutationCache as MutationCacheOrigin } from '@tanstack/query-core'
 import { MutationCache } from '../mutationCache'
@@ -10,7 +10,7 @@ describe('MutationCache', () => {
   })
 
   describe('find', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.find({
@@ -24,7 +24,7 @@ describe('MutationCache', () => {
   })
 
   describe('findAll', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.findAll({

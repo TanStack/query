@@ -44,7 +44,7 @@ export interface UseBaseQueryOptions<
   suspense?: boolean
 }
 
-export interface SolidQueryOptions<
+export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -62,7 +62,7 @@ export type UseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Accessor<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
+> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey>>
 
 /* --- Create Query and Create Base Query  Types --- */
 
@@ -87,7 +87,7 @@ export type DefinedUseQueryResult<
 > = DefinedUseBaseQueryResult<TData, TError>
 
 /* --- Create Infinite Queries Types --- */
-export interface SolidInfiniteQueryOptions<
+export interface InfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -126,7 +126,7 @@ export type UseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  SolidInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 >
 
 export type UseInfiniteQueryResult<
@@ -140,7 +140,7 @@ export type DefinedUseInfiniteQueryResult<
 > = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /* --- Create Mutation Types --- */
-export interface SolidMutationOptions<
+export interface MutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -155,7 +155,7 @@ export type UseMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
-> = Accessor<SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>>
+> = Accessor<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
 
 export type UseMutateFunction<
   TData = unknown,

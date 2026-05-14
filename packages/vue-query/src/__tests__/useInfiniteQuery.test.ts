@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getCurrentInstance } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -17,7 +17,7 @@ describe('useInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute infinite query', async () => {
+  it('should properly execute infinite query', async () => {
     const key = queryKey()
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: key,
@@ -48,7 +48,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(status.value).toStrictEqual('success')
   })
-  test('should properly execute infinite query using infiniteQueryOptions', async () => {
+  it('should properly execute infinite query using infiniteQueryOptions', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,
@@ -83,7 +83,7 @@ describe('useInfiniteQuery', () => {
   })
 
   describe('throwOnError', () => {
-    test('should throw from error watcher when throwOnError is true and suspense is not used', async () => {
+    it('should throw from error watcher when throwOnError is true and suspense is not used', async () => {
       const throwOnErrorFn = vi.fn().mockReturnValue(true)
       useInfiniteQuery({
         queryKey: ['infiniteThrowOnErrorWithoutSuspense'],
@@ -115,7 +115,7 @@ describe('useInfiniteQuery', () => {
   })
 
   describe('suspense', () => {
-    test('should not throw from error watcher when suspense is handling the error with throwOnError: true', async () => {
+    it('should not throw from error watcher when suspense is handling the error with throwOnError: true', async () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 

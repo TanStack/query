@@ -266,7 +266,7 @@ describe('UseQueries config object overload', () => {
 
   it('should infer correct data type from queryOptions without initialData in useQueries', () => {
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -277,7 +277,7 @@ describe('UseQueries config object overload', () => {
 
   it('should infer correct data type from queryOptions with select in useQueries', () => {
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       select: (data) => data.toString(),
     })
