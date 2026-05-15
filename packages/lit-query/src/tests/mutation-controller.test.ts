@@ -427,6 +427,76 @@ describe('createMutationController', () => {
     mutation.destroy()
   })
 
+  it('renders by current mutation status via mutation.render', async () => {
+    const client = new QueryClient()
+    const host = new TestControllerHost()
+
+    const mutation = createMutationController(
+      host,
+      {
+        mutationFn: async (value: number) => value + 1,
+      },
+      client,
+    )
+
+    const idleUi = mutation.render({
+      idle: () => 'idle-ui',
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: () => 'error-ui',
+    })
+    expect(idleUi).toBe('idle-ui')
+
+    host.connect()
+    host.update()
+
+    await expect(mutation.mutateAsync(1)).resolves.toBe(2)
+    await waitFor(() => mutation().isSuccess)
+
+    const successUi = mutation.render({
+      idle: () => 'idle-ui',
+      pending: () => 'pending-ui',
+      success: (result) => `success-${result.data}`,
+      error: () => 'error-ui',
+    })
+    expect(successUi).toBe('success-2')
+
+    mutation.destroy()
+  })
+
+  it('renders error branch via mutation.render when mutation fails', async () => {
+    const client = new QueryClient()
+    const host = new TestControllerHost()
+
+    const mutation = createMutationController(
+      host,
+      {
+        mutationFn: async () => {
+          throw new Error('render-mutation-failed')
+        },
+      },
+      client,
+    )
+
+    host.connect()
+    host.update()
+
+    await expect(mutation.mutateAsync(undefined)).rejects.toThrow(
+      'render-mutation-failed',
+    )
+    await waitFor(() => mutation().isError)
+
+    const errorUi = mutation.render({
+      idle: () => 'idle-ui',
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: (result) => result.error.message,
+    })
+    expect(errorUi).toBe('render-mutation-failed')
+
+    mutation.destroy()
+  })
+
   it('LC-MUT-05: explicit-client mutation accessors defer until host fields are initialized', () => {
     const client = new QueryClient()
 
