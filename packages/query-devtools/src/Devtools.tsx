@@ -2765,6 +2765,8 @@ const stylesFactory = (
         right: -8px;
         bottom: -8px;
         border-radius: 9999px;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
 
         & svg {
           position: absolute;
