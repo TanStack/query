@@ -1365,4 +1365,81 @@ describe('createQueryController', () => {
 
     host.query.destroy()
   })
+
+  it('renders by current query status via query.render', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey: ['query-controller', 'render-01'],
+        queryFn: async () => 'ok',
+      },
+      client,
+    )
+
+    const pendingUi = query.render({
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: () => 'error-ui',
+    })
+    expect(pendingUi).toBe('pending-ui')
+
+    host.connect()
+    host.update()
+    await waitFor(() => query().isSuccess)
+
+    const successUi = query.render({
+      pending: () => 'pending-ui',
+      success: (result) => `success-${result.data}`,
+      error: () => 'error-ui',
+    })
+    expect(successUi).toBe('success-ok')
+
+    query.destroy()
+  })
+
+  it('renders error branch via query.render when query fails', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey: ['query-controller', 'render-02'],
+        queryFn: async () => {
+          throw new Error('render-failed')
+        },
+      },
+      client,
+    )
+
+    host.connect()
+    host.update()
+    await waitFor(() => query().isError)
+
+    const errorUi = query.render({
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: (result) => result.error.message,
+    })
+    expect(errorUi).toBe('render-failed')
+
+    query.destroy()
+  })
 })
