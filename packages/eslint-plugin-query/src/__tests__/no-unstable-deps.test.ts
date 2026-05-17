@@ -63,6 +63,24 @@ const baseTestCases = {
             }
           `,
         },
+        {
+          name: `should pass when useSuspenseQueries with combine is passed to ${reactHookAlias} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useSuspenseQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useSuspenseQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ],
+                combine: (results) => ({ data: results[0]?.data })
+              });
+              const callback = ${reactHookInvocation}(() => { queries.data }, [queries]);
+              return;
+            }
+          `,
+        },
       ])
       .concat([
         {
@@ -160,6 +178,32 @@ const baseTestCases = {
             {
               messageId: 'noUnstableDeps',
               data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+        {
+          name: `result of useSuspenseQueries without combine is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useSuspenseQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useSuspenseQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: {
+                reactHook: reactHookAlias,
+                queryHook: 'useSuspenseQueries',
+              },
             },
           ],
         },
