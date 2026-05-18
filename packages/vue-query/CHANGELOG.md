@@ -1,5 +1,22 @@
 # @tanstack/vue-query
 
+## 5.100.11
+
+### Patch Changes
+
+- fix(vue-query): allow reactive and getter values as `queryKey` property in `queryOptions` ([#10530](https://github.com/TanStack/query/pull/10530))
+
+  This fixes a regression introduced in #10452 where `queryOptions` only accepted plain arrays for the `queryKey` property, but not `computed` refs, `Ref` values, or getter functions. The related fix in #10465 only covered the `enabled` property.
+
+  Now the `queryKey` property in `queryOptions` accepts the same reactive forms as `enabled`:
+  - Plain `QueryKey` arrays
+  - `Ref<QueryKey>`
+  - `ComputedRef<QueryKey>`
+  - `() => QueryKey` (getter)
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
 ## 5.100.10
 
 ### Patch Changes
