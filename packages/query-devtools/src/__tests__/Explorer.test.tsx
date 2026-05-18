@@ -160,4 +160,57 @@ describe('Explorer', () => {
       expect(rendered.getByText('1:')).toBeInTheDocument()
     })
   })
+
+  describe('"defaultExpanded"', () => {
+    it('should render children eagerly when the label is in "defaultExpanded"', () => {
+      const rendered = renderExplorer({
+        label: 'list',
+        value: ['a'],
+        defaultExpanded: ['list'],
+      })
+
+      expect(
+        rendered.getByRole('button', { expanded: true }),
+      ).toBeInTheDocument()
+      expect(rendered.getByText('0:')).toBeInTheDocument()
+    })
+  })
+
+  describe('pagination', () => {
+    it('should group entries into 100-item pages when the array has more than 100 entries', () => {
+      const rendered = renderExplorer({
+        label: 'big',
+        value: Array.from({ length: 101 }, (_, i) => i),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+
+      expect(rendered.getByText('[0...99]')).toBeInTheDocument()
+      expect(rendered.getByText('[100...199]')).toBeInTheDocument()
+    })
+
+    it('should keep the items of a page hidden until the page header is clicked', () => {
+      const rendered = renderExplorer({
+        label: 'big',
+        value: Array.from({ length: 101 }, (_, i) => `item-${i}`),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+
+      expect(rendered.queryByText('0:')).toBeNull()
+    })
+
+    it('should reveal the items of a page when the page header is clicked', () => {
+      const rendered = renderExplorer({
+        label: 'big',
+        value: Array.from({ length: 101 }, (_, i) => `item-${i}`),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+      fireEvent.click(rendered.getByText('[0...99]'))
+
+      expect(rendered.getByText('0:')).toBeInTheDocument()
+      expect(rendered.getByText('"item-0"')).toBeInTheDocument()
+    })
+  })
 })
