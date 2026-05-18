@@ -1,6 +1,11 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery.svelte.js'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  NoInfer,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
 import type {
   Accessor,
   CreateQueryOptions,
@@ -22,7 +27,7 @@ export function createQuery<
     UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
   >,
   queryClient?: Accessor<QueryClient>,
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<NoInfer<TData>, TError>
 
 export function createQuery<
   TQueryFnData = unknown,
@@ -34,7 +39,7 @@ export function createQuery<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
   >,
   queryClient?: Accessor<QueryClient>,
-): DefinedCreateQueryResult<TData, TError>
+): DefinedCreateQueryResult<NoInfer<TData>, TError>
 
 export function createQuery<
   TQueryFnData,
@@ -44,7 +49,7 @@ export function createQuery<
 >(
   options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
   queryClient?: Accessor<QueryClient>,
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<NoInfer<TData>, TError>
 
 export function createQuery(
   options: Accessor<CreateQueryOptions>,
