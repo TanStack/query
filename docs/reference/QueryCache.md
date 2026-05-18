@@ -11,8 +11,13 @@ The `QueryCache` is the storage mechanism for TanStack Query. It stores all the 
 import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
-  onError: (error) => {
-    console.log(error)
+  onError: (error, query) => {
+    // query.state.fetchFailureCount reflects total attempts (initial + retries)
+    if (query.state.fetchFailureCount > 1) {
+      console.error(`Failed after retries:`, error)
+    } else {
+      console.error(`First attempt failed:`, error)
+    }
   },
   onSuccess: (data) => {
     console.log(data)
@@ -38,6 +43,7 @@ Its available methods are:
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.
+  - `query.state.fetchFailureCount` indicates how many attempts were made (including retries), which can be used to differentiate a first failure from a failure after retries.
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query is successful.
