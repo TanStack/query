@@ -120,4 +120,44 @@ describe('Explorer', () => {
       expect(rendered.getByText('30')).toBeInTheDocument()
     })
   })
+
+  describe('Map and iterable values', () => {
+    it('should preserve "Map" keys as labels when expanded', () => {
+      const rendered = renderExplorer({
+        label: 'm',
+        value: new Map([
+          ['first', 1],
+          ['second', 2],
+        ]),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+
+      expect(rendered.getByText('first:')).toBeInTheDocument()
+      expect(rendered.getByText('second:')).toBeInTheDocument()
+    })
+
+    it('should mark an iterable value with an "(Iterable)" prefix on the expander', () => {
+      const rendered = renderExplorer({
+        label: 's',
+        value: new Set(['x', 'y']),
+      })
+
+      expect(
+        rendered.getByRole('button', { expanded: false }).textContent,
+      ).toContain('(Iterable)')
+    })
+
+    it('should render iterable children under their numeric index when expanded', () => {
+      const rendered = renderExplorer({
+        label: 's',
+        value: new Set(['x', 'y']),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+
+      expect(rendered.getByText('0:')).toBeInTheDocument()
+      expect(rendered.getByText('1:')).toBeInTheDocument()
+    })
+  })
 })
