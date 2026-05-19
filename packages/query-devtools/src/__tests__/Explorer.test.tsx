@@ -327,4 +327,81 @@ describe('Explorer', () => {
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
     })
   })
+
+  describe('inline edit', () => {
+    it('should write the new string value via "setQueryData" when a text input is changed', () => {
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'name',
+        value: 'Anna',
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['name'],
+      })
+
+      const input = rendered.getByLabelText('name:')
+      expect(input).toHaveAttribute('type', 'text')
+
+      fireEvent.change(input, { target: { value: 'Bob' } })
+
+      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
+    })
+
+    it('should write the new number value via "setQueryData" when a number input is changed', () => {
+      queryClient.setQueryData(['data'], { count: 1 })
+
+      const rendered = renderExplorer({
+        label: 'count',
+        value: 1,
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['count'],
+      })
+
+      const input = rendered.getByLabelText('count:')
+      expect(input).toHaveAttribute('type', 'number')
+
+      fireEvent.change(input, { target: { value: '42' } })
+
+      expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
+    })
+
+    it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
+      queryClient.setQueryData(['data'], { flag: false })
+
+      const rendered = renderExplorer({
+        label: 'flag',
+        value: false,
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['flag'],
+      })
+
+      expect(rendered.getByLabelText('Toggle value')).toBeInTheDocument()
+    })
+
+    it('should render "DeleteItemButton" inline when a primitive row has "itemsDeletable"', () => {
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'name',
+        value: 'Anna',
+        editable: true,
+        itemsDeletable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['name'],
+      })
+
+      expect(rendered.getByLabelText('Delete item')).toBeInTheDocument()
+    })
+  })
 })
