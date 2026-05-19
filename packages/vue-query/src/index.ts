@@ -6,11 +6,17 @@ export { VueQueryPlugin } from './vueQueryPlugin'
 export { QueryClient } from './queryClient'
 export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
-export { type QueryOptions } from './queryOptions'
+export type {
+  DefinedInitialQueryOptionsResult,
+  QueryOptions,
+  UndefinedInitialQueryOptionsResult,
+} from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
+  DefinedInitialDataInfiniteOptionsResult,
   UndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptionsResult,
 } from './infiniteQueryOptions'
 export { MutationCache } from './mutationCache'
 export { mutationOptions } from './mutationOptions'

@@ -58,7 +58,9 @@ export const createQuery = useQuery
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
+  DefinedInitialDataOptionsResult,
   UndefinedInitialDataOptions,
+  UndefinedInitialDataOptionsResult,
 } from './queryOptions'
 export {
   QueryClientContext,
@@ -73,7 +75,9 @@ export const createInfiniteQuery = useInfiniteQuery
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
+  DefinedInitialDataInfiniteOptionsResult,
   UndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptionsResult,
 } from './infiniteQueryOptions'
 export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'

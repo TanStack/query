@@ -20,14 +20,20 @@ export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
+  DefinedInitialDataOptionsResult,
   UndefinedInitialDataOptions,
+  UndefinedInitialDataOptionsResult,
   UnusedSkipTokenOptions,
+  UnusedSkipTokenOptionsResult,
 } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
+  DefinedInitialDataInfiniteOptionsResult,
   UndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptionsResult,
   UnusedSkipTokenInfiniteOptions,
+  UnusedSkipTokenInfiniteOptionsResult,
 } from './infiniteQueryOptions'
 export {
   QueryClientContext,

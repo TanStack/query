@@ -11,7 +11,9 @@ export { createQuery } from './createQuery.js'
 export type { QueriesResults, QueriesOptions } from './createQueries.svelte.js'
 export type {
   DefinedInitialDataOptions,
+  DefinedInitialDataOptionsResult,
   UndefinedInitialDataOptions,
+  UndefinedInitialDataOptionsResult,
 } from './queryOptions.js'
 export { queryOptions } from './queryOptions.js'
 export { createQueries } from './createQueries.svelte.js'

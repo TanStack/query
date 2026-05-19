@@ -24,17 +24,24 @@ export type DefinedInitialDataOptions<
   }
 >
 
-export function queryOptions<
+export type UndefinedInitialDataOptionsResult<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: ReturnType<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
-): ReturnType<
+> = ReturnType<
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+}
+
+export type DefinedInitialDataOptionsResult<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = ReturnType<
+  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
 > & {
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
@@ -46,13 +53,20 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: ReturnType<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+): UndefinedInitialDataOptionsResult<TQueryFnData, TError, TData, TQueryKey>
+
+export function queryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: ReturnType<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
   >,
-): ReturnType<
-  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+): DefinedInitialDataOptionsResult<TQueryFnData, TError, TData, TQueryKey>
 
 export function queryOptions(options: unknown) {
   return options
