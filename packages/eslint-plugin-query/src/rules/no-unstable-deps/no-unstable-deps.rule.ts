@@ -38,6 +38,11 @@ export const rule = createRule({
     const trackedVariables: Record<string, string> = {}
     const trackedCustomHooks: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
+    const pendingVariableDeclarators: Array<TSESTree.VariableDeclarator> = []
+    const pendingDependencyChecks: Array<{
+      reactHook: string
+      depsArray: TSESTree.ArrayExpression
+    }> = []
 
     function getReactHook(node: TSESTree.CallExpression): string | undefined {
       if (node.callee.type === 'Identifier') {
@@ -169,6 +174,29 @@ export const rule = createRule({
       return undefined
     }
 
+    function checkDependencyArray(
+      reactHook: string,
+      depsArray: TSESTree.ArrayExpression,
+    ) {
+      depsArray.elements.forEach((dep) => {
+        if (
+          dep !== null &&
+          dep.type === AST_NODE_TYPES.Identifier &&
+          trackedVariables[dep.name] !== undefined
+        ) {
+          const queryHook = trackedVariables[dep.name]
+          context.report({
+            node: dep,
+            messageId: 'noUnstableDeps',
+            data: {
+              queryHook,
+              reactHook,
+            },
+          })
+        }
+      })
+    }
+
     return {
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (
@@ -218,10 +246,7 @@ export const rule = createRule({
           node.init !== null &&
           node.init.type === AST_NODE_TYPES.CallExpression
         ) {
-          const queryHook = getTrackedQueryHook(node.init)
-          if (queryHook !== undefined) {
-            collectVariableNames(node.id, queryHook)
-          }
+          pendingVariableDeclarators.push(node)
         }
       },
       CallExpression: (node) => {
@@ -231,25 +256,27 @@ export const rule = createRule({
           node.arguments.length > 1 &&
           node.arguments[1]?.type === AST_NODE_TYPES.ArrayExpression
         ) {
-          const depsArray = node.arguments[1].elements
-          depsArray.forEach((dep) => {
-            if (
-              dep !== null &&
-              dep.type === AST_NODE_TYPES.Identifier &&
-              trackedVariables[dep.name] !== undefined
-            ) {
-              const queryHook = trackedVariables[dep.name]
-              context.report({
-                node: dep,
-                messageId: 'noUnstableDeps',
-                data: {
-                  queryHook,
-                  reactHook,
-                },
-              })
-            }
+          pendingDependencyChecks.push({
+            reactHook,
+            depsArray: node.arguments[1],
           })
         }
+      },
+      'Program:exit'() {
+        pendingVariableDeclarators.forEach((node) => {
+          if (node.init?.type !== AST_NODE_TYPES.CallExpression) {
+            return
+          }
+
+          const queryHook = getTrackedQueryHook(node.init)
+          if (queryHook !== undefined) {
+            collectVariableNames(node.id, queryHook)
+          }
+        })
+
+        pendingDependencyChecks.forEach(({ reactHook, depsArray }) => {
+          checkDependencyArray(reactHook, depsArray)
+        })
       },
     }
   }),
