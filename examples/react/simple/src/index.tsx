@@ -30,7 +30,7 @@ function Example() {
         throw new Error(`Request failed with status ${response.status}`)
       }
 
-      return await response.json()
+      return response.json()
     },
   })
 
