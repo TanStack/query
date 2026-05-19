@@ -34,8 +34,6 @@ export type Override<TTargetA, TTargetB> = {
     : TTargetA[AKey]
 }
 
-export type NoInfer<T> = [T][T extends any ? 0 : never]
-
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
