@@ -25,6 +25,11 @@ function Example() {
       const response = await fetch(
         'https://api.github.com/repos/TanStack/query',
       )
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+      }
+
       return await response.json()
     },
   })
