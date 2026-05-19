@@ -5,7 +5,6 @@ import Explorer from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { Query } from '@tanstack/query-core'
 
-
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
 vi.mock('goober', () => {
@@ -193,9 +192,7 @@ describe('Explorer', () => {
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      fireEvent.click(
-        rendered.getByLabelText('Copy object to clipboard'),
-      )
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
 
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
@@ -270,9 +267,7 @@ describe('Explorer', () => {
           .find({ queryKey: ['data'] }) as Query,
       })
 
-      expect(
-        rendered.queryByLabelText('Copy object to clipboard'),
-      ).toBeNull()
+      expect(rendered.queryByLabelText('Copy object to clipboard')).toBeNull()
       expect(rendered.queryByLabelText('Remove all items')).toBeNull()
     })
 
