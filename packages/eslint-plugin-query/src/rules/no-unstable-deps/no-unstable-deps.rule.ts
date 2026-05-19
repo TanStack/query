@@ -36,6 +36,7 @@ export const rule = createRule({
 
   create: detectTanstackQueryImports((context, _options, helpers) => {
     const trackedVariables: Record<string, string> = {}
+    const trackedCustomHooks: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
 
     function getReactHook(node: TSESTree.CallExpression): string | undefined {
@@ -81,6 +82,10 @@ export const rule = createRule({
       }
     }
 
+    function isCustomHookName(hookName: string): boolean {
+      return /^use[A-Z0-9]/.test(hookName)
+    }
+
     function hasCombineProperty(
       callExpression: TSESTree.CallExpression,
     ): boolean {
@@ -96,6 +101,72 @@ export const rule = createRule({
           prop.key.type === AST_NODE_TYPES.Identifier &&
           prop.key.name === 'combine',
       )
+    }
+
+    function getDirectQueryHook(
+      callExpression: TSESTree.CallExpression,
+    ): string | undefined {
+      if (
+        callExpression.callee.type !== AST_NODE_TYPES.Identifier ||
+        !allHookNames.includes(callExpression.callee.name) ||
+        !helpers.isTanstackQueryImport(callExpression.callee)
+      ) {
+        return undefined
+      }
+
+      if (
+        (callExpression.callee.name === 'useQueries' ||
+          callExpression.callee.name === 'useSuspenseQueries') &&
+        hasCombineProperty(callExpression)
+      ) {
+        return undefined
+      }
+
+      return callExpression.callee.name
+    }
+
+    function getTrackedQueryHook(
+      callExpression: TSESTree.CallExpression,
+    ): string | undefined {
+      const directQueryHook = getDirectQueryHook(callExpression)
+      if (directQueryHook !== undefined) {
+        return directQueryHook
+      }
+
+      if (callExpression.callee.type === AST_NODE_TYPES.Identifier) {
+        return trackedCustomHooks[callExpression.callee.name]
+      }
+
+      return undefined
+    }
+
+    function getReturnedQueryHook(
+      body:
+        | TSESTree.FunctionExpression['body']
+        | TSESTree.ArrowFunctionExpression['body'],
+    ): string | undefined {
+      if (body.type === AST_NODE_TYPES.CallExpression) {
+        return getDirectQueryHook(body)
+      }
+
+      if (body.type !== AST_NODE_TYPES.BlockStatement) {
+        return undefined
+      }
+
+      const returnStatements = body.body.filter(
+        (statement): statement is TSESTree.ReturnStatement =>
+          statement.type === AST_NODE_TYPES.ReturnStatement,
+      )
+      if (returnStatements.length !== 1) {
+        return undefined
+      }
+
+      const returnArgument = returnStatements[0]?.argument
+      if (returnArgument?.type === AST_NODE_TYPES.CallExpression) {
+        return getDirectQueryHook(returnArgument)
+      }
+
+      return undefined
     }
 
     return {
@@ -118,24 +189,39 @@ export const rule = createRule({
         }
       },
 
+      FunctionDeclaration(node) {
+        if (node.id === null || !isCustomHookName(node.id.name)) {
+          return
+        }
+
+        const queryHook = getReturnedQueryHook(node.body)
+        if (queryHook !== undefined) {
+          trackedCustomHooks[node.id.name] = queryHook
+        }
+      },
+
       VariableDeclarator(node) {
         if (
+          node.id.type === AST_NODE_TYPES.Identifier &&
+          isCustomHookName(node.id.name) &&
           node.init !== null &&
-          node.init.type === AST_NODE_TYPES.CallExpression &&
-          node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          allHookNames.includes(node.init.callee.name) &&
-          helpers.isTanstackQueryImport(node.init.callee)
+          (node.init.type === AST_NODE_TYPES.ArrowFunctionExpression ||
+            node.init.type === AST_NODE_TYPES.FunctionExpression)
         ) {
-          // Special case for useQueries/useSuspenseQueries with combine property - it's stable
-          if (
-            (node.init.callee.name === 'useQueries' ||
-              node.init.callee.name === 'useSuspenseQueries') &&
-            hasCombineProperty(node.init)
-          ) {
-            // Don't track useQueries/useSuspenseQueries with combine as unstable
-            return
+          const queryHook = getReturnedQueryHook(node.init.body)
+          if (queryHook !== undefined) {
+            trackedCustomHooks[node.id.name] = queryHook
           }
-          collectVariableNames(node.id, node.init.callee.name)
+        }
+
+        if (
+          node.init !== null &&
+          node.init.type === AST_NODE_TYPES.CallExpression
+        ) {
+          const queryHook = getTrackedQueryHook(node.init)
+          if (queryHook !== undefined) {
+            collectVariableNames(node.id, queryHook)
+          }
         }
       },
       CallExpression: (node) => {

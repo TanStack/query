@@ -200,6 +200,50 @@ const baseTestCases = {
             },
           ],
         },
+        {
+          name: `result of custom useMutation wrapper is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useMutation } from "@tanstack/react-query";
+
+            const useMyMutation = () => useMutation({ mutationFn: (value: string) => value });
+
+            function Component() {
+              const mutation = useMyMutation();
+              const callback = ${reactHookInvocation}(() => { mutation.mutate('hello') }, [mutation]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useMutation' },
+            },
+          ],
+        },
+        {
+          name: `result of custom useQuery wrapper is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function useMyQuery() {
+              return useQuery({ queryFn: (value: string) => value });
+            }
+
+            function Component() {
+              const query = useMyQuery();
+              const callback = ${reactHookInvocation}(() => { query.refetch() }, [query]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQuery' },
+            },
+          ],
+        },
       ])
       .concat([
         {
