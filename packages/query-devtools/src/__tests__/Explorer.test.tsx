@@ -366,7 +366,9 @@ describe('Explorer', () => {
       const input = rendered.getByLabelText('count:')
       expect(input).toHaveAttribute('type', 'number')
 
-      fireEvent.change(input, { target: { value: '42' } })
+      fireEvent.change(input, {
+        target: { value: '42', valueAsNumber: 42 },
+      })
 
       expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
     })
