@@ -180,6 +180,46 @@ describe('injectQueries', () => {
     expect(rendered.getByText('status2: success, data2: 2')).toBeInTheDocument()
   })
 
+  it('should reflect query list changes after subscriber results exist', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `
+        <div>
+          count: {{ result().length }}, data:
+          {{ dataText() }}
+        </div>
+      `,
+    })
+    class Page {
+      readonly ids = signal([1])
+      readonly result = injectQueries(() => ({
+        queries: this.ids().map((id) => ({
+          queryKey: [...key, id],
+          queryFn: () => sleep(10).then(() => id),
+        })),
+      }))
+
+      dataText() {
+        return this.result()
+          .map((query) => query.data() ?? 'none')
+          .join(',')
+      }
+    }
+
+    const rendered = await render(Page)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('count: 1, data: 1')).toBeInTheDocument()
+
+    rendered.fixture.componentInstance.ids.set([])
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('count: 0, data:')).toBeInTheDocument()
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()

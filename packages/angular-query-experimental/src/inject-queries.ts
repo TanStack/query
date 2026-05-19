@@ -274,13 +274,17 @@ export function injectQueries<
       ),
     )
 
+    const resultFromSubscriberSignal = signal<TCombinedResult | null>(null)
+
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     effect(() => {
-      observerSignal().setQueries(
-        defaultedQueries(),
-        optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-      )
+      const observer = observerSignal()
+      const defaulted = defaultedQueries()
+      const options = optionsSignal() as QueriesObserverOptions<TCombinedResult>
+
+      resultFromSubscriberSignal.set(null)
+      observer.setQueries(defaulted, options)
     })
 
     const optimisticCombinedResultSignal = computed(() => {
@@ -288,8 +292,6 @@ export function injectQueries<
         optimisticResultSignal()
       return getCombinedResult(trackResult())
     })
-
-    const resultFromSubscriberSignal = signal<TCombinedResult | null>(null)
 
     effect(() => {
       const observer = observerSignal()
