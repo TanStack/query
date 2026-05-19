@@ -256,7 +256,9 @@ const baseTestCases = {
               return;
             }
 
-            const useMyMutation = () => useMutation({ mutationFn: (value: string) => value });
+            function useMyMutation() {
+              return useMutation({ mutationFn: (value: string) => value });
+            }
           `,
           errors: [
             {
