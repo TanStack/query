@@ -15,12 +15,14 @@ import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
-import { DropdownMenu, RadioGroup } from '@kobalte/core'
+import { DropdownMenu, RadioGroup, useLocale } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
   displayValue,
+  formatDateTime,
+  formatTime,
   getMutationStatusColor,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
@@ -675,6 +677,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -778,7 +781,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 item.options.mutationKey
                   ? JSON.stringify(item.options.mutationKey) + ' - '
                   : ''
-              }${new Date(item.state.submittedAt).toLocaleString()}`
+              }${formatDateTime(item.state.submittedAt, locale.locale())}`
               return rankItem(value, props.localStore.mutationFilter || '')
                 .passed
             })
@@ -1501,6 +1504,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 }
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1580,9 +1584,10 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Mutation submitted at ${new Date(
+        aria-label={`Mutation submitted at ${formatDateTime(
           props.mutation.state.submittedAt,
-        ).toLocaleString()}`}
+          locale.locale(),
+        )}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
@@ -1604,7 +1609,7 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
           <Show when={props.mutation.options.mutationKey}>
             {JSON.stringify(props.mutation.options.mutationKey)} -{' '}
           </Show>
-          {new Date(props.mutation.state.submittedAt).toLocaleString()}
+          {formatDateTime(props.mutation.state.submittedAt, locale.locale())}
         </code>
       </button>
     </Show>
@@ -1857,6 +1862,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 }
 
 const QueryDetails = () => {
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2049,7 +2055,7 @@ const QueryDetails = () => {
           <div class="tsqd-query-details-last-updated">
             <span>Last Updated:</span>
             <span>
-              {new Date(activeQueryState()!.dataUpdatedAt).toLocaleTimeString()}
+              {formatTime(activeQueryState()!.dataUpdatedAt, locale.locale())}
             </span>
           </div>
         </div>
@@ -2402,6 +2408,7 @@ const QueryDetails = () => {
 }
 
 const MutationDetails = () => {
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2502,9 +2509,7 @@ const MutationDetails = () => {
           <div class="tsqd-query-details-last-updated">
             <span>Submitted At:</span>
             <span>
-              {new Date(
-                activeMutation()!.state.submittedAt,
-              ).toLocaleTimeString()}
+              {formatTime(activeMutation()!.state.submittedAt, locale.locale())}
             </span>
           </div>
         </div>
