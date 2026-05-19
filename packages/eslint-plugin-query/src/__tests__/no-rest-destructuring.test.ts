@@ -285,6 +285,19 @@ ruleTester.run('no-rest-destructuring', rule, {
         }
       `,
     },
+    {
+      name: 'custom hook returning non-tanstack useQuery is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from 'other-package'
+
+        const useTodos = () => useQuery()
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -386,6 +399,88 @@ ruleTester.run('no-rest-destructuring', rule, {
           const query = useQuery()
           const result = { ...query, data: query.data[0] }
           return result
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook that returns useQuery is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        function useTodos() {
+          return useQuery()
+        }
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook with arrow function is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const useTodos = () => useQuery()
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook with arrow function block is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const useTodos = () => {
+          return useQuery({
+            queryKey: ['todos'],
+            queryFn: () => fetch('example.com/todos'),
+          })
+        }
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook returning query result variable is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const useTodos = () => {
+          const query = useQuery()
+          return query
+        }
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook declared after component is destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return
+        }
+
+        function useTodos() {
+          return useQuery()
         }
       `,
       errors: [{ messageId: 'objectRestDestructure' }],
