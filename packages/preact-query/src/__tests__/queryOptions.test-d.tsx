@@ -57,7 +57,25 @@ describe('queryOptions', () => {
     const { data } = useSuspenseQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+  it('should work when passed to query', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
 
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with select', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
+  })
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
       queryKey: queryKey(),
