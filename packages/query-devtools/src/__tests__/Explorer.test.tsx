@@ -19,10 +19,12 @@ describe('Explorer', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     queryClient.clear()
   })
 
@@ -199,6 +201,35 @@ describe('Explorer', () => {
       expect(JSON.parse(arg as string)).toMatchObject({
         json: { name: 'Anna' },
       })
+    })
+
+    it('should switch the copy button to an error state when clipboard write fails', async () => {
+      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText('Error copying object to clipboard'),
+      ).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalledWith(
+        'Failed to copy: ',
+        expect.any(Error),
+      )
     })
 
     it('should clear array items via "setQueryData" when the clear-array button is clicked', () => {
