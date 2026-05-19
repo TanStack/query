@@ -352,6 +352,11 @@ await queryClient.invalidateQueries(
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
 
+**Notes**
+
+- Unlike [`refetchQueries`](#queryclientrefetchqueries), `invalidateQueries` marks matching queries as invalid and then refetches them according to the `refetchType` option.
+- Unlike [`removeQueries`](#queryclientremovequeries), `invalidateQueries` keeps matching queries in the cache.
+
 ## `queryClient.refetchQueries`
 
 The `refetchQueries` method can be used to refetch queries based on certain conditions.
@@ -395,6 +400,7 @@ This function returns a promise that will resolve when all of the queries are do
 
 - Queries that are "disabled" because they only have disabled Observers will never be refetched.
 - Queries that are "static" because they only have Observers with a Static StaleTime will never be refetched.
+- Unlike [`invalidateQueries`](#queryclientinvalidatequeries), `refetchQueries` refetches matching queries without marking them as invalid first.
 
 ## `queryClient.cancelQueries`
 
@@ -433,6 +439,10 @@ queryClient.removeQueries({ queryKey, exact: true })
 **Returns**
 
 This method does not return anything
+
+**Notes**
+
+- Unlike [`invalidateQueries`](#queryclientinvalidatequeries) or [`refetchQueries`](#queryclientrefetchqueries), `removeQueries` removes matching queries from the cache instead of refetching them.
 
 ## `queryClient.resetQueries`
 
