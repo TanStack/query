@@ -3,6 +3,7 @@ import { fireEvent, render } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import Explorer from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
+import type { Query } from '@tanstack/query-core'
 
 // `goober` compiles every `css\`...\`` template literal at mount time;
 // replace it with a no-op factory so label/role-based assertions stay fast.
@@ -173,6 +174,119 @@ describe('Explorer', () => {
         rendered.getByRole('button', { expanded: true }),
       ).toBeInTheDocument()
       expect(rendered.getByText('0:')).toBeInTheDocument()
+    })
+  })
+
+  describe('action menu', () => {
+    it('should copy the serialized value to the clipboard when the copy button is clicked', () => {
+      const writeText = vi.fn().mockResolvedValue(undefined)
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+
+      expect(writeText).toHaveBeenCalledTimes(1)
+      const [arg] = writeText.mock.calls[0]!
+      expect(JSON.parse(arg as string)).toMatchObject({
+        json: { name: 'Anna' },
+      })
+    })
+
+    it('should clear array items via "setQueryData" when the clear-array button is clicked', () => {
+      queryClient.setQueryData(['data'], ['a', 'b', 'c'])
+
+      const rendered = renderExplorer({
+        label: 'list',
+        value: ['a', 'b', 'c'],
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Remove all items'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual([])
+    })
+
+    it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
+      queryClient.setQueryData(['data'], ['a', 'b', 'c'])
+
+      const rendered = renderExplorer({
+        label: 'list',
+        value: ['a', 'b', 'c'],
+        editable: true,
+        itemsDeletable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['1'],
+      })
+
+      fireEvent.click(rendered.getByLabelText('Delete item'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
+    })
+
+    it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
+      queryClient.setQueryData(['data'], { flag: true })
+
+      const rendered = renderExplorer({
+        label: 'flag',
+        value: true,
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+        dataPath: ['flag'],
+      })
+
+      fireEvent.click(rendered.getByLabelText('Toggle value'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
+    })
+
+    it('should not render action buttons when "editable" is false', () => {
+      queryClient.setQueryData(['data'], ['a'])
+
+      const rendered = renderExplorer({
+        label: 'list',
+        value: ['a'],
+        editable: false,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      expect(rendered.queryByLabelText('Copy object to clipboard')).toBeNull()
+      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+    })
+
+    it('should not render "ClearArrayButton" when value is not an array', () => {
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'user',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      expect(rendered.queryByLabelText('Remove all items')).toBeNull()
+      expect(
+        rendered.getByLabelText('Copy object to clipboard'),
+      ).toBeInTheDocument()
     })
   })
 
