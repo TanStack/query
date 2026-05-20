@@ -5980,6 +5980,40 @@ describe('useQuery', () => {
 
       expect(renders).toBe(1)
     })
+
+    it('should not report isFetching=true when subscribed is false and no fetch is running', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+      const states: Array<UseQueryResult<unknown>> = []
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+        states.push(state)
+        return (
+          <div>
+            <span>
+              fetchStatus: {state.fetchStatus} isFetching:{' '}
+              {String(state.isFetching)}
+            </span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await vi.advanceTimersByTimeAsync(0)
+      rendered.getByText('fetchStatus: idle isFetching: false')
+
+      // No fetch is or will be running, so the observer must not advertise
+      // an optimistic fetching state.
+      expect(states.every((s) => s.isFetching === false)).toBe(true)
+      expect(states.every((s) => s.fetchStatus === 'idle')).toBe(true)
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
   })
 
   it('should have status=error on mount when a query has failed', async () => {

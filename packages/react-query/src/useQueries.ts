@@ -224,6 +224,7 @@ export function useQueries<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
+  const subscribed = options.subscribed !== false
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
@@ -231,14 +232,18 @@ export function useQueries<
           opts as QueryObserverOptions,
         )
 
-        // Make sure the results are already in fetching state before subscribing or updating options
+        // Make sure the results are already in fetching state before subscribing or updating options.
+        // When `subscribed: false`, the observer will never subscribe, so no fetch will be triggered.
+        // Skip the optimistic fetching state in that case so `isFetching` does not lie.
         defaultedOptions._optimisticResults = isRestoring
           ? 'isRestoring'
-          : 'optimistic'
+          : subscribed
+            ? 'optimistic'
+            : undefined
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, subscribed],
   )
 
   defaultedQueries.forEach((queryOptions) => {

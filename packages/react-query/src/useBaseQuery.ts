@@ -75,9 +75,14 @@ export function useBaseQuery<
   }
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
+  // When `subscribed: false`, the observer will never subscribe, so no fetch will be triggered.
+  // In that case we must not flip the optimistic result into the fetching state, otherwise
+  // `isFetching` would be reported as `true` even though no fetch is or will be happening.
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : options.subscribed === false
+      ? undefined
+      : 'optimistic'
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
