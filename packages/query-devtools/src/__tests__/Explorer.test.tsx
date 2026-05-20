@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import Explorer from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
@@ -511,6 +511,31 @@ describe('Explorer', () => {
       })
 
       expect(rendered.getByLabelText('Delete item')).toBeInTheDocument()
+    })
+
+    it('should delete fields from the active query when their inline delete buttons are clicked', () => {
+      const value = { name: 'Anna', age: 30 }
+      queryClient.setQueryData(['data'], value)
+
+      const rendered = renderExplorer({
+        label: 'Data',
+        value,
+        defaultExpanded: ['Data'],
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      const ageRow = rendered.getByText('age:').parentElement!
+      fireEvent.click(within(ageRow).getByLabelText('Delete item'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+
+      const nameRow = rendered.getByText('name:').parentElement!
+      fireEvent.click(within(nameRow).getByLabelText('Delete item'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual({})
     })
   })
 })
