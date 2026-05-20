@@ -232,6 +232,63 @@ describe('Explorer', () => {
       )
     })
 
+    it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined)
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText('Object copied to clipboard'),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(1500)
+
+      expect(
+        rendered.getByLabelText('Copy object to clipboard'),
+      ).toBeInTheDocument()
+    })
+
+    it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
+      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText('Error copying object to clipboard'),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(1500)
+
+      expect(
+        rendered.getByLabelText('Copy object to clipboard'),
+      ).toBeInTheDocument()
+    })
+
     it('should clear array items via "setQueryData" when the clear-array button is clicked', () => {
       queryClient.setQueryData(['data'], ['a', 'b', 'c'])
 
