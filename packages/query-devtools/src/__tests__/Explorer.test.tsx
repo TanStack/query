@@ -435,9 +435,10 @@ describe('Explorer', () => {
     })
 
     it('should render action buttons for items inside a paginated page', () => {
-      const value: Array<Array<number>> = Array.from({ length: 200 }, (_, i) => [
-        i,
-      ])
+      const value: Array<Array<number>> = Array.from(
+        { length: 200 },
+        (_, i) => [i],
+      )
       queryClient.setQueryData(['data'], value)
 
       const rendered = renderExplorer({
