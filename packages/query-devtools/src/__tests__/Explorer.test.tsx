@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent, render, within } from '@solidjs/testing-library'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import Explorer from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
@@ -232,6 +232,63 @@ describe('Explorer', () => {
       )
     })
 
+    it('should reset the copy button to the idle state 1500ms after a successful copy', async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined)
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText('Object copied to clipboard'),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(1500)
+
+      expect(
+        rendered.getByLabelText('Copy object to clipboard'),
+      ).toBeInTheDocument()
+    })
+
+    it('should reset the copy button to the idle state 1500ms after a failed copy', async () => {
+      const writeText = vi.fn().mockRejectedValue(new Error('denied'))
+      vi.stubGlobal('navigator', { clipboard: { writeText } })
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      queryClient.setQueryData(['data'], { name: 'Anna' })
+
+      const rendered = renderExplorer({
+        label: 'data',
+        value: { name: 'Anna' },
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText('Error copying object to clipboard'),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(1500)
+
+      expect(
+        rendered.getByLabelText('Copy object to clipboard'),
+      ).toBeInTheDocument()
+    })
+
     it('should clear array items via "setQueryData" when the clear-array button is clicked', () => {
       queryClient.setQueryData(['data'], ['a', 'b', 'c'])
 
@@ -357,6 +414,49 @@ describe('Explorer', () => {
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
     })
+
+    it('should independently toggle two pages when their headers are clicked', () => {
+      const rendered = renderExplorer({
+        label: 'big',
+        value: Array.from({ length: 200 }, (_, i) => `item-${i}`),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+      fireEvent.click(rendered.getByText('[0...99]'))
+      fireEvent.click(rendered.getByText('[100...199]'))
+
+      expect(rendered.getByText('"item-0"')).toBeInTheDocument()
+      expect(rendered.getByText('"item-100"')).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('[0...99]'))
+
+      expect(rendered.queryByText('"item-0"')).toBeNull()
+      expect(rendered.getByText('"item-100"')).toBeInTheDocument()
+    })
+
+    it('should render action buttons for items inside a paginated page', () => {
+      const value: Array<Array<number>> = Array.from(
+        { length: 200 },
+        (_, i) => [i],
+      )
+      queryClient.setQueryData(['data'], value)
+
+      const rendered = renderExplorer({
+        label: 'Data',
+        value,
+        defaultExpanded: ['Data'],
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByText('[0...99]'))
+
+      expect(
+        rendered.getAllByLabelText('Remove all items').length,
+      ).toBeGreaterThan(1)
+    })
   })
 
   describe('inline edit', () => {
@@ -435,6 +535,31 @@ describe('Explorer', () => {
       })
 
       expect(rendered.getByLabelText('Delete item')).toBeInTheDocument()
+    })
+
+    it('should delete fields from the active query when their inline delete buttons are clicked', () => {
+      const value = { name: 'Anna', age: 30 }
+      queryClient.setQueryData(['data'], value)
+
+      const rendered = renderExplorer({
+        label: 'Data',
+        value,
+        defaultExpanded: ['Data'],
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      const ageRow = rendered.getByText('age:').parentElement!
+      fireEvent.click(within(ageRow).getByLabelText('Delete item'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
+
+      const nameRow = rendered.getByText('name:').parentElement!
+      fireEvent.click(within(nameRow).getByLabelText('Delete item'))
+
+      expect(queryClient.getQueryData(['data'])).toEqual({})
     })
   })
 })
