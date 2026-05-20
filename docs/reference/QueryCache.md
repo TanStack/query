@@ -43,7 +43,7 @@ Its available methods are:
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.
-  - `query.state.fetchFailureCount` indicates how many attempts were made (including retries), which can be used to differentiate a first failure from a failure after retries.
+  - `query.state.fetchFailureCount` indicates how many failed fetch attempts were made (including retries), which can be used to differentiate a first failure from a failure after retries.
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query is successful.
