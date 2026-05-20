@@ -68,10 +68,17 @@ export default function App() {
 function Example() {
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
-    queryFn: () =>
-      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
-        res.json(),
-      ),
+    queryFn: async () => {
+      const response = await fetch(
+        'https://api.github.com/repos/TanStack/query',
+      )
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+      }
+
+      return response.json()
+    },
   })
 
   if (isPending) return 'Loading...'
