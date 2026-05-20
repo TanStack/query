@@ -12,7 +12,7 @@ import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
   onError: (error, query) => {
-    // query.state.fetchFailureCount reflects total attempts (initial + retries)
+    // query.state.fetchFailureCount is the total number of failed attempts including retries
     if (query.state.fetchFailureCount > 1) {
       console.error(`Failed after retries:`, error)
     } else {
