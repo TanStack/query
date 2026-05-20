@@ -357,6 +357,25 @@ describe('Explorer', () => {
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
     })
+
+    it('should independently toggle two pages when their headers are clicked', () => {
+      const rendered = renderExplorer({
+        label: 'big',
+        value: Array.from({ length: 200 }, (_, i) => `item-${i}`),
+      })
+
+      fireEvent.click(rendered.getByRole('button', { expanded: false }))
+      fireEvent.click(rendered.getByText('[0...99]'))
+      fireEvent.click(rendered.getByText('[100...199]'))
+
+      expect(rendered.getByText('"item-0"')).toBeInTheDocument()
+      expect(rendered.getByText('"item-100"')).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('[0...99]'))
+
+      expect(rendered.queryByText('"item-0"')).toBeNull()
+      expect(rendered.getByText('"item-100"')).toBeInTheDocument()
+    })
   })
 
   describe('inline edit', () => {
