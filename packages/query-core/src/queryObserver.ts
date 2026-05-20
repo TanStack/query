@@ -67,7 +67,7 @@ export class QueryObserver<
   #refetchIntervalId?: ManagedTimerId
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
-
+  #everSubscribed = false 
   constructor(
     client: QueryClient,
     public options: QueryObserverOptions<
@@ -95,7 +95,7 @@ export class QueryObserver<
   protected onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
-
+      this.#everSubscribed = true
       if (shouldFetchOnMount(this.#currentQuery, this.options)) {
         this.#executeFetch()
       } else {
@@ -176,7 +176,7 @@ export class QueryObserver<
     }
 
     const mounted = this.hasListeners()
-
+   
     // Fetch if there are subscribers
     if (
       mounted &&
@@ -191,7 +191,7 @@ export class QueryObserver<
     }
 
     // Update result
-    this.updateResult()
+    this.updateResult(mounted ? undefined : false)
 
     // Update stale interval if needed
     if (
@@ -228,11 +228,17 @@ export class QueryObserver<
       TQueryKey
     >,
   ): QueryObserverResult<TData, TError> {
-    const query = this.#client.getQueryCache().build(this.#client, options)
+  const query = this.#client.getQueryCache().build(this.#client, options)
 
-    const result = this.createResult(query, options)
+  const result = this.createResult(
+  query,
+  options,
+  !this.#everSubscribed || this.hasListeners(),
+)
 
-    if (shouldAssignObserverCurrentProperties(this, result)) {
+
+   if (shouldAssignObserverCurrentProperties(this, result)) { 
+
       // this assigns the optimistic result to the current Observer
       // because if the query function changes, useQuery will be performing
       // an effect where it would fetch again.
@@ -250,8 +256,8 @@ export class QueryObserver<
       // When keeping the previous data, the result doesn't change until new
       // data arrives.
       this.#currentResult = result
-      this.#currentResultOptions = this.options
-      this.#currentResultState = this.#currentQuery.state
+    this.#currentResultOptions = this.options
+    this.#currentResultState = this.#currentQuery.state
     }
     return result
   }
@@ -439,6 +445,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    optimistic = true,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
@@ -461,7 +468,7 @@ export class QueryObserver<
     if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
+      const fetchOnMount = optimistic && !mounted && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
@@ -642,12 +649,12 @@ export class QueryObserver<
     return nextResult
   }
 
-  updateResult(): void {
+   updateResult(optimistic?: boolean): void{
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
 
-    const nextResult = this.createResult(this.#currentQuery, this.options)
+    const nextResult = this.createResult(this.#currentQuery, this.options, optimistic)
 
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
@@ -737,10 +744,12 @@ export class QueryObserver<
       }
 
       // Then the cache listeners
+      if (this.hasListeners()) {
       this.#client.getQueryCache().notify({
         query: this.#currentQuery,
         type: 'observerResultsUpdated',
       })
+    }
     })
   }
 }

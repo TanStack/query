@@ -5980,6 +5980,48 @@ describe('useQuery', () => {
 
       expect(renders).toBe(1)
     })
+    it('should not report isFetching when subscribed is false and no fetch is running', async () => {
+      const key = queryKey()
+
+      const states: Array<UseQueryResult<string>> = []
+
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+
+        const result = useQuery({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+          subscribed,
+        })
+
+        states.push(result)
+
+        return (
+          <div>
+            <span>
+              {result.fetchStatus} {String(result.isFetching)}
+            </span>
+
+            <button onClick={() => setSubscribed(false)}>unsubscribe</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      rendered.getByText('idle false')
+
+      fireEvent.click(rendered.getByRole('button', { name: 'unsubscribe' }))
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      const latest = states[states.length - 1]!
+
+      expect(latest.fetchStatus).toBe('idle')
+      expect(latest.isFetching).toBe(false)
+    })
   })
 
   it('should have status=error on mount when a query has failed', async () => {
