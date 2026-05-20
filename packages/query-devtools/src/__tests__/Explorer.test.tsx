@@ -433,6 +433,30 @@ describe('Explorer', () => {
       expect(rendered.queryByText('"item-0"')).toBeNull()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
     })
+
+    it('should render action buttons for items inside a paginated page', () => {
+      const value: Array<Array<number>> = Array.from(
+        { length: 200 },
+        (_, i) => [i],
+      )
+      queryClient.setQueryData(['data'], value)
+
+      const rendered = renderExplorer({
+        label: 'Data',
+        value,
+        defaultExpanded: ['Data'],
+        editable: true,
+        activeQuery: queryClient
+          .getQueryCache()
+          .find({ queryKey: ['data'] }) as Query,
+      })
+
+      fireEvent.click(rendered.getByText('[0...99]'))
+
+      expect(
+        rendered.getAllByLabelText('Remove all items').length,
+      ).toBeGreaterThan(1)
+    })
   })
 
   describe('inline edit', () => {
