@@ -707,6 +707,43 @@ describe('Devtools', () => {
 
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
     })
+
+    it('should clear the error state when the textarea is focused after a submit failure', () => {
+      queryClient.setQueryData(['edit-refocus'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-refocus"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      const textarea = rendered.getByLabelText('Edit query data as JSON')
+      fireEvent.input(textarea, { target: { value: 'not json' } })
+      fireEvent.submit(textarea.closest('form')!)
+
+      expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+
+      fireEvent.focus(textarea)
+
+      expect(rendered.queryByText('Invalid Value')).toBeNull()
+    })
+
+    it('should return to the data view when the editor "Cancel" button is clicked', () => {
+      queryClient.setQueryData(['edit-cancel'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-cancel"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      expect(
+        rendered.getByLabelText('Edit query data as JSON'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('Cancel'))
+
+      expect(
+        rendered.queryByLabelText('Edit query data as JSON'),
+      ).toBeNull()
+      expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
+    })
   })
 
   describe('error type select', () => {
