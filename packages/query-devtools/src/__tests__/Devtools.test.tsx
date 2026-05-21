@@ -739,9 +739,7 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByText('Cancel'))
 
-      expect(
-        rendered.queryByLabelText('Edit query data as JSON'),
-      ).toBeNull()
+      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
