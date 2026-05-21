@@ -93,6 +93,92 @@ export type InferErrorFromTag<TError, TTaggedQueryKey extends QueryKey> =
       : TaggedError
     : TError
 
+// Throws type for typed errors in function return types
+export const throwsSymbol = Symbol('throws')
+export type throwsSymbol = typeof throwsSymbol
+
+/**
+ * Phantom type to mark throwable errors in function return types.
+ * Use this to declare what errors a function can throw.
+ *
+ * @example
+ * ```ts
+ * async function fetchUser(id: string): Promise<User & Throws<ApiError>> {
+ *   const res = await fetch(`/api/users/${id}`)
+ *   if (!res.ok) throw new ApiError(res.status)
+ *   return res.json()
+ * }
+ *
+ * // Error type is automatically inferred as ApiError
+ * const { error } = useQuery({
+ *   queryKey: ['user', id],
+ *   queryFn: () => fetchUser(id),
+ * })
+ * ```
+ */
+export type Throws<TError> = { [throwsSymbol]: TError }
+
+/**
+ * Extract the error type from a type that includes Throws<E>
+ */
+export type ExtractThrows<T> =
+  IsAny<T> extends true ? never : T extends Throws<infer E> ? E : never
+
+/**
+ * Extract the error type from a function's return type.
+ * Works with both sync functions returning T and async functions returning Promise<T>
+ */
+export type ExtractThrowsFromReturnType<T> =
+  IsAny<T> extends true
+    ? never
+    : T extends (...args: Array<any>) => infer R
+      ? R extends Promise<infer U>
+        ? ExtractThrows<U>
+        : ExtractThrows<R>
+      : never
+
+/**
+ * Infer the error type from a function.
+ * If the function's return type includes Throws<E>, returns E.
+ * Otherwise returns the fallback type (defaults to DefaultError).
+ */
+export type InferErrorFromFn<TFn, TFallback = DefaultError> =
+  ExtractThrowsFromReturnType<TFn> extends never
+    ? TFallback
+    : ExtractThrowsFromReturnType<TFn>
+
+/**
+ * Remove the Throws<E> phantom type from a type.
+ * If T is `Data & Throws<E>`, returns `Data`.
+ * If T doesn't include Throws, returns T unchanged.
+ */
+export type StripThrows<T> =
+  IsAny<T> extends true ? T : T extends Throws<any> ? Omit<T, throwsSymbol> : T
+
+/**
+ * Check if a type is `any`.
+ * Uses the trick that `0 extends (1 & T)` is only true when T is `any`.
+ */
+export type IsAny<T> = 0 extends 1 & T ? true : false
+
+/**
+ * Check if a function's return type includes Throws<E>.
+ * Uses ExtractThrowsFromReturnType and guards against `any`.
+ */
+export type HasThrows<TFn> =
+  IsAny<ExtractThrowsFromReturnType<TFn>> extends true
+    ? true
+    : [ExtractThrowsFromReturnType<TFn>] extends [never]
+      ? false
+      : true
+
+/**
+ * Helper type for overloads that should only match when queryFn/mutationFn uses Throws<E>.
+ * Returns TOptions when Throws is present, never otherwise.
+ */
+export type ThrowsFnOptions<TFn, TOptions> =
+  HasThrows<TFn> extends true ? TOptions : never
+
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
