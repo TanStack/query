@@ -356,6 +356,24 @@ describe('Devtools', () => {
 
       expect(rendered.getByLabelText(/disabled/)).toBeInTheDocument()
     })
+
+    it('should render a "static" indicator for a query with "staleTime: \'static\'"', () => {
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+      })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+        staleTime: 'static',
+      })
+      query.addObserver(observer)
+      query.setState({ ...query.state, data: 'x' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByText('static')).toBeInTheDocument()
+      expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
+    })
   })
 
   describe('status counts', () => {
