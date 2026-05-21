@@ -66,6 +66,25 @@ const baseTestCases = {
       ])
       .concat([
         {
+          name: `should pass when useQueries is array-destructured and element properties are used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const [{ data }] = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { data }, [data]);
+              return;
+            }
+          `,
+        },
+      ])
+      .concat([
+        {
           name: `should pass when useQuery is imported from non-TanStack source and used with ${reactHookAlias}`,
           code: `
             ${reactHookImport}
@@ -153,6 +172,79 @@ const baseTestCases = {
                 ]
               });
               const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+      ])
+      .concat([
+        {
+          name: `array-destructured useQueries element is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const [userQuery, postsQuery] = useQueries({
+                queries: [
+                  { queryKey: ['user'], queryFn: () => 'user' },
+                  { queryKey: ['posts'], queryFn: () => 'posts' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { userQuery.data }, [userQuery]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+        {
+          name: `array-destructured useSuspenseQueries element is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useSuspenseQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const [query] = useSuspenseQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { query.data }, [query]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useSuspenseQueries' },
+            },
+          ],
+        },
+        {
+          name: `rest element of array-destructured useQueries is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const [firstQuery, ...restQueries] = useQueries({
+                queries: [
+                  { queryKey: ['a'], queryFn: () => 'a' },
+                  { queryKey: ['b'], queryFn: () => 'b' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => {}, [restQueries]);
               return;
             }
           `,

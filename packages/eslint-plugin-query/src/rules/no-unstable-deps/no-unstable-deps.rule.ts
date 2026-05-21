@@ -64,6 +64,20 @@ export const rule = createRule({
     ) {
       if (pattern.type === AST_NODE_TYPES.Identifier) {
         trackedVariables[pattern.name] = queryHook
+      } else if (pattern.type === AST_NODE_TYPES.ArrayPattern) {
+        for (const element of pattern.elements) {
+          if (element === null) {
+            continue
+          }
+          if (element.type === AST_NODE_TYPES.Identifier) {
+            trackedVariables[element.name] = queryHook
+          } else if (
+            element.type === AST_NODE_TYPES.RestElement &&
+            element.argument.type === AST_NODE_TYPES.Identifier
+          ) {
+            trackedVariables[element.argument.name] = queryHook
+          }
+        }
       }
     }
 
