@@ -52,6 +52,15 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
    * Include queries matching their fetchStatus
    */
   fetchStatus?: FetchStatus
+  /**
+   * When `true`, object properties whose value is `undefined` are ignored
+   * during partial query key matching. Mirrors the default `hashKey`
+   * behavior which already strips `undefined` via `JSON.stringify`.
+   *
+   * @default false
+   * @see https://github.com/TanStack/query/issues/3741
+   */
+  ignoreUndefinedInKeys?: boolean
 }
 
 export interface MutationFilters<
@@ -78,6 +87,14 @@ export interface MutationFilters<
    * Filter by mutation status
    */
   status?: MutationStatus
+  /**
+   * When `true`, object properties whose value is `undefined` are ignored
+   * during partial mutation key matching.
+   *
+   * @default false
+   * @see https://github.com/TanStack/query/issues/3741
+   */
+  ignoreUndefinedInKeys?: boolean
 }
 
 export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
@@ -148,6 +165,7 @@ export function matchQuery(
     type = 'all',
     exact,
     fetchStatus,
+    ignoreUndefinedInKeys,
     predicate,
     queryKey,
     stale,
@@ -158,7 +176,9 @@ export function matchQuery(
       if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
-    } else if (!partialMatchKey(query.queryKey, queryKey)) {
+    } else if (
+      !partialMatchKey(query.queryKey, queryKey, { ignoreUndefinedInKeys })
+    ) {
       return false
     }
   }
@@ -192,7 +212,8 @@ export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
 ): boolean {
-  const { exact, status, predicate, mutationKey } = filters
+  const { exact, ignoreUndefinedInKeys, status, predicate, mutationKey } =
+    filters
   if (mutationKey) {
     if (!mutation.options.mutationKey) {
       return false
@@ -201,7 +222,11 @@ export function matchMutation(
       if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
         return false
       }
-    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+    } else if (
+      !partialMatchKey(mutation.options.mutationKey, mutationKey, {
+        ignoreUndefinedInKeys,
+      })
+    ) {
       return false
     }
   }
@@ -242,11 +267,33 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
   )
 }
 
+export type PartialMatchKeyOptions = {
+  /**
+   * When `true`, object properties whose value is `undefined` are treated as
+   * missing in both keys before comparison. This matches the behavior of the
+   * default `hashKey` (which strips `undefined` via `JSON.stringify`).
+   *
+   * Does NOT apply to `undefined` values inside arrays.
+   *
+   * @default false
+   * @see https://github.com/TanStack/query/issues/3741
+   */
+  ignoreUndefinedInKeys?: boolean
+}
+
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
-export function partialMatchKey(a: any, b: any): boolean {
+export function partialMatchKey(
+  a: QueryKey,
+  b: QueryKey,
+  options?: PartialMatchKeyOptions,
+): boolean
+export function partialMatchKey(
+  a: any,
+  b: any,
+  options?: PartialMatchKeyOptions,
+): boolean {
   if (a === b) {
     return true
   }
@@ -256,7 +303,21 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
+    if (
+      options?.ignoreUndefinedInKeys &&
+      isPlainObject(a) &&
+      isPlainObject(b)
+    ) {
+      return Object.keys(b)
+        .filter((key) => b[key] !== undefined)
+        .every((key) =>
+          partialMatchKey(a[key] as any, b[key] as any, options),
+        )
+    }
+
+    return Object.keys(b).every((key) =>
+      partialMatchKey(a[key], b[key], options),
+    )
   }
 
   return false

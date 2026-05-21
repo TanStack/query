@@ -165,6 +165,46 @@ describe('core/utils', () => {
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
       expect(partialMatchKey(a, b)).toEqual(false)
     })
+
+    // Regression tests for https://github.com/TanStack/query/issues/3741
+    describe('with ignoreUndefinedInKeys option', () => {
+      it('should match when b has `undefined` for a key that holds a concrete value in a — only when option is enabled', () => {
+        const a = [{ entity: 'todos', filter: { done: true } }]
+        const b = [{ entity: 'todos', filter: undefined }]
+        // Default behavior: typeof mismatch between {done:true} and undefined → no match
+        expect(partialMatchKey(a, b)).toEqual(false)
+        // Opt-in: undefined in b is ignored → falls back to entity-only match
+        expect(partialMatchKey(a, b, { ignoreUndefinedInKeys: true })).toEqual(
+          true,
+        )
+      })
+
+      it('should still not match when both sides have concrete but different values', () => {
+        const a = [{ entity: 'todos', filter: { done: true } }]
+        const b = [{ entity: 'todos', filter: { done: false } }]
+        expect(
+          partialMatchKey(a, b, { ignoreUndefinedInKeys: true }),
+        ).toEqual(false)
+      })
+
+      it('should not strip undefined from arrays inside the key', () => {
+        const a = [{ entity: 'todos', tags: ['urgent'] }]
+        const b = [{ entity: 'todos', tags: [undefined] }]
+        expect(
+          partialMatchKey(a, b, { ignoreUndefinedInKeys: true }),
+        ).toEqual(false)
+      })
+
+      it('should match recursively in nested objects', () => {
+        const a = [{ entity: 'todos', filter: { done: true, owner: 'me' } }]
+        const b = [{ entity: 'todos', filter: { done: true, owner: undefined } }]
+        // Default: owner undefined vs 'me' → typeof mismatch → false
+        expect(partialMatchKey(a, b)).toEqual(false)
+        expect(
+          partialMatchKey(a, b, { ignoreUndefinedInKeys: true }),
+        ).toEqual(true)
+      })
+    })
   })
 
   describe('replaceEqualDeep', () => {
