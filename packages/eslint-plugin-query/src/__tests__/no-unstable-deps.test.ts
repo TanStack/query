@@ -245,7 +245,10 @@ const baseTestCases = {
           errors: [
             {
               messageId: 'noUnstableDeps',
-              data: { reactHook: reactHookAlias, queryHook: 'useSuspenseQueries' },
+              data: {
+                reactHook: reactHookAlias,
+                queryHook: 'useSuspenseQueries',
+              },
             },
           ],
         },
