@@ -344,6 +344,48 @@ describe('createQueryController', () => {
     expect(seenKeys.includes(2)).toBe(true)
   })
 
+  it('does not request a host update when function options resolve to an unchanged result', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const query = createQueryController(
+      host,
+      () => ({
+        queryKey: ['query-controller', 'stable-function-options'] as const,
+        staleTime: Infinity,
+        queryFn: async () => {
+          callCount += 1
+          return 'stable'
+        },
+      }),
+      client,
+    )
+
+    host.connect()
+    host.update()
+    await waitFor(() => query().isSuccess)
+
+    await Promise.resolve()
+    await Promise.resolve()
+    const updatesAfterSuccess = host.updatesRequested
+
+    host.update()
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(query().data).toBe('stable')
+    expect(callCount).toBe(1)
+    expect(host.updatesRequested).toBe(updatesAfterSuccess)
+  })
+
   it('QSEM-01: refetchOnMount follows stale-vs-fresh policy', async () => {
     const client = new QueryClient({
       defaultOptions: {
