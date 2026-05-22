@@ -16,6 +16,7 @@ import {
 } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
 
 /**
  * Options accepted by `createQueryController`.
@@ -100,6 +101,9 @@ class QueryController<
   private observer:
     | QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
     | undefined
+  private readonly resultTracker = new QueryObserverResultTracker<
+    QueryObserverResult<TData, TError>
+  >()
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
 
@@ -126,7 +130,7 @@ class QueryController<
     const observer = new QueryObserver(initialClient, defaulted)
     this.queryClient = initialClient
     this.observer = observer
-    this.result = observer.getOptimisticResult(defaulted)
+    this.assignObserverResult(observer.getOptimisticResult(defaulted))
   }
 
   protected onConnected(): void {
@@ -138,7 +142,7 @@ class QueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
@@ -168,16 +172,16 @@ class QueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
   refetch: QueryObserverResult<TData, TError>['refetch'] = (...args) => {
-    if (!this.refreshOptions()) {
+    if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.result.refetch(...args)
+    return this.observer.refetch(...args)
   }
 
   suspense = async (): Promise<QueryObserverResult<TData, TError>> => {
@@ -195,6 +199,14 @@ class QueryController<
     return optimistic
   }
 
+  readCurrent(): QueryObserverResult<TData, TError> {
+    if (this.observer) {
+      this.assignObserverResult(this.observer.getCurrentResult())
+    }
+
+    return this.current
+  }
+
   private subscribe(): void {
     if (!this.observer) {
       return
@@ -205,7 +217,7 @@ class QueryController<
     }
 
     this.unsubscribe = this.observer.subscribe((next) => {
-      this.setResult(next)
+      this.setObserverResult(next)
     })
   }
 
@@ -220,6 +232,7 @@ class QueryController<
       this.unsubscribeObserver()
       this.queryClient = undefined
       this.observer = undefined
+      this.resultTracker.reset()
       this.setResult(createPendingQueryResult())
       return false
     }
@@ -232,19 +245,45 @@ class QueryController<
     this.queryClient = nextClient
     const options = this.defaultOptions()
     this.observer = new QueryObserver(this.queryClient, options)
-    this.setResult(this.observer.getOptimisticResult(options))
+    this.setObserverResult(this.observer.getOptimisticResult(options))
     return true
   }
 
-  private refreshOptions(): boolean {
+  private applyOptions(): boolean {
     if (!this.syncClient() || !this.observer) {
       return false
     }
 
     const options = this.defaultOptions(this.queryClient)
     this.observer.setOptions(options)
-    this.setResult(this.observer.getCurrentResult())
     return true
+  }
+
+  private refreshOptions(): boolean {
+    if (!this.applyOptions() || !this.observer) {
+      return false
+    }
+
+    this.setObserverResult(this.observer.getCurrentResult())
+    return true
+  }
+
+  private assignObserverResult(
+    result: QueryObserverResult<TData, TError>,
+  ): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.result = trackedResult
+    }
+  }
+
+  private setObserverResult(
+    result: QueryObserverResult<TData, TError>,
+  ): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.setResult(trackedResult)
+    }
   }
 
   private defaultOptions(
@@ -332,7 +371,7 @@ export function createQueryController<
   const controller = new QueryController(host, options, queryClient)
 
   return Object.assign(
-    createValueAccessor(() => controller.current),
+    createValueAccessor(() => controller.readCurrent()),
     {
       refetch: controller.refetch,
       suspense: controller.suspense,

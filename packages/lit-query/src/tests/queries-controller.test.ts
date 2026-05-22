@@ -227,6 +227,233 @@ describe('createQueriesController', () => {
     expect(queries()).toEqual(['alpha', 'beta'])
   })
 
+  it('does not request another update when stable function query options refresh during host update', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const queries = createQueriesController(
+      host,
+      () => ({
+        queries: [
+          {
+            queryKey: ['queries-controller', 'stable-function-options'] as const,
+            queryFn: async () => {
+              callCount += 1
+              return 'stable-result'
+            },
+            staleTime: Infinity,
+          },
+        ] as const,
+      }),
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      await waitFor(() => queries()[0]?.isSuccess === true)
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        host.update()
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(queries()[0]?.data).toBe('stable-result')
+      expect(callCount).toBe(1)
+    } finally {
+      queries.destroy()
+    }
+  })
+
+  it('does not request an update for refetch-only state changes when data was read and result refetch is invoked', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['queries-controller', 'tracked-data-only'] as const
+    const host = new TestControllerHost()
+    let resolveRefetch: (() => void) | undefined
+
+    const queries = createQueriesController(
+      host,
+      {
+        queries: [
+          {
+            queryKey,
+            initialData: 'stable-data',
+            staleTime: Infinity,
+            queryFn: () =>
+              new Promise<string>((resolve) => {
+                resolveRefetch = () => resolve('stable-data')
+              }),
+          },
+        ] as const,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(queries()[0]?.data).toBe('stable-data')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      const refetch = queries()[0]!.refetch()
+
+      await waitFor(() => resolveRefetch !== undefined)
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      resolveRefetch!()
+      await refetch
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      queries.destroy()
+    }
+  })
+
+  it('does not re-default query options when subscribed queries emit', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const originalDefaultQueryOptions = client.defaultQueryOptions
+    let defaultQueryOptionsCalls = 0
+    client.defaultQueryOptions = ((options) => {
+      defaultQueryOptionsCalls += 1
+      return originalDefaultQueryOptions.call(client, options as never)
+    }) as typeof client.defaultQueryOptions
+
+    const queryKey = ['queries-controller', 'per-emit-defaulting'] as const
+    const host = new TestControllerHost()
+    let resolveRefetch: (() => void) | undefined
+
+    const queries = createQueriesController(
+      host,
+      {
+        queries: [
+          {
+            queryKey,
+            initialData: 'stable-data',
+            staleTime: Infinity,
+            queryFn: () =>
+              new Promise<string>((resolve) => {
+                resolveRefetch = () => resolve('stable-data')
+              }),
+          },
+        ] as const,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(queries()[0]?.isFetching).toBe(false)
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      defaultQueryOptionsCalls = 0
+
+      const refetch = queries()[0]!.refetch()
+
+      await waitFor(() => resolveRefetch !== undefined)
+      await Promise.resolve()
+
+      expect(queries()[0]?.isFetching).toBe(true)
+      expect(defaultQueryOptionsCalls).toBe(0)
+
+      resolveRefetch!()
+      await refetch
+      await Promise.resolve()
+
+      expect(queries()[0]?.isFetching).toBe(false)
+      expect(defaultQueryOptionsCalls).toBe(0)
+    } finally {
+      queries.destroy()
+    }
+  })
+
+  it('refreshes suppressed query results on the next accessor read when a newly read property changed', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['queries-controller', 'late-read-freshness'] as const
+    const host = new TestControllerHost()
+
+    const queries = createQueriesController(
+      host,
+      {
+        queries: [
+          {
+            queryKey,
+            initialData: 'initial-data',
+            staleTime: Infinity,
+            queryFn: async () => 'unused',
+          },
+        ] as const,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(queries()[0]?.status).toBe('success')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      client.setQueryData(queryKey, 'updated-data')
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      expect(queries()[0]?.data).toBe('updated-data')
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      queries.destroy()
+    }
+  })
+
   it('M13: supports dynamic add/remove and keeps partial failure stability', async () => {
     const client = new QueryClient({
       defaultOptions: {

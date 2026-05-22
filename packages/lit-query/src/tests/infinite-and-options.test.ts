@@ -169,6 +169,165 @@ describe('createInfiniteQueryController', () => {
     expect(infinite().data?.pages).toEqual([-1, 0, 1])
   })
 
+  it('does not request another update when stable function options refresh during host update', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const infinite = createInfiniteQueryController(
+      host,
+      () => ({
+        queryKey: ['infinite-controller', 'stable-function-options'],
+        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => {
+          callCount += 1
+          return Number(pageParam)
+        },
+        getNextPageParam: () => undefined,
+        staleTime: Infinity,
+      }),
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      await waitFor(() => infinite().isSuccess)
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        host.update()
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(infinite().data?.pages).toEqual([0])
+      expect(callCount).toBe(1)
+    } finally {
+      infinite.destroy()
+    }
+  })
+
+  it('does not request an update for refetch-only state changes when only data was read', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let resolveRefetch: (() => void) | undefined
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: ['infinite-controller', 'tracked-data-only'],
+        initialPageParam: 0,
+        initialData: {
+          pages: ['stable-page'],
+          pageParams: [0],
+        },
+        staleTime: Infinity,
+        queryFn: () =>
+          new Promise<string>((resolve) => {
+            resolveRefetch = () => resolve('stable-page')
+          }),
+        getNextPageParam: () => undefined,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(infinite().data?.pages).toEqual(['stable-page'])
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      const refetch = infinite.refetch()
+
+      await waitFor(() => resolveRefetch !== undefined)
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      resolveRefetch!()
+      await refetch
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      infinite.destroy()
+    }
+  })
+
+  it('refreshes a suppressed result on the next accessor read when a newly read property changed', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['infinite-controller', 'late-read-freshness'] as const
+    const host = new TestControllerHost()
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey,
+        initialPageParam: 0,
+        initialData: {
+          pages: ['initial-page'],
+          pageParams: [0],
+        },
+        staleTime: Infinity,
+        queryFn: async () => 'unused',
+        getNextPageParam: () => undefined,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(infinite().status).toBe('success')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      client.setQueryData(queryKey, {
+        pages: ['updated-page'],
+        pageParams: [0],
+      })
+      await Promise.resolve()
+
+      expect(infinite().data?.pages).toEqual(['updated-page'])
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      infinite.destroy()
+    }
+  })
+
   it('INFEDGE-01: next-page failure preserves prior pages consistently', async () => {
     const client = new QueryClient({
       defaultOptions: {
