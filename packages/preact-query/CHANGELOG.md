@@ -1,5 +1,12 @@
 # @tanstack/preact-query
 
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
 ## 5.100.11
 
 ### Patch Changes
