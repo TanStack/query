@@ -6,6 +6,9 @@
     "url": "git+https://github.com/TanStack/query.git"
   },
   "packageManager": "pnpm@11.1.0",
+  "engines": {
+    "pnpm": ">=11.0.0"
+  },
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
