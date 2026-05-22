@@ -618,7 +618,7 @@ importers:
   examples/lit/basic:
     dependencies:
       '@tanstack/lit-query':
-        specifier: ^0.2.2
+        specifier: ^0.2.3
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
         specifier: ^5.100.11
@@ -637,7 +637,7 @@ importers:
   examples/lit/pagination:
     dependencies:
       '@tanstack/lit-query':
-        specifier: ^0.2.2
+        specifier: ^0.2.3
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
         specifier: ^5.100.11
@@ -659,7 +659,7 @@ importers:
         specifier: ^3.3.0
         version: 3.3.1
       '@tanstack/lit-query':
-        specifier: ^0.2.2
+        specifier: ^0.2.3
         version: link:../../../packages/lit-query
       '@tanstack/query-core':
         specifier: ^5.100.11
