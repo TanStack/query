@@ -25,13 +25,6 @@ useQuery({
   queryKey: ['todos', todoId],
   queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
 })
-useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: async () => {
-    const allTodosById = await fetchAllTodosById()
-    return allTodosById[todoId] ?? null
-  },
-})
 ```
 
 [//]: # 'Example'
