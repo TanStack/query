@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.100.12
+
+## 5.100.11
+
+## 5.100.10
+
 ## 5.100.9
 
 ### Patch Changes

@@ -243,7 +243,7 @@ class QueryController<
 
     const options = this.defaultOptions(this.queryClient)
     this.observer.setOptions(options)
-    this.setResult(this.observer.getOptimisticResult(options))
+    this.setResult(this.observer.getCurrentResult())
     return true
   }
 
