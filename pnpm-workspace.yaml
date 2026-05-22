@@ -3,6 +3,8 @@ linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
 trustPolicy: 'no-downgrade'
+trustPolicyExclude:
+  - 'vite@6.4.1'
 
 packages:
   - 'packages/*'
