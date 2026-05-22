@@ -356,6 +356,24 @@ describe('Devtools', () => {
 
       expect(rendered.getByLabelText(/disabled/)).toBeInTheDocument()
     })
+
+    it('should render a "static" indicator for a query with "staleTime: \'static\'"', () => {
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+      })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+        staleTime: 'static',
+      })
+      query.addObserver(observer)
+      query.setState({ ...query.state, data: 'x' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByText('static')).toBeInTheDocument()
+      expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
+    })
   })
 
   describe('status counts', () => {
@@ -706,6 +724,41 @@ describe('Devtools', () => {
       fireEvent.submit(textarea.closest('form')!)
 
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+    })
+
+    it('should clear the error state when the textarea is focused after a submit failure', () => {
+      queryClient.setQueryData(['edit-refocus'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-refocus"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      const textarea = rendered.getByLabelText('Edit query data as JSON')
+      fireEvent.input(textarea, { target: { value: 'not json' } })
+      fireEvent.submit(textarea.closest('form')!)
+
+      expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+
+      fireEvent.focus(textarea)
+
+      expect(rendered.queryByText('Invalid Value')).toBeNull()
+    })
+
+    it('should return to the data view when the editor "Cancel" button is clicked', () => {
+      queryClient.setQueryData(['edit-cancel'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-cancel"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      expect(
+        rendered.getByLabelText('Edit query data as JSON'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('Cancel'))
+
+      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
 
