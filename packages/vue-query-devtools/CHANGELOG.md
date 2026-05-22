@@ -1,5 +1,15 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.30
+
+### Patch Changes
+
+- Use the Vue `class` attribute for devtools template containers. ([#10635](https://github.com/TanStack/query/pull/10635))
+
+- Updated dependencies [[`139e67c`](https://github.com/TanStack/query/commit/139e67ccab2c8efba7c4dccdffa6f447350446ae)]:
+  - @tanstack/vue-query@5.100.11
+  - @tanstack/query-devtools@5.100.11
+
 ## 6.1.29
 
 ### Patch Changes
