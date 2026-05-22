@@ -5,7 +5,10 @@
     "type": "git",
     "url": "git+https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@11.1.0",
+  "engines": {
+    "pnpm": ">=11.0.0"
+  },
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -101,8 +104,7 @@
       "@typescript-eslint/visitor-keys": "8.58.1",
       "typescript-eslint": "8.58.1",
       "vite": "^6.4.1",
-      "esbuild": "^0.27.2",
-      "@sveltejs/kit": "2.57.1"
+      "esbuild": "^0.27.2"
     }
   }
 }

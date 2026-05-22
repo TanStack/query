@@ -19,6 +19,9 @@
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
     },
+    "packages/lit-query": {
+      "ignore": ["src/tests/**"]
+    },
     "packages/vue-query": {
       "ignoreDependencies": ["vue2", "vue2.7"]
     }

@@ -1,0 +1,34 @@
+# @tanstack/lit-query
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
+## 0.2.3
+
+### Patch Changes
+
+- Avoid scheduling redundant host updates when accessor function options resolve to an unchanged query result. ([#10716](https://github.com/TanStack/query/pull/10716))
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.10
+
+## 0.2.0
+
+### Minor Changes
+
+- Add initial @tanstack/lit-query package ([#10652](https://github.com/TanStack/query/pull/10652))

@@ -10,6 +10,9 @@
 'package: eslint-plugin-query':
   - changed-files:
       - any-glob-to-any-file: 'packages/eslint-plugin-query/**/*'
+'package: lit-query':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/lit-query/**/*'
 'package: preact-query':
   - changed-files:
       - any-glob-to-any-file: 'packages/preact-query/**/*'
