@@ -29,7 +29,6 @@ import type {
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
-  NoInfer,
   OmitKeyof,
   QueryClientConfig,
   QueryKey,
