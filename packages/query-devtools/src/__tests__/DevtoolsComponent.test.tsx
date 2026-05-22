@@ -61,7 +61,7 @@ describe('DevtoolsComponent', () => {
     queryClient.clear()
   })
 
-  it('should render without throwing', () => {
+  it('should render without throwing when only required props are provided', () => {
     expect(() =>
       render(() => (
         <DevtoolsComponent
@@ -69,6 +69,27 @@ describe('DevtoolsComponent', () => {
           queryFlavor="TanStack Query"
           version="5"
           onlineManager={onlineManager}
+        />
+      )),
+    ).not.toThrow()
+  })
+
+  it('should render without throwing when all props are provided', () => {
+    expect(() =>
+      render(() => (
+        <DevtoolsComponent
+          client={queryClient}
+          queryFlavor="TanStack Query"
+          version="5"
+          onlineManager={onlineManager}
+          buttonPosition="top-left"
+          position="left"
+          initialIsOpen={true}
+          errorTypes={[
+            { name: 'NetworkError', initializer: () => new Error('Network') },
+          ]}
+          hideDisabledQueries={true}
+          theme="dark"
         />
       )),
     ).not.toThrow()

@@ -77,7 +77,7 @@ describe('DevtoolsPanelComponent', () => {
     document.documentElement.style.fontSize = previousRootFontSize
   })
 
-  it('should render the panel without throwing', () => {
+  it('should render the panel without throwing when only required props are provided', () => {
     expect(() =>
       render(() => (
         <DevtoolsPanelComponent
@@ -85,6 +85,25 @@ describe('DevtoolsPanelComponent', () => {
           queryFlavor="TanStack Query"
           version="5"
           onlineManager={onlineManager}
+        />
+      )),
+    ).not.toThrow()
+  })
+
+  it('should render the panel without throwing when all props are provided', () => {
+    expect(() =>
+      render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          queryFlavor="TanStack Query"
+          version="5"
+          onlineManager={onlineManager}
+          errorTypes={[
+            { name: 'NetworkError', initializer: () => new Error('Network') },
+          ]}
+          hideDisabledQueries={true}
+          theme="dark"
+          onClose={() => {}}
         />
       )),
     ).not.toThrow()
