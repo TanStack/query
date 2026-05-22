@@ -1,5 +1,11 @@
 # @tanstack/lit-query
 
+## 0.2.3
+
+### Patch Changes
+
+- Avoid scheduling redundant host updates when accessor function options resolve to an unchanged query result. ([#10716](https://github.com/TanStack/query/pull/10716))
+
 ## 0.2.2
 
 ### Patch Changes
