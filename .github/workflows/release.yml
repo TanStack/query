@@ -12,21 +12,24 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: true # changesets/action pushes version/release changes
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
       - name: Run Build
         run: pnpm run build:all
       - name: Determine dist-tag
@@ -45,7 +48,7 @@ jobs:
           fi
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
         with:
           version: pnpm run changeset:version
           publish: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
@@ -55,7 +58,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create GitHub Release
         if: steps.changesets.outputs.published == 'true'
-        run: node scripts/create-github-release.mjs ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }} ${{ steps.dist-tag.outputs.latest == 'true' && '--latest' }}
+        run: node scripts/create-github-release.mjs ${PRERELEASE_FLAG} ${LATEST_FLAG}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRERELEASE_FLAG: ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }}
+          LATEST_FLAG: ${{ steps.dist-tag.outputs.latest == 'true' && '--latest' }}
