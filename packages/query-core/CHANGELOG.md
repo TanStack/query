@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.100.13
+
+### Patch Changes
+
+- fix(query-core): drop the custom `NoInfer<T>` re-export and rely on TypeScript's built-in `NoInfer` (TS ≥ 5.4) so `NoInfer<X[K]>` stays assignable to `X[K]` in generic contexts (fixes [#9937](https://github.com/TanStack/query/issues/9937)) ([#10593](https://github.com/TanStack/query/pull/10593))
+
 ## 5.100.12
 
 ## 5.100.11
