@@ -354,7 +354,7 @@ await queryClient.invalidateQueries(
 
 **Notes**
 
-- Unlike [`refetchQueries`](#queryclientrefetchqueries), `invalidateQueries` marks matching queries as invalid and then refetches them according to the `refetchType` option.
+- Unlike [`refetchQueries`](#queryclientrefetchqueries), `invalidateQueries` marks matching queries as invalidated and then refetches `active` queries (unless otherwise specified with the `refetchType` option).
 - Unlike [`removeQueries`](#queryclientremovequeries), `invalidateQueries` keeps matching queries in the cache.
 
 ## `queryClient.refetchQueries`
@@ -400,7 +400,7 @@ This function returns a promise that will resolve when all of the queries are do
 
 - Queries that are "disabled" because they only have disabled Observers will never be refetched.
 - Queries that are "static" because they only have Observers with a Static StaleTime will never be refetched.
-- Unlike [`invalidateQueries`](#queryclientinvalidatequeries), `refetchQueries` refetches matching queries without marking them as invalid first.
+- Unlike [`invalidateQueries`](#queryclientinvalidatequeries), `refetchQueries` refetches all matching queries.
 
 ## `queryClient.cancelQueries`
 
