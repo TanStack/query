@@ -7,14 +7,14 @@
     "build": "tsc --noEmit && vite build"
   },
   "dependencies": {
-    "@lit-labs/ssr": "^3.3.0",
+    "@lit-labs/ssr": "^3.3.1",
     "@tanstack/lit-query": "^0.2.4",
     "@tanstack/query-core": "^5.100.12",
-    "lit": "^3.3.1"
+    "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@lit-labs/ssr-client": "^1.1.7",
-    "tsx": "^4.19.0",
+    "@lit-labs/ssr-client": "^1.1.8",
+    "tsx": "^4.22.3",
     "typescript": "5.8.3",
     "vite": "^6.4.1"
   }
