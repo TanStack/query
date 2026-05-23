@@ -1341,6 +1341,60 @@ describe('Devtools', () => {
       )
     })
 
+    it('should restore "width" to the rendered minimum when the panel is dragged below its content width', () => {
+      const initialWidth = 400
+      // The panel uses `min-width: min-content`, so the rendered width may
+      // exceed the 192px `minWidth` constant when its children are wider; any
+      // value > 192 here triggers the `localStore.width < newWidth` restore
+      // branch.
+      const renderedMinWidth = 250
+      const rendered = renderDevtools(
+        { position: 'left', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      const getBoundingClientRect = vi
+        .spyOn(panel!, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          height: 0,
+          width: initialWidth,
+          x: 0,
+          y: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          toJSON: () => ({}),
+        })
+      getBoundingClientRect.mockReturnValue({
+        height: 0,
+        width: renderedMinWidth,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // Drag 300px left shrinks the panel to 100 — below `minWidth`, so the
+      // clamp + restore branches both fire.
+      fireEvent.mouseDown(handle, { clientX: 300, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
+        renderedMinWidth,
+      )
+    })
+
     it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
       queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
       const rendered = renderDevtools({
