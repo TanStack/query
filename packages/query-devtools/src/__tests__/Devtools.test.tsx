@@ -430,6 +430,32 @@ describe('Devtools', () => {
 
       expect(open).toHaveBeenCalled()
     })
+
+    it('should log and reset "pip_open" when the browser blocks the popup', () => {
+      vi.stubGlobal(
+        'open',
+        vi.fn(() => null),
+      )
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+
+      try {
+        renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.pip_open': 'true' },
+        )
+
+        expect(consoleError).toHaveBeenCalledWith(
+          expect.stringContaining('Failed to open popup'),
+        )
+        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+          'false',
+        )
+      } finally {
+        consoleError.mockRestore()
+      }
+    })
   })
 
   describe('status counts', () => {
