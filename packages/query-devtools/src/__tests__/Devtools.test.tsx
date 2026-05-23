@@ -389,17 +389,29 @@ describe('Devtools', () => {
 
     function stubPipWindow() {
       const pipDocument = document.implementation.createHTMLDocument('PiP')
+      const listeners = new Map<string, EventListener>()
       const fakeWindow: FakePipWindow = {
         document: pipDocument,
         innerWidth: 800,
         innerHeight: 600,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
+        addEventListener: vi.fn((event: string, handler: EventListener) => {
+          listeners.set(event, handler)
+        }),
+        removeEventListener: vi.fn((event: string) => {
+          listeners.delete(event)
+        }),
         close: vi.fn(),
       }
       const open = vi.fn(() => fakeWindow)
       vi.stubGlobal('open', open)
-      return { pipDocument, fakeWindow, open }
+      return {
+        pipDocument,
+        fakeWindow,
+        open,
+        fire: (event: string) => {
+          listeners.get(event)?.(new Event(event))
+        },
+      }
     }
 
     it('should open a PiP window when the picture-in-picture button is clicked', () => {
@@ -455,6 +467,36 @@ describe('Devtools', () => {
       } finally {
         consoleError.mockRestore()
       }
+    })
+
+    it('should hide the in-page panel while a PiP window is open', () => {
+      stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel-container'),
+      ).toBeNull()
+    })
+
+    it('should restore the in-page panel and reset "pip_open" when the PiP window is closed', () => {
+      const { fire } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      fire('pagehide')
+
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+      expect(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      ).toBeInTheDocument()
     })
   })
 
