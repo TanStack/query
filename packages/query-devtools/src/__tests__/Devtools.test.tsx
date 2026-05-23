@@ -339,6 +339,22 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
     })
+
+    it('should render an idle mutation that has been built but not executed', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['idle-mut'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('disabled and static queries', () => {
