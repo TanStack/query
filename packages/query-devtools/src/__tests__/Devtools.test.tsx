@@ -376,6 +376,62 @@ describe('Devtools', () => {
     })
   })
 
+  describe('picture-in-picture', () => {
+    type FakePipWindow = Pick<
+      Window,
+      | 'document'
+      | 'innerWidth'
+      | 'innerHeight'
+      | 'addEventListener'
+      | 'removeEventListener'
+      | 'close'
+    >
+
+    function stubPipWindow() {
+      const pipDocument = document.implementation.createHTMLDocument('PiP')
+      const fakeWindow: FakePipWindow = {
+        document: pipDocument,
+        innerWidth: 800,
+        innerHeight: 600,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        close: vi.fn(),
+      }
+      const open = vi.fn(() => fakeWindow)
+      vi.stubGlobal('open', open)
+      return { pipDocument, fakeWindow, open }
+    }
+
+    it('should open a PiP window when the picture-in-picture button is clicked', () => {
+      const { open } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        expect.stringMatching(/^width=\d+,height=\d+,popup$/),
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'true',
+      )
+    })
+
+    it('should automatically open a PiP window when "pip_open" is "true" in "localStorage"', () => {
+      const { open } = stubPipWindow()
+
+      renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.pip_open': 'true' },
+      )
+
+      expect(open).toHaveBeenCalled()
+    })
+  })
+
   describe('status counts', () => {
     it('should render status count badges', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
