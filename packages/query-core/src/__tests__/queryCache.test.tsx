@@ -325,11 +325,31 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = testCache.find({ queryKey: key })
-      expect(onError).toHaveBeenCalledWith('error', query)
+      expect(onError).toHaveBeenCalledWith('error', query, 0)
       expect(onError).toHaveBeenCalledTimes(1)
       expect(onSuccess).not.toHaveBeenCalled()
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettled).toHaveBeenCalledWith(undefined, 'error', query)
+    })
+
+    it('should pass the retry count to onError when retries are exhausted', async () => {
+      const key = queryKey()
+      const onError = vi.fn()
+      const testCache = new QueryCache({ onError })
+      const testClient = new QueryClient({ queryCache: testCache })
+      testClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.reject<unknown>('error'),
+        retry: 2,
+        retryDelay: 10,
+      })
+      // advance past initial attempt + 2 retry delays
+      await vi.advanceTimersByTimeAsync(10)
+      await vi.advanceTimersByTimeAsync(10)
+      await vi.advanceTimersByTimeAsync(10)
+      const query = testCache.find({ queryKey: key })
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError).toHaveBeenCalledWith('error', query, 2)
     })
   })
 

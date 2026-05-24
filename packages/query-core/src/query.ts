@@ -532,6 +532,8 @@ export class Query<
       this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
+    let retryCount = 0
+
     // Try to fetch the data
     this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
@@ -548,6 +550,7 @@ export class Query<
         abortController.abort()
       },
       onFail: (failureCount, error) => {
+        retryCount = failureCount
         this.#dispatch({ type: 'failed', failureCount, error })
       },
       onPause: () => {
@@ -610,6 +613,7 @@ export class Query<
       this.#cache.config.onError?.(
         error as any,
         this as Query<any, any, any, any>,
+        retryCount,
       )
       this.#cache.config.onSettled?.(
         this.state.data,

@@ -20,6 +20,7 @@ interface QueryCacheConfig {
   onError?: (
     error: DefaultError,
     query: Query<unknown, unknown, unknown>,
+    failureCount: number,
   ) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
   onSettled?: (
