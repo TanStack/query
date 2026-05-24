@@ -1418,7 +1418,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
   const color = createMemo(() =>
     getQueryStatusColor({
-      queryState: queryState()!,
+      queryState: queryState(),
       observerCount: observers(),
       isStale: isStale(),
     }),
