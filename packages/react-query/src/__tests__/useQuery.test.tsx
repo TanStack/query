@@ -5916,6 +5916,42 @@ describe('useQuery', () => {
       ).toBe(1)
     })
 
+    it('should not optimistically show fetching when unsubscribed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+            <button onClick={() => setSubscribed(false)}>unsubscribe</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+
+      fireEvent.click(rendered.getByRole('button', { name: 'unsubscribe' }))
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+    })
+
     it('should not be attached to the query when subscribed is false', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))

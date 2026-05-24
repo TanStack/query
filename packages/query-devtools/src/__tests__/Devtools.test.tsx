@@ -339,6 +339,22 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
     })
+
+    it('should render an idle mutation that has been built but not executed', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['idle-mut'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('disabled and static queries', () => {
@@ -384,6 +400,130 @@ describe('Devtools', () => {
 
       expect(
         rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('picture-in-picture', () => {
+    type FakePipWindow = Pick<
+      Window,
+      | 'document'
+      | 'innerWidth'
+      | 'innerHeight'
+      | 'addEventListener'
+      | 'removeEventListener'
+      | 'close'
+    >
+
+    function stubPipWindow() {
+      const pipDocument = document.implementation.createHTMLDocument('PiP')
+      const listeners = new Map<string, EventListener>()
+      const fakeWindow: FakePipWindow = {
+        document: pipDocument,
+        innerWidth: 800,
+        innerHeight: 600,
+        addEventListener: vi.fn((event: string, handler: EventListener) => {
+          listeners.set(event, handler)
+        }),
+        removeEventListener: vi.fn((event: string) => {
+          listeners.delete(event)
+        }),
+        close: vi.fn(),
+      }
+      const open = vi.fn(() => fakeWindow)
+      vi.stubGlobal('open', open)
+      return {
+        pipDocument,
+        fakeWindow,
+        open,
+        fire: (event: string) => {
+          listeners.get(event)?.(new Event(event))
+        },
+      }
+    }
+
+    it('should open a PiP window when the picture-in-picture button is clicked', () => {
+      const { open } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        expect.stringMatching(/^width=\d+,height=\d+,popup$/),
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'true',
+      )
+    })
+
+    it('should automatically open a PiP window when "pip_open" is "true" in "localStorage"', () => {
+      const { open } = stubPipWindow()
+
+      renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.pip_open': 'true' },
+      )
+
+      expect(open).toHaveBeenCalled()
+    })
+
+    it('should log and reset "pip_open" when the browser blocks the popup', () => {
+      vi.stubGlobal(
+        'open',
+        vi.fn(() => null),
+      )
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+
+      try {
+        renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.pip_open': 'true' },
+        )
+
+        expect(consoleError).toHaveBeenCalledWith(
+          expect.stringContaining('Failed to open popup'),
+        )
+        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+          'false',
+        )
+      } finally {
+        consoleError.mockRestore()
+      }
+    })
+
+    it('should hide the in-page panel while a PiP window is open', () => {
+      stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel-container'),
+      ).toBeNull()
+    })
+
+    it('should restore the in-page panel and reset "pip_open" when the PiP window is closed', () => {
+      const { fire } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      fire('pagehide')
+
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+      expect(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
       ).toBeInTheDocument()
     })
   })
@@ -1226,6 +1366,60 @@ describe('Devtools', () => {
 
       expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
         192,
+      )
+    })
+
+    it('should restore "width" to the rendered minimum when the panel is dragged below its content width', () => {
+      const initialWidth = 400
+      // The panel uses `min-width: min-content`, so the rendered width may
+      // exceed the 192px `minWidth` constant when its children are wider; any
+      // value > 192 here triggers the `localStore.width < newWidth` restore
+      // branch.
+      const renderedMinWidth = 250
+      const rendered = renderDevtools(
+        { position: 'left', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      const getBoundingClientRect = vi
+        .spyOn(panel!, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          height: 0,
+          width: initialWidth,
+          x: 0,
+          y: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          toJSON: () => ({}),
+        })
+      getBoundingClientRect.mockReturnValue({
+        height: 0,
+        width: renderedMinWidth,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // Drag 300px left shrinks the panel to 100 — below `minWidth`, so the
+      // clamp + restore branches both fire.
+      fireEvent.mouseDown(handle, { clientX: 300, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
+        renderedMinWidth,
       )
     })
 

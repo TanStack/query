@@ -1,5 +1,28 @@
 # @tanstack/react-query
 
+## 5.100.14
+
+### Patch Changes
+
+- fix(react-query): do not go into optimistic fetching state when not subscribed ([#10759](https://github.com/TanStack/query/pull/10759))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
 ## 5.100.11
 
 ### Patch Changes
