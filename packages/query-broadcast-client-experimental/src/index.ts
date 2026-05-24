@@ -1,17 +1,32 @@
 import { BroadcastChannel } from 'broadcast-channel'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryState } from '@tanstack/query-core'
 
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
   options?: BroadcastChannelOptions
+  onBroadcastError?: (error: unknown, message: BroadcastMessage) => void
 }
+
+type BroadcastMessage =
+  | {
+      type: 'updated'
+      queryHash: string
+      queryKey: QueryKey
+      state: QueryState
+    }
+  | {
+      type: 'removed' | 'added'
+      queryHash: string
+      queryKey: QueryKey
+    }
 
 export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
   options,
+  onBroadcastError,
 }: BroadcastQueryClientOptions): () => void {
   let transaction = false
   const tx = (cb: () => void) => {
@@ -27,6 +42,27 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
+  const handleBroadcastError = (error: unknown, message: BroadcastMessage) => {
+    onBroadcastError?.(error, message)
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}"`,
+        error,
+      )
+    }
+  }
+
+  const postMessage = (message: BroadcastMessage) => {
+    try {
+      void channel
+        .postMessage(message)
+        .catch((error) => handleBroadcastError(error, message))
+    } catch (error) {
+      handleBroadcastError(error, message)
+    }
+  }
+
   const unsubscribe = queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
@@ -37,7 +73,7 @@ export function broadcastQueryClient({
     } = queryEvent
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
-      channel.postMessage({
+      postMessage({
         type: 'updated',
         queryHash,
         queryKey,
@@ -46,7 +82,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'removed' && observers.length > 0) {
-      channel.postMessage({
+      postMessage({
         type: 'removed',
         queryHash,
         queryKey,
@@ -54,7 +90,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'added') {
-      channel.postMessage({
+      postMessage({
         type: 'added',
         queryHash,
         queryKey,
