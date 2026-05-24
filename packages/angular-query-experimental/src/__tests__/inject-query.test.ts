@@ -631,6 +631,40 @@ describe('injectQuery', () => {
     )
   })
 
+  it('should keep whenStable pending when a query data signal is captured before render', async () => {
+    @Component({
+      selector: 'app-fake',
+      template: `{{ data()?.title }}`,
+    })
+    class FakeComponent {
+      query = injectQuery(() => ({
+        queryKey: ['query-data-signal-pre-access'],
+        queryFn: () => sleep(50).then(() => ({ title: 'query-data' })),
+      }))
+
+      data = this.query.data
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    fixture.detectChanges()
+
+    let didStabilize = false
+    const stablePromise = fixture.whenStable().then(() => {
+      didStabilize = true
+    })
+
+    await Promise.resolve()
+    expect(didStabilize).toBe(false)
+
+    await vi.advanceTimersByTimeAsync(60)
+    await stablePromise
+
+    expect(fixture.componentInstance.data()).toEqual({ title: 'query-data' })
+    expect(fixture.componentInstance.query.data()).toEqual({
+      title: 'query-data',
+    })
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key = queryKey()

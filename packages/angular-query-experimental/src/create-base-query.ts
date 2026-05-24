@@ -60,6 +60,25 @@ export function createBaseQuery<
     defaultedOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'
+
+    if (!isRestoring() && typeof defaultedOptions.queryFn === 'function') {
+      const originalQueryFn = defaultedOptions.queryFn
+
+      defaultedOptions.queryFn = (context) => {
+        const result = originalQueryFn(context)
+
+        if (result && typeof result.then === 'function') {
+          const pendingTaskRef = pendingTasks.add()
+          void result.then(
+            () => pendingTaskRef(),
+            () => pendingTaskRef(),
+          )
+        }
+
+        return result
+      }
+    }
+
     return defaultedOptions
   })
 
@@ -110,37 +129,41 @@ export function createBaseQuery<
     const observer = observerSignal()
     let pendingTaskRef: PendingTaskRef | null = null
 
+    const updateState = (state: QueryObserverResult<TData, TError>) => {
+      ngZone.run(() => {
+        if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
+          pendingTaskRef = pendingTasks.add()
+        }
+
+        if (state.fetchStatus === 'idle' && pendingTaskRef) {
+          pendingTaskRef()
+          pendingTaskRef = null
+        }
+
+        if (
+          state.isError &&
+          !state.isFetching &&
+          shouldThrowError(observer.options.throwOnError, [
+            state.error,
+            observer.getCurrentQuery(),
+          ])
+        ) {
+          ngZone.onError.emit(state.error)
+          throw state.error
+        }
+        resultFromSubscriberSignal.set(state)
+      })
+    }
+
     const unsubscribe = isRestoring()
       ? () => undefined
       : untracked(() =>
           ngZone.runOutsideAngular(() => {
-            return observer.subscribe(
-              notifyManager.batchCalls((state) => {
-                ngZone.run(() => {
-                  if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
-                    pendingTaskRef = pendingTasks.add()
-                  }
-
-                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
-                    pendingTaskRef()
-                    pendingTaskRef = null
-                  }
-
-                  if (
-                    state.isError &&
-                    !state.isFetching &&
-                    shouldThrowError(observer.options.throwOnError, [
-                      state.error,
-                      observer.getCurrentQuery(),
-                    ])
-                  ) {
-                    ngZone.onError.emit(state.error)
-                    throw state.error
-                  }
-                  resultFromSubscriberSignal.set(state)
-                })
-              }),
+            const unsubscribeObserver = observer.subscribe(
+              notifyManager.batchCalls(updateState),
             )
+
+            return unsubscribeObserver
           }),
         )
 
