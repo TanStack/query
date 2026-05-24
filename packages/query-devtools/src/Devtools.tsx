@@ -1404,8 +1404,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().get(props.query.queryHash)?.isStale() ?? false,
+    (queryCache) => queryCache().get(props.query.queryHash)?.isStale() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
