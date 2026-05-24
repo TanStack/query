@@ -101,8 +101,10 @@ const hydratableObserverResult = <
 
 const resourceTrackingProps = new Set<PropertyKey>([
   'dataUpdatedAt',
+  'error',
   'errorUpdatedAt',
   'failureCount',
+  'failureReason',
   'errorUpdateCount',
   'isError',
   'isFetched',
@@ -119,6 +121,8 @@ const resourceTrackingProps = new Set<PropertyKey>([
   'isStale',
   'isSuccess',
   'isEnabled',
+  'refetch',
+  'promise',
   'status',
   'fetchStatus',
 ])

@@ -279,6 +279,38 @@ describe('useQuery', () => {
     expect(rendered.getByText('success')).toBeInTheDocument()
   })
 
+  it('should fetch when a curried queryOptions result only reads resource fields', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn((slug: string) => `test-${slug}`)
+    const fetchQueryOptions = (slug: string) =>
+      queryOptions({
+        queryKey: [key, slug],
+        queryFn: () => queryFn(slug),
+      })
+
+    function Page() {
+      const options = fetchQueryOptions('slug')
+      const state = useQuery(() => options)
+
+      void state.error
+      void state.failureReason
+      void state.refetch
+      void state.promise
+
+      return <div>mounted</div>
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    expect(rendered.getByText('mounted')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
