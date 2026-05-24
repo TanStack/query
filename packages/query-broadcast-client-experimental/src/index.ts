@@ -13,7 +13,10 @@ interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
   options?: BroadcastChannelOptions
-  onBroadcastError?: (error: unknown, message: BroadcastMessage) => void
+  onBroadcastError?: (
+    error: unknown,
+    message: BroadcastMessage,
+  ) => void | Promise<void>
 }
 
 export function broadcastQueryClient({
@@ -36,24 +39,30 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
+  const warnBroadcastError = (error: unknown, message: BroadcastMessage) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
+        error,
+      )
+    }
+  }
+
   const safePost = (message: BroadcastMessage) => {
     channel.postMessage(message).catch((error: unknown) => {
       if (onBroadcastError) {
+        let result: void | Promise<void>
         try {
-          onBroadcastError(error, message)
-        } catch {
-          if (process.env.NODE_ENV !== 'production') {
-            console.warn(
-              `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
-              error,
-            )
-          }
+          result = onBroadcastError(error, message)
+        } catch (callbackError) {
+          warnBroadcastError(callbackError, message)
+          return
         }
-      } else if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
-          error,
-        )
+        result?.catch((callbackError: unknown) => {
+          warnBroadcastError(callbackError, message)
+        })
+      } else {
+        warnBroadcastError(error, message)
       }
     })
   }
