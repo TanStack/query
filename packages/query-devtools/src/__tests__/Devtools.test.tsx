@@ -390,6 +390,18 @@ describe('Devtools', () => {
       expect(rendered.getByText('static')).toBeInTheDocument()
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
     })
+
+    it('should render a query row when an object query key is mutated in place', () => {
+      const filters = { page: 1 }
+      queryClient.setQueryData(['mutable-key', filters], 'x')
+      filters.page = 2
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('picture-in-picture', () => {
