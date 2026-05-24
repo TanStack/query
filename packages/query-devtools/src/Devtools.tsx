@@ -1863,12 +1863,12 @@ const QueryDetails = () => {
   })
 
   const activeQuery = createSubscribeToQueryCacheBatcher(
-    getSelectedQuery,
+    (queryCache) => getSelectedQuery(queryCache),
     false,
   )
 
   const activeQueryFresh = createSubscribeToQueryCacheBatcher(
-    getSelectedQuery,
+    (queryCache) => getSelectedQuery(queryCache),
     false,
   )
 
