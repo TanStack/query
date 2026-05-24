@@ -67,27 +67,29 @@ describe('broadcastQueryClient', () => {
       }
       process.on('unhandledRejection', onUnhandledRejection)
 
-      const onBroadcastError = vi.fn().mockImplementation(() => {
-        throw new Error('boom')
-      })
+      try {
+        const onBroadcastError = vi.fn().mockImplementation(() => {
+          throw new Error('boom')
+        })
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-        onBroadcastError,
-      })
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+          onBroadcastError,
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 0))
+        await new Promise((r) => setTimeout(r, 0))
 
-      process.off('unhandledRejection', onUnhandledRejection)
-
-      expect(onBroadcastError).toHaveBeenCalledWith(
-        cloneError,
-        expect.objectContaining({ type: 'added' }),
-      )
-      expect(unhandledRejections).toHaveLength(0)
+        expect(onBroadcastError).toHaveBeenCalledWith(
+          cloneError,
+          expect.objectContaining({ type: 'added' }),
+        )
+        expect(unhandledRejections).toHaveLength(0)
+      } finally {
+        process.off('unhandledRejection', onUnhandledRejection)
+      }
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
@@ -100,27 +102,29 @@ describe('broadcastQueryClient', () => {
       }
       process.on('unhandledRejection', onUnhandledRejection)
 
-      const onBroadcastError = vi
-        .fn()
-        .mockRejectedValueOnce(new Error('async boom'))
+      try {
+        const onBroadcastError = vi
+          .fn()
+          .mockRejectedValueOnce(new Error('async boom'))
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-        onBroadcastError,
-      })
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+          onBroadcastError,
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 10))
+        await new Promise((r) => setTimeout(r, 10))
 
-      process.off('unhandledRejection', onUnhandledRejection)
-
-      expect(onBroadcastError).toHaveBeenCalledWith(
-        cloneError,
-        expect.objectContaining({ type: 'added' }),
-      )
-      expect(unhandledRejections).toHaveLength(0)
+        expect(onBroadcastError).toHaveBeenCalledWith(
+          cloneError,
+          expect.objectContaining({ type: 'added' }),
+        )
+        expect(unhandledRejections).toHaveLength(0)
+      } finally {
+        process.off('unhandledRejection', onUnhandledRejection)
+      }
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
