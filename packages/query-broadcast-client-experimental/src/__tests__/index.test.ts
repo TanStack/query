@@ -97,4 +97,44 @@ describe('broadcastQueryClient', () => {
       error,
     )
   })
+
+  it('should report synchronous postMessage throws', async () => {
+    const error = new DOMException('cannot clone', 'DataCloneError')
+    const onBroadcastError = vi.fn()
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
+    broadcastQueryClient({
+      queryClient,
+      broadcastChannel: 'test_channel',
+      onBroadcastError,
+    })
+
+    const channel = broadcastChannelMock.channels[0]!
+    channel.postMessage.mockImplementation((message: { type: string }) => {
+      if (message.type === 'updated') {
+        throw error
+      }
+      return Promise.resolve()
+    })
+
+    queryClient.setQueryData(['stream'], new ReadableStream())
+
+    await vi.waitFor(() => {
+      expect(onBroadcastError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          type: 'updated',
+          queryHash: '["stream"]',
+          queryKey: ['stream'],
+        }),
+      )
+    })
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[broadcastQueryClient] failed to broadcast "updated" for queryHash "["stream"]"',
+      error,
+    )
+  })
 })
