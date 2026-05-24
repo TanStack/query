@@ -2,16 +2,25 @@ import { BroadcastChannel } from 'broadcast-channel'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
 import type { QueryClient } from '@tanstack/query-core'
 
+interface BroadcastMessage {
+  type: 'updated' | 'removed' | 'added'
+  queryHash: string
+  queryKey?: unknown
+  state?: unknown
+}
+
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
   options?: BroadcastChannelOptions
+  onBroadcastError?: (error: unknown, message: BroadcastMessage) => void
 }
 
 export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
   options,
+  onBroadcastError,
 }: BroadcastQueryClientOptions): () => void {
   let transaction = false
   const tx = (cb: () => void) => {
@@ -27,6 +36,19 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
+  const safePost = (message: BroadcastMessage) => {
+    channel.postMessage(message).catch((error: unknown) => {
+      if (onBroadcastError) {
+        onBroadcastError(error, message)
+      } else if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
+          error,
+        )
+      }
+    })
+  }
+
   const unsubscribe = queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
@@ -37,7 +59,7 @@ export function broadcastQueryClient({
     } = queryEvent
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
-      channel.postMessage({
+      safePost({
         type: 'updated',
         queryHash,
         queryKey,
@@ -46,7 +68,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'removed' && observers.length > 0) {
-      channel.postMessage({
+      safePost({
         type: 'removed',
         queryHash,
         queryKey,
@@ -54,7 +76,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'added') {
-      channel.postMessage({
+      safePost({
         type: 'added',
         queryHash,
         queryKey,
