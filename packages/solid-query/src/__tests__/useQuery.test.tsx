@@ -30,6 +30,7 @@ import {
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  queryOptions,
   useQuery,
 } from '..'
 import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
@@ -242,6 +243,72 @@ describe('useQuery', () => {
     expect(rendered.getByText('default')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
+  })
+
+  it('should fetch when a curried queryOptions result only reads status fields', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn((slug: string) => `test-${slug}`)
+    const fetchQueryOptions = (slug: string) =>
+      queryOptions({
+        queryKey: [key, slug],
+        queryFn: () => queryFn(slug),
+      })
+
+    function Page() {
+      const options = fetchQueryOptions('slug')
+      const state = useQuery(() => options)
+
+      return (
+        <Switch>
+          <Match when={state.isPending}>pending</Match>
+          <Match when={state.isError}>error</Match>
+          <Match when={state.isSuccess}>success</Match>
+        </Switch>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    expect(rendered.getByText('pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('success')).toBeInTheDocument()
+  })
+
+  it('should fetch when a curried queryOptions result only reads resource fields', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn((slug: string) => `test-${slug}`)
+    const fetchQueryOptions = (slug: string) =>
+      queryOptions({
+        queryKey: [key, slug],
+        queryFn: () => queryFn(slug),
+      })
+
+    function Page() {
+      const options = fetchQueryOptions('slug')
+      const state = useQuery(() => options)
+
+      void state.error
+      void state.failureReason
+      void state.refetch
+      void state.promise
+
+      return <div>mounted</div>
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    expect(rendered.getByText('mounted')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should return the correct states for a successful query', async () => {

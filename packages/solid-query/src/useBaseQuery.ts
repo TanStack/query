@@ -99,6 +99,33 @@ const hydratableObserverResult = <
   return obj
 }
 
+const resourceTrackingProps = new Set<PropertyKey>([
+  'dataUpdatedAt',
+  'error',
+  'errorUpdatedAt',
+  'failureCount',
+  'failureReason',
+  'errorUpdateCount',
+  'isError',
+  'isFetched',
+  'isFetchedAfterMount',
+  'isFetching',
+  'isLoading',
+  'isPending',
+  'isLoadingError',
+  'isInitialLoading',
+  'isPaused',
+  'isPlaceholderData',
+  'isRefetchError',
+  'isRefetching',
+  'isStale',
+  'isSuccess',
+  'isEnabled',
+  'refetch',
+  'promise',
+  'status',
+  'fetchStatus',
+])
 // Base Query Function that is used to create the query.
 export function useBaseQuery<
   TQueryFnData,
@@ -380,6 +407,11 @@ export function useBaseQuery<
           return queryResource.latest?.data
         }
         return queryResource()?.data
+      }
+      if (resourceTrackingProps.has(prop)) {
+        // Solid resources are lazy, so status-only consumers still need to read
+        // the resource once to start the observer subscription and fetch.
+        queryResource()
       }
       return Reflect.get(target, prop)
     },
