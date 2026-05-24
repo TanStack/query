@@ -1853,64 +1853,49 @@ const QueryDetails = () => {
   const [restoringLoading, setRestoringLoading] = createSignal(false)
   const [dataMode, setDataMode] = createSignal<'view' | 'edit'>('view')
   const [dataEditError, setDataEditError] = createSignal<boolean>(false)
+  const getSelectedQuery = (queryCache: Accessor<QueryCache>) => {
+    const queryHash = selectedQueryHash()
+    return queryHash ? queryCache().get(queryHash) : undefined
+  }
 
   const errorTypes = createMemo(() => {
     return useQueryDevtoolsContext().errorTypes || []
   })
 
   const activeQuery = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash()),
+    getSelectedQuery,
     false,
   )
 
-  const activeQueryFresh = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache()
-      .getAll()
-      .find((query) => query.queryHash === selectedQueryHash())
-  }, false)
+  const activeQueryFresh = createSubscribeToQueryCacheBatcher(
+    getSelectedQuery,
+    false,
+  )
 
   const activeQueryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state,
+    (queryCache) => getSelectedQuery(queryCache)?.state,
     false,
   )
 
   const activeQueryStateData = createSubscribeToQueryCacheBatcher(
-    (queryCache) => {
-      return queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state.data
-    },
+    (queryCache) => getSelectedQuery(queryCache)?.state.data,
     false,
   )
 
   const statusLabel = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = getSelectedQuery(queryCache)
     if (!query) return 'inactive'
     return getQueryStatusLabel(query)
   })
 
   const queryStatus = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = getSelectedQuery(queryCache)
     if (!query) return 'pending'
     return query.state.status
   })
 
   const observerCount = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())
-        ?.getObserversCount() ?? 0,
+    (queryCache) => getSelectedQuery(queryCache)?.getObserversCount() ?? 0,
   )
 
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))

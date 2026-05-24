@@ -402,6 +402,22 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
       ).toBeInTheDocument()
     })
+
+    it('should render query details for a custom query hash', () => {
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: ['custom-query-hash'],
+        queryFn: () => 'x',
+        queryKeyHashFn: () => 'custom-query-hash-value',
+      })
+      query.setData('x')
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Query key custom-query-hash-value'),
+      )
+
+      expect(rendered.getByText('Query Details')).toBeInTheDocument()
+    })
   })
 
   describe('picture-in-picture', () => {
