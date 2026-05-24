@@ -310,7 +310,6 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
-
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
