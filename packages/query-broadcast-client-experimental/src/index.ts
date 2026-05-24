@@ -39,7 +39,16 @@ export function broadcastQueryClient({
   const safePost = (message: BroadcastMessage) => {
     channel.postMessage(message).catch((error: unknown) => {
       if (onBroadcastError) {
-        onBroadcastError(error, message)
+        try {
+          onBroadcastError(error, message)
+        } catch {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(
+              `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
+              error,
+            )
+          }
+        }
       } else if (process.env.NODE_ENV !== 'production') {
         console.warn(
           `[broadcastQueryClient] failed to broadcast "${message.type}" for queryHash "${message.queryHash}":`,
