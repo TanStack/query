@@ -38,20 +38,30 @@ export const rule = createRule({
 
     return {
       CallExpression: (node) => {
+        if (node.parent.type !== AST_NODE_TYPES.VariableDeclarator) {
+          return
+        }
+
+        const isDirectHook =
+          ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) &&
+          helpers.isTanstackQueryImport(node.callee)
+
         if (
-          !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
-          !helpers.isTanstackQueryImport(node.callee)
+          !isDirectHook &&
+          !NoRestDestructuringUtils.isQueryResultCall(
+            node,
+            context.sourceCode.parserServices,
+          )
         ) {
           return
         }
 
         const returnValue = node.parent.id
+        const calleeName = ASTUtils.isIdentifier(node.callee)
+          ? node.callee.name
+          : null
 
-        if (
-          node.callee.name !== 'useQueries' &&
-          node.callee.name !== 'useSuspenseQueries'
-        ) {
+        if (calleeName !== 'useQueries' && calleeName !== 'useSuspenseQueries') {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
             return context.report({
               node: node.parent,
