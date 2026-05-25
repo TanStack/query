@@ -145,4 +145,90 @@ describe('PiPContext', () => {
       expect(pipDocument.body.querySelector('#leftover')).toBeNull()
     })
   })
+
+  describe('styleSheet propagation', () => {
+    type FakeCssRule = { readonly cssText: string }
+    type FakeStyleSheet = {
+      readonly cssRules?: ArrayLike<FakeCssRule>
+      readonly href?: string | null
+      readonly type?: string
+      readonly media?: { toString: () => string }
+      readonly ownerNode?: Element | null
+    }
+
+    function makeCssRules(...cssTexts: Array<string>): ArrayLike<FakeCssRule> {
+      return cssTexts.map((cssText) => ({ cssText }))
+    }
+
+    function stubParentStyleSheet(sheet: FakeStyleSheet) {
+      return vi
+        .spyOn(document, 'styleSheets', 'get')
+        .mockReturnValue([sheet] as unknown as StyleSheetList)
+    }
+
+    it('should copy parent stylesheets as "<style>" with the same id into the PiP document head', () => {
+      const sourceStyle = document.createElement('style')
+      sourceStyle.id = 'tsqd-source'
+      const sheetSpy = stubParentStyleSheet({
+        cssRules: makeCssRules('.tsqd { color: red; }'),
+        ownerNode: sourceStyle,
+      })
+      const { pipDocument } = stubPipWindow()
+
+      try {
+        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+        const copied = pipDocument.head.querySelector('style#tsqd-source')
+        expect(copied).not.toBeNull()
+        expect(copied?.textContent).toBe('.tsqd { color: red; }')
+      } finally {
+        sheetSpy.mockRestore()
+      }
+    })
+
+    it('should fall back to a "<link>" for cross-origin stylesheets whose "cssRules" throw', () => {
+      const sheetSpy = stubParentStyleSheet({
+        get cssRules(): CSSRuleList {
+          throw new DOMException('blocked', 'SecurityError')
+        },
+        href: 'https://example.com/external.css',
+        type: 'text/css',
+        media: { toString: () => 'all' },
+      })
+      const { pipDocument } = stubPipWindow()
+
+      try {
+        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+        const link = pipDocument.head.querySelector<HTMLLinkElement>(
+          'link[href="https://example.com/external.css"]',
+        )
+        expect(link).not.toBeNull()
+        expect(link?.rel).toBe('stylesheet')
+      } finally {
+        sheetSpy.mockRestore()
+      }
+    })
+
+    it('should skip the "<link>" fallback when the cross-origin stylesheet has no "href"', () => {
+      const sheetSpy = stubParentStyleSheet({
+        get cssRules(): CSSRuleList {
+          throw new DOMException('blocked', 'SecurityError')
+        },
+        href: null,
+        type: 'text/css',
+        media: { toString: () => 'all' },
+      })
+      const { pipDocument } = stubPipWindow()
+
+      try {
+        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+        expect(pipDocument.head.querySelector('link')).toBeNull()
+        expect(pipDocument.head.querySelector('style')).toBeNull()
+      } finally {
+        sheetSpy.mockRestore()
+      }
+    })
+  })
 })
