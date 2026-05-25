@@ -3,7 +3,12 @@ import { QueryClient, QueryObserver, onlineManager } from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
-import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
+import {
+  PiPProvider,
+  QueryDevtoolsContext,
+  ThemeContext,
+  useTheme,
+} from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
 
 // `solid-transition-group` internally imports from
@@ -1518,34 +1523,39 @@ describe('Devtools', () => {
   })
 
   describe('default theme', () => {
-    it('should render without throwing when no "ThemeContext.Provider" wraps it', () => {
-      expect(() =>
-        render(() => {
-          const [localStore, setLocalStore] = createLocalStorage({
-            prefix: 'TanstackQueryDevtools',
-          })
-          return (
-            <QueryDevtoolsContext.Provider
-              value={{
-                client: queryClient,
-                queryFlavor: 'TanStack Query',
-                version: '5',
-                onlineManager,
-              }}
-            >
-              <PiPProvider
-                localStore={localStore}
-                setLocalStore={setLocalStore}
-              >
-                <Devtools
-                  localStore={localStore}
-                  setLocalStore={setLocalStore}
-                />
-              </PiPProvider>
-            </QueryDevtoolsContext.Provider>
-          )
-        }),
-      ).not.toThrow()
+    it('should fall back to the "dark" theme when no "ThemeContext.Provider" wraps it', () => {
+      let resolvedTheme: ReturnType<ReturnType<typeof useTheme>> | undefined
+      function ThemeProbe() {
+        const theme = useTheme()
+        resolvedTheme = theme()
+        return null
+      }
+
+      const rendered = render(() => {
+        const [localStore, setLocalStore] = createLocalStorage({
+          prefix: 'TanstackQueryDevtools',
+        })
+        return (
+          <QueryDevtoolsContext.Provider
+            value={{
+              client: queryClient,
+              queryFlavor: 'TanStack Query',
+              version: '5',
+              onlineManager,
+            }}
+          >
+            <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+              <Devtools localStore={localStore} setLocalStore={setLocalStore} />
+              <ThemeProbe />
+            </PiPProvider>
+          </QueryDevtoolsContext.Provider>
+        )
+      })
+
+      expect(resolvedTheme).toBe('dark')
+      expect(
+        rendered.getByLabelText('Open Tanstack query devtools'),
+      ).toBeInTheDocument()
     })
   })
 })
