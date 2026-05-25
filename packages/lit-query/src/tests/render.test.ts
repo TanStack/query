@@ -1,6 +1,5 @@
 import { expectTypeOf, it, describe, expect } from 'vitest'
 import { renderResult } from '../render.js'
-import { nothing } from 'lit'
 
 type ExampleResult =
   | {
@@ -38,7 +37,7 @@ describe('renderResult', () => {
     expectTypeOf(output).toEqualTypeOf<0 | 1 | 2>()
     expect(output).toBe(0)
   })
-  it('should return nothing if no renderer matches', () => {
+  it('should return undefined if no renderer matches', () => {
     const result = { status: 'pending' } as ExampleResult
     const output = renderResult(result, {
       success() {
@@ -48,7 +47,7 @@ describe('renderResult', () => {
         return 2 as const
       },
     })
-    expectTypeOf(output).toEqualTypeOf<1 | 2 | typeof nothing>()
-    expect(output).toBe(nothing)
+    expectTypeOf(output).toEqualTypeOf<1 | 2 | undefined>()
+    expect(output).toBeUndefined()
   })
 })

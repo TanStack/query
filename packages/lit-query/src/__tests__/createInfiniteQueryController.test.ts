@@ -1083,4 +1083,40 @@ describe('createInfiniteQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('render-infinite-failed')
     host.infinite.destroy()
   })
+
+  it('should return undefined when no renderer matches the infinite query status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(host.infinite.render({ error: () => 'error-ui' })).toBeUndefined()
+
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(
+      host.infinite.render({
+        pending: () => 'pending-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBeUndefined()
+
+    host.infinite.destroy()
+  })
 })

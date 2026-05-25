@@ -1,5 +1,3 @@
-import { nothing } from 'lit'
-
 export type ResultRenderers<TResult extends { status: string }> = {
   [K in TResult['status']]?: (
     result: Extract<TResult, { status: K }>,
@@ -14,7 +12,7 @@ export type RendererResult<
     result: Extract<TResult, { status: K }>,
   ) => infer R
     ? R
-    : typeof nothing
+    : undefined
 }[TResult['status']]
 
 /**
@@ -48,5 +46,5 @@ export function renderResult<
   TRenderers extends ResultRenderers<TResult>,
 >(result: TResult, renderers: TRenderers): RendererResult<TResult, TRenderers> {
   const renderer = renderers[result.status as TResult['status']]
-  return renderer ? (renderer(result as any) as any) : (nothing as any)
+  return renderer ? (renderer(result as any) as any) : (undefined as any)
 }

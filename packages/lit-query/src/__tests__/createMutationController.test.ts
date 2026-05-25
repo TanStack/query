@@ -1163,6 +1163,14 @@ describe('createMutationController', () => {
     await vi.advanceTimersByTimeAsync(0)
     await host.updateComplete
     expect(host.shadowRoot).toHaveTextContent('pending-ui')
+    expect(
+      host.mutation.render({
+        idle: () => 'idle-ui',
+        pending: () => 'pending-ui',
+        success: () => 'success-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBe('pending-ui')
 
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutationPromise).resolves.toBe(2)
@@ -1204,6 +1212,24 @@ describe('createMutationController', () => {
     )
     await host.updateComplete
     expect(host.shadowRoot).toHaveTextContent('render-mutation-failed')
+
+    host.mutation.destroy()
+  })
+
+  it('should return undefined when no renderer matches the mutation status', () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        { mutationFn: async (value: number) => value + 1 },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(
+      host.mutation.render({ success: () => 'success-ui' }),
+    ).toBeUndefined()
 
     host.mutation.destroy()
   })

@@ -1949,4 +1949,36 @@ describe('createQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('render-failed')
     host.query.destroy()
   })
+
+  it('should return undefined when no renderer matches the query status', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'ok'),
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    expect(host.query.render({ error: () => 'error-ui' })).toBeUndefined()
+
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(10)
+    await host.updateComplete
+    expect(
+      host.query.render({
+        pending: () => 'pending-ui',
+        error: () => 'error-ui',
+      }),
+    ).toBeUndefined()
+
+    host.query.destroy()
+  })
 })
