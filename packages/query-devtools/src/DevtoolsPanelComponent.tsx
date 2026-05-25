@@ -1,6 +1,6 @@
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
-import { ContentView, ParentPanel } from './Devtools'
+import { ContentView, DevtoolsPanelProvider, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
@@ -30,14 +30,16 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
         setLocalStore={setLocalStore}
       >
         <ThemeContext.Provider value={theme}>
-          <ParentPanel>
-            <ContentView
-              localStore={localStore}
-              setLocalStore={setLocalStore}
-              onClose={props.onClose}
-              showPanelViewOnly
-            />
-          </ParentPanel>
+          <DevtoolsPanelProvider>
+            <ParentPanel>
+              <ContentView
+                localStore={localStore}
+                setLocalStore={setLocalStore}
+                onClose={props.onClose}
+                showPanelViewOnly
+              />
+            </ParentPanel>
+          </DevtoolsPanelProvider>
         </ThemeContext.Provider>
       </PiPProvider>
     </QueryDevtoolsContext.Provider>

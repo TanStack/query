@@ -2,12 +2,14 @@ import {
   For,
   Show,
   batch,
+  createContext,
   createEffect,
   createMemo,
   createSignal,
   on,
   onCleanup,
   onMount,
+  useContext,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import * as goober from 'goober'
@@ -78,7 +80,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
+import type { Accessor, Component, JSX, Setter, Signal } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -98,20 +100,71 @@ interface QueryStatusProps {
   count: number
 }
 
-const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
-  null,
-)
-const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
-  null,
-)
-const [panelWidth, setPanelWidth] = createSignal(0)
-const [offline, setOffline] = createSignal(false)
+/**
+ * Scoped panel state - each Devtools instance gets its own signals.
+ * This prevents state leakage between multiple Devtools instances
+ * on the same page (e.g. micro-frontends with separate QueryClients).
+ */
+interface DevtoolsPanelState {
+  selectedQueryHash: Signal<string | null>
+  setSelectedQueryHash: Setter<string | null>
+  selectedMutationId: Signal<number | null>
+  setSelectedMutationId: Setter<number | null>
+  panelWidth: Signal<number>
+  setPanelWidth: Setter<number>
+  offline: Signal<boolean>
+  setOffline: Setter<boolean>
+}
+
+const DevtoolsPanelContext = createContext<DevtoolsPanelState>()
+
+export const DevtoolsPanelProvider: Component<{ children: JSX.Element }> = (props) => {
+  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
+    null,
+  )
+  const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
+    null,
+  )
+  const [panelWidth, setPanelWidth] = createSignal(0)
+  const [offline, setOffline] = createSignal(false)
+
+  const value = createMemo(
+    () => ({
+      selectedQueryHash,
+      setSelectedQueryHash,
+      selectedMutationId,
+      setSelectedMutationId,
+      panelWidth,
+      setPanelWidth,
+      offline,
+      setOffline,
+    }),
+  )
+
+  return (
+    <DevtoolsPanelContext.Provider value={value()}>
+      {props.children}
+    </DevtoolsPanelContext.Provider>
+  )
+}
+
+function useDevtoolsPanelState(): DevtoolsPanelState {
+  const ctx = useContext(DevtoolsPanelContext)
+  if (!ctx) {
+    throw new Error(
+      'useDevtoolsPanelState must be used within a DevtoolsPanelProvider',
+    )
+  }
+  return ctx
+}
 
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
+  const panelState = useDevtoolsPanelState()
+  const { selectedQueryHash, selectedMutationId, panelWidth, offline, setSelectedQueryHash, setSelectedMutationId, setPanelWidth, setOffline } = panelState
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -286,6 +339,7 @@ const PiPPanel: Component<{
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
+  const { panelWidth, setPanelWidth } = useDevtoolsPanelState()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -355,6 +409,7 @@ export const ParentPanel: Component<{
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
+  const { panelWidth, setPanelWidth } = useDevtoolsPanelState()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -415,6 +470,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const { panelWidth, setPanelWidth, setSelectedQueryHash, selectedQueryHash } = useDevtoolsPanelState()
 
   let closeBtnRef!: HTMLButtonElement
 
@@ -682,6 +738,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const { offline, selectedQueryHash, selectedMutationId, setSelectedQueryHash, setSelectedMutationId, panelWidth, setPanelWidth } = useDevtoolsPanelState()
 
   const pip = usePiPWindow()
 
@@ -1379,6 +1436,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsPanelState()
 
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
@@ -1488,6 +1546,7 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsPanelState()
 
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
@@ -1841,6 +1900,7 @@ const QueryDetails = () => {
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsPanelState()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -2386,6 +2446,7 @@ const MutationDetails = () => {
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsPanelState()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
