@@ -80,7 +80,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type { Accessor, Component, JSX, Setter, Signal } from 'solid-js'
+import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -106,13 +106,13 @@ interface QueryStatusProps {
  * on the same page (e.g. micro-frontends with separate QueryClients).
  */
 interface DevtoolsPanelState {
-  selectedQueryHash: Signal<string | null>
+  selectedQueryHash: Accessor<string | null>
   setSelectedQueryHash: Setter<string | null>
-  selectedMutationId: Signal<number | null>
+  selectedMutationId: Accessor<number | null>
   setSelectedMutationId: Setter<number | null>
-  panelWidth: Signal<number>
+  panelWidth: Accessor<number>
   setPanelWidth: Setter<number>
-  offline: Signal<boolean>
+  offline: Accessor<boolean>
   setOffline: Setter<boolean>
 }
 
@@ -1788,6 +1788,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const { selectedQueryHash, panelWidth } = useDevtoolsPanelState()
 
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
