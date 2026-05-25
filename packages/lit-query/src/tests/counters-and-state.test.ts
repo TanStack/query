@@ -89,6 +89,92 @@ if (!customElements.get(contextCountersTagName)) {
 }
 
 describe('useIsFetching/useIsMutating/useMutationState', () => {
+  it('does not request another update when stable mutation state selectors refresh during host update', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        mutations: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    const mutationStates = useMutationState<string>(
+      host,
+      {
+        select: (mutation) => mutation.state.status,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      await Promise.resolve()
+
+      expect(mutationStates()).toEqual([])
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        host.update()
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(mutationStates()).toEqual([])
+    } finally {
+      mutationStates.destroy()
+    }
+  })
+
+  it('does not request another update when mutation cache emits with unchanged selected state', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        mutations: {
+          retry: false,
+        },
+      },
+    })
+
+    const mutationKey = ['mutation-state', 'stable-cache-events'] as const
+    const mutation = client.getMutationCache().build(client, {
+      mutationKey,
+    })
+
+    const host = new TestControllerHost()
+    const mutationStates = useMutationState<string>(
+      host,
+      {
+        filters: { mutationKey },
+        select: (mutation) => mutation.state.status,
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      await Promise.resolve()
+
+      expect(mutationStates()).toEqual(['idle'])
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        client.getMutationCache().notify({
+          type: 'updated',
+          mutation,
+          action: { type: 'pause' } as never,
+        })
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(mutationStates()).toEqual(['idle'])
+    } finally {
+      mutationStates.destroy()
+    }
+  })
+
   it('LC-COUNTERS-01: pre-connect placeholders stay zero/empty until a provider binds', async () => {
     const consumer = document.createElement(
       contextCountersTagName,
