@@ -67,7 +67,7 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     >['reset']
     /** Removes the controller from its Lit host and unsubscribes observers. */
     destroy: () => void
-    /** Renders the query result using the appropriate renderer from the given set, based on the result's `status`. */
+    /** Renders the mutation result using the appropriate renderer from the given set, based on the result's `status`. */
     render: <
       TRenderers extends ResultRenderers<
         MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
