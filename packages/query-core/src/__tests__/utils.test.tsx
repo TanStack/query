@@ -59,6 +59,31 @@ describe('core/utils', () => {
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toEqual(false)
     })
+
+    it('should ignore symbol-keyed properties', () => {
+      const sym = Symbol('test')
+      expect(
+        shallowEqualObjects({ a: 1, [sym]: 2 }, { a: 1, [sym]: 3 }),
+      ).toEqual(true)
+    })
+
+    it('should return false for different object references such as Date or RegExp', () => {
+      expect(
+        shallowEqualObjects(
+          { a: new Date('2024-01-01') },
+          { a: new Date('2024-01-01') },
+        ),
+      ).toEqual(false)
+      expect(shallowEqualObjects({ a: /abc/ }, { a: /abc/ })).toEqual(false)
+    })
+
+    it('should be safe with circular references in values', () => {
+      const a: any = { x: 1 }
+      a.self = a
+      const b: any = { x: 1 }
+      b.self = b
+      expect(shallowEqualObjects(a, b)).toEqual(false)
+    })
   })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
@@ -164,6 +189,31 @@ describe('core/utils', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
       expect(partialMatchKey(a, b)).toEqual(false)
+    })
+
+    it('should treat undefined values and missing keys as matching', () => {
+      expect(partialMatchKey({} as any, { a: undefined } as any)).toEqual(
+        true,
+      )
+      expect(partialMatchKey({ a: undefined } as any, {} as any)).toEqual(
+        true,
+      )
+      expect(
+        partialMatchKey({ a: 1 } as any, { a: undefined } as any),
+      ).toEqual(false)
+    })
+
+    it('should return true for Date, RegExp, Map, and Set because they have no enumerable keys', () => {
+      expect(
+        partialMatchKey(new Date('2024-01-01') as any, new Date('2024-01-02') as any),
+      ).toEqual(true)
+      expect(partialMatchKey(/abc/ as any, /def/ as any)).toEqual(true)
+      expect(partialMatchKey(new Map() as any, new Map() as any)).toEqual(
+        true,
+      )
+      expect(
+        partialMatchKey(new Set([1]) as any, new Set([2]) as any),
+      ).toEqual(true)
     })
   })
 
@@ -420,6 +470,38 @@ describe('core/utils', () => {
 
       expect(next).toBe(current)
     })
+
+    it('should return the next value for Date, RegExp, Map, and Set even if deeply equal', () => {
+      const date = new Date('2024-01-01')
+      expect(replaceEqualDeep(date, date)).toBe(date)
+      const date2 = new Date('2024-01-01')
+      expect(replaceEqualDeep(date, date2)).toBe(date2)
+
+      const re1 = /abc/g
+      const re2 = /abc/g
+      expect(replaceEqualDeep(re1, re2)).toBe(re2)
+
+      const map1 = new Map([['a', 1]])
+      const map2 = new Map([['a', 1]])
+      expect(replaceEqualDeep(map1, map2)).toBe(map2)
+
+      const set1 = new Set([1, 2])
+      const set2 = new Set([1, 2])
+      expect(replaceEqualDeep(set1, set2)).toBe(set2)
+    })
+
+    it('should bail out and return b when depth exceeds 500', () => {
+      const a = { x: 1 }
+      const b = { x: 1 }
+      expect(replaceEqualDeep(a, b, 501)).toBe(b)
+    })
+
+    it('should ignore symbol-keyed properties', () => {
+      const sym = Symbol('test')
+      const a = { a: 1, [sym]: 2 }
+      const b = { a: 1, [sym]: 3 }
+      expect(replaceEqualDeep(a, b)).toBe(a)
+    })
   })
 
   describe('matchMutation', () => {
@@ -534,6 +616,22 @@ describe('core/utils', () => {
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
+    })
+
+    it('should ignore symbol-keyed properties', () => {
+      const sym = Symbol('test')
+      expect(hashKey([{ [sym]: 1, a: 2 }])).toEqual(hashKey([{ a: 2 }]))
+    })
+
+    it('should hash Date instances as ISO strings', () => {
+      const date = new Date('2024-01-01T00:00:00.000Z')
+      expect(hashKey([date])).toEqual(JSON.stringify(['2024-01-01T00:00:00.000Z']))
+    })
+
+    it('should hash RegExp, Map, and Set as empty objects', () => {
+      expect(hashKey([/abc/g])).toEqual(JSON.stringify([{}]))
+      expect(hashKey([new Map([['a', 1]])])).toEqual(JSON.stringify([{}]))
+      expect(hashKey([new Set([1, 2])])).toEqual(JSON.stringify([{}]))
     })
   })
 
