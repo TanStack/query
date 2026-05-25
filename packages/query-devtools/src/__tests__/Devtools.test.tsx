@@ -1516,4 +1516,36 @@ describe('Devtools', () => {
       ).not.toBeInTheDocument()
     })
   })
+
+  describe('default theme', () => {
+    it('should render without throwing when no "ThemeContext.Provider" wraps it', () => {
+      expect(() =>
+        render(() => {
+          const [localStore, setLocalStore] = createLocalStorage({
+            prefix: 'TanstackQueryDevtools',
+          })
+          return (
+            <QueryDevtoolsContext.Provider
+              value={{
+                client: queryClient,
+                queryFlavor: 'TanStack Query',
+                version: '5',
+                onlineManager,
+              }}
+            >
+              <PiPProvider
+                localStore={localStore}
+                setLocalStore={setLocalStore}
+              >
+                <Devtools
+                  localStore={localStore}
+                  setLocalStore={setLocalStore}
+                />
+              </PiPProvider>
+            </QueryDevtoolsContext.Provider>
+          )
+        }),
+      ).not.toThrow()
+    })
+  })
 })
