@@ -1589,4 +1589,44 @@ describe('createQueryController', () => {
 
     query.destroy()
   })
+
+  it('returns undefined when no renderer matches current query status', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey: ['query-controller', 'render-03'],
+        queryFn: async () => 'ok',
+      },
+      client,
+    )
+
+    // In pending state but no pending renderer provided — should return undefined
+    const noMatchResult = query.render({
+      error: () => 'error-ui',
+    })
+    expect(noMatchResult).toBeUndefined()
+
+    host.connect()
+    host.update()
+    await waitFor(() => query().isSuccess)
+
+    // In success state but no success renderer provided — should return undefined
+    const noSuccessRenderer = query.render({
+      pending: () => 'pending-ui',
+      error: () => 'error-ui',
+    })
+    expect(noSuccessRenderer).toBeUndefined()
+
+    query.destroy()
+  })
 })
