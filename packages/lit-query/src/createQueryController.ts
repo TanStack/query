@@ -16,7 +16,11 @@ import {
 } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
-import { RendererResult, renderResult, ResultRenderers } from './render.js'
+import {
+  renderResult,
+  type RendererResult,
+  type ResultRenderers,
+} from './render.js'
 
 /**
  * Options accepted by `createQueryController`.
