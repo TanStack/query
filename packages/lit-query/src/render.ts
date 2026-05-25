@@ -45,6 +45,5 @@ export function renderResult<
   TResult extends { status: string },
   TRenderers extends ResultRenderers<TResult>,
 >(result: TResult, renderers: TRenderers): RendererResult<TResult, TRenderers> {
-  const renderer = renderers[result.status as TResult['status']]
-  return renderer ? (renderer(result as any) as any) : (undefined as any)
+  return renderers[result.status as TResult['status']]?.(result as never) as any
 }
