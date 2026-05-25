@@ -16,11 +16,11 @@ import { BaseController } from './controllers/BaseController.js'
 /**
  * Options accepted by `useMutationState`.
  */
-export type MutationStateOptions<TResult> = {
+export type MutationStateOptions<TResult, TMutation extends Mutation<any, any, any, any> = Mutation> = {
   /** Filters used to select mutations from the mutation cache. */
   filters?: Accessor<MutationFilters>
   /** Maps each matching mutation to the value returned by the accessor. */
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
 /**
@@ -34,13 +34,13 @@ export type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & {
   destroy: () => void
 }
 
-class MutationStateController<TResult> extends BaseController<TResult[]> {
+class MutationStateController<TResult, TMutation extends Mutation<any, any, any, any> = Mutation> extends BaseController<TResult[]> {
   private queryClient: QueryClient | undefined
   private unsubscribe: (() => void) | undefined
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly options: MutationStateOptions<TResult>,
+    private readonly options: MutationStateOptions<TResult, TMutation>,
     queryClient?: QueryClient,
   ) {
     super(host, [], queryClient)
@@ -143,7 +143,7 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
 
     return mutations.map((mutation) => {
       if (select) {
-        return select(mutation)
+        return select(mutation as unknown as TMutation)
       }
 
       return mutation.state as TResult
@@ -186,12 +186,13 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
  */
 export function useMutationState<
   TResult = MutationState<unknown, unknown, unknown, unknown>,
+  TMutation extends Mutation<any, any, any, any> = Mutation,
 >(
   host: ReactiveControllerHost,
-  options: MutationStateOptions<TResult> = {},
+  options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): MutationStateAccessor<TResult> {
-  const controller = new MutationStateController(host, options, queryClient)
+  const controller = new MutationStateController<TResult, TMutation>(host, options, queryClient)
   return Object.assign(
     createValueAccessor(() => controller.current),
     {

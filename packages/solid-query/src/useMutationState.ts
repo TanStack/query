@@ -10,25 +10,33 @@ import type {
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 
-type MutationStateOptions<TResult = MutationState> = {
+type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> = Mutation,
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<TResult = MutationState, TMutation extends Mutation<any, any, any, any> = Mutation>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<TResult, TMutation>,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select ? options.select(mutation) : mutation.state) as TResult,
+        (options.select
+          ? options.select(mutation as unknown as TMutation)
+          : mutation.state) as TResult,
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: Accessor<MutationStateOptions<TResult>> = () => ({}),
+export function useMutationState<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> = Mutation,
+>(
+  options: Accessor<MutationStateOptions<TResult, TMutation>> = () => ({}),
   queryClient?: Accessor<QueryClient>,
 ): Accessor<Array<TResult>> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
