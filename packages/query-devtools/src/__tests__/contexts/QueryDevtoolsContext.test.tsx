@@ -37,5 +37,8 @@ describe('QueryDevtoolsContext', () => {
 
     setClient(nextClient)
     expect(observed).toEqual([initialClient, nextClient])
+
+    initialClient.clear()
+    nextClient.clear()
   })
 })
