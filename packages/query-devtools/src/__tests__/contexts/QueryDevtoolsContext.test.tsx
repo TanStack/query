@@ -2,10 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { createEffect, createSignal } from 'solid-js'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import {
-  QueryDevtoolsContext,
-  useQueryDevtoolsContext,
-} from '../../contexts'
+import { QueryDevtoolsContext, useQueryDevtoolsContext } from '../../contexts'
 
 describe('QueryDevtoolsContext', () => {
   it('should reflect updates when the "Provider" value exposes a reactive getter', () => {
