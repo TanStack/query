@@ -108,5 +108,41 @@ describe('PiPContext', () => {
         'true',
       )
     })
+
+    it('should set the PiP document title to "TanStack Query Devtools"', () => {
+      const { pipDocument } = stubPipWindow()
+
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+      expect(pipDocument.title).toBe('TanStack Query Devtools')
+    })
+
+    it('should reset the PiP document body margin to "0"', () => {
+      const { pipDocument } = stubPipWindow()
+
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+      expect(pipDocument.body.style.margin).toMatch(/^0(px)?$/)
+    })
+
+    it('should clear any existing nodes in the PiP document "head"', () => {
+      const { pipDocument } = stubPipWindow()
+      pipDocument.head.appendChild(pipDocument.createElement('meta'))
+
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+      expect(pipDocument.head.querySelector('meta')).toBeNull()
+    })
+
+    it('should clear any existing nodes in the PiP document "body"', () => {
+      const { pipDocument } = stubPipWindow()
+      const leftover = pipDocument.createElement('div')
+      leftover.id = 'leftover'
+      pipDocument.body.appendChild(leftover)
+
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+      expect(pipDocument.body.querySelector('#leftover')).toBeNull()
+    })
   })
 })
