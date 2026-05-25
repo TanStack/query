@@ -16,7 +16,17 @@ import { BaseController } from './controllers/BaseController.js'
 /**
  * Options accepted by `useMutationState`.
  */
-export type MutationStateOptions<TResult, TMutation extends Mutation<any, any, any, any> = Mutation> = {
+export type MutationStateOptions<
+  TResult,
+  /**
+   * Narrows the type of the `mutation` argument passed to `select`.
+   * This is a caller-side assertion — the mutation cache stores mutations as
+   * the base `Mutation` type, so it is the caller's responsibility to ensure
+   * `TMutation` matches the actual mutations in the cache (e.g. by specifying
+   * a `mutationKey` in `filters`).
+   */
+  TMutation extends Mutation<any, any, any, any> = Mutation,
+> = {
   /** Filters used to select mutations from the mutation cache. */
   filters?: Accessor<MutationFilters>
   /** Maps each matching mutation to the value returned by the accessor. */

@@ -24,6 +24,13 @@ export function useIsMutating(
 
 type MutationStateOptions<
   TResult = MutationState,
+  /**
+   * Narrows the type of the `mutation` argument passed to `select`.
+   * This is a caller-side assertion — the mutation cache stores mutations as
+   * the base `Mutation` type, so it is the caller's responsibility to ensure
+   * `TMutation` matches the actual mutations in the cache (e.g. by specifying
+   * a `mutationKey` in `filters`).
+   */
   TMutation extends Mutation<any, any, any, any> = Mutation,
 > = {
   filters?: MutationFilters
