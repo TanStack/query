@@ -588,4 +588,46 @@ describe('Explorer', () => {
       ).not.toThrow()
     })
   })
+
+  describe('"shadowDOMTarget"', () => {
+    it('should render without throwing when a "shadowDOMTarget" is provided', () => {
+      const host = document.createElement('div')
+      document.body.appendChild(host)
+      const shadowRoot = host.attachShadow({ mode: 'open' })
+      const value = { items: ['a'], flag: true }
+      queryClient.setQueryData(['data'], value)
+
+      try {
+        expect(() =>
+          render(() => (
+            <QueryDevtoolsContext.Provider
+              value={{
+                client: queryClient,
+                queryFlavor: 'TanStack Query',
+                version: '5',
+                onlineManager,
+                shadowDOMTarget: shadowRoot,
+              }}
+            >
+              <ThemeContext.Provider value={() => 'dark'}>
+                <Explorer
+                  label="Data"
+                  value={value}
+                  defaultExpanded={['Data']}
+                  editable={true}
+                  activeQuery={
+                    queryClient
+                      .getQueryCache()
+                      .find({ queryKey: ['data'] }) as Query
+                  }
+                />
+              </ThemeContext.Provider>
+            </QueryDevtoolsContext.Provider>
+          )),
+        ).not.toThrow()
+      } finally {
+        host.remove()
+      }
+    })
+  })
 })
