@@ -165,6 +165,30 @@ describe('core/utils', () => {
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
       expect(partialMatchKey(a, b)).toEqual(false)
     })
+
+    it('should treat object property set to undefined as missing property', () => {
+      const a = ['todos']
+      const b = ['todos', { filter: undefined }]
+      expect(partialMatchKey(a, b)).toEqual(true)
+    })
+
+    it('should treat empty object and object with undefined values as equivalent', () => {
+      const a = ['todos', {}]
+      const b = ['todos', { filter: undefined }]
+      expect(partialMatchKey(a, b)).toEqual(true)
+    })
+
+    it('should match queries with specific filter when using undefined filter', () => {
+      const a = ['todos', { filter: 'done' }]
+      const b = ['todos', { filter: undefined }]
+      expect(partialMatchKey(a, b)).toEqual(true)
+    })
+
+    it('should not match when filter has a non-undefined value that differs', () => {
+      const a = ['todos', { filter: 'active' }]
+      const b = ['todos', { filter: 'done' }]
+      expect(partialMatchKey(a, b)).toEqual(false)
+    })
   })
 
   describe('replaceEqualDeep', () => {
