@@ -539,4 +539,63 @@ describe('createMutationController', () => {
 
     host.mutation.destroy()
   })
+
+  it('renders pending branch via mutation.render during active mutation', async () => {
+    const client = new QueryClient()
+    const host = new TestControllerHost()
+    let resolvePromise: (() => void) | undefined
+
+    const mutation = createMutationController(
+      host,
+      {
+        mutationFn: async (value: number) => {
+          await new Promise<void>((resolve) => {
+            resolvePromise = resolve
+          })
+          return value + 1
+        },
+      },
+      client,
+    )
+
+    host.connect()
+    host.update()
+
+    const mutatePromise = mutation.mutateAsync(1)
+    await waitFor(() => mutation().isPending)
+
+    const pendingUi = mutation.render({
+      idle: () => 'idle-ui',
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: () => 'error-ui',
+    })
+    expect(pendingUi).toBe('pending-ui')
+
+    resolvePromise?.()
+    await mutatePromise
+
+    mutation.destroy()
+  })
+
+  it('returns undefined when no renderer matches current mutation status', () => {
+    const client = new QueryClient()
+    const host = new TestControllerHost()
+
+    const mutation = createMutationController(
+      host,
+      {
+        mutationFn: async (value: number) => value + 1,
+      },
+      client,
+    )
+
+    // In idle state but no idle renderer provided — should return undefined
+    const noMatchResult = mutation.render({
+      success: () => 'success-ui',
+    })
+    expect(noMatchResult).toBeUndefined()
+
+    mutation.destroy()
+  })
 })

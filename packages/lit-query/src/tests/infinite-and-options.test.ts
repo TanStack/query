@@ -427,6 +427,48 @@ describe('createInfiniteQueryController', () => {
 
     infinite.destroy()
   })
+
+  it('returns undefined when no renderer matches current infinite query status', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+    const host = new TestControllerHost()
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: ['infinite-render-03'],
+        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => Number(pageParam),
+        getNextPageParam: (lastPage) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+      },
+      client,
+    )
+
+    // In pending state but no pending renderer provided — should return undefined
+    const noMatchResult = infinite.render({
+      error: () => 'error-ui',
+    })
+    expect(noMatchResult).toBeUndefined()
+
+    host.connect()
+    host.update()
+    await waitFor(() => infinite().isSuccess)
+
+    // In success state but no success renderer provided — should return undefined
+    const noSuccessRenderer = infinite.render({
+      pending: () => 'pending-ui',
+      error: () => 'error-ui',
+    })
+    expect(noSuccessRenderer).toBeUndefined()
+
+    infinite.destroy()
+  })
 })
 
 describe('options helpers integration', () => {
