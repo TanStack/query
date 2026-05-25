@@ -277,9 +277,7 @@ class QueryController<
     }
   }
 
-  private setObserverResult(
-    result: QueryObserverResult<TData, TError>,
-  ): void {
+  private setObserverResult(result: QueryObserverResult<TData, TError>): void {
     const trackedResult = this.resultTracker.update(this.observer, result)
     if (trackedResult) {
       this.setResult(trackedResult)

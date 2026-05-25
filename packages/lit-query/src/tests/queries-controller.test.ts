@@ -244,7 +244,10 @@ describe('createQueriesController', () => {
       () => ({
         queries: [
           {
-            queryKey: ['queries-controller', 'stable-function-options'] as const,
+            queryKey: [
+              'queries-controller',
+              'stable-function-options',
+            ] as const,
             queryFn: async () => {
               callCount += 1
               return 'stable-result'
