@@ -4,26 +4,22 @@ import { createEffect } from 'solid-js'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { PiPProvider, usePiPWindow } from '../../contexts'
 
-type FakePipWindow = Pick<
-  Window,
-  | 'document'
-  | 'innerWidth'
-  | 'innerHeight'
-  | 'addEventListener'
-  | 'removeEventListener'
-  | 'close'
->
+type FakePipWindowOverrides = {
+  document?: Document
+  innerWidth?: number
+  innerHeight?: number
+}
 
-function stubPipWindow(overrides: Partial<FakePipWindow> = {}) {
-  const pipDocument = document.implementation.createHTMLDocument('PiP')
-  const fakeWindow: FakePipWindow = {
+function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
+  const pipDocument =
+    overrides.document ?? document.implementation.createHTMLDocument('PiP')
+  const fakeWindow = {
     document: pipDocument,
-    innerWidth: 800,
-    innerHeight: 600,
+    innerWidth: overrides.innerWidth ?? 800,
+    innerHeight: overrides.innerHeight ?? 600,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     close: vi.fn(),
-    ...overrides,
   }
   const open = vi.fn(() => fakeWindow)
   vi.stubGlobal('open', open)
@@ -37,13 +33,18 @@ describe('PiPContext', () => {
 
   function renderAndAct(
     action: (pip: ReturnType<typeof usePiPWindow>) => void,
+    options: { disabled?: boolean } = {},
   ) {
     render(() => {
       const [localStore, setLocalStore] = createLocalStorage({
         prefix: 'TanstackQueryDevtools',
       })
       return (
-        <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+        <PiPProvider
+          localStore={localStore}
+          setLocalStore={setLocalStore}
+          disabled={options.disabled}
+        >
           <PiPActor run={action} />
         </PiPProvider>
       )
@@ -54,9 +55,13 @@ describe('PiPContext', () => {
     run: (pip: ReturnType<typeof usePiPWindow>) => void
   }) {
     const pip = usePiPWindow()
+    let hasRun = false
     createEffect(() => {
       pip()
-      props.run(pip)
+      if (!hasRun) {
+        hasRun = true
+        props.run(pip)
+      }
     })
     return null
   }
@@ -229,6 +234,31 @@ describe('PiPContext', () => {
       } finally {
         sheetSpy.mockRestore()
       }
+    })
+  })
+
+  describe('"pagehide" lifecycle', () => {
+    it('should reset the "pipWindow" signal and "pip_open" when the "pagehide" event fires on the opened window', () => {
+      const { fakeWindow } = stubPipWindow()
+      const observed: Array<Window | null> = []
+
+      renderAndAct(
+        (pip) => {
+          pip().requestPipWindow(640, 480)
+          observed.push(pip().pipWindow)
+          const pagehideHandler = fakeWindow.addEventListener.mock.calls.find(
+            ([event]) => event === 'pagehide',
+          )?.[1]
+          pagehideHandler?.()
+          observed.push(pip().pipWindow)
+        },
+        { disabled: true },
+      )
+
+      expect(observed).toEqual([fakeWindow, null])
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
     })
   })
 })
