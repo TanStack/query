@@ -29,12 +29,19 @@ function stubPipWindow(overrides: FakePipWindowOverrides = {}) {
 describe('PiPContext', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
+    localStorage.clear()
   })
 
   function renderAndAct(
     action: (pip: ReturnType<typeof usePiPWindow>) => void,
-    options: { disabled?: boolean } = {},
+    options: {
+      disabled?: boolean
+      initialStorage?: Record<string, string>
+    } = {},
   ) {
+    Object.entries(options.initialStorage ?? {}).forEach(([key, value]) => {
+      localStorage.setItem(key, value)
+    })
     render(() => {
       const [localStore, setLocalStore] = createLocalStorage({
         prefix: 'TanstackQueryDevtools',
@@ -304,6 +311,70 @@ describe('PiPContext', () => {
       )
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('"pip_open" auto-open createEffect', () => {
+    it('should auto-open a PiP window when "pip_open" is "true" on mount', () => {
+      const { open } = stubPipWindow()
+
+      renderAndAct(() => {}, {
+        initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+      })
+
+      expect(open).toHaveBeenCalled()
+    })
+
+    it('should not auto-open a PiP window when "disabled" is true', () => {
+      const { open } = stubPipWindow()
+
+      renderAndAct(() => {}, {
+        disabled: true,
+        initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+      })
+
+      expect(open).not.toHaveBeenCalled()
+    })
+
+    it('should reset "pip_open"/"open" and log when "window.open" returns null on auto-open', () => {
+      vi.stubGlobal(
+        'open',
+        vi.fn(() => null),
+      )
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+
+      try {
+        renderAndAct(() => {}, {
+          initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+        })
+
+        expect(consoleError).toHaveBeenCalledWith(
+          expect.stringContaining('Failed to open popup'),
+        )
+        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+          'false',
+        )
+        expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
+      } finally {
+        consoleError.mockRestore()
+      }
+    })
+
+    it('should re-throw non-"PipOpenError" errors from "window.open" on auto-open', () => {
+      vi.stubGlobal(
+        'open',
+        vi.fn(() => {
+          throw new Error('unexpected')
+        }),
+      )
+
+      expect(() =>
+        renderAndAct(() => {}, {
+          initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
+        }),
+      ).toThrow('unexpected')
     })
   })
 })
