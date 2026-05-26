@@ -310,9 +310,7 @@ export function partialMatchKey(
     ) {
       return Object.keys(b)
         .filter((key) => b[key] !== undefined)
-        .every((key) =>
-          partialMatchKey(a[key] as any, b[key] as any, options),
-        )
+        .every((key) => partialMatchKey(a[key] as any, b[key] as any, options))
     }
 
     return Object.keys(b).every((key) =>
