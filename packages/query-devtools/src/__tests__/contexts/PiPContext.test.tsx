@@ -408,10 +408,9 @@ describe('PiPContext', () => {
       stubPipWindow()
 
       try {
-        renderAndAct(
-          (pip) => pip().requestPipWindow(640, 480),
-          { disabled: true },
-        )
+        renderAndAct((pip) => pip().requestPipWindow(640, 480), {
+          disabled: true,
+        })
 
         expect(observeSpy).toHaveBeenCalledWith(
           gooberStyle,
@@ -452,6 +451,5 @@ describe('PiPContext', () => {
         gooberStyle.remove()
       }
     })
-
   })
 })
