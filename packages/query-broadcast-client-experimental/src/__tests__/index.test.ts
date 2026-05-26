@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { broadcastQueryClient } from '..'
+import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
 
 const mockPostMessage = vi.fn().mockResolvedValue(undefined)
@@ -84,7 +85,11 @@ describe('broadcastQueryClient', () => {
 
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
-          expect.objectContaining({ type: 'added' }),
+          expect.objectContaining<BroadcastErrorEvent>({
+            type: 'added',
+            queryHash: expect.any(String) as string,
+            queryKey: ['test'],
+          }),
         )
         expect(unhandledRejections).toHaveLength(0)
       } finally {
@@ -119,7 +124,11 @@ describe('broadcastQueryClient', () => {
 
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
-          expect.objectContaining({ type: 'added' }),
+          expect.objectContaining<BroadcastErrorEvent>({
+            type: 'added',
+            queryHash: expect.any(String) as string,
+            queryKey: ['test'],
+          }),
         )
         expect(unhandledRejections).toHaveLength(0)
       } finally {
@@ -143,7 +152,11 @@ describe('broadcastQueryClient', () => {
       await new Promise((r) => setTimeout(r, 0))
       expect(onBroadcastError).toHaveBeenCalledWith(
         cloneError,
-        expect.objectContaining({ type: 'added' }),
+        expect.objectContaining<BroadcastErrorEvent>({
+          type: 'added',
+          queryHash: expect.any(String) as string,
+          queryKey: ['test'],
+        }),
       )
     })
 
@@ -163,7 +176,7 @@ describe('broadcastQueryClient', () => {
 
       await new Promise((r) => setTimeout(r, 0))
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[broadcastQueryClient]'),
+        expect.stringContaining('cross-tab sync for this query was skipped'),
         cloneError,
       )
 
