@@ -105,24 +105,26 @@ describe('broadcastQueryClient', () => {
 
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-        onBroadcastError: () => {
-          throw callbackError
-        },
-      })
+      try {
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+          onBroadcastError: () => {
+            throw callbackError
+          },
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 0))
+        await new Promise((r) => setTimeout(r, 0))
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('onBroadcastError threw while handling'),
-        callbackError,
-      )
-
-      warnSpy.mockRestore()
+        expect(warnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('onBroadcastError threw while handling'),
+          callbackError,
+        )
+      } finally {
+        warnSpy.mockRestore()
+      }
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
@@ -172,22 +174,24 @@ describe('broadcastQueryClient', () => {
 
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-        onBroadcastError: () => Promise.reject(asyncError),
-      })
+      try {
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+          onBroadcastError: () => Promise.reject(asyncError),
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 10))
+        await new Promise((r) => setTimeout(r, 10))
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('onBroadcastError threw while handling'),
-        asyncError,
-      )
-
-      warnSpy.mockRestore()
+        expect(warnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('onBroadcastError threw while handling'),
+          asyncError,
+        )
+      } finally {
+        warnSpy.mockRestore()
+      }
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
@@ -221,20 +225,22 @@ describe('broadcastQueryClient', () => {
 
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-      })
+      try {
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 0))
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('cross-tab sync for this query was skipped'),
-        cloneError,
-      )
-
-      warnSpy.mockRestore()
+        await new Promise((r) => setTimeout(r, 0))
+        expect(warnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('cross-tab sync for this query was skipped'),
+          cloneError,
+        )
+      } finally {
+        warnSpy.mockRestore()
+      }
     })
 
     it('should not warn in production when postMessage fails', async () => {
@@ -244,17 +250,19 @@ describe('broadcastQueryClient', () => {
 
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-      })
+      try {
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+        })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(['test'], { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 0))
-      expect(warnSpy).not.toHaveBeenCalled()
-
-      warnSpy.mockRestore()
+        await new Promise((r) => setTimeout(r, 0))
+        expect(warnSpy).not.toHaveBeenCalled()
+      } finally {
+        warnSpy.mockRestore()
+      }
     })
   })
 })
