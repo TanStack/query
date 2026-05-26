@@ -261,4 +261,49 @@ describe('PiPContext', () => {
       )
     })
   })
+
+  describe('"closePipWindow"', () => {
+    it('should be a noop when no window is open', () => {
+      const { fakeWindow } = stubPipWindow()
+
+      renderAndAct((pip) => {
+        pip().closePipWindow()
+      })
+
+      expect(fakeWindow.close).not.toHaveBeenCalled()
+    })
+
+    it('should call "close" on the opened window and reset the "pipWindow" signal', () => {
+      const { fakeWindow } = stubPipWindow()
+      const observed: Array<Window | null> = []
+
+      renderAndAct(
+        (pip) => {
+          pip().requestPipWindow(640, 480)
+          observed.push(pip().pipWindow)
+          pip().closePipWindow()
+          observed.push(pip().pipWindow)
+        },
+        { disabled: true },
+      )
+
+      expect(fakeWindow.close).toHaveBeenCalledTimes(1)
+      expect(observed).toEqual([fakeWindow, null])
+    })
+
+    it('should call "close" only once when "closePipWindow" runs twice in a row', () => {
+      const { fakeWindow } = stubPipWindow()
+
+      renderAndAct(
+        (pip) => {
+          pip().requestPipWindow(640, 480)
+          pip().closePipWindow()
+          pip().closePipWindow()
+        },
+        { disabled: true },
+      )
+
+      expect(fakeWindow.close).toHaveBeenCalledTimes(1)
+    })
+  })
 })
