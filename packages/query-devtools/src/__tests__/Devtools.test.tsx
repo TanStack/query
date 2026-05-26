@@ -415,7 +415,11 @@ describe('Devtools', () => {
       | 'close'
     >
 
-    function stubPipWindow() {
+    function stubPipWindow(
+      overrides: Partial<
+        Pick<FakePipWindow, 'innerWidth' | 'innerHeight'>
+      > = {},
+    ) {
       const pipDocument = document.implementation.createHTMLDocument('PiP')
       const listeners = new Map<string, EventListener>()
       const fakeWindow: FakePipWindow = {
@@ -429,6 +433,7 @@ describe('Devtools', () => {
           listeners.delete(event)
         }),
         close: vi.fn(),
+        ...overrides,
       }
       const open = vi.fn(() => fakeWindow)
       vi.stubGlobal('open', open)
@@ -460,43 +465,6 @@ describe('Devtools', () => {
       )
     })
 
-    it('should automatically open a PiP window when "pip_open" is "true" in "localStorage"', () => {
-      const { open } = stubPipWindow()
-
-      renderDevtools(
-        { initialIsOpen: true },
-        { 'TanstackQueryDevtools.pip_open': 'true' },
-      )
-
-      expect(open).toHaveBeenCalled()
-    })
-
-    it('should log and reset "pip_open" when the browser blocks the popup', () => {
-      vi.stubGlobal(
-        'open',
-        vi.fn(() => null),
-      )
-      const consoleError = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {})
-
-      try {
-        renderDevtools(
-          { initialIsOpen: true },
-          { 'TanstackQueryDevtools.pip_open': 'true' },
-        )
-
-        expect(consoleError).toHaveBeenCalledWith(
-          expect.stringContaining('Failed to open popup'),
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-          'false',
-        )
-      } finally {
-        consoleError.mockRestore()
-      }
-    })
-
     it('should hide the in-page panel while a PiP window is open', () => {
       stubPipWindow()
       const rendered = renderDevtools({ initialIsOpen: true })
@@ -510,7 +478,7 @@ describe('Devtools', () => {
       ).toBeNull()
     })
 
-    it('should restore the in-page panel and reset "pip_open" when the PiP window is closed', () => {
+    it('should restore the in-page panel when the PiP window is closed', () => {
       const { fire } = stubPipWindow()
       const rendered = renderDevtools({ initialIsOpen: true })
 
@@ -519,12 +487,30 @@ describe('Devtools', () => {
       )
       fire('pagehide')
 
-      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-        'false',
-      )
       expect(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       ).toBeInTheDocument()
+    })
+
+    it('should render the PiP panel with the narrow layout when the PiP window is below the second breakpoint', () => {
+      // secondBreakpoint = 796; pick a width comfortably below it so the
+      // PiP panel evaluates its narrow (`flex-direction: column`) branch.
+      const { pipDocument } = stubPipWindow({ innerWidth: 500 })
+      queryClient.setQueryData(['narrow-pip-query'], { hello: 'world' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        pipDocument.querySelector(
+          '[aria-label="Close Tanstack query devtools"]',
+        ),
+      ).not.toBeNull()
+      expect(
+        pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
+      ).not.toBeNull()
     })
   })
 
