@@ -97,6 +97,34 @@ describe('broadcastQueryClient', () => {
       }
     })
 
+    it('should warn in dev when onBroadcastError itself throws', async () => {
+      process.env['NODE_ENV'] = 'development'
+      const cloneError = new DOMException('DataCloneError', 'DataCloneError')
+      const callbackError = new Error('boom')
+      mockPostMessage.mockRejectedValueOnce(cloneError)
+
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => {
+          throw callbackError
+        },
+      })
+
+      queryClient.setQueryData(['test'], { value: 1 })
+
+      await new Promise((r) => setTimeout(r, 0))
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        callbackError,
+      )
+
+      warnSpy.mockRestore()
+    })
+
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -134,6 +162,32 @@ describe('broadcastQueryClient', () => {
       } finally {
         process.off('unhandledRejection', onUnhandledRejection)
       }
+    })
+
+    it('should warn in dev when async onBroadcastError rejects', async () => {
+      process.env['NODE_ENV'] = 'development'
+      const cloneError = new DOMException('DataCloneError', 'DataCloneError')
+      const asyncError = new Error('async boom')
+      mockPostMessage.mockRejectedValueOnce(cloneError)
+
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+        onBroadcastError: () => Promise.reject(asyncError),
+      })
+
+      queryClient.setQueryData(['test'], { value: 1 })
+
+      await new Promise((r) => setTimeout(r, 10))
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('onBroadcastError threw while handling'),
+        asyncError,
+      )
+
+      warnSpy.mockRestore()
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
