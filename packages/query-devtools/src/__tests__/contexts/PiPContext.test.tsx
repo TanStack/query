@@ -337,7 +337,10 @@ describe('PiPContext', () => {
     })
 
     it('should reset "pip_open"/"open" and log when "window.open" returns null on auto-open', () => {
-      vi.stubGlobal('open', vi.fn(() => null))
+      vi.stubGlobal(
+        'open',
+        vi.fn(() => null),
+      )
       const consoleError = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
