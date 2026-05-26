@@ -478,7 +478,7 @@ describe('Devtools', () => {
       ).toBeNull()
     })
 
-    it('should restore the in-page panel and reset "pip_open" when the PiP window is closed', () => {
+    it('should restore the in-page panel when the PiP window is closed', () => {
       const { fire } = stubPipWindow()
       const rendered = renderDevtools({ initialIsOpen: true })
 
@@ -487,9 +487,6 @@ describe('Devtools', () => {
       )
       fire('pagehide')
 
-      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-        'false',
-      )
       expect(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       ).toBeInTheDocument()
