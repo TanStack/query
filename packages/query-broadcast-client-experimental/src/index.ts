@@ -16,7 +16,7 @@ export interface BroadcastErrorEvent {
 type BroadcastMessage =
   | { type: 'updated'; queryHash: string; queryKey: QueryKey; state: unknown }
   | { type: 'removed'; queryHash: string; queryKey: QueryKey }
-  | { type: 'added'; queryHash: string; queryKey: QueryKey }
+  | { type: 'added'; queryHash: string; queryKey: QueryKey; state: unknown }
 
 interface BroadcastQueryClientOptions {
   /** The QueryClient to sync. */
@@ -132,6 +132,7 @@ export function broadcastQueryClient({
         type: 'added',
         queryHash,
         queryKey,
+        state,
       })
     }
   })
