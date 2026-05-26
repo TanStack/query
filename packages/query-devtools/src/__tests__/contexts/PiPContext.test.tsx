@@ -377,4 +377,79 @@ describe('PiPContext', () => {
       ).toThrow('unexpected')
     })
   })
+
+  describe('"#_goober" MutationObserver', () => {
+    function stubMutationObserver() {
+      let observerCallback: MutationCallback | undefined
+      const observeSpy = vi.fn()
+      const disconnectSpy = vi.fn()
+      class FakeMutationObserver {
+        observe = observeSpy
+        disconnect = disconnectSpy
+        takeRecords = () => []
+        constructor(cb: MutationCallback) {
+          observerCallback = cb
+        }
+      }
+      vi.stubGlobal('MutationObserver', FakeMutationObserver)
+      return {
+        observeSpy,
+        disconnectSpy,
+        fire: () => observerCallback?.([], {} as MutationObserver),
+      }
+    }
+
+    it('should observe the parent "#_goober" style for childList and subtree mutations', () => {
+      const gooberStyle = document.createElement('style')
+      gooberStyle.id = '_goober'
+      gooberStyle.textContent = '.initial { color: red; }'
+      document.head.appendChild(gooberStyle)
+      const { observeSpy } = stubMutationObserver()
+      stubPipWindow()
+
+      try {
+        renderAndAct((pip) => pip().requestPipWindow(640, 480), {
+          disabled: true,
+        })
+
+        expect(observeSpy).toHaveBeenCalledWith(
+          gooberStyle,
+          expect.objectContaining({ childList: true, subtree: true }),
+        )
+      } finally {
+        gooberStyle.remove()
+      }
+    })
+
+    it('should copy parent "#_goober" "textContent" into the PiP mirror when the observer fires', () => {
+      const gooberStyle = document.createElement('style')
+      gooberStyle.id = '_goober'
+      gooberStyle.textContent = '.initial { color: red; }'
+      document.head.appendChild(gooberStyle)
+      const { fire } = stubMutationObserver()
+      const { pipDocument } = stubPipWindow()
+
+      try {
+        const pipGooberStyle = pipDocument.createElement('style')
+        pipGooberStyle.id = '_goober'
+
+        renderAndAct(
+          (pip) => {
+            pip().requestPipWindow(640, 480)
+            // `requestPipWindow` clears the PiP document head, so install
+            // the goober mirror style after that point.
+            pipDocument.head.appendChild(pipGooberStyle)
+          },
+          { disabled: true },
+        )
+
+        gooberStyle.textContent = '.next { color: blue; }'
+        fire()
+
+        expect(pipGooberStyle.textContent).toBe('.next { color: blue; }')
+      } finally {
+        gooberStyle.remove()
+      }
+    })
+  })
 })
