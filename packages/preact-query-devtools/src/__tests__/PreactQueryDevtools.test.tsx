@@ -62,6 +62,26 @@ describe('PreactQueryDevtools', () => {
     expect(mountMock).toHaveBeenCalled()
   })
 
+  it('should forward "buttonPosition" to the devtools instance', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    render(
+      <PreactQueryDevtools client={queryClient} buttonPosition="top-left" />,
+    )
+
+    expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
+  })
+
+  it('should forward "position" to the devtools instance', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    render(<PreactQueryDevtools client={queryClient} position="left" />)
+
+    expect(setPositionMock).toHaveBeenCalledWith('left')
+  })
+
   it('should return null in non-development environments', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.resetModules()
