@@ -1,5 +1,28 @@
 # @tanstack/vue-query
 
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- fix(query-core): drop the custom `NoInfer<T>` re-export and rely on TypeScript's built-in `NoInfer` (TS ≥ 5.4) so `NoInfer<X[K]>` stays assignable to `X[K]` in generic contexts (fixes [#9937](https://github.com/TanStack/query/issues/9937)) ([#10593](https://github.com/TanStack/query/pull/10593))
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
 ## 5.100.11
 
 ### Patch Changes

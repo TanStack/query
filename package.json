@@ -5,7 +5,10 @@
     "type": "git",
     "url": "git+https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@11.1.0",
+  "engines": {
+    "pnpm": ">=11.0.0"
+  },
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -41,11 +44,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.29.8",
     "@cspell/eslint-plugin": "^9.2.1",
     "@eslint-react/eslint-plugin": "^2.0.1",
     "@size-limit/preset-small-lib": "^12.0.0",
-    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@tanstack/eslint-config": "0.3.2",
     "@tanstack/typedoc-config": "0.3.1",
     "@tanstack/vite-config": "0.4.3",
@@ -82,26 +85,5 @@
     "typescript60": "npm:typescript@6.0.1-rc",
     "vite": "^6.4.1",
     "vitest": "^4.0.18"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "^19.2.7",
-      "@types/react-dom": "^19.2.3",
-      "@types/node": "^22.15.3",
-      "@typescript-eslint/eslint-plugin": "8.58.1",
-      "@typescript-eslint/parser": "8.58.1",
-      "@typescript-eslint/project-service": "8.58.1",
-      "@typescript-eslint/rule-tester": "8.58.1",
-      "@typescript-eslint/scope-manager": "8.58.1",
-      "@typescript-eslint/tsconfig-utils": "8.58.1",
-      "@typescript-eslint/type-utils": "8.58.1",
-      "@typescript-eslint/types": "8.58.1",
-      "@typescript-eslint/typescript-estree": "8.58.1",
-      "@typescript-eslint/utils": "8.58.1",
-      "@typescript-eslint/visitor-keys": "8.58.1",
-      "typescript-eslint": "8.58.1",
-      "vite": "^6.4.1",
-      "esbuild": "^0.27.2"
-    }
   }
 }

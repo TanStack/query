@@ -1,5 +1,17 @@
 # @tanstack/eslint-plugin-query
 
+## 5.100.14
+
+## 5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- fix(no-unstable-deps): handle array-destructured useQueries and useSuspenseQueries results ([#10747](https://github.com/TanStack/query/pull/10747))
+
+- Fix `no-unstable-deps` false positives for `useSuspenseQueries` results returned from `combine`. ([#10642](https://github.com/TanStack/query/pull/10642))
+
 ## 5.100.11
 
 ## 5.100.10

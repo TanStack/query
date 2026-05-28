@@ -31,15 +31,15 @@ export function getQueryStatusColor({
   observerCount,
   isStale,
 }: {
-  queryState: Query['state']
+  queryState: Query['state'] | undefined
   observerCount: number
   isStale: boolean
 }) {
-  return queryState.fetchStatus === 'fetching'
+  return queryState?.fetchStatus === 'fetching'
     ? 'blue'
     : !observerCount
       ? 'gray'
-      : queryState.fetchStatus === 'paused'
+      : queryState?.fetchStatus === 'paused'
         ? 'purple'
         : isStale
           ? 'yellow'
