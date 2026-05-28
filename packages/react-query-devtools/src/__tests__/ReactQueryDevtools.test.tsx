@@ -62,6 +62,24 @@ describe('ReactQueryDevtools', () => {
     expect(mountMock).toHaveBeenCalled()
   })
 
+  it('should forward "buttonPosition" to the devtools instance', async () => {
+    const { ReactQueryDevtools } = await import('../ReactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    render(<ReactQueryDevtools client={queryClient} buttonPosition="top-left" />)
+
+    expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
+  })
+
+  it('should forward "position" to the devtools instance', async () => {
+    const { ReactQueryDevtools } = await import('../ReactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    render(<ReactQueryDevtools client={queryClient} position="left" />)
+
+    expect(setPositionMock).toHaveBeenCalledWith('left')
+  })
+
   it('should return null in non-development environments', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.resetModules()
