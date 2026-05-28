@@ -468,5 +468,39 @@ ruleTesterTypeChecked.run('no-rest-destructuring with type information', rule, {
       `,
       errors: [{ messageId: 'objectRestDestructure' }],
     },
+    {
+      name: 'custom hook result is assigned then destructured with rest',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const useTodos = () =>
+          useQuery({ queryKey: ['todos'], queryFn: () => Promise.resolve([]) })
+
+        function Component() {
+          const todosQuery = useTodos()
+          const { data, ...rest } = todosQuery
+          return null
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'custom hook returning an interface query result is destructured with rest',
+      code: normalizeIndent`
+        import type { QueryObserverResult } from '@tanstack/react-query'
+
+        const useTodos = (): QueryObserverResult => ({
+          data: undefined,
+          isLoading: false,
+          isError: false,
+        })
+
+        function Component() {
+          const { data, ...rest } = useTodos()
+          return null
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
   ],
 })
