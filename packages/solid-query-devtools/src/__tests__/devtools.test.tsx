@@ -50,15 +50,10 @@ describe('SolidQueryDevtools', () => {
   })
 
   it('should forward "position" to the devtools instance', () => {
-    const setPosition = vi.spyOn(
-      TanstackQueryDevtools.prototype,
-      'setPosition',
-    )
+    const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
     const queryClient = new QueryClient()
 
-    render(() => (
-      <SolidQueryDevtools client={queryClient} position="left" />
-    ))
+    render(() => <SolidQueryDevtools client={queryClient} position="left" />)
 
     expect(setPosition).toHaveBeenCalledWith('left')
   })
