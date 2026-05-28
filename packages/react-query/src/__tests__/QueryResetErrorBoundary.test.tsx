@@ -483,6 +483,7 @@ describe('QueryErrorResetBoundary', () => {
       succeed = false
       shouldReset = true
 
+      fireEvent.click(rendered.getByText('retry'))
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
