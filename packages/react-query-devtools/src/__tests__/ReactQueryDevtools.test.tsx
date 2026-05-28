@@ -66,7 +66,9 @@ describe('ReactQueryDevtools', () => {
     const { ReactQueryDevtools } = await import('../ReactQueryDevtools')
     const queryClient = new QueryClient()
 
-    render(<ReactQueryDevtools client={queryClient} buttonPosition="top-left" />)
+    render(
+      <ReactQueryDevtools client={queryClient} buttonPosition="top-left" />,
+    )
 
     expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
   })
