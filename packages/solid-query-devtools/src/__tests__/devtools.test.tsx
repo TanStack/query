@@ -35,26 +35,97 @@ describe('SolidQueryDevtools', () => {
     ).not.toThrow()
   })
 
-  it('should forward "buttonPosition" to the devtools instance', () => {
-    const setButtonPosition = vi.spyOn(
+  it('should forward "initialIsOpen" to the devtools instance', () => {
+    const setInitialIsOpen = vi.spyOn(
       TanstackQueryDevtools.prototype,
-      'setButtonPosition',
+      'setInitialIsOpen',
     )
     const queryClient = new QueryClient()
 
     render(() => (
-      <SolidQueryDevtools client={queryClient} buttonPosition="top-left" />
+      <SolidQueryDevtools client={queryClient} initialIsOpen={true} />
     ))
 
-    expect(setButtonPosition).toHaveBeenCalledWith('top-left')
+    expect(setInitialIsOpen).toHaveBeenCalledWith(true)
   })
 
-  it('should forward "position" to the devtools instance', () => {
-    const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
+  it('should default "initialIsOpen" to "false" when the prop is omitted', () => {
+    const setInitialIsOpen = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setInitialIsOpen',
+    )
     const queryClient = new QueryClient()
 
-    render(() => <SolidQueryDevtools client={queryClient} position="left" />)
+    render(() => <SolidQueryDevtools client={queryClient} />)
 
-    expect(setPosition).toHaveBeenCalledWith('left')
+    expect(setInitialIsOpen).toHaveBeenCalledWith(false)
+  })
+
+  it('should forward "errorTypes" to the devtools instance', () => {
+    const setErrorTypes = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setErrorTypes',
+    )
+    const queryClient = new QueryClient()
+    const errorTypes = [
+      { name: 'Network', initializer: () => new Error('Network') },
+    ]
+
+    render(() => (
+      <SolidQueryDevtools client={queryClient} errorTypes={errorTypes} />
+    ))
+
+    expect(setErrorTypes).toHaveBeenCalledWith(errorTypes)
+  })
+
+  it('should default "errorTypes" to an empty array when the prop is omitted', () => {
+    const setErrorTypes = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setErrorTypes',
+    )
+    const queryClient = new QueryClient()
+
+    render(() => <SolidQueryDevtools client={queryClient} />)
+
+    expect(setErrorTypes).toHaveBeenCalledWith([])
+  })
+
+  it('should forward "theme" to the devtools instance', () => {
+    const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
+    const queryClient = new QueryClient()
+
+    render(() => <SolidQueryDevtools client={queryClient} theme="dark" />)
+
+    expect(setTheme).toHaveBeenCalledWith('dark')
+  })
+
+  it('should default "theme" to "system" when the prop is omitted', () => {
+    const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
+    const queryClient = new QueryClient()
+
+    render(() => <SolidQueryDevtools client={queryClient} />)
+
+    expect(setTheme).toHaveBeenCalledWith('system')
+  })
+
+  it('should forward the resolved "QueryClient" via "setClient"', () => {
+    const setClient = vi.spyOn(TanstackQueryDevtools.prototype, 'setClient')
+    const queryClient = new QueryClient()
+
+    render(() => <SolidQueryDevtools client={queryClient} />)
+
+    expect(setClient).toHaveBeenCalledWith(queryClient)
+  })
+
+  it('should call "unmount" on the devtools instance when the component unmounts', () => {
+    const unmount = vi.spyOn(TanstackQueryDevtools.prototype, 'unmount')
+    const queryClient = new QueryClient()
+
+    const { unmount: unmountComponent } = render(() => (
+      <SolidQueryDevtools client={queryClient} />
+    ))
+    unmountComponent()
+
+    expect(unmount).toHaveBeenCalled()
   })
 })
