@@ -35,6 +35,29 @@ describe('SolidQueryDevtools', () => {
     ).not.toThrow()
   })
 
+  it('should forward "buttonPosition" to the devtools instance', () => {
+    const setButtonPosition = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setButtonPosition',
+    )
+    const queryClient = new QueryClient()
+
+    render(() => (
+      <SolidQueryDevtools client={queryClient} buttonPosition="top-left" />
+    ))
+
+    expect(setButtonPosition).toHaveBeenCalledWith('top-left')
+  })
+
+  it('should forward "position" to the devtools instance', () => {
+    const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
+    const queryClient = new QueryClient()
+
+    render(() => <SolidQueryDevtools client={queryClient} position="left" />)
+
+    expect(setPosition).toHaveBeenCalledWith('left')
+  })
+
   it('should forward "initialIsOpen" to the devtools instance', () => {
     const setInitialIsOpen = vi.spyOn(
       TanstackQueryDevtools.prototype,
