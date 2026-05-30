@@ -533,6 +533,7 @@ export class Query<
     }
 
     // Try to fetch the data
+    let latestFailureRetryCount = 0
     this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>
@@ -548,6 +549,7 @@ export class Query<
         abortController.abort()
       },
       onFail: (failureCount, error) => {
+        latestFailureRetryCount = failureCount
         this.#dispatch({ type: 'failed', failureCount, error })
       },
       onPause: () => {
@@ -610,6 +612,7 @@ export class Query<
       this.#cache.config.onError?.(
         error as any,
         this as Query<any, any, any, any>,
+        { retryAttempt: latestFailureRetryCount },
       )
       this.#cache.config.onSettled?.(
         this.state.data,
