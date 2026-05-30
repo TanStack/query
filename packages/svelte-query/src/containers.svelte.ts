@@ -31,6 +31,12 @@ export function createRawRef<T extends {} | Array<unknown>>(
 ): [T, (newValue: T) => void] {
   const refObj = (Array.isArray(init) ? [] : {}) as T
   const hiddenKeys = new SvelteSet<PropertyKey>()
+  const isArrayIndex = (value: PropertyKey): value is `${number}` =>
+    typeof value === 'string' &&
+    value !== 'length' &&
+    Number.isInteger(Number(value)) &&
+    Number(value) >= 0
+
   const out = new Proxy(refObj, {
     set(target, prop, value, receiver) {
       hiddenKeys.delete(prop)
@@ -51,6 +57,12 @@ export function createRawRef<T extends {} | Array<unknown>>(
           state = v
         },
       })
+
+      if (Array.isArray(target) && isArrayIndex(prop)) {
+        const parsed = Number(prop)
+        target.length = Math.max(target.length, parsed + 1)
+      }
+
       return true
     },
     has: (target, prop) => {
@@ -75,7 +87,7 @@ export function createRawRef<T extends {} | Array<unknown>>(
         // If we just deleted it, the reactivity system wouldn't have any idea that the value was gone.
         target[prop] = undefined
         hiddenKeys.add(prop)
-        if (Array.isArray(target)) {
+        if (Array.isArray(target) && isArrayIndex(prop)) {
           target.length--
         }
         return true

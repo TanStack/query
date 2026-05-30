@@ -341,4 +341,38 @@ describe('createQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })
+
+  it(
+    'should activate query when started from an empty array',
+    withEffectRoot(async () => {
+      const key = queryKey()
+      const queryFn = () => sleep(10).then(() => 'ok')
+      let isActive = $state(false)
+
+      const result = createQueries(
+        () => ({
+          queries: isActive
+            ? [
+                {
+                  queryKey: key,
+                  queryFn,
+                },
+              ]
+            : [],
+        }),
+        () => queryClient,
+      )
+
+      expect(result.length).toBe(0)
+      isActive = true
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(result.length).toBe(1)
+      expect(result[0]).toMatchObject({ data: undefined })
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(result[0].data).toBe('ok')
+    }),
+  )
 })

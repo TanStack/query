@@ -198,6 +198,31 @@ describe('createRawRef', () => {
     expect(ref).toEqual([7, 8, 9])
   })
 
+  it('should update array length when replacing with longer arrays', () => {
+    const [ref, update] = createRawRef<number[]>([])
+
+    expect(ref.length).toBe(0)
+
+    update([1])
+    expect(ref).toEqual([1])
+    expect(ref.length).toBe(1)
+    expect(ref[0]).toBe(1)
+
+    update([2, 3])
+    expect(ref).toEqual([2, 3])
+    expect(ref.length).toBe(2)
+  })
+
+  it('should preserve array length when destructuring', () => {
+    const [ref, update] = createRawRef<number[]>([])
+
+    update([1])
+
+    const [first] = ref
+
+    expect(first).toBe(1)
+  })
+
   it('should behave like a regular object when not using `update`', () => {
     const [ref] = createRawRef<Record<string, unknown>>({ a: 1, b: 2 })
 
