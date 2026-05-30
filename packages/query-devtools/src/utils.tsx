@@ -306,6 +306,8 @@ export const deleteNestedDataByPath = (
 // Adds a nonce to the style tag if needed
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce) return
+  ;(window as { __nonce__?: string }).__nonce__ = nonce
+
   const styleExists =
     document.querySelector('#_goober') || target?.querySelector('#_goober')
 

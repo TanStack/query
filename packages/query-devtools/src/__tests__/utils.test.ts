@@ -982,6 +982,7 @@ describe('Utils tests', () => {
   describe('setupStyleSheet', () => {
     afterEach(() => {
       document.head.querySelector('#_goober')?.remove()
+      ;(window as { __nonce__?: string }).__nonce__ = undefined
     })
 
     it('should not insert any style tag when "nonce" is missing', () => {
@@ -1010,6 +1011,12 @@ describe('Utils tests', () => {
       expect(
         document.head.querySelector('#_goober')?.getAttribute('nonce'),
       ).toBe('test-nonce')
+    })
+
+    it('should set the global "__nonce__" on window', () => {
+      setupStyleSheet('test-nonce')
+
+      expect((window as { __nonce__?: string }).__nonce__).toBe('test-nonce')
     })
 
     it('should not insert a duplicate style tag when "document.head" already has one', () => {
