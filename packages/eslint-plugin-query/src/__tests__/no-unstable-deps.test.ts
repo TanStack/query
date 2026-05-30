@@ -276,6 +276,74 @@ const baseTestCases = {
             },
           ],
         },
+      ])
+      .concat([
+        {
+          name: `result of custom useMutation wrapper is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useMutation } from "@tanstack/react-query";
+
+            const useMyMutation = () =>
+              useMutation({ mutationFn: (value: string) => value });
+
+            function Component() {
+              const mutation = useMyMutation();
+              const callback = ${reactHookInvocation}(() => { mutation.mutate('hello') }, [mutation]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useMutation' },
+            },
+          ],
+        },
+        {
+          name: `result of custom useQuery wrapper is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            const useMyQuery = () =>
+              useQuery({ queryFn: (value: string) => value });
+
+            function Component() {
+              const query = useMyQuery();
+              const callback = ${reactHookInvocation}(() => { query.refetch() }, [query]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQuery' },
+            },
+          ],
+        },
+        {
+          name: `result of custom useQuery wrapper in useMemo is passed to dependency array`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            const useTodoQuery = (queryKeyValue: string) =>
+              useQuery({ queryKey: ['todo', queryKeyValue], queryFn: () => queryKeyValue });
+
+            function Component({ queryKeyValue }: { queryKeyValue: string }) {
+              const query = useTodoQuery(queryKeyValue);
+              const value = ${reactHookInvocation}(() => query.data, [query]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQuery' },
+            },
+          ],
+        },
       ]),
 }
 

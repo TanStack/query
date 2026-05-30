@@ -37,6 +37,15 @@ export const rule = createRule({
   create: detectTanstackQueryImports((context, _options, helpers) => {
     const trackedVariables: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
+    const trackedCustomHooks: Record<string, string> = {}
+    const pendingCustomHookAssignments: Array<{
+      id: TSESTree.BindingName
+      calleeName: string
+    }> = []
+    const reactHookDependencies: Array<{
+      node: TSESTree.Identifier
+      reactHook: string
+    }> = []
 
     function getReactHook(node: TSESTree.CallExpression): string | undefined {
       if (node.callee.type === 'Identifier') {
@@ -98,6 +107,71 @@ export const rule = createRule({
       )
     }
 
+    function getReturnedHookName(
+      expression: TSESTree.Expression,
+    ): string | undefined {
+      if (expression.type === AST_NODE_TYPES.ParenthesizedExpression) {
+        return getReturnedHookName(expression.expression)
+      }
+
+      if (expression.type !== AST_NODE_TYPES.CallExpression) {
+        return undefined
+      }
+
+      if (
+        expression.callee.type !== AST_NODE_TYPES.Identifier ||
+        !expression.callee.name.startsWith('use') ||
+        !helpers.isTanstackQueryImport(expression.callee)
+      ) {
+        return undefined
+      }
+
+      return expression.callee.name
+    }
+
+    function getFunctionReturnedHookName(
+      node:
+        | TSESTree.ArrowFunctionExpression
+        | TSESTree.FunctionDeclaration
+        | TSESTree.FunctionExpression,
+    ): string | undefined {
+      const returnedNode =
+        node.body.type === AST_NODE_TYPES.BlockStatement
+          ? node.body.body.find(
+              (statement) =>
+                statement.type === AST_NODE_TYPES.ReturnStatement &&
+                statement.argument !== null,
+            )?.argument
+          : node.body
+
+      if (!returnedNode) {
+        return undefined
+      }
+
+      return getReturnedHookName(returnedNode)
+    }
+
+    function resolveTrackedHook(
+      calleeName: string,
+      visited: Set<string> = new Set(),
+    ): string | undefined {
+      if (allHookNames.includes(calleeName)) {
+        return calleeName
+      }
+
+      if (visited.has(calleeName)) {
+        return undefined
+      }
+
+      const nestedHookName = trackedCustomHooks[calleeName]
+      if (!nestedHookName) {
+        return undefined
+      }
+
+      visited.add(calleeName)
+      return resolveTrackedHook(nestedHookName, visited)
+    }
+
     return {
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (
@@ -118,24 +192,65 @@ export const rule = createRule({
         }
       },
 
+      FunctionDeclaration(node: TSESTree.FunctionDeclaration) {
+        if (!node.id || node.id.type !== AST_NODE_TYPES.Identifier) {
+          return
+        }
+
+        const returnedHookName = getFunctionReturnedHookName(node)
+        if (!returnedHookName) {
+          return
+        }
+
+        trackedCustomHooks[node.id.name] = returnedHookName
+      },
+
       VariableDeclarator(node) {
         if (
+          node.id.type === AST_NODE_TYPES.Identifier &&
+          node.id.name.startsWith('use') &&
           node.init !== null &&
-          node.init.type === AST_NODE_TYPES.CallExpression &&
-          node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          allHookNames.includes(node.init.callee.name) &&
-          helpers.isTanstackQueryImport(node.init.callee)
+          (node.init.type === AST_NODE_TYPES.FunctionExpression ||
+            node.init.type === AST_NODE_TYPES.ArrowFunctionExpression)
         ) {
-          // Special case for useQueries/useSuspenseQueries with combine property - it's stable
-          if (
-            (node.init.callee.name === 'useQueries' ||
-              node.init.callee.name === 'useSuspenseQueries') &&
-            hasCombineProperty(node.init)
-          ) {
-            // Don't track useQueries/useSuspenseQueries with combine as unstable
+          const returnedHookName = getFunctionReturnedHookName(node.init)
+          if (!returnedHookName) {
             return
           }
-          collectVariableNames(node.id, node.init.callee.name)
+
+          trackedCustomHooks[node.id.name] = returnedHookName
+        }
+
+        if (
+          node.init?.type !== AST_NODE_TYPES.CallExpression ||
+          node.init.callee.type !== AST_NODE_TYPES.Identifier ||
+          !node.init.callee.name.startsWith('use')
+        ) {
+          return
+        }
+
+        const calleeName = node.init.callee.name
+        const resolvedQueryHook = resolveTrackedHook(calleeName)
+
+        if (allHookNames.includes(calleeName)) {
+          if (!helpers.isTanstackQueryImport(node.init.callee)) {
+            return
+          }
+
+          if (
+            (calleeName === 'useQueries' ||
+              calleeName === 'useSuspenseQueries') &&
+            hasCombineProperty(node.init)
+          ) {
+            return
+          }
+
+          collectVariableNames(node.id, calleeName)
+          return
+        }
+
+        if (resolvedQueryHook) {
+          pendingCustomHookAssignments.push({ id: node.id, calleeName })
         }
       },
       CallExpression: (node) => {
@@ -147,23 +262,39 @@ export const rule = createRule({
         ) {
           const depsArray = node.arguments[1].elements
           depsArray.forEach((dep) => {
-            if (
-              dep !== null &&
-              dep.type === AST_NODE_TYPES.Identifier &&
-              trackedVariables[dep.name] !== undefined
-            ) {
-              const queryHook = trackedVariables[dep.name]
-              context.report({
-                node: dep,
-                messageId: 'noUnstableDeps',
-                data: {
-                  queryHook,
-                  reactHook,
-                },
-              })
+            if (dep !== null && dep.type === AST_NODE_TYPES.Identifier) {
+              reactHookDependencies.push({ node: dep, reactHook })
             }
           })
         }
+      },
+
+      'Program:exit'() {
+        pendingCustomHookAssignments.forEach(({ id, calleeName }) => {
+          const queryHook = resolveTrackedHook(calleeName)
+          if (!queryHook) {
+            return
+          }
+
+          collectVariableNames(id, queryHook)
+        })
+
+        reactHookDependencies.forEach(({ node, reactHook }) => {
+          const queryHook = trackedVariables[node.name]
+
+          if (!queryHook) {
+            return
+          }
+
+          context.report({
+            node,
+            messageId: 'noUnstableDeps',
+            data: {
+              queryHook,
+              reactHook,
+            },
+          })
+        })
       },
     }
   }),
