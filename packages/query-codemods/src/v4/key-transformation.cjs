@@ -145,7 +145,17 @@ module.exports = (file, api) => {
   const jscodeshift = api.jscodeshift
   const root = jscodeshift(file.source)
 
-  // TODO: Execute the transformers only when it contains a `react-query` import!
+  const hasReactQueryImport = root
+    .find(jscodeshift.ImportDeclaration, {
+      source: {
+        value: 'react-query',
+      },
+    })
+    .paths().length
+
+  if (!hasReactQueryImport) {
+    return file.source
+  }
 
   const utils = createUtilsObject({ root, jscodeshift })
   const filePath = file.path

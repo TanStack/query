@@ -35,3 +35,7 @@ defineTest(
 defineTest(__dirname, 'key-transformation.cjs', null, 'type-arguments', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'key-transformation.cjs', null, 'no-react-query-import', {
+  parser: 'tsx',
+})
