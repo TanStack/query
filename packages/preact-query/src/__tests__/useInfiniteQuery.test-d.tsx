@@ -61,9 +61,8 @@ describe('select', () => {
       getNextPageParam: () => undefined,
     })
 
-    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-      InfiniteData<number, unknown> | undefined
+      InfiniteData<number, number> | undefined
     >()
   })
 
@@ -113,9 +112,8 @@ describe('getNextPageParam / getPreviousPageParam', () => {
       },
     })
 
-    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-      InfiniteData<string, unknown> | undefined
+      InfiniteData<string, number> | undefined
     >()
   })
 })

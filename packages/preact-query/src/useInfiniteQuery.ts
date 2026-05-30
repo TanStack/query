@@ -18,6 +18,19 @@ import type {
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+type IsUnknown<T> = unknown extends T
+  ? [T] extends [never]
+    ? false
+    : true
+  : false
+
+type ResolvePageParamData<TQueryFnData, TData, TPageParam> =
+  TData extends InfiniteData<TQueryFnData, infer TDataPageParam>
+    ? IsUnknown<TDataPageParam> extends true
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+    : TData
+
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -33,7 +46,10 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<
+  ResolvePageParamData<TQueryFnData, TData, TPageParam>,
+  TError
+>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -50,7 +66,10 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<
+  ResolvePageParamData<TQueryFnData, TData, TPageParam>,
+  TError
+>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -67,7 +86,10 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<
+  ResolvePageParamData<TQueryFnData, TData, TPageParam>,
+  TError
+>
 
 export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,
