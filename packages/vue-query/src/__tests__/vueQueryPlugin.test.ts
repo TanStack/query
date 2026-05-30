@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
+import { environmentManager } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
@@ -194,6 +195,21 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client', () => {
+    it('should not call mount when running on server', () => {
+      const appMock = getAppMock()
+      const customClient = { mount: vi.fn() } as unknown as QueryClient
+      const previousIsServer = environmentManager.isServer()
+
+      environmentManager.setIsServer(() => true)
+
+      try {
+        VueQueryPlugin.install(appMock, { queryClient: customClient })
+        expect(customClient.mount).toHaveBeenCalledTimes(0)
+      } finally {
+        environmentManager.setIsServer(() => previousIsServer)
+      }
+    })
+
     itIf(isVue2)('should provide that custom client', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
