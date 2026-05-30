@@ -982,6 +982,7 @@ describe('Utils tests', () => {
   describe('setupStyleSheet', () => {
     afterEach(() => {
       document.head.querySelector('#_goober')?.remove()
+      delete (window as Window & { __nonce__?: string }).__nonce__
     })
 
     it('should not insert any style tag when "nonce" is missing', () => {
@@ -1002,6 +1003,14 @@ describe('Utils tests', () => {
       const styleTag = document.head.querySelector('#_goober')
       expect(styleTag).not.toBeNull()
       expect(styleTag?.tagName).toBe('STYLE')
+    })
+
+    it('should set "window.__nonce__" from the provided nonce', () => {
+      setupStyleSheet('test-nonce')
+
+      expect(
+        (window as Window & { __nonce__?: string }).__nonce__,
+      ).toBe('test-nonce')
     })
 
     it('should set the "nonce" attribute on the inserted style tag', () => {
