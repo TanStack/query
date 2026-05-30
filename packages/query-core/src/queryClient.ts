@@ -44,6 +44,13 @@ import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
 
+type FilteredQueryData<
+  TQueryFilters extends QueryFilters<any>,
+  TQueryFnData = unknown,
+> = TQueryFilters extends QueryFilters<infer TTaggedQueryKey>
+  ? InferDataFromTag<TQueryFnData, TTaggedQueryKey>
+  : TQueryFnData
+
 interface QueryDefaults {
   queryKey: QueryKey
   defaultOptions: OmitKeyof<QueryOptions<any, any, any>, 'queryKey'>
@@ -161,6 +168,10 @@ export class QueryClient {
     return Promise.resolve(cachedData)
   }
 
+  getQueriesData<TQueryFilters extends QueryFilters<any>>(
+    filters: TQueryFilters,
+  ): Array<[QueryKey, FilteredQueryData<TQueryFilters> | undefined]>
+
   getQueriesData<
     TQueryFnData = unknown,
     TQueryFilters extends QueryFilters<any> = QueryFilters,
@@ -206,8 +217,17 @@ export class QueryClient {
       .setData(data, { ...options, manual: true })
   }
 
+  setQueriesData<TQueryFilters extends QueryFilters<any>>(
+    filters: TQueryFilters,
+    updater: Updater<
+      NoInfer<FilteredQueryData<TQueryFilters>> | undefined,
+      NoInfer<FilteredQueryData<TQueryFilters>> | undefined
+    >,
+    options?: SetDataOptions,
+  ): Array<[QueryKey, FilteredQueryData<TQueryFilters> | undefined]>
+
   setQueriesData<
-    TQueryFnData,
+    TQueryFnData = unknown,
     TQueryFilters extends QueryFilters<any> = QueryFilters,
   >(
     filters: TQueryFilters,
