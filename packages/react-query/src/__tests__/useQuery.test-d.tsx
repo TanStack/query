@@ -6,6 +6,7 @@ import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
   const key = queryKey()
+  type Post = { title: string }
 
   // unspecified query function should default to unknown
   const noQueryFn = useQuery({ queryKey: key })
@@ -55,6 +56,29 @@ describe('useQuery', () => {
   // should error when the query function result does not match with the specified type
   // @ts-expect-error
   useQuery<number>({ queryKey: key, queryFn: () => 'test' })
+
+  // should error when specifying TData that does not match queryFn data and no select transform is used
+  // @ts-expect-error
+  useQuery<Post[], Error, number, string[]>({
+    queryKey: ['posts'],
+    queryFn: () =>
+      Promise.resolve([
+        {
+          title: 'Post',
+        } as Post,
+      ]),
+  })
+
+  useQuery<Post[], Error, number, string[]>({
+    queryKey: ['posts'],
+    queryFn: () =>
+      Promise.resolve([
+        {
+          title: 'Post',
+        } as Post,
+      ]),
+    select: (posts) => posts.length,
+  })
 
   // it should infer the result type from a generic query function
   function queryFn<T = string>(): Promise<T> {
