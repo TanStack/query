@@ -121,6 +121,23 @@ describe('SolidQueryDevtoolsPanel', () => {
     expect(setClient).toHaveBeenCalledWith(queryClient)
   })
 
+  it('should preserve the default container height when "style" omits "height"', () => {
+    const queryClient = new QueryClient()
+
+    const { container } = render(() => (
+      <SolidQueryDevtoolsPanel
+        client={queryClient}
+        style={{ width: '300px' }}
+      />
+    ))
+    const panel = container.querySelector(
+      '.tsqd-parent-container',
+    ) as HTMLElement
+
+    expect(panel.style.height).toBe('500px')
+    expect(panel.style.width).toBe('300px')
+  })
+
   it('should let "style" override the default container height on the rendered element', () => {
     const queryClient = new QueryClient()
 
