@@ -92,10 +92,7 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should forward "theme" to the devtools instance', () => {
-    const setTheme = vi.spyOn(
-      TanstackQueryDevtoolsPanel.prototype,
-      'setTheme',
-    )
+    const setTheme = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'setTheme')
     const queryClient = new QueryClient()
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} theme="dark" />)
@@ -104,10 +101,7 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should default "theme" to "system" when the prop is omitted', () => {
-    const setTheme = vi.spyOn(
-      TanstackQueryDevtoolsPanel.prototype,
-      'setTheme',
-    )
+    const setTheme = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'setTheme')
     const queryClient = new QueryClient()
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
@@ -128,10 +122,7 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
-    const unmount = vi.spyOn(
-      TanstackQueryDevtoolsPanel.prototype,
-      'unmount',
-    )
+    const unmount = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'unmount')
     const queryClient = new QueryClient()
 
     const { unmount: unmountComponent } = render(() => (
