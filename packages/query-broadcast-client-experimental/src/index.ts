@@ -58,6 +58,7 @@ export function broadcastQueryClient({
         type: 'added',
         queryHash,
         queryKey,
+        state,
       })
     }
   })
@@ -92,6 +93,9 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
+          if (!state) {
+            return
+          }
           query.setState(state)
           return
         }
