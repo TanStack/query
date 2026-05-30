@@ -293,7 +293,7 @@ describe('fully typed usage', () => {
     >()
     expectTypeOf(queryData3).toEqualTypeOf<TData | undefined>()
 
-    const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' }) // TODO: types here are wrong and coming up undefined
+    const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' })
     type SetQueriesDataUpdaterArg = Parameters<
       typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
@@ -301,7 +301,7 @@ describe('fully typed usage', () => {
     expectTypeOf<SetQueriesDataUpdaterArg>().toEqualTypeOf<
       Updater<unknown, unknown>
     >()
-    expectTypeOf(queriesData2).toEqualTypeOf<Array<[QueryKey, unknown]>>()
+    expectTypeOf(queriesData2).toEqualTypeOf<Array<[QueryKey, TData | undefined]>>()
 
     const queryState = queryClient.getQueryState(filterKey)
     expectTypeOf(queryState).toEqualTypeOf<
@@ -432,7 +432,7 @@ describe('fully typed usage', () => {
     >()
     expectTypeOf(queryData3).toEqualTypeOf<unknown>()
 
-    const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' }) // TODO: types here are wrong and coming up undefined
+    const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' })
     type SetQueriesDataUpdaterArg = Parameters<
       typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]

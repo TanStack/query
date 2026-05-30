@@ -54,6 +54,11 @@ interface MutationDefaults {
   defaultOptions: MutationOptions<any, any, any, any>
 }
 
+type QueryDataForFilters<TQueryFilters extends QueryFilters> =
+  TQueryFilters extends QueryFilters<infer TQueryKey>
+    ? InferDataFromTag<unknown, TQueryKey>
+    : unknown
+
 // CLASS
 
 export class QueryClient {
@@ -206,6 +211,27 @@ export class QueryClient {
       .setData(data, { ...options, manual: true })
   }
 
+  setQueriesData<TQueryFilters extends QueryFilters<any>>(
+    filters: TQueryFilters,
+    updater: Updater<
+      NoInfer<QueryDataForFilters<TQueryFilters>> | undefined,
+      NoInfer<QueryDataForFilters<TQueryFilters>> | undefined
+    >,
+    options?: SetDataOptions,
+  ): Array<
+    [QueryKey, QueryDataForFilters<TQueryFilters> | undefined]
+  >
+  setQueriesData<
+    TQueryFnData,
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
+  >(
+    filters: TQueryFilters,
+    updater: Updater<
+      NoInfer<TQueryFnData> | undefined,
+      NoInfer<TQueryFnData> | undefined
+    >,
+    options?: SetDataOptions,
+  ): Array<[QueryKey, TQueryFnData | undefined]>
   setQueriesData<
     TQueryFnData,
     TQueryFilters extends QueryFilters<any> = QueryFilters,
