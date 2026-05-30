@@ -68,10 +68,10 @@ export function createBaseQuery<
         const result = originalQueryFn(context)
 
         if (result && typeof result.then === 'function') {
-          const pendingTaskRef = pendingTasks.add()
+          const complete = markPendingQueryFnTask()
           void result.then(
-            () => pendingTaskRef(),
-            () => pendingTaskRef(),
+            complete,
+            complete,
           )
         }
 
@@ -81,6 +81,19 @@ export function createBaseQuery<
 
     return defaultedOptions
   })
+
+  const pendingTaskRefsFromQueryFn = new Set<PendingTaskRef>()
+
+  const markPendingQueryFnTask = () => {
+    const pendingTaskRef = pendingTasks.add()
+    const done = () => {
+      if (pendingTaskRefsFromQueryFn.delete(done)) {
+        pendingTaskRef()
+      }
+    }
+    pendingTaskRefsFromQueryFn.add(done)
+    return done
+  }
 
   const observerSignal = (() => {
     let instance: QueryObserver<
@@ -172,6 +185,10 @@ export function createBaseQuery<
         pendingTaskRef()
         pendingTaskRef = null
       }
+      for (const pendingTaskRefFromQueryFn of pendingTaskRefsFromQueryFn) {
+        pendingTaskRefFromQueryFn()
+      }
+      pendingTaskRefsFromQueryFn.clear()
       unsubscribe()
     })
   })

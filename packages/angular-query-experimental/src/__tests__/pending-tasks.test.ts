@@ -297,6 +297,18 @@ describe('PendingTasks Integration', () => {
       }))
     }
 
+    @Component({
+      template: `{{ data()?.title }}`,
+    })
+    class NeverResolvesComponent {
+      query = injectQuery(() => ({
+        queryKey: ['never-resolve-query'],
+        queryFn: () => new Promise<{ title: string }>(() => {}),
+      }))
+
+      data = this.query.data
+    }
+
     it('should cleanup pending tasks when component with active query is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
@@ -312,6 +324,28 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(150)
 
       await expect(stablePromise).resolves.toEqual(undefined)
+    })
+
+    it('should cleanup query promise pending task when component with unresolved query is destroyed', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      const fixture = TestBed.createComponent(NeverResolvesComponent)
+
+      fixture.detectChanges()
+
+      const stableResult = app.whenStable().then(() => true)
+
+      fixture.destroy()
+
+      const timeoutResult = new Promise<boolean>((resolve) => {
+        setTimeout(() => {
+          resolve(false)
+        }, 10)
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      const isStableResolved = await Promise.race([stableResult, timeoutResult])
+      expect(isStableResolved).toBe(true)
     })
 
     it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
