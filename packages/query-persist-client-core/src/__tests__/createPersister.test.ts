@@ -309,6 +309,26 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
 
+  it('should restore persisted undefined data from storage', async () => {
+    const storage = getFreshStorage()
+    const { context, persister, query, queryFn } = setupPersister(['foo'], {
+      storage,
+      refetchOnRestore: false,
+    })
+
+    query.setData(undefined)
+    await persister.persistQuery(query)
+
+    query.fetch = vi.fn()
+    await persister.persisterFn(queryFn, context, query)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(query.fetch).toHaveBeenCalledTimes(0)
+    expect(query.state.data).toBe(undefined)
+  })
+
   it('should store item after successful fetch', async () => {
     const storage = getFreshStorage()
     const {

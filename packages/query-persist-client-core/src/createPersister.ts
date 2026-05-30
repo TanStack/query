@@ -13,6 +13,10 @@ import type {
   QueryState,
 } from '@tanstack/query-core'
 
+type PersistedResult<T> = {
+  data: T
+}
+
 export interface PersistedQuery {
   buster: string
   queryHash: string
@@ -125,7 +129,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   async function retrieveQuery<T>(
     queryHash: string,
     afterRestoreMacroTask?: (persistedQuery: PersistedQuery) => void,
-  ) {
+  ): Promise<PersistedResult<T> | undefined> {
     if (storage != null) {
       const storageKey = `${prefix}-${queryHash}`
       try {
@@ -149,7 +153,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
               )
             }
             // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
-            return persistedQuery.state.data as T
+            return { data: persistedQuery.state.data as T }
           }
         }
       } catch (err) {
@@ -209,7 +213,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
     if (matchesFilter && query.state.data === undefined && storage != null) {
-      const restoredData = await retrieveQuery(
+      const restoredData = await retrieveQuery<T>(
         query.queryHash,
         (persistedQuery: PersistedQuery) => {
           // Set proper updatedAt, since resolving in the first pass overrides those values
@@ -228,7 +232,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       )
 
       if (restoredData !== undefined) {
-        return Promise.resolve(restoredData as T)
+        return Promise.resolve(restoredData.data)
       }
     }
 
