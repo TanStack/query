@@ -31,11 +31,28 @@ export function createRawRef<T extends {} | Array<unknown>>(
 ): [T, (newValue: T) => void] {
   const refObj = (Array.isArray(init) ? [] : {}) as T
   const hiddenKeys = new SvelteSet<PropertyKey>()
-  const isArrayIndex = (value: PropertyKey): value is `${number}` =>
-    typeof value === 'string' &&
-    value !== 'length' &&
-    Number.isInteger(Number(value)) &&
-    Number(value) >= 0
+  const isArrayIndex = (value: PropertyKey): value is `${number}` => {
+    if (typeof value !== 'string' || value === 'length') {
+      return false
+    }
+
+    const index = Number(value)
+    return Number.isInteger(index) && index >= 0 && String(index) === value
+  }
+
+  const syncLengthFromVisibleIndexes = (target: Array<unknown>) => {
+    const visibleIndexes = Object.keys(target).filter(
+      (key) => isArrayIndex(key) && !hiddenKeys.has(key),
+    )
+
+    if (visibleIndexes.length === 0) {
+      target.length = 0
+      return
+    }
+
+    const maxIndex = visibleIndexes.reduce((max, key) => Math.max(max, Number(key)), -1)
+    target.length = maxIndex + 1
+  }
 
   const out = new Proxy(refObj, {
     set(target, prop, value, receiver) {
@@ -88,7 +105,7 @@ export function createRawRef<T extends {} | Array<unknown>>(
         target[prop] = undefined
         hiddenKeys.add(prop)
         if (Array.isArray(target) && isArrayIndex(prop)) {
-          target.length--
+          syncLengthFromVisibleIndexes(target)
         }
         return true
       }

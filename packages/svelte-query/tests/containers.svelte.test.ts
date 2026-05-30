@@ -223,6 +223,26 @@ describe('createRawRef', () => {
     expect(first).toBe(1)
   })
 
+  it('should preserve array length when multiple trailing elements are removed', () => {
+    const [ref, update] = createRawRef<number[]>([1, 2, 3, 4])
+
+    update([1])
+
+    expect(ref).toEqual([1])
+    expect(ref.length).toBe(1)
+  })
+
+  it('should ignore non-canonical array index keys', () => {
+    const [ref] = createRawRef<number[]>([])
+
+    // @ts-expect-error
+    ref['1e3'] = 1000
+
+    expect(ref.length).toBe(0)
+    // @ts-expect-error
+    expect(ref['1e3']).toBe(1000)
+  })
+
   it('should behave like a regular object when not using `update`', () => {
     const [ref] = createRawRef<Record<string, unknown>>({ a: 1, b: 2 })
 
