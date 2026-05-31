@@ -17,6 +17,7 @@ permissions:
 jobs:
   release:
     name: Release
+    if: github.repository_owner == 'TanStack'
     runs-on: ubuntu-latest
     permissions:
       contents: write
