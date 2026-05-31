@@ -130,12 +130,11 @@ describe('SolidQueryDevtoolsPanel', () => {
         style={{ width: '300px' }}
       />
     ))
-    const panel = container.querySelector(
-      '.tsqd-parent-container',
-    ) as HTMLElement
 
-    expect(panel.style.height).toBe('500px')
-    expect(panel.style.width).toBe('300px')
+    expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
+      height: '500px',
+      width: '300px',
+    })
   })
 
   it('should let "style" override the default container height on the rendered element', () => {
@@ -147,12 +146,11 @@ describe('SolidQueryDevtoolsPanel', () => {
         style={{ width: '300px', height: '300px' }}
       />
     ))
-    const panel = container.querySelector(
-      '.tsqd-parent-container',
-    ) as HTMLElement
 
-    expect(panel.style.height).toBe('300px')
-    expect(panel.style.width).toBe('300px')
+    expect(container.querySelector('.tsqd-parent-container')).toHaveStyle({
+      height: '300px',
+      width: '300px',
+    })
   })
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
