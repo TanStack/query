@@ -107,9 +107,7 @@ describe('PreactQueryDevtools', () => {
       { name: 'Network', initializer: () => new Error('Network') },
     ]
 
-    render(
-      <PreactQueryDevtools client={queryClient} errorTypes={errorTypes} />,
-    )
+    render(<PreactQueryDevtools client={queryClient} errorTypes={errorTypes} />)
 
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })

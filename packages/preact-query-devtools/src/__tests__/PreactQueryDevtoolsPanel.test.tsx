@@ -69,9 +69,7 @@ describe('PreactQueryDevtoolsPanel', () => {
     const queryClient = new QueryClient()
     const onClose = vi.fn()
 
-    render(
-      <PreactQueryDevtoolsPanel client={queryClient} onClose={onClose} />,
-    )
+    render(<PreactQueryDevtoolsPanel client={queryClient} onClose={onClose} />)
 
     expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
   })
@@ -95,10 +93,7 @@ describe('PreactQueryDevtoolsPanel', () => {
     ]
 
     render(
-      <PreactQueryDevtoolsPanel
-        client={queryClient}
-        errorTypes={errorTypes}
-      />,
+      <PreactQueryDevtoolsPanel client={queryClient} errorTypes={errorTypes} />,
     )
 
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
@@ -139,9 +134,7 @@ describe('PreactQueryDevtoolsPanel', () => {
       await import('../PreactQueryDevtoolsPanel')
     const queryClient = new QueryClient()
 
-    render(
-      <PreactQueryDevtoolsPanel client={queryClient} styleNonce="abc" />,
-    )
+    render(<PreactQueryDevtoolsPanel client={queryClient} styleNonce="abc" />)
 
     expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
       expect.objectContaining({ styleNonce: 'abc' }),
