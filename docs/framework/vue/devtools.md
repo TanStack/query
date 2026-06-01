@@ -88,7 +88,7 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
 
-Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+Place the following code as high in your Vue app as you can. The closer it is to the root of the page, the better it will work!
 
 ```vue
 <script setup>
