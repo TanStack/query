@@ -92,17 +92,20 @@ Place the following code as high in your Vue app as you can. The closer it is to
 
 ```vue
 <script setup>
+import { ref } from 'vue'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
-const isDevtoolsOpen = ref(false)
+const isOpen = ref(false)
 function toggleDevtools() {
-  isDevtoolsOpen.value = !isDevtoolsOpen.value
+  isOpen.value = !isOpen.value
 }
 </script>
 
 <template>
   <h1>The app!</h1>
-  <button @click="toggleDevtools">Open Devtools</button>
-  <VueQueryDevtoolsPanel v-if="isDevtoolsOpen" :onClose="toggleDevtools" />
+  <button @click="toggleDevtools">
+    {{ isOpen ? 'Close' : 'Open' }} the devtools panel
+  </button>
+  <VueQueryDevtoolsPanel v-if="isOpen" :onClose="toggleDevtools" />
 </template>
 ```
 
