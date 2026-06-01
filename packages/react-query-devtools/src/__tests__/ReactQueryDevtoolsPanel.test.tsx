@@ -69,9 +69,7 @@ describe('ReactQueryDevtoolsPanel', () => {
     const queryClient = new QueryClient()
     const onClose = vi.fn()
 
-    render(
-      <ReactQueryDevtoolsPanel client={queryClient} onClose={onClose} />,
-    )
+    render(<ReactQueryDevtoolsPanel client={queryClient} onClose={onClose} />)
 
     expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
   })
@@ -95,10 +93,7 @@ describe('ReactQueryDevtoolsPanel', () => {
     ]
 
     render(
-      <ReactQueryDevtoolsPanel
-        client={queryClient}
-        errorTypes={errorTypes}
-      />,
+      <ReactQueryDevtoolsPanel client={queryClient} errorTypes={errorTypes} />,
     )
 
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
