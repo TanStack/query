@@ -1,5 +1,14 @@
 # @tanstack/vue-query
 
+## 5.101.0
+
+### Patch Changes
+
+- [#10826](https://github.com/TanStack/query/pull/10826) [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8) - Replace deprecated isServer with environmentManager.isServer()
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
 ## 5.100.14
 
 ### Patch Changes
