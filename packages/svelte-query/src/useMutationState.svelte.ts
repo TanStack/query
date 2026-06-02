@@ -6,18 +6,7 @@ import type {
   MutationState,
   QueryClient,
 } from '@tanstack/query-core'
-import type { MutationStateOptions } from './types.js'
-
-type MutationTypeFromResult<TResult> = [TResult] extends [
-  MutationState<
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TOnMutateResult
-  >,
-]
-  ? Mutation<TData, TError, TVariables, TOnMutateResult>
-  : Mutation
+import type { MutationStateOptions, MutationTypeFromResult } from './types.js'
 
 function getResult<
   TResult = MutationState,
