@@ -30,7 +30,7 @@ function useWaitQuery(props: { wait: number }) {
     },
   })
 
-  return [query.data as string, query] as const
+  return [query.data, query] as const
 }
 
 function MyComponent(props: { wait: number }) {
