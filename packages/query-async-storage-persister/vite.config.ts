@@ -19,7 +19,7 @@ export default defineConfig({
     dir: './src',
     watch: false,
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
       exclude: ['src/__tests__/**'],

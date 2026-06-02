@@ -25,10 +25,7 @@ describe("useQuery's in Suspense mode with transitions", () => {
     function Suspended() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return true
-        },
+        queryFn: () => sleep(10).then(() => true),
       }))
       return <Show when={state.data}>Message</Show>
     }

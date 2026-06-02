@@ -1,12 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
-import { queryKey } from '@tanstack/query-test-utils'
-import { waitFor } from '@testing-library/react'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   QueryClientProvider,
@@ -18,26 +17,26 @@ import {
 import { QueryCache } from '../index'
 
 describe('useQuery().promise', { timeout: 10_000 }, () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-  })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
-  beforeAll(() => {
+  beforeEach(() => {
     vi.useFakeTimers({
       shouldAdvanceTime: true,
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'],
     })
-    queryClient.setDefaultOptions({
-      queries: { experimental_prefetchInRender: true },
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: {
+        queries: { experimental_prefetchInRender: true },
+      },
     })
   })
 
-  afterAll(() => {
+  afterEach(() => {
     vi.useRealTimers()
-    queryClient.setDefaultOptions({
-      queries: { experimental_prefetchInRender: false },
-    })
+    queryClient.clear()
   })
 
   it('should work with a basic test', async () => {
@@ -60,10 +59,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       useTrackRenders()
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       return (
@@ -107,7 +103,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
         queryKey: key,
         queryFn: async () => {
           callCount++
-          await vi.advanceTimersByTimeAsync(1)
+          await sleep(10)
           return 'test'
         },
         staleTime: 1000,
@@ -161,7 +157,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
         queryKey: key,
         queryFn: async () => {
           callCount++
-          await vi.advanceTimersByTimeAsync(1)
+          await sleep(10)
           return 'test'
         },
         staleTime: 1000,
@@ -238,10 +234,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       useTrackRenders()
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
         initialData: 'initial',
       })
 
@@ -274,10 +267,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should not fetch with initial data and staleTime', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(1)
-      return 'test'
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
@@ -339,10 +331,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
         placeholderData: 'placeholder',
       })
       useTrackRenders()
@@ -392,10 +381,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [...key, count],
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return 'test-' + count
-        },
+        queryFn: () => sleep(10).then(() => 'test-' + count),
         placeholderData: keepPreviousData,
       })
 
@@ -461,10 +447,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return { name: 'test' }
-        },
+        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
         select: (data) => data.name,
       })
 
@@ -517,7 +500,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
+          await sleep(10)
           if (++queryCount > 1) {
             // second time this query mounts, it should not throw
             return 'data'
@@ -598,10 +581,8 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function MyComponent() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          throw new Error('Error test')
-        },
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Error test'))),
         retry: false,
       })
       const data = React.use(query.promise)
@@ -656,10 +637,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return 'test1'
-        },
+        queryFn: () => sleep(10).then(() => 'test1'),
       })
 
       useTrackRenders()
@@ -700,10 +678,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should dedupe when re-fetched with queryClient.fetchQuery while suspending', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(10)
-      return 'test'
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     const options = {
       queryKey: key,
@@ -757,10 +734,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     const key = queryKey()
     let count = 0
     const renderStream = createRenderStream({ snapshotDOM: true })
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(10)
-      return 'test' + count++
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test' + count++))
 
     const options = {
       queryKey: key,
@@ -817,7 +793,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     const key = queryKey()
     let count = 0
     const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(10)
+      await sleep(10)
       return 'test' + count++
     })
 
@@ -891,10 +867,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should resolve to previous data when canceled with cancelQueries while suspending', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(10)
-      return 'test'
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     const options = {
       queryKey: key,
@@ -954,10 +929,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
 
     const options = (count: number) => ({
       queryKey: [...key, count],
-      queryFn: async () => {
-        await vi.advanceTimersByTimeAsync(10)
-        return 'test' + count
-      },
+      queryFn: () => sleep(10).then(() => 'test' + count),
     })
 
     function MyComponent(props: { promise: Promise<string> }) {
@@ -1010,10 +982,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     queryClient.setQueryData(key, 'initial')
 
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(1)
-      return 'test'
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
@@ -1072,10 +1043,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(10)
-          return 'test' + count
-        },
+        queryFn: () => sleep(10).then(() => 'test' + count),
         staleTime: Infinity,
       })
 
@@ -1152,10 +1120,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(10)
-          return 'test' + count
-        },
+        queryFn: () => sleep(10).then(() => 'test' + count),
         staleTime: Infinity,
       })
 
@@ -1228,10 +1193,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(10)
-          return 'test' + count + modifier
-        },
+        queryFn: () => sleep(10).then(() => 'test' + count + modifier),
       })
 
       return (
@@ -1291,24 +1253,16 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     modifier = 'new'
 
     rendered.getByText('dec').click()
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test3' })
-    }
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test2new')).toBeInTheDocument()
 
     rendered.getByText('dec').click()
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test3' })
-    }
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test1new')).toBeInTheDocument()
 
     rendered.getByText('dec').click()
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test0' })
-    }
-
-    await waitFor(() => rendered.getByText('test0new'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test0new')).toBeInTheDocument()
   })
 
   it('should not suspend indefinitely with multiple, nested observers)', async () => {
@@ -1326,10 +1280,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       return useQuery({
         staleTime: Infinity,
         queryKey: [key, input],
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return input + ' response'
-        },
+        queryFn: () => sleep(10).then(() => input + ' response'),
       })
     }
 
@@ -1400,10 +1351,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       useTrackRenders()
       const query = useInfiniteQuery({
         queryKey: key,
-        queryFn: async () => {
-          await vi.advanceTimersByTimeAsync(1)
-          return { nextCursor: 1, data: 'test' }
-        },
+        queryFn: () => sleep(10).then(() => ({ nextCursor: 1, data: 'test' })),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       })
@@ -1446,7 +1394,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       const query = useInfiniteQuery({
         queryKey: key,
         queryFn: async ({ pageParam = 0 }) => {
-          await vi.advanceTimersByTimeAsync(1)
+          await sleep(10)
           if (pageParam === 0) {
             return { nextCursor: 1, data: 'page-1' }
           }
@@ -1494,13 +1442,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     }
 
     rendered.getByText('fetchNext').click()
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(11)
 
-    await waitFor(() => {
-      expect(
-        rendered.getByText('isFetchNextPageError:true'),
-      ).toBeInTheDocument()
-    })
+    expect(rendered.getByText('isFetchNextPageError:true')).toBeInTheDocument()
 
     expect(rendered.queryByText('error boundary')).toBeNull()
   })

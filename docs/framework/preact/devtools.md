@@ -70,18 +70,68 @@ function App() {
 
 - `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open
-- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
-  - The position of the Preact Query logo to open and close the devtools panel
+  - The position of the TanStack logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the Preact Query devtools panel
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
+
+## Embedded Mode
+
+Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
+
+Place the following code as high in your Preact app as you can. The closer it is to the root of the page, the better it will work!
+
+```tsx
+import { useState } from 'preact/hooks'
+import { PreactQueryDevtoolsPanel } from '@tanstack/preact-query-devtools'
+
+function App() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* The rest of your application */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+      >{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
+      {isOpen && <PreactQueryDevtoolsPanel onClose={() => setIsOpen(false)} />}
+    </QueryClientProvider>
+  )
+}
+```
+
+### Options
+
+- `style?: CSSProperties`
+  - Custom styles for the devtools panel
+  - Default: `{ height: '500px' }`
+  - Example: `{ height: '100%' }`
+  - Example: `{ height: '100%', width: '100%' }`
+- `onClose?: () => void`
+  - Callback function that is called when the devtools panel is closed
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.

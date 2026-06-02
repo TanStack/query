@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -50,11 +51,12 @@ describe('Server side rendering with de/rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (
@@ -70,7 +72,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['success'],
+      queryKey: key,
       queryFn: () => fetchDataSuccess('success'),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
@@ -127,11 +129,12 @@ describe('Server side rendering with de/rehydration', () => {
     const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
     })
+    const key = queryKey()
 
     // -- Shared part --
     function ErrorComponent() {
       const result = useQuery({
-        queryKey: ['error'],
+        queryKey: key,
         queryFn: () => fetchDataError(),
         retry: false,
       })
@@ -147,7 +150,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['error'],
+      queryKey: key,
       queryFn: () => fetchDataError(),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
@@ -204,11 +207,12 @@ describe('Server side rendering with de/rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (

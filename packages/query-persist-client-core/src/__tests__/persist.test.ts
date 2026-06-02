@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { QueriesObserver, QueryClient } from '@tanstack/query-core'
 import {
   persistQueryClientRestore,
@@ -7,7 +7,7 @@ import {
 import { createMockPersister, createSpyPersister } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
-  test('should persist mutations', async () => {
+  it('should persist mutations', async () => {
     const queryClient = new QueryClient()
 
     const persister = createMockPersister()
@@ -31,7 +31,7 @@ describe('persistQueryClientSubscribe', () => {
 })
 
 describe('persistQueryClientSave', () => {
-  test('should not be triggered on observer type events', () => {
+  it('should not be triggered on observer type events', () => {
     const queryClient = new QueryClient()
 
     const persister = createSpyPersister()
@@ -64,7 +64,7 @@ describe('persistQueryClientSave', () => {
 })
 
 describe('persistQueryClientRestore', () => {
-  test('should rethrow exceptions in `restoreClient`', async () => {
+  it('should rethrow exceptions in `restoreClient`', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -96,7 +96,7 @@ describe('persistQueryClientRestore', () => {
     consoleWarn.mockRestore()
   })
 
-  test('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
+  it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -130,7 +130,7 @@ describe('persistQueryClientRestore', () => {
     consoleWarn.mockRestore()
   })
 
-  test('should rethrow error in `removeClient`', async () => {
+  it('should rethrow error in `removeClient`', async () => {
     const queryClient = new QueryClient()
 
     const persister = createSpyPersister()

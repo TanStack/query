@@ -1086,10 +1086,7 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          return 'result'
-        },
+        mutationFn: (_text: string) => sleep(10).then(() => 'result'),
         onSuccess: () => Promise.reject(error),
         onError,
       }))

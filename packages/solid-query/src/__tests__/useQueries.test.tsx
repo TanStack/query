@@ -22,7 +22,7 @@ import type {
   QueryFunction,
   QueryFunctionContext,
   QueryKey,
-  SolidQueryOptions,
+  QueryOptions,
   UseQueryResult,
 } from '..'
 
@@ -51,17 +51,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(100)
-              return 2
-            },
+            queryFn: () => sleep(100).then(() => 2),
           },
         ],
       }))
@@ -591,9 +585,7 @@ describe('useQueries', () => {
       TError,
       TData,
       TQueryKey extends QueryKey,
-    >(
-      queries: Array<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
-    ) {
+    >(queries: Array<QueryOptions<TQueryFnData, TError, TData, TQueryKey>>) {
       return useQueries(() => ({
         queries: queries.map(
           // no need to type the mapped query
@@ -701,10 +693,7 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
         ],
       }))

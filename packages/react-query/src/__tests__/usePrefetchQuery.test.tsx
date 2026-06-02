@@ -17,11 +17,7 @@ import type { UseSuspenseQueryOptions } from '..'
 const generateQueryFn = (data: string) =>
   vi
     .fn<(...args: Array<any>) => Promise<string>>()
-    .mockImplementation(async () => {
-      await sleep(10)
-
-      return data
-    })
+    .mockImplementation(() => sleep(10).then(() => data))
 
 describe('usePrefetchQuery', () => {
   let queryCache: QueryCache

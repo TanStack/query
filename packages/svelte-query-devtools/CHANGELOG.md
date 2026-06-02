@@ -1,5 +1,175 @@
 # @tanstack/svelte-query-devtools
 
+## 6.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.14
+  - @tanstack/svelte-query@6.1.33
+
+## 6.1.32
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.13
+  - @tanstack/svelte-query@6.1.32
+
+## 6.1.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.12
+  - @tanstack/svelte-query@6.1.31
+
+## 6.1.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.11
+  - @tanstack/svelte-query@6.1.30
+
+## 6.1.29
+
+### Patch Changes
+
+- Updated dependencies [[`4d130b9`](https://github.com/TanStack/query/commit/4d130b992d2ac396d75f921bfc530dd3a9d50577)]:
+  - @tanstack/query-devtools@5.100.10
+  - @tanstack/svelte-query@6.1.29
+
+## 6.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`3d21cac`](https://github.com/TanStack/query/commit/3d21cacdec3028b700c4c2e3e0ff8dbe7a235e8c)]:
+  - @tanstack/query-devtools@5.100.9
+  - @tanstack/svelte-query@6.1.28
+
+## 6.1.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.8
+  - @tanstack/svelte-query@6.1.27
+
+## 6.1.26
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.7
+  - @tanstack/svelte-query@6.1.26
+
+## 6.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.6
+  - @tanstack/svelte-query@6.1.25
+
+## 6.1.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.5
+  - @tanstack/svelte-query@6.1.24
+
+## 6.1.23
+
+### Patch Changes
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/query-devtools@5.100.4
+  - @tanstack/svelte-query@6.1.23
+
+## 6.1.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.3
+  - @tanstack/svelte-query@6.1.22
+
+## 6.1.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.2
+  - @tanstack/svelte-query@6.1.21
+
+## 6.1.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.1
+  - @tanstack/svelte-query@6.1.20
+
+## 6.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.0
+  - @tanstack/svelte-query@6.1.19
+
+## 6.1.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.2
+  - @tanstack/svelte-query@6.1.18
+
+## 6.1.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.1
+  - @tanstack/svelte-query@6.1.17
+
+## 6.1.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.0
+  - @tanstack/svelte-query@6.1.16
+
+## 6.1.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.98.0
+  - @tanstack/svelte-query@6.1.15
+
+## 6.1.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.97.0
+  - @tanstack/svelte-query@6.1.14
+
+## 6.1.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.96.2
+  - @tanstack/svelte-query@6.1.13
+
 ## 6.1.12
 
 ### Patch Changes
