@@ -71,7 +71,10 @@ export const rule = createRule({
           ? node.callee.name
           : null
 
-        if (calleeName !== 'useQueries' && calleeName !== 'useSuspenseQueries') {
+        if (
+          calleeName !== 'useQueries' &&
+          calleeName !== 'useSuspenseQueries'
+        ) {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
             return context.report({
               node: node.parent,
