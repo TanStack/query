@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
+  addConsumeAwareSignal,
   addToEnd,
   addToStart,
   ensureQueryFn,
@@ -601,6 +602,24 @@ describe('core/utils', () => {
       expect(shouldThrowError(true, [new Error('test error')])).toBe(true)
       expect(shouldThrowError(false, [new Error('test error')])).toBe(false)
       expect(shouldThrowError(undefined, [new Error('test error')])).toBe(false)
+    })
+  })
+
+  describe('addConsumeAwareSignal', () => {
+    it('should call onCancelled immediately when the signal is already aborted on first access', () => {
+      const controller = new AbortController()
+      controller.abort()
+      const onCancelled = vi.fn()
+      const object = addConsumeAwareSignal(
+        {},
+        () => controller.signal,
+        onCancelled,
+      )
+
+      // Access the signal to consume it
+      void object.signal
+
+      expect(onCancelled).toHaveBeenCalledTimes(1)
     })
   })
 })
