@@ -421,6 +421,29 @@ describe('core/utils', () => {
 
       expect(next).toBe(current)
     })
+
+    it('should stop structural sharing once the recursion depth exceeds the limit', () => {
+      const nest = (depth: number, leaf: number) => {
+        let value: any = { leaf }
+        for (let i = 0; i < depth; i++) {
+          value = { child: value }
+        }
+        return value
+      }
+
+      const prev = nest(502, 1)
+      const next = nest(502, 2)
+      const result = replaceEqualDeep(prev, next)
+
+      let resultNode = result
+      let nextNode = next
+      for (let i = 0; i < 502; i++) {
+        resultNode = resultNode.child
+        nextNode = nextNode.child
+      }
+
+      expect(resultNode).toBe(nextNode)
+    })
   })
 
   describe('matchMutation', () => {
