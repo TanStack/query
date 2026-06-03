@@ -657,5 +657,36 @@ describe('core/utils', () => {
 
       expect(onCancelled).toHaveBeenCalledTimes(1)
     })
+
+    it('should flag cancellation when the consumed signal aborts, mirroring streamed/infinite queries', () => {
+      const controller = new AbortController()
+      let cancelled = false
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        () => (cancelled = true),
+      )
+
+      void context.signal
+      expect(cancelled).toBe(false)
+
+      controller.abort()
+      expect(cancelled).toBe(true)
+    })
+
+    it('should consume the signal only once across repeated accesses', () => {
+      const controller = new AbortController()
+      const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.signal).toBe(controller.signal)
+      expect(context.signal).toBe(controller.signal)
+
+      expect(addEventListener).toHaveBeenCalledTimes(1)
+    })
   })
 })
