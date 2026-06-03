@@ -66,7 +66,7 @@
     "@testing-library/dom": "^10.4.0",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all2": "^5.0.0",
-    "typescript": "5.8.3",
+    "typescript": "5.9.3",
     "zone.js": "^0.16.0"
   },
   "peerDependencies": {
