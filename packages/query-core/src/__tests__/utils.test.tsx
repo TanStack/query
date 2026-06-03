@@ -606,6 +606,19 @@ describe('core/utils', () => {
   })
 
   describe('addConsumeAwareSignal', () => {
+    it('should expose the signal on the query context while preserving its properties', () => {
+      const controller = new AbortController()
+      const key = queryKey()
+      const context = addConsumeAwareSignal(
+        { queryKey: key, meta: undefined },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.queryKey).toBe(key)
+      expect(context.signal).toBe(controller.signal)
+    })
+
     it('should call onCancelled immediately when the signal is already aborted on first access', () => {
       const controller = new AbortController()
       controller.abort()
