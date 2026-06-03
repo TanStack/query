@@ -85,4 +85,27 @@ describe('removeOldestQuery', () => {
 
     expect(result).toBeUndefined()
   })
+
+  it('should preserve mutations when removing the oldest query', () => {
+    queryClient.getMutationCache().build(queryClient, {
+      mutationFn: () => Promise.resolve('data'),
+    })
+    const { mutations } = dehydrate(queryClient, {
+      shouldDehydrateMutation: () => true,
+    })
+
+    const persistedClient = createPersistedClient(
+      [createQuery('a', 10)],
+      mutations,
+    )
+
+    const result = removeOldestQuery({
+      persistedClient,
+      error: new Error('full'),
+      errorCount: 1,
+    })
+
+    expect(result?.clientState.queries).toEqual([])
+    expect(result?.clientState.mutations).toEqual(mutations)
+  })
 })
