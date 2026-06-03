@@ -73,4 +73,16 @@ describe('removeOldestQuery', () => {
       ['b'],
     ])
   })
+
+  it('should return undefined when there are no queries to remove', () => {
+    const persistedClient = createPersistedClient([])
+
+    const result = removeOldestQuery({
+      persistedClient,
+      error: new Error('full'),
+      errorCount: 1,
+    })
+
+    expect(result).toBeUndefined()
+  })
 })
