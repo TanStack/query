@@ -206,8 +206,7 @@ class MutationStateController<
  *   }
  * }
  * ```
- */
-/**
+ *
  * @template TResult - The type of values returned by the `select` callback.
  * @template TMutation - Narrows the type of the `mutation` argument passed to
  * `select`. This is a caller-side assertion — the mutation cache stores
