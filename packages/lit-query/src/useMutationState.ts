@@ -14,14 +14,29 @@ import {
 } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
 
+type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
 /**
  * Options accepted by `useMutationState`.
  */
-export type MutationStateOptions<TResult> = {
+export type MutationStateOptions<
+  TResult,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
   /** Filters used to select mutations from the mutation cache. */
   filters?: Accessor<MutationFilters>
   /** Maps each matching mutation to the value returned by the accessor. */
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
 /**
@@ -35,13 +50,16 @@ export type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & {
   destroy: () => void
 }
 
-class MutationStateController<TResult> extends BaseController<TResult[]> {
+class MutationStateController<
+  TResult,
+  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
+> extends BaseController<TResult[]> {
   private queryClient: QueryClient | undefined
   private unsubscribe: (() => void) | undefined
 
   constructor(
     host: ReactiveControllerHost,
-    private readonly options: MutationStateOptions<TResult>,
+    private readonly options: MutationStateOptions<TResult, TMutation>,
     queryClient?: QueryClient,
   ) {
     super(host, [], queryClient)
@@ -148,7 +166,7 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
 
     return mutations.map((mutation) => {
       if (select) {
-        return select(mutation)
+        return select(mutation as TMutation)
       }
 
       return mutation.state as TResult
@@ -189,14 +207,23 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
  * }
  * ```
  */
+/**
+ * @template TResult - The type of values returned by the `select` callback.
+ * @template TMutation - Narrows the type of the `mutation` argument passed to
+ * `select`. This is a caller-side assertion — the mutation cache stores
+ * mutations as the base `Mutation` type, so it is the caller's responsibility
+ * to ensure `TMutation` matches the actual mutations in the cache (e.g. by
+ * specifying a `mutationKey` in `filters`).
+ */
 export function useMutationState<
   TResult = MutationState<unknown, unknown, unknown, unknown>,
+  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
 >(
   host: ReactiveControllerHost,
-  options: MutationStateOptions<TResult> = {},
+  options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): MutationStateAccessor<TResult> {
-  const controller = new MutationStateController(host, options, queryClient)
+  const controller = new MutationStateController<TResult, TMutation>(host, options, queryClient)
   return Object.assign(
     createValueAccessor(() => controller.current),
     {
