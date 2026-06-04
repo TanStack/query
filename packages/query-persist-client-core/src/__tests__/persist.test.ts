@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueriesObserver, QueryClient, dehydrate } from '@tanstack/query-core'
 import {
+  persistQueryClient,
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from '../persist'
@@ -226,6 +227,47 @@ describe('persist', () => {
       })
 
       expect(persister.removeClient).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('persistQueryClient', () => {
+    it('should subscribe to the query cache after a successful restore', async () => {
+      const persister = createSpyPersister()
+      persister.restoreClient = () => Promise.resolve(undefined)
+
+      const [unsubscribe, restorePromise] = persistQueryClient({
+        queryClient,
+        persister,
+      })
+      await restorePromise
+
+      queryClient.setQueryData(['key'], 'data')
+
+      expect(persister.persistClient).toHaveBeenCalled()
+
+      unsubscribe()
+    })
+
+    it('should not subscribe when unsubscribed before the restore completes', async () => {
+      const persister = createSpyPersister()
+      let resolveRestore: () => void
+      persister.restoreClient = () =>
+        new Promise((resolve) => {
+          resolveRestore = () => resolve(undefined)
+        })
+
+      const [unsubscribe, restorePromise] = persistQueryClient({
+        queryClient,
+        persister,
+      })
+      // Unsubscribe before the restore resolves
+      unsubscribe()
+      resolveRestore!()
+      await restorePromise
+
+      queryClient.setQueryData(['key'], 'data')
+
+      expect(persister.persistClient).not.toHaveBeenCalled()
     })
   })
 })
