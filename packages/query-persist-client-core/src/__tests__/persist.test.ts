@@ -211,5 +211,21 @@ describe('persist', () => {
 
       expect(persister.removeClient).toHaveBeenCalledTimes(1)
     })
+
+    it('should remove the client when the persisted cache has no timestamp', async () => {
+      persister.restoreClient = () =>
+        Promise.resolve({
+          buster: '',
+          clientState: { mutations: [], queries: [] },
+          timestamp: 0,
+        })
+
+      await persistQueryClientRestore({
+        queryClient,
+        persister,
+      })
+
+      expect(persister.removeClient).toHaveBeenCalledTimes(1)
+    })
   })
 })
