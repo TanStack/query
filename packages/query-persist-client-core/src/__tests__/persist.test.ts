@@ -6,174 +6,176 @@ import {
 } from '../persist'
 import { createMockPersister, createSpyPersister } from './utils'
 
-describe('persistQueryClientSubscribe', () => {
-  it('should persist mutations', async () => {
-    const queryClient = new QueryClient()
-
-    const persister = createMockPersister()
-
-    const unsubscribe = persistQueryClientSubscribe({
-      queryClient,
-      persister,
-      dehydrateOptions: { shouldDehydrateMutation: () => true },
-    })
-
-    queryClient.getMutationCache().build(queryClient, {
-      mutationFn: (text: string) => Promise.resolve(text),
-    })
-
-    const result = await persister.restoreClient()
-
-    expect(result?.clientState.mutations).toHaveLength(1)
-
-    unsubscribe()
-  })
-})
-
-describe('persistQueryClientSave', () => {
-  it('should not be triggered on observer type events', () => {
-    const queryClient = new QueryClient()
-
-    const persister = createSpyPersister()
-
-    const unsubscribe = persistQueryClientSubscribe({
-      queryClient,
-      persister,
-    })
-
-    const queryKey = ['test']
-    const queryFn = vi.fn().mockReturnValue(1)
-    const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
-    const unsubscribeObserver = observer.subscribe(vi.fn())
-    observer
-      .getObservers()[0]
-      ?.setOptions({ queryKey, refetchOnWindowFocus: false })
-    unsubscribeObserver()
-
-    queryClient.setQueryData(queryKey, 2)
-
-    // persistClient should be called 3 times:
-    // 1. When query is added
-    // 2. When queryFn is resolved
-    // 3. When setQueryData is called
-    // All events fired by manipulating observers are ignored
-    expect(persister.persistClient).toHaveBeenCalledTimes(3)
-
-    unsubscribe()
-  })
-})
-
-describe('persistQueryClientRestore', () => {
+describe('persist', () => {
   let queryClient: QueryClient
-  let persister: ReturnType<typeof createSpyPersister>
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    persister = createSpyPersister()
   })
 
   afterEach(() => {
     queryClient.clear()
   })
 
-  it('should rethrow exceptions in `restoreClient`', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
+  describe('persistQueryClientSubscribe', () => {
+    it('should persist mutations', async () => {
+      const persister = createMockPersister()
 
-    const consoleWarn = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
-
-    const restoreError = new Error('Error restoring client')
-
-    persister.restoreClient = () => Promise.reject(restoreError)
-
-    await expect(
-      persistQueryClientRestore({
+      const unsubscribe = persistQueryClientSubscribe({
         queryClient,
         persister,
-      }),
-    ).rejects.toBe(restoreError)
-
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleWarn).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
-
-    consoleMock.mockRestore()
-    consoleWarn.mockRestore()
-  })
-
-  it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-
-    const consoleWarn = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
-
-    const restoreError = new Error('Error restoring client')
-    const removeError = new Error('Error removing client')
-
-    persister.restoreClient = () => Promise.reject(restoreError)
-    persister.removeClient = () => Promise.reject(removeError)
-
-    await expect(
-      persistQueryClientRestore({
-        queryClient,
-        persister,
-      }),
-    ).rejects.toBe(removeError)
-
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleWarn).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
-
-    consoleMock.mockRestore()
-    consoleWarn.mockRestore()
-  })
-
-  it('should rethrow error in `removeClient`', async () => {
-    const removeError = new Error('Error removing client')
-
-    persister.removeClient = () => Promise.reject(removeError)
-    persister.restoreClient = () => {
-      return Promise.resolve({
-        buster: 'random-buster',
-        clientState: {
-          mutations: [],
-          queries: [],
-        },
-        timestamp: new Date().getTime(),
-      })
-    }
-
-    await expect(
-      persistQueryClientRestore({
-        queryClient,
-        persister,
-      }),
-    ).rejects.toBe(removeError)
-  })
-
-  it('should hydrate the query client when the persisted cache is valid', async () => {
-    const sourceClient = new QueryClient()
-    sourceClient.setQueryData(['key'], 'data')
-
-    persister.restoreClient = () =>
-      Promise.resolve({
-        buster: '',
-        clientState: dehydrate(sourceClient),
-        timestamp: Date.now(),
+        dehydrateOptions: { shouldDehydrateMutation: () => true },
       })
 
-    await persistQueryClientRestore({
-      queryClient,
-      persister,
+      queryClient.getMutationCache().build(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text),
+      })
+
+      const result = await persister.restoreClient()
+
+      expect(result?.clientState.mutations).toHaveLength(1)
+
+      unsubscribe()
+    })
+  })
+
+  describe('persistQueryClientSave', () => {
+    it('should not be triggered on observer type events', () => {
+      const persister = createSpyPersister()
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+      })
+
+      const queryKey = ['test']
+      const queryFn = vi.fn().mockReturnValue(1)
+      const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
+      const unsubscribeObserver = observer.subscribe(vi.fn())
+      observer
+        .getObservers()[0]
+        ?.setOptions({ queryKey, refetchOnWindowFocus: false })
+      unsubscribeObserver()
+
+      queryClient.setQueryData(queryKey, 2)
+
+      // persistClient should be called 3 times:
+      // 1. When query is added
+      // 2. When queryFn is resolved
+      // 3. When setQueryData is called
+      // All events fired by manipulating observers are ignored
+      expect(persister.persistClient).toHaveBeenCalledTimes(3)
+
+      unsubscribe()
+    })
+  })
+
+  describe('persistQueryClientRestore', () => {
+    let persister: ReturnType<typeof createSpyPersister>
+
+    beforeEach(() => {
+      persister = createSpyPersister()
     })
 
-    expect(persister.removeClient).not.toHaveBeenCalled()
-    expect(queryClient.getQueryData(['key'])).toBe('data')
+    it('should rethrow exceptions in `restoreClient`', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const consoleWarn = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const restoreError = new Error('Error restoring client')
+
+      persister.restoreClient = () => Promise.reject(restoreError)
+
+      await expect(
+        persistQueryClientRestore({
+          queryClient,
+          persister,
+        }),
+      ).rejects.toBe(restoreError)
+
+      expect(consoleMock).toHaveBeenCalledTimes(1)
+      expect(consoleWarn).toHaveBeenCalledTimes(1)
+      expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+      consoleMock.mockRestore()
+      consoleWarn.mockRestore()
+    })
+
+    it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const consoleWarn = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+
+      const restoreError = new Error('Error restoring client')
+      const removeError = new Error('Error removing client')
+
+      persister.restoreClient = () => Promise.reject(restoreError)
+      persister.removeClient = () => Promise.reject(removeError)
+
+      await expect(
+        persistQueryClientRestore({
+          queryClient,
+          persister,
+        }),
+      ).rejects.toBe(removeError)
+
+      expect(consoleMock).toHaveBeenCalledTimes(1)
+      expect(consoleWarn).toHaveBeenCalledTimes(1)
+      expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+      consoleMock.mockRestore()
+      consoleWarn.mockRestore()
+    })
+
+    it('should rethrow error in `removeClient`', async () => {
+      const removeError = new Error('Error removing client')
+
+      persister.removeClient = () => Promise.reject(removeError)
+      persister.restoreClient = () => {
+        return Promise.resolve({
+          buster: 'random-buster',
+          clientState: {
+            mutations: [],
+            queries: [],
+          },
+          timestamp: new Date().getTime(),
+        })
+      }
+
+      await expect(
+        persistQueryClientRestore({
+          queryClient,
+          persister,
+        }),
+      ).rejects.toBe(removeError)
+    })
+
+    it('should hydrate the query client when the persisted cache is valid', async () => {
+      const sourceClient = new QueryClient()
+      sourceClient.setQueryData(['key'], 'data')
+
+      persister.restoreClient = () =>
+        Promise.resolve({
+          buster: '',
+          clientState: dehydrate(sourceClient),
+          timestamp: Date.now(),
+        })
+
+      await persistQueryClientRestore({
+        queryClient,
+        persister,
+      })
+
+      expect(persister.removeClient).not.toHaveBeenCalled()
+      expect(queryClient.getQueryData(['key'])).toBe('data')
+    })
   })
 })
