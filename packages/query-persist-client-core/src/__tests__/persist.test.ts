@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueriesObserver, QueryClient, dehydrate } from '@tanstack/query-core'
 import {
   persistQueryClientRestore,
@@ -64,6 +64,18 @@ describe('persistQueryClientSave', () => {
 })
 
 describe('persistQueryClientRestore', () => {
+  let queryClient: QueryClient
+  let persister: ReturnType<typeof createSpyPersister>
+
+  beforeEach(() => {
+    queryClient = new QueryClient()
+    persister = createSpyPersister()
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+  })
+
   it('should rethrow exceptions in `restoreClient`', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -73,11 +85,7 @@ describe('persistQueryClientRestore', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
 
-    const queryClient = new QueryClient()
-
     const restoreError = new Error('Error restoring client')
-
-    const persister = createSpyPersister()
 
     persister.restoreClient = () => Promise.reject(restoreError)
 
@@ -105,12 +113,8 @@ describe('persistQueryClientRestore', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
 
-    const queryClient = new QueryClient()
-
     const restoreError = new Error('Error restoring client')
     const removeError = new Error('Error removing client')
-
-    const persister = createSpyPersister()
 
     persister.restoreClient = () => Promise.reject(restoreError)
     persister.removeClient = () => Promise.reject(removeError)
@@ -131,9 +135,6 @@ describe('persistQueryClientRestore', () => {
   })
 
   it('should rethrow error in `removeClient`', async () => {
-    const queryClient = new QueryClient()
-
-    const persister = createSpyPersister()
     const removeError = new Error('Error removing client')
 
     persister.removeClient = () => Promise.reject(removeError)
@@ -159,9 +160,6 @@ describe('persistQueryClientRestore', () => {
   it('should hydrate the query client when the persisted cache is valid', async () => {
     const sourceClient = new QueryClient()
     sourceClient.setQueryData(['key'], 'data')
-
-    const queryClient = new QueryClient()
-    const persister = createSpyPersister()
 
     persister.restoreClient = () =>
       Promise.resolve({
