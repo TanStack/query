@@ -6,7 +6,7 @@ description: >
   awaited invalidation, and mutation callbacks.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
   - core/fetch-and-observe-queries
@@ -89,7 +89,9 @@ Wrong:
 import { useMutation } from '@tanstack/react-query'
 
 export function useUpdateTodo() {
-  return useMutation({ mutationFn: async (input: { id: string; title: string }) => input })
+  return useMutation({
+    mutationFn: async (input: { id: string; title: string }) => input,
+  })
 }
 
 useUpdateTodo().mutate('1', 'Ship')
@@ -101,7 +103,9 @@ Correct:
 import { useMutation } from '@tanstack/react-query'
 
 export function useUpdateTodo() {
-  return useMutation({ mutationFn: async (input: { id: string; title: string }) => input })
+  return useMutation({
+    mutationFn: async (input: { id: string; title: string }) => input,
+  })
 }
 
 useUpdateTodo().mutate({ id: '1', title: 'Ship' })
@@ -151,7 +155,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export function useAddTodo() {
   const queryClient = useQueryClient()
-  return useMutation({ mutationFn: async (title: string) => title, onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }) })
+  return useMutation({
+    mutationFn: async (title: string) => title,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
 }
 ```
 
@@ -162,7 +169,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export function useAddTodo() {
   const queryClient = useQueryClient()
-  return useMutation({ mutationFn: async (title: string) => title, onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['todos'] }) })
+  return useMutation({
+    mutationFn: async (title: string) => title,
+    onSuccess: async () =>
+      queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
 }
 ```
 
@@ -171,4 +182,3 @@ Returning the invalidation promise keeps the mutation pending until dependent da
 Source: TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md
 
 See also: `core/implement-optimistic-updates-and-cache-writes` for mutation side effects that update the cache before the server returns.
-

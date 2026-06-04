@@ -6,7 +6,7 @@ description: >
   React/Vue/Solid/Angular harnesses, and deterministic query state.
 type: lifecycle
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/tune-defaults-freshness-retries-and-refetching
@@ -31,7 +31,11 @@ export function createTestWrapper() {
   })
 
   return function TestWrapper(props: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+    return (
+      <QueryClientProvider client={queryClient}>
+        {props.children}
+      </QueryClientProvider>
+    )
   }
 }
 ```
@@ -56,8 +60,13 @@ export function createTestQueryClient() {
 import { QueryClient } from '@tanstack/react-query'
 
 export async function loadTodosForTest() {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return queryClient.fetchQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  return queryClient.fetchQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
 }
 ```
 
@@ -129,7 +138,10 @@ Wrong:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-const promise = queryClient.fetchQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+const promise = queryClient.fetchQuery({
+  queryKey: ['todos'],
+  queryFn: async () => [{ id: 1 }],
+})
 console.log(queryClient.getQueryData(['todos']))
 await promise
 ```
@@ -140,11 +152,13 @@ Correct:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-await queryClient.fetchQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+await queryClient.fetchQuery({
+  queryKey: ['todos'],
+  queryFn: async () => [{ id: 1 }],
+})
 console.log(queryClient.getQueryData(['todos']))
 ```
 
 Query state is asynchronous; assert after the query promise resolves or the UI wait completes.
 
 Source: TanStack/query:docs/framework/react/guides/testing.md
-

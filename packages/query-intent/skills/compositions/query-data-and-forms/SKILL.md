@@ -7,7 +7,7 @@ description: >
   avoiding blind copies from Query cache into local form state.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/write-mutations-and-invalidate-related-queries
   - core/selectors-and-derived-state
@@ -31,15 +31,26 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 function PersonDetail({ id }: { id: string }) {
   const queryClient = useQueryClient()
-  const person = useQuery({ queryKey: ['person', id], queryFn: () => fetchPerson(id), staleTime: Infinity })
+  const person = useQuery({
+    queryKey: ['person', id],
+    queryFn: () => fetchPerson(id),
+    staleTime: Infinity,
+  })
 
   const updatePerson = useMutation({
     mutationFn: savePerson,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['person', id] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['person', id] }),
   })
 
   if (!person.data) return <p>Loading...</p>
-  return <PersonForm person={person.data} isSaving={updatePerson.isPending} onSubmit={updatePerson.mutate} />
+  return (
+    <PersonForm
+      person={person.data}
+      isSaving={updatePerson.isPending}
+      onSubmit={updatePerson.mutate}
+    />
+  )
 }
 ```
 
@@ -52,7 +63,10 @@ import * as React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 function PersonName({ id }: { id: string }) {
-  const { data } = useQuery({ queryKey: ['person', id], queryFn: () => fetchPerson(id) })
+  const { data } = useQuery({
+    queryKey: ['person', id],
+    queryFn: () => fetchPerson(id),
+  })
   const [draft, setDraft] = React.useState<{ firstName?: string }>({})
 
   if (!data) return <p>Loading...</p>
@@ -88,14 +102,20 @@ Return the invalidation promise from `onSuccess` or `onSettled` when the saved s
 Wrong:
 
 ```tsx
-const { data } = useQuery({ queryKey: ['person', id], queryFn: () => fetchPerson(id) })
+const { data } = useQuery({
+  queryKey: ['person', id],
+  queryFn: () => fetchPerson(id),
+})
 const [draft, setDraft] = React.useState(data)
 ```
 
 Correct:
 
 ```tsx
-const { data } = useQuery({ queryKey: ['person', id], queryFn: () => fetchPerson(id) })
+const { data } = useQuery({
+  queryKey: ['person', id],
+  queryFn: () => fetchPerson(id),
+})
 if (!data) return <p>Loading...</p>
 return <PersonForm initialPerson={data} />
 ```
@@ -135,10 +155,11 @@ Wrong:
 Correct:
 
 ```tsx
-<button type="submit" disabled={mutation.isPending}>Save</button>
+<button type="submit" disabled={mutation.isPending}>
+  Save
+</button>
 ```
 
 Use mutation state to block duplicate writes while a submission is in flight.
 
 Source: https://tkdodo.eu/blog/react-query-and-forms
-

@@ -6,7 +6,7 @@ description: >
   SSR request-local clients. Covers stable client lifetime and provider wiring.
 type: lifecycle
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 sources:
   - TanStack/query:docs/framework/react/quick-start.md
   - TanStack/query:docs/framework/react/reference/QueryClientProvider.md
@@ -86,7 +86,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export function App(props: { children: React.ReactNode }) {
   const queryClient = new QueryClient()
-  return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      {props.children}
+    </QueryClientProvider>
+  )
 }
 ```
 
@@ -98,7 +102,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export function App(props: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient())
-  return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      {props.children}
+    </QueryClientProvider>
+  )
 }
 ```
 
@@ -138,7 +146,10 @@ Wrong:
 import { QueryController } from '@tanstack/lit-query'
 
 export class TodoElement extends HTMLElement {
-  todos = new QueryController(this, { queryKey: ['todos'], queryFn: async () => [] })
+  todos = new QueryController(this, {
+    queryKey: ['todos'],
+    queryFn: async () => [],
+  })
 }
 ```
 
@@ -151,7 +162,11 @@ import { QueryController } from '@tanstack/lit-query'
 const queryClient = new QueryClient()
 
 export class TodoElement extends HTMLElement {
-  todos = new QueryController(this, { queryKey: ['todos'], queryFn: async () => [] }, queryClient)
+  todos = new QueryController(
+    this,
+    { queryKey: ['todos'], queryFn: async () => [] },
+    queryClient,
+  )
 }
 ```
 
@@ -160,4 +175,3 @@ Lit controllers need a clear provider or explicit client when the element is not
 Source: TanStack/query:docs/framework/lit/guides/reactive-controllers-vs-hooks.md
 
 See also: `lifecycle/ssr-hydration-and-streaming` for server cache handoff.
-

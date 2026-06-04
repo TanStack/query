@@ -8,7 +8,7 @@ description: >
 type: framework
 library: TanStack Query
 framework: cross-adapter
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
   - lifecycle/prefetch-and-remove-request-waterfalls
@@ -31,12 +31,19 @@ import { Suspense } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 function Todos() {
-  const { data } = useSuspenseQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useSuspenseQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return <pre>{JSON.stringify(data)}</pre>
 }
 
 export function App() {
-  return <Suspense fallback={<p>Loading</p>}><Todos /></Suspense>
+  return (
+    <Suspense fallback={<p>Loading</p>}>
+      <Todos />
+    </Suspense>
+  )
 }
 ```
 
@@ -52,7 +59,12 @@ export function QueryErrorBoundary(props: { children: React.ReactNode }) {
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
-        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => <button onClick={resetErrorBoundary}>Retry</button>}>
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <button onClick={resetErrorBoundary}>Retry</button>
+          )}
+        >
           {props.children}
         </ErrorBoundary>
       )}
@@ -67,7 +79,10 @@ export function QueryErrorBoundary(props: { children: React.ReactNode }) {
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useSuspenseQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  return useSuspenseQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
 }
 ```
 
@@ -77,7 +92,11 @@ export function useTodos() {
 import { useQuery } from '@tanstack/react-query'
 
 export function useMaybeTodo(id: string | undefined) {
-  return useQuery({ queryKey: ['todo', id], queryFn: async () => ({ id }), enabled: Boolean(id) })
+  return useQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => ({ id }),
+    enabled: Boolean(id),
+  })
 }
 ```
 
@@ -91,7 +110,11 @@ Wrong:
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string | undefined) {
-  return useSuspenseQuery({ queryKey: ['todo', id], queryFn: async () => ({ id }), enabled: Boolean(id) })
+  return useSuspenseQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => ({ id }),
+    enabled: Boolean(id),
+  })
 }
 ```
 
@@ -101,7 +124,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string | undefined) {
-  return useQuery({ queryKey: ['todo', id], queryFn: async () => ({ id }), enabled: Boolean(id) })
+  return useQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => ({ id }),
+    enabled: Boolean(id),
+  })
 }
 ```
 
@@ -117,7 +144,10 @@ Wrong:
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const { data } = useSuspenseQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useSuspenseQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return <pre>{JSON.stringify(data)}</pre>
 }
 ```
@@ -129,7 +159,15 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
 export function WrappedTodos(props: { children: React.ReactNode }) {
-  return <QueryErrorResetBoundary>{({ reset }) => <ErrorBoundary onReset={reset} fallback={<p>Error</p>}>{props.children}</ErrorBoundary>}</QueryErrorResetBoundary>
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset} fallback={<p>Error</p>}>
+          {props.children}
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  )
 }
 ```
 
@@ -145,7 +183,8 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodoPromise() {
-  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) }).promise
+  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) })
+    .promise
 }
 ```
 
@@ -159,7 +198,8 @@ export const queryClient = new QueryClient({
 })
 
 export function useTodoPromise() {
-  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) }).promise
+  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) })
+    .promise
 }
 ```
 
@@ -168,4 +208,3 @@ The stable `promise` property requires the experimental prefetch-in-render flag.
 Source: TanStack/query:docs/framework/react/guides/suspense.md
 
 See also: `lifecycle/ssr-hydration-and-streaming` for streamed hydration constraints.
-

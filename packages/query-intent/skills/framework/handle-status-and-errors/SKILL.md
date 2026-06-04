@@ -7,7 +7,7 @@ description: >
   MutationCache error callbacks, and local versus boundary-level error handling.
 type: framework
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
   - framework/use-suspense-and-error-boundaries
@@ -25,7 +25,8 @@ Prefer data-first rendering when stale data is useful. A failed background refet
 ```tsx
 const todos = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
 
-if (todos.data) return <TodoList todos={todos.data} isRefreshing={todos.isFetching} />
+if (todos.data)
+  return <TodoList todos={todos.data} isRefreshing={todos.isFetching} />
 if (todos.isPending) return <Spinner />
 if (todos.isError) return <ErrorMessage error={todos.error} />
 return null
@@ -69,7 +70,10 @@ if (query.data) return <Todos todos={query.data} />
 Correct:
 
 ```tsx
-if (query.data) return <Todos todos={query.data} staleError={query.isError ? query.error : null} />
+if (query.data)
+  return (
+    <Todos todos={query.data} staleError={query.isError ? query.error : null} />
+  )
 if (query.isError) return <ErrorMessage error={query.error} />
 ```
 

@@ -7,7 +7,7 @@ description: >
   SolidStart, Lit SSR, ReactQueryStreamedHydration, or streamedQuery.
 type: lifecycle
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - lifecycle/prefetch-and-remove-request-waterfalls
@@ -26,12 +26,23 @@ sources:
 ## Setup
 
 ```tsx
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
 
 export async function PostsPage() {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
-  return <HydrationBoundary state={dehydrate(queryClient)}><Posts /></HydrationBoundary>
+  await queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
 }
 
 function Posts() {
@@ -70,12 +81,23 @@ export function createSsrQueryClient() {
 ### Hydrate only prefetched data
 
 ```tsx
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
 
 export async function Page() {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({ queryKey: ['profile'], queryFn: async () => ({ name: 'Tanner' }) })
-  return <HydrationBoundary state={dehydrate(queryClient)}><main>Profile</main></HydrationBoundary>
+  await queryClient.prefetchQuery({
+    queryKey: ['profile'],
+    queryFn: async () => ({ name: 'Tanner' }),
+  })
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main>Profile</main>
+    </HydrationBoundary>
+  )
 }
 ```
 
@@ -86,24 +108,49 @@ export async function Page() {
 Wrong:
 
 ```tsx
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
 
 export async function Page() {
   const queryClient = new QueryClient()
-  const posts = await queryClient.fetchQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
-  return <><p>{posts.length}</p><HydrationBoundary state={dehydrate(queryClient)}><main>Posts</main></HydrationBoundary></>
+  const posts = await queryClient.fetchQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <>
+      <p>{posts.length}</p>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <main>Posts</main>
+      </HydrationBoundary>
+    </>
+  )
 }
 ```
 
 Correct:
 
 ```tsx
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
 
 export async function Page() {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
-  return <HydrationBoundary state={dehydrate(queryClient)}><main>Posts</main></HydrationBoundary>
+  await queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main>Posts</main>
+    </HydrationBoundary>
+  )
 }
 ```
 
@@ -119,7 +166,10 @@ Wrong:
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function Posts() {
-  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useSuspenseQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return <pre>{JSON.stringify(data)}</pre>
 }
 ```
@@ -127,12 +177,23 @@ export function Posts() {
 Correct:
 
 ```tsx
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
 
 export async function Page() {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
-  return <HydrationBoundary state={dehydrate(queryClient)}><main>Posts</main></HydrationBoundary>
+  await queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main>Posts</main>
+    </HydrationBoundary>
+  )
 }
 ```
 

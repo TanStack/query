@@ -8,7 +8,7 @@ description: >
 type: framework
 library: TanStack Query
 framework: cross-adapter
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/design-query-keys-and-options
@@ -48,10 +48,12 @@ import { useQuery } from '@tanstack/vue-query'
 
 export function useTodo(props: { id: string }) {
   const id = toRef(props, 'id')
-  return useQuery(computed(() => ({
-    queryKey: ['todo', id.value],
-    queryFn: async () => ({ id: id.value }),
-  })))
+  return useQuery(
+    computed(() => ({
+      queryKey: ['todo', id.value],
+      queryFn: async () => ({ id: id.value }),
+    })),
+  )
 }
 ```
 
@@ -92,7 +94,10 @@ Wrong:
 import { useQuery } from '@tanstack/vue-query'
 
 export function useTodo(id: { value: string }) {
-  return useQuery({ queryKey: ['todo', id.value], queryFn: async () => ({ id: id.value }) })
+  return useQuery({
+    queryKey: ['todo', id.value],
+    queryFn: async () => ({ id: id.value }),
+  })
 }
 ```
 
@@ -103,7 +108,12 @@ import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
 export function useTodo(id: { value: string }) {
-  return useQuery(computed(() => ({ queryKey: ['todo', id.value], queryFn: async () => ({ id: id.value }) })))
+  return useQuery(
+    computed(() => ({
+      queryKey: ['todo', id.value],
+      queryFn: async () => ({ id: id.value }),
+    })),
+  )
 }
 ```
 
@@ -127,7 +137,10 @@ Correct:
 ```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  const query = createQuery(() => ({ queryKey: ['todos'], queryFn: async () => [] }))
+  const query = createQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: async () => [],
+  }))
 </script>
 ```
 
@@ -144,7 +157,10 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
 import { of } from 'rxjs'
 
 export class TodosQuery {
-  todos = injectQuery(() => ({ queryKey: ['todos'], queryFn: () => of([{ id: 1 }]) }))
+  todos = injectQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: () => of([{ id: 1 }]),
+  }))
 }
 ```
 
@@ -155,7 +171,10 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
 import { firstValueFrom, of } from 'rxjs'
 
 export class TodosQuery {
-  todos = injectQuery(() => ({ queryKey: ['todos'], queryFn: () => firstValueFrom(of([{ id: 1 }])) }))
+  todos = injectQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: () => firstValueFrom(of([{ id: 1 }])),
+  }))
 }
 ```
 
@@ -164,4 +183,3 @@ Query functions must resolve data; Angular HttpClient Observables need conversio
 Source: TanStack/query:docs/framework/angular/angular-httpclient-and-other-data-fetching-clients.md
 
 See also: `core/design-query-keys-and-options` for key identity across adapters.
-

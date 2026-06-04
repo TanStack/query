@@ -7,7 +7,7 @@ description: >
   streaming, redirects, and Start server functions.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/design-query-keys-and-options
@@ -24,8 +24,16 @@ sources:
 ## Setup
 
 ```tsx
-import { QueryClient, QueryClientProvider, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, createRouter, RouterProvider } from '@tanstack/react-router'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import {
+  createFileRoute,
+  createRouter,
+  RouterProvider,
+} from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient()
@@ -48,7 +56,11 @@ function PostsPage() {
 const router = createRouter({ routeTree, context: { queryClient } })
 
 export function App() {
-  return <QueryClientProvider client={queryClient}><RouterProvider router={router} /></QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  )
 }
 ```
 
@@ -83,7 +95,8 @@ const todoQuery = (todoId: string) => ({
 })
 
 export const Route = createFileRoute('/todos/$todoId')({
-  loader: ({ context, params }) => context.queryClient.ensureQueryData(todoQuery(params.todoId)),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(todoQuery(params.todoId)),
 })
 ```
 
@@ -115,7 +128,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/posts')({ component: PostsPage })
 function PostsPage() {
-  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useSuspenseQuery({
+    queryKey: ['posts'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return <pre>{JSON.stringify(data)}</pre>
 }
 ```
@@ -127,7 +143,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 const postsQuery = { queryKey: ['posts'], queryFn: async () => [{ id: 1 }] }
-export const Route = createFileRoute('/posts')({ loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery), component: PostsPage })
+export const Route = createFileRoute('/posts')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
+  component: PostsPage,
+})
 function PostsPage() {
   const { data } = useSuspenseQuery(postsQuery)
   return <pre>{JSON.stringify(data)}</pre>
@@ -149,7 +168,13 @@ import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient()
 const router = createRouter({ routeTree })
-export function App() { return <QueryClientProvider client={queryClient}><RouterProvider router={router} /></QueryClientProvider> }
+export function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  )
+}
 ```
 
 Correct:
@@ -186,7 +211,11 @@ Correct:
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/posts')({
-  loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ['posts'], queryFn: async () => [{ id: 1 }] }),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ['posts'],
+      queryFn: async () => [{ id: 1 }],
+    }),
   component: () => <p>Posts loaded by the route</p>,
 })
 ```

@@ -6,7 +6,7 @@ description: >
   cancellation, and optimistic update overwrite prevention.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
 sources:
@@ -53,8 +53,16 @@ import { queryOptions } from '@tanstack/react-query'
 export const todosWithDetailsOptions = queryOptions({
   queryKey: ['todos-with-details'],
   queryFn: async ({ signal }) => {
-    const todos = await fetch('/api/todos', { signal }).then((response) => response.json() as Promise<Array<{ id: string }>>)
-    return Promise.all(todos.map((todo) => fetch(`/api/todos/${todo.id}`, { signal }).then((response) => response.json())))
+    const todos = await fetch('/api/todos', { signal }).then(
+      (response) => response.json() as Promise<Array<{ id: string }>>,
+    )
+    return Promise.all(
+      todos.map((todo) =>
+        fetch(`/api/todos/${todo.id}`, { signal }).then((response) =>
+          response.json(),
+        ),
+      ),
+    )
   },
 })
 ```
@@ -81,7 +89,10 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string) {
-  return useQuery({ queryKey: ['todo', id], queryFn: async () => fetch(`/api/todos/${id}`).then((r) => r.json()) })
+  return useQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => fetch(`/api/todos/${id}`).then((r) => r.json()),
+  })
 }
 ```
 
@@ -91,7 +102,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string) {
-  return useQuery({ queryKey: ['todo', id], queryFn: async ({ signal }) => fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()) })
+  return useQuery({
+    queryKey: ['todo', id],
+    queryFn: async ({ signal }) =>
+      fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()),
+  })
 }
 ```
 
@@ -107,7 +122,10 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useReport() {
-  return useQuery({ queryKey: ['report'], queryFn: async () => fetch('/api/report').then((r) => r.json()) })
+  return useQuery({
+    queryKey: ['report'],
+    queryFn: async () => fetch('/api/report').then((r) => r.json()),
+  })
 }
 ```
 
@@ -117,7 +135,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useReport() {
-  return useQuery({ queryKey: ['report'], queryFn: async ({ signal }) => fetch('/api/report', { signal }).then((r) => r.json()) })
+  return useQuery({
+    queryKey: ['report'],
+    queryFn: async ({ signal }) =>
+      fetch('/api/report', { signal }).then((r) => r.json()),
+  })
 }
 ```
 
@@ -133,7 +155,11 @@ Wrong:
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string) {
-  return useSuspenseQuery({ queryKey: ['todo', id], queryFn: async ({ signal }) => fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()) })
+  return useSuspenseQuery({
+    queryKey: ['todo', id],
+    queryFn: async ({ signal }) =>
+      fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()),
+  })
 }
 ```
 
@@ -143,11 +169,14 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo(id: string) {
-  return useQuery({ queryKey: ['todo', id], queryFn: async ({ signal }) => fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()) })
+  return useQuery({
+    queryKey: ['todo', id],
+    queryFn: async ({ signal }) =>
+      fetch(`/api/todos/${id}`, { signal }).then((r) => r.json()),
+  })
 }
 ```
 
 Cancellation limitations apply to Suspense hooks; use non-suspense queries when cancellation behavior is required.
 
 Source: TanStack/query:docs/framework/react/guides/query-cancellation.md
-

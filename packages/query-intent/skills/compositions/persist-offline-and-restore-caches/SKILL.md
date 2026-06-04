@@ -7,7 +7,7 @@ description: >
   gcTime, and restore races.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/tune-defaults-freshness-retries-and-refetching
@@ -38,7 +38,10 @@ const persister = createSyncStoragePersister({
 
 export function AppProviders(props: { children: React.ReactNode }) {
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
       {props.children}
     </PersistQueryClientProvider>
   )
@@ -126,7 +129,11 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 export function App(props: { children: React.ReactNode }) {
-  return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      {props.children}
+    </QueryClientProvider>
+  )
 }
 ```
 
@@ -141,7 +148,14 @@ const queryClient = new QueryClient()
 const persister = createSyncStoragePersister({ storage: window.localStorage })
 
 export function App(props: { children: React.ReactNode }) {
-  return <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>{props.children}</PersistQueryClientProvider>
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
+      {props.children}
+    </PersistQueryClientProvider>
+  )
 }
 ```
 

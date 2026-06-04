@@ -6,7 +6,7 @@ description: >
   inference for TanStack Query reads and writes.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 sources:
   - TanStack/query:docs/framework/react/guides/query-keys.md
   - TanStack/query:docs/framework/react/guides/query-options.md
@@ -132,7 +132,10 @@ Correct:
 import { queryOptions, useQuery } from '@tanstack/react-query'
 
 function todoOptions(todoId: string) {
-  return queryOptions({ queryKey: ['todo', todoId], queryFn: async () => ({ id: todoId }) })
+  return queryOptions({
+    queryKey: ['todo', todoId],
+    queryFn: async () => ({ id: todoId }),
+  })
 }
 
 export function useTodo(todoId: string) {
@@ -152,7 +155,10 @@ Wrong:
 import { skipToken, useSuspenseQuery } from '@tanstack/react-query'
 
 export function useTodo(todoId: string | undefined) {
-  return useSuspenseQuery({ queryKey: ['todo', todoId], queryFn: todoId ? async () => ({ id: todoId }) : skipToken })
+  return useSuspenseQuery({
+    queryKey: ['todo', todoId],
+    queryFn: todoId ? async () => ({ id: todoId }) : skipToken,
+  })
 }
 ```
 
@@ -162,7 +168,10 @@ Correct:
 import { skipToken, useQuery } from '@tanstack/react-query'
 
 export function useTodo(todoId: string | undefined) {
-  return useQuery({ queryKey: ['todo', todoId], queryFn: todoId ? async () => ({ id: todoId }) : skipToken })
+  return useQuery({
+    queryKey: ['todo', todoId],
+    queryFn: todoId ? async () => ({ id: todoId }) : skipToken,
+  })
 }
 ```
 
@@ -171,4 +180,3 @@ Suspense queries require a guaranteed query function and cannot be conditionally
 Source: TanStack/query:docs/framework/react/guides/suspense.md
 
 See also: `compositions/enforce-query-best-practices-with-eslint` for rules that enforce key and options mistakes.
-

@@ -6,7 +6,7 @@ description: >
   focusManager, onlineManager, timeoutManager, or QueryClient defaultOptions.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
 sources:
@@ -85,7 +85,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useProfile() {
-  return useQuery({ queryKey: ['profile'], queryFn: async () => ({ name: 'Tanner' }), gcTime: 60_000 })
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => ({ name: 'Tanner' }),
+    gcTime: 60_000,
+  })
 }
 ```
 
@@ -95,7 +99,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useProfile() {
-  return useQuery({ queryKey: ['profile'], queryFn: async () => ({ name: 'Tanner' }), staleTime: 60_000 })
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => ({ name: 'Tanner' }),
+    staleTime: 60_000,
+  })
 }
 ```
 
@@ -111,7 +119,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], staleTime: 'static' })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+    staleTime: 'static',
+  })
 }
 ```
 
@@ -121,7 +133,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], staleTime: 60_000 })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+    staleTime: 60_000,
+  })
 }
 ```
 
@@ -154,4 +170,3 @@ Default retries add delay and can make failing tests wait before surfacing error
 Source: TanStack/query:docs/framework/react/guides/testing.md
 
 See also: `compositions/persist-offline-and-restore-caches` for persistence rules that depend on gcTime and networkMode.
-

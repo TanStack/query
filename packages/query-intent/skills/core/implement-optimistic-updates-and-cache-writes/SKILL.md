@@ -6,7 +6,7 @@ description: >
   mutation rollback, and offline-aware optimistic state.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/write-mutations-and-invalidate-related-queries
   - core/cancel-queries-and-consume-abort-signals
@@ -31,7 +31,10 @@ export function useOptimisticAddTodo() {
     onMutate: async (title) => {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
       const previous = queryClient.getQueryData<Array<Todo>>(['todos'])
-      queryClient.setQueryData<Array<Todo>>(['todos'], (old = []) => [...old, { id: -1, title }])
+      queryClient.setQueryData<Array<Todo>>(['todos'], (old = []) => [
+        ...old,
+        { id: -1, title },
+      ])
       return { previous }
     },
     onError: (_error, _title, context) => {
@@ -67,8 +70,10 @@ import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 
-queryClient.setQueryData<Array<{ id: number; title: string }>>(['todos'], (old = []) =>
-  old.map((todo) => (todo.id === 1 ? { ...todo, title: 'Done' } : todo)),
+queryClient.setQueryData<Array<{ id: number; title: string }>>(
+  ['todos'],
+  (old = []) =>
+    old.map((todo) => (todo.id === 1 ? { ...todo, title: 'Done' } : todo)),
 )
 ```
 
@@ -118,10 +123,13 @@ Wrong:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-queryClient.setQueryData<Array<{ id: number; done: boolean }>>(['todos'], (old = []) => {
-  old[0].done = true
-  return old
-})
+queryClient.setQueryData<Array<{ id: number; done: boolean }>>(
+  ['todos'],
+  (old = []) => {
+    old[0].done = true
+    return old
+  },
+)
 ```
 
 Correct:
@@ -130,8 +138,10 @@ Correct:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-queryClient.setQueryData<Array<{ id: number; done: boolean }>>(['todos'], (old = []) =>
-  old.map((todo) => (todo.id === 1 ? { ...todo, done: true } : todo)),
+queryClient.setQueryData<Array<{ id: number; done: boolean }>>(
+  ['todos'],
+  (old = []) =>
+    old.map((todo) => (todo.id === 1 ? { ...todo, done: true } : todo)),
 )
 ```
 
@@ -166,4 +176,3 @@ Paused persisted mutations need a default mutationFn after hydration because fun
 Source: TanStack/query:docs/framework/react/plugins/persistQueryClient.md
 
 See also: `core/cancel-queries-and-consume-abort-signals` before optimistic writes.
-

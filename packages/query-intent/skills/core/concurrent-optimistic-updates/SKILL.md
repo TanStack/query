@@ -7,7 +7,7 @@ description: >
   UI during concurrent writes.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/implement-optimistic-updates-and-cache-writes
   - core/cancel-queries-and-consume-abort-signals
@@ -38,7 +38,10 @@ const mutation = useMutation({
     return { previousItem }
   },
   onError: (_error, variables, context) => {
-    queryClient.setQueryData(['items', 'detail', variables.id], context?.previousItem)
+    queryClient.setQueryData(
+      ['items', 'detail', variables.id],
+      context?.previousItem,
+    )
   },
   onSettled: () => {
     if (queryClient.isMutating({ mutationKey: ['items'] }) === 1) {
@@ -55,7 +58,8 @@ Use `queryClient.isMutating()` imperatively inside the callback so the count is 
 ```tsx
 const pendingAdds = useMutationState<string>({
   filters: { mutationKey: ['todos', 'add'], status: 'pending' },
-  select: (mutation) => `${mutation.state.submittedAt}:${mutation.state.variables}`,
+  select: (mutation) =>
+    `${mutation.state.submittedAt}:${mutation.state.variables}`,
 })
 ```
 
@@ -114,7 +118,9 @@ Source: https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query
 Wrong:
 
 ```tsx
-{variables.map((title) => <li key={title}>{title}</li>)}
+{
+  variables.map((title) => <li key={title}>{title}</li>)
+}
 ```
 
 Correct:
@@ -122,13 +128,17 @@ Correct:
 ```tsx
 const pending = useMutationState({
   filters: { mutationKey: ['todos', 'add'], status: 'pending' },
-  select: (mutation) => ({ variables: mutation.state.variables, submittedAt: mutation.state.submittedAt }),
+  select: (mutation) => ({
+    variables: mutation.state.variables,
+    submittedAt: mutation.state.submittedAt,
+  }),
 })
 
-{pending.map((todo) => <li key={todo.submittedAt}>{todo.variables.title}</li>)}
+{
+  pending.map((todo) => <li key={todo.submittedAt}>{todo.variables.title}</li>)
+}
 ```
 
 Use mutation metadata to keep concurrent optimistic rows distinct.
 
 Source: TanStack/query:docs/framework/react/guides/optimistic-updates.md
-

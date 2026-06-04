@@ -7,7 +7,7 @@ description: >
   server state instead of syncing it through effects.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/seed-placeholder-select-and-transform-data
   - framework/shape-data-and-render-efficiently
@@ -46,7 +46,8 @@ function ProductTitle({ id }: { id: string }) {
 ### Stabilize expensive selectors
 
 ```tsx
-const selectAverageRating = (products: Array<Product>) => expensiveAverage(products)
+const selectAverageRating = (products: Array<Product>) =>
+  expensiveAverage(products)
 
 function ProductSummary({ filters }: { filters: ProductFilters }) {
   return useSuspenseQuery({
@@ -106,7 +107,8 @@ useSuspenseQuery({
 Correct:
 
 ```tsx
-const selectProducts = (data: Array<Product>) => expensiveSuperTransformation(data)
+const selectProducts = (data: Array<Product>) =>
+  expensiveSuperTransformation(data)
 
 useSuspenseQuery({
   ...productsOptions(filters),
@@ -149,4 +151,3 @@ useQuery({
 `select` transforms successful data. Query errors belong in the query function.
 
 Source: TanStack/query:docs/framework/react/guides/render-optimizations.md
-

@@ -6,7 +6,7 @@ description: >
   fetchStatus, pending, paused, success, and error states.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/design-query-keys-and-options
@@ -73,9 +73,19 @@ export function ensureTodos() {
 import { useQuery } from '@tanstack/react-query'
 
 export function TodoCount() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
-  const label = query.fetchStatus === 'fetching' && query.status === 'success' ? 'Refreshing' : 'Ready'
-  return <p>{query.data?.length ?? 0} {label}</p>
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  const label =
+    query.fetchStatus === 'fetching' && query.status === 'success'
+      ? 'Refreshing'
+      : 'Ready'
+  return (
+    <p>
+      {query.data?.length ?? 0} {label}
+    </p>
+  )
 }
 ```
 
@@ -89,7 +99,12 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => { await Promise.resolve([{ id: 1 }]) } })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => {
+      await Promise.resolve([{ id: 1 }])
+    },
+  })
 }
 ```
 
@@ -99,7 +114,10 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => Promise.resolve([{ id: 1 }]) })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => Promise.resolve([{ id: 1 }]),
+  })
 }
 ```
 
@@ -115,7 +133,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], networkMode: 'online' })
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+    networkMode: 'online',
+  })
   return query.isPending ? <p>Loading</p> : <p>{query.fetchStatus}</p>
 }
 ```
@@ -126,7 +148,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], networkMode: 'online' })
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+    networkMode: 'online',
+  })
   return query.fetchStatus === 'paused' ? <p>Offline</p> : <p>{query.status}</p>
 }
 ```
@@ -143,7 +169,10 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useSaveTodo(title: string) {
-  return useQuery({ queryKey: ['saveTodo', title], queryFn: async () => ({ id: 1, title }) })
+  return useQuery({
+    queryKey: ['saveTodo', title],
+    queryFn: async () => ({ id: 1, title }),
+  })
 }
 ```
 
@@ -153,7 +182,9 @@ Correct:
 import { useMutation } from '@tanstack/react-query'
 
 export function useSaveTodo() {
-  return useMutation({ mutationFn: async (title: string) => ({ id: 1, title }) })
+  return useMutation({
+    mutationFn: async (title: string) => ({ id: 1, title }),
+  })
 }
 ```
 
@@ -162,4 +193,3 @@ Queries are for reads; writes need mutation lifecycle hooks, invalidation, rollb
 Source: TanStack/query:docs/framework/react/guides/mutations.md
 
 See also: `core/tune-defaults-freshness-retries-and-refetching` for how defaults change status behavior.
-

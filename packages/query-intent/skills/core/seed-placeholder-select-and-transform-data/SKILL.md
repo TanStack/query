@@ -6,7 +6,7 @@ description: >
   seeding, or derived query data.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
   - core/fetch-and-observe-queries
@@ -44,7 +44,10 @@ export function useTodo(todoId: number) {
   return useQuery({
     queryKey: ['todo', todoId],
     queryFn: async () => ({ id: todoId, title: 'Fresh' }),
-    initialData: () => queryClient.getQueryData<Array<{ id: number; title: string }>>(['todos'])?.find((todo) => todo.id === todoId),
+    initialData: () =>
+      queryClient
+        .getQueryData<Array<{ id: number; title: string }>>(['todos'])
+        ?.find((todo) => todo.id === todoId),
   })
 }
 ```
@@ -70,7 +73,11 @@ import { queryOptions } from '@tanstack/react-query'
 
 export const todosOptions = queryOptions({
   queryKey: ['todos'],
-  queryFn: async () => [{ id: 1, title: 'ship' }].map((todo) => ({ ...todo, title: todo.title.toUpperCase() })),
+  queryFn: async () =>
+    [{ id: 1, title: 'ship' }].map((todo) => ({
+      ...todo,
+      title: todo.title.toUpperCase(),
+    })),
 })
 ```
 
@@ -84,7 +91,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo() {
-  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1, title: 'Server' }), initialData: { id: 1, title: 'Always' } })
+  return useQuery({
+    queryKey: ['todo', 1],
+    queryFn: async () => ({ id: 1, title: 'Server' }),
+    initialData: { id: 1, title: 'Always' },
+  })
 }
 ```
 
@@ -94,7 +105,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodo() {
-  return useQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1, title: 'Server' }), placeholderData: { id: 1, title: 'Temporary' } })
+  return useQuery({
+    queryKey: ['todo', 1],
+    queryFn: async () => ({ id: 1, title: 'Server' }),
+    placeholderData: { id: 1, title: 'Temporary' },
+  })
 }
 ```
 
@@ -110,7 +125,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function usePage(page: number) {
-  return useQuery({ queryKey: ['page', page], queryFn: async () => ({ page }), keepPreviousData: true })
+  return useQuery({
+    queryKey: ['page', page],
+    queryFn: async () => ({ page }),
+    keepPreviousData: true,
+  })
 }
 ```
 
@@ -120,7 +139,11 @@ Correct:
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 export function usePage(page: number) {
-  return useQuery({ queryKey: ['page', page], queryFn: async () => ({ page }), placeholderData: keepPreviousData })
+  return useQuery({
+    queryKey: ['page', page],
+    queryFn: async () => ({ page }),
+    placeholderData: keepPreviousData,
+  })
 }
 ```
 
@@ -136,7 +159,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useFirstTodo() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => [] as Array<{ id: number }>, select: (todos) => todos[0].id })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [] as Array<{ id: number }>,
+    select: (todos) => todos[0].id,
+  })
 }
 ```
 
@@ -146,7 +173,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useFirstTodo() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => [] as Array<{ id: number }>, select: (todos) => todos[0]?.id ?? null })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [] as Array<{ id: number }>,
+    select: (todos) => todos[0]?.id ?? null,
+  })
 }
 ```
 
@@ -155,4 +186,3 @@ export function useFirstTodo() {
 Source: TanStack/query:docs/framework/react/guides/render-optimizations.md
 
 See also: `lifecycle/ssr-hydration-and-streaming` for SSR tradeoffs compared to hydration.
-

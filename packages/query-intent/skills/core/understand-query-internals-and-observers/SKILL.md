@@ -7,7 +7,7 @@ description: >
   or imperative cache reads are not the same as observed queries.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
 sources:
@@ -31,7 +31,10 @@ An inactive query can exist in the cache without active observers. It can be rea
 
 ```tsx
 function TodoPage({ id }: { id: string }) {
-  const todo = useQuery({ queryKey: ['todo', id], queryFn: () => fetchTodo(id) })
+  const todo = useQuery({
+    queryKey: ['todo', id],
+    queryFn: () => fetchTodo(id),
+  })
 
   if (todo.isPending) return <p>Loading...</p>
   if (todo.isError) return <p>{todo.error.message}</p>
@@ -82,7 +85,9 @@ Correct:
 
 ```ts
 const query = queryClient.getQueryCache().find({ queryKey })
-const observerStaleTimes = query?.observers.map((observer) => observer.options.staleTime)
+const observerStaleTimes = query?.observers.map(
+  (observer) => observer.options.staleTime,
+)
 ```
 
 Several options are observer-level, so multiple components can observe the same query with different selectors or freshness behavior.
@@ -107,4 +112,3 @@ queryClient.invalidateQueries({ queryKey: ['todos'], refetchType: 'active' })
 Inactive queries are not automatically the same as mounted queries. Check observer count in devtools when invalidation or garbage collection looks surprising.
 
 Source: https://tkdodo.eu/blog/inside-react-query
-

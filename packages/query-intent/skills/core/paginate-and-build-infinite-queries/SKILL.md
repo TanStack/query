@@ -6,7 +6,7 @@ description: >
   getNextPageParam, getPreviousPageParam, maxPages, pages, or pageParams.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
   - core/fetch-and-observe-queries
@@ -42,7 +42,10 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 export function useFeed() {
   return useInfiniteQuery({
     queryKey: ['feed'],
-    queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1, items: [{ id: pageParam }] }),
+    queryFn: async ({ pageParam }) => ({
+      nextCursor: pageParam + 1,
+      items: [{ id: pageParam }],
+    }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
@@ -57,7 +60,10 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 export function useBoundedFeed() {
   return useInfiniteQuery({
     queryKey: ['feed'],
-    queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1, items: [{ id: pageParam }] }),
+    queryFn: async ({ pageParam }) => ({
+      nextCursor: pageParam + 1,
+      items: [{ id: pageParam }],
+    }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     maxPages: 5,
@@ -88,7 +94,11 @@ Wrong:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function useFeed() {
-  return useInfiniteQuery({ queryKey: ['feed'], queryFn: async () => ({ items: [] }), getNextPageParam: () => 1 })
+  return useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async () => ({ items: [] }),
+    getNextPageParam: () => 1,
+  })
 }
 ```
 
@@ -98,7 +108,12 @@ Correct:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function useFeed() {
-  return useInfiniteQuery({ queryKey: ['feed'], queryFn: async ({ pageParam }) => ({ items: [pageParam] }), initialPageParam: 0, getNextPageParam: () => 1 })
+  return useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam }) => ({ items: [pageParam] }),
+    initialPageParam: 0,
+    getNextPageParam: () => 1,
+  })
 }
 ```
 
@@ -114,7 +129,12 @@ Wrong:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function Feed() {
-  const query = useInfiniteQuery({ queryKey: ['feed'], queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }), initialPageParam: 0, getNextPageParam: (page) => page.nextCursor })
+  const query = useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }),
+    initialPageParam: 0,
+    getNextPageParam: (page) => page.nextCursor,
+  })
   return <button onClick={() => query.fetchNextPage()}>More</button>
 }
 ```
@@ -125,8 +145,20 @@ Correct:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function Feed() {
-  const query = useInfiniteQuery({ queryKey: ['feed'], queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }), initialPageParam: 0, getNextPageParam: (page) => page.nextCursor })
-  return <button disabled={query.isFetchingNextPage} onClick={() => query.fetchNextPage()}>More</button>
+  const query = useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }),
+    initialPageParam: 0,
+    getNextPageParam: (page) => page.nextCursor,
+  })
+  return (
+    <button
+      disabled={query.isFetchingNextPage}
+      onClick={() => query.fetchNextPage()}
+    >
+      More
+    </button>
+  )
 }
 ```
 
@@ -157,4 +189,3 @@ queryClient.setQueryData(['feed'], { pages: [[{ id: 1 }]], pageParams: [0] })
 Infinite query data must keep `pages` and `pageParams`; refetches expect that shape.
 
 Source: TanStack/query:docs/framework/react/guides/infinite-queries.md
-

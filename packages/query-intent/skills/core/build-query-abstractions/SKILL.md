@@ -7,7 +7,7 @@ description: >
   query configuration across hooks, loaders, prefetches, and QueryClient calls.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
 sources:
@@ -59,7 +59,10 @@ Wrong:
 
 ```ts
 export function useInvoice(id: number) {
-  return useQuery({ queryKey: ['invoice', id], queryFn: () => fetchInvoice(id) })
+  return useQuery({
+    queryKey: ['invoice', id],
+    queryFn: () => fetchInvoice(id),
+  })
 }
 ```
 
@@ -67,7 +70,10 @@ Correct:
 
 ```ts
 export function invoiceOptions(id: number) {
-  return queryOptions({ queryKey: ['invoice', id], queryFn: () => fetchInvoice(id) })
+  return queryOptions({
+    queryKey: ['invoice', id],
+    queryFn: () => fetchInvoice(id),
+  })
 }
 
 export function useInvoice(id: number) {
@@ -85,7 +91,11 @@ Wrong:
 
 ```ts
 function useInvoice(id: number, options?: Partial<UseQueryOptions<Invoice>>) {
-  return useQuery({ queryKey: ['invoice', id], queryFn: () => fetchInvoice(id), ...options })
+  return useQuery({
+    queryKey: ['invoice', id],
+    queryFn: () => fetchInvoice(id),
+    ...options,
+  })
 }
 ```
 
@@ -124,4 +134,3 @@ export function useInvoice(id: number) {
 Keep the Query result surface available unless the abstraction owns every loading, error, and refetch behavior.
 
 Source: TanStack/query:docs/framework/react/guides/queries.md
-

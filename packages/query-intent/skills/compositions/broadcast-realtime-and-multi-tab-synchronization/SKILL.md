@@ -6,7 +6,7 @@ description: >
   events, server/browser boundaries, and experimental broadcast behavior.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
   - core/write-mutations-and-invalidate-related-queries
@@ -88,7 +88,10 @@ import { QueryClient } from '@tanstack/react-query'
 import { broadcastQueryClient } from '@tanstack/query-broadcast-client-experimental'
 
 if (typeof window !== 'undefined') {
-  broadcastQueryClient({ queryClient: new QueryClient(), broadcastChannel: 'query-cache-v1' })
+  broadcastQueryClient({
+    queryClient: new QueryClient(),
+    broadcastChannel: 'query-cache-v1',
+  })
 }
 ```
 
@@ -145,4 +148,3 @@ if (typeof window !== 'undefined') broadcastQueryClient({ queryClient })
 BroadcastChannel is a browser primitive; server setup should not install it.
 
 Source: TanStack/query:docs/framework/react/plugins/broadcastQueryClient.md
-

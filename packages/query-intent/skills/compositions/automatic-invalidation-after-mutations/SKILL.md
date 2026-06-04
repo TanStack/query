@@ -7,7 +7,7 @@ description: >
   static or unrelated queries.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/write-mutations-and-invalidate-related-queries
   - core/design-query-keys-and-options
@@ -50,7 +50,9 @@ const queryClient = new QueryClient({
     onSuccess: (_data, _variables, _context, mutation) => {
       return queryClient.invalidateQueries({
         predicate: (query) =>
-          mutation.meta?.invalidates?.some((queryKey) => matchQuery({ queryKey }, query)) ?? true,
+          mutation.meta?.invalidates?.some((queryKey) =>
+            matchQuery({ queryKey }, query),
+          ) ?? true,
       })
     },
   }),

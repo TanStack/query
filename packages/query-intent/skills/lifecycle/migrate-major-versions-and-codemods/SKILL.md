@@ -7,7 +7,7 @@ description: >
   migration, and query-codemods.
 type: lifecycle
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 sources:
   - TanStack/query:docs/framework/react/guides/migrating-to-react-query-3.md
   - TanStack/query:docs/framework/react/guides/migrating-to-react-query-4.md
@@ -45,7 +45,10 @@ export function useTodo(id: string) {
 }
 
 export function prefetchTodo(id: string) {
-  return queryClient.prefetchQuery({ queryKey: ['todo', id], queryFn: async () => ({ id }) })
+  return queryClient.prefetchQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => ({ id }),
+  })
 }
 ```
 
@@ -65,7 +68,11 @@ export const queryClient = new QueryClient({
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 export function usePage(page: number) {
-  return useQuery({ queryKey: ['page', page], queryFn: async () => ({ page }), placeholderData: keepPreviousData })
+  return useQuery({
+    queryKey: ['page', page],
+    queryFn: async () => ({ page }),
+    placeholderData: keepPreviousData,
+  })
 }
 ```
 
@@ -105,7 +112,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  return useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], onSuccess: () => console.log('loaded') })
+  return useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+    onSuccess: () => console.log('loaded'),
+  })
 }
 ```
 
@@ -116,8 +127,13 @@ import * as React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 export function TodosLogger() {
-  const { data } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
-  React.useEffect(() => { if (data) console.log('loaded') }, [data])
+  const { data } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  React.useEffect(() => {
+    if (data) console.log('loaded')
+  }, [data])
   return null
 }
 ```
@@ -151,4 +167,3 @@ export const queryClient = new QueryClient({
 `cacheTime` was renamed to `gcTime` to describe garbage collection of unused queries.
 
 Source: TanStack/query:docs/framework/react/guides/migrating-to-v5.md
-

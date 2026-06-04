@@ -7,7 +7,7 @@ description: >
   infinite-query-property-order, and mutation-property-order.
 type: composition
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
   - core/fetch-and-observe-queries
@@ -29,9 +29,7 @@ sources:
 ```js
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
-export default [
-  ...pluginQuery.configs['flat/recommended'],
-]
+export default [...pluginQuery.configs['flat/recommended']]
 ```
 
 ## Core Integration Patterns
@@ -41,9 +39,7 @@ export default [
 ```js
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
-export default [
-  ...pluginQuery.configs['flat/recommended-strict'],
-]
+export default [...pluginQuery.configs['flat/recommended-strict']]
 ```
 
 ### Prefer option factories
@@ -85,9 +81,7 @@ Wrong:
 ```js
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
-export default [
-  ...pluginQuery.configs['flat/recommended'],
-]
+export default [...pluginQuery.configs['flat/recommended']]
 ```
 
 Correct:
@@ -95,9 +89,7 @@ Correct:
 ```js
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
-export default [
-  ...pluginQuery.configs['flat/recommended-strict'],
-]
+export default [...pluginQuery.configs['flat/recommended-strict']]
 ```
 
 Strict mode catches option-factory and inference patterns that agents commonly miss.
@@ -112,7 +104,12 @@ Wrong:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function useFeed() {
-  return useInfiniteQuery({ queryFn: async () => ({ nextCursor: 1 }), queryKey: ['feed'], getNextPageParam: (page) => page.nextCursor, initialPageParam: 0 })
+  return useInfiniteQuery({
+    queryFn: async () => ({ nextCursor: 1 }),
+    queryKey: ['feed'],
+    getNextPageParam: (page) => page.nextCursor,
+    initialPageParam: 0,
+  })
 }
 ```
 
@@ -122,7 +119,12 @@ Correct:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export function useFeed() {
-  return useInfiniteQuery({ queryKey: ['feed'], queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }), initialPageParam: 0, getNextPageParam: (page) => page.nextCursor })
+  return useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam }) => ({ nextCursor: pageParam + 1 }),
+    initialPageParam: 0,
+    getNextPageParam: (page) => page.nextCursor,
+  })
 }
 ```
 
@@ -138,7 +140,10 @@ Wrong:
 import { useMutation } from '@tanstack/react-query'
 
 export function useSave() {
-  return useMutation({ onSuccess: () => console.log('saved'), mutationFn: async (title: string) => title })
+  return useMutation({
+    onSuccess: () => console.log('saved'),
+    mutationFn: async (title: string) => title,
+  })
 }
 ```
 
@@ -148,7 +153,10 @@ Correct:
 import { useMutation } from '@tanstack/react-query'
 
 export function useSave() {
-  return useMutation({ mutationFn: async (title: string) => title, onSuccess: () => console.log('saved') })
+  return useMutation({
+    mutationFn: async (title: string) => title,
+    onSuccess: () => console.log('saved'),
+  })
 }
 ```
 
@@ -157,4 +165,3 @@ The mutation property order rule preserves inference for mutation options.
 Source: TanStack/query:docs/eslint/mutation-property-order.md
 
 See also: `core/design-query-keys-and-options` for the patterns these rules protect.
-

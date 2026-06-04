@@ -7,7 +7,7 @@ description: >
 type: framework
 library: TanStack Query
 framework: cross-adapter
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
   - core/seed-placeholder-select-and-transform-data
@@ -43,8 +43,16 @@ export function TodoCount() {
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const { data, isFetching } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
-  return <pre>{isFetching ? 'Refreshing ' : ''}{JSON.stringify(data ?? [])}</pre>
+  const { data, isFetching } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <pre>
+      {isFetching ? 'Refreshing ' : ''}
+      {JSON.stringify(data ?? [])}
+    </pre>
+  )
 }
 ```
 
@@ -65,7 +73,10 @@ import * as React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 export function TodosEffect() {
-  const { data } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   React.useEffect(() => console.log(data?.length ?? 0), [data])
   return null
 }
@@ -81,7 +92,10 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  const { data, ...rest } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data, ...rest } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return { data, rest }
 }
 ```
@@ -92,7 +106,10 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useTodos() {
-  const { data, isFetching, error } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data, isFetching, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   return { data, isFetching, error }
 }
 ```
@@ -110,7 +127,10 @@ import * as React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   React.useEffect(() => console.log(query.data), [query])
   return null
 }
@@ -123,7 +143,10 @@ import * as React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const { data } = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+  const { data } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
   React.useEffect(() => console.log(data), [data])
   return null
 }
@@ -159,4 +182,3 @@ Vue Query results are immutable; make a mutable copy for form state.
 Source: TanStack/query:docs/framework/vue/reactivity.md
 
 See also: `compositions/enforce-query-best-practices-with-eslint` for lint rules that protect render tracking.
-

@@ -7,7 +7,7 @@ description: >
   Suspense prefetching, and query-function prefetching.
 type: lifecycle
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/design-query-keys-and-options
   - core/fetch-and-observe-queries
@@ -48,10 +48,11 @@ export function preloadTodos() {
 import { QueryClient, queryOptions } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-const contactOptions = (contactId: string) => queryOptions({
-  queryKey: ['contact', contactId],
-  queryFn: async () => ({ id: contactId, name: 'Ada' }),
-})
+const contactOptions = (contactId: string) =>
+  queryOptions({
+    queryKey: ['contact', contactId],
+    queryFn: async () => ({ id: contactId, name: 'Ada' }),
+  })
 
 export function contactLoader(contactId: string) {
   return queryClient.ensureQueryData(contactOptions(contactId))
@@ -64,7 +65,10 @@ export function contactLoader(contactId: string) {
 import { Suspense } from 'react'
 import { usePrefetchQuery, useSuspenseQuery } from '@tanstack/react-query'
 
-const commentsOptions = { queryKey: ['comments'], queryFn: async () => [{ id: 1 }] }
+const commentsOptions = {
+  queryKey: ['comments'],
+  queryFn: async () => [{ id: 1 }],
+}
 
 function Comments() {
   const { data } = useSuspenseQuery(commentsOptions)
@@ -73,7 +77,11 @@ function Comments() {
 
 export function CommentsSection() {
   usePrefetchQuery(commentsOptions)
-  return <Suspense fallback={<p>Loading</p>}><Comments /></Suspense>
+  return (
+    <Suspense fallback={<p>Loading</p>}>
+      <Comments />
+    </Suspense>
+  )
 }
 ```
 
@@ -85,7 +93,10 @@ import { QueryClient } from '@tanstack/react-query'
 const queryClient = new QueryClient()
 
 export function getTodo(id: string) {
-  return queryClient.fetchQuery({ queryKey: ['todo', id], queryFn: async () => ({ id }) })
+  return queryClient.fetchQuery({
+    queryKey: ['todo', id],
+    queryFn: async () => ({ id }),
+  })
 }
 ```
 
@@ -101,7 +112,10 @@ Wrong:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-const data = await queryClient.prefetchQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) })
+const data = await queryClient.prefetchQuery({
+  queryKey: ['todo', 1],
+  queryFn: async () => ({ id: 1 }),
+})
 ```
 
 Correct:
@@ -110,7 +124,10 @@ Correct:
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-const data = await queryClient.fetchQuery({ queryKey: ['todo', 1], queryFn: async () => ({ id: 1 }) })
+const data = await queryClient.fetchQuery({
+  queryKey: ['todo', 1],
+  queryFn: async () => ({ id: 1 }),
+})
 ```
 
 `prefetchQuery` returns void and swallows errors; `fetchQuery` returns data and throws.
@@ -125,8 +142,14 @@ Wrong:
 import { QueryClient, useQuery } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-await queryClient.prefetchQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], staleTime: 60_000 })
-export function useTodos() { return useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] }) }
+await queryClient.prefetchQuery({
+  queryKey: ['todos'],
+  queryFn: async () => [{ id: 1 }],
+  staleTime: 60_000,
+})
+export function useTodos() {
+  return useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
+}
 ```
 
 Correct:
@@ -135,9 +158,15 @@ Correct:
 import { QueryClient, queryOptions, useQuery } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-const options = queryOptions({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }], staleTime: 60_000 })
+const options = queryOptions({
+  queryKey: ['todos'],
+  queryFn: async () => [{ id: 1 }],
+  staleTime: 60_000,
+})
 await queryClient.prefetchQuery(options)
-export function useTodos() { return useQuery(options) }
+export function useTodos() {
+  return useQuery(options)
+}
 ```
 
 Prefetch call options do not automatically configure the later observer.
@@ -154,8 +183,16 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 export function Article() {
   const queryClient = useQueryClient()
-  const article = useSuspenseQuery({ queryKey: ['article'], queryFn: async () => ({ id: 1 }) })
-  React.useEffect(() => { queryClient.prefetchQuery({ queryKey: ['comments'], queryFn: async () => [] }) }, [queryClient])
+  const article = useSuspenseQuery({
+    queryKey: ['article'],
+    queryFn: async () => ({ id: 1 }),
+  })
+  React.useEffect(() => {
+    queryClient.prefetchQuery({
+      queryKey: ['comments'],
+      queryFn: async () => [],
+    })
+  }, [queryClient])
   return <pre>{JSON.stringify(article.data)}</pre>
 }
 ```
@@ -167,13 +204,20 @@ import { Suspense } from 'react'
 import { usePrefetchQuery, useSuspenseQuery } from '@tanstack/react-query'
 
 function Article() {
-  const article = useSuspenseQuery({ queryKey: ['article'], queryFn: async () => ({ id: 1 }) })
+  const article = useSuspenseQuery({
+    queryKey: ['article'],
+    queryFn: async () => ({ id: 1 }),
+  })
   return <pre>{JSON.stringify(article.data)}</pre>
 }
 
 export function ArticleRoute() {
   usePrefetchQuery({ queryKey: ['comments'], queryFn: async () => [] })
-  return <Suspense fallback={<p>Loading</p>}><Article /></Suspense>
+  return (
+    <Suspense fallback={<p>Loading</p>}>
+      <Article />
+    </Suspense>
+  )
 }
 ```
 
@@ -182,4 +226,3 @@ Effects do not run until after a suspenseful query resolves, so they cannot flat
 Source: TanStack/query:docs/framework/react/guides/prefetching.md
 
 See also: `compositions/compose-query-with-tanstack-router-and-start` for Router and Start loader prefetching.
-

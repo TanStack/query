@@ -6,7 +6,7 @@ description: >
   fetchStatus, and declarative refetch behavior.
 type: core
 library: TanStack Query
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - core/fetch-and-observe-queries
   - core/tune-defaults-freshness-retries-and-refetching
@@ -86,7 +86,11 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function useSearch(term: string) {
-  return useQuery({ queryKey: ['search'], queryFn: async () => [term], enabled: false })
+  return useQuery({
+    queryKey: ['search'],
+    queryFn: async () => [term],
+    enabled: false,
+  })
 }
 ```
 
@@ -96,7 +100,11 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function useSearch(term: string) {
-  return useQuery({ queryKey: ['search', term], queryFn: async () => [term], enabled: term.length > 0 })
+  return useQuery({
+    queryKey: ['search', term],
+    queryFn: async () => [term],
+    enabled: term.length > 0,
+  })
 }
 ```
 
@@ -112,7 +120,12 @@ Wrong:
 import { useQueries } from '@tanstack/react-query'
 
 export function useUsers(ids: Array<string>) {
-  return useQueries({ queries: ids.map((id) => ({ queryKey: ['user'], queryFn: async () => ({ id }) })) })
+  return useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['user'],
+      queryFn: async () => ({ id }),
+    })),
+  })
 }
 ```
 
@@ -122,7 +135,12 @@ Correct:
 import { useQueries } from '@tanstack/react-query'
 
 export function useUsers(ids: Array<string>) {
-  return useQueries({ queries: ids.map((id) => ({ queryKey: ['user', id], queryFn: async () => ({ id }) })) })
+  return useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['user', id],
+      queryFn: async () => ({ id }),
+    })),
+  })
 }
 ```
 
@@ -138,8 +156,15 @@ Wrong:
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
-  return query.isFetching ? <p>Loading</p> : <pre>{JSON.stringify(query.data)}</pre>
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return query.isFetching ? (
+    <p>Loading</p>
+  ) : (
+    <pre>{JSON.stringify(query.data)}</pre>
+  )
 }
 ```
 
@@ -149,8 +174,16 @@ Correct:
 import { useQuery } from '@tanstack/react-query'
 
 export function Todos() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: async () => [{ id: 1 }] })
-  return <pre>{query.isFetching ? 'Refreshing ' : ''}{JSON.stringify(query.data ?? [])}</pre>
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => [{ id: 1 }],
+  })
+  return (
+    <pre>
+      {query.isFetching ? 'Refreshing ' : ''}
+      {JSON.stringify(query.data ?? [])}
+    </pre>
+  )
 }
 ```
 

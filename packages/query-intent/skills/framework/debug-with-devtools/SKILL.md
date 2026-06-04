@@ -8,7 +8,7 @@ description: >
 type: framework
 library: TanStack Query
 framework: cross-adapter
-library_version: "5.101.0"
+library_version: '5.101.0'
 requires:
   - lifecycle/setup-query-client-and-providers
 sources:
@@ -40,11 +40,17 @@ export function Devtools() {
 import * as React from 'react'
 
 const ReactQueryDevtoolsProduction = React.lazy(() =>
-  import('@tanstack/react-query-devtools/production').then((module) => ({ default: module.ReactQueryDevtools })),
+  import('@tanstack/react-query-devtools/production').then((module) => ({
+    default: module.ReactQueryDevtools,
+  })),
 )
 
 export function LazyDevtools() {
-  return <React.Suspense fallback={null}><ReactQueryDevtoolsProduction /></React.Suspense>
+  return (
+    <React.Suspense fallback={null}>
+      <ReactQueryDevtoolsProduction />
+    </React.Suspense>
+  )
 }
 ```
 
@@ -86,9 +92,17 @@ Correct:
 ```tsx
 import * as React from 'react'
 
-const Devtools = React.lazy(() => import('@tanstack/react-query-devtools/production').then((module) => ({ default: module.ReactQueryDevtools })))
+const Devtools = React.lazy(() =>
+  import('@tanstack/react-query-devtools/production').then((module) => ({
+    default: module.ReactQueryDevtools,
+  })),
+)
 export function AppDevtools() {
-  return <React.Suspense fallback={null}><Devtools /></React.Suspense>
+  return (
+    <React.Suspense fallback={null}>
+      <Devtools />
+    </React.Suspense>
+  )
 }
 ```
 
@@ -142,11 +156,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 export function Root() {
-  return <QueryClientProvider client={queryClient}><ReactQueryDevtools /></QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
+  )
 }
 ```
 
 Devtools need the same QueryClient context as the app.
 
 Source: TanStack/query:docs/framework/react/devtools.md
-

@@ -5,700 +5,700 @@
 # Status: draft
 
 library:
-  name: "TanStack Query"
-  version: "5.101.0"
-  repository: "https://github.com/TanStack/query"
-  description: "Framework adapters and core utilities for fetching, caching, synchronizing, and updating server state."
+  name: 'TanStack Query'
+  version: '5.101.0'
+  repository: 'https://github.com/TanStack/query'
+  description: 'Framework adapters and core utilities for fetching, caching, synchronizing, and updating server state.'
 generated_from:
-  domain_map: "_artifacts/domain_map.yaml"
-  skill_spec: "_artifacts/skill_spec.md"
-generated_at: "2026-06-03T21:41:21Z"
+  domain_map: '_artifacts/domain_map.yaml'
+  skill_spec: '_artifacts/skill_spec.md'
+generated_at: '2026-06-03T21:41:21Z'
 
 skills:
-  - name: "Set up QueryClient and providers"
-    slug: "setup-query-client-and-providers"
-    type: "lifecycle"
-    domain: "bootstrapping-query-clients"
-    path: "packages/query-intent/skills/lifecycle/setup-query-client-and-providers/SKILL.md"
-    package: "packages/query-intent"
-    description: "Create stable QueryClient instances, wire framework providers, and avoid cache leaks across renders or SSR requests."
+  - name: 'Set up QueryClient and providers'
+    slug: 'setup-query-client-and-providers'
+    type: 'lifecycle'
+    domain: 'bootstrapping-query-clients'
+    path: 'packages/query-intent/skills/lifecycle/setup-query-client-and-providers/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Create stable QueryClient instances, wire framework providers, and avoid cache leaks across renders or SSR requests.'
     sources:
-      - "TanStack/query:docs/framework/react/quick-start.md"
-      - "TanStack/query:docs/framework/react/reference/QueryClientProvider.md"
-      - "TanStack/query:docs/eslint/stable-query-client.md"
-      - "TanStack/query:docs/framework/vue/guides/custom-client.md"
-      - "TanStack/query:docs/framework/angular/overview.md"
-      - "TanStack/query:docs/framework/lit/guides/reactive-controllers-vs-hooks.md"
+      - 'TanStack/query:docs/framework/react/quick-start.md'
+      - 'TanStack/query:docs/framework/react/reference/QueryClientProvider.md'
+      - 'TanStack/query:docs/eslint/stable-query-client.md'
+      - 'TanStack/query:docs/framework/vue/guides/custom-client.md'
+      - 'TanStack/query:docs/framework/angular/overview.md'
+      - 'TanStack/query:docs/framework/lit/guides/reactive-controllers-vs-hooks.md'
     subsystems:
-      - "React"
-      - "Preact"
-      - "Vue"
-      - "Solid"
-      - "Svelte"
-      - "Angular"
-      - "Lit"
+      - 'React'
+      - 'Preact'
+      - 'Vue'
+      - 'Solid'
+      - 'Svelte'
+      - 'Angular'
+      - 'Lit'
     references:
-      - "references/providers-by-adapter.md"
-      - "references/ssr-client-lifecycle.md"
+      - 'references/providers-by-adapter.md'
+      - 'references/ssr-client-lifecycle.md'
 
-  - name: "Design query keys and reusable options"
-    slug: "design-query-keys-and-options"
-    type: "core"
-    domain: "reading-server-state"
-    path: "packages/query-intent/skills/core/design-query-keys-and-options/SKILL.md"
-    package: "packages/query-intent"
-    description: "Design complete query keys and reusable options objects that keep query identity, query functions, and TypeScript inference together."
+  - name: 'Design query keys and reusable options'
+    slug: 'design-query-keys-and-options'
+    type: 'core'
+    domain: 'reading-server-state'
+    path: 'packages/query-intent/skills/core/design-query-keys-and-options/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Design complete query keys and reusable options objects that keep query identity, query functions, and TypeScript inference together.'
     sources:
-      - "TanStack/query:docs/framework/react/guides/query-keys.md"
-      - "TanStack/query:docs/framework/react/guides/query-options.md"
-      - "TanStack/query:docs/framework/react/typescript.md"
-      - "TanStack/query:docs/eslint/exhaustive-deps.md"
-      - "TanStack/query:docs/eslint/prefer-query-options.md"
+      - 'TanStack/query:docs/framework/react/guides/query-keys.md'
+      - 'TanStack/query:docs/framework/react/guides/query-options.md'
+      - 'TanStack/query:docs/framework/react/typescript.md'
+      - 'TanStack/query:docs/eslint/exhaustive-deps.md'
+      - 'TanStack/query:docs/eslint/prefer-query-options.md'
     subsystems:
-      - "queryOptions"
-      - "infiniteQueryOptions"
-      - "mutationOptions"
-      - "skipToken"
+      - 'queryOptions'
+      - 'infiniteQueryOptions'
+      - 'mutationOptions'
+      - 'skipToken'
     references:
-      - "references/options-api-by-adapter.md"
-      - "references/query-key-factories.md"
+      - 'references/options-api-by-adapter.md'
+      - 'references/query-key-factories.md'
 
-  - name: "Build Query abstractions"
-    slug: "build-query-abstractions"
-    type: "core"
-    domain: "reading-server-state"
-    path: "packages/query-intent/skills/core/build-query-abstractions/SKILL.md"
-    package: "packages/query-intent"
-    description: "Create queryOptions factories and custom hooks that preserve TypeScript inference and work across hooks, loaders, prefetches, and QueryClient calls."
+  - name: 'Build Query abstractions'
+    slug: 'build-query-abstractions'
+    type: 'core'
+    domain: 'reading-server-state'
+    path: 'packages/query-intent/skills/core/build-query-abstractions/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Create queryOptions factories and custom hooks that preserve TypeScript inference and work across hooks, loaders, prefetches, and QueryClient calls.'
     requires:
-      - "design-query-keys-and-options"
+      - 'design-query-keys-and-options'
     sources:
-      - "https://tkdodo.eu/blog/creating-query-abstractions"
-      - "https://tkdodo.eu/blog/the-query-options-api"
-      - "TanStack/query:docs/framework/react/guides/query-options.md"
-      - "TanStack/query:docs/framework/react/typescript.md"
+      - 'https://tkdodo.eu/blog/creating-query-abstractions'
+      - 'https://tkdodo.eu/blog/the-query-options-api'
+      - 'TanStack/query:docs/framework/react/guides/query-options.md'
+      - 'TanStack/query:docs/framework/react/typescript.md'
     subsystems:
-      - "queryOptions"
-      - "custom hooks"
-      - "TypeScript inference"
+      - 'queryOptions'
+      - 'custom hooks'
+      - 'TypeScript inference'
     references:
-      - "references/query-abstractions.md"
+      - 'references/query-abstractions.md'
 
-  - name: "Understand Query internals and observers"
-    slug: "understand-query-internals-and-observers"
-    type: "core"
-    domain: "reading-server-state"
-    path: "packages/query-intent/skills/core/understand-query-internals-and-observers/SKILL.md"
-    package: "packages/query-intent"
-    description: "Explain QueryClient, QueryCache, MutationCache, QueryObserver, active and inactive queries, and observer-level option behavior."
+  - name: 'Understand Query internals and observers'
+    slug: 'understand-query-internals-and-observers'
+    type: 'core'
+    domain: 'reading-server-state'
+    path: 'packages/query-intent/skills/core/understand-query-internals-and-observers/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Explain QueryClient, QueryCache, MutationCache, QueryObserver, active and inactive queries, and observer-level option behavior.'
     requires:
-      - "fetch-and-observe-queries"
+      - 'fetch-and-observe-queries'
     sources:
-      - "https://tkdodo.eu/blog/inside-react-query"
-      - "https://tkdodo.eu/blog/react-query-selectors-supercharged"
-      - "TanStack/query:docs/reference/QueryClient.md"
-      - "TanStack/query:docs/reference/QueryCache.md"
-      - "TanStack/query:docs/reference/QueryObserver.md"
-      - "TanStack/query:docs/reference/MutationCache.md"
+      - 'https://tkdodo.eu/blog/inside-react-query'
+      - 'https://tkdodo.eu/blog/react-query-selectors-supercharged'
+      - 'TanStack/query:docs/reference/QueryClient.md'
+      - 'TanStack/query:docs/reference/QueryCache.md'
+      - 'TanStack/query:docs/reference/QueryObserver.md'
+      - 'TanStack/query:docs/reference/MutationCache.md'
     subsystems:
-      - "QueryClient"
-      - "QueryCache"
-      - "QueryObserver"
-      - "active queries"
-      - "inactive queries"
+      - 'QueryClient'
+      - 'QueryCache'
+      - 'QueryObserver'
+      - 'active queries'
+      - 'inactive queries'
     references:
-      - "references/query-internals-and-observers.md"
+      - 'references/query-internals-and-observers.md'
 
-  - name: "Fetch and observe queries"
-    slug: "fetch-and-observe-queries"
-    type: "core"
-    domain: "reading-server-state"
-    path: "packages/query-intent/skills/core/fetch-and-observe-queries/SKILL.md"
-    package: "packages/query-intent"
-    description: "Read server state with query hooks, observers, and QueryClient fetch methods while interpreting status and fetchStatus correctly."
+  - name: 'Fetch and observe queries'
+    slug: 'fetch-and-observe-queries'
+    type: 'core'
+    domain: 'reading-server-state'
+    path: 'packages/query-intent/skills/core/fetch-and-observe-queries/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Read server state with query hooks, observers, and QueryClient fetch methods while interpreting status and fetchStatus correctly.'
     requires:
-      - "setup-query-client-and-providers"
-      - "design-query-keys-and-options"
+      - 'setup-query-client-and-providers'
+      - 'design-query-keys-and-options'
     sources:
-      - "TanStack/query:docs/framework/react/guides/queries.md"
-      - "TanStack/query:docs/framework/react/guides/query-functions.md"
-      - "TanStack/query:docs/reference/QueryObserver.md"
-      - "TanStack/query:docs/reference/QueryClient.md"
-      - "TanStack/query:docs/eslint/no-void-query-fn.md"
+      - 'TanStack/query:docs/framework/react/guides/queries.md'
+      - 'TanStack/query:docs/framework/react/guides/query-functions.md'
+      - 'TanStack/query:docs/reference/QueryObserver.md'
+      - 'TanStack/query:docs/reference/QueryClient.md'
+      - 'TanStack/query:docs/eslint/no-void-query-fn.md'
     subsystems:
-      - "useQuery"
-      - "useQueries"
-      - "QueryObserver"
-      - "QueriesObserver"
-      - "QueryClient"
+      - 'useQuery'
+      - 'useQueries'
+      - 'QueryObserver'
+      - 'QueriesObserver'
+      - 'QueryClient'
     references:
-      - "references/query-observation-by-adapter.md"
-      - "references/status-and-fetch-status.md"
+      - 'references/query-observation-by-adapter.md'
+      - 'references/status-and-fetch-status.md'
 
-  - name: "Handle status checks and errors"
-    slug: "handle-status-and-errors"
-    type: "framework"
-    domain: "reading-server-state"
-    path: "packages/query-intent/skills/framework/handle-status-and-errors/SKILL.md"
-    package: "packages/query-intent"
-    description: "Design loading, stale data, background refetch error, throwOnError, Error Boundary, toast, and validation-error flows."
+  - name: 'Handle status checks and errors'
+    slug: 'handle-status-and-errors'
+    type: 'framework'
+    domain: 'reading-server-state'
+    path: 'packages/query-intent/skills/framework/handle-status-and-errors/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Design loading, stale data, background refetch error, throwOnError, Error Boundary, toast, and validation-error flows.'
     requires:
-      - "fetch-and-observe-queries"
-      - "use-suspense-and-error-boundaries"
+      - 'fetch-and-observe-queries'
+      - 'use-suspense-and-error-boundaries'
     sources:
-      - "https://tkdodo.eu/blog/status-checks-in-react-query"
-      - "https://tkdodo.eu/blog/react-query-error-handling"
-      - "TanStack/query:docs/framework/react/guides/queries.md"
-      - "TanStack/query:docs/framework/react/reference/QueryErrorResetBoundary.md"
+      - 'https://tkdodo.eu/blog/status-checks-in-react-query'
+      - 'https://tkdodo.eu/blog/react-query-error-handling'
+      - 'TanStack/query:docs/framework/react/guides/queries.md'
+      - 'TanStack/query:docs/framework/react/reference/QueryErrorResetBoundary.md'
     subsystems:
-      - "status"
-      - "fetchStatus"
-      - "throwOnError"
-      - "QueryCache callbacks"
+      - 'status'
+      - 'fetchStatus'
+      - 'throwOnError'
+      - 'QueryCache callbacks'
     references:
-      - "references/status-and-error-handling.md"
+      - 'references/status-and-error-handling.md'
 
-  - name: "Tune defaults, freshness, retries, and refetching"
-    slug: "tune-defaults-freshness-retries-and-refetching"
-    type: "core"
-    domain: "coordinating-query-execution"
-    path: "packages/query-intent/skills/core/tune-defaults-freshness-retries-and-refetching/SKILL.md"
-    package: "packages/query-intent"
-    description: "Choose staleTime, gcTime, retries, refetch triggers, network mode, and default options without confusing cache lifetime with freshness."
+  - name: 'Tune defaults, freshness, retries, and refetching'
+    slug: 'tune-defaults-freshness-retries-and-refetching'
+    type: 'core'
+    domain: 'coordinating-query-execution'
+    path: 'packages/query-intent/skills/core/tune-defaults-freshness-retries-and-refetching/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Choose staleTime, gcTime, retries, refetch triggers, network mode, and default options without confusing cache lifetime with freshness.'
     requires:
-      - "fetch-and-observe-queries"
+      - 'fetch-and-observe-queries'
     sources:
-      - "TanStack/query:docs/framework/react/guides/important-defaults.md"
-      - "TanStack/query:docs/framework/react/guides/caching.md"
-      - "TanStack/query:docs/framework/react/guides/query-retries.md"
-      - "TanStack/query:docs/framework/react/guides/window-focus-refetching.md"
-      - "TanStack/query:docs/framework/react/guides/network-mode.md"
-      - "TanStack/query:docs/reference/focusManager.md"
-      - "TanStack/query:docs/reference/onlineManager.md"
-      - "TanStack/query:docs/reference/timeoutManager.md"
+      - 'TanStack/query:docs/framework/react/guides/important-defaults.md'
+      - 'TanStack/query:docs/framework/react/guides/caching.md'
+      - 'TanStack/query:docs/framework/react/guides/query-retries.md'
+      - 'TanStack/query:docs/framework/react/guides/window-focus-refetching.md'
+      - 'TanStack/query:docs/framework/react/guides/network-mode.md'
+      - 'TanStack/query:docs/reference/focusManager.md'
+      - 'TanStack/query:docs/reference/onlineManager.md'
+      - 'TanStack/query:docs/reference/timeoutManager.md'
     references:
-      - "references/defaults-and-freshness.md"
-      - "references/focus-online-timeout-managers.md"
+      - 'references/defaults-and-freshness.md'
+      - 'references/focus-online-timeout-managers.md'
 
-  - name: "Coordinate dependent, parallel, disabled, and background queries"
-    slug: "coordinate-dependent-parallel-disabled-and-background-queries"
-    type: "core"
-    domain: "coordinating-query-execution"
-    path: "packages/query-intent/skills/core/coordinate-query-execution/SKILL.md"
-    package: "packages/query-intent"
-    description: "Coordinate query execution with enabled, skipToken, useQueries, background indicators, and dependency-driven keys instead of imperative refetch flows."
+  - name: 'Coordinate dependent, parallel, disabled, and background queries'
+    slug: 'coordinate-dependent-parallel-disabled-and-background-queries'
+    type: 'core'
+    domain: 'coordinating-query-execution'
+    path: 'packages/query-intent/skills/core/coordinate-query-execution/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Coordinate query execution with enabled, skipToken, useQueries, background indicators, and dependency-driven keys instead of imperative refetch flows.'
     requires:
-      - "fetch-and-observe-queries"
-      - "tune-defaults-freshness-retries-and-refetching"
+      - 'fetch-and-observe-queries'
+      - 'tune-defaults-freshness-retries-and-refetching'
     sources:
-      - "TanStack/query:docs/framework/react/guides/dependent-queries.md"
-      - "TanStack/query:docs/framework/react/guides/parallel-queries.md"
-      - "TanStack/query:docs/framework/react/guides/disabling-queries.md"
-      - "TanStack/query:docs/framework/react/guides/background-fetching-indicators.md"
-      - "TanStack/query:docs/framework/react/reference/useQueries.md"
+      - 'TanStack/query:docs/framework/react/guides/dependent-queries.md'
+      - 'TanStack/query:docs/framework/react/guides/parallel-queries.md'
+      - 'TanStack/query:docs/framework/react/guides/disabling-queries.md'
+      - 'TanStack/query:docs/framework/react/guides/background-fetching-indicators.md'
+      - 'TanStack/query:docs/framework/react/reference/useQueries.md'
     references:
-      - "references/query-coordination-patterns.md"
+      - 'references/query-coordination-patterns.md'
 
-  - name: "Paginate and build infinite queries"
-    slug: "paginate-and-build-infinite-queries"
-    type: "core"
-    domain: "coordinating-query-execution"
-    path: "packages/query-intent/skills/core/paginate-and-build-infinite-queries/SKILL.md"
-    package: "packages/query-intent"
-    description: "Build paginated and infinite query flows with stable keys, initialPageParam, getNextPageParam, maxPages, and preserved pages/pageParams shape."
+  - name: 'Paginate and build infinite queries'
+    slug: 'paginate-and-build-infinite-queries'
+    type: 'core'
+    domain: 'coordinating-query-execution'
+    path: 'packages/query-intent/skills/core/paginate-and-build-infinite-queries/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Build paginated and infinite query flows with stable keys, initialPageParam, getNextPageParam, maxPages, and preserved pages/pageParams shape.'
     requires:
-      - "design-query-keys-and-options"
-      - "fetch-and-observe-queries"
+      - 'design-query-keys-and-options'
+      - 'fetch-and-observe-queries'
     sources:
-      - "TanStack/query:docs/framework/react/guides/paginated-queries.md"
-      - "TanStack/query:docs/framework/react/guides/infinite-queries.md"
-      - "TanStack/query:docs/framework/react/reference/useInfiniteQuery.md"
-      - "TanStack/query:docs/reference/InfiniteQueryObserver.md"
-      - "TanStack/query:docs/eslint/infinite-query-property-order.md"
+      - 'TanStack/query:docs/framework/react/guides/paginated-queries.md'
+      - 'TanStack/query:docs/framework/react/guides/infinite-queries.md'
+      - 'TanStack/query:docs/framework/react/reference/useInfiniteQuery.md'
+      - 'TanStack/query:docs/reference/InfiniteQueryObserver.md'
+      - 'TanStack/query:docs/eslint/infinite-query-property-order.md'
     references:
-      - "references/infinite-query-by-adapter.md"
-      - "references/pagination-and-lagged-data.md"
+      - 'references/infinite-query-by-adapter.md'
+      - 'references/pagination-and-lagged-data.md'
 
-  - name: "Write mutations and invalidate related queries"
-    slug: "write-mutations-and-invalidate-related-queries"
-    type: "core"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/core/write-mutations-and-invalidate-related-queries/SKILL.md"
-    package: "packages/query-intent"
-    description: "Write server state with mutations, scoped mutation defaults, mutation state, invalidation, and awaited post-mutation refetching."
+  - name: 'Write mutations and invalidate related queries'
+    slug: 'write-mutations-and-invalidate-related-queries'
+    type: 'core'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/core/write-mutations-and-invalidate-related-queries/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Write server state with mutations, scoped mutation defaults, mutation state, invalidation, and awaited post-mutation refetching.'
     requires:
-      - "design-query-keys-and-options"
-      - "fetch-and-observe-queries"
+      - 'design-query-keys-and-options'
+      - 'fetch-and-observe-queries'
     sources:
-      - "TanStack/query:docs/framework/react/guides/mutations.md"
-      - "TanStack/query:docs/framework/react/guides/query-invalidation.md"
-      - "TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md"
-      - "TanStack/query:docs/framework/react/guides/updates-from-mutation-responses.md"
-      - "TanStack/query:docs/framework/react/reference/useMutation.md"
-      - "TanStack/query:docs/framework/react/reference/useMutationState.md"
-      - "TanStack/query:docs/reference/MutationCache.md"
+      - 'TanStack/query:docs/framework/react/guides/mutations.md'
+      - 'TanStack/query:docs/framework/react/guides/query-invalidation.md'
+      - 'TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md'
+      - 'TanStack/query:docs/framework/react/guides/updates-from-mutation-responses.md'
+      - 'TanStack/query:docs/framework/react/reference/useMutation.md'
+      - 'TanStack/query:docs/framework/react/reference/useMutationState.md'
+      - 'TanStack/query:docs/reference/MutationCache.md'
     references:
-      - "references/mutation-options-by-adapter.md"
-      - "references/invalidation-patterns.md"
+      - 'references/mutation-options-by-adapter.md'
+      - 'references/invalidation-patterns.md'
 
-  - name: "Automatic invalidation after mutations"
-    slug: "automatic-invalidation-after-mutations"
-    type: "composition"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/compositions/automatic-invalidation-after-mutations/SKILL.md"
-    package: "packages/query-intent"
-    description: "Create MutationCache invalidation policies with mutationKey scoping, mutation meta tags, awaited invalidation, and static-data exclusions."
+  - name: 'Automatic invalidation after mutations'
+    slug: 'automatic-invalidation-after-mutations'
+    type: 'composition'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/compositions/automatic-invalidation-after-mutations/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Create MutationCache invalidation policies with mutationKey scoping, mutation meta tags, awaited invalidation, and static-data exclusions.'
     requires:
-      - "write-mutations-and-invalidate-related-queries"
-      - "design-query-keys-and-options"
+      - 'write-mutations-and-invalidate-related-queries'
+      - 'design-query-keys-and-options'
     sources:
-      - "https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations"
-      - "TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md"
-      - "TanStack/query:docs/reference/MutationCache.md"
-      - "TanStack/query:docs/reference/QueryClient.md"
+      - 'https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations'
+      - 'TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md'
+      - 'TanStack/query:docs/reference/MutationCache.md'
+      - 'TanStack/query:docs/reference/QueryClient.md'
     subsystems:
-      - "MutationCache"
-      - "mutationKey"
-      - "mutation meta"
-      - "matchQuery"
+      - 'MutationCache'
+      - 'mutationKey'
+      - 'mutation meta'
+      - 'matchQuery'
     references:
-      - "references/automatic-mutation-invalidation.md"
+      - 'references/automatic-mutation-invalidation.md'
 
-  - name: "Implement optimistic updates and cache writes"
-    slug: "implement-optimistic-updates-and-cache-writes"
-    type: "core"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/core/implement-optimistic-updates-and-cache-writes/SKILL.md"
-    package: "packages/query-intent"
-    description: "Implement optimistic UI and direct cache writes with cancellation, immutable updates, rollback context, invalidation, and offline persistence awareness."
+  - name: 'Implement optimistic updates and cache writes'
+    slug: 'implement-optimistic-updates-and-cache-writes'
+    type: 'core'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/core/implement-optimistic-updates-and-cache-writes/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Implement optimistic UI and direct cache writes with cancellation, immutable updates, rollback context, invalidation, and offline persistence awareness.'
     requires:
-      - "write-mutations-and-invalidate-related-queries"
-      - "cancel-queries-and-consume-abort-signals"
+      - 'write-mutations-and-invalidate-related-queries'
+      - 'cancel-queries-and-consume-abort-signals'
     sources:
-      - "TanStack/query:docs/framework/react/guides/optimistic-updates.md"
-      - "TanStack/query:docs/framework/react/guides/updates-from-mutation-responses.md"
-      - "TanStack/query:docs/framework/react/guides/query-cancellation.md"
-      - "TanStack/query:docs/framework/react/plugins/persistQueryClient.md"
+      - 'TanStack/query:docs/framework/react/guides/optimistic-updates.md'
+      - 'TanStack/query:docs/framework/react/guides/updates-from-mutation-responses.md'
+      - 'TanStack/query:docs/framework/react/guides/query-cancellation.md'
+      - 'TanStack/query:docs/framework/react/plugins/persistQueryClient.md'
     references:
-      - "references/optimistic-updates.md"
-      - "references/cache-write-invariants.md"
+      - 'references/optimistic-updates.md'
+      - 'references/cache-write-invariants.md'
 
-  - name: "Concurrent optimistic updates"
-    slug: "concurrent-optimistic-updates"
-    type: "core"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/core/concurrent-optimistic-updates/SKILL.md"
-    package: "packages/query-intent"
-    description: "Handle overlapping optimistic mutations with submittedAt identity, scoped mutationKey filters, isMutating guards, cancellation, rollback, and filtered list updates."
+  - name: 'Concurrent optimistic updates'
+    slug: 'concurrent-optimistic-updates'
+    type: 'core'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/core/concurrent-optimistic-updates/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Handle overlapping optimistic mutations with submittedAt identity, scoped mutationKey filters, isMutating guards, cancellation, rollback, and filtered list updates.'
     requires:
-      - "implement-optimistic-updates-and-cache-writes"
-      - "cancel-queries-and-consume-abort-signals"
+      - 'implement-optimistic-updates-and-cache-writes'
+      - 'cancel-queries-and-consume-abort-signals'
     sources:
-      - "https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query"
-      - "TanStack/query:docs/framework/react/guides/optimistic-updates.md"
-      - "TanStack/query:docs/framework/react/reference/useMutationState.md"
+      - 'https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query'
+      - 'TanStack/query:docs/framework/react/guides/optimistic-updates.md'
+      - 'TanStack/query:docs/framework/react/reference/useMutationState.md'
     subsystems:
-      - "useMutationState"
-      - "submittedAt"
-      - "queryClient.isMutating"
-      - "mutationKey filters"
+      - 'useMutationState'
+      - 'submittedAt'
+      - 'queryClient.isMutating'
+      - 'mutationKey filters'
     references:
-      - "references/concurrent-optimistic-updates.md"
+      - 'references/concurrent-optimistic-updates.md'
 
-  - name: "Query data and forms"
-    slug: "query-data-and-forms"
-    type: "composition"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/compositions/query-data-and-forms/SKILL.md"
-    package: "packages/query-intent"
-    description: "Integrate Query data and mutations with forms, dirty client state, background updates, submit prevention, invalidation, and reset-after-save."
+  - name: 'Query data and forms'
+    slug: 'query-data-and-forms'
+    type: 'composition'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/compositions/query-data-and-forms/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Integrate Query data and mutations with forms, dirty client state, background updates, submit prevention, invalidation, and reset-after-save.'
     requires:
-      - "write-mutations-and-invalidate-related-queries"
-      - "selectors-and-derived-state"
+      - 'write-mutations-and-invalidate-related-queries'
+      - 'selectors-and-derived-state'
     sources:
-      - "https://tkdodo.eu/blog/react-query-and-forms"
-      - "https://tkdodo.eu/blog/deriving-client-state-from-server-state"
-      - "TanStack/query:docs/framework/react/guides/mutations.md"
-      - "TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md"
+      - 'https://tkdodo.eu/blog/react-query-and-forms'
+      - 'https://tkdodo.eu/blog/deriving-client-state-from-server-state'
+      - 'TanStack/query:docs/framework/react/guides/mutations.md'
+      - 'TanStack/query:docs/framework/react/guides/invalidations-from-mutations.md'
     subsystems:
-      - "form initial values"
-      - "dirty fields"
-      - "background updates"
-      - "mutation submission"
+      - 'form initial values'
+      - 'dirty fields'
+      - 'background updates'
+      - 'mutation submission'
     references:
-      - "references/query-data-and-forms.md"
+      - 'references/query-data-and-forms.md'
 
-  - name: "Cancel queries and consume AbortSignals"
-    slug: "cancel-queries-and-consume-abort-signals"
-    type: "core"
-    domain: "writing-server-state"
-    path: "packages/query-intent/skills/core/cancel-queries-and-consume-abort-signals/SKILL.md"
-    package: "packages/query-intent"
-    description: "Use AbortSignal-aware query functions, cancelQueries, CancelledError, and rollback behavior without assuming unmount cancels fetches."
+  - name: 'Cancel queries and consume AbortSignals'
+    slug: 'cancel-queries-and-consume-abort-signals'
+    type: 'core'
+    domain: 'writing-server-state'
+    path: 'packages/query-intent/skills/core/cancel-queries-and-consume-abort-signals/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Use AbortSignal-aware query functions, cancelQueries, CancelledError, and rollback behavior without assuming unmount cancels fetches.'
     requires:
-      - "fetch-and-observe-queries"
+      - 'fetch-and-observe-queries'
     sources:
-      - "TanStack/query:docs/framework/react/guides/query-cancellation.md"
-      - "TanStack/query:docs/reference/QueryClient.md"
-      - "TanStack/query:packages/query-core/src/retryer.ts"
+      - 'TanStack/query:docs/framework/react/guides/query-cancellation.md'
+      - 'TanStack/query:docs/reference/QueryClient.md'
+      - 'TanStack/query:packages/query-core/src/retryer.ts'
     references:
-      - "references/cancellation-and-abort.md"
+      - 'references/cancellation-and-abort.md'
 
-  - name: "Seed, placeholder, select, and transform data"
-    slug: "seed-placeholder-select-and-transform-data"
-    type: "core"
-    domain: "shaping-cache-and-render-behavior"
-    path: "packages/query-intent/skills/core/seed-placeholder-select-and-transform-data/SKILL.md"
-    package: "packages/query-intent"
-    description: "Choose initialData, placeholderData, select, and transformation points without corrupting cache semantics or hiding errors."
+  - name: 'Seed, placeholder, select, and transform data'
+    slug: 'seed-placeholder-select-and-transform-data'
+    type: 'core'
+    domain: 'shaping-cache-and-render-behavior'
+    path: 'packages/query-intent/skills/core/seed-placeholder-select-and-transform-data/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Choose initialData, placeholderData, select, and transformation points without corrupting cache semantics or hiding errors.'
     requires:
-      - "design-query-keys-and-options"
-      - "fetch-and-observe-queries"
+      - 'design-query-keys-and-options'
+      - 'fetch-and-observe-queries'
     sources:
-      - "TanStack/query:docs/framework/react/guides/initial-query-data.md"
-      - "TanStack/query:docs/framework/react/guides/placeholder-query-data.md"
-      - "TanStack/query:docs/framework/react/guides/render-optimizations.md"
-      - "TanStack/query:docs/framework/react/reference/queryOptions.md"
+      - 'TanStack/query:docs/framework/react/guides/initial-query-data.md'
+      - 'TanStack/query:docs/framework/react/guides/placeholder-query-data.md'
+      - 'TanStack/query:docs/framework/react/guides/render-optimizations.md'
+      - 'TanStack/query:docs/framework/react/reference/queryOptions.md'
     references:
-      - "references/initial-placeholder-select.md"
-      - "references/data-transformation-choices.md"
+      - 'references/initial-placeholder-select.md'
+      - 'references/data-transformation-choices.md'
 
-  - name: "Selectors and derived state"
-    slug: "selectors-and-derived-state"
-    type: "core"
-    domain: "shaping-cache-and-render-behavior"
-    path: "packages/query-intent/skills/core/selectors-and-derived-state/SKILL.md"
-    package: "packages/query-intent"
-    description: "Use select, stable selector identities, structural sharing, usage-site queryOptions composition, and render-time derivation instead of effect-based state syncing."
+  - name: 'Selectors and derived state'
+    slug: 'selectors-and-derived-state'
+    type: 'core'
+    domain: 'shaping-cache-and-render-behavior'
+    path: 'packages/query-intent/skills/core/selectors-and-derived-state/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Use select, stable selector identities, structural sharing, usage-site queryOptions composition, and render-time derivation instead of effect-based state syncing.'
     requires:
-      - "seed-placeholder-select-and-transform-data"
-      - "shape-data-and-render-efficiently"
+      - 'seed-placeholder-select-and-transform-data'
+      - 'shape-data-and-render-efficiently'
     sources:
-      - "https://tkdodo.eu/blog/react-query-selectors-supercharged"
-      - "https://tkdodo.eu/blog/deriving-client-state-from-server-state"
-      - "TanStack/query:docs/framework/react/guides/render-optimizations.md"
-      - "TanStack/query:docs/framework/react/reference/queryOptions.md"
+      - 'https://tkdodo.eu/blog/react-query-selectors-supercharged'
+      - 'https://tkdodo.eu/blog/deriving-client-state-from-server-state'
+      - 'TanStack/query:docs/framework/react/guides/render-optimizations.md'
+      - 'TanStack/query:docs/framework/react/reference/queryOptions.md'
     subsystems:
-      - "select"
-      - "selector identity"
-      - "structural sharing"
-      - "derived client state"
+      - 'select'
+      - 'selector identity'
+      - 'structural sharing'
+      - 'derived client state'
     references:
-      - "references/selectors-and-derived-state.md"
+      - 'references/selectors-and-derived-state.md'
 
-  - name: "Shape data and render efficiently"
-    slug: "shape-data-and-render-efficiently"
-    type: "framework"
-    domain: "shaping-cache-and-render-behavior"
-    path: "packages/query-intent/skills/framework/shape-data-and-render-efficiently/SKILL.md"
-    package: "packages/query-intent"
-    description: "Preserve structural sharing, tracked properties, stable hook deps, and adapter-specific immutability so Query changes do not cause noisy renders."
+  - name: 'Shape data and render efficiently'
+    slug: 'shape-data-and-render-efficiently'
+    type: 'framework'
+    domain: 'shaping-cache-and-render-behavior'
+    path: 'packages/query-intent/skills/framework/shape-data-and-render-efficiently/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Preserve structural sharing, tracked properties, stable hook deps, and adapter-specific immutability so Query changes do not cause noisy renders.'
     requires:
-      - "fetch-and-observe-queries"
-      - "seed-placeholder-select-and-transform-data"
+      - 'fetch-and-observe-queries'
+      - 'seed-placeholder-select-and-transform-data'
     sources:
-      - "TanStack/query:docs/framework/react/guides/render-optimizations.md"
-      - "TanStack/query:docs/eslint/no-rest-destructuring.md"
-      - "TanStack/query:docs/eslint/no-unstable-deps.md"
-      - "TanStack/query:docs/framework/vue/reactivity.md"
+      - 'TanStack/query:docs/framework/react/guides/render-optimizations.md'
+      - 'TanStack/query:docs/eslint/no-rest-destructuring.md'
+      - 'TanStack/query:docs/eslint/no-unstable-deps.md'
+      - 'TanStack/query:docs/framework/vue/reactivity.md'
     subsystems:
-      - "React tracked properties"
-      - "Preact tracked properties"
-      - "Vue immutable results"
+      - 'React tracked properties'
+      - 'Preact tracked properties'
+      - 'Vue immutable results'
     references:
-      - "references/render-optimization-by-adapter.md"
+      - 'references/render-optimization-by-adapter.md'
 
-  - name: "Prefetch and remove request waterfalls"
-    slug: "prefetch-and-remove-request-waterfalls"
-    type: "lifecycle"
-    domain: "rendering-across-environments"
-    path: "packages/query-intent/skills/lifecycle/prefetch-and-remove-request-waterfalls/SKILL.md"
-    package: "packages/query-intent"
-    description: "Flatten request waterfalls with prefetchQuery, prefetchInfiniteQuery, ensureQueryData, router loaders, and render-before-suspense prefetching."
+  - name: 'Prefetch and remove request waterfalls'
+    slug: 'prefetch-and-remove-request-waterfalls'
+    type: 'lifecycle'
+    domain: 'rendering-across-environments'
+    path: 'packages/query-intent/skills/lifecycle/prefetch-and-remove-request-waterfalls/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Flatten request waterfalls with prefetchQuery, prefetchInfiniteQuery, ensureQueryData, router loaders, and render-before-suspense prefetching.'
     requires:
-      - "design-query-keys-and-options"
-      - "fetch-and-observe-queries"
-      - "tune-defaults-freshness-retries-and-refetching"
+      - 'design-query-keys-and-options'
+      - 'fetch-and-observe-queries'
+      - 'tune-defaults-freshness-retries-and-refetching'
     sources:
-      - "TanStack/query:docs/framework/react/guides/prefetching.md"
-      - "TanStack/query:docs/framework/react/guides/request-waterfalls.md"
-      - "TanStack/query:docs/framework/react/reference/usePrefetchQuery.md"
-      - "TanStack/query:docs/framework/react/reference/usePrefetchInfiniteQuery.md"
-      - "TanStack/query:docs/reference/QueryClient.md"
-      - "TanStack/query:examples/react/react-router/src/routes/root.tsx"
-      - "TanStack/query:examples/react/react-router/src/routes/contact.tsx"
+      - 'TanStack/query:docs/framework/react/guides/prefetching.md'
+      - 'TanStack/query:docs/framework/react/guides/request-waterfalls.md'
+      - 'TanStack/query:docs/framework/react/reference/usePrefetchQuery.md'
+      - 'TanStack/query:docs/framework/react/reference/usePrefetchInfiniteQuery.md'
+      - 'TanStack/query:docs/reference/QueryClient.md'
+      - 'TanStack/query:examples/react/react-router/src/routes/root.tsx'
+      - 'TanStack/query:examples/react/react-router/src/routes/contact.tsx'
     subsystems:
-      - "event prefetch"
-      - "route prefetch"
-      - "render prefetch"
-      - "query function prefetch"
+      - 'event prefetch'
+      - 'route prefetch'
+      - 'render prefetch'
+      - 'query function prefetch'
     references:
-      - "references/prefetching-and-waterfalls.md"
-      - "references/router-loader-prefetch.md"
+      - 'references/prefetching-and-waterfalls.md'
+      - 'references/router-loader-prefetch.md'
 
-  - name: "Compose TanStack Query with TanStack Router and Start"
-    slug: "compose-query-with-tanstack-router-and-start"
-    type: "composition"
-    domain: "rendering-across-environments"
-    path: "packages/query-intent/skills/compositions/compose-query-with-tanstack-router-and-start/SKILL.md"
-    package: "packages/query-intent"
-    description: "Use Query with TanStack Router loaders, router context, @tanstack/react-router-ssr-query, Start routes, SSR hydration, streaming, and redirects."
+  - name: 'Compose TanStack Query with TanStack Router and Start'
+    slug: 'compose-query-with-tanstack-router-and-start'
+    type: 'composition'
+    domain: 'rendering-across-environments'
+    path: 'packages/query-intent/skills/compositions/compose-query-with-tanstack-router-and-start/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Use Query with TanStack Router loaders, router context, @tanstack/react-router-ssr-query, Start routes, SSR hydration, streaming, and redirects.'
     requires:
-      - "setup-query-client-and-providers"
-      - "design-query-keys-and-options"
-      - "prefetch-and-remove-request-waterfalls"
+      - 'setup-query-client-and-providers'
+      - 'design-query-keys-and-options'
+      - 'prefetch-and-remove-request-waterfalls'
     sources:
-      - "https://tkdodo.eu/blog/tan-stack-router-and-query"
-      - "TanStack/router:https://tanstack.com/router/latest/docs/integrations/query"
-      - "TanStack/router:https://tanstack.com/router/latest/docs/how-to/setup-ssr"
-      - "TanStack/start:https://tanstack.com/start/latest/docs/framework/react/overview"
-      - "TanStack/query:docs/framework/react/guides/prefetching.md"
-      - "TanStack/query:docs/framework/react/guides/ssr.md"
+      - 'https://tkdodo.eu/blog/tan-stack-router-and-query'
+      - 'TanStack/router:https://tanstack.com/router/latest/docs/integrations/query'
+      - 'TanStack/router:https://tanstack.com/router/latest/docs/how-to/setup-ssr'
+      - 'TanStack/start:https://tanstack.com/start/latest/docs/framework/react/overview'
+      - 'TanStack/query:docs/framework/react/guides/prefetching.md'
+      - 'TanStack/query:docs/framework/react/guides/ssr.md'
     subsystems:
-      - "TanStack Router"
-      - "TanStack Start"
-      - "@tanstack/react-router-ssr-query"
-      - "route loaders"
-      - "server functions"
+      - 'TanStack Router'
+      - 'TanStack Start'
+      - '@tanstack/react-router-ssr-query'
+      - 'route loaders'
+      - 'server functions'
     references:
-      - "references/tanstack-router-start-query.md"
-      - "references/router-ssr-query-integration.md"
+      - 'references/tanstack-router-start-query.md'
+      - 'references/router-ssr-query-integration.md'
 
-  - name: "SSR, hydration, and streaming"
-    slug: "ssr-hydration-and-streaming"
-    type: "lifecycle"
-    domain: "rendering-across-environments"
-    path: "packages/query-intent/skills/lifecycle/ssr-hydration-and-streaming/SKILL.md"
-    package: "packages/query-intent"
-    description: "Use per-request clients, dehydrate/hydrate, HydrationBoundary, TanStack Start, Router SSR Query, Next.js, Nuxt, SvelteKit, SolidStart, Lit SSR, and streamed hydration safely."
+  - name: 'SSR, hydration, and streaming'
+    slug: 'ssr-hydration-and-streaming'
+    type: 'lifecycle'
+    domain: 'rendering-across-environments'
+    path: 'packages/query-intent/skills/lifecycle/ssr-hydration-and-streaming/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Use per-request clients, dehydrate/hydrate, HydrationBoundary, TanStack Start, Router SSR Query, Next.js, Nuxt, SvelteKit, SolidStart, Lit SSR, and streamed hydration safely.'
     requires:
-      - "setup-query-client-and-providers"
-      - "prefetch-and-remove-request-waterfalls"
+      - 'setup-query-client-and-providers'
+      - 'prefetch-and-remove-request-waterfalls'
     sources:
-      - "TanStack/query:docs/framework/react/guides/ssr.md"
-      - "TanStack/query:docs/framework/react/guides/advanced-ssr.md"
-      - "TanStack/query:docs/framework/react/reference/hydration.md"
-      - "TanStack/query:docs/reference/environmentManager.md"
-      - "TanStack/query:docs/reference/streamedQuery.md"
-      - "TanStack/query:docs/framework/vue/guides/ssr.md"
-      - "TanStack/query:docs/framework/svelte/ssr.md"
-      - "TanStack/query:docs/framework/solid/guides/ssr.md"
-      - "TanStack/query:docs/framework/lit/guides/ssr.md"
+      - 'TanStack/query:docs/framework/react/guides/ssr.md'
+      - 'TanStack/query:docs/framework/react/guides/advanced-ssr.md'
+      - 'TanStack/query:docs/framework/react/reference/hydration.md'
+      - 'TanStack/query:docs/reference/environmentManager.md'
+      - 'TanStack/query:docs/reference/streamedQuery.md'
+      - 'TanStack/query:docs/framework/vue/guides/ssr.md'
+      - 'TanStack/query:docs/framework/svelte/ssr.md'
+      - 'TanStack/query:docs/framework/solid/guides/ssr.md'
+      - 'TanStack/query:docs/framework/lit/guides/ssr.md'
     subsystems:
-      - "TanStack Start"
-      - "TanStack Router SSR Query"
-      - "Next.js pages router"
-      - "Next.js app router"
-      - "Nuxt"
-      - "SvelteKit"
-      - "SolidStart"
-      - "Lit SSR"
+      - 'TanStack Start'
+      - 'TanStack Router SSR Query'
+      - 'Next.js pages router'
+      - 'Next.js app router'
+      - 'Nuxt'
+      - 'SvelteKit'
+      - 'SolidStart'
+      - 'Lit SSR'
     references:
-      - "references/ssr-recipes-by-framework.md"
-      - "references/streaming-and-experimental-apis.md"
+      - 'references/ssr-recipes-by-framework.md'
+      - 'references/streaming-and-experimental-apis.md'
 
-  - name: "Use Suspense and error boundaries"
-    slug: "use-suspense-and-error-boundaries"
-    type: "framework"
-    domain: "rendering-across-environments"
-    path: "packages/query-intent/skills/framework/use-suspense-and-error-boundaries/SKILL.md"
-    package: "packages/query-intent"
-    description: "Use suspense query hooks, QueryErrorResetBoundary, throwOnError, React.use query promises, and streamed hydration with the right framework constraints."
+  - name: 'Use Suspense and error boundaries'
+    slug: 'use-suspense-and-error-boundaries'
+    type: 'framework'
+    domain: 'rendering-across-environments'
+    path: 'packages/query-intent/skills/framework/use-suspense-and-error-boundaries/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Use suspense query hooks, QueryErrorResetBoundary, throwOnError, React.use query promises, and streamed hydration with the right framework constraints.'
     requires:
-      - "fetch-and-observe-queries"
-      - "prefetch-and-remove-request-waterfalls"
+      - 'fetch-and-observe-queries'
+      - 'prefetch-and-remove-request-waterfalls'
     sources:
-      - "TanStack/query:docs/framework/react/guides/suspense.md"
-      - "TanStack/query:docs/framework/react/reference/QueryErrorResetBoundary.md"
-      - "TanStack/query:docs/framework/react/reference/useSuspenseQuery.md"
-      - "TanStack/query:docs/framework/react/reference/useSuspenseQueries.md"
-      - "TanStack/query:docs/framework/react/reference/useSuspenseInfiniteQuery.md"
-      - "TanStack/query:docs/framework/solid/guides/suspense.md"
-      - "TanStack/query:docs/framework/vue/guides/suspense.md"
+      - 'TanStack/query:docs/framework/react/guides/suspense.md'
+      - 'TanStack/query:docs/framework/react/reference/QueryErrorResetBoundary.md'
+      - 'TanStack/query:docs/framework/react/reference/useSuspenseQuery.md'
+      - 'TanStack/query:docs/framework/react/reference/useSuspenseQueries.md'
+      - 'TanStack/query:docs/framework/react/reference/useSuspenseInfiniteQuery.md'
+      - 'TanStack/query:docs/framework/solid/guides/suspense.md'
+      - 'TanStack/query:docs/framework/vue/guides/suspense.md'
     subsystems:
-      - "React suspense"
-      - "Solid suspense"
-      - "Vue suspense"
-      - "streamed hydration"
+      - 'React suspense'
+      - 'Solid suspense'
+      - 'Vue suspense'
+      - 'streamed hydration'
     references:
-      - "references/suspense-by-framework.md"
+      - 'references/suspense-by-framework.md'
 
-  - name: "Persist offline and restore caches"
-    slug: "persist-offline-and-restore-caches"
-    type: "composition"
-    domain: "persisting-and-synchronizing-caches"
-    path: "packages/query-intent/skills/compositions/persist-offline-and-restore-caches/SKILL.md"
-    package: "packages/query-intent"
-    description: "Persist Query and mutation caches through sync, async, and fine-grained persisters while avoiding restore races, gcTime loss, and offline mutation failures."
+  - name: 'Persist offline and restore caches'
+    slug: 'persist-offline-and-restore-caches'
+    type: 'composition'
+    domain: 'persisting-and-synchronizing-caches'
+    path: 'packages/query-intent/skills/compositions/persist-offline-and-restore-caches/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Persist Query and mutation caches through sync, async, and fine-grained persisters while avoiding restore races, gcTime loss, and offline mutation failures.'
     requires:
-      - "setup-query-client-and-providers"
-      - "tune-defaults-freshness-retries-and-refetching"
-      - "write-mutations-and-invalidate-related-queries"
+      - 'setup-query-client-and-providers'
+      - 'tune-defaults-freshness-retries-and-refetching'
+      - 'write-mutations-and-invalidate-related-queries'
     sources:
-      - "TanStack/query:docs/framework/react/plugins/persistQueryClient.md"
-      - "TanStack/query:docs/framework/react/plugins/createSyncStoragePersister.md"
-      - "TanStack/query:docs/framework/react/plugins/createAsyncStoragePersister.md"
-      - "TanStack/query:docs/framework/react/plugins/createPersister.md"
-      - "TanStack/query:docs/framework/react/guides/network-mode.md"
+      - 'TanStack/query:docs/framework/react/plugins/persistQueryClient.md'
+      - 'TanStack/query:docs/framework/react/plugins/createSyncStoragePersister.md'
+      - 'TanStack/query:docs/framework/react/plugins/createAsyncStoragePersister.md'
+      - 'TanStack/query:docs/framework/react/plugins/createPersister.md'
+      - 'TanStack/query:docs/framework/react/guides/network-mode.md'
     subsystems:
-      - "persistQueryClient"
-      - "sync storage persister"
-      - "async storage persister"
-      - "fine-grained persister"
-      - "offline mutations"
+      - 'persistQueryClient'
+      - 'sync storage persister'
+      - 'async storage persister'
+      - 'fine-grained persister'
+      - 'offline mutations'
     references:
-      - "references/persistence-recipes.md"
-      - "references/offline-mutations.md"
+      - 'references/persistence-recipes.md'
+      - 'references/offline-mutations.md'
 
-  - name: "Broadcast, realtime, and multi-tab synchronization"
-    slug: "broadcast-realtime-and-multi-tab-synchronization"
-    type: "composition"
-    domain: "persisting-and-synchronizing-caches"
-    path: "packages/query-intent/skills/compositions/broadcast-realtime-and-multi-tab-synchronization/SKILL.md"
-    package: "packages/query-intent"
-    description: "Synchronize Query caches across tabs and realtime transports with broadcastQueryClient, targeted invalidation, and safe server/browser boundaries."
+  - name: 'Broadcast, realtime, and multi-tab synchronization'
+    slug: 'broadcast-realtime-and-multi-tab-synchronization'
+    type: 'composition'
+    domain: 'persisting-and-synchronizing-caches'
+    path: 'packages/query-intent/skills/compositions/broadcast-realtime-and-multi-tab-synchronization/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Synchronize Query caches across tabs and realtime transports with broadcastQueryClient, targeted invalidation, and safe server/browser boundaries.'
     requires:
-      - "setup-query-client-and-providers"
-      - "write-mutations-and-invalidate-related-queries"
-      - "persist-offline-and-restore-caches"
+      - 'setup-query-client-and-providers'
+      - 'write-mutations-and-invalidate-related-queries'
+      - 'persist-offline-and-restore-caches'
     sources:
-      - "TanStack/query:docs/framework/react/plugins/broadcastQueryClient.md"
-      - "TanStack/query:docs/framework/react/guides/query-invalidation.md"
-      - "TanStack/query:examples/react/chat/package.json"
+      - 'TanStack/query:docs/framework/react/plugins/broadcastQueryClient.md'
+      - 'TanStack/query:docs/framework/react/guides/query-invalidation.md'
+      - 'TanStack/query:examples/react/chat/package.json'
     subsystems:
-      - "broadcastQueryClient"
-      - "BroadcastChannel"
-      - "WebSocket invalidation"
-      - "multi-tab cache sync"
+      - 'broadcastQueryClient'
+      - 'BroadcastChannel'
+      - 'WebSocket invalidation'
+      - 'multi-tab cache sync'
     references:
-      - "references/broadcast-and-realtime.md"
+      - 'references/broadcast-and-realtime.md'
 
-  - name: "Use framework adapter reactivity"
-    slug: "use-framework-adapter-reactivity"
-    type: "framework"
-    domain: "framework-adapter-idioms"
-    path: "packages/query-intent/skills/framework/use-framework-adapter-reactivity/SKILL.md"
-    package: "packages/query-intent"
+  - name: 'Use framework adapter reactivity'
+    slug: 'use-framework-adapter-reactivity'
+    type: 'framework'
+    domain: 'framework-adapter-idioms'
+    path: 'packages/query-intent/skills/framework/use-framework-adapter-reactivity/SKILL.md'
+    package: 'packages/query-intent'
     description: "Apply Query through each adapter's reactivity model, including Vue refs/getters, Solid signals, Svelte stores and runes, Angular signals, Lit controllers, React, and Preact hooks."
     requires:
-      - "setup-query-client-and-providers"
-      - "design-query-keys-and-options"
+      - 'setup-query-client-and-providers'
+      - 'design-query-keys-and-options'
     sources:
-      - "TanStack/query:docs/framework/vue/reactivity.md"
-      - "TanStack/query:docs/framework/vue/guides/query-options.md"
-      - "TanStack/query:docs/framework/solid/guides/query-options.md"
-      - "TanStack/query:docs/framework/svelte/overview.md"
-      - "TanStack/query:docs/framework/svelte/migrate-from-v5-to-v6.md"
-      - "TanStack/query:docs/framework/angular/overview.md"
-      - "TanStack/query:docs/framework/angular/zoneless.md"
-      - "TanStack/query:docs/framework/lit/guides/reactive-controllers-vs-hooks.md"
+      - 'TanStack/query:docs/framework/vue/reactivity.md'
+      - 'TanStack/query:docs/framework/vue/guides/query-options.md'
+      - 'TanStack/query:docs/framework/solid/guides/query-options.md'
+      - 'TanStack/query:docs/framework/svelte/overview.md'
+      - 'TanStack/query:docs/framework/svelte/migrate-from-v5-to-v6.md'
+      - 'TanStack/query:docs/framework/angular/overview.md'
+      - 'TanStack/query:docs/framework/angular/zoneless.md'
+      - 'TanStack/query:docs/framework/lit/guides/reactive-controllers-vs-hooks.md'
     subsystems:
-      - "React"
-      - "Preact"
-      - "Vue"
-      - "Solid"
-      - "Svelte"
-      - "Angular"
-      - "Lit"
+      - 'React'
+      - 'Preact'
+      - 'Vue'
+      - 'Solid'
+      - 'Svelte'
+      - 'Angular'
+      - 'Lit'
     references:
-      - "references/adapter-reactivity.md"
-      - "references/framework-api-mapping.md"
+      - 'references/adapter-reactivity.md'
+      - 'references/framework-api-mapping.md'
 
-  - name: "Debug with devtools"
-    slug: "debug-with-devtools"
-    type: "framework"
-    domain: "operational-quality"
-    path: "packages/query-intent/skills/framework/debug-with-devtools/SKILL.md"
-    package: "packages/query-intent"
-    description: "Install and load Query devtools per adapter, embed panels when needed, avoid production bundles, and understand what devtools can and cannot simulate."
+  - name: 'Debug with devtools'
+    slug: 'debug-with-devtools'
+    type: 'framework'
+    domain: 'operational-quality'
+    path: 'packages/query-intent/skills/framework/debug-with-devtools/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Install and load Query devtools per adapter, embed panels when needed, avoid production bundles, and understand what devtools can and cannot simulate.'
     requires:
-      - "setup-query-client-and-providers"
+      - 'setup-query-client-and-providers'
     sources:
-      - "TanStack/query:docs/framework/react/devtools.md"
-      - "TanStack/query:docs/framework/preact/devtools.md"
-      - "TanStack/query:docs/framework/vue/devtools.md"
-      - "TanStack/query:docs/framework/solid/devtools.md"
-      - "TanStack/query:docs/framework/svelte/devtools.md"
-      - "TanStack/query:docs/framework/angular/devtools.md"
+      - 'TanStack/query:docs/framework/react/devtools.md'
+      - 'TanStack/query:docs/framework/preact/devtools.md'
+      - 'TanStack/query:docs/framework/vue/devtools.md'
+      - 'TanStack/query:docs/framework/solid/devtools.md'
+      - 'TanStack/query:docs/framework/svelte/devtools.md'
+      - 'TanStack/query:docs/framework/angular/devtools.md'
     subsystems:
-      - "React Devtools"
-      - "Preact Devtools"
-      - "Vue Devtools"
-      - "Solid Devtools"
-      - "Svelte Devtools"
-      - "Angular Devtools"
+      - 'React Devtools'
+      - 'Preact Devtools'
+      - 'Vue Devtools'
+      - 'Solid Devtools'
+      - 'Svelte Devtools'
+      - 'Angular Devtools'
     references:
-      - "references/devtools-by-adapter.md"
+      - 'references/devtools-by-adapter.md'
 
-  - name: "Test query code"
-    slug: "test-query-code"
-    type: "lifecycle"
-    domain: "operational-quality"
-    path: "packages/query-intent/skills/lifecycle/test-query-code/SKILL.md"
-    package: "packages/query-intent"
-    description: "Test Query code with isolated clients, disabled retries, async assertions, cache cleanup, and framework-specific render harnesses."
+  - name: 'Test query code'
+    slug: 'test-query-code'
+    type: 'lifecycle'
+    domain: 'operational-quality'
+    path: 'packages/query-intent/skills/lifecycle/test-query-code/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Test Query code with isolated clients, disabled retries, async assertions, cache cleanup, and framework-specific render harnesses.'
     requires:
-      - "setup-query-client-and-providers"
-      - "tune-defaults-freshness-retries-and-refetching"
+      - 'setup-query-client-and-providers'
+      - 'tune-defaults-freshness-retries-and-refetching'
     sources:
-      - "TanStack/query:docs/framework/react/guides/testing.md"
-      - "TanStack/query:docs/framework/solid/guides/testing.md"
-      - "TanStack/query:docs/framework/vue/guides/testing.md"
-      - "TanStack/query:docs/framework/angular/guides/testing.md"
-      - "TanStack/query:packages/query-core/src/__tests__/queryClient.test.tsx"
-      - "TanStack/query:packages/react-query/src/__tests__/useQuery.test.tsx"
+      - 'TanStack/query:docs/framework/react/guides/testing.md'
+      - 'TanStack/query:docs/framework/solid/guides/testing.md'
+      - 'TanStack/query:docs/framework/vue/guides/testing.md'
+      - 'TanStack/query:docs/framework/angular/guides/testing.md'
+      - 'TanStack/query:packages/query-core/src/__tests__/queryClient.test.tsx'
+      - 'TanStack/query:packages/react-query/src/__tests__/useQuery.test.tsx'
     references:
-      - "references/testing-query.md"
+      - 'references/testing-query.md'
 
-  - name: "Migrate major versions and codemods"
-    slug: "migrate-major-versions-and-codemods"
-    type: "lifecycle"
-    domain: "operational-quality"
-    path: "packages/query-intent/skills/lifecycle/migrate-major-versions-and-codemods/SKILL.md"
-    package: "packages/query-intent"
-    description: "Migrate Query code across v3, v4, v5, Svelte Query v6, and codemod constraints without reintroducing removed overloads or renamed options."
+  - name: 'Migrate major versions and codemods'
+    slug: 'migrate-major-versions-and-codemods'
+    type: 'lifecycle'
+    domain: 'operational-quality'
+    path: 'packages/query-intent/skills/lifecycle/migrate-major-versions-and-codemods/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Migrate Query code across v3, v4, v5, Svelte Query v6, and codemod constraints without reintroducing removed overloads or renamed options.'
     sources:
-      - "TanStack/query:docs/framework/react/guides/migrating-to-react-query-3.md"
-      - "TanStack/query:docs/framework/react/guides/migrating-to-react-query-4.md"
-      - "TanStack/query:docs/framework/react/guides/migrating-to-v5.md"
-      - "TanStack/query:docs/framework/vue/guides/migrating-to-v5.md"
-      - "TanStack/query:docs/framework/svelte/migrate-from-v5-to-v6.md"
-      - "TanStack/query:packages/query-codemods/package.json"
+      - 'TanStack/query:docs/framework/react/guides/migrating-to-react-query-3.md'
+      - 'TanStack/query:docs/framework/react/guides/migrating-to-react-query-4.md'
+      - 'TanStack/query:docs/framework/react/guides/migrating-to-v5.md'
+      - 'TanStack/query:docs/framework/vue/guides/migrating-to-v5.md'
+      - 'TanStack/query:docs/framework/svelte/migrate-from-v5-to-v6.md'
+      - 'TanStack/query:packages/query-codemods/package.json'
     subsystems:
-      - "v3 migration"
-      - "v4 migration"
-      - "v5 migration"
-      - "Svelte v6 migration"
-      - "codemods"
+      - 'v3 migration'
+      - 'v4 migration'
+      - 'v5 migration'
+      - 'Svelte v6 migration'
+      - 'codemods'
     references:
-      - "references/migration-v3-v4-v5.md"
-      - "references/svelte-v6-migration.md"
+      - 'references/migration-v3-v4-v5.md'
+      - 'references/svelte-v6-migration.md'
 
-  - name: "Enforce Query best practices with ESLint"
-    slug: "enforce-query-best-practices-with-eslint"
-    type: "composition"
-    domain: "operational-quality"
-    path: "packages/query-intent/skills/compositions/enforce-query-best-practices-with-eslint/SKILL.md"
-    package: "packages/query-intent"
-    description: "Configure @tanstack/eslint-plugin-query recommended or strict rules and use rule-specific fixes for Query keys, options, deps, and infinite or mutation option ordering."
+  - name: 'Enforce Query best practices with ESLint'
+    slug: 'enforce-query-best-practices-with-eslint'
+    type: 'composition'
+    domain: 'operational-quality'
+    path: 'packages/query-intent/skills/compositions/enforce-query-best-practices-with-eslint/SKILL.md'
+    package: 'packages/query-intent'
+    description: 'Configure @tanstack/eslint-plugin-query recommended or strict rules and use rule-specific fixes for Query keys, options, deps, and infinite or mutation option ordering.'
     requires:
-      - "design-query-keys-and-options"
-      - "fetch-and-observe-queries"
-      - "shape-data-and-render-efficiently"
+      - 'design-query-keys-and-options'
+      - 'fetch-and-observe-queries'
+      - 'shape-data-and-render-efficiently'
     sources:
-      - "TanStack/query:docs/eslint/eslint-plugin-query.md"
-      - "TanStack/query:docs/eslint/exhaustive-deps.md"
-      - "TanStack/query:docs/eslint/no-rest-destructuring.md"
-      - "TanStack/query:docs/eslint/no-unstable-deps.md"
-      - "TanStack/query:docs/eslint/no-void-query-fn.md"
-      - "TanStack/query:docs/eslint/prefer-query-options.md"
-      - "TanStack/query:docs/eslint/stable-query-client.md"
-      - "TanStack/query:docs/eslint/infinite-query-property-order.md"
-      - "TanStack/query:docs/eslint/mutation-property-order.md"
+      - 'TanStack/query:docs/eslint/eslint-plugin-query.md'
+      - 'TanStack/query:docs/eslint/exhaustive-deps.md'
+      - 'TanStack/query:docs/eslint/no-rest-destructuring.md'
+      - 'TanStack/query:docs/eslint/no-unstable-deps.md'
+      - 'TanStack/query:docs/eslint/no-void-query-fn.md'
+      - 'TanStack/query:docs/eslint/prefer-query-options.md'
+      - 'TanStack/query:docs/eslint/stable-query-client.md'
+      - 'TanStack/query:docs/eslint/infinite-query-property-order.md'
+      - 'TanStack/query:docs/eslint/mutation-property-order.md'
     subsystems:
-      - "recommended"
-      - "recommended-strict"
-      - "flat config"
-      - "rule fixers"
+      - 'recommended'
+      - 'recommended-strict'
+      - 'flat config'
+      - 'rule fixers'
     references:
-      - "references/eslint-rules.md"
+      - 'references/eslint-rules.md'

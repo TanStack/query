@@ -6,110 +6,110 @@
 # Status: draft
 
 library:
-  name: "TanStack Query"
-  version: "5.101.0"
-  repository: "https://github.com/TanStack/query"
-  docs: "https://tanstack.com/query"
-  description: "Framework adapters and core utilities for fetching, caching, synchronizing, and updating server state."
-  primary_framework: "framework-agnostic core with React-first docs and adapters for React, Preact, Vue, Solid, Svelte, Angular, and Lit"
-  discovery_mode: "Maintainer skipped live interviews; docs guide order and TKDodo blog order are treated as priority signals."
+  name: 'TanStack Query'
+  version: '5.101.0'
+  repository: 'https://github.com/TanStack/query'
+  docs: 'https://tanstack.com/query'
+  description: 'Framework adapters and core utilities for fetching, caching, synchronizing, and updating server state.'
+  primary_framework: 'framework-agnostic core with React-first docs and adapters for React, Preact, Vue, Solid, Svelte, Angular, and Lit'
+  discovery_mode: 'Maintainer skipped live interviews; docs guide order and TKDodo blog order are treated as priority signals.'
   docs_read:
     root_markdown_files: 493
-    docs_config: "docs/config.json"
+    docs_config: 'docs/config.json'
     priority_sources:
-      - "Guides & Concepts order in docs/config.json"
-      - "TKDodo blog all-post order at https://tkdodo.eu/blog/all"
+      - 'Guides & Concepts order in docs/config.json'
+      - 'TKDodo blog all-post order at https://tkdodo.eu/blog/all'
   client_facing_packages:
-    - "@tanstack/query-core"
-    - "@tanstack/react-query"
-    - "@tanstack/react-query-devtools"
-    - "@tanstack/react-query-next-experimental"
-    - "@tanstack/react-query-persist-client"
-    - "@tanstack/preact-query"
-    - "@tanstack/preact-query-devtools"
-    - "@tanstack/preact-query-persist-client"
-    - "@tanstack/vue-query"
-    - "@tanstack/vue-query-devtools"
-    - "@tanstack/solid-query"
-    - "@tanstack/solid-query-devtools"
-    - "@tanstack/solid-query-persist-client"
-    - "@tanstack/svelte-query"
-    - "@tanstack/svelte-query-devtools"
-    - "@tanstack/svelte-query-persist-client"
-    - "@tanstack/angular-query-experimental"
-    - "@tanstack/lit-query"
-    - "@tanstack/query-persist-client-core"
-    - "@tanstack/query-async-storage-persister"
-    - "@tanstack/query-sync-storage-persister"
-    - "@tanstack/query-broadcast-client-experimental"
-    - "@tanstack/eslint-plugin-query"
-    - "@tanstack/query-codemods"
+    - '@tanstack/query-core'
+    - '@tanstack/react-query'
+    - '@tanstack/react-query-devtools'
+    - '@tanstack/react-query-next-experimental'
+    - '@tanstack/react-query-persist-client'
+    - '@tanstack/preact-query'
+    - '@tanstack/preact-query-devtools'
+    - '@tanstack/preact-query-persist-client'
+    - '@tanstack/vue-query'
+    - '@tanstack/vue-query-devtools'
+    - '@tanstack/solid-query'
+    - '@tanstack/solid-query-devtools'
+    - '@tanstack/solid-query-persist-client'
+    - '@tanstack/svelte-query'
+    - '@tanstack/svelte-query-devtools'
+    - '@tanstack/svelte-query-persist-client'
+    - '@tanstack/angular-query-experimental'
+    - '@tanstack/lit-query'
+    - '@tanstack/query-persist-client-core'
+    - '@tanstack/query-async-storage-persister'
+    - '@tanstack/query-sync-storage-persister'
+    - '@tanstack/query-broadcast-client-experimental'
+    - '@tanstack/eslint-plugin-query'
+    - '@tanstack/query-codemods'
   ecosystem_composition_targets:
-    - "TanStack Router"
-    - "TanStack Start"
-    - "@tanstack/react-router"
-    - "@tanstack/react-router-ssr-query"
-    - "@tanstack/react-start"
-    - "@tanstack/solid-start"
+    - 'TanStack Router'
+    - 'TanStack Start'
+    - '@tanstack/react-router'
+    - '@tanstack/react-router-ssr-query'
+    - '@tanstack/react-start'
+    - '@tanstack/solid-start'
 
 domains:
-  - name: "Bootstrapping query clients"
-    slug: "bootstrapping-query-clients"
-    description: "Creating stable QueryClient instances, wiring providers, and respecting framework lifecycle boundaries."
-  - name: "Reading server state"
-    slug: "reading-server-state"
-    description: "Declaring queries, choosing keys and options, handling status, fetchStatus, stale data, and query functions."
-  - name: "Coordinating query execution"
-    slug: "coordinating-query-execution"
-    description: "Managing dependent, parallel, disabled, paused, retried, polled, prefetched, paginated, and infinite reads."
-  - name: "Writing server state"
-    slug: "writing-server-state"
-    description: "Using mutations, invalidation, direct cache writes, optimistic updates, rollback, and cancellation."
-  - name: "Shaping cache and render behavior"
-    slug: "shaping-cache-and-render-behavior"
-    description: "Using initial data, placeholder data, selectors, structural sharing, tracked props, and typed reusable options."
-  - name: "Rendering across environments"
-    slug: "rendering-across-environments"
-    description: "Using prefetch, TanStack Router loaders, TanStack Start, dehydrate, hydrate, Suspense, streaming, SSR, RSC, SvelteKit, Nuxt, SolidStart, and Lit SSR correctly."
-  - name: "Persisting and synchronizing caches"
-    slug: "persisting-and-synchronizing-caches"
-    description: "Persisting query and mutation caches, restoring safely, offline behavior, storage persisters, and multi-tab sync."
-  - name: "Framework adapter idioms"
-    slug: "framework-adapter-idioms"
-    description: "Applying the same Query concepts through React hooks, Vue composables, Solid resources, Svelte runes, Angular signals, Lit controllers, and Preact hooks."
-  - name: "Operational quality"
-    slug: "operational-quality"
-    description: "Debugging with devtools, testing isolation, linting best practices, migration, codemods, and production readiness."
+  - name: 'Bootstrapping query clients'
+    slug: 'bootstrapping-query-clients'
+    description: 'Creating stable QueryClient instances, wiring providers, and respecting framework lifecycle boundaries.'
+  - name: 'Reading server state'
+    slug: 'reading-server-state'
+    description: 'Declaring queries, choosing keys and options, handling status, fetchStatus, stale data, and query functions.'
+  - name: 'Coordinating query execution'
+    slug: 'coordinating-query-execution'
+    description: 'Managing dependent, parallel, disabled, paused, retried, polled, prefetched, paginated, and infinite reads.'
+  - name: 'Writing server state'
+    slug: 'writing-server-state'
+    description: 'Using mutations, invalidation, direct cache writes, optimistic updates, rollback, and cancellation.'
+  - name: 'Shaping cache and render behavior'
+    slug: 'shaping-cache-and-render-behavior'
+    description: 'Using initial data, placeholder data, selectors, structural sharing, tracked props, and typed reusable options.'
+  - name: 'Rendering across environments'
+    slug: 'rendering-across-environments'
+    description: 'Using prefetch, TanStack Router loaders, TanStack Start, dehydrate, hydrate, Suspense, streaming, SSR, RSC, SvelteKit, Nuxt, SolidStart, and Lit SSR correctly.'
+  - name: 'Persisting and synchronizing caches'
+    slug: 'persisting-and-synchronizing-caches'
+    description: 'Persisting query and mutation caches, restoring safely, offline behavior, storage persisters, and multi-tab sync.'
+  - name: 'Framework adapter idioms'
+    slug: 'framework-adapter-idioms'
+    description: 'Applying the same Query concepts through React hooks, Vue composables, Solid resources, Svelte runes, Angular signals, Lit controllers, and Preact hooks.'
+  - name: 'Operational quality'
+    slug: 'operational-quality'
+    description: 'Debugging with devtools, testing isolation, linting best practices, migration, codemods, and production readiness.'
 
 skills:
-  - name: "Set up QueryClient and providers"
-    slug: "setup-query-client-and-providers"
-    domain: "bootstrapping-query-clients"
-    description: "Install the right adapter, create stable QueryClient instances, and wire framework providers without leaking cache between renders or requests."
-    type: "lifecycle"
+  - name: 'Set up QueryClient and providers'
+    slug: 'setup-query-client-and-providers'
+    domain: 'bootstrapping-query-clients'
+    description: 'Install the right adapter, create stable QueryClient instances, and wire framework providers without leaking cache between renders or requests.'
+    type: 'lifecycle'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "QueryClient"
-      - "QueryClientProvider"
-      - "VueQueryPlugin"
-      - "provideTanStackQuery"
-      - "Lit QueryClientProvider custom element"
-      - "useQueryClient and explicit clients"
+      - 'QueryClient'
+      - 'QueryClientProvider'
+      - 'VueQueryPlugin'
+      - 'provideTanStackQuery'
+      - 'Lit QueryClientProvider custom element'
+      - 'useQueryClient and explicit clients'
     tasks:
-      - "Create a client in an SPA"
-      - "Create per-request clients for SSR"
-      - "Wire provider context for framework adapters"
+      - 'Create a client in an SPA'
+      - 'Create per-request clients for SSR'
+      - 'Wire provider context for framework adapters'
     failure_modes:
-      - mistake: "New client on every render"
-        mechanism: "The QueryClient owns the caches; recreating it discards cache and subscriptions."
+      - mistake: 'New client on every render'
+        mechanism: 'The QueryClient owns the caches; recreating it discards cache and subscriptions.'
         wrong_pattern: |
           function App() {
             const queryClient = new QueryClient()
@@ -120,10 +120,10 @@ skills:
             const [queryClient] = React.useState(() => new QueryClient())
             return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           }
-        source: "docs/eslint/stable-query-client.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Shared SSR cache between users"
+        source: 'docs/eslint/stable-query-client.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Shared SSR cache between users'
         mechanism: "A module-level client in SSR can pass one user's dehydrated data to another request."
         wrong_pattern: |
           const queryClient = new QueryClient()
@@ -135,12 +135,13 @@ skills:
             const [queryClient] = React.useState(() => new QueryClient())
             return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           }
-        source: "docs/framework/react/guides/ssr.md"
-        priority: "CRITICAL"
-        status: "active"
-        skills: ["setup-query-client-and-providers", "ssr-hydration-and-streaming"]
-      - mistake: "Ambiguous Lit fallback client"
-        mechanism: "Lit fallback lookup throws if multiple distinct QueryClientProvider instances are connected."
+        source: 'docs/framework/react/guides/ssr.md'
+        priority: 'CRITICAL'
+        status: 'active'
+        skills:
+          ['setup-query-client-and-providers', 'ssr-hydration-and-streaming']
+      - mistake: 'Ambiguous Lit fallback client'
+        mechanism: 'Lit fallback lookup throws if multiple distinct QueryClientProvider instances are connected.'
         wrong_pattern: |
           const client = useQueryClient()
           createQueryController(this, { queryKey: ['todos'], queryFn: fetchTodos })
@@ -149,42 +150,42 @@ skills:
             queryKey: ['todos'],
             queryFn: fetchTodos,
           }, explicitClient)
-        source: "docs/framework/lit/guides/reactive-controllers-vs-hooks.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/lit/guides/reactive-controllers-vs-hooks.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Design query keys and reusable options"
-    slug: "design-query-keys-and-options"
-    domain: "reading-server-state"
-    description: "Model query identity, dependencies, query functions, queryOptions, infiniteQueryOptions, mutationOptions, and skipToken in a type-safe reusable way."
-    type: "core"
+  - name: 'Design query keys and reusable options'
+    slug: 'design-query-keys-and-options'
+    domain: 'reading-server-state'
+    description: 'Model query identity, dependencies, query functions, queryOptions, infiniteQueryOptions, mutationOptions, and skipToken in a type-safe reusable way.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "queryKey"
-      - "queryFn"
-      - "queryOptions"
-      - "infiniteQueryOptions"
-      - "mutationOptions"
-      - "skipToken"
-      - "global Register types"
+      - 'queryKey'
+      - 'queryFn'
+      - 'queryOptions'
+      - 'infiniteQueryOptions'
+      - 'mutationOptions'
+      - 'skipToken'
+      - 'global Register types'
     tasks:
-      - "Build a key factory"
-      - "Extract reusable options"
-      - "Use typed keys with QueryClient methods"
+      - 'Build a key factory'
+      - 'Extract reusable options'
+      - 'Use typed keys with QueryClient methods'
     reference_candidates:
-      - topic: "Reusable option helper signatures across adapters"
-        reason: "Each adapter exposes equivalent helpers with framework-specific generic and reactivity surfaces."
+      - topic: 'Reusable option helper signatures across adapters'
+        reason: 'Each adapter exposes equivalent helpers with framework-specific generic and reactivity surfaces.'
     failure_modes:
-      - mistake: "Missing variables in query key"
-        mechanism: "Query keys are dependencies; variables used by queryFn must be part of the key to cache and refetch independently."
+      - mistake: 'Missing variables in query key'
+        mechanism: 'Query keys are dependencies; variables used by queryFn must be part of the key to cache and refetch independently.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todo'],
@@ -195,11 +196,11 @@ skills:
             queryKey: ['todo', todoId],
             queryFn: () => api.getTodo(todoId),
           })
-        source: "docs/framework/react/guides/query-keys.md; docs/eslint/exhaustive-deps.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Separated key and queryFn drift"
-        mechanism: "Duplicating keys across hook calls and QueryClient methods allows the same key to point at different functions."
+        source: 'docs/framework/react/guides/query-keys.md; docs/eslint/exhaustive-deps.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Separated key and queryFn drift'
+        mechanism: 'Duplicating keys across hook calls and QueryClient methods allows the same key to point at different functions.'
         wrong_pattern: |
           useQuery({ queryKey: ['todo', id], queryFn: () => api.getTodo(id) })
           queryClient.invalidateQueries({ queryKey: ['todo', id] })
@@ -210,11 +211,11 @@ skills:
           })
           useQuery(todoOptions(id))
           queryClient.invalidateQueries({ queryKey: todoOptions(id).queryKey })
-        source: "docs/framework/react/guides/query-options.md; docs/eslint/prefer-query-options.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "skipToken inside suspense query"
-        mechanism: "Suspense hooks require data and do not support conditional disabling through skipToken."
+        source: 'docs/framework/react/guides/query-options.md; docs/eslint/prefer-query-options.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'skipToken inside suspense query'
+        mechanism: 'Suspense hooks require data and do not support conditional disabling through skipToken.'
         wrong_pattern: |
           useSuspenseQuery({
             queryKey: ['user', id],
@@ -225,40 +226,41 @@ skills:
             queryKey: ['user', id],
             queryFn: id ? () => getUser(id) : skipToken,
           })
-        source: "packages/react-query/src/useSuspenseQuery.ts; docs/framework/react/guides/suspense.md"
-        priority: "HIGH"
-        status: "active"
-        skills: ["design-query-keys-and-options", "use-suspense-and-error-boundaries"]
+        source: 'packages/react-query/src/useSuspenseQuery.ts; docs/framework/react/guides/suspense.md'
+        priority: 'HIGH'
+        status: 'active'
+        skills:
+          ['design-query-keys-and-options', 'use-suspense-and-error-boundaries']
 
-  - name: "Fetch and observe queries"
-    slug: "fetch-and-observe-queries"
-    domain: "reading-server-state"
-    description: "Use query APIs to read server state, interpret status and fetchStatus, handle errors, and keep query functions pure and cacheable."
-    type: "core"
+  - name: 'Fetch and observe queries'
+    slug: 'fetch-and-observe-queries'
+    domain: 'reading-server-state'
+    description: 'Use query APIs to read server state, interpret status and fetchStatus, handle errors, and keep query functions pure and cacheable.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "useQuery"
-      - "createQuery"
-      - "injectQuery"
-      - "createQueryController"
-      - "QueryObserver"
-      - "status and fetchStatus"
-      - "query function context"
+      - 'useQuery'
+      - 'createQuery'
+      - 'injectQuery'
+      - 'createQueryController'
+      - 'QueryObserver'
+      - 'status and fetchStatus'
+      - 'query function context'
     tasks:
-      - "Render loading, error, and success states"
-      - "Use AbortSignal from QueryFunctionContext"
-      - "Differentiate data status from fetch status"
+      - 'Render loading, error, and success states'
+      - 'Use AbortSignal from QueryFunctionContext'
+      - 'Differentiate data status from fetch status'
     failure_modes:
-      - mistake: "Void query function"
-        mechanism: "TanStack Query caches the resolved value; undefined data is a configuration error."
+      - mistake: 'Void query function'
+        mechanism: 'TanStack Query caches the resolved value; undefined data is a configuration error.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todos'],
@@ -273,21 +275,21 @@ skills:
               return await api.todos.fetch()
             },
           })
-        source: "docs/eslint/no-void-query-fn.md; docs/framework/react/reference/useQuery.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Only checking isPending for offline state"
-        mechanism: "A pending query can have fetchStatus paused when networkMode prevents execution."
+        source: 'docs/eslint/no-void-query-fn.md; docs/framework/react/reference/useQuery.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Only checking isPending for offline state'
+        mechanism: 'A pending query can have fetchStatus paused when networkMode prevents execution.'
         wrong_pattern: |
           if (query.isPending) return <Spinner />
         correct_pattern: |
           if (query.isPending && query.fetchStatus === 'paused') return <Offline />
           if (query.isPending) return <Spinner />
-        source: "docs/framework/react/guides/queries.md; docs/framework/react/guides/network-mode.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Using mutations for reads"
-        mechanism: "Queries represent idempotent server-state reads; writes and side effects belong in mutations."
+        source: 'docs/framework/react/guides/queries.md; docs/framework/react/guides/network-mode.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Using mutations for reads'
+        mechanism: 'Queries represent idempotent server-state reads; writes and side effects belong in mutations.'
         wrong_pattern: |
           useQuery({
             queryKey: ['createTodo'],
@@ -297,40 +299,40 @@ skills:
           useMutation({
             mutationFn: (input) => api.createTodo(input),
           })
-        source: "docs/framework/react/guides/queries.md; docs/framework/react/guides/mutations.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/queries.md; docs/framework/react/guides/mutations.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Tune defaults, freshness, retries, and refetching"
-    slug: "tune-defaults-freshness-retries-and-refetching"
-    domain: "coordinating-query-execution"
-    description: "Apply important defaults, staleTime, gcTime, retry, refetch triggers, polling, focusManager, onlineManager, and networkMode."
-    type: "core"
+  - name: 'Tune defaults, freshness, retries, and refetching'
+    slug: 'tune-defaults-freshness-retries-and-refetching'
+    domain: 'coordinating-query-execution'
+    description: 'Apply important defaults, staleTime, gcTime, retry, refetch triggers, polling, focusManager, onlineManager, and networkMode.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "staleTime"
-      - "gcTime"
-      - "retry and retryDelay"
-      - "refetchOnWindowFocus"
-      - "refetchOnReconnect"
-      - "networkMode"
-      - "focusManager"
-      - "onlineManager"
+      - 'staleTime'
+      - 'gcTime'
+      - 'retry and retryDelay'
+      - 'refetchOnWindowFocus'
+      - 'refetchOnReconnect'
+      - 'networkMode'
+      - 'focusManager'
+      - 'onlineManager'
     tasks:
-      - "Prevent excessive refetches"
-      - "Set cache retention policy"
-      - "Support offline-first or always-available queryFns"
+      - 'Prevent excessive refetches'
+      - 'Set cache retention policy'
+      - 'Support offline-first or always-available queryFns'
     failure_modes:
-      - mistake: "Confusing gcTime with freshness"
-        mechanism: "gcTime only applies after a query becomes unused; staleTime controls freshness and refetching."
+      - mistake: 'Confusing gcTime with freshness'
+        mechanism: 'gcTime only applies after a query becomes unused; staleTime controls freshness and refetching.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todos'],
@@ -343,10 +345,10 @@ skills:
             queryFn: fetchTodos,
             staleTime: 60_000,
           })
-        source: "docs/framework/react/guides/important-defaults.md; docs/framework/react/guides/migrating-to-v5.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Static staleTime blocks invalidation"
+        source: 'docs/framework/react/guides/important-defaults.md; docs/framework/react/guides/migrating-to-v5.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Static staleTime blocks invalidation'
         mechanism: "staleTime: 'static' is stricter than Infinity and ignores manual invalidation refetches."
         wrong_pattern: |
           useQuery({
@@ -362,50 +364,51 @@ skills:
             staleTime: Infinity,
           })
           queryClient.invalidateQueries({ queryKey: ['permissions'] })
-        source: "docs/framework/react/guides/important-defaults.md; docs/reference/QueryClient.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Tests hang on default retries"
-        mechanism: "Failed queries retry three times with exponential backoff by default."
+        source: 'docs/framework/react/guides/important-defaults.md; docs/reference/QueryClient.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Tests hang on default retries'
+        mechanism: 'Failed queries retry three times with exponential backoff by default.'
         wrong_pattern: |
           renderHook(() => useQuery({ queryKey: ['x'], queryFn: failingFn }), { wrapper })
         correct_pattern: |
           const queryClient = new QueryClient({
             defaultOptions: { queries: { retry: false } },
           })
-        source: "docs/framework/react/guides/testing.md; docs/framework/angular/guides/testing.md"
-        priority: "HIGH"
-        status: "active"
-        skills: ["tune-defaults-freshness-retries-and-refetching", "test-query-code"]
+        source: 'docs/framework/react/guides/testing.md; docs/framework/angular/guides/testing.md'
+        priority: 'HIGH'
+        status: 'active'
+        skills:
+          ['tune-defaults-freshness-retries-and-refetching', 'test-query-code']
 
-  - name: "Coordinate dependent, parallel, disabled, and background queries"
-    slug: "coordinate-dependent-parallel-disabled-and-background-queries"
-    domain: "coordinating-query-execution"
-    description: "Compose multiple queries, dependent queries, disabled queries, background indicators, polling, and scroll restoration."
-    type: "core"
+  - name: 'Coordinate dependent, parallel, disabled, and background queries'
+    slug: 'coordinate-dependent-parallel-disabled-and-background-queries'
+    domain: 'coordinating-query-execution'
+    description: 'Compose multiple queries, dependent queries, disabled queries, background indicators, polling, and scroll restoration.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "useQueries"
-      - "enabled"
-      - "skipToken"
-      - "useIsFetching"
-      - "refetchInterval"
-      - "scroll restoration"
+      - 'useQueries'
+      - 'enabled'
+      - 'skipToken'
+      - 'useIsFetching'
+      - 'refetchInterval'
+      - 'scroll restoration'
     tasks:
-      - "Fetch multiple independent resources"
-      - "Fetch after another query succeeds"
-      - "Show background fetching without replacing content"
+      - 'Fetch multiple independent resources'
+      - 'Fetch after another query succeeds'
+      - 'Show background fetching without replacing content'
     failure_modes:
-      - mistake: "Imperative disabled query as lazy fetch"
-        mechanism: "Permanently disabling queries opts out of invalidation and background behavior."
+      - mistake: 'Imperative disabled query as lazy fetch'
+        mechanism: 'Permanently disabling queries opts out of invalidation and background behavior.'
         wrong_pattern: |
           const query = useQuery({
             queryKey: ['todos'],
@@ -419,11 +422,11 @@ skills:
             queryFn: () => fetchTodos(filters),
             enabled: Boolean(filters),
           })
-        source: "docs/framework/react/guides/disabling-queries.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Duplicate keys in useQueries"
-        mechanism: "The same key can share data between entries and confuse placeholder or select behavior."
+        source: 'docs/framework/react/guides/disabling-queries.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Duplicate keys in useQueries'
+        mechanism: 'The same key can share data between entries and confuse placeholder or select behavior.'
         wrong_pattern: |
           useQueries({
             queries: ids.map(() => ({ queryKey: ['user'], queryFn: fetchUser })),
@@ -432,50 +435,50 @@ skills:
           useQueries({
             queries: ids.map((id) => ({ queryKey: ['user', id], queryFn: () => fetchUser(id) })),
           })
-        source: "docs/framework/react/reference/useQueries.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Showing full-page spinner on background refetch"
-        mechanism: "isFetching includes background refetches while status describes whether data exists."
+        source: 'docs/framework/react/reference/useQueries.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Showing full-page spinner on background refetch'
+        mechanism: 'isFetching includes background refetches while status describes whether data exists.'
         wrong_pattern: |
           if (query.isFetching) return <Spinner />
         correct_pattern: |
           if (query.isPending) return <Spinner />
           return <>{query.isFetching ? <SmallRefresh /> : null}<Todos data={query.data} /></>
-        source: "docs/framework/react/guides/background-fetching-indicators.md; docs/framework/react/guides/queries.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/guides/background-fetching-indicators.md; docs/framework/react/guides/queries.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Paginate and build infinite queries"
-    slug: "paginate-and-build-infinite-queries"
-    domain: "coordinating-query-execution"
-    description: "Implement page-indexed queries, placeholderData, infinite queries, maxPages, bi-directional lists, and safe manual infinite cache updates."
-    type: "core"
+  - name: 'Paginate and build infinite queries'
+    slug: 'paginate-and-build-infinite-queries'
+    domain: 'coordinating-query-execution'
+    description: 'Implement page-indexed queries, placeholderData, infinite queries, maxPages, bi-directional lists, and safe manual infinite cache updates.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "useInfiniteQuery"
-      - "createInfiniteQuery"
-      - "injectInfiniteQuery"
-      - "createInfiniteQueryController"
-      - "initialPageParam"
-      - "getNextPageParam"
-      - "maxPages"
-      - "keepPreviousData"
+      - 'useInfiniteQuery'
+      - 'createInfiniteQuery'
+      - 'injectInfiniteQuery'
+      - 'createInfiniteQueryController'
+      - 'initialPageParam'
+      - 'getNextPageParam'
+      - 'maxPages'
+      - 'keepPreviousData'
     tasks:
-      - "Build numbered pagination"
-      - "Build load-more and infinite scroll"
-      - "Limit stored pages"
+      - 'Build numbered pagination'
+      - 'Build load-more and infinite scroll'
+      - 'Limit stored pages'
     failure_modes:
-      - mistake: "Missing initialPageParam"
-        mechanism: "v5 infinite queries require an explicit initial page param."
+      - mistake: 'Missing initialPageParam'
+        mechanism: 'v5 infinite queries require an explicit initial page param.'
         wrong_pattern: |
           useInfiniteQuery({
             queryKey: ['projects'],
@@ -489,20 +492,20 @@ skills:
             initialPageParam: 0,
             getNextPageParam: (lastPage) => lastPage.nextCursor,
           })
-        source: "docs/framework/react/guides/infinite-queries.md; docs/framework/react/guides/migrating-to-v5.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Overlapping infinite fetches"
-        mechanism: "One cache entry is shared for all pages; fetchNextPage during an active fetch can overwrite background refresh data."
+        source: 'docs/framework/react/guides/infinite-queries.md; docs/framework/react/guides/migrating-to-v5.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Overlapping infinite fetches'
+        mechanism: 'One cache entry is shared for all pages; fetchNextPage during an active fetch can overwrite background refresh data.'
         wrong_pattern: |
           <List onEndReached={() => fetchNextPage()} />
         correct_pattern: |
           <List onEndReached={() => hasNextPage && !isFetching && fetchNextPage()} />
-        source: "docs/framework/react/guides/infinite-queries.md; docs/framework/lit/guides/infinite-queries.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Breaking infinite data shape"
-        mechanism: "Infinite query cache data must always keep pages and pageParams arrays."
+        source: 'docs/framework/react/guides/infinite-queries.md; docs/framework/lit/guides/infinite-queries.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Breaking infinite data shape'
+        mechanism: 'Infinite query cache data must always keep pages and pageParams arrays.'
         wrong_pattern: |
           queryClient.setQueryData(['projects'], (data) => data.pages.slice(1))
         correct_pattern: |
@@ -510,48 +513,48 @@ skills:
             pages: data.pages.slice(1),
             pageParams: data.pageParams.slice(1),
           }))
-        source: "docs/framework/react/guides/infinite-queries.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/infinite-queries.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Write mutations and invalidate related queries"
-    slug: "write-mutations-and-invalidate-related-queries"
-    domain: "writing-server-state"
-    description: "Use mutations for server writes, compose side effects, invalidate related reads, update from mutation responses, and manage mutation state."
-    type: "core"
+  - name: 'Write mutations and invalidate related queries'
+    slug: 'write-mutations-and-invalidate-related-queries'
+    domain: 'writing-server-state'
+    description: 'Use mutations for server writes, compose side effects, invalidate related reads, update from mutation responses, and manage mutation state.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "useMutation"
-      - "createMutation"
-      - "injectMutation"
-      - "createMutationController"
-      - "invalidateQueries"
-      - "useMutationState"
-      - "mutationOptions"
+      - 'useMutation'
+      - 'createMutation'
+      - 'injectMutation'
+      - 'createMutationController'
+      - 'invalidateQueries'
+      - 'useMutationState'
+      - 'mutationOptions'
     tasks:
-      - "Create, update, or delete server data"
-      - "Invalidate after mutation success"
-      - "Share pending mutation state across components"
+      - 'Create, update, or delete server data'
+      - 'Invalidate after mutation success'
+      - 'Share pending mutation state across components'
     failure_modes:
-      - mistake: "Multiple mutate arguments"
-        mechanism: "mutate accepts one variables value; use an object for multiple fields."
+      - mistake: 'Multiple mutate arguments'
+        mechanism: 'mutate accepts one variables value; use an object for multiple fields.'
         wrong_pattern: |
           mutation.mutate(title, body)
         correct_pattern: |
           mutation.mutate({ title, body })
-        source: "docs/framework/react/guides/mutations.md; TKDodo Mastering Mutations"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Per-call callbacks expected after unmount"
-        mechanism: "Callbacks passed to mutate run only if the observer is still mounted and only for the last consecutive call."
+        source: 'docs/framework/react/guides/mutations.md; TKDodo Mastering Mutations'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Per-call callbacks expected after unmount'
+        mechanism: 'Callbacks passed to mutate run only if the observer is still mounted and only for the last consecutive call.'
         wrong_pattern: |
           todos.forEach((todo) => mutate(todo, { onSuccess: toastSuccess }))
         correct_pattern: |
@@ -560,11 +563,11 @@ skills:
             onSuccess: toastSuccess,
           })
           todos.forEach((todo) => mutation.mutate(todo))
-        source: "docs/framework/react/guides/mutations.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Not awaiting invalidation when pending UI depends on it"
-        mechanism: "Returning the invalidation promise keeps the mutation pending until refetch finishes."
+        source: 'docs/framework/react/guides/mutations.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Not awaiting invalidation when pending UI depends on it'
+        mechanism: 'Returning the invalidation promise keeps the mutation pending until refetch finishes.'
         wrong_pattern: |
           useMutation({
             mutationFn: addTodo,
@@ -577,38 +580,38 @@ skills:
             mutationFn: addTodo,
             onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
           })
-        source: "docs/framework/react/guides/optimistic-updates.md; TKDodo Automatic Query Invalidation after Mutations"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/optimistic-updates.md; TKDodo Automatic Query Invalidation after Mutations'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Implement optimistic updates and cache writes"
-    slug: "implement-optimistic-updates-and-cache-writes"
-    domain: "writing-server-state"
-    description: "Choose UI-level optimistic rendering or direct cache writes, cancel stale reads, snapshot, rollback, and refetch safely."
-    type: "core"
+  - name: 'Implement optimistic updates and cache writes'
+    slug: 'implement-optimistic-updates-and-cache-writes'
+    domain: 'writing-server-state'
+    description: 'Choose UI-level optimistic rendering or direct cache writes, cancel stale reads, snapshot, rollback, and refetch safely.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "onMutate"
-      - "onError"
-      - "onSettled"
-      - "cancelQueries"
-      - "setQueryData"
-      - "useMutationState"
+      - 'onMutate'
+      - 'onError'
+      - 'onSettled'
+      - 'cancelQueries'
+      - 'setQueryData'
+      - 'useMutationState'
     tasks:
-      - "Show pending items with variables"
-      - "Write optimistic cache updates"
-      - "Roll back failed mutations"
+      - 'Show pending items with variables'
+      - 'Write optimistic cache updates'
+      - 'Roll back failed mutations'
     failure_modes:
-      - mistake: "Optimistic write without cancelling refetch"
-        mechanism: "An in-flight refetch can resolve after the optimistic write and clobber it."
+      - mistake: 'Optimistic write without cancelling refetch'
+        mechanism: 'An in-flight refetch can resolve after the optimistic write and clobber it.'
         wrong_pattern: |
           onMutate: (newTodo) => {
             queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
@@ -620,11 +623,11 @@ skills:
             context.client.setQueryData(['todos'], (old) => [...old, newTodo])
             return { previousTodos }
           }
-        source: "docs/framework/react/guides/optimistic-updates.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Mutating cached data in place"
-        mechanism: "Cache writes must be immutable to preserve observer notifications and structural sharing."
+        source: 'docs/framework/react/guides/optimistic-updates.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Mutating cached data in place'
+        mechanism: 'Cache writes must be immutable to preserve observer notifications and structural sharing.'
         wrong_pattern: |
           queryClient.setQueryData(['todo', id], (old) => {
             old.title = title
@@ -635,50 +638,58 @@ skills:
             ...old,
             title,
           }))
-        source: "docs/reference/QueryClient.md; docs/framework/react/guides/updates-from-mutation-responses.md"
-        priority: "CRITICAL"
-        status: "active"
-        skills: ["implement-optimistic-updates-and-cache-writes", "shape-data-and-render-efficiently"]
-      - mistake: "Persisted persister loses optimistic cache write"
-        mechanism: "experimental_createQueryPersister does not persist setQueryData writes until invalidation/refetch persists real data."
+        source: 'docs/reference/QueryClient.md; docs/framework/react/guides/updates-from-mutation-responses.md'
+        priority: 'CRITICAL'
+        status: 'active'
+        skills:
+          [
+            'implement-optimistic-updates-and-cache-writes',
+            'shape-data-and-render-efficiently',
+          ]
+      - mistake: 'Persisted persister loses optimistic cache write'
+        mechanism: 'experimental_createQueryPersister does not persist setQueryData writes until invalidation/refetch persists real data.'
         wrong_pattern: |
           context.client.setQueryData(['todos'], optimisticTodos)
           // user refreshes before invalidation finishes
         correct_pattern: |
           context.client.setQueryData(['todos'], optimisticTodos)
           return context.client.invalidateQueries({ queryKey: ['todos'] })
-        source: "docs/framework/react/plugins/createPersister.md; docs/framework/vue/plugins/createPersister.md"
-        priority: "HIGH"
-        status: "active"
-        skills: ["implement-optimistic-updates-and-cache-writes", "persist-offline-and-restore-caches"]
+        source: 'docs/framework/react/plugins/createPersister.md; docs/framework/vue/plugins/createPersister.md'
+        priority: 'HIGH'
+        status: 'active'
+        skills:
+          [
+            'implement-optimistic-updates-and-cache-writes',
+            'persist-offline-and-restore-caches',
+          ]
 
-  - name: "Cancel queries and consume AbortSignals"
-    slug: "cancel-queries-and-consume-abort-signals"
-    domain: "writing-server-state"
-    description: "Use AbortSignal-aware query functions, manual cancellation, cancellation options, and understand state revert behavior."
-    type: "core"
+  - name: 'Cancel queries and consume AbortSignals'
+    slug: 'cancel-queries-and-consume-abort-signals'
+    domain: 'writing-server-state'
+    description: 'Use AbortSignal-aware query functions, manual cancellation, cancellation options, and understand state revert behavior.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "QueryFunctionContext.signal"
-      - "cancelQueries"
-      - "CancelledError"
-      - "cancel options"
-      - "axios and fetch cancellation"
+      - 'QueryFunctionContext.signal'
+      - 'cancelQueries'
+      - 'CancelledError'
+      - 'cancel options'
+      - 'axios and fetch cancellation'
     tasks:
-      - "Abort fetch requests on key changes"
-      - "Cancel a slow query from UI"
-      - "Protect optimistic updates from stale refetches"
+      - 'Abort fetch requests on key changes'
+      - 'Cancel a slow query from UI'
+      - 'Protect optimistic updates from stale refetches'
     failure_modes:
-      - mistake: "Ignoring signal in long request"
-        mechanism: "Without consuming signal, unused queries can still resolve and populate cache."
+      - mistake: 'Ignoring signal in long request'
+        mechanism: 'Without consuming signal, unused queries can still resolve and populate cache.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todos'],
@@ -689,11 +700,11 @@ skills:
             queryKey: ['todos'],
             queryFn: ({ signal }) => fetch('/todos', { signal }).then((r) => r.json()),
           })
-        source: "docs/framework/react/guides/query-cancellation.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Assuming unmount always cancels"
-        mechanism: "Default behavior keeps unresolved query promises running unless the signal is consumed."
+        source: 'docs/framework/react/guides/query-cancellation.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Assuming unmount always cancels'
+        mechanism: 'Default behavior keeps unresolved query promises running unless the signal is consumed.'
         wrong_pattern: |
           // rely on component unmount to abort the network request
         correct_pattern: |
@@ -701,60 +712,64 @@ skills:
             const response = await fetch(url, { signal })
             return response.json()
           }
-        source: "docs/framework/react/guides/query-cancellation.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Suspense cancellation expected"
-        mechanism: "Cancellation does not work with Suspense hooks."
+        source: 'docs/framework/react/guides/query-cancellation.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Suspense cancellation expected'
+        mechanism: 'Cancellation does not work with Suspense hooks.'
         wrong_pattern: |
           const query = useSuspenseQuery({ queryKey, queryFn })
           await queryClient.cancelQueries({ queryKey })
         correct_pattern: |
           const query = useQuery({ queryKey, queryFn })
           await queryClient.cancelQueries({ queryKey })
-        source: "docs/framework/react/guides/query-cancellation.md"
-        priority: "MEDIUM"
-        status: "active"
-        skills: ["cancel-queries-and-consume-abort-signals", "use-suspense-and-error-boundaries"]
+        source: 'docs/framework/react/guides/query-cancellation.md'
+        priority: 'MEDIUM'
+        status: 'active'
+        skills:
+          [
+            'cancel-queries-and-consume-abort-signals',
+            'use-suspense-and-error-boundaries',
+          ]
 
-  - name: "Seed, placeholder, select, and transform data"
-    slug: "seed-placeholder-select-and-transform-data"
-    domain: "shaping-cache-and-render-behavior"
-    description: "Use initialData, placeholderData, keepPreviousData, select, queryOptions, and cache seeding without corrupting timestamps or shapes."
-    type: "core"
+  - name: 'Seed, placeholder, select, and transform data'
+    slug: 'seed-placeholder-select-and-transform-data'
+    domain: 'shaping-cache-and-render-behavior'
+    description: 'Use initialData, placeholderData, keepPreviousData, select, queryOptions, and cache seeding without corrupting timestamps or shapes.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "initialData"
-      - "placeholderData"
-      - "keepPreviousData"
-      - "select"
-      - "dataUpdatedAt"
-      - "ensureQueryData"
+      - 'initialData'
+      - 'placeholderData'
+      - 'keepPreviousData'
+      - 'select'
+      - 'dataUpdatedAt'
+      - 'ensureQueryData'
     tasks:
-      - "Seed detail data from a list"
-      - "Keep previous page visible"
-      - "Transform returned data for a component"
+      - 'Seed detail data from a list'
+      - 'Keep previous page visible'
+      - 'Transform returned data for a component'
     failure_modes:
-      - mistake: "Expecting initialData to overwrite fresher cache"
-        mechanism: "initialData never overwrites existing cache data, even if the incoming value is fresher."
+      - mistake: 'Expecting initialData to overwrite fresher cache'
+        mechanism: 'initialData never overwrites existing cache data, even if the incoming value is fresher.'
         wrong_pattern: |
           useQuery({ queryKey: ['posts'], queryFn: getPosts, initialData: props.posts })
         correct_pattern: |
           await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: getPosts })
           return <HydrationBoundary state={dehydrate(queryClient)}><Posts /></HydrationBoundary>
-        source: "docs/framework/react/guides/ssr.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Using v4 keepPreviousData option"
-        mechanism: "v5 replaced keepPreviousData option with placeholderData identity."
+        source: 'docs/framework/react/guides/ssr.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Using v4 keepPreviousData option'
+        mechanism: 'v5 replaced keepPreviousData option with placeholderData identity.'
         wrong_pattern: |
           useQuery({
             queryKey,
@@ -767,11 +782,11 @@ skills:
             queryFn,
             placeholderData: keepPreviousData,
           })
-        source: "docs/framework/react/guides/migrating-to-v5.md; docs/framework/react/guides/paginated-queries.md"
-        priority: "CRITICAL"
-        status: "fixed-but-legacy-risk"
-      - mistake: "Selector throwing breaks observer"
-        mechanism: "select should transform successful data; errors belong in queryFn so Query state can represent them."
+        source: 'docs/framework/react/guides/migrating-to-v5.md; docs/framework/react/guides/paginated-queries.md'
+        priority: 'CRITICAL'
+        status: 'fixed-but-legacy-risk'
+      - mistake: 'Selector throwing breaks observer'
+        mechanism: 'select should transform successful data; errors belong in queryFn so Query state can represent them.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todos'],
@@ -790,110 +805,110 @@ skills:
               return data
             },
           })
-        source: "packages/query-core/src/queryObserver.ts; docs/framework/react/guides/render-optimizations.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'packages/query-core/src/queryObserver.ts; docs/framework/react/guides/render-optimizations.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Shape data and render efficiently"
-    slug: "shape-data-and-render-efficiently"
-    domain: "shaping-cache-and-render-behavior"
-    description: "Use structural sharing, tracked properties, select functions, memoized combine functions, and adapter-specific immutable result rules."
-    type: "framework"
+  - name: 'Shape data and render efficiently'
+    slug: 'shape-data-and-render-efficiently'
+    domain: 'shaping-cache-and-render-behavior'
+    description: 'Use structural sharing, tracked properties, select functions, memoized combine functions, and adapter-specific immutable result rules.'
+    type: 'framework'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
     covers:
-      - "structuralSharing"
-      - "notifyOnChangeProps"
-      - "select"
-      - "combine"
-      - "tracked properties"
-      - "no-rest-destructuring"
-      - "no-unstable-deps"
+      - 'structuralSharing'
+      - 'notifyOnChangeProps'
+      - 'select'
+      - 'combine'
+      - 'tracked properties'
+      - 'no-rest-destructuring'
+      - 'no-unstable-deps'
     tasks:
-      - "Avoid unnecessary rerenders"
-      - "Select small slices from large responses"
-      - "Keep immutable query results safe in forms"
+      - 'Avoid unnecessary rerenders'
+      - 'Select small slices from large responses'
+      - 'Keep immutable query results safe in forms'
     failure_modes:
-      - mistake: "Rest destructuring disables tracked props"
-        mechanism: "Object rest touches every property and opts out of property-level tracking."
+      - mistake: 'Rest destructuring disables tracked props'
+        mechanism: 'Object rest touches every property and opts out of property-level tracking.'
         wrong_pattern: |
           const { data, ...queryInfo } = useQuery(options)
         correct_pattern: |
           const { data, isPending, isError, error } = useQuery(options)
-        source: "docs/eslint/no-rest-destructuring.md; docs/framework/react/guides/render-optimizations.md"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Query result in hook deps"
-        mechanism: "Query result objects are not referentially stable; destructure stable members."
+        source: 'docs/eslint/no-rest-destructuring.md; docs/framework/react/guides/render-optimizations.md'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Query result in hook deps'
+        mechanism: 'Query result objects are not referentially stable; destructure stable members.'
         wrong_pattern: |
           const query = useQuery(options)
           useEffect(() => sync(query.data), [query])
         correct_pattern: |
           const { data } = useQuery(options)
           useEffect(() => sync(data), [data])
-        source: "docs/eslint/no-unstable-deps.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Vue v-model mutates query result"
-        mechanism: "Vue Query results are immutable; two-way binding needs a mutable copy."
+        source: 'docs/eslint/no-unstable-deps.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Vue v-model mutates query result'
+        mechanism: 'Vue Query results are immutable; two-way binding needs a mutable copy.'
         wrong_pattern: |
           <input v-model="todo.title" />
         correct_pattern: |
           const editableTodo = ref({ ...todo.value })
           <input v-model="editableTodo.title" />
-        source: "docs/framework/vue/reactivity.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/vue/reactivity.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Prefetch and remove request waterfalls"
-    slug: "prefetch-and-remove-request-waterfalls"
-    domain: "rendering-across-environments"
-    description: "Prefetch data in event handlers, component lifecycle, TanStack Router and Start loaders, other routers, and query functions to flatten waterfalls before render."
-    type: "lifecycle"
+  - name: 'Prefetch and remove request waterfalls'
+    slug: 'prefetch-and-remove-request-waterfalls'
+    domain: 'rendering-across-environments'
+    description: 'Prefetch data in event handlers, component lifecycle, TanStack Router and Start loaders, other routers, and query functions to flatten waterfalls before render.'
+    type: 'lifecycle'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
     covers:
-      - "prefetchQuery"
-      - "prefetchInfiniteQuery"
-      - "ensureQueryData"
-      - "usePrefetchQuery"
-      - "TanStack Router loaders"
-      - "TanStack Start routes"
-      - "router loaders"
-      - "request waterfalls"
+      - 'prefetchQuery'
+      - 'prefetchInfiniteQuery'
+      - 'ensureQueryData'
+      - 'usePrefetchQuery'
+      - 'TanStack Router loaders'
+      - 'TanStack Start routes'
+      - 'router loaders'
+      - 'request waterfalls'
     tasks:
-      - "Prefetch on hover or focus"
-      - "Prefetch child data from parent routes"
-      - "Pair Query with TanStack Router loaders and TanStack Start routes"
-      - "Pair Query with React Router loaders when the app uses React Router"
+      - 'Prefetch on hover or focus'
+      - 'Prefetch child data from parent routes'
+      - 'Pair Query with TanStack Router loaders and TanStack Start routes'
+      - 'Pair Query with React Router loaders when the app uses React Router'
     compositions:
-      - library: "TanStack Start"
-        skill: "Compose TanStack Query with Start routes and SSR"
-      - library: "TanStack Router"
-        skill: "Compose TanStack Query with TanStack Router loaders and SSR Query integration"
-      - library: "React Router"
-        skill: "Compose TanStack Query with React Router loaders"
+      - library: 'TanStack Start'
+        skill: 'Compose TanStack Query with Start routes and SSR'
+      - library: 'TanStack Router'
+        skill: 'Compose TanStack Query with TanStack Router loaders and SSR Query integration'
+      - library: 'React Router'
+        skill: 'Compose TanStack Query with React Router loaders'
     failure_modes:
-      - mistake: "Expecting prefetchQuery to return data"
-        mechanism: "prefetchQuery returns void and swallows errors; use fetchQuery when data or thrown errors are needed."
+      - mistake: 'Expecting prefetchQuery to return data'
+        mechanism: 'prefetchQuery returns void and swallows errors; use fetchQuery when data or thrown errors are needed.'
         wrong_pattern: |
           const data = await queryClient.prefetchQuery(todoOptions(id))
         correct_pattern: |
           const data = await queryClient.fetchQuery(todoOptions(id))
-        source: "docs/framework/react/guides/prefetching.md; docs/reference/QueryClient.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Prefetch staleTime only set on prefetch"
-        mechanism: "staleTime passed to prefetch applies only to that prefetch call; useQuery still needs its own freshness policy."
+        source: 'docs/framework/react/guides/prefetching.md; docs/reference/QueryClient.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Prefetch staleTime only set on prefetch'
+        mechanism: 'staleTime passed to prefetch applies only to that prefetch call; useQuery still needs its own freshness policy.'
         wrong_pattern: |
           await queryClient.prefetchQuery({ queryKey, queryFn, staleTime: 60_000 })
           useQuery({ queryKey, queryFn })
@@ -901,11 +916,11 @@ skills:
           const options = queryOptions({ queryKey, queryFn, staleTime: 60_000 })
           await queryClient.prefetchQuery(options)
           useQuery(options)
-        source: "docs/framework/react/guides/prefetching.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Suspense prefetch after suspension"
-        mechanism: "Effects do not run until after a suspenseful query resolves, so they cannot flatten that waterfall."
+        source: 'docs/framework/react/guides/prefetching.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Suspense prefetch after suspension'
+        mechanism: 'Effects do not run until after a suspenseful query resolves, so they cannot flatten that waterfall.'
         wrong_pattern: |
           const article = useSuspenseQuery(articleOptions(id))
           useEffect(() => {
@@ -914,44 +929,44 @@ skills:
         correct_pattern: |
           usePrefetchQuery(commentsOptions(id))
           return <Suspense><Article id={id} /></Suspense>
-        source: "docs/framework/react/guides/prefetching.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/prefetching.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Compose TanStack Query with TanStack Router and Start"
-    slug: "compose-query-with-tanstack-router-and-start"
-    domain: "rendering-across-environments"
-    description: "Wire QueryClient through TanStack Router context, Start routes, route loaders, and the Router SSR Query integration so route preloading, SSR hydration, streaming, and redirects are handled in the TanStack stack before reaching for Next.js-specific recipes."
-    type: "composition"
+  - name: 'Compose TanStack Query with TanStack Router and Start'
+    slug: 'compose-query-with-tanstack-router-and-start'
+    domain: 'rendering-across-environments'
+    description: 'Wire QueryClient through TanStack Router context, Start routes, route loaders, and the Router SSR Query integration so route preloading, SSR hydration, streaming, and redirects are handled in the TanStack stack before reaching for Next.js-specific recipes.'
+    type: 'composition'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
     ecosystem_targets:
-      - "@tanstack/react-router"
-      - "@tanstack/react-router-ssr-query"
-      - "@tanstack/react-start"
-      - "@tanstack/solid-start"
+      - '@tanstack/react-router'
+      - '@tanstack/react-router-ssr-query'
+      - '@tanstack/react-start'
+      - '@tanstack/solid-start'
     covers:
-      - "createRouter context"
-      - "createFileRoute loaders"
-      - "ensureQueryData in loaders"
-      - "setupRouterSsrQueryIntegration"
-      - "Start SSR and streaming"
-      - "redirect propagation"
-      - "router.invalidate after loader errors"
+      - 'createRouter context'
+      - 'createFileRoute loaders'
+      - 'ensureQueryData in loaders'
+      - 'setupRouterSsrQueryIntegration'
+      - 'Start SSR and streaming'
+      - 'redirect propagation'
+      - 'router.invalidate after loader errors'
     tasks:
-      - "Provide a per-request QueryClient through router context"
-      - "Preload critical route data with loaders and read it with Query hooks"
-      - "Use Router SSR Query integration for dehydration, hydration, streaming, and redirects"
-      - "Treat TanStack Start as the default TanStack SSR path before manual Router SSR or Next.js"
+      - 'Provide a per-request QueryClient through router context'
+      - 'Preload critical route data with loaders and read it with Query hooks'
+      - 'Use Router SSR Query integration for dehydration, hydration, streaming, and redirects'
+      - 'Treat TanStack Start as the default TanStack SSR path before manual Router SSR or Next.js'
     compositions:
-      - library: "TanStack Start"
-        skill: "Use Query in Start routes, server functions, SSR, and streaming"
-      - library: "TanStack Router"
-        skill: "Use Query with route loaders and @tanstack/react-router-ssr-query"
+      - library: 'TanStack Start'
+        skill: 'Use Query in Start routes, server functions, SSR, and streaming'
+      - library: 'TanStack Router'
+        skill: 'Use Query with route loaders and @tanstack/react-router-ssr-query'
     failure_modes:
-      - mistake: "Component-only Query creates a route waterfall"
-        mechanism: "The router knows the next route before render; critical route data should be ensured in the loader and then read by the component."
+      - mistake: 'Component-only Query creates a route waterfall'
+        mechanism: 'The router knows the next route before render; critical route data should be ensured in the loader and then read by the component.'
         wrong_pattern: |
           export const Route = createFileRoute('/posts')({
             component: PostsPage,
@@ -969,11 +984,11 @@ skills:
             const { data } = useSuspenseQuery(postsQuery)
             return <Posts data={data} />
           }
-        source: "https://tanstack.com/router/latest/docs/integrations/query"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Hand-rolled Router hydration while integration exists"
-        mechanism: "The Router SSR Query integration automates QueryClient dehydration, hydration, streamed query results, redirect handling, and optional provider wrapping."
+        source: 'https://tanstack.com/router/latest/docs/integrations/query'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Hand-rolled Router hydration while integration exists'
+        mechanism: 'The Router SSR Query integration automates QueryClient dehydration, hydration, streamed query results, redirect handling, and optional provider wrapping.'
         wrong_pattern: |
           const router = createRouter({ routeTree })
           return (
@@ -986,11 +1001,11 @@ skills:
         correct_pattern: |
           const router = createRouter({ routeTree, context: { queryClient } })
           setupRouterSsrQueryIntegration({ router, queryClient })
-        source: "https://tanstack.com/router/latest/docs/integrations/query"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Next.js mental model copied into Start"
-        mechanism: "Start is powered by TanStack Router; generated guidance should use file routes, loaders, server functions, and router SSR instead of Next app/pages APIs."
+        source: 'https://tanstack.com/router/latest/docs/integrations/query'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Next.js mental model copied into Start'
+        mechanism: 'Start is powered by TanStack Router; generated guidance should use file routes, loaders, server functions, and router SSR instead of Next app/pages APIs.'
         wrong_pattern: |
           // app/posts/page.tsx
           export default async function Page() {
@@ -1002,81 +1017,81 @@ skills:
             loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
             component: PostsPage,
           })
-        source: "https://tanstack.com/start/latest/docs/framework/react/overview; https://tanstack.com/router/latest/docs/how-to/setup-ssr"
-        priority: "HIGH"
-        status: "active"
+        source: 'https://tanstack.com/start/latest/docs/framework/react/overview; https://tanstack.com/router/latest/docs/how-to/setup-ssr'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "SSR, hydration, and streaming"
-    slug: "ssr-hydration-and-streaming"
-    domain: "rendering-across-environments"
-    description: "Use prefetch, dehydrate, hydrate, HydrationBoundary, TanStack Start, Router SSR Query integration, Server Components, SvelteKit, Nuxt, SolidStart, Lit SSR, and streamed hydration safely."
-    type: "lifecycle"
+  - name: 'SSR, hydration, and streaming'
+    slug: 'ssr-hydration-and-streaming'
+    domain: 'rendering-across-environments'
+    description: 'Use prefetch, dehydrate, hydrate, HydrationBoundary, TanStack Start, Router SSR Query integration, Server Components, SvelteKit, Nuxt, SolidStart, Lit SSR, and streamed hydration safely.'
+    type: 'lifecycle'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/react-query-next-experimental"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/lit-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/react-query-next-experimental'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/lit-query'
     ecosystem_targets:
-      - "TanStack Start"
-      - "@tanstack/react-start"
-      - "@tanstack/solid-start"
-      - "TanStack Router"
-      - "@tanstack/react-router"
-      - "@tanstack/react-router-ssr-query"
+      - 'TanStack Start'
+      - '@tanstack/react-start'
+      - '@tanstack/solid-start'
+      - 'TanStack Router'
+      - '@tanstack/react-router'
+      - '@tanstack/react-router-ssr-query'
     covers:
-      - "dehydrate"
-      - "hydrate"
-      - "HydrationBoundary"
-      - "setupRouterSsrQueryIntegration"
-      - "TanStack Start SSR"
-      - "Router streaming SSR"
-      - "ReactQueryStreamedHydration"
-      - "environmentManager"
-      - "SvelteKit browser"
-      - "Nuxt onServerPrefetch"
+      - 'dehydrate'
+      - 'hydrate'
+      - 'HydrationBoundary'
+      - 'setupRouterSsrQueryIntegration'
+      - 'TanStack Start SSR'
+      - 'Router streaming SSR'
+      - 'ReactQueryStreamedHydration'
+      - 'environmentManager'
+      - 'SvelteKit browser'
+      - 'Nuxt onServerPrefetch'
     tasks:
-      - "Treat TanStack Start as the default TanStack SSR path"
-      - "Use Router SSR Query integration before hand-written Router hydration"
-      - "Build SSR pages without double-fetching"
-      - "Support Next.js app router and Server Components when the app is Next.js"
-      - "Hydrate data in Vue, Svelte, Solid, or Lit"
+      - 'Treat TanStack Start as the default TanStack SSR path'
+      - 'Use Router SSR Query integration before hand-written Router hydration'
+      - 'Build SSR pages without double-fetching'
+      - 'Support Next.js app router and Server Components when the app is Next.js'
+      - 'Hydrate data in Vue, Svelte, Solid, or Lit'
     subsystems:
-      - name: "TanStack Start"
-        package: "@tanstack/react-start / @tanstack/solid-start"
-        config_surface: "Start routes, server functions, full-document SSR, streaming"
-      - name: "TanStack Router SSR Query"
-        package: "@tanstack/react-router-ssr-query"
-        config_surface: "setupRouterSsrQueryIntegration, router context QueryClient, loader prefetch"
-      - name: "Next.js pages router"
-        package: "@tanstack/react-query"
-        config_surface: "getStaticProps or getServerSideProps plus HydrationBoundary"
-      - name: "Next.js app router and streaming"
-        package: "@tanstack/react-query-next-experimental"
-        config_surface: "client provider, environmentManager, ReactQueryStreamedHydration"
-      - name: "Nuxt"
-        package: "@tanstack/vue-query"
-        config_surface: "VueQueryPlugin, dehydrate/hydrate, onServerPrefetch"
-      - name: "SvelteKit"
-        package: "@tanstack/svelte-query"
-        config_surface: "browser-gated default enabled, load functions, QueryClientProvider"
+      - name: 'TanStack Start'
+        package: '@tanstack/react-start / @tanstack/solid-start'
+        config_surface: 'Start routes, server functions, full-document SSR, streaming'
+      - name: 'TanStack Router SSR Query'
+        package: '@tanstack/react-router-ssr-query'
+        config_surface: 'setupRouterSsrQueryIntegration, router context QueryClient, loader prefetch'
+      - name: 'Next.js pages router'
+        package: '@tanstack/react-query'
+        config_surface: 'getStaticProps or getServerSideProps plus HydrationBoundary'
+      - name: 'Next.js app router and streaming'
+        package: '@tanstack/react-query-next-experimental'
+        config_surface: 'client provider, environmentManager, ReactQueryStreamedHydration'
+      - name: 'Nuxt'
+        package: '@tanstack/vue-query'
+        config_surface: 'VueQueryPlugin, dehydrate/hydrate, onServerPrefetch'
+      - name: 'SvelteKit'
+        package: '@tanstack/svelte-query'
+        config_surface: 'browser-gated default enabled, load functions, QueryClientProvider'
     failure_modes:
-      - mistake: "RSC renders fetched data twice"
-        mechanism: "React Query cannot revalidate Server Component-rendered data, so client refetch can desynchronize server-rendered derived output."
+      - mistake: 'RSC renders fetched data twice'
+        mechanism: 'React Query cannot revalidate Server Component-rendered data, so client refetch can desynchronize server-rendered derived output.'
         wrong_pattern: |
           const posts = await queryClient.fetchQuery(postsOptions)
           return <><div>{posts.length}</div><HydrationBoundary state={dehydrate(queryClient)}><Posts /></HydrationBoundary></>
         correct_pattern: |
           await queryClient.prefetchQuery(postsOptions)
           return <HydrationBoundary state={dehydrate(queryClient)}><Posts /></HydrationBoundary>
-        source: "docs/framework/react/guides/advanced-ssr.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Suspense query not prefetched on server"
-        mechanism: "Forgotten prefetch can fetch on server without hydrating, then fetch again on client and cause mismatch."
+        source: 'docs/framework/react/guides/advanced-ssr.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Suspense query not prefetched on server'
+        mechanism: 'Forgotten prefetch can fetch on server without hydrating, then fetch again on client and cause mismatch.'
         wrong_pattern: |
           function Posts() {
             const { data } = useSuspenseQuery(postsOptions)
@@ -1085,57 +1100,58 @@ skills:
         correct_pattern: |
           await queryClient.prefetchQuery(postsOptions)
           return <HydrationBoundary state={dehydrate(queryClient)}><Posts /></HydrationBoundary>
-        source: "docs/framework/react/guides/ssr.md"
-        priority: "CRITICAL"
-        status: "active"
-        skills: ["ssr-hydration-and-streaming", "use-suspense-and-error-boundaries"]
-      - mistake: "SvelteKit query runs after SSR response"
-        mechanism: "SvelteKit SSR needs queries disabled on the server unless explicitly prefetched."
+        source: 'docs/framework/react/guides/ssr.md'
+        priority: 'CRITICAL'
+        status: 'active'
+        skills:
+          ['ssr-hydration-and-streaming', 'use-suspense-and-error-boundaries']
+      - mistake: 'SvelteKit query runs after SSR response'
+        mechanism: 'SvelteKit SSR needs queries disabled on the server unless explicitly prefetched.'
         wrong_pattern: |
           const queryClient = new QueryClient()
         correct_pattern: |
           const queryClient = new QueryClient({
             defaultOptions: { queries: { enabled: browser } },
           })
-        source: "docs/framework/svelte/ssr.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/svelte/ssr.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Use Suspense and error boundaries"
-    slug: "use-suspense-and-error-boundaries"
-    domain: "rendering-across-environments"
-    description: "Use suspense hooks, QueryErrorResetBoundary, throwOnError, streamed hydration, and React.use promise support with the right constraints."
-    type: "framework"
+  - name: 'Use Suspense and error boundaries'
+    slug: 'use-suspense-and-error-boundaries'
+    domain: 'rendering-across-environments'
+    description: 'Use suspense hooks, QueryErrorResetBoundary, throwOnError, streamed hydration, and React.use promise support with the right constraints.'
+    type: 'framework'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/react-query-next-experimental"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/react-query-next-experimental'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
     covers:
-      - "useSuspenseQuery"
-      - "useSuspenseQueries"
-      - "useSuspenseInfiniteQuery"
-      - "QueryErrorResetBoundary"
-      - "throwOnError"
-      - "experimental_prefetchInRender"
-      - "React.use(query.promise)"
+      - 'useSuspenseQuery'
+      - 'useSuspenseQueries'
+      - 'useSuspenseInfiniteQuery'
+      - 'QueryErrorResetBoundary'
+      - 'throwOnError'
+      - 'experimental_prefetchInRender'
+      - 'React.use(query.promise)'
     tasks:
-      - "Render data with Suspense"
-      - "Reset errors after retry"
-      - "Use streamed hydration where the router or framework supports it"
+      - 'Render data with Suspense'
+      - 'Reset errors after retry'
+      - 'Use streamed hydration where the router or framework supports it'
     failure_modes:
-      - mistake: "Conditionally disabling suspense query"
-        mechanism: "Suspense queries guarantee data and cannot be disabled like normal queries."
+      - mistake: 'Conditionally disabling suspense query'
+        mechanism: 'Suspense queries guarantee data and cannot be disabled like normal queries.'
         wrong_pattern: |
           useSuspenseQuery({ queryKey: ['user', id], queryFn: getUser, enabled: Boolean(id) })
         correct_pattern: |
           const query = useQuery({ queryKey: ['user', id], queryFn: getUser, enabled: Boolean(id) })
-        source: "docs/framework/react/guides/suspense.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Missing QueryErrorResetBoundary"
-        mechanism: "Error boundaries need reset coordination so failed queries can retry after boundary reset."
+        source: 'docs/framework/react/guides/suspense.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Missing QueryErrorResetBoundary'
+        mechanism: 'Error boundaries need reset coordination so failed queries can retry after boundary reset.'
         wrong_pattern: |
           <ErrorBoundary fallbackRender={Fallback}>
             <Page />
@@ -1144,11 +1160,11 @@ skills:
           <QueryErrorResetBoundary>
             {({ reset }) => <ErrorBoundary onReset={reset} fallbackRender={Fallback}><Page /></ErrorBoundary>}
           </QueryErrorResetBoundary>
-        source: "docs/framework/react/guides/suspense.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "query.promise without feature flag"
-        mechanism: "React.use(query.promise) requires experimental_prefetchInRender on the QueryClient."
+        source: 'docs/framework/react/guides/suspense.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'query.promise without feature flag'
+        mechanism: 'React.use(query.promise) requires experimental_prefetchInRender on the QueryClient.'
         wrong_pattern: |
           const query = useQuery(options)
           const data = React.use(query.promise)
@@ -1156,49 +1172,49 @@ skills:
           const queryClient = new QueryClient({
             defaultOptions: { queries: { experimental_prefetchInRender: true } },
           })
-        source: "docs/framework/react/guides/suspense.md; packages/query-core/src/queryObserver.ts"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/guides/suspense.md; packages/query-core/src/queryObserver.ts'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Persist offline and restore caches"
-    slug: "persist-offline-and-restore-caches"
-    domain: "persisting-and-synchronizing-caches"
-    description: "Persist queries and mutations to storage, avoid restore races, resume paused mutations, tune gcTime/maxAge, and build custom persisters."
-    type: "composition"
+  - name: 'Persist offline and restore caches'
+    slug: 'persist-offline-and-restore-caches'
+    domain: 'persisting-and-synchronizing-caches'
+    description: 'Persist queries and mutations to storage, avoid restore races, resume paused mutations, tune gcTime/maxAge, and build custom persisters.'
+    type: 'composition'
     packages:
-      - "@tanstack/query-persist-client-core"
-      - "@tanstack/query-async-storage-persister"
-      - "@tanstack/query-sync-storage-persister"
-      - "@tanstack/react-query-persist-client"
-      - "@tanstack/preact-query-persist-client"
-      - "@tanstack/solid-query-persist-client"
-      - "@tanstack/svelte-query-persist-client"
-      - "@tanstack/angular-query-persist-client"
+      - '@tanstack/query-persist-client-core'
+      - '@tanstack/query-async-storage-persister'
+      - '@tanstack/query-sync-storage-persister'
+      - '@tanstack/react-query-persist-client'
+      - '@tanstack/preact-query-persist-client'
+      - '@tanstack/solid-query-persist-client'
+      - '@tanstack/svelte-query-persist-client'
+      - '@tanstack/angular-query-persist-client'
     covers:
-      - "persistQueryClient"
-      - "PersistQueryClientProvider"
-      - "createAsyncStoragePersister"
-      - "createSyncStoragePersister"
-      - "experimental_createQueryPersister"
-      - "resumePausedMutations"
-      - "useIsRestoring"
+      - 'persistQueryClient'
+      - 'PersistQueryClientProvider'
+      - 'createAsyncStoragePersister'
+      - 'createSyncStoragePersister'
+      - 'experimental_createQueryPersister'
+      - 'resumePausedMutations'
+      - 'useIsRestoring'
     tasks:
-      - "Persist cache to storage"
-      - "Restore without query races"
-      - "Resume offline mutations"
+      - 'Persist cache to storage'
+      - 'Restore without query races'
+      - 'Resume offline mutations'
     subsystems:
-      - name: "Async storage persister"
-        package: "@tanstack/query-async-storage-persister"
-        config_surface: "storage, serialize, deserialize, throttleTime, retry"
-      - name: "Sync storage persister"
-        package: "@tanstack/query-sync-storage-persister"
-        config_surface: "deprecated sync storage persister options"
-      - name: "Fine-grained query persister"
-        package: "@tanstack/query-persist-client-core"
-        config_surface: "experimental_createQueryPersister storage and filter utilities"
+      - name: 'Async storage persister'
+        package: '@tanstack/query-async-storage-persister'
+        config_surface: 'storage, serialize, deserialize, throttleTime, retry'
+      - name: 'Sync storage persister'
+        package: '@tanstack/query-sync-storage-persister'
+        config_surface: 'deprecated sync storage persister options'
+      - name: 'Fine-grained query persister'
+        package: '@tanstack/query-persist-client-core'
+        config_surface: 'experimental_createQueryPersister storage and filter utilities'
     failure_modes:
-      - mistake: "gcTime shorter than maxAge"
-        mechanism: "Hydrated cache can be garbage collected before persisted maxAge expires."
+      - mistake: 'gcTime shorter than maxAge'
+        mechanism: 'Hydrated cache can be garbage collected before persisted maxAge expires.'
         wrong_pattern: |
           const queryClient = new QueryClient()
           persistQueryClient({ queryClient, persister, maxAge: DAY })
@@ -1207,11 +1223,11 @@ skills:
             defaultOptions: { queries: { gcTime: DAY } },
           })
           persistQueryClient({ queryClient, persister, maxAge: DAY })
-        source: "docs/framework/react/plugins/persistQueryClient.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Rendering before async restore"
-        mechanism: "Queries can mount and fetch while restore is still in progress."
+        source: 'docs/framework/react/plugins/persistQueryClient.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Rendering before async restore'
+        mechanism: 'Queries can mount and fetch while restore is still in progress.'
         wrong_pattern: |
           persistQueryClient({ queryClient, persister })
           root.render(<App />)
@@ -1221,196 +1237,196 @@ skills:
               <App />
             </PersistQueryClientProvider>,
           )
-        source: "docs/framework/react/plugins/persistQueryClient.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "No default mutationFn for persisted mutation"
-        mechanism: "Paused persisted mutations need mutation defaults to resume after reload because functions cannot be serialized."
+        source: 'docs/framework/react/plugins/persistQueryClient.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'No default mutationFn for persisted mutation'
+        mechanism: 'Paused persisted mutations need mutation defaults to resume after reload because functions cannot be serialized.'
         wrong_pattern: |
           useMutation({ mutationKey: ['addTodo'], mutationFn: addTodo })
         correct_pattern: |
           queryClient.setMutationDefaults(['addTodo'], { mutationFn: addTodo })
           useMutation({ mutationKey: ['addTodo'] })
-        source: "docs/framework/react/guides/mutations.md; docs/framework/react/plugins/persistQueryClient.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/mutations.md; docs/framework/react/plugins/persistQueryClient.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Broadcast, realtime, and multi-tab synchronization"
-    slug: "broadcast-realtime-and-multi-tab-synchronization"
-    domain: "persisting-and-synchronizing-caches"
-    description: "Use experimental broadcastQueryClient, WebSocket-driven invalidation or cache updates, and multi-window sync without over-normalizing."
-    type: "composition"
+  - name: 'Broadcast, realtime, and multi-tab synchronization'
+    slug: 'broadcast-realtime-and-multi-tab-synchronization'
+    domain: 'persisting-and-synchronizing-caches'
+    description: 'Use experimental broadcastQueryClient, WebSocket-driven invalidation or cache updates, and multi-window sync without over-normalizing.'
+    type: 'composition'
     packages:
-      - "@tanstack/query-broadcast-client-experimental"
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
+      - '@tanstack/query-broadcast-client-experimental'
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
     covers:
-      - "broadcastQueryClient"
-      - "BroadcastChannel"
-      - "query invalidation from events"
-      - "setQueryData from event payloads"
+      - 'broadcastQueryClient'
+      - 'BroadcastChannel'
+      - 'query invalidation from events'
+      - 'setQueryData from event payloads'
     tasks:
-      - "Sync cache changes across tabs"
-      - "Invalidate queries from WebSocket events"
-      - "Choose invalidation instead of normalized writes"
+      - 'Sync cache changes across tabs'
+      - 'Invalidate queries from WebSocket events'
+      - 'Choose invalidation instead of normalized writes'
     compositions:
-      - library: "WebSocket clients"
-        skill: "Invalidate or update Query cache from realtime events"
-      - library: "BroadcastChannel"
-        skill: "Broadcast cache between browser tabs"
+      - library: 'WebSocket clients'
+        skill: 'Invalidate or update Query cache from realtime events'
+      - library: 'BroadcastChannel'
+        skill: 'Broadcast cache between browser tabs'
     failure_modes:
-      - mistake: "Using experimental broadcast without version lock"
-        mechanism: "The package is experimental and may break in minor or patch releases."
+      - mistake: 'Using experimental broadcast without version lock'
+        mechanism: 'The package is experimental and may break in minor or patch releases.'
         wrong_pattern: |
           pnpm add @tanstack/query-broadcast-client-experimental
         correct_pattern: |
           pnpm add @tanstack/query-broadcast-client-experimental@5.101.0
-        source: "docs/framework/react/plugins/broadcastQueryClient.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Manual normalized cache everywhere"
-        mechanism: "TanStack Query prefers targeted invalidation and atomic cache writes over schema-level normalized cache maintenance."
+        source: 'docs/framework/react/plugins/broadcastQueryClient.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Manual normalized cache everywhere'
+        mechanism: 'TanStack Query prefers targeted invalidation and atomic cache writes over schema-level normalized cache maintenance.'
         wrong_pattern: |
           event.entities.todos.forEach((todo) => {
             queryClient.setQueryData(['todos'], normalize(todo))
           })
         correct_pattern: |
           queryClient.invalidateQueries({ queryKey: ['todos'] })
-        source: "docs/framework/react/guides/query-invalidation.md; TKDodo Using WebSockets with React Query"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Broadcast used on server"
-        mechanism: "BroadcastChannel-based synchronization is browser-oriented and should be gated from SSR environments."
+        source: 'docs/framework/react/guides/query-invalidation.md; TKDodo Using WebSockets with React Query'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Broadcast used on server'
+        mechanism: 'BroadcastChannel-based synchronization is browser-oriented and should be gated from SSR environments.'
         wrong_pattern: |
           broadcastQueryClient({ queryClient, broadcastChannel: 'app' })
         correct_pattern: |
           if (typeof window !== 'undefined') {
             broadcastQueryClient({ queryClient, broadcastChannel: 'app' })
           }
-        source: "docs/framework/react/plugins/broadcastQueryClient.md; package peer behavior"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/plugins/broadcastQueryClient.md; package peer behavior'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Use framework adapter reactivity"
-    slug: "use-framework-adapter-reactivity"
-    domain: "framework-adapter-idioms"
-    description: "Translate core Query patterns to adapter-specific reactivity: React hooks, Vue refs/getters, Solid resources, Svelte runes, Angular signals, Lit controllers, and Preact hooks."
-    type: "framework"
+  - name: 'Use framework adapter reactivity'
+    slug: 'use-framework-adapter-reactivity'
+    domain: 'framework-adapter-idioms'
+    description: 'Translate core Query patterns to adapter-specific reactivity: React hooks, Vue refs/getters, Solid resources, Svelte runes, Angular signals, Lit controllers, and Preact hooks.'
+    type: 'framework'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
-      - "@tanstack/lit-query"
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
+      - '@tanstack/lit-query'
     covers:
-      - "React hooks"
-      - "Vue tracked query keys"
-      - "Solid reactive options"
-      - "Svelte thunked options"
-      - "Angular injectQuery signals"
-      - "Lit host-bound controllers"
+      - 'React hooks'
+      - 'Vue tracked query keys'
+      - 'Solid reactive options'
+      - 'Svelte thunked options'
+      - 'Angular injectQuery signals'
+      - 'Lit host-bound controllers'
     subsystems:
-      - name: "React and Preact hooks"
-        package: "@tanstack/react-query"
-        config_surface: "object options, hooks, QueryClientProvider"
-      - name: "Vue composables"
-        package: "@tanstack/vue-query"
-        config_surface: "refs, reactive getters, MaybeRefOrGetter, custom context key"
-      - name: "Svelte runes"
-        package: "@tanstack/svelte-query"
-        config_surface: "options thunk and direct property access"
-      - name: "Angular signals"
-        package: "@tanstack/angular-query-experimental"
-        config_surface: "injectQuery thunk, provideTanStackQuery, HttpClient Observable conversion"
-      - name: "Lit controllers"
-        package: "@tanstack/lit-query"
-        config_surface: "ReactiveControllerHost, callable accessors, provider custom element"
+      - name: 'React and Preact hooks'
+        package: '@tanstack/react-query'
+        config_surface: 'object options, hooks, QueryClientProvider'
+      - name: 'Vue composables'
+        package: '@tanstack/vue-query'
+        config_surface: 'refs, reactive getters, MaybeRefOrGetter, custom context key'
+      - name: 'Svelte runes'
+        package: '@tanstack/svelte-query'
+        config_surface: 'options thunk and direct property access'
+      - name: 'Angular signals'
+        package: '@tanstack/angular-query-experimental'
+        config_surface: 'injectQuery thunk, provideTanStackQuery, HttpClient Observable conversion'
+      - name: 'Lit controllers'
+        package: '@tanstack/lit-query'
+        config_surface: 'ReactiveControllerHost, callable accessors, provider custom element'
     tasks:
-      - "Port a React Query example to another framework"
-      - "Preserve reactivity in extracted composables"
-      - "Choose adapter-specific provider and result access patterns"
+      - 'Port a React Query example to another framework'
+      - 'Preserve reactivity in extracted composables'
+      - 'Choose adapter-specific provider and result access patterns'
     failure_modes:
-      - mistake: "Vue ref unwrapped before key"
-        mechanism: "Unwrapping a ref before passing it to queryKey loses reactivity."
+      - mistake: 'Vue ref unwrapped before key'
+        mechanism: 'Unwrapping a ref before passing it to queryKey loses reactivity.'
         wrong_pattern: |
           const { data } = useUserProjects(userId.value)
         correct_pattern: |
           const { data } = useUserProjects(userId)
-        source: "docs/framework/vue/reactivity.md"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Svelte v5 store syntax in v6 adapter"
-        mechanism: "The v6 Svelte adapter uses runes and direct result properties, not stores."
+        source: 'docs/framework/vue/reactivity.md'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Svelte v5 store syntax in v6 adapter'
+        mechanism: 'The v6 Svelte adapter uses runes and direct result properties, not stores.'
         wrong_pattern: |
           const query = createQuery({ queryKey: ['todos'], queryFn: fetchTodos })
           {#if $query.isSuccess}{$query.data}{/if}
         correct_pattern: |
           const query = createQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos }))
           {#if query.isSuccess}{query.data}{/if}
-        source: "docs/framework/svelte/migrate-from-v5-to-v6.md"
-        priority: "CRITICAL"
-        status: "fixed-but-legacy-risk"
-      - mistake: "Angular Observable returned directly"
-        mechanism: "Query functions cache promises or values; Angular HttpClient Observables need conversion."
+        source: 'docs/framework/svelte/migrate-from-v5-to-v6.md'
+        priority: 'CRITICAL'
+        status: 'fixed-but-legacy-risk'
+      - mistake: 'Angular Observable returned directly'
+        mechanism: 'Query functions cache promises or values; Angular HttpClient Observables need conversion.'
         wrong_pattern: |
           queryFn: () => this.http.get('/todos')
         correct_pattern: |
           queryFn: () => lastValueFrom(this.http.get('/todos'))
-        source: "docs/framework/angular/angular-httpclient-and-other-data-fetching-clients.md; docs/framework/angular/overview.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/angular/angular-httpclient-and-other-data-fetching-clients.md; docs/framework/angular/overview.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Debug with devtools"
-    slug: "debug-with-devtools"
-    domain: "operational-quality"
-    description: "Install floating, embedded, panel, and production-lazy devtools for each adapter and inspect queries, mutations, cache state, and mocked offline behavior."
-    type: "framework"
+  - name: 'Debug with devtools'
+    slug: 'debug-with-devtools'
+    domain: 'operational-quality'
+    description: 'Install floating, embedded, panel, and production-lazy devtools for each adapter and inspect queries, mutations, cache state, and mocked offline behavior.'
+    type: 'framework'
     packages:
-      - "@tanstack/query-devtools"
-      - "@tanstack/react-query-devtools"
-      - "@tanstack/preact-query-devtools"
-      - "@tanstack/vue-query-devtools"
-      - "@tanstack/solid-query-devtools"
-      - "@tanstack/svelte-query-devtools"
-      - "@tanstack/angular-query-experimental"
+      - '@tanstack/query-devtools'
+      - '@tanstack/react-query-devtools'
+      - '@tanstack/preact-query-devtools'
+      - '@tanstack/vue-query-devtools'
+      - '@tanstack/solid-query-devtools'
+      - '@tanstack/svelte-query-devtools'
+      - '@tanstack/angular-query-experimental'
     covers:
-      - "ReactQueryDevtools"
-      - "VueQueryDevtools"
-      - "SolidQueryDevtools"
-      - "SvelteQueryDevtools"
-      - "Angular withDevtools"
-      - "embedded panels"
-      - "mock offline"
+      - 'ReactQueryDevtools'
+      - 'VueQueryDevtools'
+      - 'SolidQueryDevtools'
+      - 'SvelteQueryDevtools'
+      - 'Angular withDevtools'
+      - 'embedded panels'
+      - 'mock offline'
     tasks:
-      - "Install devtools in development"
-      - "Lazy-load devtools in production"
-      - "Inspect paused, stale, invalidated, and fetching queries"
+      - 'Install devtools in development'
+      - 'Lazy-load devtools in production'
+      - 'Inspect paused, stale, invalidated, and fetching queries'
     failure_modes:
-      - mistake: "Production devtools imported eagerly"
-        mechanism: "Production builds should use production subpaths or lazy-loading APIs when exposing devtools."
+      - mistake: 'Production devtools imported eagerly'
+        mechanism: 'Production builds should use production subpaths or lazy-loading APIs when exposing devtools.'
         wrong_pattern: |
           import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
         correct_pattern: |
           import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production'
-        source: "docs/framework/react/devtools.md; docs/framework/angular/devtools.md"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Mock offline changes actual network"
-        mechanism: "Devtools mock offline sets onlineManager state and does not alter browser network."
+        source: 'docs/framework/react/devtools.md; docs/framework/angular/devtools.md'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Mock offline changes actual network'
+        mechanism: 'Devtools mock offline sets onlineManager state and does not alter browser network.'
         wrong_pattern: |
           // expect browser network calls to fail because devtools mock offline is enabled
         correct_pattern: |
           // use browser devtools to simulate network, or onlineManager.setOnline(false) for Query behavior
-        source: "docs/framework/react/guides/network-mode.md"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Devtools before provider"
-        mechanism: "Devtools need a QueryClient from provider context or explicit wiring."
+        source: 'docs/framework/react/guides/network-mode.md'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Devtools before provider'
+        mechanism: 'Devtools need a QueryClient from provider context or explicit wiring.'
         wrong_pattern: |
           <ReactQueryDevtools />
           <QueryClientProvider client={queryClient}><App /></QueryClientProvider>
@@ -1419,38 +1435,38 @@ skills:
             <App />
             <ReactQueryDevtools />
           </QueryClientProvider>
-        source: "docs/framework/react/devtools.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/devtools.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Test query code"
-    slug: "test-query-code"
-    domain: "operational-quality"
-    description: "Build isolated QueryClient test wrappers, disable retries, clear caches, mock network clients, and assert async query and mutation behavior."
-    type: "lifecycle"
+  - name: 'Test query code'
+    slug: 'test-query-code'
+    domain: 'operational-quality'
+    description: 'Build isolated QueryClient test wrappers, disable retries, clear caches, mock network clients, and assert async query and mutation behavior.'
+    type: 'lifecycle'
     packages:
-      - "@tanstack/query-test-utils"
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
-      - "@tanstack/preact-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/solid-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/angular-query-experimental"
+      - '@tanstack/query-test-utils'
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
+      - '@tanstack/preact-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/solid-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/angular-query-experimental'
     covers:
-      - "test QueryClient"
-      - "retry false"
-      - "queryClient.clear"
-      - "waitFor"
-      - "TestBed"
-      - "network stubs"
+      - 'test QueryClient'
+      - 'retry false'
+      - 'queryClient.clear'
+      - 'waitFor'
+      - 'TestBed'
+      - 'network stubs'
     tasks:
-      - "Test a query hook or composable"
-      - "Test mutations and optimistic updates"
-      - "Avoid cache bleed between tests"
+      - 'Test a query hook or composable'
+      - 'Test mutations and optimistic updates'
+      - 'Avoid cache bleed between tests'
     failure_modes:
-      - mistake: "Reusing test client across tests"
-        mechanism: "Query cache data can leak into later tests."
+      - mistake: 'Reusing test client across tests'
+        mechanism: 'Query cache data can leak into later tests.'
         wrong_pattern: |
           const queryClient = new QueryClient()
           const wrapper = ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -1459,22 +1475,22 @@ skills:
             const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
             return ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           }
-        source: "docs/framework/react/guides/testing.md; docs/framework/angular/guides/testing.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Retry backoff hides assertion timing"
-        mechanism: "Default retries delay failures, making tests slow or flaky."
+        source: 'docs/framework/react/guides/testing.md; docs/framework/angular/guides/testing.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Retry backoff hides assertion timing'
+        mechanism: 'Default retries delay failures, making tests slow or flaky.'
         wrong_pattern: |
           const client = new QueryClient()
         correct_pattern: |
           const client = new QueryClient({
             defaultOptions: { queries: { retry: false } },
           })
-        source: "docs/framework/react/guides/testing.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Asserting before async success"
-        mechanism: "Queries update asynchronously; tests should wait for success state or rendered output."
+        source: 'docs/framework/react/guides/testing.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Asserting before async success'
+        mechanism: 'Queries update asynchronously; tests should wait for success state or rendered output.'
         wrong_pattern: |
           const { result } = renderHook(() => useQuery(options), { wrapper })
           expect(result.current.data).toEqual(data)
@@ -1482,45 +1498,45 @@ skills:
           const { result } = renderHook(() => useQuery(options), { wrapper })
           await waitFor(() => expect(result.current.isSuccess).toBe(true))
           expect(result.current.data).toEqual(data)
-        source: "docs/framework/react/guides/testing.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/testing.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Migrate major versions and codemods"
-    slug: "migrate-major-versions-and-codemods"
-    domain: "operational-quality"
-    description: "Migrate v3 to v4, v4 to v5, Svelte v5 adapter to v6, Vue v5 changes, removed overloads, renamed options, and codemods."
-    type: "lifecycle"
+  - name: 'Migrate major versions and codemods'
+    slug: 'migrate-major-versions-and-codemods'
+    domain: 'operational-quality'
+    description: 'Migrate v3 to v4, v4 to v5, Svelte v5 adapter to v6, Vue v5 changes, removed overloads, renamed options, and codemods.'
+    type: 'lifecycle'
     packages:
-      - "@tanstack/query-codemods"
-      - "@tanstack/react-query"
-      - "@tanstack/vue-query"
-      - "@tanstack/svelte-query"
-      - "@tanstack/query-core"
-      - "@tanstack/eslint-plugin-query"
+      - '@tanstack/query-codemods'
+      - '@tanstack/react-query'
+      - '@tanstack/vue-query'
+      - '@tanstack/svelte-query'
+      - '@tanstack/query-core'
+      - '@tanstack/eslint-plugin-query'
     covers:
-      - "v5 object syntax"
-      - "cacheTime to gcTime"
-      - "keepPreviousData to placeholderData"
-      - "query callbacks removed"
-      - "Svelte runes migration"
-      - "Vue useQueries ref return"
+      - 'v5 object syntax'
+      - 'cacheTime to gcTime'
+      - 'keepPreviousData to placeholderData'
+      - 'query callbacks removed'
+      - 'Svelte runes migration'
+      - 'Vue useQueries ref return'
     tasks:
-      - "Run v5 remove-overloads codemod"
-      - "Replace removed query callbacks"
-      - "Migrate Svelte Query stores to runes"
+      - 'Run v5 remove-overloads codemod'
+      - 'Replace removed query callbacks'
+      - 'Migrate Svelte Query stores to runes'
     failure_modes:
-      - mistake: "v4 overload syntax in v5"
-        mechanism: "v5 supports one object signature for hooks and QueryClient methods."
+      - mistake: 'v4 overload syntax in v5'
+        mechanism: 'v5 supports one object signature for hooks and QueryClient methods.'
         wrong_pattern: |
           useQuery(['todos'], fetchTodos, { staleTime: 1000 })
         correct_pattern: |
           useQuery({ queryKey: ['todos'], queryFn: fetchTodos, staleTime: 1000 })
-        source: "docs/framework/react/guides/migrating-to-v5.md"
-        priority: "CRITICAL"
-        status: "fixed-but-legacy-risk"
-      - mistake: "Query callbacks on useQuery"
-        mechanism: "onSuccess, onError, and onSettled were removed from queries in v5."
+        source: 'docs/framework/react/guides/migrating-to-v5.md'
+        priority: 'CRITICAL'
+        status: 'fixed-but-legacy-risk'
+      - mistake: 'Query callbacks on useQuery'
+        mechanism: 'onSuccess, onError, and onSettled were removed from queries in v5.'
         wrong_pattern: |
           useQuery({
             queryKey: ['todos'],
@@ -1532,11 +1548,11 @@ skills:
           useEffect(() => {
             if (query.data) syncTodos(query.data)
           }, [query.data])
-        source: "docs/framework/react/guides/migrating-to-v5.md"
-        priority: "CRITICAL"
-        status: "fixed-but-legacy-risk"
-      - mistake: "cacheTime option in v5"
-        mechanism: "cacheTime was renamed to gcTime to clarify it only runs after a query is unused."
+        source: 'docs/framework/react/guides/migrating-to-v5.md'
+        priority: 'CRITICAL'
+        status: 'fixed-but-legacy-risk'
+      - mistake: 'cacheTime option in v5'
+        mechanism: 'cacheTime was renamed to gcTime to clarify it only runs after a query is unused.'
         wrong_pattern: |
           new QueryClient({
             defaultOptions: { queries: { cacheTime: 10 * 60 * 1000 } },
@@ -1545,34 +1561,34 @@ skills:
           new QueryClient({
             defaultOptions: { queries: { gcTime: 10 * 60 * 1000 } },
           })
-        source: "docs/framework/react/guides/migrating-to-v5.md"
-        priority: "HIGH"
-        status: "fixed-but-legacy-risk"
+        source: 'docs/framework/react/guides/migrating-to-v5.md'
+        priority: 'HIGH'
+        status: 'fixed-but-legacy-risk'
 
-  - name: "Enforce Query best practices with ESLint"
-    slug: "enforce-query-best-practices-with-eslint"
-    domain: "operational-quality"
-    description: "Install and tune @tanstack/eslint-plugin-query recommended and strict rules to catch query key, client stability, property order, void queryFn, and option reuse mistakes."
-    type: "composition"
+  - name: 'Enforce Query best practices with ESLint'
+    slug: 'enforce-query-best-practices-with-eslint'
+    domain: 'operational-quality'
+    description: 'Install and tune @tanstack/eslint-plugin-query recommended and strict rules to catch query key, client stability, property order, void queryFn, and option reuse mistakes.'
+    type: 'composition'
     packages:
-      - "@tanstack/eslint-plugin-query"
-      - "@tanstack/react-query"
+      - '@tanstack/eslint-plugin-query'
+      - '@tanstack/react-query'
     covers:
-      - "flat/recommended"
-      - "flat/recommended-strict"
-      - "exhaustive-deps"
-      - "stable-query-client"
-      - "no-rest-destructuring"
-      - "no-unstable-deps"
-      - "prefer-query-options"
-      - "property order rules"
+      - 'flat/recommended'
+      - 'flat/recommended-strict'
+      - 'exhaustive-deps'
+      - 'stable-query-client'
+      - 'no-rest-destructuring'
+      - 'no-unstable-deps'
+      - 'prefer-query-options'
+      - 'property order rules'
     tasks:
-      - "Add plugin to flat config"
-      - "Enable strict rules"
-      - "Fix query key and option issues"
+      - 'Add plugin to flat config'
+      - 'Enable strict rules'
+      - 'Fix query key and option issues'
     failure_modes:
-      - mistake: "Strict queryOptions rule disabled accidentally"
-        mechanism: "prefer-query-options is recommended strict, not baseline recommended."
+      - mistake: 'Strict queryOptions rule disabled accidentally'
+        mechanism: 'prefer-query-options is recommended strict, not baseline recommended.'
         wrong_pattern: |
           export default [
             ...pluginQuery.configs['flat/recommended'],
@@ -1581,11 +1597,11 @@ skills:
           export default [
             ...pluginQuery.configs['flat/recommended-strict'],
           ]
-        source: "docs/eslint/eslint-plugin-query.md; docs/eslint/prefer-query-options.md"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Infinite option property order breaks inference"
-        mechanism: "Some inference-sensitive options need stable order for type inference."
+        source: 'docs/eslint/eslint-plugin-query.md; docs/eslint/prefer-query-options.md'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Infinite option property order breaks inference'
+        mechanism: 'Some inference-sensitive options need stable order for type inference.'
         wrong_pattern: |
           useInfiniteQuery({
             queryFn,
@@ -1600,11 +1616,11 @@ skills:
             initialPageParam,
             getNextPageParam,
           })
-        source: "docs/eslint/infinite-query-property-order.md"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Mutation option property order breaks inference"
-        mechanism: "mutationFn and mutationKey order is linted because inference depends on the option object shape."
+        source: 'docs/eslint/infinite-query-property-order.md'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Mutation option property order breaks inference'
+        mechanism: 'mutationFn and mutationKey order is linted because inference depends on the option object shape.'
         wrong_pattern: |
           useMutation({
             onSuccess,
@@ -1615,30 +1631,30 @@ skills:
             mutationFn,
             onSuccess,
           })
-        source: "docs/eslint/mutation-property-order.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/eslint/mutation-property-order.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Build Query abstractions"
-    slug: "build-query-abstractions"
-    domain: "reading-server-state"
-    description: "Create queryOptions factories, feature-local key modules, and custom hooks that preserve inference and work across hooks, loaders, prefetches, and QueryClient calls."
-    type: "core"
+  - name: 'Build Query abstractions'
+    slug: 'build-query-abstractions'
+    domain: 'reading-server-state'
+    description: 'Create queryOptions factories, feature-local key modules, and custom hooks that preserve inference and work across hooks, loaders, prefetches, and QueryClient calls.'
+    type: 'core'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/query-core"
+      - '@tanstack/react-query'
+      - '@tanstack/query-core'
     covers:
-      - "queryOptions factories"
-      - "custom hooks on top of options"
-      - "usage-site option composition"
-      - "TypeScript select inference"
+      - 'queryOptions factories'
+      - 'custom hooks on top of options'
+      - 'usage-site option composition'
+      - 'TypeScript select inference'
     tasks:
-      - "Extract a queryOptions factory"
-      - "Share options between loader, hook, and prefetch"
-      - "Avoid wide UseQueryOptions wrappers"
+      - 'Extract a queryOptions factory'
+      - 'Share options between loader, hook, and prefetch'
+      - 'Avoid wide UseQueryOptions wrappers'
     failure_modes:
-      - mistake: "Custom hook is the only abstraction"
-        mechanism: "Hooks cannot run in route loaders, server prefetches, or event handlers."
+      - mistake: 'Custom hook is the only abstraction'
+        mechanism: 'Hooks cannot run in route loaders, server prefetches, or event handlers.'
         wrong_pattern: |
           export function useInvoice(id) {
             return useQuery({ queryKey: ['invoice', id], queryFn: () => fetchInvoice(id) })
@@ -1650,11 +1666,11 @@ skills:
           export function useInvoice(id) {
             return useQuery(invoiceOptions(id))
           }
-        source: "https://tkdodo.eu/blog/creating-query-abstractions"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Wide UseQueryOptions wrapper breaks inference"
-        mechanism: "Generic options wrappers often lose select inference and key typing."
+        source: 'https://tkdodo.eu/blog/creating-query-abstractions'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Wide UseQueryOptions wrapper breaks inference'
+        mechanism: 'Generic options wrappers often lose select inference and key typing.'
         wrong_pattern: |
           function useInvoice(id, options?: Partial<UseQueryOptions<Invoice>>) {
             return useQuery({ queryKey: ['invoice', id], queryFn: () => fetchInvoice(id), ...options })
@@ -1664,11 +1680,11 @@ skills:
             ...invoiceOptions(id),
             select: (invoice) => invoice.createdAt,
           })
-        source: "https://tkdodo.eu/blog/creating-query-abstractions"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Wrapper hides Query result state"
-        mechanism: "Returning only data hides status, error, refetch, and background-fetch state from callers."
+        source: 'https://tkdodo.eu/blog/creating-query-abstractions'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Wrapper hides Query result state'
+        mechanism: 'Returning only data hides status, error, refetch, and background-fetch state from callers.'
         wrong_pattern: |
           export function useInvoice(id) {
             return useQuery(invoiceOptions(id)).data
@@ -1677,132 +1693,132 @@ skills:
           export function useInvoice(id) {
             return useQuery(invoiceOptions(id))
           }
-        source: "docs/framework/react/guides/queries.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/guides/queries.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Understand Query internals and observers"
-    slug: "understand-query-internals-and-observers"
-    domain: "reading-server-state"
-    description: "Explain and debug QueryClient, QueryCache, MutationCache, Query, QueryObserver, active versus inactive queries, observer-level options, and subscription behavior."
-    type: "core"
+  - name: 'Understand Query internals and observers'
+    slug: 'understand-query-internals-and-observers'
+    domain: 'reading-server-state'
+    description: 'Explain and debug QueryClient, QueryCache, MutationCache, Query, QueryObserver, active versus inactive queries, observer-level options, and subscription behavior.'
+    type: 'core'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
     covers:
-      - "QueryClient"
-      - "QueryCache"
-      - "MutationCache"
-      - "Query"
-      - "QueryObserver"
-      - "active and inactive queries"
-      - "observer-level options"
+      - 'QueryClient'
+      - 'QueryCache'
+      - 'MutationCache'
+      - 'Query'
+      - 'QueryObserver'
+      - 'active and inactive queries'
+      - 'observer-level options'
     tasks:
-      - "Explain why a query did or did not refetch"
-      - "Debug active observer count"
-      - "Choose QueryClient APIs versus observed hook reads"
+      - 'Explain why a query did or did not refetch'
+      - 'Debug active observer count'
+      - 'Choose QueryClient APIs versus observed hook reads'
     failure_modes:
-      - mistake: "Treating cache presence as active usage"
-        mechanism: "Imperative cache reads do not create observers, so refetch triggers and garbage collection differ from useQuery."
+      - mistake: 'Treating cache presence as active usage'
+        mechanism: 'Imperative cache reads do not create observers, so refetch triggers and garbage collection differ from useQuery.'
         wrong_pattern: |
           const todo = queryClient.getQueryData(['todo', id])
         correct_pattern: |
           const todo = useQuery(todoOptions(id))
-        source: "https://tkdodo.eu/blog/inside-react-query"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Expecting one query to have one option set"
-        mechanism: "Several options, including select and staleTime, live on observers and can differ per component."
+        source: 'https://tkdodo.eu/blog/inside-react-query'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Expecting one query to have one option set'
+        mechanism: 'Several options, including select and staleTime, live on observers and can differ per component.'
         wrong_pattern: |
           queryClient.getQueryCache().find({ queryKey })?.options.staleTime
         correct_pattern: |
           queryClient.getQueryCache().find({ queryKey })?.observers.map((observer) => observer.options.staleTime)
-        source: "https://tkdodo.eu/blog/inside-react-query"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Expecting inactive queries to refetch like mounted queries"
-        mechanism: "Inactive queries are cached but not observed by a mounted component."
+        source: 'https://tkdodo.eu/blog/inside-react-query'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Expecting inactive queries to refetch like mounted queries'
+        mechanism: 'Inactive queries are cached but not observed by a mounted component.'
         wrong_pattern: |
           queryClient.getQueryData(['todos'])
           queryClient.invalidateQueries({ queryKey: ['todos'] })
         correct_pattern: |
           useQuery(todosOptions())
           queryClient.invalidateQueries({ queryKey: ['todos'], refetchType: 'active' })
-        source: "https://tkdodo.eu/blog/inside-react-query"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'https://tkdodo.eu/blog/inside-react-query'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Handle status checks and errors"
-    slug: "handle-status-and-errors"
-    domain: "reading-server-state"
-    description: "Design loading, stale data, background refetch, error boundary, throwOnError, toast, and validation-error handling without erasing useful cached data."
-    type: "framework"
+  - name: 'Handle status checks and errors'
+    slug: 'handle-status-and-errors'
+    domain: 'reading-server-state'
+    description: 'Design loading, stale data, background refetch, error boundary, throwOnError, toast, and validation-error handling without erasing useful cached data.'
+    type: 'framework'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/query-core"
+      - '@tanstack/react-query'
+      - '@tanstack/query-core'
     covers:
-      - "status"
-      - "fetchStatus"
-      - "isPending"
-      - "isFetching"
-      - "isError with data"
-      - "throwOnError"
-      - "QueryCache onError"
+      - 'status'
+      - 'fetchStatus'
+      - 'isPending'
+      - 'isFetching'
+      - 'isError with data'
+      - 'throwOnError'
+      - 'QueryCache onError'
     tasks:
-      - "Render stale data after background error"
-      - "Route severe errors to Error Boundaries"
-      - "Avoid duplicated observer-level error toasts"
+      - 'Render stale data after background error'
+      - 'Route severe errors to Error Boundaries'
+      - 'Avoid duplicated observer-level error toasts'
     failure_modes:
-      - mistake: "Hiding stale data on background error"
-        mechanism: "A query can have cached data and an error from a later background refetch."
+      - mistake: 'Hiding stale data on background error'
+        mechanism: 'A query can have cached data and an error from a later background refetch.'
         wrong_pattern: |
           if (query.isError) return <ErrorMessage error={query.error} />
           if (query.data) return <Todos todos={query.data} />
         correct_pattern: |
           if (query.data) return <Todos todos={query.data} staleError={query.isError ? query.error : null} />
           if (query.isError) return <ErrorMessage error={query.error} />
-        source: "https://tkdodo.eu/blog/status-checks-in-react-query"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Sending validation errors to a global boundary"
-        mechanism: "Expected 4xx form errors should stay near the form while 5xx errors can go to the boundary."
+        source: 'https://tkdodo.eu/blog/status-checks-in-react-query'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Sending validation errors to a global boundary'
+        mechanism: 'Expected 4xx form errors should stay near the form while 5xx errors can go to the boundary.'
         wrong_pattern: |
           useMutation({ mutationFn: submitForm, throwOnError: true })
         correct_pattern: |
           useMutation({ mutationFn: submitForm, throwOnError: (error) => error.status >= 500 })
-        source: "https://tkdodo.eu/blog/react-query-error-handling"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Duplicated toast notifications per observer"
-        mechanism: "Observer-level error callbacks can fire once per observer for the same underlying query."
+        source: 'https://tkdodo.eu/blog/react-query-error-handling'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Duplicated toast notifications per observer'
+        mechanism: 'Observer-level error callbacks can fire once per observer for the same underlying query.'
         wrong_pattern: |
           useQuery({ queryKey: ['todos'], queryFn: fetchTodos, onError: toastError })
         correct_pattern: |
           new QueryClient({ queryCache: new QueryCache({ onError: toastError }) })
-        source: "https://tkdodo.eu/blog/react-query-error-handling"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'https://tkdodo.eu/blog/react-query-error-handling'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Query data and forms"
-    slug: "query-data-and-forms"
-    domain: "writing-server-state"
-    description: "Integrate Query data and mutations with forms by choosing initial-only server state, derived server-plus-client state, dirty field behavior, double-submit prevention, and reset-after-invalidation."
-    type: "composition"
+  - name: 'Query data and forms'
+    slug: 'query-data-and-forms'
+    domain: 'writing-server-state'
+    description: 'Integrate Query data and mutations with forms by choosing initial-only server state, derived server-plus-client state, dirty field behavior, double-submit prevention, and reset-after-invalidation.'
+    type: 'composition'
     packages:
-      - "@tanstack/react-query"
+      - '@tanstack/react-query'
     covers:
-      - "form initial values"
-      - "dirty client state"
-      - "background form updates"
-      - "mutation submission state"
-      - "reset after invalidation"
+      - 'form initial values'
+      - 'dirty client state'
+      - 'background form updates'
+      - 'mutation submission state'
+      - 'reset after invalidation'
     tasks:
-      - "Initialize form fields from query data"
-      - "Keep untouched fields updated from background refetches"
-      - "Submit and reset forms after mutation invalidation"
+      - 'Initialize form fields from query data'
+      - 'Keep untouched fields updated from background refetches'
+      - 'Submit and reset forms after mutation invalidation'
     failure_modes:
-      - mistake: "Initializing form defaults before query data exists"
-        mechanism: "The first render usually has undefined query data."
+      - mistake: 'Initializing form defaults before query data exists'
+        mechanism: 'The first render usually has undefined query data.'
         wrong_pattern: |
           const { data } = useQuery(personOptions(id))
           const [draft, setDraft] = useState(data)
@@ -1810,49 +1826,49 @@ skills:
           const { data } = useQuery(personOptions(id))
           if (!data) return <Loading />
           return <PersonForm initialPerson={data} />
-        source: "https://tkdodo.eu/blog/react-query-and-forms"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Background refetch overwrites dirty client state"
-        mechanism: "Copying server data into form state on every update loses deliberate local edits."
+        source: 'https://tkdodo.eu/blog/react-query-and-forms'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Background refetch overwrites dirty client state'
+        mechanism: 'Copying server data into form state on every update loses deliberate local edits.'
         wrong_pattern: |
           useEffect(() => setDraft(personQuery.data), [personQuery.data])
         correct_pattern: |
           const shownFirstName = draft.firstName ?? personQuery.data?.firstName ?? ''
-        source: "https://tkdodo.eu/blog/deriving-client-state-from-server-state"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Double submit while mutation is pending"
-        mechanism: "Forms can submit duplicate writes unless mutation state disables the action."
+        source: 'https://tkdodo.eu/blog/deriving-client-state-from-server-state'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Double submit while mutation is pending'
+        mechanism: 'Forms can submit duplicate writes unless mutation state disables the action.'
         wrong_pattern: |
           <button type="submit">Save</button>
         correct_pattern: |
           <button type="submit" disabled={mutation.isPending}>Save</button>
-        source: "https://tkdodo.eu/blog/react-query-and-forms"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'https://tkdodo.eu/blog/react-query-and-forms'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Automatic invalidation after mutations"
-    slug: "automatic-invalidation-after-mutations"
-    domain: "writing-server-state"
-    description: "Create app-level MutationCache invalidation policies with mutationKey scoping, meta invalidation tags, awaited invalidation, and exclusions for static data."
-    type: "composition"
+  - name: 'Automatic invalidation after mutations'
+    slug: 'automatic-invalidation-after-mutations'
+    domain: 'writing-server-state'
+    description: 'Create app-level MutationCache invalidation policies with mutationKey scoping, meta invalidation tags, awaited invalidation, and exclusions for static data.'
+    type: 'composition'
     packages:
-      - "@tanstack/query-core"
-      - "@tanstack/react-query"
+      - '@tanstack/query-core'
+      - '@tanstack/react-query'
     covers:
-      - "MutationCache callbacks"
-      - "mutationKey invalidation"
-      - "mutation meta"
-      - "matchQuery"
-      - "awaited invalidation"
+      - 'MutationCache callbacks'
+      - 'mutationKey invalidation'
+      - 'mutation meta'
+      - 'matchQuery'
+      - 'awaited invalidation'
     tasks:
-      - "Invalidate related queries after every mutation"
-      - "Scope invalidation by mutation key"
-      - "Attach explicit invalidation tags through mutation meta"
+      - 'Invalidate related queries after every mutation'
+      - 'Scope invalidation by mutation key'
+      - 'Attach explicit invalidation tags through mutation meta'
     failure_modes:
-      - mistake: "Invalidating the whole app for every mutation"
-        mechanism: "A global MutationCache callback without scope can refetch unrelated data."
+      - mistake: 'Invalidating the whole app for every mutation'
+        mechanism: 'A global MutationCache callback without scope can refetch unrelated data.'
         wrong_pattern: |
           new MutationCache({ onSuccess: () => queryClient.invalidateQueries() })
         correct_pattern: |
@@ -1860,20 +1876,20 @@ skills:
             onSuccess: (_data, _variables, _context, mutation) =>
               queryClient.invalidateQueries({ queryKey: mutation.options.mutationKey }),
           })
-        source: "https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Not returning invalidation when pending UI depends on refetch"
-        mechanism: "Returning the invalidation promise keeps the mutation pending until related reads are refreshed."
+        source: 'https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Not returning invalidation when pending UI depends on refetch'
+        mechanism: 'Returning the invalidation promise keeps the mutation pending until related reads are refreshed.'
         wrong_pattern: |
           onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['todos'] }) }
         correct_pattern: |
           onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
-        source: "docs/framework/react/guides/invalidations-from-mutations.md"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Refetching data that should be static"
-        mechanism: "Data that must ignore broad manual invalidation should opt into v5 static freshness."
+        source: 'docs/framework/react/guides/invalidations-from-mutations.md'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Refetching data that should be static'
+        mechanism: 'Data that must ignore broad manual invalidation should opt into v5 static freshness.'
         wrong_pattern: |
           useQuery({
             queryKey: ['build-info'],
@@ -1886,31 +1902,31 @@ skills:
             queryFn: fetchBuildInfo,
             staleTime: 'static',
           })
-        source: "https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations'
+        priority: 'MEDIUM'
+        status: 'active'
 
-  - name: "Concurrent optimistic updates"
-    slug: "concurrent-optimistic-updates"
-    domain: "writing-server-state"
-    description: "Handle overlapping optimistic mutations with cancellation, scoped mutation keys, submittedAt identities, per-mutation rollback, filtered cache updates, and guarded invalidation."
-    type: "core"
+  - name: 'Concurrent optimistic updates'
+    slug: 'concurrent-optimistic-updates'
+    domain: 'writing-server-state'
+    description: 'Handle overlapping optimistic mutations with cancellation, scoped mutation keys, submittedAt identities, per-mutation rollback, filtered cache updates, and guarded invalidation.'
+    type: 'core'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/query-core"
+      - '@tanstack/react-query'
+      - '@tanstack/query-core'
     covers:
-      - "useMutationState"
-      - "submittedAt"
-      - "queryClient.isMutating"
-      - "mutationKey filters"
-      - "filtered optimistic list updates"
+      - 'useMutationState'
+      - 'submittedAt'
+      - 'queryClient.isMutating'
+      - 'mutationKey filters'
+      - 'filtered optimistic list updates'
     tasks:
-      - "Render multiple pending optimistic rows"
-      - "Prevent one invalidation from reverting another optimistic write"
-      - "Keep filtered lists consistent during optimistic edits"
+      - 'Render multiple pending optimistic rows'
+      - 'Prevent one invalidation from reverting another optimistic write'
+      - 'Keep filtered lists consistent during optimistic edits'
     failure_modes:
-      - mistake: "One mutation invalidation reverts another optimistic update"
-        mechanism: "An earlier settled mutation can refetch and overwrite a later pending optimistic write."
+      - mistake: 'One mutation invalidation reverts another optimistic update'
+        mechanism: 'An earlier settled mutation can refetch and overwrite a later pending optimistic write.'
         wrong_pattern: |
           onSettled: () => queryClient.invalidateQueries({ queryKey: ['items'] })
         correct_pattern: |
@@ -1919,68 +1935,68 @@ skills:
               return queryClient.invalidateQueries({ queryKey: ['items'] })
             }
           }
-        source: "https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query"
-        priority: "CRITICAL"
-        status: "active"
-      - mistake: "Optimistic list update ignores current filters"
-        mechanism: "The optimistic cache write must mirror list filtering that the server response would apply."
+        source: 'https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query'
+        priority: 'CRITICAL'
+        status: 'active'
+      - mistake: 'Optimistic list update ignores current filters'
+        mechanism: 'The optimistic cache write must mirror list filtering that the server response would apply.'
         wrong_pattern: |
           old?.map((item) => item.id === updated.id ? updated : item)
         correct_pattern: |
           old?.map((item) => item.id === updated.id ? updated : item).filter((item) => matchesFilters(item, filters))
-        source: "https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Pending optimistic rows share unstable keys"
-        mechanism: "Concurrent variables can be equal; submittedAt identifies each mutation attempt."
+        source: 'https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Pending optimistic rows share unstable keys'
+        mechanism: 'Concurrent variables can be equal; submittedAt identifies each mutation attempt.'
         wrong_pattern: |
           variables.map((title) => <li key={title}>{title}</li>)
         correct_pattern: |
           pending.map((mutation) => <li key={mutation.submittedAt}>{mutation.variables.title}</li>)
-        source: "docs/framework/react/guides/optimistic-updates.md"
-        priority: "HIGH"
-        status: "active"
+        source: 'docs/framework/react/guides/optimistic-updates.md'
+        priority: 'HIGH'
+        status: 'active'
 
-  - name: "Selectors and derived state"
-    slug: "selectors-and-derived-state"
-    domain: "shaping-cache-and-render-behavior"
-    description: "Use select, stable selectors, structural sharing, queryOptions composition, and render-time derivation to subscribe to precise server-state slices without effect-based syncing."
-    type: "core"
+  - name: 'Selectors and derived state'
+    slug: 'selectors-and-derived-state'
+    domain: 'shaping-cache-and-render-behavior'
+    description: 'Use select, stable selectors, structural sharing, queryOptions composition, and render-time derivation to subscribe to precise server-state slices without effect-based syncing.'
+    type: 'core'
     packages:
-      - "@tanstack/react-query"
-      - "@tanstack/query-core"
+      - '@tanstack/react-query'
+      - '@tanstack/query-core'
     covers:
-      - "select"
-      - "selector identity"
-      - "structural sharing of selected data"
-      - "derived client state"
-      - "usage-site select composition"
+      - 'select'
+      - 'selector identity'
+      - 'structural sharing of selected data'
+      - 'derived client state'
+      - 'usage-site select composition'
     tasks:
-      - "Subscribe to one field from a larger response"
-      - "Memoize expensive select transforms"
-      - "Replace useEffect syncing with derived values"
+      - 'Subscribe to one field from a larger response'
+      - 'Memoize expensive select transforms'
+      - 'Replace useEffect syncing with derived values'
     failure_modes:
-      - mistake: "Syncing derived state through an effect"
-        mechanism: "Server state changes can invalidate client selections without needing a side-effect sync."
+      - mistake: 'Syncing derived state through an effect'
+        mechanism: 'Server state changes can invalidate client selections without needing a side-effect sync.'
         wrong_pattern: |
           useEffect(() => syncSelectedUser(users), [users])
         correct_pattern: |
           const selectedUser = users?.find((user) => user.id === selectedUserId)
-        source: "https://tkdodo.eu/blog/deriving-client-state-from-server-state"
-        priority: "HIGH"
-        status: "active"
-      - mistake: "Inline expensive select reruns on unrelated renders"
-        mechanism: "Query reruns select when data changes or the select function identity changes."
+        source: 'https://tkdodo.eu/blog/deriving-client-state-from-server-state'
+        priority: 'HIGH'
+        status: 'active'
+      - mistake: 'Inline expensive select reruns on unrelated renders'
+        mechanism: 'Query reruns select when data changes or the select function identity changes.'
         wrong_pattern: |
           useSuspenseQuery({ ...productsOptions(filters), select: (data) => expensiveTransform(data) })
         correct_pattern: |
           const selectProducts = (data) => expensiveTransform(data)
           useSuspenseQuery({ ...productsOptions(filters), select: selectProducts })
-        source: "https://tkdodo.eu/blog/react-query-selectors-supercharged"
-        priority: "MEDIUM"
-        status: "active"
-      - mistake: "Using select to throw domain errors"
-        mechanism: "select transforms successful data; query errors should be produced by queryFn."
+        source: 'https://tkdodo.eu/blog/react-query-selectors-supercharged'
+        priority: 'MEDIUM'
+        status: 'active'
+      - mistake: 'Using select to throw domain errors'
+        mechanism: 'select transforms successful data; query errors should be produced by queryFn.'
         wrong_pattern: |
           useQuery({ queryKey: ['todos'], queryFn: fetchTodos, select: (todos) => {
             if (!todos.length) throw new Error('empty')
@@ -1992,131 +2008,173 @@ skills:
             if (!todos.length) throw new Error('empty')
             return todos
           }})
-        source: "docs/framework/react/guides/render-optimizations.md"
-        priority: "MEDIUM"
-        status: "active"
+        source: 'docs/framework/react/guides/render-optimizations.md'
+        priority: 'MEDIUM'
+        status: 'active'
 
 tensions:
-  - name: "Declarative cache versus imperative fetch control"
-    skills: ["coordinate-dependent-parallel-disabled-and-background-queries", "fetch-and-observe-queries"]
-    description: "Disabled queries and manual refetch feel simple but opt out of the cache lifecycle that makes Query useful."
-    implication: "Agents often generate button-driven refetch code instead of modeling dependencies in queryKey and enabled."
-  - name: "SSR freshness versus user data isolation"
-    skills: ["setup-query-client-and-providers", "compose-query-with-tanstack-router-and-start", "ssr-hydration-and-streaming", "tune-defaults-freshness-retries-and-refetching"]
-    description: "SSR needs per-request clients and nonzero staleTime, but TanStack Router and Start also need the QueryClient placed in route context so loaders, hydration, and streaming share one request-local cache."
-    implication: "Agents either create a global SSR client or create a fresh browser client during every render."
-  - name: "Router-owned loading versus component-only queries"
-    skills: ["prefetch-and-remove-request-waterfalls", "compose-query-with-tanstack-router-and-start", "ssr-hydration-and-streaming", "understand-query-internals-and-observers"]
-    description: "TanStack Router and Start know the target route before render, but route loaders should prime Query cache rather than replace active Query observers."
-    implication: "Agents that start from Next, component-only examples, or useLoaderData recreate waterfalls and bypass Query observer behavior."
-  - name: "Optimistic responsiveness versus server truth"
-    skills: ["implement-optimistic-updates-and-cache-writes", "concurrent-optimistic-updates", "write-mutations-and-invalidate-related-queries", "persist-offline-and-restore-caches"]
-    description: "Optimistic cache writes improve UX but need cancellation, rollback, invalidation, and persistence awareness."
-    implication: "Agents write optimistic data and forget that refetch, reload, or offline restore can overwrite or lose it."
-  - name: "Reusable abstractions versus type erasure"
-    skills: ["design-query-keys-and-options", "build-query-abstractions", "selectors-and-derived-state"]
-    description: "Query abstraction should preserve the full options surface and select inference instead of hiding it behind wide custom hook wrappers."
-    implication: "Agents often generate custom hooks that cannot run in loaders, cannot compose with Suspense, and break select typing."
-  - name: "Automatic invalidation versus scoped freshness"
-    skills: ["automatic-invalidation-after-mutations", "write-mutations-and-invalidate-related-queries", "tune-defaults-freshness-retries-and-refetching"]
-    description: "Global mutation invalidation reduces boilerplate but can refetch unrelated or static data unless mutation keys, meta, or predicates scope it."
-    implication: "Agents choose either no invalidation or invalidateQueries() everywhere."
-  - name: "Form client ownership versus background server freshness"
-    skills: ["query-data-and-forms", "selectors-and-derived-state", "write-mutations-and-invalidate-related-queries"]
-    description: "Forms may intentionally copy server state as initial values, but collaborative or long-lived forms need derived server-plus-client state."
-    implication: "Agents overwrite dirty fields with background refetches or disable useful background updates without acknowledging the tradeoff."
-  - name: "Framework idioms versus copied React examples"
-    skills: ["use-framework-adapter-reactivity", "design-query-keys-and-options", "ssr-hydration-and-streaming"]
-    description: "Adapters share core concepts but differ in how reactivity and SSR hooks are expressed."
-    implication: "Agents port React examples to Vue, Svelte, Angular, or Lit without preserving reactive inputs or provider boundaries."
+  - name: 'Declarative cache versus imperative fetch control'
+    skills:
+      [
+        'coordinate-dependent-parallel-disabled-and-background-queries',
+        'fetch-and-observe-queries',
+      ]
+    description: 'Disabled queries and manual refetch feel simple but opt out of the cache lifecycle that makes Query useful.'
+    implication: 'Agents often generate button-driven refetch code instead of modeling dependencies in queryKey and enabled.'
+  - name: 'SSR freshness versus user data isolation'
+    skills:
+      [
+        'setup-query-client-and-providers',
+        'compose-query-with-tanstack-router-and-start',
+        'ssr-hydration-and-streaming',
+        'tune-defaults-freshness-retries-and-refetching',
+      ]
+    description: 'SSR needs per-request clients and nonzero staleTime, but TanStack Router and Start also need the QueryClient placed in route context so loaders, hydration, and streaming share one request-local cache.'
+    implication: 'Agents either create a global SSR client or create a fresh browser client during every render.'
+  - name: 'Router-owned loading versus component-only queries'
+    skills:
+      [
+        'prefetch-and-remove-request-waterfalls',
+        'compose-query-with-tanstack-router-and-start',
+        'ssr-hydration-and-streaming',
+        'understand-query-internals-and-observers',
+      ]
+    description: 'TanStack Router and Start know the target route before render, but route loaders should prime Query cache rather than replace active Query observers.'
+    implication: 'Agents that start from Next, component-only examples, or useLoaderData recreate waterfalls and bypass Query observer behavior.'
+  - name: 'Optimistic responsiveness versus server truth'
+    skills:
+      [
+        'implement-optimistic-updates-and-cache-writes',
+        'concurrent-optimistic-updates',
+        'write-mutations-and-invalidate-related-queries',
+        'persist-offline-and-restore-caches',
+      ]
+    description: 'Optimistic cache writes improve UX but need cancellation, rollback, invalidation, and persistence awareness.'
+    implication: 'Agents write optimistic data and forget that refetch, reload, or offline restore can overwrite or lose it.'
+  - name: 'Reusable abstractions versus type erasure'
+    skills:
+      [
+        'design-query-keys-and-options',
+        'build-query-abstractions',
+        'selectors-and-derived-state',
+      ]
+    description: 'Query abstraction should preserve the full options surface and select inference instead of hiding it behind wide custom hook wrappers.'
+    implication: 'Agents often generate custom hooks that cannot run in loaders, cannot compose with Suspense, and break select typing.'
+  - name: 'Automatic invalidation versus scoped freshness'
+    skills:
+      [
+        'automatic-invalidation-after-mutations',
+        'write-mutations-and-invalidate-related-queries',
+        'tune-defaults-freshness-retries-and-refetching',
+      ]
+    description: 'Global mutation invalidation reduces boilerplate but can refetch unrelated or static data unless mutation keys, meta, or predicates scope it.'
+    implication: 'Agents choose either no invalidation or invalidateQueries() everywhere.'
+  - name: 'Form client ownership versus background server freshness'
+    skills:
+      [
+        'query-data-and-forms',
+        'selectors-and-derived-state',
+        'write-mutations-and-invalidate-related-queries',
+      ]
+    description: 'Forms may intentionally copy server state as initial values, but collaborative or long-lived forms need derived server-plus-client state.'
+    implication: 'Agents overwrite dirty fields with background refetches or disable useful background updates without acknowledging the tradeoff.'
+  - name: 'Framework idioms versus copied React examples'
+    skills:
+      [
+        'use-framework-adapter-reactivity',
+        'design-query-keys-and-options',
+        'ssr-hydration-and-streaming',
+      ]
+    description: 'Adapters share core concepts but differ in how reactivity and SSR hooks are expressed.'
+    implication: 'Agents port React examples to Vue, Svelte, Angular, or Lit without preserving reactive inputs or provider boundaries.'
 
 cross_references:
-  - from: "setup-query-client-and-providers"
-    to: "ssr-hydration-and-streaming"
-    reason: "Client creation rules change between browser app lifecycle and per-request server lifecycle."
-  - from: "design-query-keys-and-options"
-    to: "enforce-query-best-practices-with-eslint"
-    reason: "The lint rules encode key dependency and reusable options mistakes."
-  - from: "design-query-keys-and-options"
-    to: "build-query-abstractions"
-    reason: "Options factories are the base abstraction for stable keys, query functions, and typed QueryClient usage."
-  - from: "fetch-and-observe-queries"
-    to: "tune-defaults-freshness-retries-and-refetching"
-    reason: "Status interpretation depends on stale, retry, focus, online, and network settings."
-  - from: "fetch-and-observe-queries"
-    to: "handle-status-and-errors"
-    reason: "Status, fetchStatus, background errors, and throwOnError determine what UI should render."
-  - from: "fetch-and-observe-queries"
-    to: "understand-query-internals-and-observers"
-    reason: "Hook reads create QueryObservers, while QueryClient reads only inspect cache state."
-  - from: "write-mutations-and-invalidate-related-queries"
-    to: "implement-optimistic-updates-and-cache-writes"
-    reason: "Optimistic writes are mutation side effects that still need invalidation and rollback."
-  - from: "write-mutations-and-invalidate-related-queries"
-    to: "automatic-invalidation-after-mutations"
-    reason: "App-level mutation policies build on mutation keys, MutationCache callbacks, and awaited invalidation."
-  - from: "implement-optimistic-updates-and-cache-writes"
-    to: "cancel-queries-and-consume-abort-signals"
-    reason: "Optimistic writes commonly need cancellation to avoid stale refetch overwrites."
-  - from: "implement-optimistic-updates-and-cache-writes"
-    to: "concurrent-optimistic-updates"
-    reason: "Concurrent optimistic writes add submittedAt identity, scoped mutation keys, and guarded invalidation."
-  - from: "seed-placeholder-select-and-transform-data"
-    to: "ssr-hydration-and-streaming"
-    reason: "initialData is a quick SSR path with tradeoffs compared to dehydration."
-  - from: "seed-placeholder-select-and-transform-data"
-    to: "selectors-and-derived-state"
-    reason: "select is both a transformation hook and a fine-grained subscription mechanism."
-  - from: "selectors-and-derived-state"
-    to: "query-data-and-forms"
-    reason: "Forms often need derived server-plus-client state instead of effect-based synchronization."
-  - from: "build-query-abstractions"
-    to: "selectors-and-derived-state"
-    reason: "Abstractions must preserve usage-site select inference and stable selector composition."
-  - from: "prefetch-and-remove-request-waterfalls"
-    to: "compose-query-with-tanstack-router-and-start"
-    reason: "TanStack Router and Start loaders are the highest-priority route prefetch surface in the TanStack ecosystem."
-  - from: "compose-query-with-tanstack-router-and-start"
-    to: "ssr-hydration-and-streaming"
-    reason: "Router SSR Query integration owns the QueryClient cache handoff, streamed query results, and route loader prefetch during SSR."
-  - from: "compose-query-with-tanstack-router-and-start"
-    to: "use-suspense-and-error-boundaries"
-    reason: "Suspense queries and loader prefetches participate differently in Router SSR and streaming than plain useQuery."
-  - from: "shape-data-and-render-efficiently"
-    to: "enforce-query-best-practices-with-eslint"
-    reason: "no-rest-destructuring and no-unstable-deps protect render optimization assumptions."
-  - from: "persist-offline-and-restore-caches"
-    to: "tune-defaults-freshness-retries-and-refetching"
-    reason: "Persistence maxAge and hydration behavior depend on gcTime, networkMode, and retry settings."
-  - from: "use-framework-adapter-reactivity"
-    to: "design-query-keys-and-options"
-    reason: "Adapter reactivity usually flows through queryKey and option thunk shapes."
-  - from: "migrate-major-versions-and-codemods"
-    to: "design-query-keys-and-options"
-    reason: "v5 migration changed all key/function call signatures to object options."
+  - from: 'setup-query-client-and-providers'
+    to: 'ssr-hydration-and-streaming'
+    reason: 'Client creation rules change between browser app lifecycle and per-request server lifecycle.'
+  - from: 'design-query-keys-and-options'
+    to: 'enforce-query-best-practices-with-eslint'
+    reason: 'The lint rules encode key dependency and reusable options mistakes.'
+  - from: 'design-query-keys-and-options'
+    to: 'build-query-abstractions'
+    reason: 'Options factories are the base abstraction for stable keys, query functions, and typed QueryClient usage.'
+  - from: 'fetch-and-observe-queries'
+    to: 'tune-defaults-freshness-retries-and-refetching'
+    reason: 'Status interpretation depends on stale, retry, focus, online, and network settings.'
+  - from: 'fetch-and-observe-queries'
+    to: 'handle-status-and-errors'
+    reason: 'Status, fetchStatus, background errors, and throwOnError determine what UI should render.'
+  - from: 'fetch-and-observe-queries'
+    to: 'understand-query-internals-and-observers'
+    reason: 'Hook reads create QueryObservers, while QueryClient reads only inspect cache state.'
+  - from: 'write-mutations-and-invalidate-related-queries'
+    to: 'implement-optimistic-updates-and-cache-writes'
+    reason: 'Optimistic writes are mutation side effects that still need invalidation and rollback.'
+  - from: 'write-mutations-and-invalidate-related-queries'
+    to: 'automatic-invalidation-after-mutations'
+    reason: 'App-level mutation policies build on mutation keys, MutationCache callbacks, and awaited invalidation.'
+  - from: 'implement-optimistic-updates-and-cache-writes'
+    to: 'cancel-queries-and-consume-abort-signals'
+    reason: 'Optimistic writes commonly need cancellation to avoid stale refetch overwrites.'
+  - from: 'implement-optimistic-updates-and-cache-writes'
+    to: 'concurrent-optimistic-updates'
+    reason: 'Concurrent optimistic writes add submittedAt identity, scoped mutation keys, and guarded invalidation.'
+  - from: 'seed-placeholder-select-and-transform-data'
+    to: 'ssr-hydration-and-streaming'
+    reason: 'initialData is a quick SSR path with tradeoffs compared to dehydration.'
+  - from: 'seed-placeholder-select-and-transform-data'
+    to: 'selectors-and-derived-state'
+    reason: 'select is both a transformation hook and a fine-grained subscription mechanism.'
+  - from: 'selectors-and-derived-state'
+    to: 'query-data-and-forms'
+    reason: 'Forms often need derived server-plus-client state instead of effect-based synchronization.'
+  - from: 'build-query-abstractions'
+    to: 'selectors-and-derived-state'
+    reason: 'Abstractions must preserve usage-site select inference and stable selector composition.'
+  - from: 'prefetch-and-remove-request-waterfalls'
+    to: 'compose-query-with-tanstack-router-and-start'
+    reason: 'TanStack Router and Start loaders are the highest-priority route prefetch surface in the TanStack ecosystem.'
+  - from: 'compose-query-with-tanstack-router-and-start'
+    to: 'ssr-hydration-and-streaming'
+    reason: 'Router SSR Query integration owns the QueryClient cache handoff, streamed query results, and route loader prefetch during SSR.'
+  - from: 'compose-query-with-tanstack-router-and-start'
+    to: 'use-suspense-and-error-boundaries'
+    reason: 'Suspense queries and loader prefetches participate differently in Router SSR and streaming than plain useQuery.'
+  - from: 'shape-data-and-render-efficiently'
+    to: 'enforce-query-best-practices-with-eslint'
+    reason: 'no-rest-destructuring and no-unstable-deps protect render optimization assumptions.'
+  - from: 'persist-offline-and-restore-caches'
+    to: 'tune-defaults-freshness-retries-and-refetching'
+    reason: 'Persistence maxAge and hydration behavior depend on gcTime, networkMode, and retry settings.'
+  - from: 'use-framework-adapter-reactivity'
+    to: 'design-query-keys-and-options'
+    reason: 'Adapter reactivity usually flows through queryKey and option thunk shapes.'
+  - from: 'migrate-major-versions-and-codemods'
+    to: 'design-query-keys-and-options'
+    reason: 'v5 migration changed all key/function call signatures to object options.'
 
 gaps:
-  - skill: "compose-query-with-tanstack-router-and-start"
-    question: "Should this composition skill be generated in Query, Router, Start, or all three with cross-links?"
-    context: "The core Query APIs live in this repo, while the first-class Router SSR Query integration and Start guidance live in the Router and Start docs."
-    status: "open"
-  - skill: "broadcast-realtime-and-multi-tab-synchronization"
-    question: "Which realtime patterns should be blessed as skills versus treated as examples only?"
-    context: "Docs include broadcast and examples reference chat/WebSockets, while TKDodo has a WebSockets article, but repo docs do not define a first-class realtime API."
-    status: "open"
-  - skill: "use-framework-adapter-reactivity"
-    question: "Should adapter skills be generated as one cross-framework skill with references, or one package-local skill per adapter?"
-    context: "Intent monorepo generation writes skills inside packages, but the docs intentionally share most guides across adapters."
-    status: "open"
-  - skill: "ssr-hydration-and-streaming"
-    question: "Should experimental ReactQueryStreamedHydration and streamedQuery be excluded from generated skills or marked experimental with version-lock guidance?"
-    context: "Docs mark these APIs experimental; user asked to cover all ecosystem packages, but Intent asks experimental features to be excluded unless ready."
-    status: "open"
-  - skill: "migrate-major-versions-and-codemods"
-    question: "How far back should generated migration skills go for agents: v3, v4, v5, Svelte v6, or only currently common legacy mistakes?"
-    context: "Docs include multiple migration guides, and agents trained on older code frequently emit removed overloads."
-    status: "open"
-  - skill: "enforce-query-best-practices-with-eslint"
-    question: "Should ESLint skills be React-only or documented as generally useful for Query codebases where the rule supports the adapter?"
-    context: "The package is named generically, but many examples and rules are React-hook oriented."
-    status: "open"
+  - skill: 'compose-query-with-tanstack-router-and-start'
+    question: 'Should this composition skill be generated in Query, Router, Start, or all three with cross-links?'
+    context: 'The core Query APIs live in this repo, while the first-class Router SSR Query integration and Start guidance live in the Router and Start docs.'
+    status: 'open'
+  - skill: 'broadcast-realtime-and-multi-tab-synchronization'
+    question: 'Which realtime patterns should be blessed as skills versus treated as examples only?'
+    context: 'Docs include broadcast and examples reference chat/WebSockets, while TKDodo has a WebSockets article, but repo docs do not define a first-class realtime API.'
+    status: 'open'
+  - skill: 'use-framework-adapter-reactivity'
+    question: 'Should adapter skills be generated as one cross-framework skill with references, or one package-local skill per adapter?'
+    context: 'Intent monorepo generation writes skills inside packages, but the docs intentionally share most guides across adapters.'
+    status: 'open'
+  - skill: 'ssr-hydration-and-streaming'
+    question: 'Should experimental ReactQueryStreamedHydration and streamedQuery be excluded from generated skills or marked experimental with version-lock guidance?'
+    context: 'Docs mark these APIs experimental; user asked to cover all ecosystem packages, but Intent asks experimental features to be excluded unless ready.'
+    status: 'open'
+  - skill: 'migrate-major-versions-and-codemods'
+    question: 'How far back should generated migration skills go for agents: v3, v4, v5, Svelte v6, or only currently common legacy mistakes?'
+    context: 'Docs include multiple migration guides, and agents trained on older code frequently emit removed overloads.'
+    status: 'open'
+  - skill: 'enforce-query-best-practices-with-eslint'
+    question: 'Should ESLint skills be React-only or documented as generally useful for Query codebases where the rule supports the adapter?'
+    context: 'The package is named generically, but many examples and rules are React-hook oriented.'
+    status: 'open'
