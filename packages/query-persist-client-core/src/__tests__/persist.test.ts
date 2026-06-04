@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { QueriesObserver, QueryClient } from '@tanstack/query-core'
+import { QueriesObserver, QueryClient, dehydrate } from '@tanstack/query-core'
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
@@ -154,5 +154,28 @@ describe('persistQueryClientRestore', () => {
         persister,
       }),
     ).rejects.toBe(removeError)
+  })
+
+  it('should hydrate the query client when the persisted cache is valid', async () => {
+    const sourceClient = new QueryClient()
+    sourceClient.setQueryData(['key'], 'data')
+
+    const queryClient = new QueryClient()
+    const persister = createSpyPersister()
+
+    persister.restoreClient = () =>
+      Promise.resolve({
+        buster: '',
+        clientState: dehydrate(sourceClient),
+        timestamp: Date.now(),
+      })
+
+    await persistQueryClientRestore({
+      queryClient,
+      persister,
+    })
+
+    expect(persister.removeClient).not.toHaveBeenCalled()
+    expect(queryClient.getQueryData(['key'])).toBe('data')
   })
 })
