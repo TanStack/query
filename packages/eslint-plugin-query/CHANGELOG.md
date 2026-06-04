@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.101.0
+
+### Minor Changes
+
+- [#10775](https://github.com/TanStack/query/pull/10775) [`dc54932`](https://github.com/TanStack/query/commit/dc549328642e3d5b7417c0ad070d9fbf38c195a4) - `no-rest-destructuring` now also flags rest destructuring on custom hooks that return a TanStack Query result. Detection uses the TypeScript type checker and runs only when typed linting is enabled, so untyped projects are unaffected. Closes [#8951](https://github.com/TanStack/query/issues/8951).
+
 ## 5.100.14
 
 ## 5.100.13
