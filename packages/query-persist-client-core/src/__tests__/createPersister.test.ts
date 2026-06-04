@@ -553,6 +553,25 @@ describe('createPersister', () => {
       await persister.persisterGc()
       expect(await storage.entries()).toHaveLength(0)
     })
+
+    it('should keep entries that are neither expired nor busted', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, query, queryKey } = setupPersister(['foo'], {
+        storage,
+      })
+      query.setState({
+        dataUpdatedAt: Date.now(),
+        data: 'foo',
+      })
+      client.getQueryCache().add(query)
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.persisterGc()
+      expect(await storage.entries()).toHaveLength(1)
+    })
   })
 
   describe('restoreQueries', () => {
