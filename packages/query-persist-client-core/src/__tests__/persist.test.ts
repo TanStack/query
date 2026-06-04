@@ -177,5 +177,39 @@ describe('persist', () => {
       expect(persister.removeClient).not.toHaveBeenCalled()
       expect(queryClient.getQueryData(['key'])).toBe('data')
     })
+
+    it('should remove the client when the persisted cache is expired', async () => {
+      persister.restoreClient = () =>
+        Promise.resolve({
+          buster: '',
+          clientState: { mutations: [], queries: [] },
+          timestamp: Date.now() - 1000,
+        })
+
+      await persistQueryClientRestore({
+        queryClient,
+        persister,
+        maxAge: 100,
+      })
+
+      expect(persister.removeClient).toHaveBeenCalledTimes(1)
+    })
+
+    it('should remove the client when the buster does not match', async () => {
+      persister.restoreClient = () =>
+        Promise.resolve({
+          buster: 'old-buster',
+          clientState: { mutations: [], queries: [] },
+          timestamp: Date.now(),
+        })
+
+      await persistQueryClientRestore({
+        queryClient,
+        persister,
+        buster: 'new-buster',
+      })
+
+      expect(persister.removeClient).toHaveBeenCalledTimes(1)
+    })
   })
 })
