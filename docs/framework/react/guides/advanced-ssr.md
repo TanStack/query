@@ -31,7 +31,7 @@ The first step of any React Query setup is always to create a `queryClient` and 
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -51,7 +51,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -376,7 +376,7 @@ We will also need to move the `getQueryClient()` function out of our `app/provid
 ```tsx
 // app/get-query-client.ts
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   defaultShouldDehydrateQuery,
 } from '@tanstack/react-query'
@@ -408,7 +408,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 export function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -564,7 +564,7 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 'use client'
 
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -586,7 +586,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
