@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueriesObserver, QueryClient, dehydrate } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  QueriesObserver,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/query-core'
 import {
   persistQueryClient,
   persistQueryClientRestore,
@@ -66,6 +71,28 @@ describe('persist', () => {
       // 3. When setQueryData is called
       // All events fired by manipulating observers are ignored
       expect(persister.persistClient).toHaveBeenCalledTimes(3)
+
+      unsubscribe()
+    })
+
+    it('should not be triggered on mutation observer type events', () => {
+      const persister = createSpyPersister()
+
+      const unsubscribe = persistQueryClientSubscribe({
+        queryClient,
+        persister,
+      })
+
+      const observer = new MutationObserver(queryClient, {
+        mutationFn: () => Promise.resolve('data'),
+      })
+      const unsubscribeObserver = observer.subscribe(vi.fn())
+      observer.setOptions({ mutationKey: ['test'] })
+      unsubscribeObserver()
+
+      // Events fired by manipulating the mutation observer are not cache
+      // events, so they must not trigger a persist.
+      expect(persister.persistClient).not.toHaveBeenCalled()
 
       unsubscribe()
     })
