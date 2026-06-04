@@ -523,6 +523,23 @@ describe('createPersister', () => {
     })
   })
 
+  describe('retrieveQuery', () => {
+    it('should return the persisted data when called without a restore callback', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryHash, queryKey } = setupPersister(
+        ['foo'],
+        { storage },
+      )
+
+      client.setQueryData(queryKey, 'baz')
+      await persister.persistQueryByKey(queryKey, client)
+
+      const restoredData = await persister.retrieveQuery(queryHash)
+
+      expect(restoredData).toBe('baz')
+    })
+  })
+
   describe('persisterGc', () => {
     it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
