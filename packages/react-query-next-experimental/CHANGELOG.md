@@ -1,5 +1,14 @@
 # @tanstack/react-query-next-experimental
 
+## 5.101.0
+
+### Patch Changes
+
+- [#10857](https://github.com/TanStack/query/pull/10857) [`7cf5923`](https://github.com/TanStack/query/commit/7cf5923308fb91f3eff0fe952d8c64676e2bdad7) - fix(react-query-next-experimental): replace deprecated 'isServer' with 'environmentManager.isServer()'
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.101.0
+
 ## 5.100.14
 
 ### Patch Changes

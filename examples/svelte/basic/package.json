@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.100.14",
-    "@tanstack/svelte-query": "^6.1.33",
-    "@tanstack/svelte-query-devtools": "^6.1.33",
-    "@tanstack/svelte-query-persist-client": "^6.1.33"
+    "@tanstack/query-async-storage-persister": "^5.101.0",
+    "@tanstack/svelte-query": "^6.1.34",
+    "@tanstack/svelte-query-devtools": "^6.1.34",
+    "@tanstack/svelte-query-persist-client": "^6.1.34"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.1.0",

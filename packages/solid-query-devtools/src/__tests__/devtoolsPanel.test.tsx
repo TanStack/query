@@ -164,4 +164,21 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     expect(unmount).toHaveBeenCalled()
   })
+
+  it('should return null in non-development environments', async () => {
+    vi.doMock('solid-js/web', async (importOriginal) => {
+      const actual = await importOriginal()
+      return Object.assign({}, actual, { isDev: false })
+    })
+    vi.resetModules()
+
+    try {
+      const { SolidQueryDevtoolsPanel: ProductionDevtoolsPanel } =
+        await import('..')
+      expect(ProductionDevtoolsPanel({})).toBeNull()
+    } finally {
+      vi.doUnmock('solid-js/web')
+      vi.resetModules()
+    }
+  })
 })
