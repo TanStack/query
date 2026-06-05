@@ -161,6 +161,153 @@ describe('createQueryController', () => {
     expect(host.updatesRequested).toBeGreaterThan(0)
   })
 
+  it('does not request another update when stable function options refresh during host update', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const query = createQueryController(
+      host,
+      () => ({
+        queryKey: ['query-controller', 'stable-function-options'],
+        queryFn: async () => {
+          callCount += 1
+          return 'stable-result'
+        },
+        staleTime: Infinity,
+      }),
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      await waitFor(() => query().isSuccess)
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        host.update()
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(query().data).toBe('stable-result')
+      expect(callCount).toBe(1)
+    } finally {
+      query.destroy()
+    }
+  })
+
+  it('does not request an update for refetch-only state changes when only data was read', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['query-controller', 'tracked-data-only'] as const
+    const host = new TestControllerHost()
+    let resolveRefetch: (() => void) | undefined
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey,
+        initialData: 'stable-data',
+        staleTime: Infinity,
+        queryFn: () =>
+          new Promise<string>((resolve) => {
+            resolveRefetch = () => resolve('stable-data')
+          }),
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(query().data).toBe('stable-data')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      const refetch = query.refetch()
+
+      await waitFor(() => resolveRefetch !== undefined)
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      resolveRefetch!()
+      await refetch
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      query.destroy()
+    }
+  })
+
+  it('refreshes a suppressed result on the next accessor read when a newly read property changed', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['query-controller', 'late-read-freshness'] as const
+    const host = new TestControllerHost()
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey,
+        initialData: 'initial-data',
+        staleTime: Infinity,
+        queryFn: async () => 'unused',
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(query().status).toBe('success')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      client.setQueryData(queryKey, 'updated-data')
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      expect(query().data).toBe('updated-data')
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      query.destroy()
+    }
+  })
+
   it('M4: transitions from pending to success with expected contract', async () => {
     const client = new QueryClient({
       defaultOptions: {
@@ -342,6 +489,48 @@ describe('createQueryController', () => {
     expect(query().data).toBe('user-2')
     expect(seenKeys.includes(1)).toBe(true)
     expect(seenKeys.includes(2)).toBe(true)
+  })
+
+  it('does not request a host update when function options resolve to an unchanged result', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const query = createQueryController(
+      host,
+      () => ({
+        queryKey: ['query-controller', 'stable-function-options'] as const,
+        staleTime: Infinity,
+        queryFn: async () => {
+          callCount += 1
+          return 'stable'
+        },
+      }),
+      client,
+    )
+
+    host.connect()
+    host.update()
+    await waitFor(() => query().isSuccess)
+
+    await Promise.resolve()
+    await Promise.resolve()
+    const updatesAfterSuccess = host.updatesRequested
+
+    host.update()
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(query().data).toBe('stable')
+    expect(callCount).toBe(1)
+    expect(host.updatesRequested).toBe(updatesAfterSuccess)
   })
 
   it('QSEM-01: refetchOnMount follows stale-vs-fresh policy', async () => {

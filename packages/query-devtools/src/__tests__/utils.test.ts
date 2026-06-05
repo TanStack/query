@@ -1573,6 +1573,16 @@ describe('Utils tests', () => {
       ).toBe('gray')
     })
 
+    it('should return "gray" when the query state is unavailable', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: undefined,
+          observerCount: 0,
+          isStale: false,
+        }),
+      ).toBe('gray')
+    })
+
     it('should return "purple" when fetchStatus is "paused"', () => {
       expect(
         getQueryStatusColor({

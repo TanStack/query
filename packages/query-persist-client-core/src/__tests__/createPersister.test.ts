@@ -523,6 +523,23 @@ describe('createPersister', () => {
     })
   })
 
+  describe('retrieveQuery', () => {
+    it('should return the persisted data when called without a restore callback', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryHash, queryKey } = setupPersister(
+        ['foo'],
+        { storage },
+      )
+
+      client.setQueryData(queryKey, 'baz')
+      await persister.persistQueryByKey(queryKey, client)
+
+      const restoredData = await persister.retrieveQuery(queryHash)
+
+      expect(restoredData).toBe('baz')
+    })
+  })
+
   describe('persisterGc', () => {
     it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
@@ -541,6 +558,36 @@ describe('createPersister', () => {
 
       await persister.persisterGc()
       expect(await storage.entries()).toHaveLength(0)
+    })
+
+    it('should remove entries that cannot be deserialized', async () => {
+      const storage = getFreshStorage()
+      const { persister } = setupPersister(['foo'], { storage })
+
+      await storage.setItem(`${PERSISTER_KEY_PREFIX}-["foo"]`, 'not-json{')
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.persisterGc()
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    it('should keep entries that are neither expired nor busted', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, query, queryKey } = setupPersister(['foo'], {
+        storage,
+      })
+      query.setState({
+        dataUpdatedAt: Date.now(),
+        data: 'foo',
+      })
+      client.getQueryCache().add(query)
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.persisterGc()
+      expect(await storage.entries()).toHaveLength(1)
     })
   })
 
@@ -674,6 +721,19 @@ describe('createPersister', () => {
       })
       expect(client.getQueryCache().getAll()).toHaveLength(1)
     })
+
+    it('should remove entries that cannot be deserialized', async () => {
+      const storage = getFreshStorage()
+      const { persister, client } = setupPersister(['foo'], { storage })
+
+      await storage.setItem(`${PERSISTER_KEY_PREFIX}-["foo"]`, 'not-json{')
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.restoreQueries(client)
+
+      expect(await storage.entries()).toHaveLength(0)
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+    })
   })
 
   describe('removeQueries', () => {
@@ -761,6 +821,18 @@ describe('createPersister', () => {
         queryKey: queryKey,
         exact: true,
       })
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    it('should remove entries that cannot be deserialized', async () => {
+      const storage = getFreshStorage()
+      const { persister } = setupPersister(['foo'], { storage })
+
+      await storage.setItem(`${PERSISTER_KEY_PREFIX}-["foo"]`, 'not-json{')
+      expect(await storage.entries()).toHaveLength(1)
+
+      await persister.removeQueries({ queryKey: ['foo'] })
+
       expect(await storage.entries()).toHaveLength(0)
     })
   })

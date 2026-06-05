@@ -34,8 +34,6 @@ export type Override<TTargetA, TTargetB> = {
     : TTargetA[AKey]
 }
 
-export type NoInfer<T> = [T][T extends any ? 0 : never]
-
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
@@ -365,7 +363,7 @@ export interface QueryObserverOptions<
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
    * If set to a function, the function will be executed with the latest data and query to compute the value.
-   * Defaults to the value of `networkOnline` (`true`)
+   * Defaults to `true` unless `networkMode` is `'always'`.
    */
   refetchOnReconnect?:
     | boolean

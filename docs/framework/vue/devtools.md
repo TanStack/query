@@ -88,21 +88,22 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
 
-Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+Place the following code as high in your Vue app as you can. The closer it is to the root of the page, the better it will work!
 
 ```vue
 <script setup>
+import { ref } from 'vue'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
-const isDevtoolsOpen = ref(false)
-function toggleDevtools() {
-  isDevtoolsOpen.value = !isDevtoolsOpen.value
-}
+
+const isOpen = ref(false)
 </script>
 
 <template>
   <h1>The app!</h1>
-  <button @click="toggleDevtools">Open Devtools</button>
-  <VueQueryDevtoolsPanel v-if="isDevtoolsOpen" :onClose="toggleDevtools" />
+  <button @click="isOpen = !isOpen">
+    {{ isOpen ? 'Close' : 'Open' }} the devtools panel
+  </button>
+  <VueQueryDevtoolsPanel v-if="isOpen" :onClose="() => (isOpen = false)" />
 </template>
 ```
 
