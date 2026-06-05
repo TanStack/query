@@ -1294,22 +1294,28 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('shouldFetchOnWindowFocus should respect refetchOnWindowFocus option', () => {
+  it('shouldFetchOnWindowFocus should return true when refetchOnWindowFocus is true', () => {
     const key = queryKey()
 
-    const observer1 = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
       refetchOnWindowFocus: true,
     })
-    expect(observer1.shouldFetchOnWindowFocus()).toBe(true)
 
-    const observer2 = new QueryObserver(queryClient, {
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+  })
+
+  it('shouldFetchOnWindowFocus should return false when refetchOnWindowFocus is false', () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
       refetchOnWindowFocus: false,
     })
-    expect(observer2.shouldFetchOnWindowFocus()).toBe(false)
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(false)
   })
 
   it('fetchOptimistic should fetch and return optimistic result', async () => {
