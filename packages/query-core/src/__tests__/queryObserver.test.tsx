@@ -1462,6 +1462,24 @@ describe('queryObserver', () => {
     queryClient2.clear()
   })
 
+  it('should not reject promise when experimental_prefetchInRender is enabled', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    const tracked = observer.trackResult(observer.getCurrentResult())
+    const promise = tracked.promise
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    await expect(promise).resolves.toBe('data')
+
+    unsubscribe()
+  })
+
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => 'data')
