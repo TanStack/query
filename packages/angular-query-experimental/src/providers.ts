@@ -32,7 +32,7 @@ export function provideQueryClient(
 /**
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
  *
- * Allows to configure a `QueryClient` and optional features such as developer tools.
+ * Allows configuring a `QueryClient` and optional features such as developer tools.
  *
  * **Example - standalone**
  *
@@ -115,7 +115,7 @@ export function provideTanStackQuery(
 /**
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
  *
- * Allows to configure a `QueryClient`.
+ * Allows configuring a `QueryClient`.
  * @param queryClient - A `QueryClient` instance.
  * @returns A set of providers to set up TanStack Query.
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
