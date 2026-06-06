@@ -257,6 +257,11 @@ export function hydrate(
                 ...(!existingQueryIsFetching && {
                   fetchStatus: 'idle' as const,
                 }),
+                // A pending query that resolved before hydration won't have
+                // a valid dataUpdatedAt, so we set it to the current time.
+                ...(state.dataUpdatedAt === 0 && {
+                  dataUpdatedAt: Date.now(),
+                }),
               }),
           })
         }
@@ -284,6 +289,13 @@ export function hydrate(
               state.status === 'pending' && data !== undefined
                 ? 'success'
                 : state.status,
+            // A pending query that resolved before hydration won't have
+            // a valid dataUpdatedAt, so we set it to the current time.
+            ...(state.status === 'pending' &&
+              data !== undefined &&
+              state.dataUpdatedAt === 0 && {
+                dataUpdatedAt: Date.now(),
+              }),
           },
         )
       }
