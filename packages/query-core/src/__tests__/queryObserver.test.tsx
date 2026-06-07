@@ -747,6 +747,40 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
+  it('should refetch at the interval returned when refetchInterval is a function', async () => {
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.resolve('data')
+      },
+      refetchInterval: () => 10,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    expect(count).toBe(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(2)
+    unsubscribe()
+  })
+
+  it('should call refetchInterval with the query when it is a function', async () => {
+    const key = queryKey()
+    const refetchInterval = vi.fn(() => 10)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      refetchInterval,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(refetchInterval).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+    unsubscribe()
+  })
+
   it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
     const key = queryKey()
 
