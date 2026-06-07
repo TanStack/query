@@ -747,6 +747,52 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
+  it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'new data'),
+      staleTime: Infinity,
+      notifyOnChangeProps: () => ['data'],
+    })
+    const listener = vi.fn()
+
+    const unsubscribe = observer.subscribe(listener)
+    listener.mockClear()
+
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners when notifyOnChangeProps is a function returning props that did not change', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      notifyOnChangeProps: () => ['data'],
+    })
+    const listener = vi.fn()
+
+    const unsubscribe = observer.subscribe(listener)
+    listener.mockClear()
+
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
   it('should use placeholderData as non-cache data when pending a query with no data', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
