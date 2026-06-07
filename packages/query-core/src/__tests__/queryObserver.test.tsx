@@ -747,7 +747,7 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
-  it('uses placeholderData as non-cache data when pending a query with no data', async () => {
+  it('should use placeholderData as non-cache data when pending a query with no data', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -806,7 +806,7 @@ describe('queryObserver', () => {
     ).toThrow('Expected enabled to be a boolean')
   })
 
-  it('getCurrentQuery should return the current query', () => {
+  it('should return the current query from getCurrentQuery', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1120,7 +1120,7 @@ describe('queryObserver', () => {
     expect(stableSelect.mock.calls[1]![0]).toEqual(data2)
   })
 
-  it('setOptions should notify cache listeners', () => {
+  it('should notify cache listeners when setOptions is called', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1140,7 +1140,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('disabled observers should not be stale', () => {
+  it('should not be stale for disabled observers', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1294,7 +1294,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('shouldFetchOnWindowFocus should return true when refetchOnWindowFocus is true', () => {
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is true', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1306,7 +1306,7 @@ describe('queryObserver', () => {
     expect(observer.shouldFetchOnWindowFocus()).toBe(true)
   })
 
-  it('shouldFetchOnWindowFocus should return false when refetchOnWindowFocus is false', () => {
+  it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is false', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1318,7 +1318,7 @@ describe('queryObserver', () => {
     expect(observer.shouldFetchOnWindowFocus()).toBe(false)
   })
 
-  it('fetchOptimistic should fetch and return optimistic result', async () => {
+  it('should fetch and return optimistic result via fetchOptimistic', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
