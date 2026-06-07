@@ -1337,6 +1337,61 @@ describe('queryObserver', () => {
     expect(observer.shouldFetchOnWindowFocus()).toBe(true)
   })
 
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning true', () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => true)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
+  it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning false', () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => false)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(false)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning "always" even if the query is fresh', async () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => 'always' as const)
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
   it('should fetch and return optimistic result via fetchOptimistic', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
