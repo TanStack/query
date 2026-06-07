@@ -747,6 +747,24 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
+  it('should refetch at the interval returned when refetchInterval is a function', async () => {
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.resolve('data')
+      },
+      refetchInterval: () => 10,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    expect(count).toBe(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(2)
+    unsubscribe()
+  })
+
   it('should use placeholderData as non-cache data when pending a query with no data', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
