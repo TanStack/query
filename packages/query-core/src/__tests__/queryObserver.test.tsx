@@ -1318,6 +1318,25 @@ describe('queryObserver', () => {
     expect(observer.shouldFetchOnWindowFocus()).toBe(false)
   })
 
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is "always" even if the query is fresh', async () => {
+    const key = queryKey()
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      refetchOnWindowFocus: 'always',
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+  })
+
   it('should fetch and return optimistic result via fetchOptimistic', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
