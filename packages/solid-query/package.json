@@ -10,6 +10,9 @@
     "directory": "packages/solid-query"
   },
   "homepage": "https://tanstack.com/query",
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
+  },
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
