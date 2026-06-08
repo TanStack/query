@@ -659,7 +659,7 @@ describe('createQuery', () => {
         queryClient,
         options: (count: number) => ({
           queryKey: [...key, count],
-          queryFn: () => Promise.resolve(count),
+          queryFn: () => sleep(10).then(() => count),
           placeholderData: keepPreviousData,
         }),
       },
@@ -670,7 +670,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
@@ -681,7 +681,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
@@ -696,7 +696,7 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve(++count),
+          queryFn: () => sleep(10).then(() => ++count),
         }),
       },
     })
@@ -704,7 +704,7 @@ describe('createQuery', () => {
     // Initial
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
 
     // Remove the query, then refetch — a new query starts from scratch
@@ -713,7 +713,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
   })
 
@@ -785,7 +785,7 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve('fetched'),
+          queryFn: () => sleep(10).then(() => 'fetched'),
           initialData: 'initial',
           staleTime: Infinity,
         }),
@@ -795,7 +795,7 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('set')
     queryClient.refetchQueries({ queryKey: key })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('fetched')
   })
 
@@ -808,19 +808,19 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve(++count),
+          queryFn: () => sleep(10).then(() => ++count),
           staleTime: Infinity,
         }),
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
     queryClient.invalidateQueries({ queryKey: key })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -828,7 +828,7 @@ describe('createQuery', () => {
 
   it('should not update disabled query when refetching with refetchQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => Promise.resolve(1))
+    const queryFn = vi.fn(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -853,7 +853,7 @@ describe('createQuery', () => {
 
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => Promise.resolve(1))
+    const queryFn = vi.fn(() => sleep(10).then(() => 1))
 
     const rendered = render(Base, {
       props: {
@@ -887,7 +887,7 @@ describe('createQuery', () => {
         queryClient,
         options: (count: number) => ({
           queryKey: [...key, count],
-          queryFn: () => Promise.resolve(count),
+          queryFn: () => sleep(10).then(() => count),
           enabled: count === 0,
         }),
       },
@@ -897,14 +897,14 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
 
     // Switch to a disabled query — it should not fetch
     fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
   })
@@ -917,7 +917,7 @@ describe('createQuery', () => {
         queryClient,
         options: (count: number) => ({
           queryKey: [...key, count],
-          queryFn: () => Promise.resolve(count),
+          queryFn: () => sleep(10).then(() => count),
           placeholderData: keepPreviousData,
         }),
       },
@@ -929,7 +929,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
@@ -943,7 +943,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('true')
 
     // New data comes in
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
@@ -958,7 +958,7 @@ describe('createQuery', () => {
         queryClient,
         options: (count: number) => ({
           queryKey: [...key, count],
-          queryFn: () => Promise.resolve(count),
+          queryFn: () => sleep(10).then(() => count),
           placeholderData: keepPreviousData,
           initialData: 99,
         }),
@@ -971,7 +971,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
@@ -985,7 +985,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
 
     // New data comes in
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
@@ -1004,7 +1004,7 @@ describe('createQuery', () => {
         startCount: 10,
         options: (count: number) => ({
           queryKey: [...key, count],
-          queryFn: () => Promise.resolve(count),
+          queryFn: () => sleep(10).then(() => count),
           enabled: false,
           placeholderData: keepPreviousData,
           notifyOnChangeProps: 'all',
@@ -1037,7 +1037,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('true')
 
     // Refetch done — new data for key 12
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('12')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
@@ -1097,12 +1097,12 @@ describe('createQuery', () => {
         queryClient,
         options1: () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve('one'),
+          queryFn: () => sleep(10).then(() => 'one'),
           staleTime: 100,
         }),
         options2: () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve('two'),
+          queryFn: () => sleep(10).then(() => 'two'),
           staleTime: 10,
         }),
       },
@@ -1116,7 +1116,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isStale2')).toHaveTextContent('true')
 
     // After the refetch triggered by the stale second query
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data1')).toHaveTextContent('two')
     expect(rendered.getByTestId('isStale1')).toHaveTextContent('false')
     expect(rendered.getByTestId('data2')).toHaveTextContent('two')
