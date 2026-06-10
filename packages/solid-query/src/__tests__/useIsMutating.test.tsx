@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   QueryClientProvider,
@@ -23,6 +23,8 @@ describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -36,11 +38,11 @@ describe('useIsMutating', () => {
 
     function Mutations() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(150).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(50).then(() => 'data'),
       }))
 
@@ -77,9 +79,11 @@ describe('useIsMutating', () => {
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
-      const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
+      const isMutating = useIsMutating(() => ({ mutationKey: mutationKey1 }))
 
       createRenderEffect(() => {
         isMutatingArray.push(isMutating())
@@ -90,11 +94,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
@@ -121,11 +125,13 @@ describe('useIsMutating', () => {
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
         predicate: (mutation) =>
-          mutation.options.mutationKey?.[0] === 'mutation1',
+          mutation.options.mutationKey?.[0] === mutationKey1[0],
       }))
 
       createRenderEffect(() => {
@@ -137,11 +143,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
@@ -167,12 +173,13 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => queryClient)
       const { mutate } = useMutation(
         () => ({
-          mutationKey: ['mutation1'],
+          mutationKey: mutationKey1,
           mutationFn: () => sleep(20).then(() => 'data'),
         }),
         () => queryClient,
@@ -218,6 +225,7 @@ describe('useIsMutating', () => {
       })
 
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
 
     function IsMutating() {
       useIsMutating()
@@ -228,7 +236,7 @@ describe('useIsMutating', () => {
       const [mounted, setMounted] = createSignal(true)
 
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(10).then(() => 'data'),
       }))
 

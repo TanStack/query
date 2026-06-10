@@ -31,7 +31,7 @@ The first step of any React Query setup is always to create a `queryClient` and 
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -51,7 +51,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -216,7 +216,7 @@ One neat thing about the examples above is that the only thing that is Next.js-s
 
 In the SSR guide, we noted that you could get rid of the boilerplate of having `<HydrationBoundary>` in every route. This is not possible with Server Components.
 
-> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
+> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js TypeScript docs.
 
 > NOTE: If you encounter an error `Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.` make sure that you're **not** passing to queryFn a function reference, instead call the function because queryFn args has a bunch of properties and not all of it would be serializable. see [Server Action only works when queryFn isn't a reference](https://github.com/TanStack/query/issues/6264).
 
@@ -376,7 +376,7 @@ We will also need to move the `getQueryClient()` function out of our `app/provid
 ```tsx
 // app/get-query-client.ts
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   defaultShouldDehydrateQuery,
 } from '@tanstack/react-query'
@@ -408,7 +408,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 export function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -555,7 +555,7 @@ This ensures that only successfully resolved queries are persisted to storage, p
 
 While we recommend the prefetching solution detailed above because it flattens request waterfalls both on the initial page load **and** any subsequent page navigation, there is an experimental way to skip prefetching altogether and still have streaming SSR work: `@tanstack/react-query-next-experimental`
 
-This package will allow you to fetch data on the server (in a Client Component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. If you call `useSuspenseQuery` without wrapping it in a `<Suspense>` boundary, the HTML response won't start until the fetch resolves. This can be when you want depending on the situation, but keep in mind that this will hurt your TTFB.
+This package will allow you to fetch data on the server (in a Client Component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. If you call `useSuspenseQuery` without wrapping it in a `<Suspense>` boundary, the HTML response won't start until the fetch resolves. This can be what you want depending on the situation, but keep in mind that this will hurt your TTFB.
 
 To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 
@@ -564,7 +564,7 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 'use client'
 
 import {
-  isServer,
+  environmentManager,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -586,7 +586,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {

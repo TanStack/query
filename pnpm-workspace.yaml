@@ -1,6 +1,10 @@
 cleanupUnusedCatalogs: true
 linkWorkspacePackages: true
 preferWorkspacePackages: true
+blockExoticSubdeps: true
+trustPolicy: 'no-downgrade'
+trustPolicyExclude:
+  - 'vite@6.4.1'
 
 packages:
   - 'packages/*'
@@ -8,8 +12,56 @@ packages:
   - 'examples/angular/*'
   - 'examples/react/*'
   - 'examples/preact/*'
+  - 'examples/lit/*'
   - 'examples/solid/*'
   - 'examples/svelte/*'
   - 'examples/vue/*'
   - '!examples/vue/2*'
   - '!examples/vue/nuxt*'
+
+overrides:
+  'chokidar': '5.0.0'
+  '@types/react': '^19.2.7'
+  '@types/react-dom': '^19.2.3'
+  '@types/node': '^22.15.3'
+  '@typescript-eslint/eslint-plugin': '8.58.1'
+  '@typescript-eslint/parser': '8.58.1'
+  '@typescript-eslint/project-service': '8.58.1'
+  '@typescript-eslint/rule-tester': '8.58.1'
+  '@typescript-eslint/scope-manager': '8.58.1'
+  '@typescript-eslint/tsconfig-utils': '8.58.1'
+  '@typescript-eslint/type-utils': '8.58.1'
+  '@typescript-eslint/types': '8.58.1'
+  '@typescript-eslint/typescript-estree': '8.58.1'
+  '@typescript-eslint/utils': '8.58.1'
+  '@typescript-eslint/visitor-keys': '8.58.1'
+  typescript-eslint: '8.58.1'
+  vite: '^6.4.1'
+  esbuild: '^0.27.2'
+
+allowBuilds:
+  # root dependency
+  nx: true
+  unrs-resolver: false # not directly required for build
+  esbuild: true
+
+  # vite
+  fsevents: false # optional dependency
+
+  # msw
+  msw: false # used for example only
+
+  # nx, @vitejs/plugin-react-swc, terser-webpack-plugin
+  '@swc/core': true
+
+  # @angular/build
+  '@parcel/watcher': false # optional dep of @angular/build
+  lmdb: false # optional dep of @angular/build
+  msgpackr-extract: false # optional dep of @angular/build
+
+  # @tanstack/vue-store
+  vue-demi: false # only required for vue 2 support
+
+  # nextJs
+  sharp: false # not directly required for build
+

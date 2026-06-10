@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '@tanstack/query-core'
 import {
   injectIsMutating,
@@ -16,10 +17,11 @@ import type { CreateMutationOptions, CreateMutationResult } from '../types'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
+    const key = queryKey()
     // @ts-expect-error this is a good error, because onMutates does not exist!
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: key,
       onMutates: 1000,
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
@@ -28,9 +30,10 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for callbacks', () => {
+    const key = queryKey()
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: key,
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
@@ -38,11 +41,12 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for onError callback', () => {
+    const key = queryKey()
     mutationOptions({
       mutationFn: () => {
         throw new Error('fail')
       },
-      mutationKey: ['key'],
+      mutationKey: key,
       onError: (error) => {
         expectTypeOf(error).toEqualTypeOf<DefaultError>()
       },
@@ -50,19 +54,21 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types for variables', () => {
+    const key = queryKey()
     mutationOptions<number, DefaultError, { id: string }>({
       mutationFn: (vars) => {
         expectTypeOf(vars).toEqualTypeOf<{ id: string }>()
         return Promise.resolve(5)
       },
-      mutationKey: ['with-vars'],
+      mutationKey: key,
     })
   })
 
   it('should infer result type correctly', () => {
+    const key = queryKey()
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: key,
       onMutate: () => {
         return { name: 'onMutateResult' }
       },
@@ -73,12 +79,13 @@ describe('mutationOptions', () => {
   })
 
   it('should infer context type correctly', () => {
+    const key = queryKey()
     mutationOptions<number>({
       mutationFn: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
         return Promise.resolve(5)
       },
-      mutationKey: ['key'],
+      mutationKey: key,
       onMutate: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
@@ -113,10 +120,11 @@ describe('mutationOptions', () => {
   })
 
   it('should infer all types when not explicitly provided', () => {
+    const key = queryKey()
     expectTypeOf(
       mutationOptions({
         mutationFn: (id: string) => Promise.resolve(id.length),
-        mutationKey: ['key'],
+        mutationKey: key,
         onSuccess: (data) => {
           expectTypeOf(data).toEqualTypeOf<number>()
         },
@@ -140,9 +148,10 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types when used with injectMutation', () => {
+    const key = queryKey()
     const mutation = injectMutation(() =>
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: key,
         mutationFn: () => Promise.resolve('data'),
         onSuccess: (data) => {
           expectTypeOf(data).toEqualTypeOf<string>()
@@ -166,9 +175,10 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types when used with injectIsMutating', () => {
+    const key = queryKey()
     const isMutating = injectIsMutating(
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: key,
         mutationFn: () => Promise.resolve(5),
       }),
     )
@@ -183,11 +193,12 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types when used with queryClient.isMutating', () => {
+    const key = queryKey()
     const queryClient = new QueryClient()
 
     const isMutating = queryClient.isMutating(
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: key,
         mutationFn: () => Promise.resolve(5),
       }),
     )
@@ -202,9 +213,10 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types when used with injectMutationState', () => {
+    const key = queryKey()
     const mutationState = injectMutationState(() => ({
       filters: mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: key,
         mutationFn: () => Promise.resolve(5),
       }),
     }))

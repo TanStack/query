@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -8,10 +9,76 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    queryClient.clear()
+  })
+
+  it('should return the correct states for a successful infinite query', async () => {
+    const key = queryKey()
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
+
+    function Page() {
+      const [multiplier, setMultiplier] = React.useState(1)
+      const state = useSuspenseInfiniteQuery({
+        queryKey: [`${key}_${multiplier}`],
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => pageParam * multiplier),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <button onClick={() => setMultiplier(2)}>next</button>
+          data: {state.data?.pages.join(',')}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1], pageParams: [1] },
+      status: 'success',
+    })
+
+    fireEvent.click(rendered.getByText('next'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
+      data: { pages: [2], pageParams: [1] },
+      status: 'success',
+    })
+  })
 
   it('should log an error when skipToken is passed as queryFn', () => {
     const consoleErrorSpy = vi

@@ -1,10 +1,10 @@
 import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
-  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
+  QueryBooleanOption,
   QueryFunction,
   QueryKey,
   QueryOptions,
@@ -86,6 +86,9 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
+/** @deprecated
+ * use `environmentManager.isServer()` instead.
+ */
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 export function noop(): void
@@ -123,16 +126,18 @@ export function resolveStaleTime<
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
-export function resolveEnabled<
+export function resolveQueryBoolean<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
+  option:
+    | undefined
+    | QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): boolean | undefined {
-  return typeof enabled === 'function' ? enabled(query) : enabled
+  return typeof option === 'function' ? option(query) : option
 }
 
 export function matchQuery(

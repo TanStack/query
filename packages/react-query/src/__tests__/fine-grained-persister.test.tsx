@@ -9,16 +9,19 @@ import { QueryCache, QueryClient, hashKey, useQuery } from '..'
 import { renderWithClient } from './utils'
 
 describe('fine grained persister', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should restore query state from persister and not refetch', async () => {
     const key = queryKey()
@@ -76,11 +79,7 @@ describe('fine grained persister', () => {
   it('should restore query state from persister and refetch', async () => {
     const key = queryKey()
     const hash = hashKey(key)
-    const spy = vi.fn(async () => {
-      await sleep(5)
-
-      return 'Works from queryFn'
-    })
+    const spy = vi.fn(() => sleep(5).then(() => 'Works from queryFn'))
 
     const mapStorage = new Map()
     const storage = {

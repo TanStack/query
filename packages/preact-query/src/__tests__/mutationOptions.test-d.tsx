@@ -5,6 +5,7 @@ import type {
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { useIsMutating, useMutation, useMutationState } from '..'
@@ -16,7 +17,7 @@ describe('mutationOptions', () => {
     // @ts-expect-error this is a good error, because onMutates does not exist!
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       onMutates: 1000,
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
@@ -27,7 +28,7 @@ describe('mutationOptions', () => {
   it('should infer types for callbacks', () => {
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
@@ -39,7 +40,7 @@ describe('mutationOptions', () => {
       mutationFn: () => {
         throw new Error('fail')
       },
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       onError: (error) => {
         expectTypeOf(error).toEqualTypeOf<DefaultError>()
       },
@@ -52,14 +53,14 @@ describe('mutationOptions', () => {
         expectTypeOf(vars).toEqualTypeOf<{ id: string }>()
         return Promise.resolve(5)
       },
-      mutationKey: ['with-vars'],
+      mutationKey: queryKey(),
     })
   })
 
   it('should infer result type correctly', () => {
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       onMutate: () => {
         return { name: 'onMutateResult' }
       },
@@ -75,7 +76,7 @@ describe('mutationOptions', () => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
         return Promise.resolve(5)
       },
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       onMutate: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
@@ -113,7 +114,7 @@ describe('mutationOptions', () => {
     expectTypeOf(
       mutationOptions({
         mutationFn: (id: string) => Promise.resolve(id.length),
-        mutationKey: ['key'],
+        mutationKey: queryKey(),
         onSuccess: (data) => {
           expectTypeOf(data).toEqualTypeOf<number>()
         },
@@ -139,7 +140,7 @@ describe('mutationOptions', () => {
   it('should infer types when used with useMutation', () => {
     const mutation = useMutation(
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: queryKey(),
         mutationFn: () => Promise.resolve('data'),
         onSuccess: (data) => {
           expectTypeOf(data).toEqualTypeOf<string>()
@@ -164,7 +165,7 @@ describe('mutationOptions', () => {
   it('should infer types when used with useIsMutating', () => {
     const isMutating = useIsMutating(
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: queryKey(),
         mutationFn: () => Promise.resolve(5),
       }),
     )
@@ -183,7 +184,7 @@ describe('mutationOptions', () => {
 
     const isMutating = queryClient.isMutating(
       mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: queryKey(),
         mutationFn: () => Promise.resolve(5),
       }),
     )
@@ -200,7 +201,7 @@ describe('mutationOptions', () => {
   it('should infer types when used with useMutationState', () => {
     const mutationState = useMutationState({
       filters: mutationOptions({
-        mutationKey: ['key'],
+        mutationKey: queryKey(),
         mutationFn: () => Promise.resolve(5),
       }),
     })

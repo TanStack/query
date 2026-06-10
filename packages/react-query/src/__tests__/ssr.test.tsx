@@ -29,6 +29,7 @@ describe('Server Side Rendering', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   it('should not trigger fetch', () => {
@@ -55,8 +56,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
-
-    queryCache.clear()
   })
 
   it('should add prefetched data to cache', async () => {
@@ -72,8 +71,6 @@ describe('Server Side Rendering', () => {
 
     expect(data).toBe('data')
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
-
-    queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
@@ -103,8 +100,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
-
-    queryCache.clear()
   })
 
   it('should add initialData to the cache', () => {
@@ -135,8 +130,6 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
-
-    queryCache.clear()
   })
 
   it('useInfiniteQuery should return the correct state', async () => {
@@ -174,8 +167,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
-
-    queryCache.clear()
   })
 
   it('useIsFetching should return 0 after prefetch completes', async () => {
@@ -205,8 +196,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('data')
     expect(markup).toContain('isFetching: 0')
-
-    queryCache.clear()
   })
 
   it('useQueries should return existing data from the cache', async () => {
@@ -247,8 +236,6 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('status2: success')
     expect(markup).toContain('data1: data1')
     expect(markup).toContain('data2: data2')
-
-    queryCache.clear()
   })
 
   it('useMutation should return idle status', () => {
@@ -267,8 +254,6 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('status: idle')
-
-    queryCache.clear()
   })
 
   it('useMutationState should return empty array', () => {
@@ -285,7 +270,5 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('mutationState: 0')
-
-    queryCache.clear()
   })
 })

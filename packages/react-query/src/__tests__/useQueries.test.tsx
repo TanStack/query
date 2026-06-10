@@ -12,6 +12,7 @@ import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   queryOptions,
@@ -29,16 +30,19 @@ import type {
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -50,17 +54,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(200)
-              return 2
-            },
+            queryFn: () => sleep(200).then(() => 2),
           },
         ],
       })
@@ -390,7 +388,7 @@ describe('useQueries', () => {
       const result4 = useQueries({
         queries: [
           queryOptions({
-            queryKey: ['key1'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -398,7 +396,7 @@ describe('useQueries', () => {
             },
           }),
           queryOptions({
-            queryKey: ['key2'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -1089,17 +1087,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(5)
-              return Promise.resolve('query1')
-            },
+            queryFn: () => sleep(5).then(() => Promise.resolve('query1')),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(20)
-              return Promise.resolve('query2')
-            },
+            queryFn: () => sleep(20).then(() => Promise.resolve('query2')),
           },
         ],
         combine: ([query1, query2]) => {
@@ -1134,17 +1126,13 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return Promise.resolve('first result ' + count)
-              },
+              queryFn: () =>
+                sleep(5).then(() => Promise.resolve('first result ' + count)),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(50)
-                return Promise.resolve('second result ' + count)
-              },
+              queryFn: () =>
+                sleep(50).then(() => Promise.resolve('second result ' + count)),
             },
           ],
           combine: (queryResults) => {
@@ -1326,17 +1314,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result:' + value
-              },
+              queryFn: () => sleep(10).then(() => 'first result:' + value),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result:' + value
-              },
+              queryFn: () => sleep(20).then(() => 'second result:' + value),
             },
           ],
           combine: React.useCallback((results: Array<QueryObserverResult>) => {
@@ -1410,17 +1392,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result'
-              },
+              queryFn: () => sleep(20).then(() => 'second result'),
             },
           ],
           combine: React.useCallback(
@@ -1534,24 +1510,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1596,24 +1563,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1675,17 +1633,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result'
-              },
+              queryFn: () => sleep(20).then(() => 'second result'),
             },
           ],
           combine: React.useCallback((results: Array<QueryObserverResult>) => {
@@ -1744,15 +1696,17 @@ describe('useQueries', () => {
 
   it('should not cause infinite re-renders when removing last query', async () => {
     let renderCount = 0
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function Page() {
       const [queries, setQueries] = React.useState([
         {
-          queryKey: ['query1'],
+          queryKey: key1,
           queryFn: () => 'data1',
         },
         {
-          queryKey: ['query2'],
+          queryKey: key2,
           queryFn: () => 'data2',
         },
       ])
@@ -1768,7 +1722,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query1'],
+                  queryKey: key1,
                   queryFn: () => 'data1',
                 },
               ])
@@ -1780,7 +1734,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query2'],
+                  queryKey: key2,
                   queryFn: () => 'data2',
                 },
               ])
@@ -1814,6 +1768,7 @@ describe('useQueries', () => {
 
   it('should return correct results when queries count changes with stable combine reference', async () => {
     const combine = (results: Array<QueryObserverResult>) => results
+    const key = queryKey()
 
     const results: Array<{ n: number; length: number }> = []
 
@@ -1823,7 +1778,7 @@ describe('useQueries', () => {
       const queries = useQueries(
         {
           queries: [...Array(n).keys()].map((i) => ({
-            queryKey: ['dynamic', i],
+            queryKey: [...key, i],
             queryFn: () => i,
           })),
           combine,
@@ -1862,5 +1817,128 @@ describe('useQueries', () => {
     results.forEach((result) => {
       expect(result.length).toBe(result.n)
     })
+  })
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
+  it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
   })
 })

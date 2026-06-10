@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -74,10 +74,14 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
@@ -99,7 +103,7 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
@@ -148,7 +152,7 @@ export function useBaseQuery<
 
   if (
     defaultedOptions.experimental_prefetchInRender &&
-    !isServer &&
+    !environmentManager.isServer() &&
     willFetch(result, isRestoring)
   ) {
     const promise = isNewCacheEntry

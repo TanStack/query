@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
@@ -44,7 +44,7 @@ describe('QueryCache', () => {
   })
 
   describe('isFetching', () => {
-    test('should properly unwrap 1 parameter', () => {
+    it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.isFetching({
@@ -58,7 +58,7 @@ describe('QueryCache', () => {
   })
 
   describe('isMutating', () => {
-    test('should properly unwrap 1 parameter', () => {
+    it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.isMutating({
@@ -72,7 +72,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryData', () => {
-    test('should properly unwrap 1 parameter', () => {
+    it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryData(queryKeyRef)
@@ -83,8 +83,24 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('ensureQueryData', () => {
+    it('should properly unwrap parameter', () => {
+      const queryClient = new QueryClient()
+
+      queryClient.ensureQueryData({
+        queryKey: queryKeyRef,
+        queryFn: fn,
+      })
+
+      expect(QueryClientOrigin.prototype.ensureQueryData).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        queryFn: fn,
+      })
+    })
+  })
+
   describe('getQueriesData', () => {
-    test('should properly unwrap queryKey param', () => {
+    it('should properly unwrap queryKey param', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueriesData({ queryKey: queryKeyRef })
@@ -94,7 +110,7 @@ describe('QueryCache', () => {
       })
     })
 
-    test('should properly unwrap filters param', () => {
+    it('should properly unwrap filters param', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueriesData({ queryKey: queryKeyRef })
@@ -106,7 +122,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueryData', () => {
-    test('should properly unwrap 3 parameter', () => {
+    it('should properly unwrap 3 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueryData(queryKeyRef, fn, {
@@ -122,7 +138,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueriesData', () => {
-    test('should properly unwrap params with queryKey', () => {
+    it('should properly unwrap params with queryKey', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
@@ -136,7 +152,7 @@ describe('QueryCache', () => {
       )
     })
 
-    test('should properly unwrap params with filters', () => {
+    it('should properly unwrap params with filters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
@@ -152,7 +168,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryState', () => {
-    test('should properly unwrap 1 parameter', () => {
+    it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryState(queryKeyRef)
@@ -164,7 +180,7 @@ describe('QueryCache', () => {
   })
 
   describe('removeQueries', () => {
-    test('should properly unwrap 1 parameter', () => {
+    it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.removeQueries({
@@ -178,7 +194,7 @@ describe('QueryCache', () => {
   })
 
   describe('resetQueries', () => {
-    test('should properly unwrap 2 parameter', () => {
+    it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.resetQueries(
@@ -198,7 +214,7 @@ describe('QueryCache', () => {
   })
 
   describe('cancelQueries', () => {
-    test('should properly unwrap 2 parameter', () => {
+    it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.cancelQueries(
@@ -218,7 +234,7 @@ describe('QueryCache', () => {
   })
 
   describe('invalidateQueries', () => {
-    test('should properly unwrap 2 parameter', () => {
+    it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.invalidateQueries(
@@ -238,7 +254,7 @@ describe('QueryCache', () => {
     })
 
     // #7694
-    test('should call invalidateQueries immediately and refetchQueries after sleep', async () => {
+    it('should call invalidateQueries immediately and refetchQueries after sleep', async () => {
       const invalidateQueries = vi.spyOn(
         QueryClientOrigin.prototype,
         'invalidateQueries',
@@ -262,7 +278,7 @@ describe('QueryCache', () => {
       expect(refetchQueries).toBeCalled()
     })
 
-    test('should call invalidateQueries immediately and not call refetchQueries', async () => {
+    it('should call invalidateQueries immediately and not call refetchQueries', async () => {
       const invalidateQueries = vi.spyOn(
         QueryClientOrigin.prototype,
         'invalidateQueries',
@@ -289,7 +305,7 @@ describe('QueryCache', () => {
   })
 
   describe('refetchQueries', () => {
-    test('should properly unwrap 2 parameter', () => {
+    it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.refetchQueries(
@@ -309,7 +325,7 @@ describe('QueryCache', () => {
   })
 
   describe('fetchQuery', () => {
-    test('should properly unwrap parameter', () => {
+    it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchQuery({
@@ -323,7 +339,7 @@ describe('QueryCache', () => {
   })
 
   describe('prefetchQuery', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
@@ -336,7 +352,7 @@ describe('QueryCache', () => {
   })
 
   describe('fetchInfiniteQuery', () => {
-    test('should properly unwrap parameter', () => {
+    it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchInfiniteQuery({
@@ -351,7 +367,7 @@ describe('QueryCache', () => {
         }),
       )
     })
-    test('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
+    it('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
 
       const options = infiniteQueryOptions({
@@ -372,7 +388,7 @@ describe('QueryCache', () => {
   })
 
   describe('prefetchInfiniteQuery', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.prefetchInfiniteQuery({
@@ -390,7 +406,7 @@ describe('QueryCache', () => {
   })
 
   describe('setDefaultOptions', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setDefaultOptions({
@@ -408,7 +424,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueryDefaults', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueryDefaults(queryKeyRef, {
@@ -425,7 +441,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryDefaults', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryDefaults(queryKeyRef)
@@ -437,7 +453,7 @@ describe('QueryCache', () => {
   })
 
   describe('setMutationDefaults', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setMutationDefaults(queryKeyRef, {
@@ -454,7 +470,7 @@ describe('QueryCache', () => {
   })
 
   describe('getMutationDefaults', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.getMutationDefaults(queryKeyRef)

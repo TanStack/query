@@ -81,8 +81,8 @@ Feature/Capability Key:
 
 [bpl-react-query]: https://bundlephobia.com/result?p=@tanstack/react-query
 [bp-react-query]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query?label=💾
-[gh-react-query]: https://github.com/tannerlinsley/react-query
-[stars-react-query]: https://img.shields.io/github/stars/tannerlinsley/react-query?label=%F0%9F%8C%9F
+[gh-react-query]: https://github.com/TanStack/query
+[stars-react-query]: https://img.shields.io/github/stars/TanStack/query?label=%F0%9F%8C%9F
 [swr]: https://github.com/vercel/swr
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=💾
 [gh-swr]: https://github.com/vercel/swr

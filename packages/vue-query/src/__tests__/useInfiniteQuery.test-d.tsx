@@ -1,15 +1,16 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
+    const key = queryKey()
     const query = reactive(
       useInfiniteQuery({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -23,9 +24,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('data should be defined when query is success', () => {
+    const key = queryKey()
     const query = reactive(
       useInfiniteQuery({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -39,9 +41,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('error should be null when query is success', () => {
+    const key = queryKey()
     const query = reactive(
       useInfiniteQuery({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -54,9 +57,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('data should be undefined when query is pending', () => {
+    const key = queryKey()
     const query = reactive(
       useInfiniteQuery({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -69,9 +73,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('error should be defined when query is error', () => {
+    const key = queryKey()
     const query = reactive(
       useInfiniteQuery({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -84,8 +89,9 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept computed options', () => {
+    const key = queryKey()
     const options = computed(() => ({
-      queryKey: ['infiniteQuery'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
       getNextPageParam: () => undefined,
       initialPageParam: 0,
@@ -98,9 +104,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept computed options using infiniteQueryOptions', () => {
+    const key = queryKey()
     const options = computed(() =>
       infiniteQueryOptions({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
@@ -114,9 +121,10 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept plain options using infiniteQueryOptions', () => {
+    const key = queryKey()
     const options = () =>
       infiniteQueryOptions({
-        queryKey: ['infiniteQuery'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
