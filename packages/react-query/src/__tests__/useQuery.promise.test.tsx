@@ -791,9 +791,10 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
-    // `sleep` is longer than usual on purpose: `takeRender` below advances the
-    // shared fake clock (`shouldAdvanceTime`) by ~35ms while awaiting the React
-    // commit, so the fetch must outlast that to stay in-flight when cancelled.
+    // `sleep` is longer than usual on purpose: with `shouldAdvanceTime`, the
+    // real time spent rendering and awaiting `takeRender` (~40ms) is added to
+    // the fake clock, so a shorter fetch would resolve before `cancel` can take
+    // effect. A longer fetch keeps the query in-flight when it is cancelled.
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(50).then(() => 'test'))
