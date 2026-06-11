@@ -1600,6 +1600,53 @@ describe('queryClient', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
       unsubscribe()
     })
+
+    // Regression test for https://github.com/TanStack/query/issues/3741
+    it('should match keys with `undefined` properties when ignoreUndefinedInKeys is set', async () => {
+      const queryFnAll = vi.fn().mockReturnValue('all')
+      const queryFnFiltered = vi.fn().mockReturnValue('filtered')
+
+      await queryClient.fetchQuery({
+        queryKey: [{ entity: 'todos', scope: 'list' }],
+        queryFn: queryFnAll,
+      })
+      await queryClient.fetchQuery({
+        queryKey: [{ entity: 'todos', scope: 'list', filter: { done: true } }],
+        queryFn: queryFnFiltered,
+      })
+
+      const observerAll = new QueryObserver(queryClient, {
+        queryKey: [{ entity: 'todos', scope: 'list' }],
+        queryFn: queryFnAll,
+        staleTime: Infinity,
+      })
+      const observerFiltered = new QueryObserver(queryClient, {
+        queryKey: [{ entity: 'todos', scope: 'list', filter: { done: true } }],
+        queryFn: queryFnFiltered,
+        staleTime: Infinity,
+      })
+      const u1 = observerAll.subscribe(() => undefined)
+      const u2 = observerFiltered.subscribe(() => undefined)
+
+      // Without the option: undefined-keyed invalidation only hits the
+      // unfiltered cache entry — the filtered one is NOT refetched.
+      await queryClient.invalidateQueries({
+        queryKey: [{ entity: 'todos', scope: 'list', filter: undefined }],
+      })
+      expect(queryFnAll).toHaveBeenCalledTimes(2)
+      expect(queryFnFiltered).toHaveBeenCalledTimes(1)
+
+      // With the option: undefined property is ignored → both entries match.
+      await queryClient.invalidateQueries({
+        queryKey: [{ entity: 'todos', scope: 'list', filter: undefined }],
+        ignoreUndefinedInKeys: true,
+      })
+      expect(queryFnAll).toHaveBeenCalledTimes(3)
+      expect(queryFnFiltered).toHaveBeenCalledTimes(2)
+
+      u1()
+      u2()
+    })
   })
 
   describe('resetQueries', () => {
