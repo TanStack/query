@@ -295,6 +295,190 @@ describe('useMutation', () => {
     expect(callbacks).toEqual(['mutate.onSettled'])
   })
 
+  it('should call mutateAsync callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      }))
+
+      createEffect(() => {
+        const { mutateAsync } = mutation
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      })
+
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'mutateAsync.onSuccess',
+      'mutateAsync.onSettled',
+    ])
+  })
+
+  it('should call mutateAsync error callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      }))
+
+      createEffect(() => {
+        const { mutateAsync } = mutation
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutateAsync.onSettled')
+              },
+            })
+          } catch {}
+        }, 0)
+      })
+
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+  })
+
+  it('should call only mutateAsync onSuccess when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      }))
+
+      createEffect(() => {
+        const { mutateAsync } = mutation
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+          })
+        }, 0)
+      })
+
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+  })
+
+  it('should call only mutateAsync onError when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      }))
+
+      createEffect(() => {
+        const { mutateAsync } = mutation
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+            })
+          } catch {}
+        }, 0)
+      })
+
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError'])
+  })
+
+  it('should call only mutateAsync onSettled when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      }))
+
+      createEffect(() => {
+        const { mutateAsync } = mutation
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      })
+
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSettled'])
+  })
+
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const [count, setCount] = createSignal(0)
     const onSuccessMock = vi.fn()
