@@ -25,8 +25,8 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   describe('useQuery', () => {

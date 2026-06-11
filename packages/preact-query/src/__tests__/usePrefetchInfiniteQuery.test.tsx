@@ -52,9 +52,9 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
     Fallback.mockClear()
+    vi.useRealTimers()
   })
 
   const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)

@@ -15,8 +15,8 @@ describe('createQueries', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it(
