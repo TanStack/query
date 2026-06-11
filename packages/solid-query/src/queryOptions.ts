@@ -1,4 +1,8 @@
-import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  QueryKey,
+  QueryKeyWithDataTag,
+} from '@tanstack/query-core'
 import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
@@ -35,9 +39,8 @@ export function queryOptions<
   >,
 ): ReturnType<
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -50,9 +53,8 @@ export function queryOptions<
   >,
 ): ReturnType<
   DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions(options: unknown) {
   return options
