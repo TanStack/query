@@ -27,8 +27,8 @@ describe('useMutation', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should be able to reset `data`', async () => {

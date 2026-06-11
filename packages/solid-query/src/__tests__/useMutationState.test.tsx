@@ -18,8 +18,8 @@ describe('useMutationState', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return all mutation states when called without options', async () => {
