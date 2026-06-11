@@ -80,7 +80,10 @@ export function createRawRef<T extends {} | Array<unknown>>(
         }
         return true
       }
-      return false
+      // Spec semantics: deleting a missing prop is a no-op. Returning false here
+      // makes `delete` throw in strict mode, which broke #10341 when `update()`
+      // iterated stale indices over an already-shrunk array.
+      return true
     },
   })
 
@@ -88,6 +91,13 @@ export function createRawRef<T extends {} | Array<unknown>>(
     const existingKeys = Object.keys(out)
     const newKeys = Object.keys(newValue)
     const keysToRemove = existingKeys.filter((key) => !newKeys.includes(key))
+    // Arrays: delete in descending index order so each `deleteProperty` trap
+    // sees the slot it is removing as the current tail (length-- stays valid).
+    // Forward iteration would shrink the array under our feet and the next
+    // index would no longer be `in target`, tripping the trap.
+    if (Array.isArray(newValue)) {
+      keysToRemove.sort((a, b) => Number(b) - Number(a))
+    }
     for (const key of keysToRemove) {
       // @ts-expect-error
       delete out[key]
