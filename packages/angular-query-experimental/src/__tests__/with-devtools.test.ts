@@ -58,8 +58,8 @@ describe('withDevtools feature', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.useRealTimers()
     TestBed.resetTestingModule()
+    vi.useRealTimers()
   })
 
   it.each([
