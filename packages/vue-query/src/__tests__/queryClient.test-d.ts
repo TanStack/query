@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '@tanstack/query-core'
@@ -149,5 +150,110 @@ describe('fetchInfiniteQuery', () => {
         pages: 5,
       },
     ])
+  })
+})
+
+describe('query', () => {
+  it('should return the selected type', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken and enabled false', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      enabled: false,
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken and enabled true', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      enabled: true,
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  })
+})
+
+describe('infiniteQuery', () => {
+  it('should return infinite data', async () => {
+    const data = await new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should return the selected type', () => {
+    const result = new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve({ count: 1 }),
+      getNextPageParam: () => 2,
+      initialPageParam: 1,
+      select: (data) => data.pages.map((page) => page.count),
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<Array<number>>>()
+  })
+
+  it('should allow passing pages with getNextPageParam', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        pages: 5,
+      },
+    ])
+  })
+
+  it('should not allow passing pages without getNextPageParam', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      // @ts-expect-error Property 'getNextPageParam' is missing
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        pages: 5,
+      },
+    ])
+  })
+
+  it('should preserve page param inference', () => {
+    new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return Promise.resolve(pageParam.toString())
+      },
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+    })
   })
 })
