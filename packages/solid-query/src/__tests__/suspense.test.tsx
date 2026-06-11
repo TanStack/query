@@ -29,8 +29,8 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should render the correct amount of times in Suspense mode', async () => {

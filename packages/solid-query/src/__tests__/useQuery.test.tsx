@@ -54,8 +54,8 @@ describe('useQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return the correct types', () => {

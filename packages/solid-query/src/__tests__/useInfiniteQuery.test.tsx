@@ -61,8 +61,8 @@ describe('useInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return the correct states for a successful query', async () => {

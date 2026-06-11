@@ -21,8 +21,8 @@ describe('mutationOptions', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {

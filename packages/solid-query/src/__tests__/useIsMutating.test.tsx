@@ -20,8 +20,8 @@ describe('useIsMutating', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return the number of fetching mutations', async () => {
