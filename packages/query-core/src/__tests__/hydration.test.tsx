@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
+import { QueryObserver } from '../queryObserver'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
@@ -1794,6 +1795,78 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
+    expect(states).not.toContainEqual(
+      expect.objectContaining({ fetchStatus: 'fetching' }),
+    )
+    expect(states).not.toContainEqual(
+      expect.objectContaining({ status: 'pending' }),
+    )
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  it('should not transition to a fetching/pending state when hydrating an already resolved promise into an idle pending query', async () => {
+    const key = queryKey()
+    // --- server ---
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    let resolvePrefetch: undefined | ((value?: unknown) => void)
+    const prefetchPromise = new Promise((res) => {
+      resolvePrefetch = res
+    })
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => prefetchPromise,
+    })
+    const dehydrated = dehydrate(serverQueryClient)
+
+    // Simulate a synchronous thenable - the promise was already resolved
+    // before we hydrate on the client.
+    resolvePrefetch?.('server data')
+    Object.assign(dehydrated.queries[0]!.promise!, {
+      then: (cb: ((value: unknown) => unknown) | undefined) => {
+        cb?.('server data')
+        return dehydrated.queries[0]!.promise!
+      },
+    })
+
+    // --- client ---
+    // This matches a useQuery({ enabled: false }) shell that exists before
+    // HydrationBoundary hydrates the streamed query.
+    const clientQueryClient = new QueryClient()
+    const observer = new QueryObserver(clientQueryClient, {
+      queryKey: key,
+      enabled: false,
+    })
+    const unsubscribeObserver = observer.subscribe(() => undefined)
+    const query = clientQueryClient.getQueryCache().find({ queryKey: key })!
+    expect(query.state).toMatchObject({
+      dataUpdatedAt: 0,
+      status: 'pending',
+      fetchStatus: 'idle',
+    })
+
+    const states: Array<{ status: string; fetchStatus: string }> = []
+    const unsubscribeCache = clientQueryClient
+      .getQueryCache()
+      .subscribe((event) => {
+        if (event.type === 'updated') {
+          const { status, fetchStatus } = event.query.state
+          states.push({ status, fetchStatus })
+        }
+      })
+
+    hydrate(clientQueryClient, dehydrated)
+    await vi.advanceTimersByTimeAsync(0)
+    unsubscribeCache()
+    unsubscribeObserver()
+
+    expect(clientQueryClient.getQueryData(key)).toBe('server data')
     expect(states).not.toContainEqual(
       expect.objectContaining({ fetchStatus: 'fetching' }),
     )
