@@ -67,6 +67,11 @@ export class QueryObserver<
   #refetchIntervalId?: ManagedTimerId
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
+  #lastTrackedResult?: QueryObserverResult<TData, TError>
+  #resultProxyCache = new WeakMap<
+    QueryObserverResult<TData, TError>, // un-proxied result
+    QueryObserverResult<TData, TError> // proxied result
+  >()
 
   constructor(
     client: QueryClient,
@@ -253,7 +258,7 @@ export class QueryObserver<
       this.#currentResultOptions = this.options
       this.#currentResultState = this.#currentQuery.state
     }
-    return result
+    return this.#currentResult
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
@@ -261,29 +266,48 @@ export class QueryObserver<
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>,
+    nextResult: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    return new Proxy(result, {
-      get: (target, key) => {
-        this.trackProp(key as keyof QueryObserverResult)
-        onPropTracked?.(key as keyof QueryObserverResult)
-        if (key === 'promise') {
-          this.trackProp('data')
-          if (
-            !this.options.experimental_prefetchInRender &&
-            this.#currentThenable.status === 'pending'
-          ) {
-            this.#currentThenable.reject(
-              new Error(
-                'experimental_prefetchInRender feature flag is not enabled',
-              ),
-            )
+    let resultProxy = this.#resultProxyCache.get(nextResult)
+
+    if (resultProxy) {
+      return resultProxy
+    }
+
+    if (this.#lastTrackedResult) {
+      if (shallowEqualObjects(this.#lastTrackedResult, nextResult)) {
+        resultProxy = this.#resultProxyCache.get(this.#lastTrackedResult)
+      }
+    }
+
+    if (!resultProxy) {
+      resultProxy = new Proxy(nextResult, {
+        get: (target, key) => {
+          this.trackProp(key as keyof QueryObserverResult)
+          onPropTracked?.(key as keyof QueryObserverResult)
+          if (key === 'promise') {
+            this.trackProp('data')
+            if (
+              !this.options.experimental_prefetchInRender &&
+              this.#currentThenable.status === 'pending'
+            ) {
+              this.#currentThenable.reject(
+                new Error(
+                  'experimental_prefetchInRender feature flag is not enabled',
+                ),
+              )
+            }
           }
-        }
-        return Reflect.get(target, key)
-      },
-    })
+          return Reflect.get(target, key)
+        },
+      })
+    }
+
+    this.#resultProxyCache.set(nextResult, resultProxy)
+    this.#lastTrackedResult = nextResult
+
+    return resultProxy
   }
 
   trackProp(key: keyof QueryObserverResult) {
