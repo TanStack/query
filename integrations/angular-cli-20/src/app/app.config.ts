@@ -12,6 +12,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideTanStackQuery(new QueryClient()),
+    ...provideTanStackQuery(new QueryClient()),
   ],
 }
