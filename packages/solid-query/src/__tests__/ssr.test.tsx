@@ -42,4 +42,31 @@ describe('useQuery on the server', () => {
     expect(state!.refetch).toBeUndefined()
     expect(state!.promise).toBeUndefined()
   })
+
+  it('resolves an enabled query with data and without unserializable fields', async () => {
+    const client = new QueryClient()
+    let state: UseQueryResult<string> | undefined
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: ['enabled-ssr'],
+        queryFn: () => Promise.resolve('server data'),
+      }))
+      state = query
+      return <div>data: {String(query.data)}</div>
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={client}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('data: server data'))
+
+    expect(state!.data).toBe('server data')
+    expect(state!.isSuccess).toBe(true)
+    expect(state!.refetch).toBeUndefined()
+    expect(state!.promise).toBeUndefined()
+  })
 })
