@@ -79,6 +79,10 @@ const hydratableObserverResult = <
     // During SSR, functions cannot be serialized, so we need to remove them
     // This is safe because we will add these functions back when the query is hydrated
     refetch: undefined,
+    // The `experimental_prefetchInRender` promise cannot be serialized either.
+    // For a disabled query it never settles, which would hang stream/async
+    // SSR while the serializer awaits it (#10907).
+    promise: undefined,
   }
 
   // If the query is an infinite query, we need to remove additional properties
