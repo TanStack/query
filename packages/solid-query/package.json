@@ -77,5 +77,8 @@
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }
