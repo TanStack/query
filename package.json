@@ -85,5 +85,8 @@
     "typescript60": "npm:typescript@6.0.1-rc",
     "vite": "^6.4.1",
     "vitest": "^4.0.18"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }
