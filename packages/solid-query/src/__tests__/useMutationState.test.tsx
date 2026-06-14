@@ -10,16 +10,19 @@ import {
 } from '..'
 
 describe('useMutationState', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return all mutation states when called without options', async () => {
-    const queryClient = new QueryClient()
     const mutationKey = queryKey()
 
     function States() {
@@ -67,7 +70,6 @@ describe('useMutationState', () => {
   })
 
   it('should return variables after calling mutate', async () => {
-    const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
     const mutationKey = queryKey()
 

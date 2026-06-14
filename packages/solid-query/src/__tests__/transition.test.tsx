@@ -15,8 +15,8 @@ describe("useQuery's in Suspense mode with transitions", () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should render the content when the transition is done', async () => {

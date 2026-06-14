@@ -89,12 +89,12 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
+    vi.useRealTimers()
   })
 
   function renderDevtools(

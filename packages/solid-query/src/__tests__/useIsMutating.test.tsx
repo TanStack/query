@@ -12,17 +12,20 @@ import {
 import { setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -78,7 +81,6 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -124,7 +126,6 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -172,17 +173,17 @@ describe('useIsMutating', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = new QueryClient()
+    const customClient = new QueryClient()
     const mutationKey1 = queryKey()
 
     function Page() {
-      const isMutating = useIsMutating(undefined, () => queryClient)
+      const isMutating = useIsMutating(undefined, () => customClient)
       const { mutate } = useMutation(
         () => ({
           mutationKey: mutationKey1,
           mutationFn: () => sleep(20).then(() => 'data'),
         }),
-        () => queryClient,
+        () => customClient,
       )
 
       createEffect(() => {
@@ -224,7 +225,9 @@ describe('useIsMutating', () => {
         return new MutationCacheMock(fn)
       })
 
-    const queryClient = new QueryClient()
+    // Create the client after mocking MutationCache so it uses the mock,
+    // not the centralized client from beforeEach
+    const spiedClient = new QueryClient()
     const mutationKey1 = queryKey()
 
     function IsMutating() {
@@ -255,7 +258,7 @@ describe('useIsMutating', () => {
     }
 
     const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={spiedClient}>
         <Page />
       </QueryClientProvider>
     ))

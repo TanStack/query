@@ -15,8 +15,8 @@ describe('createQueries', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it(
@@ -288,7 +288,7 @@ describe('createQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
@@ -319,7 +319,7 @@ describe('createQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')

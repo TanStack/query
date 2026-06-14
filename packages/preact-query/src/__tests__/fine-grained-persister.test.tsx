@@ -20,8 +20,8 @@ describe('fine grained persister', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should restore query state from persister and not refetch', async () => {

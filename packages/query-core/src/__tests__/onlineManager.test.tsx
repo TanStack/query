@@ -157,6 +157,20 @@ describe('onlineManager', () => {
     unsubscribe2()
   })
 
+  it('should update online status from window online and offline events', () => {
+    const unsubscribe = onlineManager.subscribe(() => undefined)
+
+    expect(onlineManager.isOnline()).toBe(true)
+
+    window.dispatchEvent(new Event('offline'))
+    expect(onlineManager.isOnline()).toBe(false)
+
+    window.dispatchEvent(new Event('online'))
+    expect(onlineManager.isOnline()).toBe(true)
+
+    unsubscribe()
+  })
+
   it('should call listeners when setOnline is called', () => {
     const listener = vi.fn()
 
