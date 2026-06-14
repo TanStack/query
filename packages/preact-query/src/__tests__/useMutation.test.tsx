@@ -2006,7 +2006,7 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
   })
 
-  it('should handle conditional logic based on mutate success or failure', async () => {
+  it('should set success message from mutate callbacks when mutation succeeds', async () => {
     function Page() {
       const [message, setMessage] = useState<string>('idle')
 
@@ -2033,6 +2033,38 @@ describe('useMutation', () => {
           >
             submit
           </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
+  })
+
+  it('should set error message from mutate callbacks when mutation fails', async () => {
+    function Page() {
+      const [message, setMessage] = useState<string>('idle')
+
+      const { mutate } = useMutation({
+        mutationFn: async (shouldFail: boolean) => {
+          await sleep(10)
+          if (shouldFail) {
+            throw new Error('submission failed')
+          }
+          return 'submitted successfully'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
           <button
             onClick={() =>
               mutate(true, {
@@ -2049,13 +2081,6 @@ describe('useMutation', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
-
-    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
-    await vi.advanceTimersByTimeAsync(11)
-
-    expect(
-      rendered.getByText('message: success: submitted successfully'),
-    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
     await vi.advanceTimersByTimeAsync(11)
