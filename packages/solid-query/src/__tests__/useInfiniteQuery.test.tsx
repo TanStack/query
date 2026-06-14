@@ -1135,7 +1135,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 3
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1216,7 +1216,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 2
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
