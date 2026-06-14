@@ -46,7 +46,7 @@ describe('QueryClientProvider/context', () => {
     provider.remove()
     await Promise.resolve()
 
-    expect(() => useQueryClient()).toThrowError(/No QueryClient available/)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
   it('prefers an explicit client in resolveQueryClient', () => {
@@ -76,7 +76,7 @@ describe('QueryClientProvider/context', () => {
     providerA.remove()
     await Promise.resolve()
 
-    expect(() => useQueryClient()).toThrowError(/No QueryClient available/)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
   it('throws when multiple different providers make global lookup ambiguous', async () => {
@@ -93,10 +93,8 @@ describe('QueryClientProvider/context', () => {
     await providerB.updateComplete
 
     expect(getDefaultQueryClient()).toBeUndefined()
-    expect(() => useQueryClient()).toThrowError(
-      /Multiple QueryClients are mounted/,
-    )
-    expect(() => resolveQueryClient()).toThrowError(
+    expect(() => useQueryClient()).toThrow(/Multiple QueryClients are mounted/)
+    expect(() => resolveQueryClient()).toThrow(
       /Multiple QueryClients are mounted/,
     )
 
@@ -112,7 +110,7 @@ describe('QueryClientProvider/context', () => {
 
   it('requires an explicit client before connect', () => {
     const provider = document.createElement(tagName) as QueryClientProvider
-    expect(() => provider.connectedCallback()).toThrowError(
+    expect(() => provider.connectedCallback()).toThrow(
       /No QueryClient available/,
     )
   })
@@ -195,7 +193,7 @@ describe('QueryClientProvider/context', () => {
     )
     expect(unmount).toHaveBeenCalledTimes(1)
     expect(getDefaultQueryClient()).toBeUndefined()
-    expect(() => useQueryClient()).toThrowError(/No QueryClient available/)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
     await waitForMissingQueryClient(() => consumer.query())
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
