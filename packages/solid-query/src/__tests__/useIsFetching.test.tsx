@@ -2,14 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useIsFetching,
-  useQuery,
-} from '..'
-import { setActTimeout } from './utils'
+import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
   let queryCache: QueryCache
@@ -57,11 +51,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
@@ -125,11 +115,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await vi.advanceTimersByTimeAsync(300)
@@ -185,11 +171,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
@@ -220,11 +202,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)

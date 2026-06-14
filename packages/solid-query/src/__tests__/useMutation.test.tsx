@@ -7,14 +7,12 @@ import {
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
-  MutationCache,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-} from '..'
-import { mockOnlineManagerIsOnline, setActTimeout } from './utils'
+  mockOnlineManagerIsOnline,
+  renderWithClient,
+  setActTimeout,
+} from './utils'
 import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
@@ -49,11 +47,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByRole('heading').textContent).toBe('empty')
 
@@ -88,11 +82,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.queryByRole('heading')).toBeNull()
 
@@ -134,11 +124,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -175,11 +161,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -210,11 +192,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -248,11 +226,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -283,11 +257,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -320,11 +290,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -364,11 +330,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -397,11 +359,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -435,11 +393,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -468,11 +422,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -510,11 +460,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByRole('heading').textContent).toBe('0')
 
@@ -572,11 +518,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('Data')).toBeInTheDocument()
 
@@ -636,11 +578,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByRole('heading').textContent).toBe('0')
 
@@ -707,11 +645,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -760,11 +694,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -805,11 +735,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(20)
 
@@ -842,11 +768,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(20)
 
@@ -882,11 +804,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(
       rendered.getByText('error: null, status: idle, isPaused: false'),
@@ -939,11 +857,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(
       rendered.getByText('data: null, status: idle, isPaused: false'),
@@ -1005,11 +919,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     rendered.getByText('data: null, status: idle, isPaused: false')
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
@@ -1067,11 +977,7 @@ describe('useMutation', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(16)
 
@@ -1138,11 +1044,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
     fireEvent.click(rendered.getByText('mutate'))
     fireEvent.click(rendered.getByText('unmount'))
   })
@@ -1169,18 +1071,16 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
-          fallback={() => (
-            <div>
-              <span>error</span>
-            </div>
-          )}
-        >
-          <Page />
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary
+        fallback={() => (
+          <div>
+            <span>error</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
     ))
 
     fireEvent.click(rendered.getByText('mutate'))
@@ -1217,18 +1117,16 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
-          fallback={() => (
-            <div>
-              <span>error boundary</span>
-            </div>
-          )}
-        >
-          <Page />
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary
+        fallback={() => (
+          <div>
+            <span>error boundary</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
     ))
 
     // first error goes to component
@@ -1271,11 +1169,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClientMutationMeta}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClientMutationMeta, () => <Page />)
 
     fireEvent.click(rendered.getByText('succeed'))
     await vi.advanceTimersByTimeAsync(0)
@@ -1314,11 +1208,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClientMutationMeta}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClientMutationMeta, () => <Page />)
 
     fireEvent.click(rendered.getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
@@ -1379,11 +1269,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
@@ -1438,11 +1324,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await rendered.findByText('data: null, status: idle')
 
@@ -1495,11 +1377,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await rendered.findByText('status: idle')
 
@@ -1548,11 +1426,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error: null, status: idle')).toBeInTheDocument()
@@ -1599,11 +1473,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('error: null, status: idle')).toBeInTheDocument()
 

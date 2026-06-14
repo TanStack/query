@@ -7,17 +7,12 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueriesObserver,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useQueries,
-} from '..'
+import { QueriesObserver, QueryCache, QueryClient, useQueries } from '..'
+import { renderWithClient } from './utils'
 import type {
   QueryFunction,
   QueryFunctionContext,
@@ -74,11 +69,7 @@ describe('useQueries', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
@@ -716,11 +707,7 @@ describe('useQueries', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     fireEvent.click(rendered.getByText('unmount'))
 
