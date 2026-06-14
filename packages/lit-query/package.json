@@ -14,16 +14,26 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "scripts": {
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto .",
+    "lint:fix": "eslint --concurrency=auto . --fix",
+    "test:types": "tsc --noEmit",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:watch": "pnpm run test:lib:dev",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup --tsconfig tsconfig.prod.json",
+    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
+    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
+    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
+    "perf:l3:raw": "node scripts/l3-stress.mjs"
+  },
   "type": "module",
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
-  "sideEffects": false,
-  "files": [
-    "build",
-    "src",
-    "!src/tests"
-  ],
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
@@ -38,22 +48,12 @@
     },
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "clean": "premove ./build ./coverage",
-    "compile": "node ../../node_modules/typescript/lib/tsc.js --build",
-    "build": "tsup --tsconfig tsconfig.prod.json",
-    "test:types": "node ../../node_modules/typescript/lib/tsc.js --noEmit",
-    "test:eslint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test:lib": "vitest run",
-    "test:lib:dev": "vitest",
-    "test:watch": "pnpm run test:lib:dev",
-    "test:build": "publint --strict && attw --pack",
-    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
-    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
-    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
-    "perf:l3:raw": "node scripts/l3-stress.mjs"
-  },
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src",
+    "!src/tests"
+  ],
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
