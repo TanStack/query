@@ -1244,8 +1244,7 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
-  it('should pass meta to mutation', async () => {
-    const errorMock = vi.fn()
+  it('should pass meta to mutation on success', async () => {
     const successMock = vi.fn()
 
     const queryClientMutationMeta = new QueryClient({
@@ -1253,33 +1252,21 @@ describe('useMutation', () => {
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)
         },
-        onError: (_, __, ___, mutation) => {
-          errorMock(mutation.meta?.metaErrorMessage)
-        },
       }),
     })
 
     const metaSuccessMessage = 'mutation succeeded'
-    const metaErrorMessage = 'mutation failed'
 
     function Page() {
       const mutationSucceed = useMutation(() => ({
         mutationFn: () => Promise.resolve(''),
         meta: { metaSuccessMessage },
       }))
-      const mutationError = useMutation(() => ({
-        mutationFn: () => {
-          throw new Error('')
-        },
-        meta: { metaErrorMessage },
-      }))
 
       return (
         <div>
           <button onClick={() => mutationSucceed.mutate()}>succeed</button>
-          <button onClick={() => mutationError.mutate()}>error</button>
           {mutationSucceed.isSuccess && <div>successTest</div>}
-          {mutationError.isError && <div>errorTest</div>}
         </div>
       )
     }
@@ -1291,13 +1278,51 @@ describe('useMutation', () => {
     ))
 
     fireEvent.click(rendered.getByText('succeed'))
-    fireEvent.click(rendered.getByText('error'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.queryByText('successTest')).not.toBeNull()
-    expect(rendered.queryByText('errorTest')).not.toBeNull()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
+  })
+
+  it('should pass meta to mutation on error', async () => {
+    const errorMock = vi.fn()
+
+    const queryClientMutationMeta = new QueryClient({
+      mutationCache: new MutationCache({
+        onError: (_, __, ___, mutation) => {
+          errorMock(mutation.meta?.metaErrorMessage)
+        },
+      }),
+    })
+
+    const metaErrorMessage = 'mutation failed'
+
+    function Page() {
+      const mutationError = useMutation(() => ({
+        mutationFn: () => {
+          throw new Error('')
+        },
+        meta: { metaErrorMessage },
+      }))
+
+      return (
+        <div>
+          <button onClick={() => mutationError.mutate()}>error</button>
+          {mutationError.isError && <div>errorTest</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClientMutationMeta}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    fireEvent.click(rendered.getByText('error'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByText('errorTest')).not.toBeNull()
 
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
