@@ -10,25 +10,58 @@ import type {
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 
-type MutationStateOptions<TResult = MutationState> = {
+type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
+type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<TResult, TMutation>,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select ? options.select(mutation) : mutation.state) as TResult,
+        (options.select
+          ? options.select(mutation as TMutation)
+          : mutation.state) as TResult,
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: Accessor<MutationStateOptions<TResult>> = () => ({}),
+/**
+ * @template TResult - The type of values returned by the `select` callback.
+ * @template TMutation - Narrows the type of the `mutation` argument passed to
+ * `select`. This is a caller-side assertion — the mutation cache stores
+ * mutations as the base `Mutation` type, so it is the caller's responsibility
+ * to ensure `TMutation` matches the actual mutations in the cache (e.g. by
+ * specifying a `mutationKey` in `filters`).
+ */
+export function useMutationState<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
+  options: Accessor<MutationStateOptions<TResult, TMutation>> = () => ({}),
   queryClient?: Accessor<QueryClient>,
 ): Accessor<Array<TResult>> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
