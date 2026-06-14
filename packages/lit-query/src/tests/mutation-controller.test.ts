@@ -42,7 +42,7 @@ describe('createMutationController', () => {
     ) as ContextMutationHostElement
 
     expect(consumer.mutation().isIdle).toBe(true)
-    expect(() => consumer.mutation.mutate(1)).toThrowError(
+    expect(() => consumer.mutation.mutate(1)).toThrow(
       /No QueryClient available/,
     )
     await expect(consumer.mutation.mutateAsync(1)).rejects.toThrow(
