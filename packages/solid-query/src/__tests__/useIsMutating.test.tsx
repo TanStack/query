@@ -3,13 +3,8 @@ import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-} from '..'
-import { setActTimeout } from './utils'
+import { QueryClient, useIsMutating, useMutation } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
   let queryClient: QueryClient
@@ -68,11 +63,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
 
@@ -112,11 +103,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
@@ -160,11 +147,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
@@ -257,11 +240,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={spiedClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(spiedClient, () => <Page />)
 
     fireEvent.click(rendered.getByText('unmount'))
 
