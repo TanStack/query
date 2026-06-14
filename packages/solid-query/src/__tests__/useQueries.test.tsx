@@ -7,7 +7,7 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent } from '@solidjs/testing-library'
+import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -722,6 +722,32 @@ describe('useQueries', () => {
 
     await vi.advanceTimersByTimeAsync(20)
     QueriesObserverSpy.mockRestore()
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => 'custom client')
+
+    function Page() {
+      const queries = useQueries(
+        () => ({
+          queries: [
+            {
+              queryKey: key,
+              queryFn,
+            },
+          ],
+        }),
+        () => queryClient,
+      )
+
+      return <div>data: {queries[0].data}</div>
+    }
+
+    const rendered = render(() => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
