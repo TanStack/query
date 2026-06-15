@@ -66,5 +66,8 @@
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
     "vue": "^3.3.0"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

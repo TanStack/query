@@ -91,5 +91,8 @@
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
     "react": "^18 || ^19"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

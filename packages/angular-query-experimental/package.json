@@ -110,5 +110,8 @@
   "publishConfig": {
     "directory": "dist",
     "linkDirectory": false
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

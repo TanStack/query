@@ -80,5 +80,8 @@
   },
   "peerDependencies": {
     "preact": "^10.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

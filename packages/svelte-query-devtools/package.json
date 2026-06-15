@@ -65,5 +65,8 @@
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",
     "svelte": "^5.25.0"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

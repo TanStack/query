@@ -82,5 +82,8 @@
   },
   "peerDependencies": {
     "react": "^18 || ^19"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

@@ -66,5 +66,8 @@
     "@tanstack/react-query": "workspace:^",
     "next": "^13 || ^14 || ^15 || ^16",
     "react": "^18 || ^19"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

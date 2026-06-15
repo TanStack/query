@@ -75,5 +75,8 @@
     "typescript": {
       "optional": true
     }
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

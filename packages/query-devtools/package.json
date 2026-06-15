@@ -78,5 +78,8 @@
     "superjson": "^2.2.2",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }

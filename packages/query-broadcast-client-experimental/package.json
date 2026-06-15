@@ -64,5 +64,8 @@
     "@testing-library/react": "^16.1.0",
     "@vitejs/plugin-react": "^4.3.4",
     "npm-run-all2": "^5.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/TanStack/query/issues"
   }
 }
