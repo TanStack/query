@@ -1855,10 +1855,10 @@ describe('useInfiniteQuery', () => {
                   {(page, i) => (
                     <div>
                       <div>
-                        Page {i()}: {page().ts}
+                        Page {i()}: {page.ts}
                       </div>
                       <div>
-                        <For each={page().items} keyed={false}>
+                        <For each={page.items} keyed={false}>
                           {(item) => <p>Item: {item()}</p>}
                         </For>
                       </div>
@@ -1996,10 +1996,10 @@ describe('useInfiniteQuery', () => {
                   {(page, i) => (
                     <div>
                       <div>
-                        Page {i()}: {page().ts}
+                        Page {i()}: {page.ts}
                       </div>
                       <div>
-                        <For each={page().items} keyed={false}>
+                        <For each={page.items} keyed={false}>
                           {(item) => <p>Item: {item()}</p>}
                         </For>
                       </div>
