@@ -27,12 +27,7 @@ import {
   queryKey,
   sleep,
 } from '@tanstack/query-test-utils'
-import {
-  QueryCache,
-  QueryClient,
-  keepPreviousData,
-  useQuery,
-} from '..'
+import { QueryCache, QueryClient, keepPreviousData, useQuery } from '..'
 import { IsRestoringContext } from '../isRestoring'
 import {
   Blink,
