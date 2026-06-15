@@ -1,4 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
@@ -8,7 +9,7 @@ import type { UseQueryOptions, UseQueryResult } from '../types'
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {
     const query1 = {
-      queryKey: ['key1'],
+      queryKey: queryKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -20,13 +21,13 @@ describe('UseQueries config object overload', () => {
     }
 
     const query2 = {
-      queryKey: ['key2'],
+      queryKey: queryKey(),
       queryFn: () => 'Query Data',
       initialData: 'initial data',
     }
 
     const query3 = {
-      queryKey: ['key2'],
+      queryKey: queryKey(),
       queryFn: () => 'Query Data',
     }
 
@@ -43,7 +44,7 @@ describe('UseQueries config object overload', () => {
 
   it('TData should be defined when passed through queryOptions', () => {
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => {
         return {
           wow: true,
@@ -60,15 +61,15 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
     const query1 = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       select: (data) => data > 1,
     })
 
     const query2 = {
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       select: (data: number) => data > 1,
     }
@@ -85,7 +86,7 @@ describe('UseQueries config object overload', () => {
     const queryResults = useQueries({
       queries: [
         {
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -112,7 +113,7 @@ describe('UseQueries config object overload', () => {
           queries: [
             {
               ...options,
-              queryKey: ['todos-key'],
+              queryKey: queryKey(),
               queryFn: () => Promise.resolve('data'),
             },
           ],
@@ -130,7 +131,7 @@ describe('UseQueries config object overload', () => {
     const queryResults = useQueries({
       queries: [
         {
-          queryKey: ['withSkipToken'],
+          queryKey: queryKey(),
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
         },
       ],
@@ -146,14 +147,14 @@ describe('UseQueries config object overload', () => {
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: ['key1'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: ['key2'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(true),
         }),
     }

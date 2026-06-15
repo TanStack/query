@@ -18,21 +18,20 @@ import { renderWithClient } from './utils'
 const generateQueryFn = (data: string) =>
   vi
     .fn<(...args: Array<any>) => Promise<string>>()
-    .mockImplementation(async () => {
-      await sleep(10)
-
-      return data
-    })
+    .mockImplementation(() => sleep(10).then(() => data))
 
 describe('usePrefetchQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 

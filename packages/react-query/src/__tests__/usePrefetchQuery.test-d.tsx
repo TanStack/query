@@ -1,10 +1,11 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken, usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -14,7 +15,7 @@ describe('usePrefetchQuery', () => {
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         refetchInterval: 1000,
@@ -23,7 +24,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         enabled: true,
@@ -32,7 +33,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         throwOnError: true,
@@ -43,14 +44,14 @@ describe('usePrefetchQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: skipToken,
       }),
     )
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),

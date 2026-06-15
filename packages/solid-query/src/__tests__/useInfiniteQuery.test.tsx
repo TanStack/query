@@ -14,12 +14,11 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
-  QueryClientProvider,
   infiniteQueryOptions,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import { Blink, setActTimeout } from './utils'
+import { Blink, renderWithClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -50,16 +49,19 @@ const fetchItems = (
   }))
 
 describe('useInfiniteQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
@@ -83,12 +85,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -199,12 +199,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(50)
@@ -261,12 +259,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -357,12 +353,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -410,12 +404,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -471,12 +463,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -553,12 +543,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(30)
@@ -651,12 +639,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -804,12 +790,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -922,12 +906,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1042,12 +1024,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1144,12 +1124,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(160)
@@ -1229,18 +1207,16 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 3
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1309,18 +1285,16 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 2
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1371,12 +1345,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(60)
@@ -1432,12 +1404,10 @@ describe('useInfiniteQuery', () => {
       return <>{show() ? <List /> : null}</>
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(125)
@@ -1499,12 +1469,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(70)
@@ -1592,12 +1560,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(30)
@@ -1655,12 +1621,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1705,12 +1669,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1755,12 +1717,10 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1805,12 +1765,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1907,12 +1865,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
@@ -2041,12 +1997,10 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Page />
+      </Loading>
     ))
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
@@ -2112,14 +2066,12 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading>
-          <Blink duration={5}>
-            <Page />
-          </Blink>
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading>
+        <Blink duration={5}>
+          <Page />
+        </Blink>
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(5)

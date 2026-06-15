@@ -8,7 +8,7 @@ import {
   isValidTimeout,
   noop,
   replaceData,
-  resolveEnabled,
+  resolveQueryBoolean,
   resolveStaleTime,
   shallowEqualObjects,
   timeUntilStale,
@@ -153,7 +153,7 @@ export class QueryObserver<
       this.options.enabled !== undefined &&
       typeof this.options.enabled !== 'boolean' &&
       typeof this.options.enabled !== 'function' &&
-      typeof resolveEnabled(this.options.enabled, this.#currentQuery) !==
+      typeof resolveQueryBoolean(this.options.enabled, this.#currentQuery) !==
         'boolean'
     ) {
       throw new Error(
@@ -197,8 +197,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
+        resolveQueryBoolean(this.options.enabled, this.#currentQuery) !==
+          resolveQueryBoolean(prevOptions.enabled, this.#currentQuery) ||
         resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
           resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
@@ -211,8 +211,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
+        resolveQueryBoolean(this.options.enabled, this.#currentQuery) !==
+          resolveQueryBoolean(prevOptions.enabled, this.#currentQuery) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -394,7 +394,7 @@ export class QueryObserver<
 
     if (
       environmentManager.isServer() ||
-      resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
+      resolveQueryBoolean(this.options.enabled, this.#currentQuery) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
@@ -417,14 +417,14 @@ export class QueryObserver<
   }
 
   #clearStaleTimeout(): void {
-    if (this.#staleTimeoutId) {
+    if (this.#staleTimeoutId !== undefined) {
       timeoutManager.clearTimeout(this.#staleTimeoutId)
       this.#staleTimeoutId = undefined
     }
   }
 
   #clearRefetchInterval(): void {
-    if (this.#refetchIntervalId) {
+    if (this.#refetchIntervalId !== undefined) {
       timeoutManager.clearInterval(this.#refetchIntervalId)
       this.#refetchIntervalId = undefined
     }
@@ -589,7 +589,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       promise: this.#currentThenable,
-      isEnabled: resolveEnabled(options.enabled, query) !== false,
+      isEnabled: resolveQueryBoolean(options.enabled, query) !== false,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>
@@ -750,9 +750,12 @@ function shouldLoadOnMount(
   options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
-    resolveEnabled(options.enabled, query) !== false &&
+    resolveQueryBoolean(options.enabled, query) !== false &&
     query.state.data === undefined &&
-    !(query.state.status === 'error' && options.retryOnMount === false)
+    !(
+      query.state.status === 'error' &&
+      resolveQueryBoolean(options.retryOnMount, query) === false
+    )
   )
 }
 
@@ -775,7 +778,7 @@ function shouldFetchOn(
     (typeof options)['refetchOnReconnect'],
 ) {
   if (
-    resolveEnabled(options.enabled, query) !== false &&
+    resolveQueryBoolean(options.enabled, query) !== false &&
     resolveStaleTime(options.staleTime, query) !== 'static'
   ) {
     const value = typeof field === 'function' ? field(query) : field
@@ -793,7 +796,7 @@ function shouldFetchOptionally(
 ): boolean {
   return (
     (query !== prevQuery ||
-      resolveEnabled(prevOptions.enabled, query) === false) &&
+      resolveQueryBoolean(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
   )
@@ -804,7 +807,7 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    resolveEnabled(options.enabled, query) !== false &&
+    resolveQueryBoolean(options.enabled, query) !== false &&
     query.isStaleByTime(resolveStaleTime(options.staleTime, query))
   )
 }

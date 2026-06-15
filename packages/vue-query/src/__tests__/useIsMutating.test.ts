@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
 import type { MockedFunction } from 'vitest'
@@ -16,7 +16,7 @@ describe('useIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', async () => {
+  it('should properly return isMutating state', async () => {
     const mutation = useMutation({
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
@@ -39,7 +39,7 @@ describe('useIsMutating', () => {
     expect(isMutating.value).toStrictEqual(0)
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
+  it('should stop listening to changes on onScopeDispose', async () => {
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
@@ -69,10 +69,12 @@ describe('useIsMutating', () => {
     onScopeDisposeMock.mockReset()
   })
 
-  test('should properly update filters', async () => {
-    const filter = reactive({ mutationKey: ['foo'] })
+  it('should properly update filters', async () => {
+    const key = queryKey()
+    const filterKey = queryKey()
+    const filter = reactive({ mutationKey: filterKey })
     const { mutate } = useMutation({
-      mutationKey: ['isMutating'],
+      mutationKey: key,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     mutate('foo')
@@ -81,17 +83,18 @@ describe('useIsMutating', () => {
 
     expect(isMutating.value).toStrictEqual(0)
 
-    filter.mutationKey = ['isMutating']
+    filter.mutationKey = key
 
     await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(1)
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const keyRef = ref('isMutatingGetter2')
     const { mutate } = useMutation({
-      mutationKey: ['isMutatingGetter'],
+      mutationKey: key,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     mutate('foo')
@@ -102,7 +105,7 @@ describe('useIsMutating', () => {
 
     expect(isMutating.value).toStrictEqual(0)
 
-    keyRef.value = 'isMutatingGetter'
+    keyRef.value = key[0]!
 
     await vi.advanceTimersByTimeAsync(0)
 

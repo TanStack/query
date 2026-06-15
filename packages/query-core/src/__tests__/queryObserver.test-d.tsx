@@ -122,7 +122,7 @@ describe('queryObserver', () => {
       }
 
       new QueryObserver<boolean, CustomError>(new QueryClient(), {
-        queryKey: ['key'],
+        queryKey: queryKey(),
         placeholderData: (_, previousQuery) => {
           if (previousQuery) {
             expectTypeOf(
@@ -138,7 +138,7 @@ describe('queryObserver', () => {
       const queryData = { foo: 'bar' } as const
 
       new QueryObserver(new QueryClient(), {
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => queryData,
         select: (data) => data.foo,
         placeholderData: (previousData) => {

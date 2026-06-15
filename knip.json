@@ -1,11 +1,6 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": [
-    ".pnpmfile.cjs",
-    "scripts/*.{j,t}s",
-    "**/root.*.config.*",
-    "**/ts-fixture/file.ts"
-  ],
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["scripts/*.{j,t}s", "**/root.*.config.*", "**/ts-fixture/file.ts"],
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",
@@ -33,8 +28,10 @@
     "packages/solid-query-persist-client": {
       "ignoreDependencies": ["@solidjs/web", "esbuild"]
     },
+    "packages/lit-query": {
+      "ignore": ["src/tests/**"]
+    },
     "packages/vue-query": {
-      "ignore": ["**/__mocks__/**"],
       "ignoreDependencies": ["vue2", "vue2.7"]
     }
   }
