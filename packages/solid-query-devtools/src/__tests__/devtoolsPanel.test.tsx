@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
+import { flush } from 'solid-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import SolidQueryDevtoolsPanel from '../devtoolsPanel'
@@ -47,6 +48,7 @@ describe('SolidQueryDevtoolsPanel', () => {
       <SolidQueryDevtoolsPanel client={queryClient} onClose={onClose} />
     ))
 
+    flush()
     expect(setOnClose).toHaveBeenCalledWith(onClose)
   })
 
@@ -59,6 +61,7 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
+    flush()
     expect(setOnClose).toHaveBeenCalledWith(expect.any(Function))
   })
 
@@ -76,6 +79,7 @@ describe('SolidQueryDevtoolsPanel', () => {
       <SolidQueryDevtoolsPanel client={queryClient} errorTypes={errorTypes} />
     ))
 
+    flush()
     expect(setErrorTypes).toHaveBeenCalledWith(errorTypes)
   })
 
@@ -88,6 +92,7 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
+    flush()
     expect(setErrorTypes).toHaveBeenCalledWith([])
   })
 
@@ -97,6 +102,7 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} theme="dark" />)
 
+    flush()
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
@@ -106,6 +112,7 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
+    flush()
     expect(setTheme).toHaveBeenCalledWith('system')
   })
 
@@ -118,6 +125,7 @@ describe('SolidQueryDevtoolsPanel', () => {
 
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
+    flush()
     expect(setClient).toHaveBeenCalledWith(queryClient)
   })
 
@@ -160,6 +168,7 @@ describe('SolidQueryDevtoolsPanel', () => {
     const { unmount: unmountComponent } = render(() => (
       <SolidQueryDevtoolsPanel client={queryClient} />
     ))
+    flush()
     unmountComponent()
 
     expect(unmount).toHaveBeenCalled()

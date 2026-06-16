@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
+import { flush } from 'solid-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import SolidQueryDevtools from '../devtools'
@@ -46,6 +47,7 @@ describe('SolidQueryDevtools', () => {
       <SolidQueryDevtools client={queryClient} buttonPosition="top-left" />
     ))
 
+    flush()
     expect(setButtonPosition).toHaveBeenCalledWith('top-left')
   })
 
@@ -55,6 +57,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} position="left" />)
 
+    flush()
     expect(setPosition).toHaveBeenCalledWith('left')
   })
 
@@ -69,6 +72,7 @@ describe('SolidQueryDevtools', () => {
       <SolidQueryDevtools client={queryClient} initialIsOpen={true} />
     ))
 
+    flush()
     expect(setInitialIsOpen).toHaveBeenCalledWith(true)
   })
 
@@ -81,6 +85,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} />)
 
+    flush()
     expect(setInitialIsOpen).toHaveBeenCalledWith(false)
   })
 
@@ -98,6 +103,7 @@ describe('SolidQueryDevtools', () => {
       <SolidQueryDevtools client={queryClient} errorTypes={errorTypes} />
     ))
 
+    flush()
     expect(setErrorTypes).toHaveBeenCalledWith(errorTypes)
   })
 
@@ -110,6 +116,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} />)
 
+    flush()
     expect(setErrorTypes).toHaveBeenCalledWith([])
   })
 
@@ -119,6 +126,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} theme="dark" />)
 
+    flush()
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
@@ -128,6 +136,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} />)
 
+    flush()
     expect(setTheme).toHaveBeenCalledWith('system')
   })
 
@@ -137,6 +146,7 @@ describe('SolidQueryDevtools', () => {
 
     render(() => <SolidQueryDevtools client={queryClient} />)
 
+    flush()
     expect(setClient).toHaveBeenCalledWith(queryClient)
   })
 
@@ -147,6 +157,7 @@ describe('SolidQueryDevtools', () => {
     const { unmount: unmountComponent } = render(() => (
       <SolidQueryDevtools client={queryClient} />
     ))
+    flush()
     unmountComponent()
 
     expect(unmount).toHaveBeenCalled()
