@@ -276,7 +276,7 @@ describe('useMutation', () => {
         mutationFn: (text: string) => sleep(10).then(() => text),
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           await mutateAsync('todo', {
@@ -314,7 +314,7 @@ describe('useMutation', () => {
           }),
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
@@ -348,7 +348,7 @@ describe('useMutation', () => {
         mutationFn: (text: string) => sleep(10).then(() => text),
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           await mutateAsync('todo', {
@@ -380,7 +380,7 @@ describe('useMutation', () => {
           }),
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
@@ -411,7 +411,7 @@ describe('useMutation', () => {
         mutationFn: (text: string) => sleep(10).then(() => text),
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           await mutateAsync('todo', {

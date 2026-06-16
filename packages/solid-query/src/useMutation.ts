@@ -4,6 +4,7 @@ import {
   createRenderEffect,
   createStore,
   onCleanup,
+  runWithOwner,
   untrack,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
@@ -63,11 +64,17 @@ export function useMutation<
   })
 
   const unsubscribe = observer.subscribe((result) => {
-    setState(() => ({
-      ...result,
-      mutate,
-      mutateAsync: result.mutate,
-    }))
+    // observer.mutate may be invoked synchronously from an owned scope (e.g.
+    // during render or inside an effect), which triggers this subscriber
+    // synchronously. Store writes inside an owned scope throw in Solid v2, so
+    // escape the owner to allow the setState write — matching useBaseQuery.
+    runWithOwner(null, () => {
+      setState(() => ({
+        ...result,
+        mutate,
+        mutateAsync: result.mutate,
+      }))
+    })
   })
 
   onCleanup(unsubscribe)

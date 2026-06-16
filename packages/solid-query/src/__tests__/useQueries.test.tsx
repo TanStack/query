@@ -12,7 +12,7 @@ import * as QueryCore from '@tanstack/query-core'
 import { createSignal, createTrackedEffect, deep } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
-  IsRestoringProvider,
+  IsRestoringContext,
   QueriesObserver,
   QueryCache,
   QueryClient,
@@ -779,9 +779,9 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <IsRestoringProvider value={() => true}>
+      <IsRestoringContext value={() => true}>
         <Page />
-      </IsRestoringProvider>
+      </IsRestoringContext>
     ))
 
     await vi.advanceTimersByTimeAsync(0)

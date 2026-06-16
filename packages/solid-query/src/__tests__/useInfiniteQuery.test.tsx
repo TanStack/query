@@ -1809,7 +1809,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data?.pages ?? []}>
+                <For each={state.data?.pages ?? []} keyed={false}>
                   {(page, i) => (
                     <div>
                       <div>
@@ -1948,7 +1948,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data!.pages}>
+                <For each={state.data!.pages} keyed={false}>
                   {(page, i) => (
                     <div>
                       <div>
