@@ -418,8 +418,19 @@ export function useBaseQuery<
       // pending Promise, and re-renders with the resolved state. Without
       // this, JSX reads through the Proxy never subscribe to queryResource
       // and SSR HTML reflects the initial loading state.
+      //
+      // Read the value from the *resolved resource* rather than `state`. When
+      // the boundary suspends and re-renders after the query settles, the
+      // `state` store is not synced (the server subscriber resolves the
+      // resource Promise but does not write the store), so reading `state`
+      // would render stale loading values. Reading the resolved resource keeps
+      // the streamed SSR HTML consistent with the serialized resource, which
+      // is what the client hydrates against.
       if (isServer) {
-        queryResource()
+        const resolved = queryResource()
+        if (resolved && prop in resolved) {
+          return Reflect.get(resolved, prop)
+        }
       }
 
       // Always pass through error-related props without throwing
