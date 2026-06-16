@@ -20,13 +20,13 @@
       "ignore": ["**/__testfixtures__/**"]
     },
     "packages/solid-query": {
-      "ignoreDependencies": ["@solidjs/web", "esbuild"]
+      "ignoreDependencies": ["esbuild"]
     },
     "packages/solid-query-devtools": {
       "ignoreDependencies": ["esbuild"]
     },
     "packages/solid-query-persist-client": {
-      "ignoreDependencies": ["@solidjs/web", "esbuild"]
+      "ignoreDependencies": ["esbuild"]
     },
     "packages/lit-query": {
       "ignore": ["src/tests/**"]
