@@ -63,10 +63,10 @@
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/react-query": "workspace:*",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^4.3.4",
-    "npm-run-all2": "^5.0.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "npm-run-all2": "^5.0.2",
     "react": "^19.2.1"
   },
   "peerDependencies": {

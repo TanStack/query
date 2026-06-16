@@ -61,15 +61,15 @@
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
-    "lit": "^3.3.1"
+    "lit": "^3.3.3"
   },
   "peerDependencies": {
     "@tanstack/query-core": "^5.0.0",
     "lit": ">=2.8.0 <4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
-    "globals": "^17.4.0",
-    "typescript-eslint": "^8.54.0"
+    "@eslint/js": "^9.39.4",
+    "globals": "^17.6.0",
+    "typescript-eslint": "^8.61.1"
   }
 }
