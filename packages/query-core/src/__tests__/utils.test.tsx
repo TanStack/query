@@ -493,6 +493,11 @@ describe('core/utils', () => {
       const max = undefined
       expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
     })
+    it('should not exceed max when items already exceed max', () => {
+      const items = [1, 2, 3, 4, 5]
+      const newItems = addToEnd(items, 6, 3)
+      expect(newItems).toEqual([4, 5, 6])
+    })
   })
 
   describe('addToStart', () => {
