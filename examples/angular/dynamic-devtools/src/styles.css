@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+
+.hint {
+  font-size: 0.9rem;
+  color: #444;
+  max-width: 42rem;
+  line-height: 1.45;
+}
+
+kbd {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  margin: 0 0.1rem;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #f7f7f7;
+}

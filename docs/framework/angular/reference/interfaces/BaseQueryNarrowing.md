@@ -5,7 +5,7 @@ title: BaseQueryNarrowing
 
 # Interface: BaseQueryNarrowing\<TData, TError\>
 
-Defined in: [types.ts:57](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L57)
+Defined in: [types.ts:45](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L45)
 
 ## Type Parameters
 
@@ -25,7 +25,7 @@ Defined in: [types.ts:57](https://github.com/TanStack/query/blob/main/packages/a
 isError: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>;
 ```
 
-Defined in: [types.ts:65](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L65)
+Defined in: [types.ts:53](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L53)
 
 #### Parameters
 
@@ -45,7 +45,7 @@ Defined in: [types.ts:65](https://github.com/TanStack/query/blob/main/packages/a
 isPending: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>;
 ```
 
-Defined in: [types.ts:72](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L72)
+Defined in: [types.ts:60](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L60)
 
 #### Parameters
 
@@ -65,7 +65,7 @@ Defined in: [types.ts:72](https://github.com/TanStack/query/blob/main/packages/a
 isSuccess: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>;
 ```
 
-Defined in: [types.ts:58](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L58)
+Defined in: [types.ts:46](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L46)
 
 #### Parameters
 

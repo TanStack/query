@@ -48,7 +48,7 @@ describe('injectDevtoolsPanel', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
         { provide: ElementRef, useValue: signal(mockElementRef) },
       ],
     })

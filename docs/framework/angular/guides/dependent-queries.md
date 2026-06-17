@@ -27,7 +27,13 @@ projectsQuery = injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-// injectQueries is under development for Angular Query
+projectsQueries = injectQueries(() => ({
+  queries:
+    this.userQuery.data()?.projectIds.map((projectId) => ({
+      queryKey: ['project', projectId],
+      queryFn: () => getProjectById(projectId),
+    })) ?? [],
+}))
 ```
 
 [//]: # 'Example2'

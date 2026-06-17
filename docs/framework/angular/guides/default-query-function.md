@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 })
 
 bootstrapApplication(MyAppComponent, {
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 
 export class PostsComponent {

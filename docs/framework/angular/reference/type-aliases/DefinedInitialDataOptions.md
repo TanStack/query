@@ -6,10 +6,10 @@ title: DefinedInitialDataOptions
 # Type Alias: DefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [query-options.ts:40](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L40)
+Defined in: [query-options.ts:39](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L39)
 
 ## Type Declaration
 
@@ -19,12 +19,6 @@ Defined in: [query-options.ts:40](https://github.com/TanStack/query/blob/main/pa
 initialData: 
   | NonUndefinedGuard<TQueryFnData>
 | () => NonUndefinedGuard<TQueryFnData>;
-```
-
-### queryFn?
-
-```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
 ## Type Parameters

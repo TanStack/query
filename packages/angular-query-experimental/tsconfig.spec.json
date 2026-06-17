@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"],
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false,
+    "target": "ES2022"
+  },
+  "files": ["test-setup.ts"],
+  "include": [
+    "src/**/*.test.ts",
+    "../query-test-utils/src/**/*.ts"
+  ],
+  "exclude": ["src/**/*.test-d.ts"]
+}

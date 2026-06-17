@@ -9,7 +9,7 @@ TanStack Query's `inject*` functions integrate with [`PendingTasks`](https://ang
 
 This means tests and SSR can wait until mutations and queries resolve. In unit tests you can use `ApplicationRef.whenStable()` or `fixture.whenStable()` to await query completion. This works for both Zone.js and Zoneless setups.
 
-> This integration requires Angular 19 or later. Earlier versions of Angular do not support `PendingTasks`.
+> This integration requires Angular 20 or later. Earlier versions of Angular do not support `PendingTasks`.
 
 ## TestBed setup
 
@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 })
 
 TestBed.configureTestingModule({
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 ```
 
@@ -85,7 +85,7 @@ Angular's `HttpClientTestingModule` plays nicely with PendingTasks. Register it 
 ```ts
 TestBed.configureTestingModule({
   imports: [HttpClientTestingModule],
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 
 const httpCtrl = TestBed.inject(HttpTestingController)
