@@ -738,7 +738,7 @@ describe('query', () => {
 
     await queryClient.prefetchQuery({ queryKey: key, queryFn, meta })
 
-    expect(queryFn).toBeCalledWith(
+    expect(queryFn).toHaveBeenCalledWith(
       expect.objectContaining({
         meta,
       }),
