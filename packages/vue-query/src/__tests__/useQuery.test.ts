@@ -34,7 +34,7 @@ describe('useQuery', () => {
       staleTime: 1000,
     })
 
-    expect(useBaseQuery).toBeCalledWith(
+    expect(useBaseQuery).toHaveBeenCalledWith(
       QueryObserver,
       {
         queryKey: key,
