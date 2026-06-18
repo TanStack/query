@@ -143,6 +143,20 @@ export const ASTUtils = {
 
     return identifier
   },
+  traverseUpMemberExpression(node: TSESTree.Node): TSESTree.Node {
+    const parent = node.parent
+
+    if (
+      (parent.type === AST_NODE_TYPES.MemberExpression &&
+        parent.object === node) ||
+      parent.type === AST_NODE_TYPES.ChainExpression ||
+      parent.type === AST_NODE_TYPES.TSNonNullExpression
+    ) {
+      return ASTUtils.traverseUpMemberExpression(parent)
+    }
+
+    return node
+  },
   isDeclaredInNode(params: {
     functionNode: TSESTree.Node
     reference: TSESLint.Scope.Reference
@@ -184,10 +198,21 @@ export const ASTUtils = {
     const references = collectReferences(scope)
       .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
       .map((x) => {
-        const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
-          AST_NODE_TYPES.MemberExpression,
-          AST_NODE_TYPES.Identifier,
-        ])
+        const memberPath = ASTUtils.traverseUpMemberExpression(x.identifier)
+        const memberExpression = memberPath.parent
+        const isComputedCallProperty =
+          memberExpression.type === AST_NODE_TYPES.MemberExpression &&
+          memberExpression.computed &&
+          memberExpression.property === memberPath &&
+          memberExpression.parent.type === AST_NODE_TYPES.CallExpression &&
+          memberExpression.parent.callee === memberExpression
+
+        const referenceNode = isComputedCallProperty
+          ? memberPath
+          : ASTUtils.traverseUpOnly(x.identifier, [
+              AST_NODE_TYPES.MemberExpression,
+              AST_NODE_TYPES.Identifier,
+            ])
 
         return {
           variable: x,
