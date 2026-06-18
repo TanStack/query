@@ -271,7 +271,7 @@ describe('useQuery', () => {
   describe('accept ref options', () => {
     it('should accept ref options', () => {
       const options = ref({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       })
 
@@ -284,7 +284,7 @@ describe('useQuery', () => {
 
     it('should accept computed options', () => {
       const options = computed(() => ({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -298,7 +298,7 @@ describe('useQuery', () => {
     it('should accept computed query options', () => {
       const options = computed(() =>
         queryOptions({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )

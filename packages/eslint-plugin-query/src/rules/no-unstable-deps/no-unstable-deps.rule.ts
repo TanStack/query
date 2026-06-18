@@ -36,7 +36,13 @@ export const rule = createRule({
 
   create: detectTanstackQueryImports((context, _options, helpers) => {
     const trackedVariables: Record<string, string> = {}
+    const trackedCustomHooks: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
+    const pendingVariableDeclarators: Array<TSESTree.VariableDeclarator> = []
+    const pendingDependencyChecks: Array<{
+      reactHook: string
+      depsArray: TSESTree.ArrayExpression
+    }> = []
 
     function getReactHook(node: TSESTree.CallExpression): string | undefined {
       if (node.callee.type === 'Identifier') {
@@ -64,7 +70,25 @@ export const rule = createRule({
     ) {
       if (pattern.type === AST_NODE_TYPES.Identifier) {
         trackedVariables[pattern.name] = queryHook
+      } else if (pattern.type === AST_NODE_TYPES.ArrayPattern) {
+        for (const element of pattern.elements) {
+          if (element === null) {
+            continue
+          }
+          if (element.type === AST_NODE_TYPES.Identifier) {
+            trackedVariables[element.name] = queryHook
+          } else if (
+            element.type === AST_NODE_TYPES.RestElement &&
+            element.argument.type === AST_NODE_TYPES.Identifier
+          ) {
+            trackedVariables[element.argument.name] = queryHook
+          }
+        }
       }
+    }
+
+    function isCustomHookName(hookName: string): boolean {
+      return /^use[A-Z0-9]/.test(hookName)
     }
 
     function hasCombineProperty(
@@ -82,6 +106,95 @@ export const rule = createRule({
           prop.key.type === AST_NODE_TYPES.Identifier &&
           prop.key.name === 'combine',
       )
+    }
+
+    function getDirectQueryHook(
+      callExpression: TSESTree.CallExpression,
+    ): string | undefined {
+      if (
+        callExpression.callee.type !== AST_NODE_TYPES.Identifier ||
+        !allHookNames.includes(callExpression.callee.name) ||
+        !helpers.isTanstackQueryImport(callExpression.callee)
+      ) {
+        return undefined
+      }
+
+      if (
+        (callExpression.callee.name === 'useQueries' ||
+          callExpression.callee.name === 'useSuspenseQueries') &&
+        hasCombineProperty(callExpression)
+      ) {
+        return undefined
+      }
+
+      return callExpression.callee.name
+    }
+
+    function getTrackedQueryHook(
+      callExpression: TSESTree.CallExpression,
+    ): string | undefined {
+      const directQueryHook = getDirectQueryHook(callExpression)
+      if (directQueryHook !== undefined) {
+        return directQueryHook
+      }
+
+      if (callExpression.callee.type === AST_NODE_TYPES.Identifier) {
+        return trackedCustomHooks[callExpression.callee.name]
+      }
+
+      return undefined
+    }
+
+    function getReturnedQueryHook(
+      body:
+        | TSESTree.FunctionExpression['body']
+        | TSESTree.ArrowFunctionExpression['body'],
+    ): string | undefined {
+      if (body.type === AST_NODE_TYPES.CallExpression) {
+        return getDirectQueryHook(body)
+      }
+
+      if (body.type !== AST_NODE_TYPES.BlockStatement) {
+        return undefined
+      }
+
+      const returnStatements = body.body.filter(
+        (statement): statement is TSESTree.ReturnStatement =>
+          statement.type === AST_NODE_TYPES.ReturnStatement,
+      )
+      if (returnStatements.length !== 1) {
+        return undefined
+      }
+
+      const returnArgument = returnStatements[0]?.argument
+      if (returnArgument?.type === AST_NODE_TYPES.CallExpression) {
+        return getDirectQueryHook(returnArgument)
+      }
+
+      return undefined
+    }
+
+    function checkDependencyArray(
+      reactHook: string,
+      depsArray: TSESTree.ArrayExpression,
+    ) {
+      depsArray.elements.forEach((dep) => {
+        if (
+          dep !== null &&
+          dep.type === AST_NODE_TYPES.Identifier &&
+          trackedVariables[dep.name] !== undefined
+        ) {
+          const queryHook = trackedVariables[dep.name]
+          context.report({
+            node: dep,
+            messageId: 'noUnstableDeps',
+            data: {
+              queryHook,
+              reactHook,
+            },
+          })
+        }
+      })
     }
 
     return {
@@ -104,23 +217,36 @@ export const rule = createRule({
         }
       },
 
+      FunctionDeclaration(node) {
+        if (node.id === null || !isCustomHookName(node.id.name)) {
+          return
+        }
+
+        const queryHook = getReturnedQueryHook(node.body)
+        if (queryHook !== undefined) {
+          trackedCustomHooks[node.id.name] = queryHook
+        }
+      },
+
       VariableDeclarator(node) {
         if (
+          node.id.type === AST_NODE_TYPES.Identifier &&
+          isCustomHookName(node.id.name) &&
           node.init !== null &&
-          node.init.type === AST_NODE_TYPES.CallExpression &&
-          node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          allHookNames.includes(node.init.callee.name) &&
-          helpers.isTanstackQueryImport(node.init.callee)
+          (node.init.type === AST_NODE_TYPES.ArrowFunctionExpression ||
+            node.init.type === AST_NODE_TYPES.FunctionExpression)
         ) {
-          // Special case for useQueries with combine property - it's stable
-          if (
-            node.init.callee.name === 'useQueries' &&
-            hasCombineProperty(node.init)
-          ) {
-            // Don't track useQueries with combine as unstable
-            return
+          const queryHook = getReturnedQueryHook(node.init.body)
+          if (queryHook !== undefined) {
+            trackedCustomHooks[node.id.name] = queryHook
           }
-          collectVariableNames(node.id, node.init.callee.name)
+        }
+
+        if (
+          node.init !== null &&
+          node.init.type === AST_NODE_TYPES.CallExpression
+        ) {
+          pendingVariableDeclarators.push(node)
         }
       },
       CallExpression: (node) => {
@@ -130,25 +256,27 @@ export const rule = createRule({
           node.arguments.length > 1 &&
           node.arguments[1]?.type === AST_NODE_TYPES.ArrayExpression
         ) {
-          const depsArray = node.arguments[1].elements
-          depsArray.forEach((dep) => {
-            if (
-              dep !== null &&
-              dep.type === AST_NODE_TYPES.Identifier &&
-              trackedVariables[dep.name] !== undefined
-            ) {
-              const queryHook = trackedVariables[dep.name]
-              context.report({
-                node: dep,
-                messageId: 'noUnstableDeps',
-                data: {
-                  queryHook,
-                  reactHook,
-                },
-              })
-            }
+          pendingDependencyChecks.push({
+            reactHook,
+            depsArray: node.arguments[1],
           })
         }
+      },
+      'Program:exit'() {
+        pendingVariableDeclarators.forEach((node) => {
+          if (node.init?.type !== AST_NODE_TYPES.CallExpression) {
+            return
+          }
+
+          const queryHook = getTrackedQueryHook(node.init)
+          if (queryHook !== undefined) {
+            collectVariableNames(node.id, queryHook)
+          }
+        })
+
+        pendingDependencyChecks.forEach(({ reactHook, depsArray }) => {
+          checkDependencyArray(reactHook, depsArray)
+        })
       },
     }
   }),

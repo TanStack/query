@@ -263,4 +263,27 @@ describe('UseQueries config object overload', () => {
       number | boolean | undefined
     >()
   })
+
+  it('should infer correct data type from queryOptions without initialData in useQueries', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const { value: queriesState } = useQueries({ queries: [options] })
+
+    expectTypeOf(queriesState[0].data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should infer correct data type from queryOptions with select in useQueries', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const { value: queriesState } = useQueries({ queries: [options] })
+
+    expectTypeOf(queriesState[0].data).toEqualTypeOf<string | undefined>()
+  })
 })

@@ -3,6 +3,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { DevtoolsFeature } from '../providers'
 
@@ -50,7 +51,7 @@ export interface DevtoolsOptions {
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the TanStack Query devtools panel.
+   * The position of the Angular Query devtools panel.
    * `top` | `bottom` | `left` | `right`
    * Defaults to `bottom`.
    */
@@ -75,6 +76,11 @@ export interface DevtoolsOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
+   */
+  theme?: Theme
 
   /**
    * Whether the developer tools should load.

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -39,8 +39,8 @@ describe('useQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -3889,7 +3889,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3914,7 +3914,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: pending, idle')).toBeInTheDocument()
   })
 
-  test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3937,7 +3937,7 @@ describe('useQuery', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
-  test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
+  it('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
     const key = queryKey()
 
     function Page() {
@@ -4898,7 +4898,7 @@ describe('useQuery', () => {
         queryFn,
         enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -4933,17 +4933,17 @@ describe('useQuery', () => {
     // // render error state component
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // change to enabled to false
     fireEvent.click(rendered.getByLabelText('retry'))
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
@@ -4959,7 +4959,7 @@ describe('useQuery', () => {
           }
         },
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -5013,7 +5013,7 @@ describe('useQuery', () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -5675,9 +5675,9 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
-            return `data${count}`
+            return Promise.resolve(`data${count}`)
           },
         })
 
@@ -5916,6 +5916,42 @@ describe('useQuery', () => {
       ).toBe(1)
     })
 
+    it('should not optimistically show fetching when unsubscribed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+            <button onClick={() => setSubscribed(false)}>unsubscribe</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+
+      fireEvent.click(rendered.getByRole('button', { name: 'unsubscribe' }))
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+    })
+
     it('should not be attached to the query when subscribed is false', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
@@ -5996,7 +6032,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       })
 
       states.push(state)
@@ -6419,7 +6455,7 @@ describe('useQuery', () => {
           ? () => sleep(10).then(() => Promise.resolve('data'))
           : skipToken,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -6729,7 +6765,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         throwOnError: () => false,
-        retryOnMount: true,
+        retryOnMount: () => true,
         staleTime: Infinity,
         retry: false,
       })
@@ -6775,7 +6811,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         throwOnError: () => true,
-        retryOnMount: true,
+        retryOnMount: () => true,
         staleTime: Infinity,
         retry: false,
       })
@@ -6881,6 +6917,87 @@ describe('useQuery', () => {
     // Should retry because throwOnError returns false (500 error doesn't include '404')
     expect(fetchCount).toBe(initialFetchCount + 1)
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should pass the query to retryOnMount callback', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockRejectedValue(new Error('oops'))
+    const retryOnMount = vi.fn((query) => query.state.status !== 'error')
+
+    function Page() {
+      const { status } = useQuery({
+        queryKey: key,
+        queryFn,
+        retry: false,
+        retryOnMount,
+      })
+
+      return <div>{status}</div>
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByText('error')).toBeInTheDocument()
+    rendered1.unmount()
+
+    renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(retryOnMount).toHaveBeenCalled()
+    const query = retryOnMount.mock.calls.at(-1)![0]
+    expect(query.state.status).toBe('error')
+    expect(query.state.data).toBeUndefined()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not call retryOnMount callback when the query has data', async () => {
+    const key = queryKey()
+    let count = 0
+    const retryOnMount = vi.fn(() => false)
+    const queryFn = vi.fn().mockImplementation(async () => {
+      await sleep(10)
+      count++
+      if (count === 1) {
+        return 'data'
+      }
+      throw new Error('oops')
+    })
+
+    function Page() {
+      const { data, error, refetch } = useQuery({
+        queryKey: key,
+        queryFn,
+        retry: false,
+        staleTime: 0,
+        refetchOnMount: true,
+        retryOnMount,
+      })
+
+      return (
+        <div>
+          <div>{data ?? 'no data'}</div>
+          <div>{error instanceof Error ? error.message : 'no error'}</div>
+          <button onClick={() => refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data')).toBeInTheDocument()
+    expect(rendered.getByText('oops')).toBeInTheDocument()
+
+    rendered.unmount()
+
+    renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(retryOnMount).not.toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalledTimes(3)
   })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {

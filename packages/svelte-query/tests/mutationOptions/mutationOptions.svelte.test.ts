@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
-import BaseExample from './BaseExample.svelte'
-import MultiExample from './MultiExample.svelte'
+import Base from './Base.svelte'
+import Multi from './Multi.svelte'
 
 describe('mutationOptions', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -38,8 +43,8 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+    const rendered = render(Base, {
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -47,7 +52,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -56,8 +61,8 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+    const rendered = render(Base, {
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -65,7 +70,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -79,8 +84,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
       },
@@ -92,7 +98,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -106,8 +112,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
@@ -120,7 +127,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -131,8 +138,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         isMutatingFilters: { mutationKey: mutationOpts.mutationKey },
       },
@@ -143,7 +151,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -152,8 +160,8 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+    const rendered = render(Base, {
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
@@ -161,7 +169,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -175,8 +183,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
       },
@@ -188,7 +197,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -202,8 +211,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
@@ -216,7 +226,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -227,8 +237,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: {
@@ -242,7 +253,7 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
@@ -251,8 +262,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: { status: 'success' },
@@ -263,7 +275,7 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
@@ -277,8 +289,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {
@@ -291,7 +304,7 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('mutationState: ["data1","data2"]'),
     ).toBeInTheDocument()
@@ -307,8 +320,9 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {
@@ -324,7 +338,7 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data1"]')).toBeInTheDocument()
   })
 })

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
@@ -18,7 +18,7 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
-  test('should return result for each query', () => {
+  it('should return result for each query', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queries = [
@@ -49,7 +49,7 @@ describe('useQueries', () => {
     ])
   })
 
-  test('should resolve to success and update reactive state', async () => {
+  it('should resolve to success and update reactive state', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queries = [
@@ -82,7 +82,7 @@ describe('useQueries', () => {
     ])
   })
 
-  test('should reject one of the queries and update reactive state', async () => {
+  it('should reject one of the queries and update reactive state', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queries = [
@@ -116,7 +116,7 @@ describe('useQueries', () => {
     ])
   })
 
-  test('should return state for new queries', async () => {
+  it('should return state for new queries', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -174,7 +174,7 @@ describe('useQueries', () => {
     ])
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
+  it('should stop listening to changes on onScopeDispose', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
@@ -211,7 +211,7 @@ describe('useQueries', () => {
     ])
   })
 
-  test('should use queryClient provided via options', async () => {
+  it('should use queryClient provided via options', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queryClient = new QueryClient()
@@ -232,7 +232,7 @@ describe('useQueries', () => {
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
 
-  test('should combine queries', async () => {
+  it('should combine queries', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const firstResult = 'first result'
@@ -270,7 +270,7 @@ describe('useQueries', () => {
     })
   })
 
-  test('should be `enabled` to accept getter function', async () => {
+  it('should be `enabled` to accept getter function', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
@@ -294,7 +294,7 @@ describe('useQueries', () => {
     expect(fetchFn).toHaveBeenCalled()
   })
 
-  test('should allow getters for query keys', async () => {
+  it('should allow getters for query keys', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
@@ -324,7 +324,7 @@ describe('useQueries', () => {
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
 
-  test('should allow arbitrarily nested getters for query keys', async () => {
+  it('should allow arbitrarily nested getters for query keys', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
@@ -388,7 +388,7 @@ describe('useQueries', () => {
     expect(fetchFn).toHaveBeenCalledTimes(6)
   })
 
-  test('should refetch only the specific query without affecting others', async () => {
+  it('should refetch only the specific query without affecting others', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     let userCount = 0
@@ -419,7 +419,7 @@ describe('useQueries', () => {
     expect(queriesState.value[1].data).toBe('posts-1')
   })
 
-  test('should warn when used outside of setup function in development mode', () => {
+  it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
@@ -442,7 +442,7 @@ describe('useQueries', () => {
     }
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')

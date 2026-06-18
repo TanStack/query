@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
+  addConsumeAwareSignal,
   addToEnd,
   addToStart,
+  ensureQueryFn,
   hashKey,
   hashQueryKeyByOptions,
   isPlainArray,
@@ -14,8 +16,10 @@ import {
   replaceEqualDeep,
   shallowEqualObjects,
   shouldThrowError,
+  skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
+import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
@@ -417,6 +421,29 @@ describe('core/utils', () => {
 
       expect(next).toBe(current)
     })
+
+    it('should stop structural sharing once the recursion depth exceeds the limit', () => {
+      const nest = (depth: number, leaf: number) => {
+        let value: any = { leaf }
+        for (let i = 0; i < depth; i++) {
+          value = { child: value }
+        }
+        return value
+      }
+
+      const prev = nest(502, 1)
+      const next = nest(502, 2)
+      const result = replaceEqualDeep(prev, next)
+
+      let resultNode = result
+      let nextNode = next
+      for (let i = 0; i < 502; i++) {
+        resultNode = resultNode.child
+        nextNode = nextNode.child
+      }
+
+      expect(resultNode).toBe(nextNode)
+    })
   })
 
   describe('matchMutation', () => {
@@ -534,6 +561,55 @@ describe('core/utils', () => {
     })
   })
 
+  describe('ensureQueryFn', () => {
+    const context = {} as QueryFunctionContext
+
+    it('should return a function that resolves to initialPromise when queryFn is missing and initialPromise is provided', async () => {
+      const initialPromise = Promise.resolve('initial-data')
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(resolved(context)).resolves.toBe('initial-data')
+    })
+
+    it('should return a function that rejects when initialPromise rejects', async () => {
+      const error = new Error('initial-promise-error')
+      const initialPromise = Promise.reject(error)
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(resolved(context)).rejects.toBe(error)
+    })
+
+    it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const resolved = ensureQueryFn({
+        queryFn: skipToken,
+        queryHash: '["skip"]',
+      })
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Attempted to invoke queryFn when set to skipToken',
+        ),
+      )
+      await expect(resolved(context)).rejects.toThrow(
+        'Missing queryFn: \'["skip"]\'',
+      )
+
+      consoleErrorSpy.mockRestore()
+    })
+  })
+
   describe('shouldThrowError', () => {
     it('should return the result of executing throwOnError if throwOnError parameter is a function', () => {
       const throwOnError = (error: Error) => error.message === 'test error'
@@ -549,6 +625,68 @@ describe('core/utils', () => {
       expect(shouldThrowError(true, [new Error('test error')])).toBe(true)
       expect(shouldThrowError(false, [new Error('test error')])).toBe(false)
       expect(shouldThrowError(undefined, [new Error('test error')])).toBe(false)
+    })
+  })
+
+  describe('addConsumeAwareSignal', () => {
+    it('should expose the signal on the query context while preserving its properties', () => {
+      const controller = new AbortController()
+      const key = queryKey()
+      const context = addConsumeAwareSignal(
+        { queryKey: key, meta: undefined },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.queryKey).toBe(key)
+      expect(context.signal).toBe(controller.signal)
+    })
+
+    it('should call onCancelled immediately when the signal is already aborted on first access', () => {
+      const controller = new AbortController()
+      controller.abort()
+      const onCancelled = vi.fn()
+      const object = addConsumeAwareSignal(
+        {},
+        () => controller.signal,
+        onCancelled,
+      )
+
+      // Access the signal to consume it
+      void object.signal
+
+      expect(onCancelled).toHaveBeenCalledTimes(1)
+    })
+
+    it('should flag cancellation when the consumed signal aborts, mirroring streamed/infinite queries', () => {
+      const controller = new AbortController()
+      let cancelled = false
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        () => (cancelled = true),
+      )
+
+      void context.signal
+      expect(cancelled).toBe(false)
+
+      controller.abort()
+      expect(cancelled).toBe(true)
+    })
+
+    it('should consume the signal only once across repeated accesses', () => {
+      const controller = new AbortController()
+      const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.signal).toBe(controller.signal)
+      expect(context.signal).toBe(controller.signal)
+
+      expect(addEventListener).toHaveBeenCalledTimes(1)
     })
   })
 })

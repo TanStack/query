@@ -1,5 +1,65 @@
 # @tanstack/eslint-plugin-query
 
+## 5.101.0
+
+### Minor Changes
+
+- [#10775](https://github.com/TanStack/query/pull/10775) [`dc54932`](https://github.com/TanStack/query/commit/dc549328642e3d5b7417c0ad070d9fbf38c195a4) - `no-rest-destructuring` now also flags rest destructuring on custom hooks that return a TanStack Query result. Detection uses the TypeScript type checker and runs only when typed linting is enabled, so untyped projects are unaffected. Closes [#8951](https://github.com/TanStack/query/issues/8951).
+
+## 5.100.14
+
+## 5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- fix(no-unstable-deps): handle array-destructured useQueries and useSuspenseQueries results ([#10747](https://github.com/TanStack/query/pull/10747))
+
+- Fix `no-unstable-deps` false positives for `useSuspenseQueries` results returned from `combine`. ([#10642](https://github.com/TanStack/query/pull/10642))
+
+## 5.100.11
+
+## 5.100.10
+
+## 5.100.9
+
+## 5.100.8
+
+## 5.100.7
+
+## 5.100.6
+
+## 5.100.5
+
+## 5.100.4
+
+## 5.100.3
+
+## 5.100.2
+
+## 5.100.1
+
+## 5.100.0
+
+## 5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- fix(eslint-plugin-query): fix `no-void-query-fn` false positive on enum returns for typescript 6. ([#10460](https://github.com/TanStack/query/pull/10460))
+
+## 5.99.0
+
+## 5.98.0
+
+## 5.97.0
+
+### Minor Changes
+
+- feat(eslint): support eslint v10 and typescript v6 ([#10182](https://github.com/TanStack/query/pull/10182))
+
 ## 5.96.2
 
 ### Patch Changes

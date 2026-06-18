@@ -26,8 +26,8 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   describe('useQuery', () => {
@@ -830,7 +830,7 @@ describe('QueryErrorResetBoundary', () => {
                 }),
               retry: false,
               throwOnError: true,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -895,7 +895,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
