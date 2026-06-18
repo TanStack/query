@@ -14,6 +14,9 @@ const queryResetCounts = new WeakMap<
   QueryErrorResetBoundaryValue,
   WeakMap<object, number>
 >()
+// Track reset generations per live Query instance. If a query is garbage
+// collected between unmount and remount, a future Query instance starts fresh
+// instead of inheriting retry state from a different lifecycle.
 
 function getResetCount(errorResetBoundary: QueryErrorResetBoundaryValue) {
   return errorResetBoundary.getResetCount?.()
