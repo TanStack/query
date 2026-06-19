@@ -88,10 +88,10 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.0.0",
     "npm-run-all2": "^5.0.0",
@@ -104,8 +104,8 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
-    "@angular/common": ">=16.0.0",
-    "@angular/core": ">=16.0.0"
+    "@angular/common": ">=22.0.0",
+    "@angular/core": ">=22.0.0"
   },
   "publishConfig": {
     "directory": "dist",

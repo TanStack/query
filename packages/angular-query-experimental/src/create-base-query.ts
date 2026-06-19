@@ -16,6 +16,7 @@ import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import { PENDING_TASKS } from './pending-tasks-compat'
 import type { PendingTaskRef } from './pending-tasks-compat'
+import type { Signal } from '@angular/core'
 import type {
   QueryKey,
   QueryObserver,
@@ -25,10 +26,15 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ *
+ * Returns a `Signal` of the latest `QueryObserverResult`. This is the shared engine
+ * used both by the signal-proxy based APIs (`injectQuery` / `injectInfiniteQuery`)
+ * and by the resource based APIs (`queryResource` / `infiniteQueryResource`), so all
+ * of them are driven by the exact same `QueryObserver`, `QueryClient` and cache.
  * @param optionsFn
  * @param Observer
  */
-export function createBaseQuery<
+export function createBaseQueryResult<
   TQueryFnData,
   TError,
   TData,
@@ -43,7 +49,7 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
-) {
+): Signal<QueryObserverResult<TData, TError>> {
   const ngZone = inject(NgZone)
   const pendingTasks = inject(PENDING_TASKS)
   const queryClient = inject(QueryClient)
@@ -153,23 +159,48 @@ export function createBaseQuery<
     })
   })
 
-  return signalProxy(
-    computed(() => {
-      const subscriberResult = resultFromSubscriberSignal()
-      const optimisticResult = optimisticResultSignal()
-      const result = subscriberResult ?? optimisticResult
+  return computed(() => {
+    const subscriberResult = resultFromSubscriberSignal()
+    const optimisticResult = optimisticResultSignal()
+    const result = subscriberResult ?? optimisticResult
 
-      // Wrap methods to ensure observer has latest options before execution
-      const observer = observerSignal()
+    // Wrap methods to ensure observer has latest options before execution
+    const observer = observerSignal()
 
-      const originalRefetch = result.refetch
-      return {
-        ...result,
-        refetch: ((...args: Parameters<typeof originalRefetch>) => {
-          observer.setOptions(defaultedOptionsSignal())
-          return originalRefetch(...args)
-        }) as typeof originalRefetch,
-      }
-    }),
-  )
+    const originalRefetch = result.refetch
+    return {
+      ...result,
+      refetch: ((...args: Parameters<typeof originalRefetch>) => {
+        observer.setOptions(defaultedOptionsSignal())
+        return originalRefetch(...args)
+      }) as typeof originalRefetch,
+    }
+  })
+}
+
+/**
+ * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ *
+ * Wraps {@link createBaseQueryResult} in a {@link signalProxy} so each field of the
+ * result is exposed as its own `Signal`.
+ * @param optionsFn
+ * @param Observer
+ */
+export function createBaseQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  optionsFn: () => CreateBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+  Observer: typeof QueryObserver,
+) {
+  return signalProxy(createBaseQueryResult(optionsFn, Observer))
 }

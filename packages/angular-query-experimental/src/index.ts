@@ -44,6 +44,27 @@ export type { QueriesOptions, QueriesResults } from './inject-queries'
 export type { InjectQueryOptions } from './inject-query'
 export { injectQuery } from './inject-query'
 
+// Resource-shaped APIs (Angular >= 22). These are backed by the same QueryClient,
+// observers and cache as their `inject*` counterparts — they only change how the
+// result is presented (as an Angular `Resource`).
+export { queryResource } from './query-resource'
+export { infiniteQueryResource } from './infinite-query-resource'
+export { mutationResource } from './mutation-resource'
+export { toResourceSnapshot } from './resource/to-resource-snapshot'
+export type {
+  BaseQueryResource,
+  CreateQueryResourceResult,
+  CreateInfiniteQueryResourceResult,
+  MutationResource,
+  QueryResourceConfig,
+  QueryResourceOptionsFn,
+  QueryResourceInjectorOptions,
+  InfiniteQueryResourceConfig,
+  InfiniteQueryResourceOptionsFn,
+  MutationResourceConfig,
+  MutationResourceOptionsFn,
+} from './resource/resource-types'
+
 export { injectQueryClient } from './inject-query-client'
 
 export type {
