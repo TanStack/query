@@ -53,7 +53,7 @@ export type DefinedInitialDataOptions<
 }
 
 /**
- * Allows to share and re-use query options in a type-safe way.
+ * Allows sharing and re-using query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  *
@@ -85,7 +85,7 @@ export function queryOptions<
 }
 
 /**
- * Allows to share and re-use query options in a type-safe way.
+ * Allows sharing and re-using query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  *
@@ -117,7 +117,7 @@ export function queryOptions<
 }
 
 /**
- * Allows to share and re-use query options in a type-safe way.
+ * Allows sharing and re-using query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  *
@@ -149,7 +149,7 @@ export function queryOptions<
 }
 
 /**
- * Allows to share and re-use query options in a type-safe way.
+ * Allows sharing and re-using query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  *
