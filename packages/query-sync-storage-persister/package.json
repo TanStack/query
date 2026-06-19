@@ -63,6 +63,6 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
-    "npm-run-all2": "^5.0.0"
+    "npm-run-all2": "^5.0.2"
   }
 }

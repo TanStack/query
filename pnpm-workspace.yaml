@@ -24,20 +24,20 @@ overrides:
   '@types/react': '^19.2.7'
   '@types/react-dom': '^19.2.3'
   '@types/node': '^22.15.3'
-  '@typescript-eslint/eslint-plugin': '8.58.1'
-  '@typescript-eslint/parser': '8.58.1'
-  '@typescript-eslint/project-service': '8.58.1'
-  '@typescript-eslint/rule-tester': '8.58.1'
-  '@typescript-eslint/scope-manager': '8.58.1'
-  '@typescript-eslint/tsconfig-utils': '8.58.1'
-  '@typescript-eslint/type-utils': '8.58.1'
-  '@typescript-eslint/types': '8.58.1'
-  '@typescript-eslint/typescript-estree': '8.58.1'
-  '@typescript-eslint/utils': '8.58.1'
-  '@typescript-eslint/visitor-keys': '8.58.1'
-  typescript-eslint: '8.58.1'
+  '@typescript-eslint/eslint-plugin': '8.61.1'
+  '@typescript-eslint/parser': '8.61.1'
+  '@typescript-eslint/project-service': '8.61.1'
+  '@typescript-eslint/rule-tester': '8.61.1'
+  '@typescript-eslint/scope-manager': '8.61.1'
+  '@typescript-eslint/tsconfig-utils': '8.61.1'
+  '@typescript-eslint/type-utils': '8.61.1'
+  '@typescript-eslint/types': '8.61.1'
+  '@typescript-eslint/typescript-estree': '8.61.1'
+  '@typescript-eslint/utils': '8.61.1'
+  '@typescript-eslint/visitor-keys': '8.61.1'
+  typescript-eslint: '8.61.1'
   vite: '^6.4.1'
-  esbuild: '^0.27.2'
+  esbuild: '^0.28.1'
 
 allowBuilds:
   # root dependency
@@ -64,4 +64,3 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
-
