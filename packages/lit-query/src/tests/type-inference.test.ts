@@ -1,7 +1,9 @@
 import {
   dataTagErrorSymbol,
   dataTagSymbol,
+  mutationOptions as coreMutationOptions,
   QueryClient,
+  queryOptions as coreQueryOptions,
   type DefinedQueryObserverResult,
   type InfiniteData,
   type QueryObserverResult,
@@ -163,6 +165,18 @@ describe('type inference', () => {
       { id: number; name: string } | undefined
     >()
 
+    const coreQuery = createQueryController(
+      host,
+      () => coreQueryOptions({
+        queryKey: ['type-inference', 'core-query'] as const,
+        queryFn: async () => ({ id: '1', title: 'Do Laundry' }),
+      }),
+      client,
+    )
+    expectTypeOf(coreQuery().data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+
     const mutation = createMutationController(
       host,
       mutationOptions({
@@ -173,6 +187,18 @@ describe('type inference', () => {
     expectTypeOf(mutation().data).toEqualTypeOf<string | undefined>()
     expectTypeOf(mutation().variables).toEqualTypeOf<
       { id: number } | undefined
+    >()
+
+    const coreMutation = createMutationController(
+      host,
+      () => coreMutationOptions({
+        mutationFn: async (input: { id: string }) => input.id,
+      }),
+      client,
+    )
+    expectTypeOf(coreMutation().data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(coreMutation().variables).toEqualTypeOf<
+      { id: string } | undefined
     >()
 
     const queryOpts = queryOptions({
