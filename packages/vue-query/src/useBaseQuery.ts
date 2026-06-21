@@ -14,6 +14,7 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, updateState } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
+  CoreQueryOptions,
   DefaultedQueryObserverOptions,
   QueryKey,
   QueryObserver,
@@ -59,16 +60,18 @@ export function useBaseQuery<
   TPageParam,
 >(
   Observer: typeof QueryObserver,
-  options: MaybeRefOrGetter<
-    UseQueryOptionsGeneric<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >
-  >,
+  options:
+    | MaybeRefOrGetter<
+        UseQueryOptionsGeneric<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey,
+          TPageParam
+        >
+      >
+    | (() => CoreQueryOptions<TQueryFnData, TError, TData, TQueryKey>),
   queryClient?: QueryClient,
 ): UseBaseQueryReturnType<TData, TError> {
   if (process.env.NODE_ENV === 'development') {
@@ -82,10 +85,8 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    let resolvedOptions = options
-    if (typeof resolvedOptions === 'function') {
-      resolvedOptions = resolvedOptions()
-    }
+    const resolvedOptions =
+      typeof options === 'function' ? options() : options
     const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
     if (typeof clonedOptions.enabled === 'function') {
