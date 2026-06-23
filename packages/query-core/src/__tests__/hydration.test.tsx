@@ -1818,7 +1818,10 @@ describe('dehydration and rehydration', () => {
     let resolvePrefetch: undefined | ((value?: unknown) => void)
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: () => new Promise((res) => { resolvePrefetch = res }),
+      queryFn: () =>
+        new Promise((res) => {
+          resolvePrefetch = res
+        }),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -1860,7 +1863,10 @@ describe('dehydration and rehydration', () => {
     let resolvePrefetch: undefined | ((value?: unknown) => void)
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: () => new Promise((res) => { resolvePrefetch = res }),
+      queryFn: () =>
+        new Promise((res) => {
+          resolvePrefetch = res
+        }),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
