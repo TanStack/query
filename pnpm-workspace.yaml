@@ -1,10 +1,15 @@
 cleanupUnusedCatalogs: true
+minimumReleaseAge: 1
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
 trustPolicy: 'no-downgrade'
 trustPolicyExclude:
   - 'vite@6.4.1'
+  - 'semver@5.7.2'
+  - 'semver@6.3.1'
+  - 'ua-parser-js@1.0.41'
+  - 'undici-types@6.21.0'
 
 packages:
   - 'packages/*'
@@ -64,4 +69,3 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
-
