@@ -1,6 +1,6 @@
 'use client'
 
-import { isServer } from '@tanstack/react-query'
+import { environmentManager } from '@tanstack/react-query'
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
 import { htmlEscapeJsonString } from './htmlescape'
@@ -106,7 +106,7 @@ export function createHydrationStreamProvider<TShape>() {
 
     // <server stuff>
     const [stream] = React.useState<Array<TShape>>(() => {
-      if (!isServer) {
+      if (!environmentManager.isServer()) {
         return {
           push() {
             // no-op on the client
@@ -154,7 +154,7 @@ export function createHydrationStreamProvider<TShape>() {
     // the initial render so children have access to the data immediately
     // This is important to avoid the client suspending during the initial render
     // if the data has not yet been hydrated.
-    if (!isServer) {
+    if (!environmentManager.isServer()) {
       const win = window as any
       if (!win[id]?.initialized) {
         // Client: consume cache:

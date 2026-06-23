@@ -747,7 +747,87 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
-  it('uses placeholderData as non-cache data when pending a query with no data', async () => {
+  it('should refetch at the interval returned when refetchInterval is a function', async () => {
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.resolve('data')
+      },
+      refetchInterval: () => 10,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    expect(count).toBe(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(2)
+    unsubscribe()
+  })
+
+  it('should call refetchInterval with the query when it is a function', async () => {
+    const key = queryKey()
+    const refetchInterval = vi.fn(() => 10)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      refetchInterval,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(refetchInterval).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+    unsubscribe()
+  })
+
+  it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'new data'),
+      staleTime: Infinity,
+      notifyOnChangeProps: () => ['data'],
+    })
+    const listener = vi.fn()
+
+    const unsubscribe = observer.subscribe(listener)
+    listener.mockClear()
+
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners when notifyOnChangeProps is a function returning props that did not change', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      notifyOnChangeProps: () => ['data'],
+    })
+    const listener = vi.fn()
+
+    const unsubscribe = observer.subscribe(listener)
+    listener.mockClear()
+
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
+  it('should use placeholderData as non-cache data when pending a query with no data', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -806,7 +886,7 @@ describe('queryObserver', () => {
     ).toThrow('Expected enabled to be a boolean')
   })
 
-  it('getCurrentQuery should return the current query', () => {
+  it('should return the current query from getCurrentQuery', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1120,7 +1200,7 @@ describe('queryObserver', () => {
     expect(stableSelect.mock.calls[1]![0]).toEqual(data2)
   })
 
-  it('setOptions should notify cache listeners', () => {
+  it('should notify cache listeners when setOptions is called', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1140,7 +1220,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('disabled observers should not be stale', () => {
+  it('should not be stale for disabled observers', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1294,25 +1374,105 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('shouldFetchOnWindowFocus should respect refetchOnWindowFocus option', () => {
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is true', () => {
     const key = queryKey()
 
-    const observer1 = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
       refetchOnWindowFocus: true,
     })
-    expect(observer1.shouldFetchOnWindowFocus()).toBe(true)
 
-    const observer2 = new QueryObserver(queryClient, {
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+  })
+
+  it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is false', () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
       refetchOnWindowFocus: false,
     })
-    expect(observer2.shouldFetchOnWindowFocus()).toBe(false)
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(false)
   })
 
-  it('fetchOptimistic should fetch and return optimistic result', async () => {
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is "always" even if the query is fresh', async () => {
+    const key = queryKey()
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      refetchOnWindowFocus: 'always',
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+  })
+
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning true', () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => true)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
+  it('should return false from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning false', () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => false)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(false)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
+  it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is a function returning "always" even if the query is fresh', async () => {
+    const key = queryKey()
+    const refetchOnWindowFocus = vi.fn(() => 'always' as const)
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      refetchOnWindowFocus,
+    })
+
+    expect(observer.shouldFetchOnWindowFocus()).toBe(true)
+    expect(refetchOnWindowFocus).toHaveBeenCalledWith(
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+  })
+
+  it('should fetch and return optimistic result via fetchOptimistic', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -1460,6 +1620,24 @@ describe('queryObserver', () => {
     )
 
     queryClient2.clear()
+  })
+
+  it('should not reject promise when experimental_prefetchInRender is enabled', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    const tracked = observer.trackResult(observer.getCurrentResult())
+    const promise = tracked.promise
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    await expect(promise).resolves.toBe('data')
+
+    unsubscribe()
   })
 
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {

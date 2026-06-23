@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["scripts/*.{j,t}s", "**/root.*.config.*", "**/ts-fixture/file.ts"],
   "ignoreDependencies": [
     "@types/react",
@@ -18,6 +18,9 @@
     "packages/query-codemods": {
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
+    },
+    "packages/lit-query": {
+      "ignore": ["src/tests/**"]
     },
     "packages/vue-query": {
       "ignoreDependencies": ["vue2", "vue2.7"]

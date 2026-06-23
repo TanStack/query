@@ -380,6 +380,22 @@ describe('queryCache', () => {
     })
   })
 
+  describe('QueryCache.remove', () => {
+    it('should only delete the instance currently stored under its queryHash', () => {
+      const key = queryKey()
+
+      const staleQuery = queryCache.build(queryClient, { queryKey: key })
+      queryCache.remove(staleQuery)
+
+      const currentQuery = queryCache.build(queryClient, { queryKey: key })
+      expect(currentQuery).not.toBe(staleQuery)
+
+      queryCache.remove(staleQuery)
+
+      expect(queryCache.get(hashKey(key))).toBe(currentQuery)
+    })
+  })
+
   describe('QueryCache.add', () => {
     it('should not try to add a query already added to the cache', async () => {
       const key = queryKey()

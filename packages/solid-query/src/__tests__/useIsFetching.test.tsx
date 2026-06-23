@@ -2,28 +2,26 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useIsFetching,
-  useQuery,
-} from '..'
-import { setActTimeout } from './utils'
+import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
 
     function IsFetching() {
@@ -53,11 +51,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
@@ -68,9 +62,6 @@ describe('useIsFetching', () => {
   })
 
   it('should not update state while rendering', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -124,11 +115,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await vi.advanceTimersByTimeAsync(300)
@@ -137,7 +124,6 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -185,11 +171,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
@@ -203,7 +185,6 @@ describe('useIsFetching', () => {
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
-    const queryClient = new QueryClient()
     const key = queryKey()
 
     function Page() {
@@ -221,11 +202,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -233,7 +210,7 @@ describe('useIsFetching', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = new QueryClient()
+    const customClient = new QueryClient()
     const key = queryKey()
 
     function Page() {
@@ -242,10 +219,10 @@ describe('useIsFetching', () => {
           queryKey: key,
           queryFn: () => sleep(10).then(() => 'test'),
         }),
-        () => queryClient,
+        () => customClient,
       )
 
-      const isFetching = useIsFetching(undefined, () => queryClient)
+      const isFetching = useIsFetching(undefined, () => customClient)
 
       return (
         <div>

@@ -1,5 +1,61 @@
 # @tanstack/vue-query
 
+## 5.101.0
+
+### Patch Changes
+
+- [#10826](https://github.com/TanStack/query/pull/10826) [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8) - Replace deprecated isServer with environmentManager.isServer()
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- fix(query-core): drop the custom `NoInfer<T>` re-export and rely on TypeScript's built-in `NoInfer` (TS ≥ 5.4) so `NoInfer<X[K]>` stays assignable to `X[K]` in generic contexts (fixes [#9937](https://github.com/TanStack/query/issues/9937)) ([#10593](https://github.com/TanStack/query/pull/10593))
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- fix(vue-query): allow reactive and getter values as `queryKey` property in `queryOptions` ([#10530](https://github.com/TanStack/query/pull/10530))
+
+  This fixes a regression introduced in #10452 where `queryOptions` only accepted plain arrays for the `queryKey` property, but not `computed` refs, `Ref` values, or getter functions. The related fix in #10465 only covered the `enabled` property.
+
+  Now the `queryKey` property in `queryOptions` accepts the same reactive forms as `enabled`:
+  - Plain `QueryKey` arrays
+  - `Ref<QueryKey>`
+  - `ComputedRef<QueryKey>`
+  - `() => QueryKey` (getter)
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
+## 5.100.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.10
+
 ## 5.100.9
 
 ### Patch Changes

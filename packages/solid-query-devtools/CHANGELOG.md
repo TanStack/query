@@ -1,5 +1,55 @@
 # @tanstack/solid-query-devtools
 
+## 5.101.0
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/solid-query@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.14
+  - @tanstack/solid-query@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.13
+  - @tanstack/solid-query@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.12
+  - @tanstack/solid-query@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.11
+  - @tanstack/solid-query@5.100.11
+
+## 5.100.10
+
+### Patch Changes
+
+- fix(query-devtools): remove experimentalDts to prevent solid-js type leak ([#10694](https://github.com/TanStack/query/pull/10694))
+
+- Updated dependencies [[`4d130b9`](https://github.com/TanStack/query/commit/4d130b992d2ac396d75f921bfc530dd3a9d50577)]:
+  - @tanstack/query-devtools@5.100.10
+  - @tanstack/solid-query@5.100.10
+
 ## 5.100.9
 
 ### Patch Changes

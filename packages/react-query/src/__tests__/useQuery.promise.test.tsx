@@ -35,8 +35,8 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should work with a basic test', async () => {

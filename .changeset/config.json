@@ -1,8 +1,8 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
   "changelog": [
-    "@svitejs/changesets-changelog-github-compact",
-    { "repo": "TanStack/query" }
+    "@changesets/changelog-github",
+    { "repo": "TanStack/query", "disableThanks": true }
   ],
   "commit": false,
   "access": "public",

@@ -30,7 +30,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
@@ -120,7 +120,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
@@ -143,13 +143,13 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('Data: {"pages":[0],"pageParams":[0]}'),
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
     ).toBeInTheDocument()
