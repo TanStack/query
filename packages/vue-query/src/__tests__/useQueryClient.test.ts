@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as VueDemi from 'vue-demi'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -20,7 +20,7 @@ describe('useQueryClient', () => {
     vi.clearAllMocks()
   })
 
-  test('should return queryClient when it is provided in the context', () => {
+  it('should return queryClient when it is provided in the context', () => {
     const queryClientMock = { name: 'Mocked client' }
     injectSpy.mockReturnValueOnce(queryClientMock)
 
@@ -31,22 +31,22 @@ describe('useQueryClient', () => {
     expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
   })
 
-  test('should throw an error when queryClient does not exist in the context', () => {
+  it('should throw an error when queryClient does not exist in the context', () => {
     injectSpy.mockReturnValueOnce(undefined)
 
-    expect(useQueryClient).toThrowError()
+    expect(useQueryClient).toThrow()
     expect(injectSpy).toHaveBeenCalledTimes(1)
     expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
   })
 
-  test('should throw an error when used outside of setup function', () => {
+  it('should throw an error when used outside of setup function', () => {
     hasInjectionContextSpy.mockReturnValueOnce(false)
 
-    expect(useQueryClient).toThrowError()
+    expect(useQueryClient).toThrow()
     expect(hasInjectionContextSpy).toHaveBeenCalledTimes(1)
   })
 
-  test('should call inject with a custom key as a suffix', () => {
+  it('should call inject with a custom key as a suffix', () => {
     const queryClientKey = 'foo'
     const expectedKeyParameter = `${VUE_QUERY_CLIENT}:${queryClientKey}`
     const queryClientMock = { name: 'Mocked client' }

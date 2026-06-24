@@ -1,6 +1,6 @@
 import { queryKey } from '@tanstack/query-test-utils'
 import { Suspense } from 'preact/compat'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   QueryCache,
@@ -11,8 +11,17 @@ import {
 import { renderWithClient } from './utils'
 
 describe('useSuspenseInfiniteQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+  })
 
   it('should log an error when skipToken is passed as queryFn', () => {
     const consoleErrorSpy = vi

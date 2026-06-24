@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup } from 'solid-js'
+import { createEffect, createMemo, onSettled, runWithOwner } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
@@ -15,13 +15,13 @@ interface DevtoolsOptions {
    */
   initialIsOpen?: boolean
   /**
-   * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+   * The position of the TanStack logo to open and close the devtools panel.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
    * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the React Query devtools panel.
+   * The position of the Solid Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
    * Defaults to 'bottom'.
    */
@@ -118,20 +118,12 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     },
   )
 
-  let isMounted = false
-  let isDisposed = false
-
-  queueMicrotask(() => {
-    if (isDisposed) return
-    devtools.mount(ref)
-    isMounted = true
-  })
-
-  onCleanup(() => {
-    isDisposed = true
-    if (isMounted) {
-      devtools.unmount()
-    }
+  // onSettled replaces the 1.x onMount + onCleanup pairing. devtools.mount
+  // renders a nested Solid app (creating reactive primitives), which isn't
+  // allowed inside an owned scope, so escape the owner with runWithOwner(null).
+  onSettled(() => {
+    runWithOwner(null, () => devtools.mount(ref))
+    return () => devtools.unmount()
   })
 
   return <div class="tsqd-parent-container" ref={ref}></div>

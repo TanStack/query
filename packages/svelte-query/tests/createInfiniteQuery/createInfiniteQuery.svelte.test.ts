@@ -2,30 +2,35 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { ref } from '../utils.svelte.js'
-import BaseExample from './BaseExample.svelte'
-import SelectExample from './SelectExample.svelte'
+import Base from './Base.svelte'
+import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return the correct states for a successful query', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         states,
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
@@ -108,13 +113,14 @@ describe('createInfiniteQuery', () => {
   it('should be able to select a part of the data', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
-    const rendered = render(SelectExample, {
+    const rendered = render(Select, {
       props: {
+        queryClient,
         states,
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
@@ -131,21 +137,19 @@ describe('createInfiniteQuery', () => {
   })
 
   it('should be able to set new pages with the query client', async () => {
-    const queryClient = new QueryClient()
-
     const rendered = render(ChangeClient, {
       props: {
         queryClient,
       },
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('Data: {"pages":[0],"pageParams":[0]}'),
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
     ).toBeInTheDocument()

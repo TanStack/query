@@ -46,22 +46,25 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: {
+        queries: {
+          experimental_prefetchInRender: true,
+        },
+      },
+    })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
-  })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        experimental_prefetchInRender: true,
-      },
-    },
   })
 
   it('should return the correct states for a successful query', async () => {
@@ -974,7 +977,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 3
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1049,7 +1052,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 2
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 

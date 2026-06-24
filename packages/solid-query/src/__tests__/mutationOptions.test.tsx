@@ -1,23 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import { createEffect, createRenderEffect } from 'solid-js'
-import { sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-  useMutationState,
-} from '..'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
+import { renderWithClient } from './utils'
 import type { MutationState } from '@tanstack/query-core'
 
 describe('mutationOptions', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -27,7 +26,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
@@ -35,14 +34,14 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
@@ -61,11 +60,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toEqual(0)
@@ -78,7 +73,6 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating (without mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
       mutationFn: () => sleep(50).then(() => 'data'),
     })
@@ -98,11 +92,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toEqual(0)
@@ -115,9 +105,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -141,11 +131,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -158,9 +144,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -186,11 +172,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -204,9 +186,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
@@ -220,11 +202,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -246,7 +224,6 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (without mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
       mutationFn: () => sleep(500).then(() => 'data'),
     })
@@ -261,11 +238,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -287,9 +260,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -308,11 +281,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -335,9 +304,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpt1.mutationKey)', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -356,11 +325,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -391,9 +356,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState (with mutationKey in mutationOptions)', async () => {
     const mutationStateArray: Array<Array<MutationState>> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -417,11 +382,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
@@ -435,7 +396,6 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState (without mutationKey in mutationOptions)', async () => {
     const mutationStateArray: Array<Array<MutationState>> = []
-    const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
       mutationFn: () => sleep(10).then(() => 'data'),
     })
@@ -460,11 +420,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
@@ -478,9 +434,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState', async () => {
     const mutationStateArray: Array<Array<MutationState>> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -509,11 +465,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
@@ -529,9 +481,9 @@ describe('mutationOptions', () => {
 
   it('should return the number of fetching mutations when used with useMutationState (filter mutationOpt1.mutationKey)', async () => {
     const mutationStateArray: Array<Array<MutationState>> = []
-    const queryClient = new QueryClient()
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -560,11 +512,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
