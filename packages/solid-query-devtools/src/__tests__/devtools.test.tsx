@@ -150,7 +150,7 @@ describe('SolidQueryDevtools', () => {
     expect(setClient).toHaveBeenCalledWith(queryClient)
   })
 
-  it('should call "unmount" on the devtools instance when the component unmounts', () => {
+  it('should call "unmount" on the devtools instance when the component unmounts', async () => {
     const unmount = vi.spyOn(TanstackQueryDevtools.prototype, 'unmount')
     const queryClient = new QueryClient()
 
@@ -158,6 +158,7 @@ describe('SolidQueryDevtools', () => {
       <SolidQueryDevtools client={queryClient} />
     ))
     flush()
+    await Promise.resolve()
     unmountComponent()
 
     expect(unmount).toHaveBeenCalled()
