@@ -1,28 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import { Errored, Loading, createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-  useQuery,
-} from '..'
+import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
+import { renderWithClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Loading mode", () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient.clear()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should render the correct amount of times in Loading mode', async () => {
     const key = queryKey()
@@ -61,12 +58,10 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading fallback="loading">
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback="loading">
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -111,12 +106,10 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading fallback="loading">
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback="loading">
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -146,12 +139,10 @@ describe("useQuery's in Loading mode", () => {
       return <>rendered</>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading fallback="loading">
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback="loading">
+        <Page />
+      </Loading>
     ))
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -186,11 +177,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
@@ -234,29 +221,27 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Errored
-          fallback={(_err, resetSolid) => (
-            <div>
-              <div>error boundary</div>
-              <button
-                onClick={() => {
-                  succeed = true
-                  queryClient.resetQueries({ queryKey: key })
-                  resetSolid()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )}
-        >
-          <Loading fallback="loading">
-            <Page />
-          </Loading>
-        </Errored>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Errored
+        fallback={(_err, resetSolid) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                succeed = true
+                queryClient.resetQueries({ queryKey: key })
+                resetSolid()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <Loading fallback="loading">
+          <Page />
+        </Loading>
+      </Errored>
     ))
 
     await vi.advanceTimersByTimeAsync(100)
@@ -293,28 +278,26 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Errored
-          fallback={(_err, resetSolid) => (
-            <div>
-              <div>error boundary</div>
-              <button
-                onClick={() => {
-                  queryClient.resetQueries({ queryKey: key })
-                  resetSolid()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )}
-        >
-          <Loading fallback="loading">
-            <Page />
-          </Loading>
-        </Errored>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Errored
+        fallback={(_err, resetSolid) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                queryClient.resetQueries({ queryKey: key })
+                resetSolid()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <Loading fallback="loading">
+          <Page />
+        </Loading>
+      </Errored>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -370,11 +353,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
@@ -426,11 +405,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument()
@@ -475,11 +450,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -518,11 +489,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -563,11 +530,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -607,11 +570,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -640,12 +599,10 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading fallback="loading">
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback="loading">
+        <Page />
+      </Loading>
     ))
 
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -701,11 +658,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // resolve promise -> render Page (rendered)
     await vi.advanceTimersByTimeAsync(10)
@@ -764,11 +717,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // resolve promise -> render Page (rendered)
     await vi.advanceTimersByTimeAsync(10)
@@ -831,11 +780,7 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
     // render empty data with 'rendered' when enabled is false
@@ -879,12 +824,10 @@ describe("useQuery's in Loading mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Loading fallback="loading">
-          <Page />
-        </Loading>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback="loading">
+        <Page />
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)

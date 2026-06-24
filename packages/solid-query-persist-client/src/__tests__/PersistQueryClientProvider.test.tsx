@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
@@ -54,7 +54,7 @@ describe('PersistQueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  test('restores cache from persister', async () => {
+  it('restores cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -138,7 +138,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should also put useQueries into idle state', async () => {
+  it('should also put useQueries into idle state', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -227,7 +227,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -316,7 +316,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -404,7 +404,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
 
     const queryClient = new QueryClient()
@@ -457,7 +457,7 @@ describe('PersistQueryClientProvider', () => {
     expect(screen.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
 
     const onErrorMock = vi
@@ -509,7 +509,7 @@ describe('PersistQueryClientProvider', () => {
     onErrorMock.mockRestore()
   })
 
-  test('should be able to persist into multiple clients', async () => {
+  it('should be able to persist into multiple clients', async () => {
     const key = queryKey()
     const states: Array<{
       status: string

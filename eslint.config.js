@@ -53,10 +53,14 @@ export default [
     plugins: { vitest },
     rules: {
       ...vitest.configs.recommended.rules,
+      'vitest/consistent-test-it': [
+        'error',
+        { fn: 'it', withinDescribe: 'it' },
+      ],
       'vitest/no-standalone-expect': [
         'error',
         {
-          additionalTestBlockFunctions: ['testIf'],
+          additionalTestBlockFunctions: ['itIf'],
         },
       ],
     },

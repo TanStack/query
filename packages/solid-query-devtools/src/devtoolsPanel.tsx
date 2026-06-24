@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup } from 'solid-js'
+import { createEffect, createMemo, onSettled, runWithOwner } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
@@ -34,7 +34,7 @@ export interface DevtoolsPanelOptions {
   /**
    * Callback function that is called when the devtools panel is closed
    */
-  onClose?: () => unknown
+  onClose?: () => void
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
@@ -93,20 +93,12 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     },
   )
 
-  let isMounted = false
-  let isDisposed = false
-
-  queueMicrotask(() => {
-    if (isDisposed) return
-    devtools.mount(ref)
-    isMounted = true
-  })
-
-  onCleanup(() => {
-    isDisposed = true
-    if (isMounted) {
-      devtools.unmount()
-    }
+  // onSettled replaces the 1.x onMount + onCleanup pairing. devtools.mount
+  // renders a nested Solid app (creating reactive primitives), which isn't
+  // allowed inside an owned scope, so escape the owner with runWithOwner(null).
+  onSettled(() => {
+    runWithOwner(null, () => devtools.mount(ref))
+    return () => devtools.unmount()
   })
 
   return (

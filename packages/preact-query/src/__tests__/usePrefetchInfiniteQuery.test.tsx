@@ -25,7 +25,7 @@ const generateInfiniteQueryOptions = (
       .mockImplementation(async () => {
         const currentPageData = data[currentPage]
         if (!currentPageData) {
-          throw new Error('No data defined for page ' + currentPage)
+          throw new Error(`No data defined for page ${currentPage}`)
         }
 
         await sleep(10)
@@ -42,8 +42,13 @@ const generateInfiniteQueryOptions = (
 }
 
 describe('usePrefetchInfiniteQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
@@ -51,9 +56,6 @@ describe('usePrefetchInfiniteQuery', () => {
     Fallback.mockClear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
 

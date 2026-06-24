@@ -23,10 +23,7 @@ describe('QueryClientProvider', () => {
     function Page() {
       const query = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       }))
 
       return (
@@ -63,10 +60,7 @@ describe('QueryClientProvider', () => {
     function Page1() {
       const query = useQuery(() => ({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test1'
-        },
+        queryFn: () => sleep(10).then(() => 'test1'),
       }))
 
       return (
@@ -78,10 +72,7 @@ describe('QueryClientProvider', () => {
     function Page2() {
       const query = useQuery(() => ({
         queryKey: key2,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test2'
-        },
+        queryFn: () => sleep(10).then(() => 'test2'),
       }))
 
       return (
@@ -132,10 +123,7 @@ describe('QueryClientProvider', () => {
     function Page() {
       const query = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       }))
 
       return (

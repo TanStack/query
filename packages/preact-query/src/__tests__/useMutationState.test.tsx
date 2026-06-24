@@ -1,4 +1,4 @@
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/preact'
 import { useEffect } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -18,6 +18,8 @@ describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -29,11 +31,11 @@ describe('useIsMutating', () => {
 
     function Mutations() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(50).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(10).then(() => 'data'),
       })
 
@@ -79,20 +81,22 @@ describe('useIsMutating', () => {
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
-      const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
+      const isMutating = useIsMutating({ mutationKey: mutationKey1 })
       isMutatingArray.push(isMutating)
       return null
     }
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
@@ -113,11 +117,13 @@ describe('useIsMutating', () => {
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating({
         predicate: (mutation) =>
-          mutation.options.mutationKey?.[0] === 'mutation1',
+          mutation.options.mutationKey?.[0] === mutationKey1[0],
       })
       isMutatingArray.push(isMutating)
       return null
@@ -125,11 +131,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
@@ -149,12 +155,13 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const queryClient = new QueryClient()
+    const key = queryKey()
 
     function Page() {
       const isMutating = useIsMutating({}, queryClient)
       const { mutate } = useMutation(
         {
-          mutationKey: ['mutation1'],
+          mutationKey: key,
           mutationFn: () => sleep(10).then(() => 'data'),
         },
         queryClient,
@@ -190,7 +197,7 @@ describe('useMutationState', () => {
   it('should return variables after calling mutate', async () => {
     const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
-    const mutationKey = ['mutation']
+    const mutationKey = queryKey()
 
     function Variables() {
       variables.push(
@@ -206,7 +213,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const { mutate, data } = useMutation({
         mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+        mutationFn: (input: number) => sleep(150).then(() => `data${input}`),
       })
 
       return (
