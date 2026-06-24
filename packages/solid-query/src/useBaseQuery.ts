@@ -428,7 +428,7 @@ export function useBaseQuery<
       // is what the client hydrates against.
       if (isServer) {
         const resolved = queryResource()
-        if (resolved && prop in resolved) {
+        if (prop in resolved) {
           return Reflect.get(resolved, prop)
         }
       }
