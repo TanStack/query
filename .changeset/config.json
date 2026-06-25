@@ -26,10 +26,12 @@
       "@tanstack/react-query-devtools",
       "@tanstack/react-query-next-experimental",
       "@tanstack/react-query-persist-client",
+      "@tanstack/vue-query"
+    ],
+    [
       "@tanstack/solid-query",
       "@tanstack/solid-query-devtools",
-      "@tanstack/solid-query-persist-client",
-      "@tanstack/vue-query"
+      "@tanstack/solid-query-persist-client"
     ],
     [
       "@tanstack/vue-query-devtools",
