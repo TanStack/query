@@ -256,7 +256,19 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
+    // Plain objects and arrays are matched structurally. Other objects
+    // (e.g. `Date`) are compared the same way `hashKey` serializes them, so
+    // that non-exact matching stays consistent with how queries are stored.
+    if (
+      (isPlainArray(a) && isPlainArray(b)) ||
+      (isPlainObject(a) && isPlainObject(b))
+    ) {
+      return Object.keys(b).every((key) =>
+        partialMatchKey((a as any)[key], (b as any)[key]),
+      )
+    }
+
+    return hashKey([a]) === hashKey([b])
   }
 
   return false
