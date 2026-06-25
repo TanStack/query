@@ -10,34 +10,45 @@ Here's an example of a mutation that adds a new todo to the server:
 [//]: # 'Example'
 
 ```tsx
-function App() {
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+
+function TodoApp() {
+  const queryClient = useQueryClient()
+
+  // 1. Fetch the existing todos list
+  const { data: todos, isLoading } = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => axios.get('/todos').then((res) => res.data),
+  })
+
+  // 2. Create the mutation and invalidate the list on success
   const mutation = useMutation({
-    mutationFn: (newTodo) => {
-      return axios.post('/todos', newTodo)
+    mutationFn: (newTodo) => axios.post('/todos', newTodo),
+    onSuccess: () => {
+      // This forces useQuery to refetch and pull the updated list automatically
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 
+  if (isLoading) return 'Loading todos...'
+
   return (
     <div>
-      {mutation.isPending ? (
-        'Adding todo...'
-      ) : (
-        <>
-          {mutation.isError ? (
-            <div>An error occurred: {mutation.error.message}</div>
-          ) : null}
+      <ul>
+        {todos?.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
 
-          {mutation.isSuccess ? <div>Todo added!</div> : null}
-
-          <button
-            onClick={() => {
-              mutation.mutate({ id: new Date(), title: 'Do Laundry' })
-            }}
-          >
-            Create Todo
-          </button>
-        </>
-      )}
+      <button
+        disabled={mutation.isPending}
+        onClick={() => {
+          mutation.mutate({ title: 'Do Laundry' })
+        }}
+      >
+        {mutation.isPending ? 'Adding...' : 'Create Todo'}
+      </button>
     </div>
   )
 }
