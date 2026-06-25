@@ -283,7 +283,12 @@ describe('fully typed usage', () => {
       Array<[ReadonlyArray<unknown>, unknown]>
     >()
 
-    const queryData3 = queryClient.setQueryData(filterKey, { foo: '' })
+    // Type the value before passing it: TypeScript 5.4's `NoInfer` can't match
+    // an inline object literal against the value branch of the `Updater` union
+    // here, so it falls back to the function branch and reports the literal as
+    // excess properties. Annotating sidesteps that (TS >= 5.5 handles it).
+    const newData: TData = { foo: '' }
+    const queryData3 = queryClient.setQueryData(filterKey, newData)
     type SetQueryDataUpdaterArg = Parameters<
       typeof queryClient.setQueryData<unknown, typeof filterKey>
     >[1]
