@@ -26,13 +26,15 @@
     "@tanstack/svelte-query-devtools": "6.0.4",
     "@tanstack/svelte-query-persist-client": "6.0.25",
     "@tanstack/vue-query": "5.92.12",
-    "@tanstack/vue-query-devtools": "6.1.5"
+    "@tanstack/vue-query-devtools": "6.1.5",
+    "@tanstack/lit-query": "0.2.7"
   },
   "changesets": [
     "fifty-spoons-draw",
     "free-cities-hunt",
     "legal-signs-call",
     "slimy-mice-relate",
+    "solid-beta-15-upgrade",
     "sour-balloons-nail",
     "whole-coins-count"
   ]
