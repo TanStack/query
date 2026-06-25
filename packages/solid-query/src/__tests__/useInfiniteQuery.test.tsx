@@ -1809,15 +1809,15 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data?.pages ?? []} keyed={false}>
+                <For each={state.data?.pages ?? []}>
                   {(page, i) => (
                     <div>
                       <div>
-                        Page {i()}: {page().ts}
+                        Page {i()}: {page.ts}
                       </div>
                       <div>
-                        <For each={page().items} keyed={false}>
-                          {(item) => <p>Item: {item()}</p>}
+                        <For each={page.items}>
+                          {(item) => <p>Item: {item}</p>}
                         </For>
                       </div>
                     </div>
@@ -1948,15 +1948,15 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data!.pages} keyed={false}>
+                <For each={state.data!.pages}>
                   {(page, i) => (
                     <div>
                       <div>
-                        Page {i()}: {page().ts}
+                        Page {i()}: {page.ts}
                       </div>
                       <div>
-                        <For each={page().items} keyed={false}>
-                          {(item) => <p>Item: {item()}</p>}
+                        <For each={page.items}>
+                          {(item) => <p>Item: {item}</p>}
                         </For>
                       </div>
                     </div>

@@ -7,7 +7,8 @@ import {
   untrack,
 } from 'solid-js'
 import { isServer } from '@solidjs/web'
-import type { Component, ComponentProps, JSX } from 'solid-js'
+import type { Component, ComponentProps } from 'solid-js'
+import type { JSX } from '@solidjs/web'
 
 /*
   This function has been taken from solid-start's codebase

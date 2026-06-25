@@ -118,12 +118,24 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     },
   )
 
-  // onSettled replaces the 1.x onMount + onCleanup pairing. devtools.mount
-  // renders a nested Solid app (creating reactive primitives), which isn't
-  // allowed inside an owned scope, so escape the owner with runWithOwner(null).
+  // devtools.mount() calls render() from solid-js/web, which calls flush().
+  // flush() is not reentrant inside onSettled, so defer the mount to a
+  // microtask. runWithOwner(null) escapes the owned scope because
+  // devtools.mount renders a nested Solid app (creating reactive primitives).
+  let mounted = false
+  let disposed = false
   onSettled(() => {
-    runWithOwner(null, () => devtools.mount(ref))
-    return () => devtools.unmount()
+    queueMicrotask(() => {
+      if (disposed) return
+      runWithOwner(null, () => devtools.mount(ref))
+      mounted = true
+    })
+    return () => {
+      disposed = true
+      if (mounted) {
+        devtools.unmount()
+      }
+    }
   })
 
   return <div class="tsqd-parent-container" ref={ref}></div>

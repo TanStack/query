@@ -6,7 +6,7 @@ import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { IsRestoringContext, QueryClientProvider } from '@tanstack/solid-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/solid-query'
-import type { JSX } from 'solid-js'
+import type { JSX } from '@solidjs/web'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>

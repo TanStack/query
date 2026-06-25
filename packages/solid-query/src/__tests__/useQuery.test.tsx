@@ -43,7 +43,7 @@ import type {
   UseQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
-import type { JSX } from 'solid-js'
+import type { JSX } from '@solidjs/web'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
@@ -2674,7 +2674,9 @@ describe('useQuery', () => {
       return (
         <div>
           <ErrorBoundary
-            fallback={(err) => <div>Fallback error: {err().message}</div>}
+            fallback={(err) => (
+              <div>Fallback error: {(err() as Error).message}</div>
+            )}
           >
             <h1>{state.data}</h1>
             <h1>{state.status}</h1>
@@ -2716,7 +2718,9 @@ describe('useQuery', () => {
         <div>
           <h2>Outside error boundary: {state.error?.message}</h2>
           <ErrorBoundary
-            fallback={(err) => <div>Fallback error: {err().message}</div>}
+            fallback={(err) => (
+              <div>Fallback error: {(err() as Error).message}</div>
+            )}
           >
             <h1>{state.data}</h1>
             <h1>{state.status}</h1>
@@ -2826,7 +2830,7 @@ describe('useQuery', () => {
         fallback={(error) => (
           <div>
             <div>error boundary</div>
-            <div>{error()?.message}</div>
+            <div>{(error() as Error | undefined)?.message}</div>
           </div>
         )}
       >
