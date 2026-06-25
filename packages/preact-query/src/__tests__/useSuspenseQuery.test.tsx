@@ -32,8 +32,8 @@ describe('useSuspenseQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   /**

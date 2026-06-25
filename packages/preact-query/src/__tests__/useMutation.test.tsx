@@ -28,8 +28,8 @@ describe('useMutation', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should be able to reset `data`', async () => {
@@ -1486,8 +1486,7 @@ describe('useMutation', () => {
     expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
   })
 
-  it('should pass meta to mutation', async () => {
-    const errorMock = vi.fn()
+  it('should pass meta to mutation on success', async () => {
     const successMock = vi.fn()
 
     const queryClientMutationMeta = new QueryClient({
@@ -1495,33 +1494,21 @@ describe('useMutation', () => {
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)
         },
-        onError: (_, __, ___, mutation) => {
-          errorMock(mutation.meta?.metaErrorMessage)
-        },
       }),
     })
 
     const metaSuccessMessage = 'mutation succeeded'
-    const metaErrorMessage = 'mutation failed'
 
     function Page() {
       const { mutate: succeed, isSuccess } = useMutation({
         mutationFn: () => Promise.resolve(''),
         meta: { metaSuccessMessage },
       })
-      const { mutate: error, isError } = useMutation({
-        mutationFn: () => {
-          return Promise.reject(new Error(''))
-        },
-        meta: { metaErrorMessage },
-      })
 
       return (
         <div>
           <button onClick={() => succeed()}>succeed</button>
-          <button onClick={() => error()}>error</button>
           {isSuccess && <div>successTest</div>}
-          {isError && <div>errorTest</div>}
         </div>
       )
     }
@@ -1532,14 +1519,53 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(getByText('succeed'))
-    fireEvent.click(getByText('error'))
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('successTest')).not.toBeNull()
-    expect(queryByText('errorTest')).not.toBeNull()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
+  })
+
+  it('should pass meta to mutation on error', async () => {
+    const errorMock = vi.fn()
+
+    const queryClientMutationMeta = new QueryClient({
+      mutationCache: new MutationCache({
+        onError: (_, __, ___, mutation) => {
+          errorMock(mutation.meta?.metaErrorMessage)
+        },
+      }),
+    })
+
+    const metaErrorMessage = 'mutation failed'
+
+    function Page() {
+      const { mutate: error, isError } = useMutation({
+        mutationFn: () => {
+          return Promise.reject(new Error(''))
+        },
+        meta: { metaErrorMessage },
+      })
+
+      return (
+        <div>
+          <button onClick={() => error()}>error</button>
+          {isError && <div>errorTest</div>}
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClientMutationMeta,
+      <Page />,
+    )
+
+    fireEvent.click(getByText('error'))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryByText('errorTest')).not.toBeNull()
+
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
   })
@@ -1980,7 +2006,7 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
   })
 
-  it('should handle conditional logic based on mutate success or failure', async () => {
+  it('should set success message from mutate callbacks when mutation succeeds', async () => {
     function Page() {
       const [message, setMessage] = useState<string>('idle')
 
@@ -2007,6 +2033,38 @@ describe('useMutation', () => {
           >
             submit
           </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
+  })
+
+  it('should set error message from mutate callbacks when mutation fails', async () => {
+    function Page() {
+      const [message, setMessage] = useState<string>('idle')
+
+      const { mutate } = useMutation({
+        mutationFn: async (shouldFail: boolean) => {
+          await sleep(10)
+          if (shouldFail) {
+            throw new Error('submission failed')
+          }
+          return 'submitted successfully'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
           <button
             onClick={() =>
               mutate(true, {
@@ -2023,13 +2081,6 @@ describe('useMutation', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
-
-    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
-    await vi.advanceTimersByTimeAsync(11)
-
-    expect(
-      rendered.getByText('message: success: submitted successfully'),
-    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
     await vi.advanceTimersByTimeAsync(11)

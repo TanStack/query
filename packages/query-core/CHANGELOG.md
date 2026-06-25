@@ -1,5 +1,25 @@
 # @tanstack/query-core
 
+## 5.101.1
+
+### Patch Changes
+
+- [#10610](https://github.com/TanStack/query/pull/10610) [`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1) - fix missing `dataUpdatedAt` for streamed queries that resolve before hydration
+
+## 5.101.0
+
+## 5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- fix(query-core): drop the custom `NoInfer<T>` re-export and rely on TypeScript's built-in `NoInfer` (TS ≥ 5.4) so `NoInfer<X[K]>` stays assignable to `X[K]` in generic contexts (fixes [#9937](https://github.com/TanStack/query/issues/9937)) ([#10593](https://github.com/TanStack/query/pull/10593))
+
+## 5.100.12
+
+## 5.100.11
+
 ## 5.100.10
 
 ## 5.100.9

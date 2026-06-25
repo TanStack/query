@@ -89,12 +89,12 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
+    vi.useRealTimers()
   })
 
   function renderDevtools(
@@ -339,6 +339,22 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
     })
+
+    it('should render an idle mutation that has been built but not executed', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['idle-mut'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('disabled and static queries', () => {
@@ -355,6 +371,146 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(rendered.getByLabelText(/disabled/)).toBeInTheDocument()
+    })
+
+    it('should render a "static" indicator for a query with "staleTime: \'static\'"', () => {
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+      })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['static-q'],
+        queryFn: () => 'x',
+        staleTime: 'static',
+      })
+      query.addObserver(observer)
+      query.setState({ ...query.state, data: 'x' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByText('static')).toBeInTheDocument()
+      expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
+    })
+
+    it('should render a query row when an object query key is mutated in place', () => {
+      const filters = { page: 1 }
+      queryClient.setQueryData(['mutable-key', filters], 'x')
+      filters.page = 2
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('picture-in-picture', () => {
+    type FakePipWindow = Pick<
+      Window,
+      | 'document'
+      | 'innerWidth'
+      | 'innerHeight'
+      | 'addEventListener'
+      | 'removeEventListener'
+      | 'close'
+    >
+
+    function stubPipWindow(
+      overrides: Partial<
+        Pick<FakePipWindow, 'innerWidth' | 'innerHeight'>
+      > = {},
+    ) {
+      const pipDocument = document.implementation.createHTMLDocument('PiP')
+      const listeners = new Map<string, EventListener>()
+      const fakeWindow: FakePipWindow = {
+        document: pipDocument,
+        innerWidth: 800,
+        innerHeight: 600,
+        addEventListener: vi.fn((event: string, handler: EventListener) => {
+          listeners.set(event, handler)
+        }),
+        removeEventListener: vi.fn((event: string) => {
+          listeners.delete(event)
+        }),
+        close: vi.fn(),
+        ...overrides,
+      }
+      const open = vi.fn(() => fakeWindow)
+      vi.stubGlobal('open', open)
+      return {
+        pipDocument,
+        fakeWindow,
+        open,
+        fire: (event: string) => {
+          listeners.get(event)?.(new Event(event))
+        },
+      }
+    }
+
+    it('should open a PiP window when the picture-in-picture button is clicked', () => {
+      const { open } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(open).toHaveBeenCalledWith(
+        '',
+        'TSQD-Devtools-Panel',
+        expect.stringMatching(/^width=\d+,height=\d+,popup$/),
+      )
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'true',
+      )
+    })
+
+    it('should hide the in-page panel while a PiP window is open', () => {
+      stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        rendered.container.querySelector('.tsqd-main-panel-container'),
+      ).toBeNull()
+    })
+
+    it('should restore the in-page panel when the PiP window is closed', () => {
+      const { fire } = stubPipWindow()
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+      fire('pagehide')
+
+      expect(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      ).toBeInTheDocument()
+    })
+
+    it('should render the PiP panel with the narrow layout when the PiP window is below the second breakpoint', () => {
+      // secondBreakpoint = 796; pick a width comfortably below it so the
+      // PiP panel evaluates its narrow (`flex-direction: column`) branch.
+      const { pipDocument } = stubPipWindow({ innerWidth: 500 })
+      queryClient.setQueryData(['narrow-pip-query'], { hello: 'world' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        pipDocument.querySelector(
+          '[aria-label="Close Tanstack query devtools"]',
+        ),
+      ).not.toBeNull()
+      expect(
+        pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
+      ).not.toBeNull()
     })
   })
 
@@ -706,6 +862,41 @@ describe('Devtools', () => {
       fireEvent.submit(textarea.closest('form')!)
 
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+    })
+
+    it('should clear the error state when the textarea is focused after a submit failure', () => {
+      queryClient.setQueryData(['edit-refocus'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-refocus"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      const textarea = rendered.getByLabelText('Edit query data as JSON')
+      fireEvent.input(textarea, { target: { value: 'not json' } })
+      fireEvent.submit(textarea.closest('form')!)
+
+      expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+
+      fireEvent.focus(textarea)
+
+      expect(rendered.queryByText('Invalid Value')).toBeNull()
+    })
+
+    it('should return to the data view when the editor "Cancel" button is clicked', () => {
+      queryClient.setQueryData(['edit-cancel'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-cancel"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      expect(
+        rendered.getByLabelText('Edit query data as JSON'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('Cancel'))
+
+      expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
+      expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
   })
 
@@ -1161,6 +1352,60 @@ describe('Devtools', () => {
 
       expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
         192,
+      )
+    })
+
+    it('should restore "width" to the rendered minimum when the panel is dragged below its content width', () => {
+      const initialWidth = 400
+      // The panel uses `min-width: min-content`, so the rendered width may
+      // exceed the 192px `minWidth` constant when its children are wider; any
+      // value > 192 here triggers the `localStore.width < newWidth` restore
+      // branch.
+      const renderedMinWidth = 250
+      const rendered = renderDevtools(
+        { position: 'left', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      const getBoundingClientRect = vi
+        .spyOn(panel!, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          height: 0,
+          width: initialWidth,
+          x: 0,
+          y: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          toJSON: () => ({}),
+        })
+      getBoundingClientRect.mockReturnValue({
+        height: 0,
+        width: renderedMinWidth,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // Drag 300px left shrinks the panel to 100 — below `minWidth`, so the
+      // clamp + restore branches both fire.
+      fireEvent.mouseDown(handle, { clientX: 300, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
+        renderedMinWidth,
       )
     })
 

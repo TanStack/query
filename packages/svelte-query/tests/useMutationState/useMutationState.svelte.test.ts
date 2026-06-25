@@ -44,12 +44,12 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
@@ -82,12 +82,12 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
   })
@@ -147,12 +147,12 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
   })

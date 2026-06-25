@@ -436,7 +436,7 @@ describe('injectQuery', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
-    expect(spy).toBeCalledWith({
+    expect(spy).toHaveBeenCalledWith({
       client: queryClient,
       meta: undefined,
       queryKey: key2,

@@ -1,5 +1,49 @@
 # @tanstack/react-query-next-experimental
 
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- [#10857](https://github.com/TanStack/query/pull/10857) [`7cf5923`](https://github.com/TanStack/query/commit/7cf5923308fb91f3eff0fe952d8c64676e2bdad7) - fix(react-query-next-experimental): replace deprecated 'isServer' with 'environmentManager.isServer()'
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies [[`ed20b6d`](https://github.com/TanStack/query/commit/ed20b6d7541c908033acfcad92b0cd112930d1c3)]:
+  - @tanstack/react-query@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.100.11
+
 ## 5.100.10
 
 ### Patch Changes

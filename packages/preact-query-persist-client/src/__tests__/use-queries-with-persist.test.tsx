@@ -44,8 +44,8 @@ describe('useQueries with persist and memoized combine (preact)', () => {
 
   afterEach(() => {
     cleanup()
-    vi.useRealTimers()
     Object.keys(storage).forEach((key) => delete storage[key])
+    vi.useRealTimers()
   })
 
   it('updates UI when combine is memoized with persisted results', async () => {

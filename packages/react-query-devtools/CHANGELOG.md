@@ -1,5 +1,53 @@
 # @tanstack/react-query-devtools
 
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/react-query@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/react-query@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies [[`ed20b6d`](https://github.com/TanStack/query/commit/ed20b6d7541c908033acfcad92b0cd112930d1c3)]:
+  - @tanstack/react-query@5.100.14
+  - @tanstack/query-devtools@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.13
+  - @tanstack/react-query@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.12
+  - @tanstack/react-query@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.11
+  - @tanstack/react-query@5.100.11
+
 ## 5.100.10
 
 ### Patch Changes
