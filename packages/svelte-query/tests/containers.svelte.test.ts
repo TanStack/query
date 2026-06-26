@@ -198,6 +198,24 @@ describe('createRawRef', () => {
     expect(ref).toEqual([7, 8, 9])
   })
 
+  it('should handle shrinking an array by more than one entry at once', () => {
+    // Regression for #10341: createQueries crashed with
+    // `TypeError: can't delete property 'N': proxy deleteProperty handler returned false`
+    // when two or more items were removed from the reactive array in a single update.
+    const [ref, update] = createRawRef([1, 2, 3, 4, 5])
+
+    expect(ref).toEqual([1, 2, 3, 4, 5])
+
+    update([1, 2])
+    expect(ref).toEqual([1, 2])
+
+    update([1, 2, 3, 4])
+    expect(ref).toEqual([1, 2, 3, 4])
+
+    update([])
+    expect(ref).toEqual([])
+  })
+
   it('should behave like a regular object when not using `update`', () => {
     const [ref] = createRawRef<Record<string, unknown>>({ a: 1, b: 2 })
 
