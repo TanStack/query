@@ -1078,12 +1078,13 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
+      expect(themeTrigger).not.toBe(
+        document.querySelector('.tsqd-settings-menu-sub-trigger-position'),
+      )
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       expect(
@@ -1098,12 +1099,10 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       const themeMenu = document.querySelector(

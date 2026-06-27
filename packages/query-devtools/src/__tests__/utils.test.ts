@@ -1042,6 +1042,19 @@ describe('Utils tests', () => {
       expect(styleTags).toHaveLength(1)
       expect(styleTags[0]?.getAttribute('nonce')).toBe('first-nonce')
     })
+
+    it('should install the style tag into the "ShadowRoot" target even when "document.head" already has one', () => {
+      const host = document.createElement('div')
+      const shadow = host.attachShadow({ mode: 'open' })
+
+      setupStyleSheet('host-nonce')
+      setupStyleSheet('shadow-nonce', shadow)
+
+      expect(shadow.querySelector('#_goober')).not.toBeNull()
+      expect(shadow.querySelector('#_goober')?.getAttribute('nonce')).toBe(
+        'shadow-nonce',
+      )
+    })
   })
 
   describe('sortFns', () => {
@@ -1075,6 +1088,13 @@ describe('Utils tests', () => {
 
         expect(dateSort(older, newer)).toBe(1)
         expect(dateSort(newer, older)).toBe(-1)
+      })
+
+      it('should return 0 when both queries share the same "dataUpdatedAt"', () => {
+        const a = buildQuery(['a'], { dataUpdatedAt: 100 })
+        const b = buildQuery(['b'], { dataUpdatedAt: 100 })
+
+        expect(dateSort(a, b)).toBe(0)
       })
     })
 

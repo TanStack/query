@@ -311,9 +311,9 @@ describe('queriesObserver', () => {
     await vi.advanceTimersByTimeAsync(20)
 
     // 1 call: pending
-    expect(subscription1Handler).toBeCalledTimes(1)
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
     // 1 call: success
-    expect(subscription2Handler).toBeCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(1)
 
     // Clean-up
     unsubscribe2()
