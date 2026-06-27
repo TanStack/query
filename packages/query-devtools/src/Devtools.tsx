@@ -1192,7 +1192,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       class={cx(
                         styles().settingsSubTrigger,
                         'tsqd-settings-menu-sub-trigger',
-                        'tsqd-settings-menu-sub-trigger-position',
+                        'tsqd-settings-menu-sub-trigger-theme',
                       )}
                     >
                       <span>Theme</span>
