@@ -312,6 +312,22 @@ describe('PiPContext', () => {
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
     })
+
+    it('should reset "pip_open" in "localStore" so the auto-open createEffect does not reopen the window', () => {
+      stubPipWindow()
+
+      renderAndAct(
+        (pip) => {
+          pip().requestPipWindow(640, 480)
+          pip().closePipWindow()
+        },
+        { disabled: true },
+      )
+
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+    })
   })
 
   describe('"pip_open" auto-open createEffect', () => {

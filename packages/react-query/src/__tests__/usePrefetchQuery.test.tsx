@@ -30,8 +30,8 @@ describe('usePrefetchQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   function Suspended<TData = unknown>(props: {

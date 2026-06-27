@@ -101,8 +101,10 @@ const getStatusRank = (q: Query) =>
 
 const queryHashSort: SortFn = (a, b) => a.queryHash.localeCompare(b.queryHash)
 
-const dateSort: SortFn = (a, b) =>
-  a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1
+const dateSort: SortFn = (a, b) => {
+  const diff = b.state.dataUpdatedAt - a.state.dataUpdatedAt
+  return diff < 0 ? -1 : diff > 0 ? 1 : 0
+}
 
 const statusAndDateSort: SortFn = (a, b) => {
   if (getStatusRank(a) === getStatusRank(b)) {
@@ -308,7 +310,7 @@ export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce) return
 
   // Goober reads window.__nonce__ every time it creates or accesses its style
-  // element (e.nonce = window.__nonce__). Without this, goober overwrites the
+  // element (el.nonce = window.__nonce__). Without this, goober overwrites the
   // nonce we set on the pre-created element with undefined, clearing it.
   ;(window as any).__nonce__ = nonce
 

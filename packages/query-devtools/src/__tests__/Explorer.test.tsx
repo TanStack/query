@@ -24,8 +24,8 @@ describe('Explorer', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   function renderExplorer(

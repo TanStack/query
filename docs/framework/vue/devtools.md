@@ -9,9 +9,9 @@ When you begin your Vue Query journey, you'll want these devtools by your side. 
 
 > For Chrome, Firefox, and Edge users: Third-party browser extensions are available for debugging TanStack Query directly in browser DevTools. These provide the same functionality as the framework-specific devtools packages:
 >
-> - <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Chrome](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
-> - <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Firefox](https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/)
-> - <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Edge](https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj)
+> - <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai">Devtools for Chrome</a>
+> - <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/">Devtools for Firefox</a>
+> - <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj">Devtools for Edge</a>
 
 ## Component based Devtools (Vue 3)
 
@@ -88,21 +88,22 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
 
-Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+Place the following code as high in your Vue app as you can. The closer it is to the root of the page, the better it will work!
 
 ```vue
 <script setup>
+import { ref } from 'vue'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
-const isDevtoolsOpen = ref(false)
-function toggleDevtools() {
-  isDevtoolsOpen.value = !isDevtoolsOpen.value
-}
+
+const isOpen = ref(false)
 </script>
 
 <template>
   <h1>The app!</h1>
-  <button @click="toggleDevtools">Open Devtools</button>
-  <VueQueryDevtoolsPanel v-if="isDevtoolsOpen" :onClose="toggleDevtools" />
+  <button @click="isOpen = !isOpen">
+    {{ isOpen ? 'Close' : 'Open' }} the devtools panel
+  </button>
+  <VueQueryDevtoolsPanel v-if="isOpen" :onClose="() => (isOpen = false)" />
 </template>
 ```
 
