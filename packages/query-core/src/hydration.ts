@@ -81,7 +81,7 @@ function dehydrateQuery(
   shouldRedactErrors: (error: unknown) => boolean,
 ): DehydratedQuery {
   const dehydratePromise = () => {
-    const promise = query.promise?.then(serializeData).catch((error) => {
+    const promise = query.promise.then(serializeData).catch((error) => {
       if (!shouldRedactErrors(error)) {
         // Reject original error if it should not be redacted
         return Promise.reject(error)
@@ -99,7 +99,7 @@ function dehydrateQuery(
     // We need the promise we dehydrate to reject to get the correct result into
     // the query cache, but we also want to avoid unhandled promise rejections
     // in whatever environment the prefetches are happening in.
-    promise?.catch(noop)
+    promise.catch(noop)
 
     return promise
   }

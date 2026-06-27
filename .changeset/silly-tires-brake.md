@@ -1,5 +1,6 @@
 ---
 '@tanstack/react-query': patch
+'@tanstack/peact-query': patch
 '@tanstack/query-core': patch
 ---
 
