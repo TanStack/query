@@ -171,7 +171,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
-  #promise: Thenable<TData>
+  #promise?: Thenable<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -189,8 +189,6 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
-    this.#promise = pendingThenable()
-    this.#updatePromise()
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -201,12 +199,8 @@ export class Query<
     return this.#queryType
   }
 
-  get promise(): Promise<TData> {
+  get promise(): Promise<TData> | undefined {
     return this.#promise
-  }
-
-  #updatePromise(): void {
-    this.#promise = updateThenable(this.#promise, this.state)
   }
 
   setOptions(
@@ -705,7 +699,7 @@ export class Query<
     }
 
     this.state = reducer(this.state)
-    this.#updatePromise()
+    this.#promise = updateThenable(this.#promise ?? pendingThenable(), this.state)
 
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
