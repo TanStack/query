@@ -1076,6 +1076,13 @@ describe('Utils tests', () => {
         expect(dateSort(older, newer)).toBe(1)
         expect(dateSort(newer, older)).toBe(-1)
       })
+
+      it('should return 0 when both queries share the same "dataUpdatedAt"', () => {
+        const a = buildQuery(['a'], { dataUpdatedAt: 100 })
+        const b = buildQuery(['b'], { dataUpdatedAt: 100 })
+
+        expect(dateSort(a, b)).toBe(0)
+      })
     })
 
     describe("'query hash'", () => {

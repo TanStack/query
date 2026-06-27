@@ -101,8 +101,10 @@ const getStatusRank = (q: Query) =>
 
 const queryHashSort: SortFn = (a, b) => a.queryHash.localeCompare(b.queryHash)
 
-const dateSort: SortFn = (a, b) =>
-  a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1
+const dateSort: SortFn = (a, b) => {
+  const diff = b.state.dataUpdatedAt - a.state.dataUpdatedAt
+  return diff < 0 ? -1 : diff > 0 ? 1 : 0
+}
 
 const statusAndDateSort: SortFn = (a, b) => {
   if (getStatusRank(a) === getStatusRank(b)) {
