@@ -699,7 +699,10 @@ export class Query<
     }
 
     this.state = reducer(this.state)
-    this.#promise = updateThenable(this.#promise ?? pendingThenable(), this.state)
+    this.#promise = updateThenable(
+      this.#promise ?? pendingThenable(),
+      this.state,
+    )
 
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
