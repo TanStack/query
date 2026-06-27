@@ -307,7 +307,12 @@ export const deleteNestedDataByPath = (
 // Sets up the goober stylesheet
 // Adds a nonce to the style tag if needed
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
-  if (!nonce) return
+  if (!nonce)
+    return // Goober reads window.__nonce__ every time it creates or accesses its style
+    // element (el.nonce = window.__nonce__). Without this, goober overwrites the
+    // nonce we set on the pre-created element with undefined, clearing it.
+  ;(window as any).__nonce__ = nonce
+
   const root = target ?? document.head
   if (root.querySelector('#_goober')) return
   const styleTag = document.createElement('style')
