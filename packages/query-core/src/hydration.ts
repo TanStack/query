@@ -253,6 +253,7 @@ export function hydrate(
             ...(state.status === 'pending' &&
               data !== undefined && {
                 status: 'success' as const,
+                dataUpdatedAt: dehydratedAt ?? Date.now(),
                 // Preserve existing fetchStatus if the existing query is actively fetching.
                 ...(!existingQueryIsFetching && {
                   fetchStatus: 'idle' as const,
@@ -284,6 +285,10 @@ export function hydrate(
               state.status === 'pending' && data !== undefined
                 ? 'success'
                 : state.status,
+            ...(state.status === 'pending' &&
+              data !== undefined && {
+                dataUpdatedAt: dehydratedAt ?? Date.now(),
+              }),
           },
         )
       }
