@@ -39,7 +39,7 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = React.useSyncExternalStore(
+  const r = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         observer.subscribe(notifyManager.batchCalls(onStoreChange)),
@@ -48,6 +48,9 @@ export function useMutation<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
+
+  // Handle result property usage tracking
+  const result = !options.notifyOnChangeProps ? observer.trackResult(r) : r
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
@@ -65,5 +68,7 @@ export function useMutation<
     throw result.error
   }
 
-  return { ...result, mutate, mutateAsync: result.mutate }
+  return React.useMemo(() => {
+    return Object.assign(result, { mutate, mutateAsync: result.mutate })
+  }, [mutate, result])
 }
