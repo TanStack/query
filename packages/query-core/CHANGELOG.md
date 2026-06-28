@@ -1,5 +1,13 @@
 # @tanstack/query-core
 
+## 5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- [#10610](https://github.com/TanStack/query/pull/10610) [`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1) - fix missing `dataUpdatedAt` for streamed queries that resolve before hydration
+
 ## 5.101.0
 
 ## 5.100.14

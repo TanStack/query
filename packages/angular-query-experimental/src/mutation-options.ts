@@ -2,7 +2,7 @@ import type { DefaultError, WithRequired } from '@tanstack/query-core'
 import type { CreateMutationOptions } from './types'
 
 /**
- * Allows to share and re-use mutation options in a type-safe way.
+ * Allows sharing and re-using mutation options in a type-safe way.
  *
  * **Example**
  *
@@ -66,7 +66,7 @@ export function mutationOptions<
 >
 
 /**
- * Allows to share and re-use mutation options in a type-safe way.
+ * Allows sharing and re-using mutation options in a type-safe way.
  *
  * **Example**
  *
