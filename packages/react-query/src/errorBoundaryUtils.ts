@@ -10,6 +10,72 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
+const queryResetCounts = new WeakMap<
+  QueryErrorResetBoundaryValue,
+  WeakMap<object, number>
+>()
+// Track reset generations per live Query instance. If a query is garbage
+// collected between unmount and remount, a future Query instance starts fresh
+// instead of inheriting retry state from a different lifecycle.
+
+function getResetCount(errorResetBoundary: QueryErrorResetBoundaryValue) {
+  return errorResetBoundary.getResetCount?.()
+}
+
+function getQueryResetCounts(errorResetBoundary: QueryErrorResetBoundaryValue) {
+  let resetCounts = queryResetCounts.get(errorResetBoundary)
+
+  if (!resetCounts) {
+    resetCounts = new WeakMap()
+    queryResetCounts.set(errorResetBoundary, resetCounts)
+  }
+
+  return resetCounts
+}
+
+function isResetForQuery<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+) {
+  const resetCount = getResetCount(errorResetBoundary)
+
+  if (errorResetBoundary.isReset()) {
+    if (query && resetCount) {
+      getQueryResetCounts(errorResetBoundary).set(query, resetCount)
+    }
+
+    return resetCount === undefined || resetCount > 0
+  }
+
+  if (!query) {
+    return false
+  }
+
+  const resetCounts = getQueryResetCounts(errorResetBoundary)
+  const queryResetCount = resetCounts.get(query)
+
+  if (queryResetCount === undefined) {
+    resetCounts.set(query, resetCount ?? 0)
+    return false
+  }
+
+  if (!resetCount) {
+    return false
+  }
+
+  if (resetCount > queryResetCount) {
+    resetCounts.set(query, resetCount)
+    return true
+  }
+
+  return false
+}
+
 export const ensurePreventErrorBoundaryRetry = <
   TQueryFnData,
   TError,
@@ -38,7 +104,7 @@ export const ensurePreventErrorBoundaryRetry = <
     throwOnError
   ) {
     // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
+    if (!isResetForQuery(errorResetBoundary, query)) {
       options.retryOnMount = false
     }
   }

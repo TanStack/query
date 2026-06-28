@@ -5,21 +5,29 @@ import * as React from 'react'
 export type QueryErrorResetFunction = () => void
 export type QueryErrorIsResetFunction = () => boolean
 export type QueryErrorClearResetFunction = () => void
+export type QueryErrorResetCountFunction = () => number
 
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
+  getResetCount?: QueryErrorResetCountFunction
   isReset: QueryErrorIsResetFunction
   reset: QueryErrorResetFunction
 }
 
 function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
+  let resetCount = 0
+
   return {
     clearReset: () => {
       isReset = false
     },
+    getResetCount: () => {
+      return resetCount
+    },
     reset: () => {
       isReset = true
+      resetCount++
     },
     isReset: () => {
       return isReset
