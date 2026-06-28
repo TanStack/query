@@ -1,4 +1,6 @@
 /* istanbul ignore file */
+import { startTransition } from 'react'
+import { notifyManager } from '@tanstack/query-core'
 
 // Re-export core
 export * from '@tanstack/query-core'
@@ -54,3 +56,5 @@ export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
+
+notifyManager.setNotifyFunction(startTransition)
