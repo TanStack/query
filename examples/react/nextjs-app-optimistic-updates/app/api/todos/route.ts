@@ -1,28 +1,24 @@
 import { NextResponse } from 'next/server'
-
-export interface Todo {
-  id: string
-  text: string
-  createdAt: number
-}
-
-export const todos: Array<Todo> = [
-  { id: crypto.randomUUID(), text: 'Buy groceries', createdAt: Date.now() - 3000 },
-  { id: crypto.randomUUID(), text: 'Walk the dog', createdAt: Date.now() - 2000 },
-  { id: crypto.randomUUID(), text: 'Read a book', createdAt: Date.now() - 1000 },
-]
-
-export async function getTodos(): Promise<Array<Todo>> {
-  await new Promise((resolve) => setTimeout(resolve, 200))
-  return todos
-}
+import { todos, getTodos, type Todo } from './data'
 
 export async function GET() {
   return NextResponse.json(await getTodos())
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as { text: string }
+  const body = (await request.json()) as unknown
+
+  const text =
+    body !== null &&
+    typeof body === 'object' &&
+    'text' in body &&
+    typeof (body as { text: unknown }).text === 'string'
+      ? ((body as { text: string }).text.trim())
+      : ''
+
+  if (!text) {
+    return NextResponse.json({ error: 'text is required' }, { status: 400 })
+  }
 
   await new Promise((resolve) => setTimeout(resolve, 500))
 
@@ -35,7 +31,7 @@ export async function POST(request: Request) {
 
   const newTodo: Todo = {
     id: crypto.randomUUID(),
-    text: body.text,
+    text,
     createdAt: Date.now(),
   }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 import { getQueryClient } from '@/app/get-query-client'
-import { getTodos } from '@/app/api/todos/route'
+import { getTodos } from '@/app/api/todos/data'
 import ApproachTabs from '@/components/ApproachTabs'
 
 export default function Home() {

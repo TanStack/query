@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Todo } from '@/app/api/todos/route'
+import type { Todo } from '@/app/api/todos/data'
 
 async function fetchTodos(): Promise<Array<Todo>> {
   const res = await fetch('/api/todos')

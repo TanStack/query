@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Todo } from '@/app/api/todos/route'
+import type { Todo } from '@/app/api/todos/data'
 
 interface MutationContext {
   previousTodos: Array<Todo> | undefined
+  optimisticId: string
 }
 
 async function fetchTodos(): Promise<Array<Todo>> {
@@ -45,8 +46,9 @@ export default function TodoListCache() {
 
       const previousTodos = queryClient.getQueryData<Array<Todo>>(['todos'])
 
+      const optimisticId = `optimistic-${Date.now()}`
       const optimisticTodo: Todo = {
-        id: `optimistic-${Date.now()}`,
+        id: optimisticId,
         text,
         createdAt: Date.now(),
       }
@@ -56,12 +58,16 @@ export default function TodoListCache() {
         optimisticTodo,
       ])
 
-      return { previousTodos }
+      return { previousTodos, optimisticId }
     },
     onError: (_err, _text, context) => {
       setLastError(_err.message)
       if (context?.previousTodos !== undefined) {
         queryClient.setQueryData(['todos'], context.previousTodos)
+      } else if (context?.optimisticId) {
+        queryClient.setQueryData<Array<Todo>>(['todos'], (old = []) =>
+          old.filter((todo) => todo.id !== context.optimisticId),
+        )
       }
     },
     onSettled: () => {
