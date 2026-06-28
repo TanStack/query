@@ -6,6 +6,17 @@ import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
+
+export const exportedQueryOptionsGetter = queryOptions(() => ({
+  queryKey: ['invalid'],
+}))
+
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
     const key = queryKey()

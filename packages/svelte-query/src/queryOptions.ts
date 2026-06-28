@@ -1,5 +1,5 @@
 import type {
-  DataTag,
+  QueryKeyWithDataTag,
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
@@ -34,9 +34,8 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
-}
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData>
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -45,9 +44,8 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
-}
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData>
 
 export function queryOptions(options: unknown) {
   return options

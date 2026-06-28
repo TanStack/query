@@ -1,5 +1,5 @@
 import type {
-  DataTag,
+  QueryKeyWithDataTag,
   DefaultError,
   InfiniteData,
   NonUndefinedGuard,
@@ -58,9 +58,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -85,9 +84,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions(options: unknown) {
   return options

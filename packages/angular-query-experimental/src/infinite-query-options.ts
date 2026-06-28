@@ -1,5 +1,5 @@
 import type {
-  DataTag,
+  QueryKeyWithDataTag,
   DefaultError,
   InfiniteData,
   InitialDataFunction,
@@ -105,9 +105,8 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
  * Allows sharing and re-using infinite query options in a type-safe way.
@@ -136,9 +135,8 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
  * Allows sharing and re-using infinite query options in a type-safe way.
@@ -167,9 +165,8 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
  * Allows sharing and re-using infinite query options in a type-safe way.
