@@ -1692,6 +1692,41 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(0)
       expect(didSkipTokenRun).toBe(false)
     })
+
+    it('should refetch queries matched by a state-dependent predicate after reset (#10705)', async () => {
+      const key = queryKey()
+      let shouldFail = true
+      const queryFn = vi.fn(() =>
+        sleep(10).then(() => {
+          if (shouldFail) throw new Error('failed')
+          return 'data'
+        }),
+      )
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        retry: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+
+      // let the initial fetch settle into an error
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)?.status).toBe('error')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      // the refetch triggered by the reset should now succeed
+      shouldFail = false
+      const resetPromise = queryClient.resetQueries({
+        predicate: (query) => query.state.status === 'error',
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      await resetPromise
+
+      unsubscribe()
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryState(key)?.status).toBe('success')
+    })
   })
 
   describe('focusManager and onlineManager', () => {
