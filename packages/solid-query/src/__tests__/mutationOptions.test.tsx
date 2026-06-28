@@ -1,15 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import { createEffect, createRenderEffect } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-  useMutationState,
-} from '..'
+import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
+import { renderWithClient } from './utils'
 import type { MutationState } from '@tanstack/query-core'
 
 describe('mutationOptions', () => {
@@ -65,11 +60,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toEqual(0)
@@ -101,11 +92,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toEqual(0)
@@ -144,11 +131,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -189,11 +172,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -223,11 +202,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -263,11 +238,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -310,11 +281,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -358,11 +325,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     const mutationCache = queryClient.getMutationCache()
     const unsubscribe = mutationCache.subscribe(() => {
@@ -416,11 +379,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     expect(mutationStateArray[0]).toEqual([])
 
@@ -454,11 +413,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     expect(mutationStateArray[0]).toEqual([])
 
@@ -499,11 +454,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     expect(mutationStateArray[0]).toEqual([])
 
@@ -546,11 +497,7 @@ describe('mutationOptions', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Mutation />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Mutation />)
 
     expect(mutationStateArray[0]).toEqual([])
 
