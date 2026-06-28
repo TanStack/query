@@ -982,6 +982,7 @@ describe('Utils tests', () => {
   describe('setupStyleSheet', () => {
     afterEach(() => {
       document.head.querySelector('#_goober')?.remove()
+      delete (window as any).__nonce__
     })
 
     it('should not insert any style tag when "nonce" is missing', () => {
@@ -1054,6 +1055,18 @@ describe('Utils tests', () => {
       expect(shadow.querySelector('#_goober')?.getAttribute('nonce')).toBe(
         'shadow-nonce',
       )
+    })
+
+    it('should set window.__nonce__ so goober preserves the nonce on its style element', () => {
+      setupStyleSheet('test-nonce')
+
+      expect((window as any).__nonce__).toBe('test-nonce')
+    })
+
+    it('should not set window.__nonce__ when nonce is missing', () => {
+      setupStyleSheet()
+
+      expect((window as any).__nonce__).toBeUndefined()
     })
   })
 
