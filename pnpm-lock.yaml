@@ -49,6 +49,12 @@ importers:
       '@tanstack/eslint-config':
         specifier: 0.3.2
         version: 0.3.2(@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      '@tanstack/intent':
+        specifier: ^0.0.41
+        version: 0.0.41
+      '@tanstack/query-intent':
+        specifier: workspace:*
+        version: link:packages/query-intent
       '@tanstack/typedoc-config':
         specifier: 0.3.1
         version: 0.3.1(typescript@5.9.3)
@@ -2764,6 +2770,12 @@ importers:
       vite-plugin-solid:
         specifier: ^2.11.6
         version: 2.11.11(@testing-library/jest-dom@6.9.1)(solid-js@1.9.12)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+
+  packages/query-intent:
+    devDependencies:
+      '@tanstack/intent':
+        specifier: ^0.0.41
+        version: 0.0.41
 
   packages/query-persist-client-core:
     dependencies:
@@ -7293,6 +7305,10 @@ packages:
   '@tanstack/eslint-config@0.3.2':
     resolution: {integrity: sha512-2g+PuGR3GuvvCiR3xZs+IMqAvnYU9bvH+jRml0BFBSxHBj22xFCTNvJWhvgj7uICFF9IchDkFUto91xDPMu5cg==}
     engines: {node: '>=18'}
+
+  '@tanstack/intent@0.0.41':
+    resolution: {integrity: sha512-Psl+oDiidLvtctswkTQ1P6sQIihwrMLcdfQVfkLpO42oKwxWEr1lodWUHiOG5jFXsGwDDvpUv/WAdlmJF+yGpw==}
+    hasBin: true
 
   '@tanstack/match-sorter-utils@8.19.4':
     resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
@@ -21167,6 +21183,13 @@ snapshots:
       - eslint-import-resolver-node
       - supports-color
       - typescript
+
+  '@tanstack/intent@0.0.41':
+    dependencies:
+      cac: 6.7.14
+      jsonc-parser: 3.3.1
+      semver: 7.7.4
+      yaml: 2.8.3
 
   '@tanstack/match-sorter-utils@8.19.4':
     dependencies:
