@@ -417,7 +417,7 @@ export function keepPreviousData<T>(
 
 export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [...items, item]
-  return max && newItems.length > max ? newItems.slice(1) : newItems
+  return max && newItems.length > max ? newItems.slice(-max) : newItems
 }
 
 export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
