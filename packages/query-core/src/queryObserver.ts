@@ -3,7 +3,7 @@ import { environmentManager } from './environmentManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
-import { pendingThenable } from './thenable'
+import { pendingThenable, updateThenable } from './thenable'
 import {
   isValidTimeout,
   noop,
@@ -17,7 +17,7 @@ import { timeoutManager } from './timeoutManager'
 import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import type { PendingThenable, Thenable } from './thenable'
+import type { Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -317,7 +317,9 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    query.fetch().catch(noop)
+
+    return query.promise.then(() => this.createResult(query, defaultedOptions))
   }
 
   protected fetch(
@@ -595,48 +597,11 @@ export class QueryObserver<
     const nextResult = result as QueryObserverResult<TData, TError>
 
     if (this.options.experimental_prefetchInRender) {
-      const hasResultData = nextResult.data !== undefined
-      const isErrorWithoutData = nextResult.status === 'error' && !hasResultData
-      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (isErrorWithoutData) {
-          thenable.reject(nextResult.error)
-        } else if (hasResultData) {
-          thenable.resolve(nextResult.data as TData)
-        }
-      }
-
-      /**
-       * Create a new thenable and result promise when the results have changed
-       */
-      const recreateThenable = () => {
-        const pending =
-          (this.#currentThenable =
-          nextResult.promise =
-            pendingThenable())
-
-        finalizeThenableIfPossible(pending)
-      }
-
-      const prevThenable = this.#currentThenable
-      switch (prevThenable.status) {
-        case 'pending':
-          // Finalize the previous thenable if it was pending
-          // and we are still observing the same query
-          if (query.queryHash === prevQuery.queryHash) {
-            finalizeThenableIfPossible(prevThenable)
-          }
-          break
-        case 'fulfilled':
-          if (isErrorWithoutData || nextResult.data !== prevThenable.value) {
-            recreateThenable()
-          }
-          break
-        case 'rejected':
-          if (!isErrorWithoutData || nextResult.error !== prevThenable.reason) {
-            recreateThenable()
-          }
-          break
-      }
+      this.#currentThenable = nextResult.promise = updateThenable(
+        this.#currentThenable,
+        nextResult,
+        query.queryHash === prevQuery.queryHash,
+      )
     }
 
     return nextResult
