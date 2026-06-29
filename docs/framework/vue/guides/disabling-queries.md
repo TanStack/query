@@ -10,7 +10,7 @@ ref: docs/framework/react/guides/disabling-queries.md
 <script setup>
 import { useQuery } from '@tanstack/vue-query'
 
-const { isLoading, isError, data, error, refetch, isFetching } = useQuery({
+const { isPending, isError, data, error, refetch, isFetching } = useQuery({
   queryKey: ['todos'],
   queryFn: fetchTodoList,
   enabled: false,
@@ -19,7 +19,7 @@ const { isLoading, isError, data, error, refetch, isFetching } = useQuery({
 
 <template>
   <button @click="refetch()">Fetch Todos</button>
-  <span v-if="isLoading">Loading...</span>
+  <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error?.message }}</span>
   <div v-else-if="data">
     <span v-if="isFetching">Fetching...</span>
