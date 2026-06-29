@@ -38,7 +38,13 @@ export {
   shouldThrowError,
   skipToken,
 } from './utils'
-export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
+export type {
+  MutationFilters,
+  PartialMatchKeyOptions,
+  QueryFilters,
+  SkipToken,
+  Updater,
+} from './utils'
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
