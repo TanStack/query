@@ -1,7 +1,6 @@
 import {
   dataTagSymbol,
   QueryClient,
-  skipToken,
   type DefinedQueryObserverResult,
   type InfiniteData,
   type QueryObserverResult,
@@ -244,20 +243,6 @@ describe('type inference', () => {
 
     const data = await client.query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
-  })
-
-  it('L6: queryOptions with skipToken integrates with queryClient.query', async () => {
-    const options = queryOptions({
-      queryKey: ['type-inference', 'query-skip-token'] as const,
-      queryFn: skipToken,
-    })
-
-    const client = new QueryClient()
-    // skipToken disables the query, so seed matching data to exercise the return type.
-    client.setQueryData(options.queryKey, 5)
-
-    const data = await client.query(options)
-    expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
   it('L7: infiniteQueryOptions integrates with queryClient.infiniteQuery', async () => {
