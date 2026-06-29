@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive, ref } from 'vue-demi'
+import { computed, reactive, ref, type MaybeRefOrGetter, toValue } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
 import type { OmitKeyof, UseQueryOptions } from '..'
@@ -61,6 +61,28 @@ describe('useQuery', () => {
       )
 
       expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
+    })
+
+    it('should allow spreading queryOptions with a non-data-shaping override like enabled', () => {
+      const fooQueryOptions = (id: MaybeRefOrGetter<string | null>) =>
+        queryOptions({
+          queryKey: computed(() => ['foo', toValue(id)] as const),
+          queryFn: async () => {
+            const v = toValue(id)
+            return v ? { id: v } : null
+          },
+        })
+
+      const direct = reactive(useQuery(fooQueryOptions('1')))
+      expectTypeOf(direct.data).toEqualTypeOf<{ id: string } | null | undefined>()
+
+      const spread = reactive(
+        useQuery({
+          ...fooQueryOptions('1'),
+          enabled: () => true,
+        }),
+      )
+      expectTypeOf(spread.data).toEqualTypeOf<{ id: string } | null | undefined>()
     })
 
     it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
