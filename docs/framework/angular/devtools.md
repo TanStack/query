@@ -137,7 +137,7 @@ export const appConfig: ApplicationConfig = {
 
 ### Options returned from the callback
 
-Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosition`, and `initialIsOpen` support reactivity through signals.
+Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosition`, `initialIsOpen`, and `theme` support reactivity through signals.
 
 - `loadDevtools?: 'auto' | boolean`
   - Defaults to `auto`: lazily loads devtools when in development mode. Skips loading in production mode.
@@ -162,3 +162,6 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 - `hideDisabledQueries?: boolean`
   - Set this to true to hide disabled queries from the devtools panel.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
