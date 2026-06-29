@@ -1,4 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { createQuery, queryOptions } from '../../src/index.js'
 
@@ -26,6 +27,19 @@ describe('createQuery', () => {
         const { data } = createQuery(() => options)
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      })
+
+      it('TData should be inferred when passed through core queryOptions', () => {
+        const key = queryKey()
+        const options = coreQueryOptions({
+          queryKey: key,
+          queryFn: () => ({ id: '1', title: 'Do Laundry' }),
+        })
+        const { data } = createQuery(() => options)
+
+        expectTypeOf(data).toEqualTypeOf<
+          { id: string; title: string } | undefined
+        >()
       })
 
       it('TData should have undefined in the union when initialData is NOT provided', () => {

@@ -1,5 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  mutationOptions as coreMutationOptions,
+} from '@tanstack/query-core'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { mutationOptions } from '../mutationOptions'
@@ -161,6 +164,19 @@ describe('mutationOptions', () => {
         },
       }),
     )
+  })
+
+  it('should work when core mutationOptions are used with useMutation', () => {
+    const mutation = useMutation(
+      () => coreMutationOptions({
+        mutationFn: (input: { id: string }) => Promise.resolve(input.id),
+      }),
+    )
+
+    expectTypeOf(mutation.data.value).toEqualTypeOf<string | undefined>()
+    expectTypeOf(mutation.variables.value).toEqualTypeOf<
+      { id: string } | undefined
+    >()
   })
 
   it('should work when used with useIsMutating', () => {
