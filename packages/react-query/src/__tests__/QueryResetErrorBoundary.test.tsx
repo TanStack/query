@@ -294,7 +294,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should not retry fetch if the reset error boundary has not been reset', async () => {
+    it('should retry fetch on remount even if the reset error boundary has not been reset', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
@@ -302,12 +302,14 @@ describe('QueryErrorResetBoundary', () => {
       const key = queryKey()
 
       let succeed = false
+      let fetchCount = 0
 
       function Page() {
         const { data } = useQuery({
           queryKey: key,
           queryFn: () =>
             sleep(10).then(() => {
+              fetchCount++
               if (!succeed) throw new Error('Error')
               return 'data'
             }),
@@ -350,7 +352,8 @@ describe('QueryErrorResetBoundary', () => {
 
       fireEvent.click(rendered.getByText('retry'))
       await vi.advanceTimersByTimeAsync(11)
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('data')).toBeInTheDocument()
+      expect(fetchCount).toBe(2)
 
       consoleMock.mockRestore()
     })
@@ -419,7 +422,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
+    it('should retry fetch on remount if the reset error boundary has not been reset after a previous reset', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
@@ -480,19 +483,13 @@ describe('QueryErrorResetBoundary', () => {
       succeed = false
       shouldReset = true
 
+      fireEvent.click(rendered.getByText('retry'))
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
       succeed = true
       shouldReset = false
-
-      fireEvent.click(rendered.getByText('retry'))
-      await vi.advanceTimersByTimeAsync(11)
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
-
-      succeed = true
-      shouldReset = true
 
       fireEvent.click(rendered.getByText('retry'))
       await vi.advanceTimersByTimeAsync(11)
