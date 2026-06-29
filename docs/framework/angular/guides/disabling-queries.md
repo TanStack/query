@@ -22,14 +22,14 @@ replace: { 'useQuery': 'injectQuery' }
     } @else {
       @if (query.isError()) {
         <span>Error: {{ query.error().message }}</span>
-      } @else if (query.isLoading()) {
+      } @else if (query.isPending()) {
         <span>Loading...</span>
-      } @else if (!query.isLoading() && !query.isError()) {
+      } @else if (!query.isPending() && !query.isError()) {
         <span>Not ready ...</span>
       }
     }
 
-    <div>{{ query.isLoading() ? 'Fetching...' : '' }}</div>
+    <div>{{ query.isPending() ? 'Fetching...' : '' }}</div>
   </div>`,
 })
 export class TodosComponent {

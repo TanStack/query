@@ -29,7 +29,7 @@ function Todos() {
         <Match when={todosQuery.isError}>
           <span>Error: {todosQuery.error.message}</span>
         </Match>
-        <Match when={todosQuery.isLoading}>
+        <Match when={todosQuery.isPending}>
           <span>Loading...</span>
         </Match>
         <Match when={true}>

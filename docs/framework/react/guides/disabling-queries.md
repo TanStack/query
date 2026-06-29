@@ -20,7 +20,7 @@ When `enabled` is `false`:
 
 ```tsx
 function Todos() {
-  const { isLoading, isError, data, error, refetch, isFetching } = useQuery({
+  const { isPending, isError, data, error, refetch, isFetching } = useQuery({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
     enabled: false,
@@ -38,7 +38,7 @@ function Todos() {
         </ul>
       ) : isError ? (
         <span>Error: {error.message}</span>
-      ) : isLoading ? (
+      ) : isPending ? (
         <span>Loading...</span>
       ) : (
         <span>Not ready ...</span>
