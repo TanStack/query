@@ -1,7 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
-import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
+import {
+  hasNextPage,
+  hasPreviousPage,
+  infiniteQueryBehavior,
+} from '../infiniteQueryBehavior'
 import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
@@ -529,5 +533,18 @@ describe('InfiniteQueryBehavior', () => {
     expect(persisterSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe()
+  })
+
+  it('should not throw when data has no pages array (malformed InfiniteData)', () => {
+    const options = {
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      getPreviousPageParam: () => 1,
+    }
+    const malformed = {} as InfiniteData<unknown>
+
+    // Should return false instead of throwing on `pages.length`.
+    expect(hasNextPage(options, malformed)).toBe(false)
+    expect(hasPreviousPage(options, malformed)).toBe(false)
   })
 })
