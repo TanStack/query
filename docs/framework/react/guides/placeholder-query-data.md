@@ -20,7 +20,7 @@ When we use `placeholderData`, our Query will not be in a `pending` state - it w
 
 ## Placeholder Data as a Value
 
-[//]: # 'ExampleValue'
+[//]: # (ExampleValue)
 
 ```tsx
 function Todos() {
@@ -32,8 +32,8 @@ function Todos() {
 }
 ```
 
-[//]: # 'ExampleValue'
-[//]: # 'Memoization'
+[//]: # (ExampleValue)
+[//]: # (Memoization)
 
 ### Placeholder Data Memoization
 
@@ -50,13 +50,13 @@ function Todos() {
 }
 ```
 
-[//]: # 'Memoization'
+[//]: # (Memoization)
 
 ## Placeholder Data as a Function
 
 `placeholderData` can also be a function, where you can get access to the data and Query meta information of a "previous" successful Query. This is useful for situations where you want to use the data from one query as the placeholder data for another query. When the QueryKey changes, e.g. from `['todos', 1]` to `['todos', 2]`, we can keep displaying "old" data instead of having to show a loading spinner while data is _transitioning_ from one Query to the next. For more information, see [Paginated Queries](./paginated-queries.md).
 
-[//]: # 'ExampleFunction'
+[//]: # (ExampleFunction)
 
 ```tsx
 const result = useQuery({
@@ -66,13 +66,13 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'ExampleFunction'
+[//]: # (ExampleFunction)
 
 ### Placeholder Data from Cache
 
 In some circumstances, you may be able to provide the placeholder data for a query from the cached result of another. A good example of this would be searching the cached data from a blog post list query for a preview version of the post, then using that as the placeholder data for your individual post query:
 
-[//]: # 'ExampleCache'
+[//]: # (ExampleCache)
 
 ```tsx
 function BlogPost({ blogPostId }) {
@@ -91,11 +91,11 @@ function BlogPost({ blogPostId }) {
 }
 ```
 
-[//]: # 'ExampleCache'
-[//]: # 'Materials'
+[//]: # (ExampleCache)
+[//]: # (Materials)
 
 ## Further reading
 
 For a comparison between `Placeholder Data` and `Initial Data`, see the [article by TkDodo](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query).
 
-[//]: # 'Materials'
+[//]: # (Materials)
