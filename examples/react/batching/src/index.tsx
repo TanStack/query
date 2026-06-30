@@ -21,6 +21,7 @@ const characterQueryOptions = (id: number) =>
   queryOptions({
     queryKey: ['character', id],
     queryFn: () => loadCharacter(id),
+    staleTime: 60 * 1000,
   })
 
 function Characters({ ids }: { ids: Array<number> }) {
