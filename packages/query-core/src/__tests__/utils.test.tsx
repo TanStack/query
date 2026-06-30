@@ -166,6 +166,28 @@ describe('core/utils', () => {
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
       expect(partialMatchKey(a, b)).toEqual(false)
     })
+
+    it('should distinguish different `Date` values, consistent with `hashKey`', () => {
+      expect(partialMatchKey([new Date(0)], [new Date(1000)])).toEqual(false)
+      expect(
+        partialMatchKey(
+          ['report', { from: new Date(0) }],
+          ['report', { from: new Date(1000) }],
+        ),
+      ).toEqual(false)
+    })
+
+    it('should return `true` for equal `Date` values', () => {
+      expect(partialMatchKey([new Date(0)], [new Date(0)])).toEqual(true)
+    })
+
+    it('should match non-plain objects that hash equally (e.g. `Map`)', () => {
+      // `Map`/`Set` serialize to `{}` via `hashKey`, so they share a cache
+      // entry and must keep matching, unlike `Date`.
+      expect(
+        partialMatchKey([new Map([['a', 1]])], [new Map([['a', 2]])]),
+      ).toEqual(true)
+    })
   })
 
   describe('replaceEqualDeep', () => {
