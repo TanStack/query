@@ -10,19 +10,8 @@ interface CharacterT {
   image: string
 }
 
-const createDeferred = <T>() => {
-  let resolve!: (value: T) => void
-  let reject!: (reason?: unknown) => void
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res
-    reject = rej
-  })
-
-  return { promise, resolve, reject }
-}
-
 type CharacterRequest = {
-  deferred: ReturnType<typeof createDeferred<CharacterT | null>>
+  deferred: PromiseWithResolvers<CharacterT | null>
   id: number
 }
 
@@ -63,7 +52,7 @@ const characterBatcher = new AsyncBatcher<CharacterRequest>(
 )
 
 export const loadCharacter = (id: number) => {
-  const deferred = createDeferred<CharacterT | null>()
+  const deferred = Promise.withResolvers<CharacterT | null>()
 
   characterBatcher.addItem({ deferred, id })
 
