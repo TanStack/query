@@ -1,0 +1,35 @@
+{
+  "name": "@tanstack/query-example-react-batching",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "@tanstack/react-query-devtools": "^5.101.2",
+    "dataloader": "^2.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.101.2",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.8.3",
+    "vite": "^6.4.1"
+  },
+  "nx": {
+    "targets": {
+      "test:eslint": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  }
+}
