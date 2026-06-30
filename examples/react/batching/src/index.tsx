@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
-import { characterLoader } from './character-loader'
+import { loadCharacter } from './character-loader'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +20,7 @@ const queryClient = new QueryClient({
 const characterQueryOptions = (id: number) =>
   queryOptions({
     queryKey: ['character', id],
-    queryFn: () => characterLoader.load(id),
+    queryFn: () => loadCharacter(id),
   })
 
 function Characters({ ids }: { ids: Array<number> }) {

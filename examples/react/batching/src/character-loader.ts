@@ -1,4 +1,4 @@
-import Dataloader from 'dataloader'
+import { AsyncBatcher } from '@tanstack/react-pacer/async-batcher'
 
 interface CharacterT {
   id: number
@@ -10,29 +10,62 @@ interface CharacterT {
   image: string
 }
 
-// fetch function that returns characters in request order
+const createDeferred = <T>() => {
+  let resolve!: (value: T) => void
+  let reject!: (reason?: unknown) => void
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+
+  return { promise, resolve, reject }
+}
+
+type CharacterRequest = {
+  deferred: ReturnType<typeof createDeferred<CharacterT | null>>
+  id: number
+}
+
+// fetch function that returns characters by id
 const fetchCharacters = async (ids: ReadonlyArray<number>) => {
   console.log(`Fetching characters: ${ids.join(', ')}`)
 
   const res = await fetch(
     `https://rickandmortyapi.com/api/character/[${ids.join(',')}]`,
   )
-  const characters = (await res.json()) as Array<CharacterT>
+  const characters = (await res.json()) as Array<CharacterT> | CharacterT
 
-  // dataloader requires that we return characters in the same order as requested
-  // so we create a map to pick characters in O(n) time
   const characterMap = new Map<number, CharacterT>()
-  for (const character of characters) {
+  for (const character of Array.isArray(characters)
+    ? characters
+    : [characters]) {
     characterMap.set(character.id, character)
   }
 
-  // map over ids array and pick the characters in order
-  // null indicates not found
-  return ids.map((id) => characterMap.get(id) ?? null)
+  return characterMap
 }
 
-// Singleton characterLoader
-//
-export const characterLoader = new Dataloader(fetchCharacters, {
-  cache: false, // <-- IMPORTANT, dataloader doesn't have the same cache management as react-query
-})
+const characterBatcher = new AsyncBatcher<CharacterRequest>(
+  (requests) => fetchCharacters([...new Set(requests.map(({ id }) => id))]),
+  {
+    wait: 0,
+    onSuccess: (charactersById, requests) => {
+      for (const { deferred, id } of requests) {
+        deferred.resolve(charactersById.get(id) ?? null)
+      }
+    },
+    onError: (error, requests) => {
+      for (const { deferred } of requests) {
+        deferred.reject(error)
+      }
+    },
+  },
+)
+
+export const loadCharacter = (id: number) => {
+  const deferred = createDeferred<CharacterT | null>()
+
+  characterBatcher.addItem({ deferred, id })
+
+  return deferred.promise
+}
