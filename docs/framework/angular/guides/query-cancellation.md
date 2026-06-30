@@ -29,7 +29,7 @@ postQuery = injectQuery(() => ({
 
 ## Using `fetch`
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```ts
 query = injectQuery(() => ({
@@ -54,11 +54,11 @@ query = injectQuery(() => ({
 }))
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ## Using `axios`
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```ts
 import axios from 'axios'
@@ -73,13 +73,13 @@ const query = injectQuery(() => ({
 }))
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ## Manual Cancellation
 
 You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, TanStack Query will additionally also cancel the Promise.
 
-[//]: # 'Example7'
+[//]: # (Example7)
 
 ```angular-ts
 @Component({
@@ -102,4 +102,4 @@ export class TodosComponent {
 }
 ```
 
-[//]: # 'Example7'
+[//]: # (Example7)

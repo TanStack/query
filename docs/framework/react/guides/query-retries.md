@@ -12,12 +12,12 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = true` will infinitely retry failing requests.
 - Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed. Note that `failureCount` starts at `0` for the first retry attempt.
 
-[//]: # 'Info'
+[//]: # (Info)
 
 > On the server, retries default to `0` to make server rendering as fast as possible.
 
-[//]: # 'Info'
-[//]: # 'Example'
+[//]: # (Info)
+[//]: # (Example)
 
 ```tsx
 import { useQuery } from '@tanstack/react-query'
@@ -30,7 +30,7 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 > Info: Contents of the `error` property will be part of `failureReason` response property of `useQuery` until the last retry attempt. So in above example any error contents will be part of `failureReason` property for first 9 retry attempts (Overall 10 attempts) and finally they will be part of `error` after last attempt if error persists after all retry attempts.
 
@@ -40,7 +40,7 @@ By default, retries in TanStack Query do not happen immediately after a request 
 
 The default `retryDelay` is set to double (starting at `1000`ms) with each attempt, but not exceed 30 seconds:
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 // Configure for all queries
@@ -63,11 +63,11 @@ function App() {
 }
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```tsx
 const result = useQuery({
@@ -77,7 +77,7 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ## Background Retry Behavior
 
@@ -85,7 +85,7 @@ When using `refetchInterval` with `refetchIntervalInBackground: true`, retries w
 
 If you need continuous retries in the background, consider disabling retries and implementing a custom refetch strategy:
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ```tsx
 const result = useQuery({
@@ -100,6 +100,6 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 This approach lets you control retry timing manually while keeping refetches active in the background.

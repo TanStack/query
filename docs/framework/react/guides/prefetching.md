@@ -31,7 +31,7 @@ Before jumping into the different specific prefetch patterns, let's look at the 
 
 This is how you use `prefetchQuery`:
 
-[//]: # 'ExamplePrefetchQuery'
+[//]: # (ExamplePrefetchQuery)
 
 ```tsx
 const prefetchTodos = async () => {
@@ -43,11 +43,11 @@ const prefetchTodos = async () => {
 }
 ```
 
-[//]: # 'ExamplePrefetchQuery'
+[//]: # (ExamplePrefetchQuery)
 
 Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
 
-[//]: # 'ExamplePrefetchInfiniteQuery'
+[//]: # (ExamplePrefetchInfiniteQuery)
 
 ```tsx
 const prefetchProjects = async () => {
@@ -62,7 +62,7 @@ const prefetchProjects = async () => {
 }
 ```
 
-[//]: # 'ExamplePrefetchInfiniteQuery'
+[//]: # (ExamplePrefetchInfiniteQuery)
 
 Next, let's look at how you can use these and other ways to prefetch in different situations.
 
@@ -70,7 +70,7 @@ Next, let's look at how you can use these and other ways to prefetch in differen
 
 A straightforward form of prefetching is doing it when the user interacts with something. In this example we'll use `queryClient.prefetchQuery` to start a prefetch on `onMouseEnter` or `onFocus`.
 
-[//]: # 'ExampleEventHandler'
+[//]: # (ExampleEventHandler)
 
 ```tsx
 function ShowDetailsButton() {
@@ -94,13 +94,13 @@ function ShowDetailsButton() {
 }
 ```
 
-[//]: # 'ExampleEventHandler'
+[//]: # (ExampleEventHandler)
 
 ## Prefetch in components
 
 Prefetching during the component lifecycle is useful when we know some child or descendant will need a particular piece of data, but we can't render that until some other query has finished loading. Let's borrow an example from the Request Waterfall guide to explain:
 
-[//]: # 'ExampleComponent'
+[//]: # (ExampleComponent)
 
 ```tsx
 function Article({ id }) {
@@ -132,7 +132,7 @@ function Comments({ id }) {
 }
 ```
 
-[//]: # 'ExampleComponent'
+[//]: # (ExampleComponent)
 
 This results in a request waterfall looking like this:
 
@@ -145,7 +145,7 @@ As mentioned in that guide, one way to flatten this waterfall and improve perfor
 
 In that case, we can instead prefetch the query in the parent. The simplest way to do this is to use a query but ignore the result:
 
-[//]: # 'ExampleParentComponent'
+[//]: # (ExampleParentComponent)
 
 ```tsx
 function Article({ id }) {
@@ -185,7 +185,7 @@ function Comments({ id }) {
 }
 ```
 
-[//]: # 'ExampleParentComponent'
+[//]: # (ExampleParentComponent)
 
 This starts fetching `'article-comments'` immediately and flattens the waterfall:
 
@@ -194,7 +194,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 1. |> getArticleCommentsById()
 ```
 
-[//]: # 'Suspense'
+[//]: # (Suspense)
 
 If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery.md) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery.md) hooks available in the library.
 
@@ -263,13 +263,13 @@ To recap, if you want to prefetch a query during the component lifecycle, there 
 
 Let's look at a slightly more advanced case next.
 
-[//]: # 'Suspense'
+[//]: # (Suspense)
 
 ### Dependent Queries & Code Splitting
 
 Sometimes we want to prefetch conditionally, based on the result of another fetch. Consider this example borrowed from the [Performance & Request Waterfalls guide](./request-waterfalls.md):
 
-[//]: # 'ExampleConditionally1'
+[//]: # (ExampleConditionally1)
 
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
@@ -310,7 +310,7 @@ function GraphFeedItem({ feedItem }) {
 }
 ```
 
-[//]: # 'ExampleConditionally1'
+[//]: # (ExampleConditionally1)
 
 As noted over in that guide, this example leads to the following double request waterfall:
 
@@ -322,7 +322,7 @@ As noted over in that guide, this example leads to the following double request 
 
 If we can not restructure our API so `getFeed()` also returns the `getGraphDataById()` data when necessary, there is no way to get rid of the `getFeed->getGraphDataById` waterfall, but by leveraging conditional prefetching, we can at least load the code and data in parallel. Just like described above, there are multiple ways to do this, but for this example, we'll do it in the query function:
 
-[//]: # 'ExampleConditionally2'
+[//]: # (ExampleConditionally2)
 
 ```tsx
 function Feed() {
@@ -349,7 +349,7 @@ function Feed() {
 }
 ```
 
-[//]: # 'ExampleConditionally2'
+[//]: # (ExampleConditionally2)
 
 This would load the code and data in parallel:
 
@@ -361,7 +361,7 @@ This would load the code and data in parallel:
 
 There is a tradeoff however, in that the code for `getGraphDataById` is now included in the parent bundle instead of in `JS for <GraphFeedItem>` so you'll need to determine what's the best performance tradeoff on a case by case basis. If `GraphFeedItem` are likely, it's probably worth to include the code in the parent. If they are exceedingly rare, it's probably not.
 
-[//]: # 'Router'
+[//]: # (Router)
 
 ## Router Integration
 
@@ -414,20 +414,20 @@ const articleRoute = new Route({
 
 Integration with other routers is also possible, see the [react-router](../examples/react-router) for another demonstration.
 
-[//]: # 'Router'
+[//]: # (Router)
 
 ## Manually Priming a Query
 
 If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../reference/QueryClient.md#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
-[//]: # 'ExampleManualPriming'
+[//]: # (ExampleManualPriming)
 
 ```tsx
 queryClient.setQueryData(['todos'], todos)
 ```
 
-[//]: # 'ExampleManualPriming'
-[//]: # 'Materials'
+[//]: # (ExampleManualPriming)
+[//]: # (Materials)
 
 ## Further reading
 
@@ -435,4 +435,4 @@ For a deep-dive on how to get data into your Query Cache before you fetch, see t
 
 Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to be passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](./ssr.md).
 
-[//]: # 'Materials'
+[//]: # (Materials)

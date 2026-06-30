@@ -114,10 +114,10 @@ The `clear` method can be used to clear the cache entirely and start fresh.
 queryCache.clear()
 ```
 
-[//]: # 'Materials'
+[//]: # (Materials)
 
 ## Further reading
 
 To get a better understanding how the QueryCache works internally, have a look at [the Inside React Query article by TkDodo](https://tkdodo.eu/blog/inside-react-query).
 
-[//]: # 'Materials'
+[//]: # (Materials)

@@ -11,11 +11,11 @@ The [Prefetching & Router Integration guide](./prefetching.md) builds on this an
 
 The [Server Rendering & Hydration guide](./ssr.md) teaches you how to prefetch data on the server and pass that data down to the client so you don't have to fetch it again.
 
-[//]: # 'AdvancedSSRLink'
+[//]: # (AdvancedSSRLink)
 
 The [Advanced Server Rendering guide](./advanced-ssr.md) further teaches you how to apply these patterns to Server Components and Streaming Server Rendering.
 
-[//]: # 'AdvancedSSRLink'
+[//]: # (AdvancedSSRLink)
 
 ## What is a Request Waterfall?
 
@@ -71,7 +71,7 @@ With this as a basis, let's look at a few different patterns that can lead to Re
 
 When a single component first fetches one query, and then another, that's a request waterfall. This can happen when the second query is a [Dependent Query](./dependent-queries.md), that is, it depends on data from the first query when fetching:
 
-[//]: # 'DependentExample'
+[//]: # (DependentExample)
 
 ```tsx
 // Get the user
@@ -95,16 +95,16 @@ const {
 })
 ```
 
-[//]: # 'DependentExample'
+[//]: # (DependentExample)
 
 While not always feasible, for optimal performance it's better to restructure your API so you can fetch both of these in a single query. In the example above, instead of first fetching `getUserByEmail` to be able to `getProjectsByUser`, introducing a new `getProjectsByUserEmail` query would flatten the waterfall.
 
-[//]: # 'ServerComponentsNote1'
+[//]: # (ServerComponentsNote1)
 
 > Another way to mitigate dependent queries without restructuring your API is to move the waterfall to the server where latency is lower. This is the idea behind Server Components which are covered in the [Advanced Server Rendering guide](./advanced-ssr.md).
 
-[//]: # 'ServerComponentsNote1'
-[//]: # 'SuspenseSerial'
+[//]: # (ServerComponentsNote1)
+[//]: # (SuspenseSerial)
 
 Another example of serial queries is when you use React Query with Suspense:
 
@@ -135,21 +135,21 @@ const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
 })
 ```
 
-[//]: # 'SuspenseSerial'
+[//]: # (SuspenseSerial)
 
 ### Nested Component Waterfalls
 
-[//]: # 'NestedIntro'
+[//]: # (NestedIntro)
 
 Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen both with `useQuery` and `useSuspenseQuery`.
 
-[//]: # 'NestedIntro'
+[//]: # (NestedIntro)
 
 If the child renders conditionally based on the data in the parent, or if the child relies on some part of the result being passed down as a prop from the parent to make its query, we have a _dependent_ nested component waterfall.
 
 Let's first look at an example where the child is **not** dependent on the parent.
 
-[//]: # 'NestedExample'
+[//]: # (NestedExample)
 
 ```tsx
 function Article({ id }) {
@@ -182,11 +182,11 @@ function Comments({ id }) {
 }
 ```
 
-[//]: # 'NestedExample'
+[//]: # (NestedExample)
 
 Note that while `<Comments>` takes a prop `id` from the parent, that id is already available when the `<Article>` renders so there is no reason we could not fetch the comments at the same time as the article. In real world applications, the child might be nested far below the parent and these kinds of waterfalls are often trickier to spot and fix, but for our example, one way to flatten the waterfall would be to hoist the comments query to the parent instead:
 
-[//]: # 'NestedHoistedExample'
+[//]: # (NestedHoistedExample)
 
 ```tsx
 function Article({ id }) {
@@ -218,18 +218,18 @@ function Article({ id }) {
 }
 ```
 
-[//]: # 'NestedHoistedExample'
-[//]: # 'NestedHoistedOutro'
+[//]: # (NestedHoistedExample)
+[//]: # (NestedHoistedOutro)
 
 The two queries will now fetch in parallel. Note that if you are using suspense, you'd want to combine these two queries into a single `useSuspenseQueries` instead.
 
-[//]: # 'NestedHoistedOutro'
+[//]: # (NestedHoistedOutro)
 
 Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigation, read more about this in the [Prefetching & Router Integration guide](./prefetching.md).
 
 Next, let's look at a _Dependent Nested Component Waterfall_.
 
-[//]: # 'DependentNestedExample'
+[//]: # (DependentNestedExample)
 
 ```tsx
 function Feed() {
@@ -265,7 +265,7 @@ function GraphFeedItem({ feedItem }) {
 }
 ```
 
-[//]: # 'DependentNestedExample'
+[//]: # (DependentNestedExample)
 
 The second query `getGraphDataById` is dependent on its parent in two different ways. First of all, it doesn't ever happen unless the `feedItem` is a graph, and second, it needs an `id` from the parent.
 
@@ -274,11 +274,11 @@ The second query `getGraphDataById` is dependent on its parent in two different 
 2.   |> getGraphDataById()
 ```
 
-[//]: # 'ServerComponentsNote2'
+[//]: # (ServerComponentsNote2)
 
 In this example, we can't trivially flatten the waterfall by just hoisting the query to the parent, or even adding prefetching. Just like the dependent query example at the beginning of this guide, one option is to refactor our API to include the graph data in the `getFeed` query. Another more advanced solution is to leverage Server Components to move the waterfall to the server where latency is lower (read more about this in the [Advanced Server Rendering guide](./advanced-ssr.md)) but note that this can be a very big architectural change.
 
-[//]: # 'ServerComponentsNote2'
+[//]: # (ServerComponentsNote2)
 
 You can have good performance even with a few query waterfalls here and there, just know they are a common performance concern and be mindful about them. An especially insidious version is when Code Splitting is involved, let's take a look at this next.
 
@@ -288,7 +288,7 @@ Splitting an applications JS-code into smaller chunks and only loading the neces
 
 Consider this a slightly modified version of the Feed example.
 
-[//]: # 'LazyExample'
+[//]: # (LazyExample)
 
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
@@ -329,7 +329,7 @@ function GraphFeedItem({ feedItem }) {
 }
 ```
 
-[//]: # 'LazyExample'
+[//]: # (LazyExample)
 
 This example has a double waterfall, looking like this:
 
@@ -361,7 +361,7 @@ In the code split case, it might actually help to hoist the `getGraphDataById` q
 
 This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case. Read more about how to do this in the [Prefetching & Router Integration guide](./prefetching.md).
 
-[//]: # 'ServerComponentsNote3'
+[//]: # (ServerComponentsNote3)
 
 > The tradeoff between:
 >
@@ -370,7 +370,7 @@ This is very much a tradeoff however. You are now including the data fetching co
 >
 > is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](./advanced-ssr.md).
 
-[//]: # 'ServerComponentsNote3'
+[//]: # (ServerComponentsNote3)
 
 ## Summary and takeaways
 
