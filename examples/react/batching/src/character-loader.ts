@@ -1,5 +1,4 @@
-import { useAsyncBatchedCallback } from '@tanstack/react-pacer/async-batcher'
-import { useCallback } from 'react'
+import { AsyncBatcher } from '@tanstack/react-pacer/async-batcher'
 
 interface CharacterT {
   id: number
@@ -46,35 +45,27 @@ const fetchCharacters = async (ids: ReadonlyArray<number>) => {
   return characterMap
 }
 
-export const useLoadCharacter = () => {
-  const loadCharacters = useAsyncBatchedCallback<CharacterRequest>(
-    async (requests) => {
-      const charactersById = await fetchCharacters([
-        ...new Set(requests.map(({ id }) => id)),
-      ])
-
+const characterBatcher = new AsyncBatcher<CharacterRequest>(
+  (requests) => fetchCharacters([...new Set(requests.map(({ id }) => id))]),
+  {
+    wait: 0,
+    onSuccess: (charactersById, requests) => {
       for (const { deferred, id } of requests) {
         deferred.resolve(charactersById.get(id) ?? null)
       }
     },
-    {
-      wait: 0,
-      onError: (error, requests) => {
-        for (const { deferred } of requests) {
-          deferred.reject(error)
-        }
-      },
+    onError: (error, requests) => {
+      for (const { deferred } of requests) {
+        deferred.reject(error)
+      }
     },
-  )
+  },
+)
 
-  return useCallback(
-    (id: number) => {
-      const deferred = createDeferred<CharacterT | null>()
+export const loadCharacter = (id: number) => {
+  const deferred = createDeferred<CharacterT | null>()
 
-      loadCharacters({ deferred, id })
+  characterBatcher.addItem({ deferred, id })
 
-      return deferred.promise
-    },
-    [loadCharacters],
-  )
+  return deferred.promise
 }

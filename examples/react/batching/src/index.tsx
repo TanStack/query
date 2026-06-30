@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
-import { useLoadCharacter } from './character-loader'
+import { loadCharacter } from './character-loader'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,10 +17,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const characterQueryOptions = (
-  id: number,
-  loadCharacter: ReturnType<typeof useLoadCharacter>,
-) =>
+const characterQueryOptions = (id: number) =>
   queryOptions({
     queryKey: ['character', id],
     queryFn: () => loadCharacter(id),
@@ -28,9 +25,8 @@ const characterQueryOptions = (
   })
 
 function Characters({ ids }: { ids: Array<number> }) {
-  const loadCharacter = useLoadCharacter()
   const characters = useQueries({
-    queries: ids.map((id) => characterQueryOptions(id, loadCharacter)),
+    queries: ids.map((id) => characterQueryOptions(id)),
   })
 
   return characters.map((character, index) => {
