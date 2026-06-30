@@ -42,6 +42,34 @@ describe('queryObserver', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should go through a pending state even when the queryFn returns synchronously', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
+    const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    // A synchronous return value is still wrapped in a promise, so the query
+    // goes through a fetching state before it resolves.
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: 'data',
+    })
+
+    unsubscribe()
+  })
+
   it('should be able to read latest data after subscribing', () => {
     const key = queryKey()
     queryClient.setQueryData(key, 'data')
