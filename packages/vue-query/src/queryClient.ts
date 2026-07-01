@@ -3,7 +3,7 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
-import type { UseQueryOptions } from './useQuery'
+import type { UseQueryOptions } from './queryOptions'
 import type { Ref } from 'vue-demi'
 import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
 import type {

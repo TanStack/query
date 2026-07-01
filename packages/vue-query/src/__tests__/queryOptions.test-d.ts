@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
@@ -11,9 +11,9 @@ describe('queryOptions', () => {
     const key = queryKey()
     assertType(
       queryOptions({
-        // @ts-expect-error this is a good error, because stallTime does not exist!
         queryKey: key,
         queryFn: () => Promise.resolve(5),
+        // @ts-expect-error this is a good error, because stallTime does not exist!
         stallTime: 1000,
       }),
     )
@@ -231,27 +231,45 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('should allow accessing queryFn and other properties on the returned options object', () => {
+  it('should keep the tagged queryKey accessible and be spreadable into useQuery', () => {
     const options = queryOptions({
       queryKey: queryKey(),
-      queryFn: () => Promise.resolve([]),
+      queryFn: () => Promise.resolve(5),
     })
 
-    expectTypeOf(options.queryFn).not.toBeUndefined()
     expectTypeOf(options.queryKey).not.toBeUndefined()
-    expectTypeOf(options.staleTime).not.toBeUndefined()
+
+    const { data } = reactive(
+      useQuery({
+        ...options,
+        select: (d) => d.toString(),
+      }),
+    )
+    expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
 
-  it('should allow accessing queryFn and other properties on the returned options when used with getter', () => {
+  it('should allow a getter returning options to be passed to useQuery', () => {
     const options = queryOptions(() => ({
       queryKey: queryKey(),
-      queryFn: () => Promise.resolve([]),
+      queryFn: () => Promise.resolve(5),
     }))
 
-    const resolvedGetter = options()
+    const { data } = reactive(useQuery(options))
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
 
-    expectTypeOf(resolvedGetter.queryFn).not.toBeUndefined()
-    expectTypeOf(resolvedGetter.queryKey).not.toBeUndefined()
+  it('should allow a computed queryFn returning skipToken, matching useQuery', () => {
+    const enabled = ref(false)
+
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: computed(() =>
+        enabled.value ? () => Promise.resolve(5) : skipToken,
+      ),
+    })
+
+    const { data } = reactive(useQuery(options))
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should allow computed ref as enabled property', () => {
@@ -322,14 +340,15 @@ describe('queryOptions', () => {
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
 
-  it('should allow getter function as queryKey', () => {
+  it('should not allow a per-field getter as queryKey, matching useQuery (use computed/ref, or a getter for the whole options)', () => {
     const id = ref<string | null>('1')
 
-    const options = queryOptions({
-      queryKey: () => ['foo', id.value] as const,
-      queryFn: () => Promise.resolve({ id: '1' }),
-    })
-
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    assertType(
+      queryOptions({
+        // @ts-expect-error queryKey must be a plain key / ref / computed, not a per-field getter
+        queryKey: () => ['foo', id.value] as const,
+        queryFn: () => Promise.resolve({ id: '1' }),
+      }),
+    )
   })
 })
