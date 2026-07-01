@@ -10,6 +10,7 @@ import {
   hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
+  isValidTimeout,
   keepPreviousData,
   matchMutation,
   partialMatchKey,
@@ -165,6 +166,18 @@ describe('core/utils', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
       expect(partialMatchKey(a, b)).toEqual(false)
+    })
+
+    it('should treat undefined object properties as matching missing properties', () => {
+      const queryKeyWithUndefined = ['todos', { filters: undefined }]
+      const queryKeyWithoutProperty = ['todos', {}]
+
+      expect(
+        partialMatchKey(queryKeyWithoutProperty, queryKeyWithUndefined),
+      ).toEqual(true)
+      expect(
+        partialMatchKey(queryKeyWithUndefined, queryKeyWithoutProperty),
+      ).toEqual(true)
     })
   })
 
@@ -558,6 +571,28 @@ describe('core/utils', () => {
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
+    })
+
+    it('should hash undefined object properties the same as missing properties', () => {
+      const withUndefined = ['todos', { filters: undefined }]
+      const withoutProperty = ['todos', {}]
+
+      expect(hashKey(withUndefined)).toEqual(hashKey(withoutProperty))
+    })
+  })
+
+  describe('isValidTimeout', () => {
+    it('should accept valid timeout values', () => {
+      expect(isValidTimeout(0)).toEqual(true)
+      expect(isValidTimeout(1_000)).toEqual(true)
+    })
+
+    it('should reject invalid timeout values', () => {
+      expect(isValidTimeout(-1)).toEqual(false)
+      expect(isValidTimeout(Number.NaN)).toEqual(false)
+      expect(isValidTimeout(Number.POSITIVE_INFINITY)).toEqual(false)
+      expect(isValidTimeout('1000')).toEqual(false)
+      expect(isValidTimeout(undefined)).toEqual(false)
     })
   })
 
