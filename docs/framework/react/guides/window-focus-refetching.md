@@ -7,7 +7,7 @@ If a user leaves your application and returns and the query data is stale, **Tan
 
 #### Disabling Globally
 
-[//]: # 'Example'
+<!-- Example -->
 
 ```tsx
 //
@@ -24,11 +24,11 @@ function App() {
 }
 ```
 
-[//]: # 'Example'
+<!-- Example -->
 
 #### Disabling Per-Query
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 ```tsx
 useQuery({
@@ -38,13 +38,13 @@ useQuery({
 })
 ```
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 ## Custom Window Focus Event
 
 In rare circumstances, you may want to manage your own window focus events that trigger TanStack Query to revalidate. To do this, TanStack Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
-[//]: # 'Example3'
+<!-- Example3 -->
 
 ```tsx
 focusManager.setEventListener((handleFocus) => {
@@ -62,8 +62,8 @@ focusManager.setEventListener((handleFocus) => {
 })
 ```
 
-[//]: # 'Example3'
-[//]: # 'ReactNative'
+<!-- Example3 -->
+<!-- ReactNative -->
 
 ## Managing Focus in React Native
 
@@ -86,11 +86,11 @@ useEffect(() => {
 }, [])
 ```
 
-[//]: # 'ReactNative'
+<!-- ReactNative -->
 
 ## Managing focus state
 
-[//]: # 'Example4'
+<!-- Example4 -->
 
 ```tsx
 import { focusManager } from '@tanstack/react-query'
@@ -102,4 +102,4 @@ focusManager.setFocused(true)
 focusManager.setFocused(undefined)
 ```
 
-[//]: # 'Example4'
+<!-- Example4 -->

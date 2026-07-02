@@ -7,7 +7,7 @@ title: Dependent Queries
 
 Dependent (or serial) queries depend on previous ones to finish before they can execute. To achieve this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
 
-[//]: # 'Example'
+<!-- Example -->
 
 ```tsx
 // Get the user
@@ -31,7 +31,7 @@ const {
 })
 ```
 
-[//]: # 'Example'
+<!-- Example -->
 
 The `projects` query will start in:
 
@@ -61,7 +61,7 @@ fetchStatus: 'idle'
 
 Dynamic parallel query - `useQueries` can depend on a previous query also, here's how to achieve this:
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 ```tsx
 // Get the users ids
@@ -84,7 +84,7 @@ const usersMessages = useQueries({
 })
 ```
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 **Note** that `useQueries` return an **array of query results**
 

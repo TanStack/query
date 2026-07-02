@@ -7,7 +7,7 @@ Because React Query's fetching mechanisms are agnostically built on Promises, yo
 
 > Keep in mind that React Query does not support normalized caching. While a vast majority of users do not actually need a normalized cache or even benefit from it as much as they believe they do, there may be very rare circumstances that may warrant it so be sure to check with us first to make sure it's truly something you need!
 
-[//]: # 'Codegen'
+<!-- Codegen -->
 
 ## Type-Safety and Code Generation
 
@@ -52,4 +52,4 @@ _You can find a [complete example in the repo](https://github.com/dotansimha/gra
 
 Get started with the [dedicated guide on GraphQL Code Generator documentation](https://www.the-guild.dev/graphql/codegen/docs/guides/react-vue).
 
-[//]: # 'Codegen'
+<!-- Codegen -->

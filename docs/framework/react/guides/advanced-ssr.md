@@ -641,10 +641,10 @@ Server Components and streaming are still fairly new concepts and we are still f
 
 Similarly, it would be impossible to teach all the intricacies of this new paradigm all in one guide, on the first try. If you are missing some piece of information here or have suggestions on how to improve this content, also get in touch, or even better, click the "Edit on GitHub" button below and help us out.
 
-[//]: # 'Materials'
+<!-- Materials -->
 
 ## Further reading
 
 To understand if your application can benefit from React Query when also using Server Components, see the article [You Might Not Need React Query](https://tkdodo.eu/blog/you-might-not-need-react-query).
 
-[//]: # 'Materials'
+<!-- Materials -->

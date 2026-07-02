@@ -9,7 +9,7 @@ React Query provides two ways to optimistically update your UI before a mutation
 
 This is the simpler variant, as it doesn't interact with the cache directly.
 
-[//]: # 'ExampleUI1'
+<!-- ExampleUI1 -->
 
 ```tsx
 const addTodoMutation = useMutation({
@@ -22,11 +22,11 @@ const addTodoMutation = useMutation({
 const { isPending, submittedAt, variables, mutate, isError } = addTodoMutation
 ```
 
-[//]: # 'ExampleUI1'
+<!-- ExampleUI1 -->
 
 you will then have access to `addTodoMutation.variables`, which contain the added todo. In your UI list, where the query is rendered, you can append another item to the list while the mutation `isPending`:
 
-[//]: # 'ExampleUI2'
+<!-- ExampleUI2 -->
 
 ```tsx
 <ul>
@@ -37,13 +37,13 @@ you will then have access to `addTodoMutation.variables`, which contain the adde
 </ul>
 ```
 
-[//]: # 'ExampleUI2'
+<!-- ExampleUI2 -->
 
 We're rendering a temporary item with a different `opacity` as long as the mutation is pending. Once it completes, the item will automatically no longer be rendered. Given that the refetch succeeded, we should see the item as a "normal item" in our list.
 
 If the mutation errors, the item will also disappear. But we could continue to show it, if we want, by checking for the `isError` state of the mutation. `variables` are _not_ cleared when the mutation errors, so we can still access them, maybe even show a retry button:
 
-[//]: # 'ExampleUI3'
+<!-- ExampleUI3 -->
 
 ```tsx
 {
@@ -56,13 +56,13 @@ If the mutation errors, the item will also disappear. But we could continue to s
 }
 ```
 
-[//]: # 'ExampleUI3'
+<!-- ExampleUI3 -->
 
 ### If the mutation and the query don't live in the same component
 
 This approach works very well if the mutation and the query live in the same component. However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
 
-[//]: # 'ExampleUI4'
+<!-- ExampleUI4 -->
 
 ```tsx
 // somewhere in your app
@@ -79,7 +79,7 @@ const variables = useMutationState<string>({
 })
 ```
 
-[//]: # 'ExampleUI4'
+<!-- ExampleUI4 -->
 
 `variables` will be an `Array`, because there might be multiple mutations running at the same time. If we need a unique key for the items, we can also select `mutation.state.submittedAt`. This will even make displaying concurrent optimistic updates a breeze.
 
@@ -91,7 +91,7 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 
 ### Updating a list of todos when adding a new todo
 
-[//]: # 'Example'
+<!-- Example -->
 
 ```tsx
 const queryClient = useQueryClient()
@@ -124,11 +124,11 @@ useMutation({
 })
 ```
 
-[//]: # 'Example'
+<!-- Example -->
 
 ### Updating a single todo
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 ```tsx
 useMutation({
@@ -161,11 +161,11 @@ useMutation({
 })
 ```
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
 
-[//]: # 'Example3'
+<!-- Example3 -->
 
 ```tsx
 useMutation({
@@ -179,7 +179,7 @@ useMutation({
 })
 ```
 
-[//]: # 'Example3'
+<!-- Example3 -->
 
 ## When to use what
 
@@ -187,10 +187,10 @@ If you only have one place where the optimistic result should be shown, using `v
 
 However, if you have multiple places on the screen that would require to know about the update, manipulating the cache directly will take care of this for you automatically.
 
-[//]: # 'Materials'
+<!-- Materials -->
 
 ## Further reading
 
 Have a look at the guide by TkDodo on [Concurrent Optimistic Updates](https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query).
 
-[//]: # 'Materials'
+<!-- Materials -->

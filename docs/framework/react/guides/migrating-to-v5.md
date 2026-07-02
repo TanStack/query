@@ -371,7 +371,7 @@ To understand the reasoning behind this change checkout the [v5 roadmap discussi
 
 because it also hashes mutation keys and can be used inside the `predicate` functions of `useIsMutating` and `useMutationState`, which gets mutations passed.
 
-[//]: # 'FrameworkSpecificBreakingChanges'
+<!-- FrameworkSpecificBreakingChanges -->
 
 ### The minimum required React version is now 18.0
 
@@ -447,7 +447,7 @@ queryClient.setQueryDefaults(['todo', 'detail'], {
 
 Note that in this specific example, `retry: true` was added to the `['todo', 'detail']` registration to counteract it now inheriting `retry: false` from the more general registration. The specific changes needed to maintain exact behavior will vary depending on your defaults.
 
-[//]: # 'FrameworkSpecificBreakingChanges'
+<!-- FrameworkSpecificBreakingChanges -->
 
 ## New Features 🚀
 
@@ -504,7 +504,7 @@ See the [useQueries docs](../reference/useQueries.md#combine) for more details.
 
 See the [experimental_createPersister docs](../plugins/createPersister.md) for more details.
 
-[//]: # 'FrameworkSpecificNewFeatures'
+<!-- FrameworkSpecificNewFeatures -->
 
 ### Typesafe way to create Query Options
 
@@ -526,4 +526,4 @@ The experimental `suspense: boolean` flag on the query hooks has been removed.
 
 You can read more about them in the [suspense docs](./suspense.md).
 
-[//]: # 'FrameworkSpecificNewFeatures'
+<!-- FrameworkSpecificNewFeatures -->

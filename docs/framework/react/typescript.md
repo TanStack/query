@@ -16,7 +16,7 @@ Things to keep in mind:
 
 Types in React Query generally flow through very well so that you don't have to provide type annotations for yourself
 
-[//]: # 'TypeInference1'
+<!-- TypeInference1 -->
 
 ```tsx
 const { data } = useQuery({
@@ -28,8 +28,8 @@ const { data } = useQuery({
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSqDkIAEa4qAXQA0cFQEo5APjgAFciGAYAdLVQQANgDd0KgKxmzXgB6ILgw8IA9AH5eIA)
 
-[//]: # 'TypeInference1'
-[//]: # 'TypeInference2'
+<!-- TypeInference1 -->
+<!-- TypeInference2 -->
 
 ```tsx
 const { data } = useQuery({
@@ -42,11 +42,11 @@ const { data } = useQuery({
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSox0IqgF0ANHBUBKOQD44ABXIhgGAHS1UEADYA3dCoCsxw0gwu6EwAXHASUuZhknT2MBAAyjBQwIIA5iaExrwA9Nlw+QUAegD8vEA)
 
-[//]: # 'TypeInference2'
+<!-- TypeInference2 -->
 
 This works best if your `queryFn` has a well-defined returned type. Keep in mind that most data fetching libraries return `any` per default, so make sure to extract it to a properly typed function:
 
-[//]: # 'TypeInference3'
+<!-- TypeInference3 -->
 
 ```tsx
 const fetchGroups = (): Promise<Group[]> =>
@@ -58,13 +58,13 @@ const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBInd1EeigY2Lh4gfFUxX6lVIkANKQe3nGlvTwFBXAHhwB6APxwA65wI3RmW0lwAD4o5kboJMDm6Ea8QA)
 
-[//]: # 'TypeInference3'
+<!-- TypeInference3 -->
 
 ## Type Narrowing
 
 React Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result, discriminated by the `status` field and the derived status boolean flags. This will allow you to check for e.g. `success` status to make `data` defined:
 
-[//]: # 'TypeNarrowing'
+<!-- TypeNarrowing -->
 
 ```tsx
 const { data, isSuccess } = useQuery({
@@ -80,13 +80,13 @@ if (isSuccess) {
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0ANHGCoAysgYN0qVETgBeFBmy48ACgDaVGGphUAurMMBKbQD44ABXIh56AHS1UEADYAbuiGAKx2dry8wCRwhvJKKmqoDgi8cBlwElK8APS5GQB6APy8hLxAA)
 
-[//]: # 'TypeNarrowing'
+<!-- TypeNarrowing -->
 
 ## Typing the error field
 
 The type for error defaults to `Error`, because that is what most users expect.
 
-[//]: # 'TypingError'
+<!-- TypingError -->
 
 ```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
@@ -95,22 +95,22 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFZVLWR9VQ5ADSkwWGZ9WOSnJxwl1cAegD8QA)
 
-[//]: # 'TypingError'
+<!-- TypingError -->
 
 If you want to throw a custom error, or something that isn't an `Error` at all, you can specify the type of the error field:
 
-[//]: # 'TypingError2'
+<!-- TypingError2 -->
 
 ```tsx
 const { error } = useQuery<Group[], string>(['groups'], fetchGroups)
 //      ^? const error: string | null
 ```
 
-[//]: # 'TypingError2'
+<!-- TypingError2 -->
 
 However, this has the drawback that type inference for all other generics of `useQuery` will not work anymore. It is generally not considered a good practice to throw something that isn't an `Error`, so if you have a subclass like `AxiosError` you can use _type narrowing_ to make the error field more specific:
 
-[//]: # 'TypingError3'
+<!-- TypingError3 -->
 
 ```tsx
 import axios from 'axios'
@@ -126,13 +126,13 @@ if (axios.isAxiosError(error)) {
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 
-[//]: # 'TypingError3'
+<!-- TypingError3 -->
 
 ### Registering a global Error
 
 TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type. If you want to enforce that call-sides must do explicit type-narrowing, set `defaultError` to `unknown`:
 
-[//]: # 'RegisterErrorType'
+<!-- RegisterErrorType -->
 
 ```tsx
 import '@tanstack/react-query'
@@ -148,8 +148,8 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const error: unknown | null
 ```
 
-[//]: # 'RegisterErrorType'
-[//]: # 'TypingMeta'
+<!-- RegisterErrorType -->
+<!-- TypingMeta -->
 
 ## Typing meta
 
@@ -172,8 +172,8 @@ declare module '@tanstack/react-query' {
 }
 ```
 
-[//]: # 'TypingMeta'
-[//]: # 'TypingQueryAndMutationKeys'
+<!-- TypingMeta -->
+<!-- TypingQueryAndMutationKeys -->
 
 ## Typing query and mutation keys
 
@@ -194,8 +194,8 @@ declare module '@tanstack/react-query' {
 }
 ```
 
-[//]: # 'TypingQueryAndMutationKeys'
-[//]: # 'TypingQueryOptions'
+<!-- TypingQueryAndMutationKeys -->
+<!-- TypingQueryOptions -->
 
 ## Typing Query Options
 
@@ -264,17 +264,17 @@ useIsMutating(groupMutationOptions())
 queryClient.isMutating(groupMutationOptions())
 ```
 
-[//]: # 'TypingQueryOptions'
+<!-- TypingQueryOptions -->
 
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
 Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.
 
-[//]: # 'Materials'
+<!-- Materials -->
 
 ## Further Reading
 
 For tips and tricks around type inference, see the article [React Query and TypeScript](https://tkdodo.eu/blog/react-query-and-type-script). To find out how to get the best possible type-safety, you can read [Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query). [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
 
-[//]: # 'Materials'
+<!-- Materials -->

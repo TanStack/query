@@ -7,18 +7,18 @@ title: Queries
 
 A query is a declarative dependency on an asynchronous source of data that is tied to a **unique key**. A query can be used with any Promise based method (including GET and POST methods) to fetch data from a server. If your method modifies data on the server, we recommend using [Mutations](./mutations.md) instead.
 
-[//]: # 'SubscribeDescription'
+<!-- SubscribeDescription -->
 
 To subscribe to a query in your components or custom hooks, call the `useQuery` hook with at least:
 
-[//]: # 'SubscribeDescription'
+<!-- SubscribeDescription -->
 
 - A **unique key for the query**
 - A function that returns a promise that:
   - Resolves the data, or
   - Throws an error
 
-[//]: # 'Example'
+<!-- Example -->
 
 ```tsx
 import { useQuery } from '@tanstack/react-query'
@@ -28,19 +28,19 @@ function App() {
 }
 ```
 
-[//]: # 'Example'
+<!-- Example -->
 
 The **unique key** you provide is used internally for refetching, caching, and sharing your queries throughout your application.
 
 The query result returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 ```tsx
 const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 ```
 
-[//]: # 'Example2'
+<!-- Example2 -->
 
 The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
 
@@ -56,7 +56,7 @@ Beyond those primary states, more information is available depending on the stat
 
 For **most** queries, it's usually sufficient to check for the `isPending` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
 
-[//]: # 'Example3'
+<!-- Example3 -->
 
 ```tsx
 function Todos() {
@@ -84,11 +84,11 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example3'
+<!-- Example3 -->
 
 If booleans aren't your thing, you can always use the `status` state as well:
 
-[//]: # 'Example4'
+<!-- Example4 -->
 
 ```tsx
 function Todos() {
@@ -116,7 +116,7 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example4'
+<!-- Example4 -->
 
 TypeScript will also narrow the type of `data` correctly if you've checked for `pending` and `error` before accessing it.
 
@@ -140,10 +140,10 @@ So keep in mind that a query can be in `pending` state without actually fetching
 - The `status` gives information about the `data`: Do we have any or not?
 - The `fetchStatus` gives information about the `queryFn`: Is it running or not?
 
-[//]: # 'Materials'
+<!-- Materials -->
 
 ## Further Reading
 
 For an alternative way of performing status checks, have a look at [this article by TkDodo](https://tkdodo.eu/blog/status-checks-in-react-query).
 
-[//]: # 'Materials'
+<!-- Materials -->
