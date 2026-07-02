@@ -63,7 +63,7 @@ function reconcileFn<TData, TError>(
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
  * if the resource data is not serializable.
  */
-const hydratableObserverResult = <
+export const hydratableObserverResult = <
   TQueryFnData,
   TError,
   TData,
@@ -79,6 +79,12 @@ const hydratableObserverResult = <
     // During SSR, functions cannot be serialized, so we need to remove them
     // This is safe because we will add these functions back when the query is hydrated
     refetch: undefined,
+  }
+
+  // Disabled queries expose a pending thenable during SSR even though no fetch will start.
+  // Serializing that promise keeps Solid's resource suspended forever.
+  if (result.isEnabled === false && result.fetchStatus === 'idle') {
+    delete obj.promise
   }
 
   // If the query is an infinite query, we need to remove additional properties
