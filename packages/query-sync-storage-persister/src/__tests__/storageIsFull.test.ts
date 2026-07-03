@@ -189,4 +189,50 @@ describe('create persister', () => {
     const restoredClient = await persister.restoreClient()
     expect(restoredClient).toEqual(undefined)
   })
+
+  it('should keep persisting on subsequent calls even if the retry handler throws', async () => {
+    const queryCache = new QueryCache()
+    const mutationCache = new MutationCache()
+    const queryClient = new QueryClient({ queryCache, mutationCache })
+
+    let setItemCalls = 0
+    const storage = {
+      getItem: () => null,
+      setItem: () => {
+        setItemCalls++
+        throw new Error('storage always fails')
+      },
+      removeItem: () => {},
+    } as any as Storage
+
+    const persister = createSyncStoragePersister({
+      throttleTime: 10,
+      storage,
+      retry: () => {
+        throw new Error('retry handler bug')
+      },
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: ['A'],
+      queryFn: () => Promise.resolve('A'),
+    })
+
+    const persistClient = {
+      buster: '',
+      timestamp: Date.now(),
+      clientState: dehydrate(queryClient),
+    }
+
+    // First attempt: `setItem` fails, and the `retry` handler throws while
+    // trying to recover. This must not leave the persister permanently stuck.
+    persister.persistClient(persistClient)
+    await sleep(20)
+    expect(setItemCalls).toBe(1)
+
+    // A later persist call should still be attempted, not silently dropped.
+    persister.persistClient(persistClient)
+    await sleep(20)
+    expect(setItemCalls).toBe(2)
+  })
 })

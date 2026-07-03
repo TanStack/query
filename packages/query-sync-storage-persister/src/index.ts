@@ -108,8 +108,15 @@ function throttle<TArgs extends Array<any>>(
     params = args
     if (timer === null) {
       timer = timeoutManager.setTimeout(() => {
-        func(...params)
-        timer = null
+        try {
+          func(...params)
+        } catch {
+          // Prevent an error thrown by `func` (e.g. a `retry` handler) from
+          // leaving `timer` stuck, which would silently disable all future
+          // persist attempts for the rest of the session.
+        } finally {
+          timer = null
+        }
       }, wait)
     }
   }
