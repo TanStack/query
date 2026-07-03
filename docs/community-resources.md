@@ -188,7 +188,7 @@ others:
     {
       title: 'StitchAPI',
       url: 'https://stitchapi.dev',
-      description: 'Typed, validated, streaming-first API toolkit; its stitchQueryOptions helper turns any endpoint into TanStack Query options across React, Vue, Svelte, Solid, and Angular.',
+      description: 'Gives TanStack Query a typed, validated, streaming-first queryFn: stitchQueryOptions supplies the fetcher, so Query keeps owning caching and revalidation. Bindings for React, Vue, Svelte, Solid, and Angular.',
     },
     {
       title: 'Tanstack Query Visualizer',
