@@ -153,9 +153,8 @@ describe('SolidQueryDevtools', () => {
       'setButtonPosition',
     )
     const queryClient = new QueryClient()
-    const [buttonPosition, setButtonPositionSignal] = createSignal<
-      DevtoolsButtonPosition
-    >('bottom-right')
+    const [buttonPosition, setButtonPositionSignal] =
+      createSignal<DevtoolsButtonPosition>('bottom-right')
 
     render(() => (
       <SolidQueryDevtools
@@ -173,9 +172,8 @@ describe('SolidQueryDevtools', () => {
   it('should forward a "position" change to the devtools instance after mount', () => {
     const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
     const queryClient = new QueryClient()
-    const [position, setPositionSignal] = createSignal<DevtoolsPosition>(
-      'bottom',
-    )
+    const [position, setPositionSignal] =
+      createSignal<DevtoolsPosition>('bottom')
 
     render(() => (
       <SolidQueryDevtools client={queryClient} position={position()} />
@@ -196,7 +194,10 @@ describe('SolidQueryDevtools', () => {
     const [initialIsOpen, setInitialIsOpenSignal] = createSignal(false)
 
     render(() => (
-      <SolidQueryDevtools client={queryClient} initialIsOpen={initialIsOpen()} />
+      <SolidQueryDevtools
+        client={queryClient}
+        initialIsOpen={initialIsOpen()}
+      />
     ))
     setInitialIsOpen.mockClear()
 
