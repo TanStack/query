@@ -186,6 +186,11 @@ others:
       description: 'VS Code extension for TanStack Query (React Query): visualize query keys, cache invalidation/refetch flows, and file impact graph',
     },
     {
+      title: 'StitchAPI',
+      url: 'https://stitchapi.dev',
+      description: 'Typed, validated, streaming-first API toolkit; its stitchQueryOptions helper turns any endpoint into TanStack Query options across React, Vue, Svelte, Solid, and Angular.',
+    },
+    {
       title: 'Tanstack Query Visualizer',
       url: 'https://tanstack-query-visualizer.sofi.coop/',
       description: 'An interactive sandbox that visualizes the relationship between mutations and query keys.',
