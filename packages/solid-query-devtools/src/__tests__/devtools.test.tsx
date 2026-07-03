@@ -1,8 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createSignal } from 'solid-js'
 import { render } from '@solidjs/testing-library'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import SolidQueryDevtools from '../devtools'
+import type {
+  DevtoolsButtonPosition,
+  DevtoolsErrorType,
+  DevtoolsPosition,
+  Theme,
+} from '@tanstack/query-devtools'
 
 describe('SolidQueryDevtools', () => {
   afterEach(() => {
@@ -138,6 +145,101 @@ describe('SolidQueryDevtools', () => {
     render(() => <SolidQueryDevtools client={queryClient} />)
 
     expect(setClient).toHaveBeenCalledWith(queryClient)
+  })
+
+  it('should forward a "buttonPosition" change to the devtools instance after mount', () => {
+    const setButtonPosition = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setButtonPosition',
+    )
+    const queryClient = new QueryClient()
+    const [buttonPosition, setButtonPositionSignal] =
+      createSignal<DevtoolsButtonPosition>('bottom-right')
+
+    render(() => (
+      <SolidQueryDevtools
+        client={queryClient}
+        buttonPosition={buttonPosition()}
+      />
+    ))
+    setButtonPosition.mockClear()
+
+    setButtonPositionSignal('top-left')
+
+    expect(setButtonPosition).toHaveBeenCalledWith('top-left')
+  })
+
+  it('should forward a "position" change to the devtools instance after mount', () => {
+    const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
+    const queryClient = new QueryClient()
+    const [position, setPositionSignal] =
+      createSignal<DevtoolsPosition>('bottom')
+
+    render(() => (
+      <SolidQueryDevtools client={queryClient} position={position()} />
+    ))
+    setPosition.mockClear()
+
+    setPositionSignal('top')
+
+    expect(setPosition).toHaveBeenCalledWith('top')
+  })
+
+  it('should forward an "initialIsOpen" change to the devtools instance after mount', () => {
+    const setInitialIsOpen = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setInitialIsOpen',
+    )
+    const queryClient = new QueryClient()
+    const [initialIsOpen, setInitialIsOpenSignal] = createSignal(false)
+
+    render(() => (
+      <SolidQueryDevtools
+        client={queryClient}
+        initialIsOpen={initialIsOpen()}
+      />
+    ))
+    setInitialIsOpen.mockClear()
+
+    setInitialIsOpenSignal(true)
+
+    expect(setInitialIsOpen).toHaveBeenCalledWith(true)
+  })
+
+  it('should forward an "errorTypes" change to the devtools instance after mount', () => {
+    const setErrorTypes = vi.spyOn(
+      TanstackQueryDevtools.prototype,
+      'setErrorTypes',
+    )
+    const queryClient = new QueryClient()
+    const [errorTypes, setErrorTypesSignal] = createSignal<
+      Array<DevtoolsErrorType>
+    >([])
+
+    render(() => (
+      <SolidQueryDevtools client={queryClient} errorTypes={errorTypes()} />
+    ))
+    setErrorTypes.mockClear()
+
+    const nextErrorTypes = [
+      { name: 'Network', initializer: () => new Error('Network') },
+    ]
+    setErrorTypesSignal(nextErrorTypes)
+
+    expect(setErrorTypes).toHaveBeenCalledWith(nextErrorTypes)
+  })
+
+  it('should forward a "theme" change to the devtools instance after mount', () => {
+    const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
+    const queryClient = new QueryClient()
+    const [theme, setThemeSignal] = createSignal<Theme>('light')
+
+    render(() => <SolidQueryDevtools client={queryClient} theme={theme()} />)
+    setTheme.mockClear()
+
+    setThemeSignal('dark')
+
+    expect(setTheme).toHaveBeenCalledWith('dark')
   })
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
