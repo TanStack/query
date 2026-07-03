@@ -187,7 +187,10 @@ describe('PreactQueryDevtools', () => {
     const queryClient = new QueryClient()
 
     const { rerender } = render(
-      <PreactQueryDevtools client={queryClient} buttonPosition="bottom-right" />,
+      <PreactQueryDevtools
+        client={queryClient}
+        buttonPosition="bottom-right"
+      />,
     )
     setButtonPositionMock.mockClear()
 
