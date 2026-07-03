@@ -182,6 +182,83 @@ describe('PreactQueryDevtools', () => {
     )
   })
 
+  it('should forward a "buttonPosition" change to the devtools instance after mount', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} buttonPosition="bottom-right" />,
+    )
+    setButtonPositionMock.mockClear()
+
+    rerender(
+      <PreactQueryDevtools client={queryClient} buttonPosition="top-left" />,
+    )
+
+    expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
+  })
+
+  it('should forward a "position" change to the devtools instance after mount', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} position="bottom" />,
+    )
+    setPositionMock.mockClear()
+
+    rerender(<PreactQueryDevtools client={queryClient} position="top" />)
+
+    expect(setPositionMock).toHaveBeenCalledWith('top')
+  })
+
+  it('should forward an "initialIsOpen" change to the devtools instance after mount', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} initialIsOpen={false} />,
+    )
+    setInitialIsOpenMock.mockClear()
+
+    rerender(<PreactQueryDevtools client={queryClient} initialIsOpen={true} />)
+
+    expect(setInitialIsOpenMock).toHaveBeenCalledWith(true)
+  })
+
+  it('should forward an "errorTypes" change to the devtools instance after mount', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} errorTypes={[]} />,
+    )
+    setErrorTypesMock.mockClear()
+
+    const errorTypes = [
+      { name: 'Network', initializer: () => new Error('Network') },
+    ]
+    rerender(
+      <PreactQueryDevtools client={queryClient} errorTypes={errorTypes} />,
+    )
+
+    expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
+  })
+
+  it('should forward a "theme" change to the devtools instance after mount', async () => {
+    const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
+    const queryClient = new QueryClient()
+
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} theme="light" />,
+    )
+    setThemeMock.mockClear()
+
+    rerender(<PreactQueryDevtools client={queryClient} theme="dark" />)
+
+    expect(setThemeMock).toHaveBeenCalledWith('dark')
+  })
+
   it('should call "unmount" on the devtools instance when the component unmounts', async () => {
     const { PreactQueryDevtools } = await import('../PreactQueryDevtools')
     const queryClient = new QueryClient()
