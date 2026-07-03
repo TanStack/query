@@ -238,7 +238,9 @@ describe('ReactQueryDevtools', () => {
     const errorTypes = [
       { name: 'Network', initializer: () => new Error('Network') },
     ]
-    rerender(<ReactQueryDevtools client={queryClient} errorTypes={errorTypes} />)
+    rerender(
+      <ReactQueryDevtools client={queryClient} errorTypes={errorTypes} />,
+    )
 
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })
