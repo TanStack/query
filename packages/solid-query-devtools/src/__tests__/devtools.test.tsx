@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSignal } from 'solid-js'
 import { render } from '@solidjs/testing-library'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
@@ -12,6 +12,12 @@ import type {
 } from '@tanstack/query-devtools'
 
 describe('SolidQueryDevtools', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryClient = new QueryClient()
+  })
+
   afterEach(() => {
     vi.restoreAllMocks()
   })
@@ -23,8 +29,6 @@ describe('SolidQueryDevtools', () => {
   })
 
   it('should not throw an error if query client is provided via context', () => {
-    const queryClient = new QueryClient()
-
     expect(() =>
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -35,8 +39,6 @@ describe('SolidQueryDevtools', () => {
   })
 
   it('should not throw an error if query client is provided via props', () => {
-    const queryClient = new QueryClient()
-
     expect(() =>
       render(() => <SolidQueryDevtools client={queryClient} />),
     ).not.toThrow()
@@ -47,8 +49,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setButtonPosition',
     )
-    const queryClient = new QueryClient()
-
     render(() => (
       <SolidQueryDevtools client={queryClient} buttonPosition="top-left" />
     ))
@@ -58,8 +58,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should forward "position" to the devtools instance', () => {
     const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} position="left" />)
 
     expect(setPosition).toHaveBeenCalledWith('left')
@@ -70,8 +68,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setInitialIsOpen',
     )
-    const queryClient = new QueryClient()
-
     render(() => (
       <SolidQueryDevtools client={queryClient} initialIsOpen={true} />
     ))
@@ -84,8 +80,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setInitialIsOpen',
     )
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} />)
 
     expect(setInitialIsOpen).toHaveBeenCalledWith(false)
@@ -96,7 +90,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setErrorTypes',
     )
-    const queryClient = new QueryClient()
     const errorTypes = [
       { name: 'Network', initializer: () => new Error('Network') },
     ]
@@ -113,8 +106,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setErrorTypes',
     )
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} />)
 
     expect(setErrorTypes).toHaveBeenCalledWith([])
@@ -122,8 +113,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should forward "theme" to the devtools instance', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} theme="dark" />)
 
     expect(setTheme).toHaveBeenCalledWith('dark')
@@ -131,8 +120,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should default "theme" to "system" when the prop is omitted', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} />)
 
     expect(setTheme).toHaveBeenCalledWith('system')
@@ -140,8 +127,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should forward the resolved "QueryClient" via "setClient"', () => {
     const setClient = vi.spyOn(TanstackQueryDevtools.prototype, 'setClient')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtools client={queryClient} />)
 
     expect(setClient).toHaveBeenCalledWith(queryClient)
@@ -152,7 +137,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setButtonPosition',
     )
-    const queryClient = new QueryClient()
     const [buttonPosition, setButtonPositionSignal] =
       createSignal<DevtoolsButtonPosition>('bottom-right')
 
@@ -171,7 +155,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should forward a "position" change to the devtools instance after mount', () => {
     const setPosition = vi.spyOn(TanstackQueryDevtools.prototype, 'setPosition')
-    const queryClient = new QueryClient()
     const [position, setPositionSignal] =
       createSignal<DevtoolsPosition>('bottom')
 
@@ -190,7 +173,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setInitialIsOpen',
     )
-    const queryClient = new QueryClient()
     const [initialIsOpen, setInitialIsOpenSignal] = createSignal(false)
 
     render(() => (
@@ -211,7 +193,6 @@ describe('SolidQueryDevtools', () => {
       TanstackQueryDevtools.prototype,
       'setErrorTypes',
     )
-    const queryClient = new QueryClient()
     const [errorTypes, setErrorTypesSignal] = createSignal<
       Array<DevtoolsErrorType>
     >([])
@@ -231,7 +212,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should forward a "theme" change to the devtools instance after mount', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtools.prototype, 'setTheme')
-    const queryClient = new QueryClient()
     const [theme, setThemeSignal] = createSignal<Theme>('light')
 
     render(() => <SolidQueryDevtools client={queryClient} theme={theme()} />)
@@ -244,8 +224,6 @@ describe('SolidQueryDevtools', () => {
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
     const unmount = vi.spyOn(TanstackQueryDevtools.prototype, 'unmount')
-    const queryClient = new QueryClient()
-
     const { unmount: unmountComponent } = render(() => (
       <SolidQueryDevtools client={queryClient} />
     ))
