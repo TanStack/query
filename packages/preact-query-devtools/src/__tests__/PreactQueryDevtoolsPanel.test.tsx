@@ -30,9 +30,8 @@ describe('PreactQueryDevtoolsPanel', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks()
-    ;({ PreactQueryDevtoolsPanel } = await import(
-      '../PreactQueryDevtoolsPanel'
-    ))
+    ;({ PreactQueryDevtoolsPanel } =
+      await import('../PreactQueryDevtoolsPanel'))
     queryClient = new QueryClient()
   })
 
