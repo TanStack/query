@@ -58,7 +58,9 @@ describe('SolidQueryDevtoolsPanel', () => {
     )
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
-    expect(setOnClose).toHaveBeenCalledWith(expect.any(Function))
+    const forwarded = setOnClose.mock.calls[0]![0]
+    expect(forwarded).toBeInstanceOf(Function)
+    expect(forwarded()).toBeUndefined()
   })
 
   it('should forward "errorTypes" to the devtools instance', () => {
