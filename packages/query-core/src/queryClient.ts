@@ -260,13 +260,22 @@ export class QueryClient {
     const queryCache = this.#queryCache
 
     return notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
+      const queries = queryCache.findAll(filters)
+
+      queries.forEach((query) => {
         query.reset()
       })
+
+      const queryHashes = new Set(queries.map((q) => q.queryHash))
+
+      if (!queryHashes.size) {
+        return Promise.resolve()
+      }
+
       return this.refetchQueries(
         {
           type: 'active',
-          ...filters,
+          predicate: (query) => queryHashes.has(query.queryHash),
         },
         options,
       )
