@@ -2,27 +2,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-} from '..'
-import { setActTimeout } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, useIsMutating, useMutation } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -36,11 +36,11 @@ describe('useIsMutating', () => {
 
     function Mutations() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(150).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(50).then(() => 'data'),
       }))
 
@@ -63,11 +63,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
 
@@ -76,10 +72,11 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
-      const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
+      const isMutating = useIsMutating(() => ({ mutationKey: mutationKey1 }))
 
       createRenderEffect(() => {
         isMutatingArray.push(isMutating())
@@ -90,11 +87,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
@@ -106,11 +103,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
@@ -120,12 +113,13 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
         predicate: (mutation) =>
-          mutation.options.mutationKey?.[0] === 'mutation1',
+          mutation.options.mutationKey?.[0] === mutationKey1[0],
       }))
 
       createRenderEffect(() => {
@@ -137,11 +131,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
-        mutationKey: ['mutation2'],
+        mutationKey: mutationKey2,
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
@@ -153,11 +147,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
@@ -166,16 +156,17 @@ describe('useIsMutating', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = new QueryClient()
+    const customClient = new QueryClient()
+    const mutationKey1 = queryKey()
 
     function Page() {
-      const isMutating = useIsMutating(undefined, () => queryClient)
+      const isMutating = useIsMutating(undefined, () => customClient)
       const { mutate } = useMutation(
         () => ({
-          mutationKey: ['mutation1'],
+          mutationKey: mutationKey1,
           mutationFn: () => sleep(20).then(() => 'data'),
         }),
-        () => queryClient,
+        () => customClient,
       )
 
       createEffect(() => {
@@ -217,7 +208,10 @@ describe('useIsMutating', () => {
         return new MutationCacheMock(fn)
       })
 
-    const queryClient = new QueryClient()
+    // Create the client after mocking MutationCache so it uses the mock,
+    // not the centralized client from beforeEach
+    const spiedClient = new QueryClient()
+    const mutationKey1 = queryKey()
 
     function IsMutating() {
       useIsMutating()
@@ -228,7 +222,7 @@ describe('useIsMutating', () => {
       const [mounted, setMounted] = createSignal(true)
 
       const { mutate: mutate1 } = useMutation(() => ({
-        mutationKey: ['mutation1'],
+        mutationKey: mutationKey1,
         mutationFn: () => sleep(10).then(() => 'data'),
       }))
 
@@ -246,11 +240,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(spiedClient, () => <Page />)
 
     fireEvent.click(rendered.getByText('unmount'))
 

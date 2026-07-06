@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint'
 
 export default [
   ...tseslint.configs.recommended,
-  ...pluginQuery.configs['flat/recommended'],
+  ...pluginQuery.configs['flat/recommended-strict'],
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
     rules: {

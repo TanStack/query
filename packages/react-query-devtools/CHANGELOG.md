@@ -1,5 +1,219 @@
 # @tanstack/react-query-devtools
 
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies [[`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07), [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8), [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d), [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29), [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f)]:
+  - @tanstack/query-devtools@5.101.2
+  - @tanstack/react-query@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/react-query@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/react-query@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies [[`ed20b6d`](https://github.com/TanStack/query/commit/ed20b6d7541c908033acfcad92b0cd112930d1c3)]:
+  - @tanstack/react-query@5.100.14
+  - @tanstack/query-devtools@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.13
+  - @tanstack/react-query@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.12
+  - @tanstack/react-query@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.11
+  - @tanstack/react-query@5.100.11
+
+## 5.100.10
+
+### Patch Changes
+
+- Updated dependencies [[`4d130b9`](https://github.com/TanStack/query/commit/4d130b992d2ac396d75f921bfc530dd3a9d50577)]:
+  - @tanstack/query-devtools@5.100.10
+  - @tanstack/react-query@5.100.10
+
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`3d21cac`](https://github.com/TanStack/query/commit/3d21cacdec3028b700c4c2e3e0ff8dbe7a235e8c)]:
+  - @tanstack/query-devtools@5.100.9
+  - @tanstack/react-query@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.8
+  - @tanstack/react-query@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.7
+  - @tanstack/react-query@5.100.7
+
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.6
+  - @tanstack/react-query@5.100.6
+
+## 5.100.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.5
+  - @tanstack/react-query@5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/query-devtools@5.100.4
+  - @tanstack/react-query@5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- Updated dependencies [[`f85d825`](https://github.com/TanStack/query/commit/f85d825e02efbbff02e2081528ed28f5e5382f7a)]:
+  - @tanstack/react-query@5.100.3
+  - @tanstack/query-devtools@5.100.3
+
+## 5.100.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.2
+  - @tanstack/react-query@5.100.2
+
+## 5.100.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.1
+  - @tanstack/react-query@5.100.1
+
+## 5.100.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.0
+  - @tanstack/react-query@5.100.0
+
+## 5.99.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.2
+  - @tanstack/react-query@5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.1
+  - @tanstack/react-query@5.99.1
+
+## 5.99.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.0
+  - @tanstack/react-query@5.99.0
+
+## 5.98.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.98.0
+  - @tanstack/react-query@5.98.0
+
+## 5.97.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.97.0
+  - @tanstack/react-query@5.97.0
+
+## 5.96.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.96.2
+  - @tanstack/react-query@5.96.2
+
+## 5.96.1
+
+### Patch Changes
+
+- fix(build): exclude config files from production DTS rollup to prevent `@types/node` type pollution ([#10358](https://github.com/TanStack/query/pull/10358))
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.96.1
+  - @tanstack/react-query@5.96.1
+
+## 5.96.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.96.0
+  - @tanstack/react-query@5.96.0
+
 ## 5.95.2
 
 ### Patch Changes

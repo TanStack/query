@@ -136,6 +136,27 @@
           ]
         },
         {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/lit/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/lit/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/lit/quick-start"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/lit/typescript"
+            }
+          ]
+        },
+        {
           "label": "angular",
           "children": [
             {
@@ -245,6 +266,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/react/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/react/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -400,6 +425,10 @@
               "to": "framework/solid/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/solid/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/solid/guides/disabling-queries"
             },
@@ -535,6 +564,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/vue/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/vue/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -748,6 +781,47 @@
           ]
         },
         {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Reactive Controllers vs Hooks",
+              "to": "framework/lit/guides/reactive-controllers-vs-hooks"
+            },
+            {
+              "label": "Queries",
+              "to": "framework/lit/guides/queries"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/lit/guides/parallel-queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "framework/lit/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "framework/lit/guides/query-functions"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/lit/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "framework/lit/guides/query-invalidation"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/lit/guides/infinite-queries"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/lit/guides/ssr"
+            }
+          ]
+        },
+        {
           "label": "preact",
           "children": [
             {
@@ -789,6 +863,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/preact/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/preact/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -1056,6 +1134,18 @@
               "to": "framework/vue/reference/infiniteQueryOptions"
             },
             {
+              "label": "mutationOptions",
+              "to": "framework/vue/reference/mutationOptions"
+            },
+            {
+              "label": "usePrefetchQuery",
+              "to": "framework/vue/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/vue/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "hydration",
               "to": "framework/vue/reference/hydration"
             }
@@ -1099,6 +1189,10 @@
             {
               "label": "infiniteQueryOptions",
               "to": "framework/solid/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "mutationOptions",
+              "to": "framework/solid/reference/mutationOptions"
             },
             {
               "label": "hydration",
@@ -1152,6 +1246,83 @@
             {
               "label": "Functions / mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
+            }
+          ]
+        },
+        {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Lit Reference",
+              "to": "framework/lit/reference/index"
+            },
+            {
+              "label": "QueryClientProvider",
+              "to": "framework/lit/reference/classes/QueryClientProvider"
+            },
+            {
+              "label": "Functions / createQueryController",
+              "to": "framework/lit/reference/functions/createQueryController"
+            },
+            {
+              "label": "Functions / createQueriesController",
+              "to": "framework/lit/reference/functions/createQueriesController"
+            },
+            {
+              "label": "Functions / createInfiniteQueryController",
+              "to": "framework/lit/reference/functions/createInfiniteQueryController"
+            },
+            {
+              "label": "Functions / createMutationController",
+              "to": "framework/lit/reference/functions/createMutationController"
+            },
+            {
+              "label": "Functions / useIsFetching",
+              "to": "framework/lit/reference/functions/useIsFetching"
+            },
+            {
+              "label": "Functions / useIsMutating",
+              "to": "framework/lit/reference/functions/useIsMutating"
+            },
+            {
+              "label": "Functions / useMutationState",
+              "to": "framework/lit/reference/functions/useMutationState"
+            },
+            {
+              "label": "Functions / useQueryClient",
+              "to": "framework/lit/reference/functions/useQueryClient"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/lit/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/lit/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/lit/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Context / queryClientContext",
+              "to": "framework/lit/reference/variables/queryClientContext"
+            },
+            {
+              "label": "Context / getDefaultQueryClient",
+              "to": "framework/lit/reference/functions/getDefaultQueryClient"
+            },
+            {
+              "label": "Context / registerDefaultQueryClient",
+              "to": "framework/lit/reference/functions/registerDefaultQueryClient"
+            },
+            {
+              "label": "Context / unregisterDefaultQueryClient",
+              "to": "framework/lit/reference/functions/unregisterDefaultQueryClient"
+            },
+            {
+              "label": "Context / resolveQueryClient",
+              "to": "framework/lit/reference/functions/resolveQueryClient"
             }
           ]
         },
@@ -1293,6 +1464,10 @@
         {
           "label": "Mutation Property Order",
           "to": "eslint/mutation-property-order"
+        },
+        {
+          "label": "Prefer Query Options",
+          "to": "eslint/prefer-query-options"
         }
       ]
     },
@@ -1497,6 +1672,23 @@
             {
               "label": "Infinite Queries",
               "to": "framework/svelte/examples/load-more-infinite-scroll"
+            }
+          ]
+        },
+        {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Basic",
+              "to": "framework/lit/examples/basic"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/lit/examples/pagination"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/lit/examples/ssr"
             }
           ]
         },

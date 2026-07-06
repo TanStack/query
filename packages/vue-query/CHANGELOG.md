@@ -1,5 +1,222 @@
 # @tanstack/vue-query
 
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies [[`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1)]:
+  - @tanstack/query-core@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- [#10826](https://github.com/TanStack/query/pull/10826) [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8) - Replace deprecated isServer with environmentManager.isServer()
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- fix(query-core): drop the custom `NoInfer<T>` re-export and rely on TypeScript's built-in `NoInfer` (TS ≥ 5.4) so `NoInfer<X[K]>` stays assignable to `X[K]` in generic contexts (fixes [#9937](https://github.com/TanStack/query/issues/9937)) ([#10593](https://github.com/TanStack/query/pull/10593))
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- fix(vue-query): allow reactive and getter values as `queryKey` property in `queryOptions` ([#10530](https://github.com/TanStack/query/pull/10530))
+
+  This fixes a regression introduced in #10452 where `queryOptions` only accepted plain arrays for the `queryKey` property, but not `computed` refs, `Ref` values, or getter functions. The related fix in #10465 only covered the `enabled` property.
+
+  Now the `queryKey` property in `queryOptions` accepts the same reactive forms as `enabled`:
+  - Plain `QueryKey` arrays
+  - `Ref<QueryKey>`
+  - `ComputedRef<QueryKey>`
+  - `() => QueryKey` (getter)
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
+## 5.100.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.10
+
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.6
+
+## 5.100.5
+
+### Patch Changes
+
+- Updated dependencies [[`a53ef97`](https://github.com/TanStack/query/commit/a53ef97f87decb8ea2431710f5199431d3c94c8d)]:
+  - @tanstack/query-core@5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- Updated dependencies [[`f85d825`](https://github.com/TanStack/query/commit/f85d825e02efbbff02e2081528ed28f5e5382f7a)]:
+  - @tanstack/query-core@5.100.3
+
+## 5.100.2
+
+### Patch Changes
+
+- Updated dependencies [[`ea4497e`](https://github.com/TanStack/query/commit/ea4497e8aa00d8c1c3a36fb1e17563a889d6ab31), [`d6a7bf3`](https://github.com/TanStack/query/commit/d6a7bf3e3e024c1a77d0536813238cc8007a5fa7), [`645d5d1`](https://github.com/TanStack/query/commit/645d5d130f5e8017cb1bf1a37987f7b980aed705)]:
+  - @tanstack/query-core@5.100.2
+
+## 5.100.1
+
+### Patch Changes
+
+- Updated dependencies [[`1bb0d23`](https://github.com/TanStack/query/commit/1bb0d234280fd4ae1725c439088426a20593a8df)]:
+  - @tanstack/query-core@5.100.1
+
+## 5.100.0
+
+### Patch Changes
+
+- Updated dependencies [[`6540a41`](https://github.com/TanStack/query/commit/6540a4126b1c087d86d64525e78f32d9920dcd31)]:
+  - @tanstack/query-core@5.100.0
+
+## 5.99.2
+
+### Patch Changes
+
+- fix(vue-query): allow computed ref and other reactive values as `enabled` property in queryOptions ([#10465](https://github.com/TanStack/query/pull/10465))
+
+  This fixes a regression introduced in #10452 where `queryOptions` only accepted getter functions for the `enabled` property, but not `computed` refs or other reactive values.
+
+  Now the `enabled` property in `queryOptions` correctly accepts:
+  - `boolean` values
+  - `Ref<boolean>`
+  - `ComputedRef<boolean>`
+  - `() => boolean` getter functions
+  - `(query) => boolean` query predicate functions
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.99.1
+
+## 5.99.0
+
+### Minor Changes
+
+- feat(vue-query): add 'mutationOptions' ([#10381](https://github.com/TanStack/query/pull/10381))
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.99.0
+
+## 5.98.0
+
+### Minor Changes
+
+- Add usePrefetchQuery and usePrefetchInfiniteQuery to vue-query. ([#10372](https://github.com/TanStack/query/pull/10372))
+
+### Patch Changes
+
+- fix(vue-query): fix type of queryOptions to allow plain properies or getters ([#10452](https://github.com/TanStack/query/pull/10452))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.98.0
+
+## 5.97.0
+
+### Patch Changes
+
+- Updated dependencies [[`2bfb12c`](https://github.com/TanStack/query/commit/2bfb12cc44f1d8495106136e4ddacb817135f8f9)]:
+  - @tanstack/query-core@5.97.0
+
+## 5.96.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.96.2
+
+## 5.96.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.96.1
+
+## 5.96.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.96.0
+
 ## 5.95.2
 
 ### Patch Changes

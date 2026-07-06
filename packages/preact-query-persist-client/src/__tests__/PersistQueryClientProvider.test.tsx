@@ -11,7 +11,7 @@ import { notifyManager } from '../../../query-core/src'
 import { act, cleanup, render } from '@testing-library/preact'
 import type { UseQueryResult } from '../../../preact-query/src'
 import { QueryClient, useQuery } from '../../../preact-query/src'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 
 import { PersistQueryClientProvider } from './testPersistProvider'
@@ -48,7 +48,7 @@ describe('PersistQueryClientProvider (preact)', () => {
     vi.useRealTimers()
   })
 
-  test('restores cache from persister and refetches', async () => {
+  it('restores cache from persister and refetches', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 

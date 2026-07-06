@@ -1,3 +1,4 @@
+import { queryKey } from '@tanstack/query-test-utils'
 import { act } from '@testing-library/preact'
 import { hydrate as preactHydrate, render } from 'preact'
 import type { VNode } from 'preact'
@@ -36,6 +37,9 @@ function PrintStateComponent({ componentName, result }: any): any {
 }
 
 describe('Server side rendering with de/rehydration', () => {
+  const successKey = queryKey()
+  const errorKey = queryKey()
+
   beforeAll(() => {
     vi.useFakeTimers()
   })
@@ -53,7 +57,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: successKey,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (
@@ -69,7 +73,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['success'],
+      queryKey: successKey,
       queryFn: () => fetchDataSuccess('success'),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
@@ -130,7 +134,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Shared part --
     function ErrorComponent() {
       const result = useQuery({
-        queryKey: ['error'],
+        queryKey: errorKey,
         queryFn: () => fetchDataError(),
         retry: false,
       })
@@ -146,7 +150,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['error'],
+      queryKey: errorKey,
       queryFn: () => fetchDataError(),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
@@ -207,7 +211,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: successKey,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (

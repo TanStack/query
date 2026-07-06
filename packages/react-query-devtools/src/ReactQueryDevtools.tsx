@@ -16,8 +16,8 @@ export interface DevtoolsOptions {
    */
   initialIsOpen?: boolean
   /**
-   * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+   * The position of the TanStack logo to open and close the devtools panel.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
    * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition

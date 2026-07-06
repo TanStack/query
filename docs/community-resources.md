@@ -141,6 +141,11 @@ others:
       description: 'Generate SDKs for all your APIs',
     },
     {
+      title: '@codewithagents/openapi-react-query',
+      url: 'https://github.com/codewithagents/openapi-zod-ts',
+      description: 'Generate fully typed TanStack/React Query v5 hooks from an OpenAPI 3.1 spec, with Zod v4 runtime validation and an end-to-end pipeline (client, mocks, server).',
+    },
+    {
       title: 'OpenAPI codegen',
       url: 'https://github.com/fabien0102/openapi-codegen',
       description: 'A tool for generating code based on an OpenAPI schema.',
@@ -174,6 +179,11 @@ others:
       title: 'Rapini',
       url: 'https://github.com/rametta/rapini',
       description: '🥬 OpenAPI to React Query (or SWR) & Axios',
+    },
+    {
+      title: 'React Query Visualizer',
+      url: 'https://marketplace.visualstudio.com/items?itemName=fe-dudu.react-query-visualizer',
+      description: 'VS Code extension for TanStack Query (React Query): visualize query keys, cache invalidation/refetch flows, and file impact graph',
     },
     {
       title: 'Tanstack Query Visualizer',

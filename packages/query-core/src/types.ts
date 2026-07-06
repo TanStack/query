@@ -34,8 +34,6 @@ export type Override<TTargetA, TTargetB> = {
     : TTargetA[AKey]
 }
 
-export type NoInfer<T> = [T][T extends any ? 0 : never]
-
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
@@ -110,7 +108,7 @@ export type StaleTimeFunction<
   | StaleTime
   | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
-export type Enabled<
+export type QueryBooleanOption<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -231,7 +229,7 @@ export interface QueryOptions<
 > {
   /**
    * If `false`, failed queries will not retry by default.
-   * If `true`, failed queries will retry infinitely., failureCount: num
+   * If `true`, failed queries will retry infinitely.
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
@@ -246,11 +244,7 @@ export interface QueryOptions<
    */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
-  persister?: QueryPersister<
-    NoInfer<TQueryFnData>,
-    NoInfer<TQueryKey>,
-    NoInfer<TPageParam>
-  >
+  persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
@@ -266,6 +260,7 @@ export interface QueryOptions<
     | boolean
     | ((oldData: unknown | undefined, newData: unknown) => unknown)
   _defaulted?: boolean
+  _type?: 'infinite'
   /**
    * Additional payload to be stored on each query.
    * Use this property to pass information that can be used in other places.
@@ -326,7 +321,7 @@ export interface QueryObserverOptions<
    * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
-  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
+  enabled?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
@@ -368,7 +363,7 @@ export interface QueryObserverOptions<
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
    * If set to a function, the function will be executed with the latest data and query to compute the value.
-   * Defaults to the value of `networkOnline` (`true`)
+   * Defaults to `true` unless `networkMode` is `'always'`.
    */
   refetchOnReconnect?:
     | boolean
@@ -391,9 +386,10 @@ export interface QueryObserverOptions<
       ) => boolean | 'always')
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
+   * If set to a function, the function will be executed with the query to compute the value.
    * Defaults to `true`.
    */
-  retryOnMount?: boolean
+  retryOnMount?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
