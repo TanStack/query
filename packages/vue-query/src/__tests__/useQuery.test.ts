@@ -502,7 +502,9 @@ describe('useQuery', () => {
         ...errorSpy.mock.calls,
         ...rejectionHandler.mock.calls,
       ].some((args) =>
-        args.some((arg) => arg instanceof Error && arg.message === 'Some error'),
+        args.some(
+          (arg) => arg instanceof Error && arg.message === 'Some error',
+        ),
       )
 
       errorSpy.mockRestore()
