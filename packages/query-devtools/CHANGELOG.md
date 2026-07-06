@@ -1,5 +1,21 @@
 # @tanstack/query-devtools
 
+## 5.101.2
+
+### Patch Changes
+
+- [#10813](https://github.com/TanStack/query/pull/10813) [`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07) - fix(query-devtools/PiPContext): reset 'pip_open' in 'localStore' from 'closePipWindow' so the auto-open createEffect does not reopen the window after a programmatic close
+
+- [#10812](https://github.com/TanStack/query/pull/10812) [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8) - fix(query-devtools/utils): make 'last updated' sort return 0 for queries with equal 'dataUpdatedAt' to follow the standard comparator contract
+
+- [#10815](https://github.com/TanStack/query/pull/10815) [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d) - fix(query-devtools/utils): scope the 'setupStyleSheet' dedup check to the target so a 'shadowDOMTarget' still receives its own '#\_goober' style tag when 'document.head' already has one
+
+- [#10811](https://github.com/TanStack/query/pull/10811) [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29) - fix(query-devtools/Devtools): correct the Theme sub-trigger className from 'position' to 'theme'
+
+- [#10736](https://github.com/TanStack/query/pull/10736) [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f) - `setupStyleSheet` now sets `window.__nonce__` when a `styleNonce` is provided.
+
+  The devtools use [goober](https://goober.js.org/) for CSS-in-JS, which reads `window.__nonce__` every time it creates or accesses its style element. Without this, goober overwrote the nonce with `undefined`, causing CSP violations even when `styleNonce` was correctly passed to `<ReactQueryDevtools>`.
+
 ## 5.101.1
 
 ## 5.101.0
