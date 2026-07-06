@@ -95,13 +95,25 @@ describe('useInfiniteQuery', () => {
         throwOnError: throwOnErrorFn,
       })
 
-      // Capture the Unhandled Rejection caused by the watcher throw in Vue 3.
+      // The watcher rethrows, which Vue surfaces differently across versions:
+      // through console.error on Vue 2.x and as an unhandled rejection on Vue 3.
+      // Capture both channels so the assertion holds on every supported version.
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const rejectionHandler = vi.fn()
       process.on('unhandledRejection', rejectionHandler)
 
       await vi.advanceTimersByTimeAsync(10)
 
       process.off('unhandledRejection', rejectionHandler)
+
+      const reportedError = [
+        ...errorSpy.mock.calls,
+        ...rejectionHandler.mock.calls,
+      ].some((args) =>
+        args.some((arg) => arg instanceof Error && arg.message === 'Some error'),
+      )
+
+      errorSpy.mockRestore()
 
       // throwOnError is evaluated and throw is attempted (not suppressed by suspense)
       expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
@@ -111,12 +123,9 @@ describe('useInfiniteQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
-      // The watcher rethrows, so an unhandled rejection is observed.
-      expect(rejectionHandler).toHaveBeenCalledTimes(1)
-      expect(rejectionHandler).toHaveBeenCalledWith(
-        Error('Some error'),
-        expect.anything(),
-      )
+      // The watcher rethrows, so Vue surfaces the error (console.error or an
+      // unhandled rejection depending on the version).
+      expect(reportedError).toBe(true)
     })
   })
 
