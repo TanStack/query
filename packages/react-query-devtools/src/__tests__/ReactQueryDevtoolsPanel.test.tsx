@@ -63,13 +63,15 @@ describe('ReactQueryDevtoolsPanel', () => {
 
     render(<ReactQueryDevtoolsPanel client={queryClient} onClose={onClose} />)
 
-    expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
+    expect(setOnCloseMock).toHaveBeenCalledWith(onClose)
   })
 
   it('should default "onClose" to a no-op function when the prop is omitted', () => {
     render(<ReactQueryDevtoolsPanel client={queryClient} />)
 
-    expect(setOnCloseMock).toHaveBeenCalledWith(expect.any(Function))
+    const forwarded = setOnCloseMock.mock.calls[0]?.[0]
+    expect(forwarded).toBeInstanceOf(Function)
+    expect(forwarded()).toBeUndefined()
   })
 
   it('should forward "errorTypes" to the devtools instance', () => {
