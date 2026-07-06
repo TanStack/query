@@ -868,4 +868,173 @@ describe('useQueries', () => {
       }
     })
   })
+
+  describe('select', () => {
+    // Inferring the `select` argument of an *inline* query object from its
+    // sibling `queryFn` is a known TypeScript limitation, because `useQueries`
+    // infers its array generic from the argument itself. The two supported
+    // workarounds are to annotate the `select` parameter, or to define the
+    // query with the `queryOptions` helper.
+    // https://github.com/TanStack/query/issues/6556
+
+    describe('without queryOptions (inline query object)', () => {
+      it('leaves the select argument as `unknown` without an annotation', () => {
+        useQueries({
+          queries: [
+            {
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve(1),
+              select: (data) => {
+                expectTypeOf(data).toBeUnknown()
+                // @ts-expect-error `data` is `unknown`, not the expected `number`
+                return data.toFixed()
+              },
+            },
+          ],
+        })
+      })
+
+      it('infers the result when the select parameter is annotated', () => {
+        const queryResults = useQueries({
+          queries: [
+            {
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve(1),
+              select: (data: number) => data.toFixed(),
+            },
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+      })
+    })
+
+    describe('with queryOptions passed directly', () => {
+      it('without select, infers the queryFn data as the result', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useQueries({ queries: [options] })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<number | undefined>()
+      })
+
+      it('with select, infers the select argument and the result', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => {
+            expectTypeOf(data).toEqualTypeOf<number>()
+            return data.toFixed()
+          },
+        })
+        const queryResults = useQueries({ queries: [options] })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+      })
+
+      it('infers select when a base queryOptions is re-wrapped with queryOptions', () => {
+        const baseOptions = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useQueries({
+          queries: [
+            queryOptions({
+              ...baseOptions,
+              select: (data) => {
+                expectTypeOf(data).toEqualTypeOf<number>()
+                return data.toFixed()
+              },
+            }),
+            baseOptions,
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+        expectTypeOf(queryResults[1].data).toEqualTypeOf<number | undefined>()
+      })
+
+      it('infers an overriding select when a queryOptions with a select is re-wrapped with queryOptions', () => {
+        const baseOptions = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        const queryResults = useQueries({
+          queries: [
+            queryOptions({
+              ...baseOptions,
+              select: (data) => {
+                expectTypeOf(data).toEqualTypeOf<number>()
+                return data.toFixed()
+              },
+            }),
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+      })
+    })
+
+    describe('with queryOptions spread into an inline query object', () => {
+      it('without select in the factory, leaves an unannotated select as `unknown`', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        useQueries({
+          queries: [
+            // @ts-expect-error Without an annotation the inline `select` receives `data: unknown`, which makes the whole spread query object unassignable to the expected options type
+            {
+              ...options,
+              select: (data) => {
+                expectTypeOf(data).toBeUnknown()
+                return data
+              },
+            },
+          ],
+        })
+      })
+
+      it('without select in the factory, an annotated select compiles', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useQueries({
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+      })
+
+      it('with select in the factory, leaves an unannotated overriding select as `unknown`', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        useQueries({
+          queries: [
+            // @ts-expect-error Without an annotation the inline `select` receives `data: unknown`, which makes the whole spread query object unassignable to the expected options type
+            {
+              ...options,
+              select: (data) => {
+                expectTypeOf(data).toBeUnknown()
+                return data
+              },
+            },
+          ],
+        })
+      })
+
+      it('with select in the factory, an annotated overriding select compiles', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        const queryResults = useQueries({
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+      })
+    })
+  })
 })
