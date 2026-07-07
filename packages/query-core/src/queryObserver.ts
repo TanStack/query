@@ -479,7 +479,13 @@ export class QueryObserver<
     if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
+      // While a query is hydrating, the first render must match the server,
+      // which always rendered the dehydrated query as idle (not fetching),
+      // regardless of staleness. Suppress the optimistic fetch state so we
+      // don't introduce a hydration mismatch. The actual refetch (if the data
+      // is stale) is still triggered afterwards in `onSubscribe`.
+      const fetchOnMount =
+        !mounted && !options._isHydrating && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)

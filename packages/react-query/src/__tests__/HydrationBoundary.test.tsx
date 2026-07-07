@@ -890,8 +890,9 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    // Initially shows cached data (from first prefetch)
-    expect(rendered.getByText('new-data')).toBeInTheDocument()
+    // The first render matches the server (not fetching), then the hydration
+    // effect surfaces the hydrated data.
+    expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
     // refetchOnMount: 'always' should trigger refetch even during hydration
     // Wait for the refetch to complete
@@ -899,7 +900,6 @@ describe('React hydration', () => {
 
     // Should refetch because refetchOnMount is 'always' bypasses hydration skip
     expect(queryFn).toHaveBeenCalledTimes(1)
-    // Hydration data is shown because useEffect runs after refetch starts
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
     queryClient.clear()
@@ -954,13 +954,14 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    expect(rendered.getByText('new-data')).toBeInTheDocument()
+    // The first render matches the server (not fetching), then the hydration
+    // effect surfaces the hydrated data.
+    expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(10)
 
     // Should refetch because refetchOnMount function returns 'always'
     expect(queryFn).toHaveBeenCalledTimes(1)
-    // Hydration data is shown because useEffect runs after refetch starts
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
     queryClient.clear()
@@ -1492,6 +1493,60 @@ describe('React hydration', () => {
 
     expect(isHydratingLog).toContain(false)
     expect(isHydratingLog).not.toContain(true)
+
+    queryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  it('should render as not fetching on the first hydrating render even when the data is stale', async () => {
+    const queryClient = new QueryClient()
+
+    // Populate the cache with older data (simulating a first page visit).
+    queryClient.prefetchQuery({
+      queryKey: ['mismatch-test'],
+      queryFn: () => sleep(10).then(() => 'cached'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Advance time so the server prefetch below is newer than the cache.
+    await vi.advanceTimersByTimeAsync(10)
+
+    const serverQueryClient = new QueryClient()
+    serverQueryClient.prefetchQuery({
+      queryKey: ['mismatch-test'],
+      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    const fetchingLog: Array<boolean> = []
+    function Page() {
+      const { data, isFetching } = useQuery({
+        queryKey: ['mismatch-test'],
+        queryFn: () => sleep(10).then(() => 'new-data'),
+        // Immediately stale, so without the hydration guard the optimistic
+        // first render would flip to fetching and mismatch the server.
+        staleTime: 0,
+      })
+      fetchingLog.push(isFetching)
+      return <h1>{data}</h1>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    // The first render must match the server, which rendered the dehydrated
+    // query as idle (not fetching), even though the data is now stale.
+    expect(fetchingLog[0]).toBe(false)
+
+    // Hydration lands the server data into the cache after the first render.
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
     queryClient.clear()
     serverQueryClient.clear()
