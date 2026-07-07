@@ -50,8 +50,8 @@ describe('Suspense Timer Tests', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {

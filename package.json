@@ -5,9 +5,9 @@
     "type": "git",
     "url": "git+https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@11.1.0",
+  "packageManager": "pnpm@11.9.0",
   "engines": {
-    "pnpm": ">=11.0.0"
+    "pnpm": ">=11.9.0"
   },
   "type": "module",
   "scripts": {
