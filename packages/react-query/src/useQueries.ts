@@ -245,9 +245,7 @@ export function useQueries<
 
         return defaultedOptions
       }),
-    // Note: hydratingQueries is a stable Set object, so we don't include it in deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, hydratingQueries],
   )
 
   defaultedQueries.forEach((queryOptions) => {

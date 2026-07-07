@@ -8,6 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
   dehydrate,
+  useIsHydrating,
   useQuery,
 } from '..'
 import type { hydrate } from '@tanstack/query-core'
@@ -541,7 +542,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should not double fetch when hydrating existing query with fresh data on subsequent visits', async () => {
+  it('should not double fetch when hydrating existing query with fresh data on subsequent visits', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'initial-data'))
@@ -603,7 +604,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not refetch when refetchOnMount is true during hydration', async () => {
+  it('should not refetch when refetchOnMount is true during hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -663,7 +664,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not refetch when refetchOnMount function returns true during hydration', async () => {
+  it('should not refetch when refetchOnMount function returns true during hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -723,7 +724,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not refetch when refetchOnMount is false during hydration', async () => {
+  it('should not refetch when refetchOnMount is false during hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -781,7 +782,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not refetch when refetchOnMount function returns false during hydration', async () => {
+  it('should not refetch when refetchOnMount function returns false during hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -839,7 +840,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should still refetch when refetchOnMount is explicitly set to "always" despite hydration', async () => {
+  it('should still refetch when refetchOnMount is explicitly set to "always" despite hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -905,7 +906,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should still refetch when refetchOnMount function returns "always" despite hydration', async () => {
+  it('should still refetch when refetchOnMount function returns "always" despite hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -966,7 +967,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should refetch when hydrated data is stale (cached markup scenario)', async () => {
+  it('should refetch when hydrated data is stale (cached markup scenario)', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -1026,7 +1027,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not double fetch for multiple queries when hydrating', async () => {
+  it('should not double fetch for multiple queries when hydrating', async () => {
     const queryFn1 = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'data-1'))
@@ -1100,7 +1101,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should hydrate new queries immediately without pending flag', async () => {
+  it('should hydrate new queries immediately without pending flag', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'client-data'))
@@ -1149,7 +1150,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not hydrate when server data is older than client data', async () => {
+  it('should not hydrate when server data is older than client data', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -1204,7 +1205,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should handle gracefully when query is removed from cache during hydration in useMemo', async () => {
+  it('should handle gracefully when query is removed from cache during hydration in useMemo', async () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
@@ -1270,7 +1271,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should handle gracefully when query is removed from cache during hydration in useEffect', async () => {
+  it('should handle gracefully when query is removed from cache during hydration in useEffect', async () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
@@ -1337,7 +1338,7 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not refetch after unmount and remount during hydration', async () => {
+  it('should not refetch after unmount and remount during hydration', async () => {
     const queryFn = vi
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'new-data'))
@@ -1421,5 +1422,78 @@ describe('React hydration', () => {
     queryClient.clear()
     serverQueryClient.clear()
     serverQueryClient2.clear()
+  })
+
+  it('should clear the pending hydration flag once hydration has completed', async () => {
+    const queryClient = new QueryClient()
+
+    // Populate the cache so the dehydrated query is treated as "existing".
+    queryClient.prefetchQuery({
+      queryKey: ['self-clear-test'],
+      queryFn: () => sleep(10).then(() => 'cached'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Advance time so the server prefetch below produces a newer `dataUpdatedAt`
+    // than the cached entry, ensuring the query is treated as pending hydration.
+    await vi.advanceTimersByTimeAsync(10)
+
+    const serverQueryClient = new QueryClient()
+    serverQueryClient.prefetchQuery({
+      queryKey: ['self-clear-test'],
+      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    // The same dehydrated state object is reused across renders, matching how it
+    // is typically passed once from the server.
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    const queryHash = queryClient.defaultQueryOptions({
+      queryKey: ['self-clear-test'],
+    }).queryHash
+    const isHydratingLog: Array<boolean> = []
+
+    function Probe() {
+      isHydratingLog.push(useIsHydrating().has(queryHash))
+      const { data } = useQuery({
+        queryKey: ['self-clear-test'],
+        queryFn: () => sleep(10).then(() => 'new-data'),
+        staleTime: Infinity,
+      })
+      return <h1>{data}</h1>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Probe />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    // The first render happens before the deferred hydration effect, so the
+    // query is flagged as pending.
+    expect(isHydratingLog[0]).toBe(true)
+
+    // Let the hydration effect run so the cache catches up to the server data.
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Re-render with the same `state` reference (as SSR would keep it stable).
+    // The pending flag must have cleared, because the cache now matches the
+    // hydrated data and the query is no longer classified as newer.
+    isHydratingLog.length = 0
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Probe />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    expect(isHydratingLog).toContain(false)
+    expect(isHydratingLog).not.toContain(true)
+
+    queryClient.clear()
+    serverQueryClient.clear()
   })
 })
