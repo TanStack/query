@@ -1643,7 +1643,7 @@ describe('dehydration and rehydration', () => {
   // synchronous thenable resolution must also produce status: 'success'.
   // Previously the if (query) branch would spread status: 'pending' from the
   // server state without correcting it for the resolved data.
-  it('should set status to success when rehydrating an existing pending query with a synchronously resolved promise', async () => {
+  it('should set status to success when rehydrating an existing pending query with a synchronously resolved promise', () => {
     const key = queryKey()
     // --- server ---
 
@@ -1811,7 +1811,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  it('should set dataUpdatedAt when hydrating a resolved streamed query into a new cache entry', async () => {
+  it('should set dataUpdatedAt when hydrating a resolved streamed query into a new cache entry', () => {
     const key = queryKey()
 
     // --- server ---
@@ -1856,7 +1856,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  it('should set dataUpdatedAt when hydrating a resolved streamed query into an existing cache entry', async () => {
+  it('should set dataUpdatedAt when hydrating a resolved streamed query into an existing cache entry', () => {
     const key = queryKey()
 
     // --- server ---
