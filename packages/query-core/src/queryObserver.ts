@@ -317,7 +317,26 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    let unsubscribe = () => {}
+
+    return Promise.race([
+      query.fetch().then(() => {
+        unsubscribe()
+        return this.createResult(query, defaultedOptions)
+      }),
+      new Promise<QueryObserverResult<TData, TError>>((resolve) => {
+        unsubscribe = this.#client.getQueryCache().subscribe((event) => {
+          if (
+            event.type === 'updated' &&
+            event.query.queryHash === query.queryHash &&
+            query.state.data !== undefined
+          ) {
+            unsubscribe()
+            resolve(this.createResult(query, defaultedOptions))
+          }
+        })
+      }),
+    ])
   }
 
   protected fetch(
