@@ -473,7 +473,7 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
-  it('should skip combine notifications while suspense queries have no data', async () => {
+  it('should skip combine notifications while suspense queries have no data', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
@@ -506,7 +506,7 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
-  it('should skip combine notifications after suspense is enabled without structural changes', async () => {
+  it('should skip combine notifications after suspense is enabled without structural changes', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
