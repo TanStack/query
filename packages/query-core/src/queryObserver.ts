@@ -321,8 +321,9 @@ export class QueryObserver<
 
     return Promise.race([
       query.fetch().then(() => {
-        unsubscribe()
         return this.createResult(query, defaultedOptions)
+      }).finally(() => {
+        unsubscribe()
       }),
       new Promise<QueryObserverResult<TData, TError>>((resolve) => {
         unsubscribe = this.#client.getQueryCache().subscribe((event) => {
