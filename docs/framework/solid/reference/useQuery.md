@@ -11,6 +11,7 @@ const {
   errorUpdatedAt,
   failureCount,
   failureReason,
+  errorUpdateCount,
   fetchStatus,
   isError,
   isFetched,
