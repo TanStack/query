@@ -1419,10 +1419,10 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
 
     const hydratedQuery = hydrationCache.find({ queryKey: key })
-    expect(hydratedQuery?.state.data).toBeDefined()
-    expect(hydratedQuery?.state.data).toHaveProperty('pages')
-    expect(hydratedQuery?.state.data).toHaveProperty('pageParams')
-    expect((hydratedQuery?.state.data as any).pages).toHaveLength(1)
+    expect(hydratedQuery?.state.data).toEqual({
+      pages: [{ items: ['page-0'], nextCursor: 1 }],
+      pageParams: [0],
+    })
   })
 
   it('should attach infiniteQueryBehavior during hydration', async () => {
@@ -1548,11 +1548,10 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(10)
     const result = await resultPromise
 
-    expect(result).toHaveProperty('pages')
-    expect(result).toHaveProperty('pageParams')
-    expect(Array.isArray(result.pages)).toBe(true)
-    expect(result.pages).toHaveLength(1)
-    expect(result.pages[0]).toHaveProperty('items')
+    expect(result).toEqual({
+      pages: [{ items: ['page-0'], next: 1 }],
+      pageParams: [0],
+    })
   })
 
   it('should retain infinite query type after subsequent setOptions calls', async () => {
@@ -1632,10 +1631,13 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(20)
     const result = await resultPromise
 
-    expect(result.pages).toHaveLength(2)
-    expect(result.pageParams).toHaveLength(2)
-    expect(result.pages[0]).toHaveProperty('items')
-    expect(result.pages[1]).toHaveProperty('items')
+    expect(result).toEqual({
+      pages: [
+        { items: ['item-0'], next: 1 },
+        { items: ['item-1'], next: 2 },
+      ],
+      pageParams: [0, 1],
+    })
   })
 
   // Companion to the test above: when the query already exists in the cache
