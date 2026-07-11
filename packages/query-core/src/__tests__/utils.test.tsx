@@ -463,7 +463,7 @@ describe('core/utils', () => {
   describe('keepPreviousData', () => {
     it('should return the parameter as is', () => {
       const x = { a: 1, b: 2 }
-      expect(keepPreviousData(x)).toEqual(x)
+      expect(keepPreviousData(x)).toBe(x)
     })
   })
 
