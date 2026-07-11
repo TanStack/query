@@ -114,19 +114,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -198,19 +198,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -282,19 +282,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'initial',
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -371,13 +371,13 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'hydrated',
@@ -580,19 +580,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toEqual({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toEqual({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toEqual({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'queryFn2',
