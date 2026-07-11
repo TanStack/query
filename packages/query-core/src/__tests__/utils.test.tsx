@@ -79,7 +79,7 @@ describe('core/utils', () => {
     })
 
     it('should return `true` for object with an undefined constructor', () => {
-      expect(isPlainObject(Object.create(null))).toBeTruthy()
+      expect(isPlainObject(Object.create(null))).toBe(true)
     })
 
     it('should return `false` if constructor does not have an Object-specific method', () => {
@@ -89,7 +89,7 @@ describe('core/utils', () => {
           this.abc = {}
         }
       }
-      expect(isPlainObject(new Foo())).toBeFalsy()
+      expect(isPlainObject(new Foo())).toBe(false)
     })
 
     it('should return `false` if the object has a modified prototype', () => {
@@ -102,7 +102,7 @@ describe('core/utils', () => {
         this.vertices.push(v)
       }
 
-      expect(isPlainObject(Object.create(Graph))).toBeFalsy()
+      expect(isPlainObject(Object.create(Graph))).toBe(false)
     })
 
     it('should return `false` for object with custom prototype', () => {
@@ -110,7 +110,7 @@ describe('core/utils', () => {
       const obj = Object.create(CustomProto)
       obj.b = 2
 
-      expect(isPlainObject(obj)).toBeFalsy()
+      expect(isPlainObject(obj)).toBe(false)
     })
   })
 
@@ -456,14 +456,14 @@ describe('core/utils', () => {
         mutationCache: queryClient.getMutationCache(),
         options: {},
       })
-      expect(matchMutation(filters, mutation)).toBeFalsy()
+      expect(matchMutation(filters, mutation)).toBe(false)
     })
   })
 
   describe('keepPreviousData', () => {
     it('should return the parameter as is', () => {
       const x = { a: 1, b: 2 }
-      expect(keepPreviousData(x)).toEqual(x)
+      expect(keepPreviousData(x)).toBe(x)
     })
   })
 

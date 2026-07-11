@@ -807,7 +807,7 @@ describe('query', () => {
     const query = queryCache.find({ queryKey: key })!
 
     query.invalidate()
-    expect(query.state.isInvalidated).toBeTruthy()
+    expect(query.state.isInvalidated).toBe(true)
 
     const previousState = query.state
 
