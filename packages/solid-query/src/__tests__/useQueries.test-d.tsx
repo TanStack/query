@@ -323,7 +323,7 @@ describe('useQueries', () => {
         queryKey: ['key', key],
         queryFn: () => true,
       })),
-      combine: (results) => ({
+      combine: (results: Array<UseQueryResult<boolean, Error>>) => ({
         data: results.every((r) => r.data),
       }),
     }))

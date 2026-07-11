@@ -1,5 +1,5 @@
 import { QueriesObserver, noop } from '@tanstack/query-core'
-import { createStore, unwrap } from 'solid-js/store'
+import { createStore, reconcile, unwrap } from 'solid-js/store'
 import {
   batch,
   createComputed,
@@ -198,6 +198,13 @@ export function useQueries<
 ): TCombinedResult {
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
+  const observerOptions = createMemo(() =>
+    queriesOptions().combine
+      ? ({
+          combine: queriesOptions().combine,
+        } as QueriesObserverOptions<TCombinedResult>)
+      : undefined,
+  )
 
   const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
@@ -215,11 +222,7 @@ export function useQueries<
   const observer = new QueriesObserver(
     client(),
     defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+    observerOptions(),
   )
 
   const [state, setState] = createStore<TCombinedResult>(
@@ -236,12 +239,41 @@ export function useQueries<
         setState(
           observer.getOptimisticResult(
             defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
+            observerOptions()?.combine,
           )[1](),
         ),
     ),
   )
+
+  if (!Array.isArray(state)) {
+    const subscribeToObserver = () =>
+      observer.subscribe((result) => {
+        const combine = queriesOptions().combine
+        if (combine) {
+          setState(
+            reconcile(combine(result as unknown as QueriesResults<T>)) as any,
+          )
+        }
+      })
+
+    let unsubscribe: () => void = noop
+    createComputed<() => void>((cleanup) => {
+      cleanup?.()
+      unsubscribe = isRestoring() ? noop : subscribeToObserver()
+      return () => queueMicrotask(unsubscribe)
+    })
+    onCleanup(unsubscribe)
+
+    onMount(() => {
+      observer.setQueries(defaultedQueries(), observerOptions())
+    })
+
+    createComputed(() => {
+      observer.setQueries(defaultedQueries(), observerOptions())
+    })
+
+    return state
+  }
 
   // Internal "view" of the underlying per-query results. `state` is typed as
   // `TCombinedResult` (which may be a user-defined non-array shape via `combine`),
@@ -307,25 +339,11 @@ export function useQueries<
   onCleanup(unsubscribe)
 
   onMount(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
+    observer.setQueries(defaultedQueries(), observerOptions())
   })
 
   createComputed(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
+    observer.setQueries(defaultedQueries(), observerOptions())
   })
 
   const handler = (index: number) => ({
