@@ -1614,7 +1614,15 @@ describe('queryClient', () => {
 
       queryClient.resetQueries({ queryKey: key })
 
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: 'updated',
+          query,
+          action: expect.objectContaining({ type: 'setState' }),
+        }),
+      )
     })
 
     it('should reset query', async () => {

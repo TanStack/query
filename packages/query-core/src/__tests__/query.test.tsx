@@ -966,13 +966,10 @@ describe('query', () => {
     const unsubscribe = queryClient.getQueryCache().subscribe(fn)
 
     queryClient.setQueryData(key, 'data')
+    const query = queryClient.getQueryCache().find({ queryKey: key })
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(fn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'removed',
-      }),
-    )
+    expect(fn).toHaveBeenLastCalledWith({ type: 'removed', query })
 
     expect(queryClient.getQueryCache().findAll()).toHaveLength(0)
 
