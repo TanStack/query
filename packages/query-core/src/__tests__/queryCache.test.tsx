@@ -24,7 +24,7 @@ describe('queryCache', () => {
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
-      expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
+      expect(subscriber).toHaveBeenNthCalledWith(1, { query, type: 'added' })
       unsubscribe()
     })
 
@@ -37,7 +37,8 @@ describe('queryCache', () => {
         queryFn: () => sleep(100).then(() => 'data'),
       })
       await vi.advanceTimersByTimeAsync(100)
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should notify query cache when a query becomes stale', async () => {
@@ -89,7 +90,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key })
-      expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should notify subscribers when new query with initialData is added', async () => {
@@ -102,7 +103,8 @@ describe('queryCache', () => {
         initialData: 'initial',
       })
       await vi.advanceTimersByTimeAsync(100)
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should be able to limit cache size', async () => {

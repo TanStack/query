@@ -436,7 +436,7 @@ describe('injectQuery', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toHaveBeenNthCalledWith(2, {
       client: queryClient,
       meta: undefined,
       queryKey: key2,
@@ -528,7 +528,8 @@ describe('injectQuery', () => {
 
     void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(1)
-      expect(fetchFn).toHaveBeenCalledWith(
+      expect(fetchFn).toHaveBeenNthCalledWith(
+        1,
         expect.objectContaining({
           queryKey: [...key, 'key11'],
         }),
@@ -541,7 +542,8 @@ describe('injectQuery', () => {
 
     void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
-      expect(fetchFn).toHaveBeenCalledWith(
+      expect(fetchFn).toHaveBeenNthCalledWith(
+        2,
         expect.objectContaining({
           queryKey: [...key, 'key12'],
         }),
