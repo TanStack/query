@@ -1370,6 +1370,37 @@ describe('queryClient', () => {
   })
 
   describe('invalidateQueries', () => {
+    it.each([true, false])(
+      'should resolve an invalidated imperative fetch when observer active is %s',
+      async (observerActive) => {
+        const key = queryKey()
+        const queryFn = vi.fn(() => sleep(50).then(() => 'updated'))
+        queryClient.setQueryData(key, 'initial')
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn,
+          staleTime: Infinity,
+          enabled: observerActive,
+        })
+        const unsubscribe = observer.subscribe(() => undefined)
+
+        const promise = queryClient.fetchQuery({
+          queryKey: key,
+          queryFn,
+          staleTime: 0,
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        void queryClient.invalidateQueries({ queryKey: key })
+        await vi.advanceTimersByTimeAsync(50)
+
+        await expect(promise).resolves.toBe('updated')
+        expect(queryFn).toHaveBeenCalledTimes(observerActive ? 2 : 1)
+        unsubscribe()
+      },
+    )
+
     it('should refetch active queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
