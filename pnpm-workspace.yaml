@@ -43,6 +43,7 @@ overrides:
   typescript-eslint: '8.58.1'
   vite: '^6.4.1'
   esbuild: '^0.27.2'
+  'shell-quote': '1.8.4'
 
 allowBuilds:
   # root dependency
