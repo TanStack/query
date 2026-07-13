@@ -1057,6 +1057,41 @@ describe('queryClient', () => {
         error: null,
       })
     })
+
+    it('should resolve (not reject with CancelledError) when the query is invalidated mid-fetch while an active observer refetches it', async () => {
+      const key = queryKey()
+      let count = 0
+      const queryFn = () => sleep(100).then(() => ++count)
+
+      // prime the query so it has data (`data !== undefined`)
+      const priming = queryClient.fetchQuery({ queryKey: key, queryFn })
+      await vi.advanceTimersByTimeAsync(100)
+      await priming
+
+      // keep an active observer mounted; being stale it starts a background
+      // refetch that the imperative `fetchQuery` below piggybacks onto
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 0,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+
+      // imperative fetch that joins the in-flight observer fetch
+      const fetchPromise = queryClient.fetchQuery({ queryKey: key, queryFn })
+
+      // one tick later invalidate -> refetches the active observer with
+      // `cancelRefetch: true`, silently cancelling the in-flight fetch
+      await vi.advanceTimersByTimeAsync(10)
+      void queryClient.invalidateQueries({ queryKey: key })
+
+      await vi.advanceTimersByTimeAsync(200)
+      unsubscribe()
+
+      // the imperative fetch should resolve with the superseding fetch's data
+      // instead of rejecting with a silent CancelledError
+      await expect(fetchPromise).resolves.toEqual(expect.any(Number))
+    })
   })
 
   describe('refetchQueries', () => {
