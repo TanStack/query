@@ -462,15 +462,15 @@ describe('useMutation', () => {
     expect(getByRole('heading').textContent).toBe('3')
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
 
-    expect(onSuccessMock).toHaveBeenCalledWith(1)
-    expect(onSuccessMock).toHaveBeenCalledWith(2)
-    expect(onSuccessMock).toHaveBeenCalledWith(3)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(3, 3)
 
     expect(onSettledMock).toHaveBeenCalledTimes(3)
 
-    expect(onSettledMock).toHaveBeenCalledWith(1)
-    expect(onSettledMock).toHaveBeenCalledWith(2)
-    expect(onSettledMock).toHaveBeenCalledWith(3)
+    expect(onSettledMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSettledMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
   })
 
   it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
@@ -567,24 +567,30 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('3')
     expect(onErrorMock).toHaveBeenCalledTimes(3)
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      1,
       'Expected mock error. All is well! 1',
     )
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      2,
       'Expected mock error. All is well! 2',
     )
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      3,
       'Expected mock error. All is well! 3',
     )
 
     expect(onSettledMock).toHaveBeenCalledTimes(3)
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      1,
       'Expected mock error. All is well! 1',
     )
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      2,
       'Expected mock error. All is well! 2',
     )
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      3,
       'Expected mock error. All is well! 3',
     )
   })

@@ -364,7 +364,7 @@ describe('createInfiniteQueryController', () => {
 
     const nextPageResult = await infinite.fetchNextPage()
     expect(nextPageResult.isFetchNextPageError).toBe(true)
-    expect(nextPageResult.error).toBeInstanceOf(Error)
+    expect(nextPageResult.error).toEqual(new Error('next-page-failed'))
     await waitFor(() => infinite().isFetchNextPageError)
     expect(infinite().data?.pages).toEqual([0])
   })

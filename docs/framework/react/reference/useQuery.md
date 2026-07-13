@@ -8,6 +8,7 @@ const {
   data,
   dataUpdatedAt,
   error,
+  errorUpdateCount,
   errorUpdatedAt,
   failureCount,
   failureReason,

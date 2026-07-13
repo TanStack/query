@@ -1614,7 +1614,15 @@ describe('queryClient', () => {
 
       queryClient.resetQueries({ queryKey: key })
 
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: 'updated',
+          query,
+          action: expect.objectContaining({ type: 'setState' }),
+        }),
+      )
     })
 
     it('should reset query', async () => {
@@ -1781,8 +1789,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1816,8 +1824,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1861,8 +1869,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
@@ -1885,12 +1893,12 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       await queryClient.resumePausedMutations()
 
       // still paused because we are still offline
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1909,7 +1917,7 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       const state = dehydrate(queryClient)
 
@@ -2004,9 +2012,9 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
+      expect(observer3.getCurrentResult().isPaused).toBe(true)
       onlineManager.setOnline(true)
 
       await vi.advanceTimersByTimeAsync(110)
