@@ -705,6 +705,84 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  it('should not let an orphaned stream write to the cache after a refetch when the signal is not consumed', async () => {
+    const key = queryKey()
+
+    let callCount = 0
+    // First fetch: two chunks. The first resolves immediately (giving the
+    // query defined data, which is what makes `refetch({cancelRefetch:true})`
+    // actually cancel-and-restart instead of just reusing the pending fetch).
+    // The second stays pending until we manually resolve it later, simulating
+    // a still-in-flight chunk at the moment a refetch happens.
+    let resolveFirstFetchChunk2: (value: number) => void = () => undefined
+    const firstFetchChunk2Pending = new Promise<number>((resolve) => {
+      resolveFirstFetchChunk2 = resolve
+    })
+    let resolveSecondFetchChunk: (value: number) => void = () => undefined
+    const secondFetchChunkPending = new Promise<number>((resolve) => {
+      resolveSecondFetchChunk = resolve
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        refetchMode: 'reset',
+        // Does NOT touch context.signal, matching third-party streaming
+        // SDKs that don't accept an AbortSignal to plumb through.
+        streamFn: async function* () {
+          callCount++
+          if (callCount === 1) {
+            yield 0
+            yield await firstFetchChunk2Pending
+          } else {
+            yield await secondFetchChunkPending
+          }
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: [0],
+    })
+
+    // Refetch while the first fetch's generator is still alive, awaiting its
+    // second chunk. cancelRefetch defaults to true and data is now defined,
+    // so this actually cancels-and-restarts (unlike before the first chunk).
+    void observer.refetch()
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(callCount).toBe(2)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      data: undefined,
+    })
+
+    resolveSecondFetchChunk(100)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: [100],
+    })
+
+    // The first fetch was "cancelled" by the refetch above, but its
+    // streamFn was never told (it never read context.signal), so it is
+    // still running and now delivers its stale second chunk.
+    resolveFirstFetchChunk2(1)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: [100],
+    })
+
+    unsubscribe()
+  })
+
   it('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
     const arr: Array<number> = []
