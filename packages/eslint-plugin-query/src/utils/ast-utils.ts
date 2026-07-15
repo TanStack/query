@@ -147,10 +147,11 @@ export const ASTUtils = {
     const parent = node.parent
 
     if (
-      (parent.type === AST_NODE_TYPES.MemberExpression &&
+      parent !== undefined &&
+      ((parent.type === AST_NODE_TYPES.MemberExpression &&
         parent.object === node) ||
-      parent.type === AST_NODE_TYPES.ChainExpression ||
-      parent.type === AST_NODE_TYPES.TSNonNullExpression
+        parent.type === AST_NODE_TYPES.ChainExpression ||
+        parent.type === AST_NODE_TYPES.TSNonNullExpression)
     ) {
       return ASTUtils.traverseUpMemberExpression(parent)
     }
@@ -201,6 +202,7 @@ export const ASTUtils = {
         const memberPath = ASTUtils.traverseUpMemberExpression(x.identifier)
         const memberExpression = memberPath.parent
         const isComputedCallProperty =
+          memberExpression !== undefined &&
           memberExpression.type === AST_NODE_TYPES.MemberExpression &&
           memberExpression.computed &&
           memberExpression.property === memberPath &&

@@ -65,6 +65,7 @@ export const ExhaustiveDepsUtils = {
     const callee = ASTUtils.traverseUpMemberExpression(identifier)
 
     return (
+      callee.parent !== undefined &&
       callee.parent.type === AST_NODE_TYPES.CallExpression &&
       callee.parent.callee === callee
     )
