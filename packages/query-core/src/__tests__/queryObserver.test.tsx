@@ -1240,10 +1240,13 @@ describe('queryObserver', () => {
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
+    const query = queryClient.getQueryCache().find({ queryKey: key })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'observerOptionsUpdated' }),
-    )
+    expect(spy).toHaveBeenCalledWith({
+      type: 'observerOptionsUpdated',
+      query,
+      observer,
+    })
 
     unsubscribe()
   })

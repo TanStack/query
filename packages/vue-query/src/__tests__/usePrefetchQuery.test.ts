@@ -16,7 +16,7 @@ describe('usePrefetchQuery', () => {
   it('should prefetch query if query state does not exist', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
-    const queryFn = vi.fn(() => Promise.resolve('prefetched'))
+    const queryFn = () => Promise.resolve('prefetched')
     const key = queryKey()
 
     usePrefetchQuery(
@@ -37,7 +37,7 @@ describe('usePrefetchQuery', () => {
   it('should not prefetch query if query state exists', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
-    const queryFn = vi.fn(() => Promise.resolve('prefetched'))
+    const queryFn = () => Promise.resolve('prefetched')
     const key = queryKey()
     queryClient.setQueryData(key, 'existing')
 
@@ -57,20 +57,20 @@ describe('usePrefetchQuery', () => {
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const nestedRef = ref('value')
     const key = queryKey()
+    const queryFn = () => Promise.resolve('prefetched')
 
     usePrefetchQuery(
       {
         queryKey: [...key, nestedRef],
-        queryFn: () => Promise.resolve('prefetched'),
+        queryFn,
       },
       queryClient,
     )
 
-    expect(prefetchQuerySpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        queryKey: [...key, 'value'],
-      }),
-    )
+    expect(prefetchQuerySpy).toHaveBeenCalledWith({
+      queryKey: [...key, 'value'],
+      queryFn,
+    })
   })
 
   it('should prefetch again when query key changes reactively', async () => {
@@ -78,28 +78,28 @@ describe('usePrefetchQuery', () => {
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const keyRef = ref('first')
     const key = queryKey()
+    const queryFn = () => Promise.resolve(keyRef.value)
 
     usePrefetchQuery(
       () => ({
         queryKey: [...key, keyRef.value],
-        queryFn: () => Promise.resolve(keyRef.value),
+        queryFn,
       }),
       queryClient,
     )
 
-    expect(prefetchQuerySpy).toHaveBeenCalledTimes(1)
-    expect(prefetchQuerySpy).toHaveBeenLastCalledWith({
+    expect(prefetchQuerySpy).toHaveBeenNthCalledWith(1, {
       queryKey: [...key, 'first'],
-      queryFn: expect.any(Function),
+      queryFn,
     })
 
     keyRef.value = 'second'
     await nextTick()
 
     expect(prefetchQuerySpy).toHaveBeenCalledTimes(2)
-    expect(prefetchQuerySpy).toHaveBeenLastCalledWith({
+    expect(prefetchQuerySpy).toHaveBeenNthCalledWith(2, {
       queryKey: [...key, 'second'],
-      queryFn: expect.any(Function),
+      queryFn,
     })
   })
 
