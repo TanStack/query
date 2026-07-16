@@ -108,7 +108,7 @@ export function streamedQuery<
       activeStreamPerQuery.set(query, streamToken)
     }
     const isSuperseded = () =>
-      query !== undefined && activeStreamPerQuery.get(query) !== streamToken
+      !!query && activeStreamPerQuery.get(query) !== streamToken
 
     const stream = await streamFn(streamFnContext)
 
