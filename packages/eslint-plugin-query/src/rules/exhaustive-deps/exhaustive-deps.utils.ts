@@ -61,7 +61,9 @@ export const ExhaustiveDepsUtils = {
     )
   },
 
-  isFunctionCallTarget(identifier: TSESTree.Identifier): boolean {
+  isFunctionCallTarget(
+    identifier: TSESTree.Identifier | TSESTree.JSXIdentifier,
+  ): boolean {
     const callee = ASTUtils.traverseUpMemberExpression(identifier)
 
     return (
