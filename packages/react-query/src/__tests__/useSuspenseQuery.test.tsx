@@ -1098,4 +1098,42 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
   })
+
+  it('should NOT release suspense when setQueryData is called with undefined', async () => {
+    const key = queryKey()
+
+    function Content() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    function Page() {
+      return (
+        <div>
+          <button
+            onClick={() => queryClient.setQueryData(key, undefined as any)}
+          >
+            set undefined
+          </button>
+          <React.Suspense fallback="loading">
+            <Content />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('set undefined'))
+    await act(() => vi.advanceTimersByTimeAsync(0))
+
+    // Suspense should NOT release — setQueryData(undefined) doesn't satisfy
+    // the query.state.data !== undefined guard in fetchOptimistic
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+  })
 })
