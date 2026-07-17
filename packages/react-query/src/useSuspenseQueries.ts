@@ -125,7 +125,7 @@ export type SuspenseQueriesOptions<
           >
         : Array<unknown> extends T
           ? T
-          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogeneous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
                 UseSuspenseQueryOptions<
