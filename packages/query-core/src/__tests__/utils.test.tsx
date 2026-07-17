@@ -587,11 +587,23 @@ describe('core/utils', () => {
       expect(isValidTimeout(1_000)).toBe(true)
     })
 
-    it('should reject invalid timeout values', () => {
+    it('should reject a negative timeout value', () => {
       expect(isValidTimeout(-1)).toBe(false)
+    })
+
+    it('should reject NaN', () => {
       expect(isValidTimeout(Number.NaN)).toBe(false)
+    })
+
+    it('should reject Infinity', () => {
       expect(isValidTimeout(Number.POSITIVE_INFINITY)).toBe(false)
+    })
+
+    it('should reject a string timeout value', () => {
       expect(isValidTimeout('1000')).toBe(false)
+    })
+
+    it('should reject undefined', () => {
       expect(isValidTimeout(undefined)).toBe(false)
     })
   })
