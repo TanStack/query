@@ -105,7 +105,7 @@ export function functionalUpdate<TInput, TOutput>(
 }
 
 export function isValidTimeout(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
+  return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
