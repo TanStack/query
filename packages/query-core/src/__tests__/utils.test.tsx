@@ -47,36 +47,36 @@ describe('core/utils', () => {
 
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
+      expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
     })
 
     it('should return `false` for non shallow equal objects', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toBe(false)
     })
 
     it('should return `false` if lengths are not equal', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toBe(false)
     })
 
     it('should return false if b is undefined', () => {
-      expect(shallowEqualObjects({ a: 1 }, undefined)).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
   })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
-      expect(isPlainObject({})).toEqual(true)
+      expect(isPlainObject({})).toBe(true)
     })
 
     it('should return `false` for an array', () => {
-      expect(isPlainObject([])).toEqual(false)
+      expect(isPlainObject([])).toBe(false)
     })
 
     it('should return `false` for null', () => {
-      expect(isPlainObject(null)).toEqual(false)
+      expect(isPlainObject(null)).toBe(false)
     })
 
     it('should return `false` for undefined', () => {
-      expect(isPlainObject(undefined)).toEqual(false)
+      expect(isPlainObject(undefined)).toBe(false)
     })
 
     it('should return `true` for object with an undefined constructor', () => {
@@ -117,11 +117,11 @@ describe('core/utils', () => {
 
   describe('isPlainArray', () => {
     it('should return `true` for plain arrays', () => {
-      expect(isPlainArray([1, 2])).toEqual(true)
+      expect(isPlainArray([1, 2])).toBe(true)
     })
 
     it('should return `false` for non plain arrays', () => {
-      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toEqual(false)
+      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toBe(false)
     })
   })
 
@@ -129,43 +129,43 @@ describe('core/utils', () => {
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
-      expect(partialMatchKey(a, b)).toEqual(true)
+      expect(partialMatchKey(a, b)).toBe(true)
     })
 
     it('should return `false` if a does not include b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `true` if array a includes array b', () => {
       const a = [1, 2, 3]
       const b = [1, 2]
-      expect(partialMatchKey(a, b)).toEqual(true)
+      expect(partialMatchKey(a, b)).toBe(true)
     })
 
     it('should return `false` if a is null and b is not', () => {
       const a = [null]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if a contains null and b is not', () => {
       const a = [{ a: null, c: 'c', d: [] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if b is null and a is not', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [null]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if b contains null and a is not', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should treat undefined object properties as matching missing properties', () => {
@@ -174,10 +174,10 @@ describe('core/utils', () => {
 
       expect(
         partialMatchKey(queryKeyWithoutProperty, queryKeyWithUndefined),
-      ).toEqual(true)
+      ).toBe(true)
       expect(
         partialMatchKey(queryKeyWithUndefined, queryKeyWithoutProperty),
-      ).toEqual(true)
+      ).toBe(true)
     })
   })
 
@@ -583,16 +583,16 @@ describe('core/utils', () => {
 
   describe('isValidTimeout', () => {
     it('should accept valid timeout values', () => {
-      expect(isValidTimeout(0)).toEqual(true)
-      expect(isValidTimeout(1_000)).toEqual(true)
+      expect(isValidTimeout(0)).toBe(true)
+      expect(isValidTimeout(1_000)).toBe(true)
     })
 
     it('should reject invalid timeout values', () => {
-      expect(isValidTimeout(-1)).toEqual(false)
-      expect(isValidTimeout(Number.NaN)).toEqual(false)
-      expect(isValidTimeout(Number.POSITIVE_INFINITY)).toEqual(false)
-      expect(isValidTimeout('1000')).toEqual(false)
-      expect(isValidTimeout(undefined)).toEqual(false)
+      expect(isValidTimeout(-1)).toBe(false)
+      expect(isValidTimeout(Number.NaN)).toBe(false)
+      expect(isValidTimeout(Number.POSITIVE_INFINITY)).toBe(false)
+      expect(isValidTimeout('1000')).toBe(false)
+      expect(isValidTimeout(undefined)).toBe(false)
     })
   })
 
