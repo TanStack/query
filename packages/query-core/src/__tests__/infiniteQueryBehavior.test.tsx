@@ -2,16 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
 import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
-import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
+import type { InfiniteData, InfiniteQueryObserverResult } from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
-  let queryCache: QueryCache
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
 
@@ -39,10 +37,9 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    const query = queryCache.find({ queryKey: key })!
     expect(observerResult).toMatchObject({
       isError: true,
-      error: new Error(`Missing queryFn: '${query.queryHash}'`),
+      error: new Error(`Missing queryFn: '${JSON.stringify(key)}'`),
     })
 
     unsubscribe()
