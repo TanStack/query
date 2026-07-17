@@ -5,7 +5,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   format: ['esm'],
-  experimentalDts: true,
+  dts: true,
   outDir: 'build',
   outExtension({ format }) {
     return format === 'esm' ? { js: '.mjs' } : { js: '.js' }
