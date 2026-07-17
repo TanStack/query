@@ -1,3 +1,4 @@
+import stableHash from 'stable-hash';
 import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
@@ -230,16 +231,22 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * Hashes the value into a stable hash.
  */
 export function hashKey(queryKey: QueryKey | MutationKey): string {
-  return JSON.stringify(queryKey, (_, val) =>
-    isPlainObject(val)
-      ? Object.keys(val)
-          .sort()
-          .reduce((result, key) => {
-            result[key] = val[key]
-            return result
-          }, {} as any)
-      : val,
-  )
+  return stableHash(queryKey)
+}
+
+/**
+ * Renders a key as a human readable string for logging and error messages.
+ * Keys are not guaranteed to be JSON serializable, so falls back to the hash.
+ */
+export function describeKey(key: QueryKey | MutationKey | undefined): string {
+  if (key === undefined) {
+    return 'undefined'
+  }
+  try {
+    return JSON.stringify(key)
+  } catch {
+    return hashKey(key)
+  }
 }
 
 /**
@@ -396,7 +403,7 @@ export function replaceData<
         return replaceEqualDeep(prevData, data)
       } catch (error) {
         console.error(
-          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${describeKey(options.queryKey)}]: ${error}`,
         )
 
         // Prevent the replaceEqualDeep from being called again down below.
@@ -435,13 +442,14 @@ export function ensureQueryFn<
   options: {
     queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
     queryHash?: string
+    queryKey?: TQueryKey
   },
   fetchOptions?: FetchOptions<TQueryFnData>,
 ): QueryFunction<TQueryFnData, TQueryKey> {
   if (process.env.NODE_ENV !== 'production') {
     if (options.queryFn === skipToken) {
       console.error(
-        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query key: '${describeKey(options.queryKey)}'`,
       )
     }
   }
@@ -455,7 +463,7 @@ export function ensureQueryFn<
 
   if (!options.queryFn || options.queryFn === skipToken) {
     return () =>
-      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
+      Promise.reject(new Error(`Missing queryFn: '${describeKey(options.queryKey)}'`))
   }
 
   return options.queryFn
