@@ -35,7 +35,7 @@ describe('usePrefetchQuery', () => {
 
     const componentQueryOpts = {
       ...queryOpts,
-      queryFn: vi.fn(() => sleep(10).then(() => 'useSuspenseQuery')),
+      queryFn: () => sleep(10).then(() => 'useSuspenseQuery'),
     }
 
     function Page() {
