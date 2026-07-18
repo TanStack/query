@@ -9,7 +9,6 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
-import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
 import type { Mock } from 'vitest'
 
 const createFallback = () =>
@@ -57,28 +56,6 @@ describe('usePrefetchInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  function Suspended<T = unknown>(props: {
-    queryOpts: UseSuspenseInfiniteQueryOptions<
-      T,
-      Error,
-      InfiniteData<T>,
-      Array<string>,
-      any
-    >
-    renderPage: (page: T) => React.JSX.Element
-  }) {
-    const state = useSuspenseInfiniteQuery(props.queryOpts)
-
-    return (
-      <div>
-        {state.data.pages.map((page, index) => (
-          <div key={index}>{props.renderPage(page)}</div>
-        ))}
-        <button onClick={() => state.fetchNextPage()}>Next Page</button>
-      </div>
-    )
-  }
-
   it('should prefetch an infinite query if query state does not exist', async () => {
     const Fallback = createFallback()
     const data = [
@@ -96,15 +73,25 @@ describe('usePrefetchInfiniteQuery', () => {
       ...generateInfiniteQueryOptions(data),
     }
 
+    function Page() {
+      const state = useSuspenseInfiniteQuery(queryOpts)
+
+      return (
+        <div>
+          {state.data.pages.map((page, index) => (
+            <div key={index}>data: {page.data}</div>
+          ))}
+          <button onClick={() => state.fetchNextPage()}>Next Page</button>
+        </div>
+      )
+    }
+
     function App() {
       usePrefetchInfiniteQuery({ ...queryOpts, pages: data.length })
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended
-            queryOpts={queryOpts}
-            renderPage={(page) => <div>data: {page.data}</div>}
-          />
+          <Page />
         </React.Suspense>
       )
     }
@@ -140,15 +127,25 @@ describe('usePrefetchInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(30)
     ;(queryOpts.queryFn as Mock).mockClear()
 
+    function Page() {
+      const state = useSuspenseInfiniteQuery(queryOpts)
+
+      return (
+        <div>
+          {state.data.pages.map((page, index) => (
+            <div key={index}>data: {page.data}</div>
+          ))}
+          <button onClick={() => state.fetchNextPage()}>Next Page</button>
+        </div>
+      )
+    }
+
     function App() {
       usePrefetchInfiniteQuery(queryOpts)
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended
-            queryOpts={queryOpts}
-            renderPage={(page) => <div>data: {page.data}</div>}
-          />
+          <Page />
         </React.Suspense>
       )
     }
@@ -179,14 +176,24 @@ describe('usePrefetchInfiniteQuery', () => {
       return <>{children}</>
     }
 
+    function Page() {
+      const state = useSuspenseInfiniteQuery(queryOpts)
+
+      return (
+        <div>
+          {state.data.pages.map((page, index) => (
+            <div key={index}>data: {page.data}</div>
+          ))}
+          <button onClick={() => state.fetchNextPage()}>Next Page</button>
+        </div>
+      )
+    }
+
     function App() {
       return (
         <React.Suspense>
           <Prefetch>
-            <Suspended
-              queryOpts={queryOpts}
-              renderPage={(page) => <div>data: {page.data}</div>}
-            />
+            <Page />
           </Prefetch>
         </React.Suspense>
       )
