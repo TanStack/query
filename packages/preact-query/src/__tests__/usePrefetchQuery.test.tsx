@@ -72,6 +72,8 @@ describe('usePrefetchQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
+    expect(rendered.getByText('Loading...')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: prefetchQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
