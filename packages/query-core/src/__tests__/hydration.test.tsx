@@ -5,7 +5,7 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
-import { hashKey } from '../utils';
+import { hashKey } from '../utils'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -700,22 +700,18 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === metaKeyHash)
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === metaKeyHash)?.meta,
     ).toEqual({
       some: 'meta',
     })
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)?.meta,
     ).toEqual(undefined)
 
     expect(
       Object.keys(
-        dehydrated.queries.find(
-          (q) => q.queryHash === noMetaKeyHash,
-        )!,
+        dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)!,
       ),
     ).not.toEqual(expect.arrayContaining(['meta']))
 

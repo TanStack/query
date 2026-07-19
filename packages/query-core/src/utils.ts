@@ -1,4 +1,4 @@
-import stableHash from 'stable-hash';
+import stableHash from 'stable-hash'
 import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
@@ -463,7 +463,9 @@ export function ensureQueryFn<
 
   if (!options.queryFn || options.queryFn === skipToken) {
     return () =>
-      Promise.reject(new Error(`Missing queryFn: '${describeKey(options.queryKey)}'`))
+      Promise.reject(
+        new Error(`Missing queryFn: '${describeKey(options.queryKey)}'`),
+      )
   }
 
   return options.queryFn
