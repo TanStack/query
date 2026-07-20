@@ -73,11 +73,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              count++
-              return count
-            },
+            queryFn: () =>
+              sleep(10).then(() => {
+                count++
+                return count
+              }),
           },
         ],
       })
@@ -144,7 +144,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
@@ -212,7 +212,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
@@ -768,19 +768,19 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                queryFns.push('first result')
-                return 'first result'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  queryFns.push('first result')
+                  return 'first result'
+                }),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                queryFns.push('second result')
-                return 'second result'
-              },
+              queryFn: () =>
+                sleep(20).then(() => {
+                  queryFns.push('second result')
+                  return 'second result'
+                }),
             },
           ],
           combine: () => 'foo',

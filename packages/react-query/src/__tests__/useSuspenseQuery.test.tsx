@@ -839,7 +839,7 @@ describe('useSuspenseQuery', () => {
 
       const state = useSuspenseQuery({
         queryKey: stateKey,
-        queryFn: async () => sleep(10).then(() => ++count),
+        queryFn: () => sleep(10).then(() => ++count),
       })
 
       states.push(state)
