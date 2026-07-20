@@ -25,7 +25,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
   pnpm install
   ```
 
-  - We use [pnpm](https://pnpm.io/) v10 for package management (run in case of pnpm-related issues).
+  - We use [pnpm](https://pnpm.io/) v11 for package management (run in case of pnpm-related issues).
 
     ```bash
     corepack enable && corepack prepare

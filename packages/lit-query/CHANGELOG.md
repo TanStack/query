@@ -1,5 +1,12 @@
 # @tanstack/lit-query
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies [[`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677)]:
+  - @tanstack/query-core@5.101.3
+
 ## 0.2.9
 
 ### Patch Changes

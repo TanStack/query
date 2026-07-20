@@ -114,19 +114,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -198,19 +198,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -282,19 +282,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'initial',
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -328,11 +328,11 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetched = true
-          return 'fetched'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetched = true
+            return 'fetched'
+          }),
         staleTime: Infinity,
       }))
 
@@ -371,13 +371,13 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'hydrated',
@@ -580,19 +580,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'queryFn2',
