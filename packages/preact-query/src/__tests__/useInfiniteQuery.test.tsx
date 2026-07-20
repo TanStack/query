@@ -1523,18 +1523,17 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }): Promise<Result> => {
-          await sleep(10)
+        queryFn: ({ pageParam }): Promise<Result> => {
           const noNext =
             pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage)
-          return {
+          return sleep(10).then(() => ({
             items: [...new Array(10)]
               .fill(null)
               .map((_, d) => pageParam * pageSize + d),
             nextId: noNext ? undefined : pageParam + 1,
             prevId: pageParam - 1,
             ts: fetchCountRef.current++,
-          }
+          }))
         },
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
