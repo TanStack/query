@@ -1,5 +1,13 @@
 # @tanstack/react-query-devtools
 
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.3
+  - @tanstack/react-query@5.101.3
+
 ## 5.101.2
 
 ### Patch Changes

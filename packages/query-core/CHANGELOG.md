@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.101.3
+
+### Patch Changes
+
+- [#11084](https://github.com/TanStack/query/pull/11084) [`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677) - Improve `partialMatchKey` performance in query-core.
+
 ## 5.101.2
 
 ## 5.101.1
