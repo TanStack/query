@@ -499,14 +499,14 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (++queryCount > 1) {
-            // second time this query mounts, it should not throw
-            return 'data'
-          }
-          throw new Error('Error test')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (++queryCount > 1) {
+              // second time this query mounts, it should not throw
+              return 'data'
+            }
+            throw new Error('Error test')
+          }),
         retry: false,
       })
 
@@ -1393,13 +1393,13 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = 0 }) => {
-          await sleep(10)
-          if (pageParam === 0) {
-            return { nextCursor: 1, data: 'page-1' }
-          }
-          throw new Error('page error')
-        },
+        queryFn: ({ pageParam = 0 }) =>
+          sleep(10).then(() => {
+            if (pageParam === 0) {
+              return { nextCursor: 1, data: 'page-1' }
+            }
+            throw new Error('page error')
+          }),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         retry: false,
