@@ -5,6 +5,8 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { ComputedRef, Ref } from 'vue-demi'
+import type { DataTag } from '@tanstack/query-core'
 import type { QueryOptionsDataTag, UndefinedInitialQueryOptions } from '..'
 
 describe('queryOptions', () => {
@@ -309,7 +311,11 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      ComputedRef<
+        DataTag<readonly ['foo', string | null], { id: string }, Error>
+      >
+    >()
   })
 
   it('should allow ref as queryKey', () => {
@@ -320,7 +326,9 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      Ref<DataTag<readonly ['foo', '1'], { id: string }, Error>>
+    >()
   })
 
   it('should allow getter function as queryKey', () => {
@@ -331,7 +339,9 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      () => DataTag<readonly ['foo', string | null], { id: string }, Error>
+    >()
   })
 
   it('should allow public queryOptions types to be used in declaration emit', () => {
