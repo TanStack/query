@@ -956,13 +956,13 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (_text: string) => {
-          await sleep(1)
-          count++
-          return count > 1
-            ? Promise.resolve('data')
-            : Promise.reject(new Error('oops'))
-        },
+        mutationFn: (_text: string) =>
+          sleep(1).then(() => {
+            count++
+            return count > 1
+              ? Promise.resolve('data')
+              : Promise.reject(new Error('oops'))
+          }),
         retry: 1,
         retryDelay: 5,
         networkMode: 'offlineFirst',
@@ -1413,10 +1413,10 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          throw mutateFnError
-        },
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw mutateFnError
+          }),
         onError: () => Promise.reject(error),
       }))
 
@@ -1459,10 +1459,10 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          throw mutateFnError
-        },
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw mutateFnError
+          }),
         onSettled: () => Promise.reject(error),
         onError,
       }))
@@ -1500,7 +1500,7 @@ describe('useMutation', () => {
     function Page() {
       const mutation = useMutation(
         () => ({
-          mutationFn: async (text: string) => {
+          mutationFn: (text: string) => {
             return Promise.resolve(text)
           },
         }),
