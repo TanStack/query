@@ -5,6 +5,15 @@ blockExoticSubdeps: true
 trustPolicy: 'no-downgrade'
 trustPolicyExclude:
   - 'vite@6.4.1'
+minimumReleaseAgeExclude:
+  - 'solid-js'
+  - '@solidjs/*'
+  - 'vite-plugin-solid'
+  - 'babel-preset-solid'
+  - 'babel-plugin-jsx-dom-expressions'
+  - '@dom-expressions/*'
+  - 'seroval'
+  - 'seroval-plugins'
 
 packages:
   - 'packages/*'

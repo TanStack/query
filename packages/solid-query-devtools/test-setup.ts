@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@solidjs/testing-library'
+import { resetErrorHalt } from '@solidjs/signals'
 import { afterEach, vi } from 'vitest'
 
 /**
@@ -29,4 +30,10 @@ vi.mock('solid-js', async (importOriginal) => {
 })
 
 // https://github.com/solidjs/solid-testing-library
-afterEach(() => cleanup())
+afterEach(() => {
+  cleanup()
+  // Tests that intentionally render throwing components (e.g. missing
+  // QueryClient) permanently halt Solid's scheduler. Revive it so
+  // subsequent tests in the same file still run effects.
+  resetErrorHalt()
+})
