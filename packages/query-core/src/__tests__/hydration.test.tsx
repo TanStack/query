@@ -5,6 +5,7 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
+import { hashKey } from '../utils'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -631,6 +632,7 @@ describe('dehydration and rehydration', () => {
 
   it('should set the fetchStatus to idle when creating a query with dehydrate', async () => {
     const key = queryKey()
+    const keyHash = hashKey(key)
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
@@ -660,7 +662,7 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+      dehydrated.queries.find((q) => q.queryHash === keyHash)?.state
         .fetchStatus,
     ).toBe('fetching')
     const stringified = JSON.stringify(dehydrated)
@@ -677,7 +679,9 @@ describe('dehydration and rehydration', () => {
 
   it('should dehydrate and hydrate meta for queries', async () => {
     const metaKey = queryKey()
+    const metaKeyHash = hashKey(metaKey)
     const noMetaKey = queryKey()
+    const noMetaKeyHash = hashKey(noMetaKey)
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
     queryClient.prefetchQuery({
@@ -696,22 +700,18 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(metaKey))
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === metaKeyHash)?.meta,
     ).toEqual({
       some: 'meta',
     })
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(noMetaKey))
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)?.meta,
     ).toEqual(undefined)
 
     expect(
       Object.keys(
-        dehydrated.queries.find(
-          (q) => q.queryHash === JSON.stringify(noMetaKey),
-        )!,
+        dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)!,
       ),
     ).not.toEqual(expect.arrayContaining(['meta']))
 
@@ -796,6 +796,7 @@ describe('dehydration and rehydration', () => {
 
   it('should not change fetchStatus when updating a query with dehydrate', async () => {
     const key = queryKey()
+    const keyHash = hashKey(key)
     const queryClient = new QueryClient()
 
     const options = {
@@ -809,7 +810,7 @@ describe('dehydration and rehydration', () => {
 
     const dehydrated = dehydrate(queryClient)
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+      dehydrated.queries.find((q) => q.queryHash === keyHash)?.state
         .fetchStatus,
     ).toBe('idle')
     const stringified = JSON.stringify(dehydrated)

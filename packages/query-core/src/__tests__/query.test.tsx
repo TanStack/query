@@ -861,10 +861,9 @@ describe('query', () => {
     const unsubscribe = observer.subscribe(() => undefined)
 
     await vi.advanceTimersByTimeAsync(10)
-    const query = queryCache.find({ queryKey: key })!
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
-      error: new Error(`Missing queryFn: '${query.queryHash}'`),
+      error: new Error(`Missing queryFn: '${JSON.stringify(key)}'`),
     })
     unsubscribe()
   })

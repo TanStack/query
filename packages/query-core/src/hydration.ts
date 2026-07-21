@@ -1,5 +1,5 @@
 import { tryResolveSync } from './thenable'
-import { noop } from './utils'
+import { describeKey, noop } from './utils'
 import type {
   DefaultError,
   MutationKey,
@@ -89,7 +89,7 @@ function dehydrateQuery(
       // If not in production, log original error before rejecting redacted error
       if (process.env.NODE_ENV !== 'production') {
         console.error(
-          `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+          `A query that was dehydrated as pending ended up rejecting. [${describeKey(query.queryKey)}]: ${error}; The error will be redacted in production builds`,
         )
       }
       return Promise.reject(new Error('redacted'))

@@ -20,7 +20,7 @@ import {
   skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
-import type { QueryFunctionContext } from '..'
+import type { QueryFunctionContext, QueryKey } from '..'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
@@ -543,9 +543,9 @@ describe('core/utils', () => {
 
   describe('hashKey', () => {
     it('should hash primitives correctly', () => {
-      expect(hashKey(['test'])).toEqual(JSON.stringify(['test']))
-      expect(hashKey([123])).toEqual(JSON.stringify([123]))
-      expect(hashKey([null])).toEqual(JSON.stringify([null]))
+      expect(hashKey(['test'])).toEqual('@"test",')
+      expect(hashKey([123])).toEqual('@123,')
+      expect(hashKey([null])).toEqual('@null,')
     })
 
     it('should hash objects with sorted keys consistently', () => {
@@ -556,7 +556,7 @@ describe('core/utils', () => {
       const hash2 = hashKey(key2)
 
       expect(hash1).toEqual(hash2)
-      expect(hash1).toEqual(JSON.stringify([{ a: 1, b: 2 }]))
+      expect(hash1).toEqual('@#b:2,a:1,,')
     })
 
     it('should hash arrays consistently', () => {
@@ -641,7 +641,7 @@ describe('core/utils', () => {
 
       const resolved = ensureQueryFn({
         queryFn: skipToken,
-        queryHash: '["skip"]',
+        queryKey: ['skip'] as QueryKey,
       })
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(

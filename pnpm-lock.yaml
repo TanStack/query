@@ -2716,6 +2716,9 @@ importers:
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
+      stable-hash:
+        specifier: ^0.0.6
+        version: 0.0.6
 
   packages/query-devtools:
     devDependencies:
@@ -14737,6 +14740,9 @@ packages:
   stable-hash-x@0.2.0:
     resolution: {integrity: sha512-o3yWv49B/o4QZk5ZcsALc6t0+eCelPc44zZsLtCQnZPDwFpDYSWcDnrv2TtMmMbQ7uKo3J0HTURCqckw23czNQ==}
     engines: {node: '>=12.0.0'}
+
+  stable-hash@0.0.6:
+    resolution: {integrity: sha512-0afH4mobqTybYZsXImQRLOjHV4gvOW+92HdUIax9t7a8d9v54KWykEuMVIcXhD9BCi+w3kS4x7O6fmZQ3JlG/g==}
 
   stack-trace@1.0.0-pre2:
     resolution: {integrity: sha512-2ztBJRek8IVofG9DBJqdy2N5kulaacX30Nz7xmkYF6ale9WBVmIy6mFBchvGX7Vx/MyjBhx+Rcxqrj+dbOnQ6A==}
@@ -30718,6 +30724,8 @@ snapshots:
       figgy-pudding: 3.5.2
 
   stable-hash-x@0.2.0: {}
+
+  stable-hash@0.0.6: {}
 
   stack-trace@1.0.0-pre2: {}
 
