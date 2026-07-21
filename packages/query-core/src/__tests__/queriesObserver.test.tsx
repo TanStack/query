@@ -149,7 +149,9 @@ describe('queriesObserver', () => {
     const queryCache = queryClient.getQueryCache()
 
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
-    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
+    expect(
+      queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
+    ).toEqual(key2)
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
