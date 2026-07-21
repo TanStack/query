@@ -1,4 +1,5 @@
 import type { DeepUnwrapRef, MaybeRefOrGetter, ShallowOption } from './types'
+import type { ComputedRef, Ref } from 'vue-demi'
 import type {
   DataTag,
   DefaultError,
@@ -67,51 +68,42 @@ export type DefinedInitialQueryOptions<
 
 export type QueryOptionsDataTag<TOptions, TQueryFnData, TError, TQueryKey> =
   Omit<TOptions, 'queryKey'> & {
-    queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+    queryKey: TaggedQueryKey<
+      TOptions,
+      TQueryFnData,
+      TError,
+      TQueryKey
+    >
   }
 
-export function queryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): QueryOptionsDataTag<
-  DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  TQueryFnData,
-  TError,
-  TQueryKey
->
+type TaggedQueryKey<TOptions, TQueryFnData, TError, TQueryKey> =
+  TOptions extends { queryKey: infer TQueryKeyOption }
+    ? TQueryKeyOption extends () => infer TQueryKeyFromGetter
+      ? () => DataTag<TQueryKeyFromGetter, TQueryFnData, TError>
+      : TQueryKeyOption extends ComputedRef<infer TQueryKeyFromComputed>
+        ? ComputedRef<DataTag<TQueryKeyFromComputed, TQueryFnData, TError>>
+        : TQueryKeyOption extends Ref<infer TQueryKeyFromRef>
+          ? Ref<DataTag<TQueryKeyFromRef, TQueryFnData, TError>>
+          : TQueryKeyOption extends QueryKey
+            ? DataTag<TQueryKeyOption, TQueryFnData, TError>
+            : DataTag<TQueryKey, TQueryFnData, TError>
+    : DataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: () => DefinedInitialQueryOptions<
+  TOptions extends DefinedInitialQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey
-  >,
-): () => QueryOptionsDataTag<
-  DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  TQueryFnData,
-  TError,
-  TQueryKey
->
-
-export function queryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
+  > = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 >(
-  options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: TOptions,
 ): QueryOptionsDataTag<
-  UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  TOptions,
   TQueryFnData,
   TError,
   TQueryKey
@@ -122,15 +114,56 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: () => UndefinedInitialQueryOptions<
+  TOptions extends DefinedInitialQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey
-  >,
+  > = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(
+  options: () => TOptions,
 ): () => QueryOptionsDataTag<
-  UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  TOptions,
+  TQueryFnData,
+  TError,
+  TQueryKey
+>
+
+export function queryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TOptions extends UndefinedInitialQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(
+  options: TOptions,
+): QueryOptionsDataTag<
+  TOptions,
+  TQueryFnData,
+  TError,
+  TQueryKey
+>
+
+export function queryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TOptions extends UndefinedInitialQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(
+  options: () => TOptions,
+): () => QueryOptionsDataTag<
+  TOptions,
   TQueryFnData,
   TError,
   TQueryKey
