@@ -256,7 +256,22 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
+    if (Array.isArray(a) && Array.isArray(b)) {
+      for (let i = 0; i < b.length; i++) {
+        if (!partialMatchKey(a[i], b[i])) {
+          return false
+        }
+      }
+      return true
+    }
+
+    const bKeys = Object.keys(b)
+    for (const key of bKeys) {
+      if (!partialMatchKey(a[key], b[key])) {
+        return false
+      }
+    }
+    return true
   }
 
   return false

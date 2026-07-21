@@ -1,5 +1,13 @@
 # @tanstack/eslint-plugin-query
 
+## 5.101.4
+
+### Patch Changes
+
+- [#11067](https://github.com/TanStack/query/pull/11067) [`7ac45ed`](https://github.com/TanStack/query/commit/7ac45ed45cbc28a54ac2fcfb1faccfcd87fb7b75) - Relax `exhaustive-deps` so function call targets are not required in query keys while values referenced in nested callbacks are still checked.
+
+## 5.101.3
+
 ## 5.101.2
 
 ## 5.101.1
