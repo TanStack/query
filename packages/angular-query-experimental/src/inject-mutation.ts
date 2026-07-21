@@ -18,8 +18,10 @@ import {
 import { signalProxy } from './signal-proxy'
 import { PENDING_TASKS } from './pending-tasks-compat'
 import type { PendingTaskRef } from './pending-tasks-compat'
+import type { Signal } from '@angular/core'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
+  CreateBaseMutationResult,
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
@@ -35,14 +37,16 @@ export interface InjectMutationOptions {
 }
 
 /**
- * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
+ * Shared engine for `injectMutation` and `mutationResource`.
  *
- * Unlike queries, mutations are not run automatically.
+ * Returns a `Signal` of the latest mutation result (with `mutate` / `mutateAsync`
+ * attached), driven by the same `MutationObserver` and `MutationCache`. Used both by
+ * the signal-proxy based `injectMutation` and the resource based `mutationResource`.
  * @param injectMutationFn - A function that returns mutation options.
- * @param options - Additional configuration
- * @returns The mutation.
+ * @param injector - The injection context to run in.
+ * @returns A signal of the mutation result.
  */
-export function injectMutation<
+export function createMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -54,10 +58,8 @@ export function injectMutation<
     TVariables,
     TOnMutateResult
   >,
-  options?: InjectMutationOptions,
-): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
-  !options?.injector && assertInInjectionContext(injectMutation)
-  const injector = options?.injector ?? inject(Injector)
+  injector: Injector,
+): Signal<CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>> {
   const ngZone = injector.get(NgZone)
   const pendingTasks = injector.get(PENDING_TASKS)
   const queryClient = injector.get(QueryClient)
@@ -186,10 +188,39 @@ export function injectMutation<
     }
   })
 
-  return signalProxy(resultSignal) as CreateMutationResult<
+  return resultSignal as Signal<
+    CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
+  >
+}
+
+/**
+ * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
+ *
+ * Unlike queries, mutations are not run automatically.
+ * @param injectMutationFn - A function that returns mutation options.
+ * @param options - Additional configuration
+ * @returns The mutation.
+ */
+export function injectMutation<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+>(
+  injectMutationFn: () => CreateMutationOptions<
     TData,
     TError,
     TVariables,
     TOnMutateResult
-  >
+  >,
+  options?: InjectMutationOptions,
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
+  !options?.injector && assertInInjectionContext(injectMutation)
+  const injector = options?.injector ?? inject(Injector)
+  return signalProxy(
+    createMutationResult<TData, TError, TVariables, TOnMutateResult>(
+      injectMutationFn,
+      injector,
+    ),
+  ) as CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 }
