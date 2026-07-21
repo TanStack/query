@@ -35,6 +35,8 @@ export type {
   UseQueryOptions,
   UseQueryReturnType,
   UseQueryDefinedReturnType,
+  UndefinedInitialQueryOptions as UndefinedInitialUseQueryOptions,
+  DefinedInitialQueryOptions as DefinedInitialUseQueryOptions,
 } from './useQuery'
 export type {
   UseInfiniteQueryOptions,
