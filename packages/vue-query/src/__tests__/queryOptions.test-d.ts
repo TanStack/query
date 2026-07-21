@@ -5,6 +5,7 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { QueryOptionsDataTag, UndefinedInitialQueryOptions } from '..'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -331,5 +332,43 @@ describe('queryOptions', () => {
     })
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow public queryOptions types to be used in declaration emit', () => {
+    type Todo = {
+      id: number
+      name: string
+    }
+
+    type TodoOptions = UndefinedInitialQueryOptions<
+      Todo,
+      Error,
+      Todo,
+      readonly ['todo']
+    >
+
+    function todoOptions(): TodoOptions {
+      return queryOptions({
+        queryKey: ['todo'] as const,
+        queryFn: () => Promise.resolve({ id: 1, name: 'one' }),
+      })
+    }
+
+    expectTypeOf(
+      queryOptions({
+        queryKey: ['todo'] as const,
+        queryFn: (): Promise<Todo> => Promise.resolve({ id: 1, name: 'one' }),
+      }),
+    ).toEqualTypeOf<
+      QueryOptionsDataTag<TodoOptions, Todo, Error, readonly ['todo']>
+    >()
+
+    queryOptions({
+      ...todoOptions(),
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<Todo>()
+        return data.name
+      },
+    })
   })
 })
