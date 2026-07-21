@@ -1,5 +1,7 @@
 # @tanstack/eslint-plugin-query
 
+## 5.101.3
+
 ## 5.101.2
 
 ## 5.101.1

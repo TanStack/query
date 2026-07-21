@@ -279,11 +279,11 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetched = true
-          return 'fetched'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetched = true
+            return 'fetched'
+          }),
         staleTime: Infinity,
       }))
 
