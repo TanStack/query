@@ -1,5 +1,14 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-beta.6
+
+### Patch Changes
+
+- [#11092](https://github.com/TanStack/query/pull/11092) [`dafe806`](https://github.com/TanStack/query/commit/dafe8066381d1ac5332b766c2dfb364d2375b666) - chore: upgrade to solid v2 beta 21
+
+- Updated dependencies [[`dafe806`](https://github.com/TanStack/query/commit/dafe8066381d1ac5332b766c2dfb364d2375b666)]:
+  - @tanstack/solid-query@6.0.0-beta.6
+
 ## 6.0.0-beta.5
 
 ### Patch Changes
