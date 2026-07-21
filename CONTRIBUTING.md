@@ -179,7 +179,7 @@ To run tests in a local environment, you should use `nx` commands from the root 
 To run tests for **all packages**, run:
 
 ```bash
-npm run test
+pnpm run test
 ```
 
 ### ✅ Run tests for a specific package
@@ -187,13 +187,13 @@ npm run test
 To run tests for a specific package, use the following command:
 
 ```bash
-npx nx run @tanstack/{package-name}:test:lib
+pnpm nx run @tanstack/{package-name}:test:lib
 ```
 
 For example:
 
 ```bash
-npx nx run @tanstack/react-query:test:lib
+pnpm nx run @tanstack/react-query:test:lib
 ```
 
 ### ⚠️ Caution
