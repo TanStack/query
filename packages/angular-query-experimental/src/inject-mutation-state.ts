@@ -6,12 +6,9 @@ import {
   computed,
   inject,
   signal,
+  untracked,
 } from '@angular/core'
-import {
-  QueryClient,
-  notifyManager,
-  replaceEqualDeep,
-} from '@tanstack/query-core'
+import { QueryClient, replaceEqualDeep } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 import type {
   Mutation,
@@ -53,12 +50,12 @@ export interface InjectMutationStateOptions {
 
 /**
  * Injects a signal that tracks the state of all mutations.
- * @param injectMutationStateFn - A function that returns mutation state options.
+ * @param mutationStateFn - A function that returns mutation state options.
  * @param options - The Angular injector to use.
  * @returns The signal that tracks the state of all mutations.
  */
 export function injectMutationState<TResult = MutationState>(
-  injectMutationStateFn: () => MutationStateOptions<TResult> = () => ({}),
+  mutationStateFn: () => MutationStateOptions<TResult> = () => ({}),
   options?: InjectMutationStateOptions,
 ): Signal<Array<TResult>> {
   !options?.injector && assertInInjectionContext(injectMutationState)
@@ -69,53 +66,32 @@ export function injectMutationState<TResult = MutationState>(
   const mutationCache = queryClient.getMutationCache()
 
   /**
-   * Computed signal that gets result from mutation cache based on passed options
-   * First element is the result, second element is the time when the result was set
+   * Returning a writable signal from a computed is similar to `linkedSignal`,
+   * but compatible with Angular < 19
+   *
+   * Compared to `linkedSignal`, this pattern requires extra parentheses:
+   * - Accessing value: `result()()`
+   * - Setting value: `result().set(newValue)`
    */
-  const resultFromOptionsSignal = computed(() => {
-    return [
-      getResult(mutationCache, injectMutationStateFn()),
-      performance.now(),
-    ] as const
-  })
-
-  /**
-   * Signal that contains result set by subscriber
-   * First element is the result, second element is the time when the result was set
-   */
-  const resultFromSubscriberSignal = signal<[Array<TResult>, number] | null>(
-    null,
+  const linkedStateSignal = computed(() =>
+    signal(getResult(mutationCache, mutationStateFn())),
   )
 
-  /**
-   * Returns the last result by either subscriber or options
-   */
-  const effectiveResultSignal = computed(() => {
-    const optionsResult = resultFromOptionsSignal()
-    const subscriberResult = resultFromSubscriberSignal()
-    return subscriberResult && subscriberResult[1] > optionsResult[1]
-      ? subscriberResult[0]
-      : optionsResult[0]
-  })
+  const updateMutationState = () =>
+    ngZone.run(() =>
+      untracked(() =>
+        linkedStateSignal().update((current) => {
+          const next = getResult(mutationCache, mutationStateFn())
+          return replaceEqualDeep(current, next)
+        }),
+      ),
+    )
 
   const unsubscribe = ngZone.runOutsideAngular(() =>
-    mutationCache.subscribe(
-      notifyManager.batchCalls(() => {
-        const [lastResult] = effectiveResultSignal()
-        const nextResult = replaceEqualDeep(
-          lastResult,
-          getResult(mutationCache, injectMutationStateFn()),
-        )
-        if (lastResult !== nextResult) {
-          ngZone.run(() => {
-            resultFromSubscriberSignal.set([nextResult, performance.now()])
-          })
-        }
-      }),
-    ),
+    mutationCache.subscribe(updateMutationState),
   )
 
   destroyRef.onDestroy(unsubscribe)
 
-  return effectiveResultSignal
+  return computed(() => linkedStateSignal()())
 }
