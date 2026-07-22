@@ -212,11 +212,14 @@ export class QueryClient extends QC {
       | (() => InvalidateQueryFilters<TTaggedQueryKey>) = {},
     options: MaybeRefDeep<InvalidateOptions> | (() => InvalidateOptions) = {},
   ): Promise<void> {
+    const unwrappedFilters = typeof filters === 'function' ? filters() : filters
+    const unwrappedOptions = typeof options === 'function' ? options() : options
+    
     const filtersCloned = cloneDeepUnref(
-      filters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
+      unwrappedFilters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
     )
     const optionsCloned = cloneDeepUnref(
-      options as MaybeRefDeep<InvalidateOptions>,
+      unwrappedOptions as MaybeRefDeep<InvalidateOptions>,
     )
 
     super.invalidateQueries(
@@ -301,11 +304,20 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-    >,
+    options:
+      | MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >
+      | (() => FetchQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >),
   ): Promise<TData> {
-    return super.fetchQuery(cloneDeepUnref(options))
+    const unwrappedOptions = typeof options === 'function' ? options() : options
+    return super.fetchQuery(cloneDeepUnref(unwrappedOptions as any))
   }
 
   prefetchQuery<
