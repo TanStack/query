@@ -51,6 +51,10 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
+import {
+  TimelineView,
+  setupTimelineSubscriptions,
+} from './timeline'
 import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
@@ -674,6 +678,16 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
 export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
+  const queryCacheForTimeline = createMemo(() =>
+    useQueryDevtoolsContext().client.getQueryCache(),
+  )
+  const mutationCacheForTimeline = createMemo(() =>
+    useQueryDevtoolsContext().client.getMutationCache(),
+  )
+  setupTimelineSubscriptions(
+    queryCacheForTimeline(),
+    mutationCacheForTimeline(),
+  )
   let containerRef!: HTMLDivElement
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -685,9 +699,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
   const pip = usePiPWindow()
 
-  const [selectedView, setSelectedView] = createSignal<'queries' | 'mutations'>(
-    'queries',
-  )
+  const [selectedView, setSelectedView] = createSignal<
+    'queries' | 'mutations' | 'timeline'
+  >('queries')
 
   const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
   const sortOrder = createMemo(
@@ -861,9 +875,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             <RadioGroup.Root
               class={cx(styles().viewToggle)}
               value={selectedView()}
-              aria-label="Toggle between queries and mutations view"
+              aria-label="Toggle between queries, mutations, and timeline view"
               onChange={(value) => {
-                setSelectedView(value as 'queries' | 'mutations')
+                setSelectedView(value as 'queries' | 'mutations' | 'timeline')
                 setSelectedQueryHash(null)
                 setSelectedMutationId(null)
               }}
@@ -886,6 +900,15 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   Mutations
                 </RadioGroup.ItemLabel>
               </RadioGroup.Item>
+              <RadioGroup.Item value="timeline" class="tsqd-radio-toggle">
+                <RadioGroup.ItemInput />
+                <RadioGroup.ItemControl>
+                  <RadioGroup.ItemIndicator />
+                </RadioGroup.ItemControl>
+                <RadioGroup.ItemLabel title="Toggle Timeline View">
+                  Timeline
+                </RadioGroup.ItemLabel>
+              </RadioGroup.Item>
             </RadioGroup.Root>
           </div>
 
@@ -896,140 +919,151 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             <MutationStatusCount />
           </Show>
         </div>
-        <div class={cx(styles().row, 'tsqd-filters-actions-container')}>
-          <div class={cx(styles().filtersContainer, 'tsqd-filters-container')}>
+        <Show when={selectedView() !== 'timeline'}>
+          <div class={cx(styles().row, 'tsqd-filters-actions-container')}>
             <div
-              class={cx(
-                styles().filterInput,
-                'tsqd-query-filter-textfield-container',
-              )}
+              class={cx(styles().filtersContainer, 'tsqd-filters-container')}
             >
-              <Search />
-              <input
-                aria-label="Filter queries by query key"
-                type="text"
-                placeholder="Filter"
-                onInput={(e) => {
+              <div
+                class={cx(
+                  styles().filterInput,
+                  'tsqd-query-filter-textfield-container',
+                )}
+              >
+                <Search />
+                <input
+                  aria-label="Filter queries by query key"
+                  type="text"
+                  placeholder="Filter"
+                  onInput={(e) => {
+                    if (selectedView() === 'queries') {
+                      props.setLocalStore('filter', e.currentTarget.value)
+                    } else {
+                      props.setLocalStore(
+                        'mutationFilter',
+                        e.currentTarget.value,
+                      )
+                    }
+                  }}
+                  class={cx('tsqd-query-filter-textfield')}
+                  name="tsqd-query-filter-input"
+                  value={
+                    selectedView() === 'queries'
+                      ? props.localStore.filter || ''
+                      : props.localStore.mutationFilter || ''
+                  }
+                />
+              </div>
+              <div
+                class={cx(
+                  styles().filterSelect,
+                  'tsqd-query-filter-sort-container',
+                )}
+              >
+                <Show when={selectedView() === 'queries'}>
+                  <select
+                    value={sort()}
+                    name="tsqd-queries-filter-sort"
+                    aria-label="Sort queries by"
+                    onChange={(e) => {
+                      props.setLocalStore('sort', e.currentTarget.value)
+                    }}
+                  >
+                    {Object.keys(sortFns).map((key) => (
+                      <option value={key}>Sort by {key}</option>
+                    ))}
+                  </select>
+                </Show>
+                <Show when={selectedView() === 'mutations'}>
+                  <select
+                    value={mutationSort()}
+                    name="tsqd-mutations-filter-sort"
+                    aria-label="Sort mutations by"
+                    onChange={(e) => {
+                      props.setLocalStore(
+                        'mutationSort',
+                        e.currentTarget.value,
+                      )
+                    }}
+                  >
+                    {Object.keys(mutationSortFns).map((key) => (
+                      <option value={key}>Sort by {key}</option>
+                    ))}
+                  </select>
+                </Show>
+                <ChevronDown />
+              </div>
+              <button
+                onClick={() => {
                   if (selectedView() === 'queries') {
-                    props.setLocalStore('filter', e.currentTarget.value)
+                    props.setLocalStore('sortOrder', String(sortOrder() * -1))
                   } else {
-                    props.setLocalStore('mutationFilter', e.currentTarget.value)
+                    props.setLocalStore(
+                      'mutationSortOrder',
+                      String(mutationSortOrder() * -1),
+                    )
                   }
                 }}
-                class={cx('tsqd-query-filter-textfield')}
-                name="tsqd-query-filter-input"
-                value={
-                  selectedView() === 'queries'
-                    ? props.localStore.filter || ''
-                    : props.localStore.mutationFilter || ''
-                }
-              />
-            </div>
-            <div
-              class={cx(
-                styles().filterSelect,
-                'tsqd-query-filter-sort-container',
-              )}
-            >
-              <Show when={selectedView() === 'queries'}>
-                <select
-                  value={sort()}
-                  name="tsqd-queries-filter-sort"
-                  aria-label="Sort queries by"
-                  onChange={(e) => {
-                    props.setLocalStore('sort', e.currentTarget.value)
-                  }}
-                >
-                  {Object.keys(sortFns).map((key) => (
-                    <option value={key}>Sort by {key}</option>
-                  ))}
-                </select>
-              </Show>
-              <Show when={selectedView() === 'mutations'}>
-                <select
-                  value={mutationSort()}
-                  name="tsqd-mutations-filter-sort"
-                  aria-label="Sort mutations by"
-                  onChange={(e) => {
-                    props.setLocalStore('mutationSort', e.currentTarget.value)
-                  }}
-                >
-                  {Object.keys(mutationSortFns).map((key) => (
-                    <option value={key}>Sort by {key}</option>
-                  ))}
-                </select>
-              </Show>
-              <ChevronDown />
-            </div>
-            <button
-              onClick={() => {
-                if (selectedView() === 'queries') {
-                  props.setLocalStore('sortOrder', String(sortOrder() * -1))
-                } else {
-                  props.setLocalStore(
-                    'mutationSortOrder',
-                    String(mutationSortOrder() * -1),
-                  )
-                }
-              }}
-              aria-label={`Sort order ${
-                (selectedView() === 'queries'
-                  ? sortOrder()
-                  : mutationSortOrder()) === -1
-                  ? 'descending'
-                  : 'ascending'
-              }`}
-              aria-pressed={
-                (selectedView() === 'queries'
-                  ? sortOrder()
-                  : mutationSortOrder()) === -1
-              }
-              class="tsqd-query-filter-sort-order-btn"
-            >
-              <Show
-                when={
+                aria-label={`Sort order ${
                   (selectedView() === 'queries'
                     ? sortOrder()
-                    : mutationSortOrder()) === 1
-                }
-              >
-                <span>Asc</span>
-                <ArrowUp />
-              </Show>
-              <Show
-                when={
+                    : mutationSortOrder()) === -1
+                    ? 'descending'
+                    : 'ascending'
+                }`}
+                aria-pressed={
                   (selectedView() === 'queries'
                     ? sortOrder()
                     : mutationSortOrder()) === -1
                 }
+                class="tsqd-query-filter-sort-order-btn"
               >
-                <span>Desc</span>
-                <ArrowDown />
-              </Show>
-            </button>
-          </div>
+                <Show
+                  when={
+                    (selectedView() === 'queries'
+                      ? sortOrder()
+                      : mutationSortOrder()) === 1
+                  }
+                >
+                  <span>Asc</span>
+                  <ArrowUp />
+                </Show>
+                <Show
+                  when={
+                    (selectedView() === 'queries'
+                      ? sortOrder()
+                      : mutationSortOrder()) === -1
+                  }
+                >
+                  <span>Desc</span>
+                  <ArrowDown />
+                </Show>
+              </button>
+            </div>
 
-          <div class={cx(styles().actionsContainer, 'tsqd-actions-container')}>
-            <button
-              onClick={() => {
-                if (selectedView() === 'queries') {
-                  sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
-                  query_cache().clear()
-                } else {
-                  sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
-                  mutation_cache().clear()
-                }
-              }}
-              class={cx(
-                styles().actionsBtn,
-                'tsqd-actions-btn',
-                'tsqd-action-clear-cache',
-              )}
-              aria-label="Clear query cache"
-              title={`Clear ${selectedView()} cache`}
+            <div
+              class={cx(styles().actionsContainer, 'tsqd-actions-container')}
             >
-              <Trash />
-            </button>
+              <button
+                onClick={() => {
+                  if (selectedView() === 'queries') {
+                    sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
+                    query_cache().clear()
+                  } else {
+                    sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
+                    mutation_cache().clear()
+                  }
+                }}
+                class={cx(
+                  styles().actionsBtn,
+                  'tsqd-actions-btn',
+                  'tsqd-action-clear-cache',
+                )}
+                aria-label="Clear query cache"
+                title={`Clear ${selectedView()} cache`}
+              >
+                <Trash />
+              </button>
             <button
               onClick={() => {
                 onlineManager().setOnline(!onlineManager().isOnline())
@@ -1331,6 +1365,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             </DropdownMenu.Root>
           </div>
         </div>
+        </Show>
         <Show when={selectedView() === 'queries'}>
           <div
             class={cx(
@@ -1358,6 +1393,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               </Key>
             </div>
           </div>
+        </Show>
+        <Show when={selectedView() === 'timeline'}>
+          <TimelineView />
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
@@ -3664,15 +3702,30 @@ const stylesFactory = (
       & .tsqd-radio-toggle {
         opacity: 0.5;
         display: flex;
+        border-right: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+
         & label {
           display: flex;
           align-items: center;
           cursor: pointer;
           line-height: ${font.lineHeight.md};
+          padding: 0 ${tokens.size[1.5]};
         }
 
         & label:hover {
           background-color: ${t(colors.gray[100], colors.darkGray[500])};
+        }
+
+        &:first-child label {
+          padding-left: ${tokens.size[2]};
+        }
+
+        &:last-child {
+          border-right: none;
+
+          & label {
+            padding-right: ${tokens.size[2]};
+          }
         }
       }
 
@@ -3681,19 +3734,6 @@ const stylesFactory = (
         background-color: ${t(colors.gray[100], colors.darkGray[400])};
         & label:hover {
           background-color: ${t(colors.gray[100], colors.darkGray[400])};
-        }
-      }
-
-      & .tsqd-radio-toggle:first-child {
-        & label {
-          padding: 0 ${tokens.size[1.5]} 0 ${tokens.size[2]};
-        }
-        border-right: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      }
-
-      & .tsqd-radio-toggle:nth-child(2) {
-        & label {
-          padding: 0 ${tokens.size[2]} 0 ${tokens.size[1.5]};
         }
       }
     `,

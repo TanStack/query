@@ -4,6 +4,7 @@ import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
+import { resetTimelineStore } from '../timeline'
 import type { QueryDevtoolsProps } from '../contexts'
 
 // `solid-transition-group` internally imports from
@@ -84,7 +85,10 @@ describe('Devtools', () => {
         disconnect = vi.fn()
       },
     )
-    queryClient = new QueryClient()
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    resetTimelineStore()
     document.documentElement.style.fontSize = '16px'
   })
 
@@ -92,6 +96,7 @@ describe('Devtools', () => {
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
+    resetTimelineStore()
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
     vi.useRealTimers()
@@ -353,6 +358,94 @@ describe('Devtools', () => {
 
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
+
+    it('should switch to timeline view when the timeline toggle is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Timeline'))
+
+      expect(
+        rendered.container.querySelector('.tsqd-timeline-container'),
+      ).not.toBeNull()
+      expect(
+        rendered.container.querySelector('.tsqd-filters-container'),
+      ).toBeNull()
+    })
+  })
+
+  describe('timeline view', () => {
+    it('should show a query span with duration after a fetch completes', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Timeline'))
+
+      const promise = queryClient.fetchQuery({
+        queryKey: ['timeline-posts'],
+        queryFn: () =>
+          new Promise((resolve) => setTimeout(() => resolve('ok'), 40)),
+      })
+
+      expect(
+        rendered.getByLabelText(/query \["timeline-posts"\], pending/),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(40)
+      await promise
+
+      expect(
+        rendered.getByLabelText(/query \["timeline-posts"\], success, 40ms/),
+      ).toBeInTheDocument()
+      expect(rendered.getByText('40ms')).toBeInTheDocument()
+    })
+
+    it('should show parallel query spans', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Timeline'))
+
+      const p1 = queryClient.fetchQuery({
+        queryKey: ['parallel-a'],
+        queryFn: () =>
+          new Promise((resolve) => setTimeout(() => resolve('a'), 30)),
+      })
+      const p2 = queryClient.fetchQuery({
+        queryKey: ['parallel-b'],
+        queryFn: () =>
+          new Promise((resolve) => setTimeout(() => resolve('b'), 30)),
+      })
+
+      expect(
+        rendered.getByLabelText(/query \["parallel-a"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.getByLabelText(/query \["parallel-b"\]/),
+      ).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(30)
+      await Promise.all([p1, p2])
+    })
+
+    it('should clear timeline spans when Clear is clicked', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Timeline'))
+
+      await queryClient.fetchQuery({
+        queryKey: ['clear-span'],
+        queryFn: () => Promise.resolve(1),
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText(/query \["clear-span"\]/),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByLabelText('Clear timeline'))
+
+      expect(
+        rendered.queryByLabelText(/query \["clear-span"\]/),
+      ).not.toBeInTheDocument()
+      expect(
+        rendered.getByText(/No query or mutation fetches recorded yet/),
       ).toBeInTheDocument()
     })
   })
