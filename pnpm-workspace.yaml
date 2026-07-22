@@ -24,6 +24,9 @@ packages:
   - '!examples/vue/2*'
   - '!examples/vue/nuxt*'
 
+catalog:
+  octane: ^0.1.12
+
 overrides:
   'chokidar': '5.0.0'
   '@types/react': '^19.2.7'

@@ -8,6 +8,7 @@
     "react-dom"
   ],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
+  "tags": ["-knipignore"],
   "workspaces": {
     "packages/angular-query-experimental": {
       "entry": [

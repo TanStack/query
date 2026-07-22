@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": "."
+  },
+  "include": ["src", "octane-compiler.d.ts", "*.config.ts", "package.json"],
+  "references": [{ "path": "../query-core" }]
+}

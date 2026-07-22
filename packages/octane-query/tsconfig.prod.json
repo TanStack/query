@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "composite": false,
+    "rootDir": "../../"
+  },
+  "include": ["src", "octane-compiler.d.ts"],
+  "exclude": ["src/__tests__"]
+}
