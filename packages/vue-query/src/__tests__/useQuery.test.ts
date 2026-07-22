@@ -6,7 +6,10 @@ import {
   reactive,
   ref,
 } from 'vue-demi'
-import { QueryObserver } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  queryOptions as coreQueryOptions,
+} from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
@@ -91,6 +94,42 @@ describe('useQuery', () => {
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result021' },
+      isPending: { value: false },
+      isFetching: { value: false },
+      isFetched: { value: true },
+      isSuccess: { value: true },
+    })
+  })
+
+  it('should work with core queryOptions getter and be reactive', async () => {
+    const key = queryKey()
+    const keyRef = ref('core-key-1')
+    const resultRef = ref('core-result-1')
+    const query = useQuery(() =>
+      coreQueryOptions({
+        queryKey: [...key, keyRef.value],
+        queryFn: () => sleep(0).then(() => resultRef.value),
+      }),
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'core-result-1' },
+      isPending: { value: false },
+      isFetching: { value: false },
+      isFetched: { value: true },
+      isSuccess: { value: true },
+    })
+
+    resultRef.value = 'core-result-2'
+    keyRef.value = 'core-key-2'
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'core-result-2' },
       isPending: { value: false },
       isFetching: { value: false },
       isFetched: { value: true },

@@ -1,6 +1,7 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
+  CoreQueryOptions,
   DefaultError,
   DefinedQueryObserverResult,
   InitialDataFunction,
@@ -88,6 +89,37 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
   DefinedQueryObserverResult<TData, TError>
 >
 
+type DefinedCoreQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+> = CoreQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
+}
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: () => DefinedCoreQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
+): UseQueryDefinedReturnType<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: () => CoreQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
+): UseQueryReturnType<TData, TError>
+
 export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -126,9 +158,11 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: MaybeRefOrGetter<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
-  >,
+  options:
+    | MaybeRefOrGetter<
+        UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
+      >
+    | (() => CoreQueryOptions<TQueryFnData, TError, TData, TQueryKey>),
   queryClient?: QueryClient,
 ):
   | UseQueryReturnType<TData, TError>
