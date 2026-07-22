@@ -506,6 +506,128 @@ describe('createInfiniteQueryController', () => {
 
     host.infinite.destroy()
   })
+
+  it('renders by current infinite status via infinite.render', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+    const host = new TestControllerHost()
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: ['infinite-render-01'],
+        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => Number(pageParam),
+        getNextPageParam: (lastPage) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+      },
+      client,
+    )
+
+    const pendingUi = infinite.render({
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: () => 'error-ui',
+    })
+    expect(pendingUi).toBe('pending-ui')
+
+    host.connect()
+    host.update()
+    await waitFor(() => infinite().isSuccess)
+
+    const successUi = infinite.render({
+      pending: () => 'pending-ui',
+      success: (result) => `success-${result.data?.pages.join(',')}`,
+      error: () => 'error-ui',
+    })
+    expect(successUi).toBe('success-0')
+
+    infinite.destroy()
+  })
+
+  it('renders error branch via infinite.render when query fails', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+    const host = new TestControllerHost()
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: ['infinite-render-02'],
+        initialPageParam: 0,
+        queryFn: async () => {
+          throw new Error('render-infinite-failed')
+        },
+        getNextPageParam: () => undefined,
+      },
+      client,
+    )
+
+    host.connect()
+    host.update()
+    await waitFor(() => infinite().isError)
+
+    const errorUi = infinite.render({
+      pending: () => 'pending-ui',
+      success: () => 'success-ui',
+      error: (result) => result.error.message,
+    })
+    expect(errorUi).toBe('render-infinite-failed')
+
+    infinite.destroy()
+  })
+
+  it('returns undefined when no renderer matches current infinite query status', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+    const host = new TestControllerHost()
+
+    const infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: ['infinite-render-03'],
+        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => Number(pageParam),
+        getNextPageParam: (lastPage) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+      },
+      client,
+    )
+
+    // In pending state but no pending renderer provided — should return undefined
+    const noMatchResult = infinite.render({
+      error: () => 'error-ui',
+    })
+    expect(noMatchResult).toBeUndefined()
+
+    host.connect()
+    host.update()
+    await waitFor(() => infinite().isSuccess)
+
+    // In success state but no success renderer provided — should return undefined
+    const noSuccessRenderer = infinite.render({
+      pending: () => 'pending-ui',
+      error: () => 'error-ui',
+    })
+    expect(noSuccessRenderer).toBeUndefined()
+
+    infinite.destroy()
+  })
 })
 
 describe('options helpers integration', () => {

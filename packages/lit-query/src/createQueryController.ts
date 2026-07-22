@@ -17,6 +17,11 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import {
+  renderResult,
+  type RendererResult,
+  type ResultRenderers,
+} from './render.js'
 
 /**
  * Options accepted by `createQueryController`.
@@ -48,6 +53,12 @@ export type QueryResultAccessor<TData, TError> = ValueAccessor<
   suspense: () => Promise<QueryObserverResult<TData, TError>>
   /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
+  /** Renders the query result using the appropriate renderer from the given set, based on the result's `status`. */
+  render: <
+    TRenderers extends ResultRenderers<QueryObserverResult<TData, TError>>,
+  >(
+    renderers: TRenderers,
+  ) => RendererResult<QueryObserverResult<TData, TError>, TRenderers>
 }
 
 function createPendingQueryResult<TData, TError>(): QueryObserverResult<
@@ -374,6 +385,11 @@ export function createQueryController<
       refetch: controller.refetch,
       suspense: controller.suspense,
       destroy: () => controller.destroy(),
+      render: <
+        TRenderers extends ResultRenderers<QueryObserverResult<TData, TError>>,
+      >(
+        renderers: TRenderers,
+      ) => renderResult(controller.current, renderers),
     },
   )
 }
