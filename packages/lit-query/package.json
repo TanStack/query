@@ -14,50 +14,46 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "module",
-  "main": "dist-cjs/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "dist",
-    "dist-cjs",
-    "src/**/*.ts",
-    "!src/tests/**/*"
-  ],
-  "exports": {
-    ".": {
-      "@tanstack/custom-condition": "./src/index.ts",
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist-cjs/index.d.cts",
-        "default": "./dist-cjs/index.js"
-      },
-      "default": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
   "scripts": {
-    "compile": "node ../../node_modules/typescript/lib/tsc.js --build",
-    "build:deps": "pnpm --dir ../query-core run build",
-    "build": "pnpm run build:deps && pnpm run build:esm && pnpm run build:cjs",
-    "build:esm": "node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.json",
-    "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
-    "test:types": "node ../../node_modules/typescript/lib/tsc.js --noEmit",
-    "test:eslint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test:lib": "vitest run",
-    "test:lib:dev": "vitest",
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto .",
+    "lint:fix": "eslint --concurrency=auto . --fix",
+    "test:types": "tsc --noEmit",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:watch": "pnpm run test:lib:dev",
-    "test:build": "publint --strict && attw --pack && node scripts/check-cjs-types-smoke.mjs",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup --tsconfig tsconfig.prod.json",
     "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
     "measure:bundle:raw": "node scripts/measure-bundle.mjs",
     "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
     "perf:l3:raw": "node scripts/l3-stress.mjs"
   },
+  "type": "module",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src",
+    "!src/tests"
+  ],
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
