@@ -1090,7 +1090,7 @@ describe('queryClient', () => {
 
       // the imperative fetch should resolve with the superseding fetch's data
       // instead of rejecting with a silent CancelledError
-      await expect(fetchPromise).resolves.toEqual(expect.any(Number))
+      await expect(fetchPromise).resolves.toBe(3)
     })
   })
 
