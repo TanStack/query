@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -310,7 +311,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
 
     consumer.remove()
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    await sleep(0)
     providerA.remove()
 
     providerB.append(consumer)

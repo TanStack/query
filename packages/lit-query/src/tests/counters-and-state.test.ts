@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
@@ -314,7 +315,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       {
         queryKey: ['counter-test'],
         queryFn: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 40))
+          await sleep(40)
           return 'done'
         },
       },
@@ -325,7 +326,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       host,
       {
         mutationFn: async (value: number) => {
-          await new Promise((resolve) => setTimeout(resolve, 40))
+          await sleep(40)
           return value + 10
         },
       },
