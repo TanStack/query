@@ -9,7 +9,7 @@ On success, the resolved value may be anything **except `undefined`**. Queries t
 
 All of the following are valid query function configurations:
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 useQuery({ queryKey: ['todos'], queryFn: fetchAllTodos })
@@ -27,13 +27,13 @@ useQuery({
 })
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ## Handling and Throwing Errors
 
 For TanStack Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 const { error } = useQuery({
@@ -51,13 +51,13 @@ const { error } = useQuery({
 })
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ## Usage with `fetch` and other clients that do not throw by default
 
 While most utilities like `axios` or `graphql-request` automatically throw errors for unsuccessful HTTP calls, some utilities like `fetch` do not throw errors by default. If that's the case, you'll need to throw them on your own. Here is a simple way to do that with the popular `fetch` API:
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```tsx
 useQuery({
@@ -72,13 +72,13 @@ useQuery({
 })
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ## Query Function Variables
 
 Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function as part of the QueryFunctionContext. While not always necessary, this makes it possible to extract your query functions if needed:
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ```tsx
 function Todos({ status, page }) {
@@ -95,7 +95,7 @@ function fetchTodoList({ queryKey }) {
 }
 ```
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ### QueryFunctionContext
 

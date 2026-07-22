@@ -52,7 +52,7 @@ On a more technical note, TanStack Query will likely:
 - Have a direct impact on your end-users by making your application feel faster and more responsive than ever before.
 - Potentially help you save on bandwidth and increase memory performance
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ## Enough talk, show me some code already!
 

@@ -5,7 +5,7 @@ title: Paginated / Lagged Queries
 
 Rendering paginated data is a very common UI pattern and in TanStack Query, it "just works" by including the page information in the query key:
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 const result = useQuery({
@@ -14,7 +14,7 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 However, if you run this simple example, you might notice something strange:
 
@@ -30,7 +30,7 @@ Consider the following example where we would ideally want to increment a pageIn
 - When the new data arrives, the previous `data` is seamlessly swapped to show the new data.
 - `isPlaceholderData` is made available to know what data the query is currently providing you
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
@@ -86,7 +86,7 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ## Lagging Infinite Query results with `placeholderData`
 
