@@ -1700,6 +1700,77 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(0)
       expect(didSkipTokenRun).toBe(false)
     })
+
+    it('should refetch queries selected via a state-based predicate', async () => {
+      // Regression test for #10705 — when `resetQueries` is called with a
+      // predicate keyed on `query.state.status`, reset() mutates the status
+      // before refetchQueries re-evaluates the predicate, so the matched set
+      // collapses and no refetch happens.
+      const erroredKey = queryKey()
+      const successKey = queryKey()
+      const erroredQueryFn = vi
+        .fn<(...args: Array<unknown>) => Promise<string>>()
+        .mockRejectedValue(new Error('boom'))
+      const successQueryFn = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('ok')
+
+      // Seed the queries directly (fetchQuery returns a Promise — works under
+      // vi.useFakeTimers because no setTimeout is involved).
+      await queryClient
+        .fetchQuery({
+          queryKey: erroredKey,
+          queryFn: erroredQueryFn,
+          retry: false,
+        })
+        .catch(() => undefined)
+      await queryClient.fetchQuery({
+        queryKey: successKey,
+        queryFn: successQueryFn,
+      })
+      expect(queryClient.getQueryState(erroredKey)?.status).toBe('error')
+      expect(queryClient.getQueryState(successKey)?.status).toBe('success')
+
+      // Mount observers so the queries are "active" — refetch only runs for
+      // queries with observers. The observers may also auto-refetch on mount
+      // because the data is stale; the test re-resets the mocks AFTER that
+      // settles so the only thing the assertion counts is the resetQueries
+      // refetch under test.
+      const erroredObserver = new QueryObserver(queryClient, {
+        queryKey: erroredKey,
+        queryFn: erroredQueryFn,
+        retry: false,
+      })
+      const successObserver = new QueryObserver(queryClient, {
+        queryKey: successKey,
+        queryFn: successQueryFn,
+      })
+      erroredObserver.subscribe(() => undefined)
+      successObserver.subscribe(() => undefined)
+
+      // Let any mount-time fetches settle so the errored query is back in
+      // 'error' state when we call resetQueries.
+      await vi.runOnlyPendingTimersAsync()
+
+      erroredQueryFn.mockClear()
+      successQueryFn.mockClear()
+
+      expect(queryClient.getQueryState(erroredKey)?.status).toBe('error')
+
+      await queryClient
+        .resetQueries({
+          predicate: (query) => query.state.status === 'error',
+        })
+        .catch(() => undefined)
+
+      // The errored query was reset AND re-fetched.
+      expect(erroredQueryFn).toHaveBeenCalledTimes(1)
+      // The successful query stayed untouched.
+      expect(successQueryFn).toHaveBeenCalledTimes(0)
+
+      successObserver.destroy()
+      erroredObserver.destroy()
+    })
   })
 
   describe('focusManager and onlineManager', () => {
