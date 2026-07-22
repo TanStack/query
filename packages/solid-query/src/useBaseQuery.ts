@@ -375,6 +375,16 @@ export function useBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
+      // The server subscriber resolves the resource without updating `state`.
+      // Read the settled resource so deferred SSR renders do not stay frozen
+      // on the initial optimistic result.
+      if (isServer) {
+        const resolved = queryResource()
+        if (resolved && prop in resolved) {
+          return Reflect.get(resolved, prop)
+        }
+      }
+
       if (prop === 'data') {
         if (state.data !== undefined) {
           return queryResource.latest?.data
