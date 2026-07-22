@@ -260,13 +260,21 @@ export class QueryClient {
     const queryCache = this.#queryCache
 
     return notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
+      // Snapshot the matched queries *before* resetting them. `reset()` mutates
+      // each query (e.g. status 'error' -> 'pending'), so re-running `filters`
+      // afterwards could miss them — e.g. a `predicate` filtering on status, see
+      // #10705. Refetch exactly the queries that matched before the reset.
+      const queries = queryCache.findAll(filters)
+
+      queries.forEach((query) => {
         query.reset()
       })
+
+      const queriesToRefetch = new Set(queries)
       return this.refetchQueries(
         {
           type: 'active',
-          ...filters,
+          predicate: (query) => queriesToRefetch.has(query),
         },
         options,
       )
