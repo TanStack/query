@@ -202,15 +202,19 @@ export class QueryClient extends QC {
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
     filters?:
-      | InvalidateQueryFilters<TTaggedQueryKey>
-      | (() => InvalidateQueryFilters<TTaggedQueryKey>),
-    options?: MaybeRefDeep<InvalidateOptions>,
+      | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
+      | (() => MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>),
+    options?:
+      | MaybeRefDeep<InvalidateOptions>
+      | (() => MaybeRefDeep<InvalidateOptions>),
   ): Promise<void>
   invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     filters:
       | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
-      | (() => InvalidateQueryFilters<TTaggedQueryKey>) = {},
-    options: MaybeRefDeep<InvalidateOptions> | (() => InvalidateOptions) = {},
+      | (() => MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>) = {},
+    options:
+      | MaybeRefDeep<InvalidateOptions>
+      | (() => MaybeRefDeep<InvalidateOptions>) = {},
   ): Promise<void> {
     const unwrappedFilters = typeof filters === 'function' ? filters() : filters
     const unwrappedOptions = typeof options === 'function' ? options() : options
@@ -289,13 +293,16 @@ export class QueryClient extends QC {
       | MaybeRefDeep<
           FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
         >
-      | (() => FetchQueryOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam
-        >),
+      | (() =>
+          MaybeRefDeep<
+            FetchQueryOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryKey,
+              TPageParam
+            >
+          >),
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
@@ -308,16 +315,19 @@ export class QueryClient extends QC {
       | MaybeRefDeep<
           FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
         >
-      | (() => FetchQueryOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam
-        >),
+      | (() =>
+          MaybeRefDeep<
+            FetchQueryOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryKey,
+              TPageParam
+            >
+          >),
   ): Promise<TData> {
     const unwrappedOptions = typeof options === 'function' ? options() : options
-    return super.fetchQuery(cloneDeepUnref(unwrappedOptions as any))
+    return super.fetchQuery(cloneDeepUnref(unwrappedOptions))
   }
 
   prefetchQuery<
