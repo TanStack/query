@@ -131,26 +131,30 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
 function getNextPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
-  { pages, pageParams }: InfiniteData<unknown>,
+  { pages, pageParams }: Partial<InfiniteData<unknown>>,
 ): unknown | undefined {
+  // `pages` can be undefined at runtime (hydration, `setQueryData`).
+  if (!pages?.length) return undefined
   const lastIndex = pages.length - 1
-  return pages.length > 0
-    ? options.getNextPageParam(
-        pages[lastIndex],
-        pages,
-        pageParams[lastIndex],
-        pageParams,
-      )
-    : undefined
+  return options.getNextPageParam(
+    pages[lastIndex],
+    pages,
+    pageParams?.[lastIndex],
+    pageParams ?? [],
+  )
 }
 
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
-  { pages, pageParams }: InfiniteData<unknown>,
+  { pages, pageParams }: Partial<InfiniteData<unknown>>,
 ): unknown | undefined {
-  return pages.length > 0
-    ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
-    : undefined
+  if (!pages?.length) return undefined
+  return options.getPreviousPageParam?.(
+    pages[0],
+    pages,
+    pageParams?.[0],
+    pageParams ?? [],
+  )
 }
 
 /**
