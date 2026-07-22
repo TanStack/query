@@ -2,6 +2,7 @@ import { QueriesObserver } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { createRawRef } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
+import { watchChanges } from './utils.svelte.js'
 import type {
   Accessor,
   CreateQueryOptions,
@@ -215,13 +216,25 @@ export function createQueries<
     }),
   )
 
-  // can't do same as createMutation, as QueriesObserver has no `setOptions` method
-  const observer = $derived(
+  /** Creates the observer - reuse when possible, recreate only on client change */
+  // svelte-ignore state_referenced_locally - intentional, initial value
+  let observer = $state(
     new QueriesObserver<TCombinedResult>(
       client,
       resolvedQueryOptions,
       combine as QueriesObserverOptions<TCombinedResult>,
     ),
+  )
+  watchChanges(
+    () => client,
+    'pre',
+    () => {
+      observer = new QueriesObserver<TCombinedResult>(
+        client,
+        resolvedQueryOptions,
+        combine as QueriesObserverOptions<TCombinedResult>,
+      )
+    },
   )
 
   function createResult() {
@@ -233,7 +246,7 @@ export function createQueries<
   }
 
   // @ts-expect-error - the crazy-complex TCombinedResult type doesn't like being called an array
-  // svelte-ignore state_referenced_locally
+  // svelte-ignore state_referenced_locally - intentional, initial value
   const [results, update] = createRawRef<TCombinedResult>(createResult())
 
   $effect(() => {
@@ -243,12 +256,16 @@ export function createQueries<
     return unsubscribe
   })
 
-  $effect.pre(() => {
-    observer.setQueries(resolvedQueryOptions, {
-      combine,
-    } as QueriesObserverOptions<TCombinedResult>)
-    update(createResult())
-  })
+  watchChanges(
+    () => [resolvedQueryOptions, combine],
+    'pre',
+    () => {
+      observer.setQueries(resolvedQueryOptions, {
+        combine,
+      } as QueriesObserverOptions<TCombinedResult>)
+      update(createResult())
+    },
+  )
 
   return results
 }
