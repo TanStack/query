@@ -345,7 +345,7 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   }
 
   for (const key in a) {
-    if (a[key] !== b[key]) {
+    if (!hasOwn.call(b, key) || a[key] !== b[key]) {
       return false
     }
   }
