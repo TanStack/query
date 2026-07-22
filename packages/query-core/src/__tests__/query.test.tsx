@@ -58,6 +58,37 @@ describe('query', () => {
     expect(query.gcTime).toBe(200)
   })
 
+  it('should resolve the query promise when data is set while fetching', async () => {
+    const key = queryKey()
+    let fetchResult: unknown
+    queryClient
+      .fetchQuery({
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'fetched'),
+      })
+      .then((data) => {
+        fetchResult = data
+      })
+
+    const query = queryCache.find({ queryKey: key })!
+    let queryPromiseResult: unknown
+    query.promise.then((data) => {
+      queryPromiseResult = data
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    queryClient.setQueryData(key, 'cached')
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryPromiseResult).toBe('cached')
+    expect(fetchResult).toBeUndefined()
+    expect(query.state.fetchStatus).toBe('fetching')
+
+    await vi.advanceTimersByTimeAsync(100)
+    await expect(query.promise).resolves.toBe('fetched')
+    expect(fetchResult).toBe('fetched')
+  })
+
   it('should continue retry after focus regain and resolve all promises', async () => {
     const key = queryKey()
 
