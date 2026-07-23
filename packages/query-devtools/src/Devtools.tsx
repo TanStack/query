@@ -60,6 +60,7 @@ import {
   DEFAULT_SORT_ORDER,
   DEFAULT_WIDTH,
   INITIAL_IS_OPEN,
+  OVERSCAN,
   POSITION,
   QUERY_ROW_HEIGHT_MULTIPLIER,
   firstBreakpoint,
@@ -672,6 +673,141 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   )
 }
 
+/**
+ * Windowed list renderer for the query and mutation panes.
+ *
+ * Only the rows intersecting the scroll viewport (plus `OVERSCAN` on each side)
+ * are mounted, so the DOM node count and the per-row cache subscriptions stay
+ * bounded regardless of how many entries the cache holds. Rows have a fixed
+ * `rowHeight`, so offsets are computed arithmetically without measuring the DOM.
+ * The currently selected row is always kept mounted so its subscriptions and
+ * focus survive scrolling and live re-sorts.
+ */
+function VirtualList<T>(props: {
+  items: Array<T>
+  getKey: (item: T) => string
+  rowHeight: number
+  pinnedKey?: string | null
+  overscan?: number
+  overflowClass: string
+  containerClass: string
+  rowClass: string
+  children: (item: T) => JSX.Element
+}): JSX.Element {
+  let scrollRef!: HTMLDivElement
+  const [scrollTop, setScrollTop] = createSignal(0)
+  // Seed with a bounded default (never the item count) so a large list cannot
+  // fully mount before the first measurement arrives.
+  const [viewportHeight, setViewportHeight] = createSignal(DEFAULT_HEIGHT)
+
+  onMount(() => {
+    const el = scrollRef
+    const view = el.ownerDocument.defaultView
+    setScrollTop(el.scrollTop)
+    if (el.clientHeight > 0) {
+      setViewportHeight(el.clientHeight)
+    }
+
+    const onScroll = () => setScrollTop(el.scrollTop)
+    el.addEventListener('scroll', onScroll, { passive: true })
+
+    // Resolve ResizeObserver from the element's own document so the observer
+    // works when the panel is rendered into a Picture-in-Picture window.
+    let observer: ResizeObserver | undefined
+    const ObserverCtor = view?.ResizeObserver
+    if (ObserverCtor) {
+      observer = new ObserverCtor((entries) => {
+        const height = entries[0]?.contentRect.height
+        if (typeof height === 'number' && height > 0) {
+          setViewportHeight(height)
+        }
+        setScrollTop(el.scrollTop)
+      })
+      observer.observe(el)
+    }
+
+    onCleanup(() => {
+      el.removeEventListener('scroll', onScroll)
+      observer?.disconnect()
+    })
+  })
+
+  const totalSize = createMemo(() => props.items.length * props.rowHeight)
+
+  // Resolve the selected row's index separately so scrolling (which only
+  // changes scrollTop) never triggers this O(N) scan. It re-runs only when the
+  // list or the selection changes, keeping scroll updates O(window) even for
+  // very large caches.
+  const pinnedIndex = createMemo(() => {
+    const pinnedKey = props.pinnedKey
+    if (pinnedKey == null) return -1
+    return props.items.findIndex((item) => props.getKey(item) === pinnedKey)
+  })
+
+  const virtualRows = createMemo(() => {
+    const rowHeight = props.rowHeight
+    const count = props.items.length
+    if (rowHeight <= 0 || count === 0) {
+      return [] as Array<{ key: string; item: T; start: number }>
+    }
+
+    const overscan = props.overscan ?? OVERSCAN
+    const height = viewportHeight()
+    // Clamp the scroll offset so a shrinking list (after filtering/sorting)
+    // never scrolls past the end and blanks the viewport.
+    const maxScrollTop = Math.max(0, count * rowHeight - height)
+    const clampedTop = Math.min(scrollTop(), maxScrollTop)
+    const first = Math.max(0, Math.floor(clampedTop / rowHeight) - overscan)
+    const last = Math.min(
+      count,
+      first + Math.ceil(height / rowHeight) + overscan * 2,
+    )
+
+    const indexes = new Set<number>()
+    for (let i = first; i < last; i++) {
+      indexes.add(i)
+    }
+
+    const pinned = pinnedIndex()
+    if (pinned >= 0 && pinned < count) {
+      indexes.add(pinned)
+    }
+
+    return [...indexes]
+      .sort((a, b) => a - b)
+      .map((index) => {
+        const item = props.items[index]!
+        return { key: props.getKey(item), item, start: index * rowHeight }
+      })
+  })
+
+  // Keep the element's scroll position in sync when the list shrinks below the
+  // current offset, so the scrollbar and the computed window agree.
+  createEffect(() => {
+    const maxScrollTop = Math.max(0, totalSize() - viewportHeight())
+    if (scrollTop() > maxScrollTop) {
+      scrollRef.scrollTop = maxScrollTop
+    }
+  })
+
+  return (
+    <div ref={scrollRef} class={props.overflowClass}>
+      <div class={props.containerClass} style={{ height: `${totalSize()}px` }}>
+        <Key by={(row) => row.key} each={virtualRows()}>
+          {(row) => (
+            <div
+              class={props.rowClass}
+              style={{ transform: `translateY(${row().start}px)` }}
+            >
+              {props.children(row().item)}
+            </div>
+          )}
+        </Key>
+      </div>
+    </div>
+  )
+}
+
 export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
@@ -806,6 +942,31 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     const variable = computedStyle.getPropertyValue('--tsqd-font-size')
     el.style.setProperty('--tsqd-font-size', variable)
   }
+
+  // Fixed row height for the virtualized lists, derived from the panel's
+  // resolved `--tsqd-font-size` so it tracks the user's font-size setting and
+  // any inherited scaling. Read from the always-mounted panel container rather
+  // than the toggling scroll element, and refreshed on window focus like the
+  // font-size variable itself (see the onMount above).
+  const [rowFontSize, setRowFontSize] = createSignal(16)
+  onMount(() => {
+    const readRowFontSize = () => {
+      const value = getComputedStyle(containerRef).getPropertyValue(
+        '--tsqd-font-size',
+      )
+      const parsed = Number.parseFloat(value)
+      if (Number.isFinite(parsed) && parsed > 0) {
+        setRowFontSize(parsed)
+      }
+    }
+    readRowFontSize()
+    const view = containerRef.ownerDocument.defaultView
+    view?.addEventListener('focus', readRowFontSize)
+    onCleanup(() => view?.removeEventListener('focus', readRowFontSize))
+  })
+  const rowHeight = createMemo(
+    () => rowFontSize() * QUERY_ROW_HEIGHT_MULTIPLIER,
+  )
   return (
     <>
       <div
@@ -1333,18 +1494,20 @@ export const ContentView: Component<ContentViewProps> = (props) => {
           </div>
         </div>
         <Show when={selectedView() === 'queries'}>
-          <div
-            class={cx(
+          <VirtualList
+            items={queries()}
+            getKey={(q) => q.queryHash}
+            rowHeight={rowHeight()}
+            pinnedKey={selectedQueryHash()}
+            overflowClass={cx(
               styles().overflowQueryContainer,
               'tsqd-queries-overflow-container',
             )}
+            containerClass={cx('tsqd-queries-container', styles().virtualSpacer)}
+            rowClass={styles().virtualRow}
           >
-            <div class="tsqd-queries-container">
-              <Key by={(q) => q.queryHash} each={queries()}>
-                {(query) => <QueryRow query={query()} />}
-              </Key>
-            </div>
-          </div>
+            {(query) => <QueryRow query={query} />}
+          </VirtualList>
         </Show>
         <Show when={selectedView() === 'mutations'}>
           <div
@@ -3340,10 +3503,21 @@ const stylesFactory = (
         flex-direction: column;
       }
     `,
+    virtualSpacer: css`
+      position: relative;
+      width: 100%;
+    `,
+    virtualRow: css`
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    `,
     queryRow: css`
       display: flex;
       align-items: center;
       padding: 0;
+      width: 100%;
       height: calc(var(--tsqd-font-size) * ${QUERY_ROW_HEIGHT_MULTIPLIER});
       border: none;
       cursor: pointer;
