@@ -1510,18 +1510,27 @@ export const ContentView: Component<ContentViewProps> = (props) => {
           </VirtualList>
         </Show>
         <Show when={selectedView() === 'mutations'}>
-          <div
-            class={cx(
+          <VirtualList
+            items={mutations()}
+            getKey={(m) => String(m.mutationId)}
+            rowHeight={rowHeight()}
+            pinnedKey={
+              selectedMutationId() != null
+                ? String(selectedMutationId())
+                : null
+            }
+            overflowClass={cx(
               styles().overflowQueryContainer,
               'tsqd-mutations-overflow-container',
             )}
+            containerClass={cx(
+              'tsqd-mutations-container',
+              styles().virtualSpacer,
+            )}
+            rowClass={styles().virtualRow}
           >
-            <div class="tsqd-mutations-container">
-              <Key by={(m) => m.mutationId} each={mutations()}>
-                {(mutation) => <MutationRow mutation={mutation()} />}
-              </Key>
-            </div>
-          </div>
+            {(mutation) => <MutationRow mutation={mutation} />}
+          </VirtualList>
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
