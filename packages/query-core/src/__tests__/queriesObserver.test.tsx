@@ -735,6 +735,41 @@ describe('queriesObserver', () => {
     expect(combined1).toBe(combined2)
   })
 
+  it.each([
+    ['zero', 0],
+    ['negative zero', -0],
+    ['NaN', Number.NaN],
+    ['false', false],
+    ['empty string', ''],
+    ['null', null],
+    ['undefined', undefined],
+    ['zero bigint', 0n],
+  ])(
+    'should cache the falsy combined result %s when nothing has changed',
+    (_name, value) => {
+      const combine = vi.fn(() => value)
+      const key = queryKey()
+      const queries = [{ queryKey: key, queryFn: () => 1 }]
+      const observer = new QueriesObserver<typeof value>(queryClient, queries, {
+        combine,
+      })
+
+      const [raw1, getCombined1] = observer.getOptimisticResult(
+        queries,
+        combine,
+      )
+      getCombined1(raw1)
+
+      const [raw2, getCombined2] = observer.getOptimisticResult(
+        queries,
+        combine,
+      )
+      getCombined2(raw2)
+
+      expect(combine).toHaveBeenCalledTimes(1)
+    },
+  )
+
   it('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
