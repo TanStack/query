@@ -1667,33 +1667,21 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
+  // Read this row's own stable mutation instance directly instead of scanning
+  // the entire cache on every event. The subscription still fires on mutation-
+  // cache changes (that is what triggers the re-read), but the read itself is
+  // O(1), so a burst of mutation activity no longer costs O(rows x cache size).
   const mutationState = createSubscribeToMutationCacheBatcher(
-    (mutationCache) => {
-      const mutations = mutationCache().getAll()
-      const mutation = mutations.find(
-        (m) => m.mutationId === props.mutation.mutationId,
-      )
-      return mutation?.state
-    },
+    () => props.mutation.state,
   )
 
-  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return false
-    return mutation.state.isPaused
-  })
+  const isPaused = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.isPaused,
+  )
 
-  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return 'idle'
-    return mutation.state.status
-  })
+  const status = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.status,
+  )
 
   const color = createMemo(() =>
     getMutationStatusColor({
