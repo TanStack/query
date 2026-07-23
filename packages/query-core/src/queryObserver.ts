@@ -552,6 +552,7 @@ export class QueryObserver<
       data = this.#selectResult
       errorUpdatedAt = Date.now()
       status = 'error'
+      isPlaceholderData = false
     }
 
     const isFetching = newState.fetchStatus === 'fetching'
