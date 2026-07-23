@@ -478,6 +478,51 @@ describe('useQuery', () => {
         }),
       )
     })
+
+    it('should throw from error watcher when throwOnError is true and suspense is not used', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      useQuery({
+        queryKey: ['throwOnErrorWithoutSuspense'],
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        retry: false,
+        throwOnError: throwOnErrorFn,
+      })
+
+      // The watcher rethrows, which Vue surfaces differently across versions:
+      // through console.error on Vue 2.x and as an unhandled rejection on Vue 3.
+      // Capture both channels so the assertion holds on every supported version.
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const rejectionHandler = vi.fn()
+      process.on('unhandledRejection', rejectionHandler)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      const reportedError = [
+        ...errorSpy.mock.calls,
+        ...rejectionHandler.mock.calls,
+      ].some((args) =>
+        args.some(
+          (arg) => arg instanceof Error && arg.message === 'Some error',
+        ),
+      )
+
+      errorSpy.mockRestore()
+
+      // throwOnError is evaluated and throw is attempted (not suppressed by suspense)
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+      // The watcher rethrows, so Vue surfaces the error (console.error or an
+      // unhandled rejection depending on the version).
+      expect(reportedError).toBe(true)
+    })
   })
 
   describe('outside scope warning', () => {
@@ -614,6 +659,47 @@ describe('useQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
+    })
+
+    it('should not throw from error watcher when suspense is handling the error with throwOnError: true', async () => {
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
+      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+
+      // Spy on unhandled rejections so we can assert the watcher does not rethrow.
+      const rejectionHandler = vi.fn()
+      process.on('unhandledRejection', rejectionHandler)
+
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      const query = useQuery({
+        queryKey: ['suspense6'],
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        retry: false,
+        throwOnError: throwOnErrorFn,
+      })
+
+      let rejectedError: unknown
+      const promise = query.suspense().catch((error) => {
+        rejectedError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await promise
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      expect(rejectedError).toBeInstanceOf(Error)
+      expect((rejectedError as Error).message).toBe('Some error')
+      // throwOnError is evaluated in both suspense() and the error watcher
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(2)
+      // The error watcher must not rethrow when suspense is active, so no
+      // unhandled rejection should be observed.
+      expect(rejectionHandler).not.toHaveBeenCalled()
+      expect(query).toMatchObject({
+        status: { value: 'error' },
+        isError: { value: true },
+      })
     })
   })
 })
