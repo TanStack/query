@@ -61,6 +61,7 @@ import {
   DEFAULT_WIDTH,
   INITIAL_IS_OPEN,
   POSITION,
+  QUERY_ROW_HEIGHT_MULTIPLIER,
   firstBreakpoint,
   secondBreakpoint,
   thirdBreakpoint,
@@ -1464,7 +1465,9 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         >
           {observers()}
         </div>
-        <code class="tsqd-query-hash">{props.query.queryHash}</code>
+        <code class="tsqd-query-hash" title={props.query.queryHash}>
+          {props.query.queryHash}
+        </code>
         <Show when={isDisabled()}>
           <div class="tsqd-query-disabled-indicator" aria-hidden="true">
             disabled
@@ -1580,7 +1583,14 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
             <LoadingCircle />
           </Show>
         </div>
-        <code class="tsqd-query-hash">
+        <code
+          class="tsqd-query-hash"
+          title={`${
+            props.mutation.options.mutationKey
+              ? JSON.stringify(props.mutation.options.mutationKey) + ' - '
+              : ''
+          }${new Date(props.mutation.state.submittedAt).toLocaleString()}`}
+        >
           <Show when={props.mutation.options.mutationKey}>
             {JSON.stringify(props.mutation.options.mutationKey)} -{' '}
           </Show>
@@ -3334,6 +3344,7 @@ const stylesFactory = (
       display: flex;
       align-items: center;
       padding: 0;
+      height: calc(var(--tsqd-font-size) * ${QUERY_ROW_HEIGHT_MULTIPLIER});
       border: none;
       cursor: pointer;
       color: ${t(colors.gray[700], colors.gray[300])};
@@ -3372,14 +3383,16 @@ const stylesFactory = (
         align-items: center;
         min-height: ${tokens.size[6]};
         flex: 1;
+        min-width: 0;
         padding: ${tokens.size[1]} ${tokens.size[2]};
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
-        text-overflow: clip;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       & .tsqd-query-disabled-indicator {
