@@ -22,7 +22,7 @@
   "scripts": {
     "clean": "premove ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint --concurrency=auto ./src ./tests ./scripts",
+    "test:eslint": "eslint --concurrency=auto --ignore-pattern \"tests/differential/.react-cache/**\" ./src ./tests ./scripts",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
