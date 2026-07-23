@@ -29,6 +29,7 @@ catalog:
 
 overrides:
   'chokidar': '5.0.0'
+  '@angular/build>vite': '^6.4.1'
   '@types/react': '^19.2.7'
   '@types/react-dom': '^19.2.3'
   '@types/node': '^22.15.3'
