@@ -201,29 +201,18 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?:
-      | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
-      | (() => MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>),
-    options?:
-      | MaybeRefDeep<InvalidateOptions>
-      | (() => MaybeRefDeep<InvalidateOptions>),
+    filters?: MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
+    options?: MaybeRefDeep<InvalidateOptions>,
   ): Promise<void>
   invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters:
-      | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
-      | (() => MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>) = {},
-    options:
-      | MaybeRefDeep<InvalidateOptions>
-      | (() => MaybeRefDeep<InvalidateOptions>) = {},
+    filters: MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>> = {},
+    options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
-    const unwrappedFilters = typeof filters === 'function' ? filters() : filters
-    const unwrappedOptions = typeof options === 'function' ? options() : options
-    
     const filtersCloned = cloneDeepUnref(
-      unwrappedFilters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
+      filters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
     )
     const optionsCloned = cloneDeepUnref(
-      unwrappedOptions as MaybeRefDeep<InvalidateOptions>,
+      options as MaybeRefDeep<InvalidateOptions>,
     )
 
     super.invalidateQueries(
