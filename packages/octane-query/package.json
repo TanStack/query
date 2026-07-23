@@ -77,9 +77,10 @@
     "octane": "catalog:",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "vite": "^6.4.1"
+    "vite": "^8.0.16",
+    "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "octane": "^0.1.12"
+    "octane": "^0.1.13"
   }
 }

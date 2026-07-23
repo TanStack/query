@@ -3,7 +3,7 @@
 Official Octane bindings for [TanStack Query](https://tanstack.com/query).
 The package reuses `@tanstack/query-core` and exposes the same query, mutation,
 suspense, hydration, and error-reset primitives as the React adapter through
-Octane hooks and components.
+Octane hooks and components. It requires Octane 0.1.13 or newer.
 
 ```tsrx
 import {

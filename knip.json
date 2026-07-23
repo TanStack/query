@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["scripts/*.{j,t}s", "**/root.*.config.*", "**/ts-fixture/file.ts"],
+  "ignore": ["scripts/*.{j,t}s", "**/ts-fixture/file.ts"],
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",
@@ -22,6 +22,12 @@
     },
     "packages/lit-query": {
       "ignore": ["src/tests/**"]
+    },
+    "packages/octane-query": {
+      "entry": [
+        "tests/_fixtures/async-diff.tsrx",
+        "tests/_fixtures/cached-diff.tsrx"
+      ]
     },
     "packages/vue-query": {
       "ignoreDependencies": ["vue2", "vue2.7"]

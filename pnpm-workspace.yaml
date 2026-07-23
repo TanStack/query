@@ -25,7 +25,7 @@ packages:
   - '!examples/vue/nuxt*'
 
 catalog:
-  octane: ^0.1.12
+  octane: ^0.1.13
 
 overrides:
   'chokidar': '5.0.0'
@@ -44,7 +44,6 @@ overrides:
   '@typescript-eslint/utils': '8.58.1'
   '@typescript-eslint/visitor-keys': '8.58.1'
   typescript-eslint: '8.58.1'
-  vite: '^6.4.1'
   esbuild: '^0.27.2'
 
 allowBuilds:
