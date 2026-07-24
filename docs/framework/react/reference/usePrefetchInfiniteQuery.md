@@ -9,7 +9,7 @@ usePrefetchInfiniteQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient.md#queryclientprefetchinfinitequery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.infiniteQuery`](../../../reference/QueryClient.md#queryclientinfinitequery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
   - **Required**

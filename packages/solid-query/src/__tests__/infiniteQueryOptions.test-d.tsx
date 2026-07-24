@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { dataTagSymbol } from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -10,6 +10,60 @@ import type {
 } from '../infiniteQueryOptions'
 
 describe('infiniteQueryOptions', () => {
+  it('should work when passed to infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<{ wow: boolean }>>()
+  })
+
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: skipToken,
+      initialPageParam: 0,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
+
   it('should infer defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,
