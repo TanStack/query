@@ -109,11 +109,11 @@ describe('usePrefetchQuery', () => {
       queryFn,
     }
 
-    queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
-
-      throw new Error('Oops! Server error!')
-    })
+    queryFn.mockImplementationOnce(() =>
+      sleep(10).then(() => {
+        throw new Error('Oops! Server error!')
+      }),
+    )
 
     function Page() {
       const state = useSuspenseQuery(queryOpts)
@@ -190,11 +190,11 @@ describe('usePrefetchQuery', () => {
       queryFn,
     }
 
-    queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
-
-      throw new Error('Oops! Server error!')
-    })
+    queryFn.mockImplementationOnce(() =>
+      sleep(10).then(() => {
+        throw new Error('Oops! Server error!')
+      }),
+    )
 
     function Page() {
       const state = useSuspenseQuery(queryOpts)
