@@ -3,7 +3,12 @@ import { createMemo } from 'solid-js'
 import { ContentView, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
-import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
+import {
+  DevtoolsInstanceProvider,
+  PiPProvider,
+  QueryDevtoolsContext,
+  ThemeContext,
+} from './contexts'
 import type { Theme } from './contexts'
 import type { DevtoolsComponentType } from './Devtools'
 
@@ -30,14 +35,16 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
         setLocalStore={setLocalStore}
       >
         <ThemeContext.Provider value={theme}>
-          <ParentPanel>
-            <ContentView
-              localStore={localStore}
-              setLocalStore={setLocalStore}
-              onClose={props.onClose}
-              showPanelViewOnly
-            />
-          </ParentPanel>
+          <DevtoolsInstanceProvider>
+            <ParentPanel>
+              <ContentView
+                localStore={localStore}
+                setLocalStore={setLocalStore}
+                onClose={props.onClose}
+                showPanelViewOnly
+              />
+            </ParentPanel>
+          </DevtoolsInstanceProvider>
         </ThemeContext.Provider>
       </PiPProvider>
     </QueryDevtoolsContext.Provider>
