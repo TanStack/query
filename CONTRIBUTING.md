@@ -31,7 +31,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
     corepack enable && corepack prepare
     ```
 
-  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`
+  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in [.nvmrc](./.nvmrc)
 
     ```bash
     nvm use
