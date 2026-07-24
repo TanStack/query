@@ -397,6 +397,27 @@ export class Query<
     }
   }
 
+  // When a fetch is silently cancelled, a new fetch has been started to
+  // supersede it. Any caller holding the superseded promise should follow
+  // that new fetch instead of receiving the internal `CancelledError`. This
+  // walks the chain of superseding fetches until one settles for real. When
+  // the silent cancellation does not come from a superseding fetch (e.g. the
+  // query was destroyed), `this.#retryer` still points at the settled promise,
+  // so we rethrow instead of looping.
+  #continueOnSilentCancel(promise: Promise<TData>): Promise<TData> {
+    return promise.catch((error): TData | Promise<TData> => {
+      if (
+        error instanceof CancelledError &&
+        error.silent &&
+        this.#retryer &&
+        this.#retryer.promise !== promise
+      ) {
+        return this.#continueOnSilentCancel(this.#retryer.promise)
+      }
+      throw error
+    })
+  }
+
   async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
@@ -414,8 +435,12 @@ export class Query<
       } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
         this.#retryer.continueRetry()
-        // Return current promise if we are already fetching
-        return this.#retryer.promise
+        // Return current promise if we are already fetching.
+        // If that fetch gets silently cancelled because a new fetch supersedes
+        // it (e.g. `invalidateQueries` refetching an active observer), piggyback
+        // onto the new fetch instead of rejecting the caller with a
+        // `CancelledError`.
+        return this.#continueOnSilentCancel(this.#retryer.promise)
       }
     }
 
@@ -590,7 +615,7 @@ export class Query<
         if (error.silent) {
           // silent cancellation implies a new fetch is going to be started,
           // so we piggyback onto that promise
-          return this.#retryer.promise
+          return this.#continueOnSilentCancel(this.#retryer.promise)
         } else if (error.revert) {
           // transform error into reverted state data
           // if the initial fetch was cancelled, we have no data, so we have
