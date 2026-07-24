@@ -33,7 +33,7 @@ Defined in: [preact-query/src/usePrefetchQuery.tsx:5](https://github.com/theVeda
 
 ### options
 
-[`UsePrefetchQueryOptions`](../interfaces/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+`QueryExecuteOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### queryClient?
 
