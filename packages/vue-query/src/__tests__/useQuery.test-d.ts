@@ -2,6 +2,8 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
+import type { Ref } from 'vue-demi'
+import type { QueryObserverResult } from '@tanstack/query-core'
 import type { OmitKeyof, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
@@ -264,6 +266,99 @@ describe('useQuery', () => {
 
       if (query.isError) {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
+      }
+    })
+  })
+
+  // Regression coverage for #9244 — narrowing across the discriminated
+  // result union from useQuery() under the patterns users actually write.
+  describe('issue #9244 — narrowing without reactive()', () => {
+    it('useQuery() return preserves the discriminated union (no reactive())', () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      // Whole-result narrowing requires reactive() because the discriminator
+      // sits inside `Ref<boolean>`. The `data` ref itself is still a
+      // discriminated union of `Ref<string> | Ref<undefined>` (matches the
+      // shape documented in docs/framework/vue/typescript.md).
+      expectTypeOf(query.data).toEqualTypeOf<Ref<string> | Ref<undefined>>()
+    })
+
+    it('data.value narrows after a direct undefined check', () => {
+      const key = queryKey()
+
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      // This is the recommended pattern when `reactive()` is not used:
+      // narrow on `.value !== undefined` rather than relying on `isSuccess`.
+      if (data.value !== undefined) {
+        expectTypeOf(data.value).toEqualTypeOf<string>()
+        expectTypeOf(data).toEqualTypeOf<Ref<string>>()
+      }
+    })
+
+    it('reactive() preserves narrowing across destructured properties', () => {
+      const key = queryKey()
+
+      // Destructuring directly from `useQuery()` (without `reactive()`)
+      // breaks cross-property narrowing because each ref is independent —
+      // wrapping in `reactive()` flattens the refs and keeps the
+      // discriminated union linkage.
+      const { data, isSuccess } = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+
+      if (isSuccess) {
+        expectTypeOf(data).toEqualTypeOf<string>()
+      }
+    })
+
+    it('reactive() narrows on status discriminator', () => {
+      const key = queryKey()
+
+      const { data, status } = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+
+      if (status === 'success') {
+        expectTypeOf(data).toEqualTypeOf<string>()
+      }
+    })
+
+    it('suspense() returns Promise<QueryObserverResult> parameterized by TResult', async () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      // Pinning the resolved type guards the `suspense: () => Promise<TResult>`
+      // parameterization on `UseBaseQueryReturnType` against accidental
+      // collapse to `Promise<unknown>` or `Promise<QueryObserverResult<unknown, unknown>>`.
+      expectTypeOf(query.suspense()).toEqualTypeOf<
+        Promise<QueryObserverResult<string, Error>>
+      >()
+
+      const result = await query.suspense()
+      // Awaiting the promise must preserve the discriminated union so
+      // narrowing on `isSuccess` reduces `data` to the queryFn return type.
+      if (result.isSuccess) {
+        expectTypeOf(result.data).toEqualTypeOf<string>()
+        expectTypeOf(result.error).toEqualTypeOf<null>()
       }
     })
   })

@@ -68,6 +68,8 @@ if (isSuccess) {
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEixEcKOnqsYwbuiKlylKr3RUA3BImsIzeEgAm9BgBo4wVAGVkrVulSp1AXjkKlK9AAUaFjCeAEA2lQwbjBUALq2AQCUcJ4AfHAACpr26AB08qgQADaqAQCsSVWGkiRwAfZOLm6oKQgScJ1wlgwSnJydAHoA-BKEEkA)
 
+> **Note:** Wrapping `useQuery(...)` in `reactive(...)` is required to narrow `data` from a discriminator like `isSuccess` or `status`. Destructuring directly from `useQuery(...)` produces independent refs, and TypeScript cannot propagate narrowing across separate refs — `if (isSuccess.value)` will not narrow `data.value` from `T | undefined` to `T`. If you cannot use `reactive()`, narrow the value ref directly with `if (data.value !== undefined)`.
+
 [//]: # 'TypeNarrowing'
 [//]: # 'TypingError'
 
