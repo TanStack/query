@@ -3,10 +3,11 @@
   "configMigration": true,
   "extends": [
     "config:recommended",
+    "helpers:pinGitHubActionDigests",
     "group:allNonMajor",
     "schedule:weekly",
+    "security:minimumReleaseAgeNpm",
     ":approveMajorUpdates",
-    ":automergeMinor",
     ":disablePeerDependencies",
     ":maintainLockFilesMonthly",
     ":semanticCommits",
