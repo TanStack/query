@@ -135,26 +135,6 @@ https://github.com/fulopkovacs/form/assets/43729152/9d35a3c3-8153-4e74-9cb2-af27
 
 If you want to run an example without installing dependencies for the whole repo, just follow the instructions from the example's README.md file. It will then be run against the latest TanStack Query release.
 
-## Online one-click setup
-
-You can use Gitpod (An Online open-source VS Code-like IDE that is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
-
-- clone the `TanStack/query` repo.
-- install all the dependencies in `/` and `/docs`.
-- run below in the root(`/`) to Auto-build files.
-
-  ```bash
-  npm start
-  ```
-
-- run below in `/docs`.
-
-  ```bash
-  npm run dev
-  ```
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/TanStack/query)
-
 ## Changesets
 
 This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. If your PR should release a new package version (patch, minor, or major), please run `pnpm changeset` and commit the file. If needed, changeset descriptions can be more descriptive, and will be included in the changelog. If your PR affects docs, examples, styles, etc., you probably don't need to generate a changeset.
