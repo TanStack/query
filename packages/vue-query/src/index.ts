@@ -6,7 +6,12 @@ export { VueQueryPlugin } from './vueQueryPlugin'
 export { QueryClient } from './queryClient'
 export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
-export { type QueryOptions } from './queryOptions'
+export type {
+  DefinedInitialQueryOptions,
+  QueryOptions,
+  QueryOptionsDataTag,
+  UndefinedInitialQueryOptions,
+} from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
@@ -30,15 +35,15 @@ export type {
   UseQueryOptions,
   UseQueryReturnType,
   UseQueryDefinedReturnType,
-  UndefinedInitialQueryOptions,
-  DefinedInitialQueryOptions,
+  UndefinedInitialQueryOptions as UndefinedInitialUseQueryOptions,
+  DefinedInitialQueryOptions as DefinedInitialUseQueryOptions,
 } from './useQuery'
 export type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryReturnType,
 } from './useInfiniteQuery'
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
-export type { MutationOptions } from './types'
+export type { MaybeRefOrGetter, MutationOptions, ShallowOption } from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type { MutationFilters, MutationStateOptions } from './useMutationState'
 export type { QueryFilters } from './useIsFetching'

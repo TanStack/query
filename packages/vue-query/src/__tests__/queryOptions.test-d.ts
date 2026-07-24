@@ -5,6 +5,9 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { ComputedRef, Ref } from 'vue-demi'
+import type { DataTag } from '@tanstack/query-core'
+import type { QueryOptionsDataTag, UndefinedInitialQueryOptions } from '..'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -308,7 +311,11 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      ComputedRef<
+        DataTag<readonly ['foo', string | null], { id: string }, Error>
+      >
+    >()
   })
 
   it('should allow ref as queryKey', () => {
@@ -319,7 +326,9 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      Ref<DataTag<readonly ['foo', '1'], { id: string }, Error>>
+    >()
   })
 
   it('should allow getter function as queryKey', () => {
@@ -330,6 +339,46 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve({ id: '1' }),
     })
 
-    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      () => DataTag<readonly ['foo', string | null], { id: string }, Error>
+    >()
+  })
+
+  it('should allow public queryOptions types to be used in declaration emit', () => {
+    type Todo = {
+      id: number
+      name: string
+    }
+
+    type TodoOptions = UndefinedInitialQueryOptions<
+      Todo,
+      Error,
+      Todo,
+      readonly ['todo']
+    >
+
+    function todoOptions(): TodoOptions {
+      return queryOptions({
+        queryKey: ['todo'] as const,
+        queryFn: () => Promise.resolve({ id: 1, name: 'one' }),
+      })
+    }
+
+    expectTypeOf(
+      queryOptions({
+        queryKey: ['todo'] as const,
+        queryFn: (): Promise<Todo> => Promise.resolve({ id: 1, name: 'one' }),
+      }),
+    ).toEqualTypeOf<
+      QueryOptionsDataTag<TodoOptions, Todo, Error, readonly ['todo']>
+    >()
+
+    queryOptions({
+      ...todoOptions(),
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<Todo>()
+        return data.name
+      },
+    })
   })
 })
