@@ -24,19 +24,19 @@ type ErrorBoundarySharedProps = PropsWithChildren<{
   resetKeys?: any[]
 }>
 
-export type ErrorBoundaryPropsWithComponent = ErrorBoundarySharedProps & {
+type ErrorBoundaryPropsWithComponent = ErrorBoundarySharedProps & {
   fallback?: never
   FallbackComponent: ComponentType<FallbackProps>
   fallbackRender?: never
 }
 
-export type ErrorBoundaryPropsWithRender = ErrorBoundarySharedProps & {
+type ErrorBoundaryPropsWithRender = ErrorBoundarySharedProps & {
   fallback?: never
   FallbackComponent?: never
   fallbackRender: (props: FallbackProps) => ComponentChild
 }
 
-export type ErrorBoundaryPropsWithFallback = ErrorBoundarySharedProps & {
+type ErrorBoundaryPropsWithFallback = ErrorBoundarySharedProps & {
   fallback: ComponentChild
   FallbackComponent?: never
   fallbackRender?: never

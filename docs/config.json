@@ -217,6 +217,23 @@
               "to": "framework/preact/graphql"
             }
           ]
+        },
+        {
+          "label": "octane",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/octane/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/octane/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/octane/quick-start"
+            }
+          ]
         }
       ]
     },
@@ -949,6 +966,19 @@
               "to": "framework/preact/guides/does-this-replace-client-state"
             }
           ]
+        },
+        {
+          "label": "octane",
+          "children": [
+            {
+              "label": "Suspense and Error Boundaries",
+              "to": "framework/octane/guides/suspense"
+            },
+            {
+              "label": "Server Rendering and Hydration",
+              "to": "framework/octane/guides/ssr"
+            }
+          ]
         }
       ]
     },
@@ -1425,6 +1455,15 @@
             {
               "label": "hydration",
               "to": "framework/preact/reference/functions/HydrationBoundary"
+            }
+          ]
+        },
+        {
+          "label": "octane",
+          "children": [
+            {
+              "label": "Octane Reference",
+              "to": "framework/octane/reference/index"
             }
           ]
         }

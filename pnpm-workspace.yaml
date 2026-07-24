@@ -24,8 +24,14 @@ packages:
   - '!examples/vue/2*'
   - '!examples/vue/nuxt*'
 
+catalog:
+  octane: ^0.1.13
+
 overrides:
   'chokidar': '5.0.0'
+  '@angular/build>vite': '^6.4.1'
+  'svelte@5.55.1>esrap': '2.2.4'
+  'vite@6.4.1>yaml': '2.8.3'
   '@types/react': '^19.2.7'
   '@types/react-dom': '^19.2.3'
   '@types/node': '^22.15.3'
@@ -41,7 +47,6 @@ overrides:
   '@typescript-eslint/utils': '8.58.1'
   '@typescript-eslint/visitor-keys': '8.58.1'
   typescript-eslint: '8.58.1'
-  vite: '^6.4.1'
   esbuild: '^0.27.2'
 
 allowBuilds:
