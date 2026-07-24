@@ -1700,6 +1700,53 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(0)
       expect(didSkipTokenRun).toBe(false)
     })
+
+    it('should refetch queries matched by a state-dependent predicate even though reset() mutates state', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const queryFn1 = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data')
+      const queryFn2 = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockRejectedValue('error')
+      const observer1 = new QueryObserver(queryClient, {
+        queryKey: key1,
+        queryFn: queryFn1,
+      })
+      const observer2 = new QueryObserver(queryClient, {
+        queryKey: key2,
+        queryFn: queryFn2,
+        retry: false,
+      })
+
+      observer1.subscribe(() => undefined)
+      observer2.subscribe(() => undefined)
+
+      await vi.waitFor(() => {
+        expect(queryClient.getQueryState(key1)?.status).toBe('success')
+        expect(queryClient.getQueryState(key2)?.status).toBe('error')
+      })
+      expect(queryFn1).toHaveBeenCalledTimes(1)
+      expect(queryFn2).toHaveBeenCalledTimes(1)
+
+      await queryClient.resetQueries({
+        predicate: (query) => query.state.status === 'success',
+      })
+
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+      expect(queryFn2).toHaveBeenCalledTimes(1)
+
+      await queryClient.resetQueries({
+        predicate: (query) => query.state.status === 'error',
+      })
+
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+      expect(queryFn2).toHaveBeenCalledTimes(2)
+
+      observer1.destroy()
+      observer2.destroy()
+    })
   })
 
   describe('focusManager and onlineManager', () => {
