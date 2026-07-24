@@ -72,8 +72,9 @@ describe('queryCache', () => {
         'observerResultsUpdated', // 8. Observer result updated -> stale
       ])
 
+      const cachedQuery = queryCache.find({ queryKey: key })
       queries.forEach((query) => {
-        expect(query).toBeDefined()
+        expect(query).toBe(cachedQuery)
       })
 
       unsubscribe()
@@ -161,7 +162,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key })!
-      expect(query).toBeDefined()
+      expect(query.state.data).toBe('data1')
     })
 
     it('find should filter correctly with exact set to false', async () => {
@@ -172,7 +173,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key, exact: false })!
-      expect(query).toBeDefined()
+      expect(query.state.data).toBe('data1')
     })
   })
 
