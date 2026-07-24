@@ -182,8 +182,8 @@ export function useBaseQuery<
     return obs.subscribe((result) => {
       observerResult = result
       queueMicrotask(() => {
-        if (!unsubscribe) return
-        if (resolver || result.isLoading || result.isError) {
+        if (!unsubscribe || observer() !== obs) return
+        if (resolver || result.isLoading || (result.isFetching && result.isError)) {
           refetch()
         } else {
           setStateWithReconciliation(result)
