@@ -8,7 +8,7 @@ There are many ways to supply initial data for a query to the cache before you n
 - Declaratively:
   - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch the data using `queryClient.prefetchQuery`](./prefetching.md)
+  - [Prefetch the data using `queryClient.query`](./prefetching.md)
   - [Manually place the data into the cache using `queryClient.setQueryData`](./prefetching.md)
 
 ## Using `initialData` to prepopulate a query
@@ -84,7 +84,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   This option allows the staleTime to be used for its original purpose, determining how fresh the data needs to be, while also allowing the data to be refetched on mount if the `initialData` is older than the `staleTime`. In the example above, our data needs to be fresh within 1 minute, and we can hint to the query when the initialData was last updated so the query can decide for itself whether the data needs to be refetched again or not.
 
-  > If you would rather treat your data as **prefetched data**, we recommend that you use the `prefetchQuery` or `fetchQuery` APIs to populate the cache beforehand, thus letting you configure your `staleTime` independently from your initialData
+  > If you would rather treat your data as **prefetched data**, we recommend that you use the `query` api to populate the cache beforehand, thus letting you configure your `staleTime` independently from your `initialData`.
 
 ### Initial Data Function
 
