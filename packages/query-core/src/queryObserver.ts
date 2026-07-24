@@ -96,7 +96,25 @@ export class QueryObserver<
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
-      if (shouldFetchOnMount(this.#currentQuery, this.options)) {
+      // Check if this query is pending hydration via options._isHydrating
+      // If so, skip fetch unless:
+      // - refetchOnMount is explicitly 'always', or
+      // - the hydrated data is stale (e.g., cached markup scenario where
+      //   server fetch happened long ago)
+      const resolvedRefetchOnMount =
+        typeof this.options.refetchOnMount === 'function'
+          ? this.options.refetchOnMount(this.#currentQuery)
+          : this.options.refetchOnMount
+
+      const shouldSkipFetchForHydration =
+        this.options._isHydrating &&
+        resolvedRefetchOnMount !== 'always' &&
+        !isStale(this.#currentQuery, this.options)
+
+      if (
+        shouldFetchOnMount(this.#currentQuery, this.options) &&
+        !shouldSkipFetchForHydration
+      ) {
         this.#executeFetch()
       } else {
         this.updateResult()
@@ -461,7 +479,13 @@ export class QueryObserver<
     if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
-      const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
+      // While a query is hydrating, the first render must match the server,
+      // which always rendered the dehydrated query as idle (not fetching),
+      // regardless of staleness. Suppress the optimistic fetch state so we
+      // don't introduce a hydration mismatch. The actual refetch (if the data
+      // is stale) is still triggered afterwards in `onSubscribe`.
+      const fetchOnMount =
+        !mounted && !options._isHydrating && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
