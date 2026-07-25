@@ -139,7 +139,10 @@ export const rule = createRule({
       }
 
       if (callExpression.callee.type === AST_NODE_TYPES.Identifier) {
-        return trackedCustomHooks[callExpression.callee.name]
+        const calleeName = callExpression.callee.name
+        return Object.hasOwn(trackedCustomHooks, calleeName)
+          ? trackedCustomHooks[calleeName]
+          : undefined
       }
 
       return undefined
