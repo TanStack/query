@@ -317,7 +317,7 @@ describe('Devtools', () => {
       }
     })
 
-    it('should render a hydrated query with a custom hash function', async () => {
+    it('should render a query row when a hydrated query uses a custom hash function', async () => {
       queryClient.fetchQuery({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
