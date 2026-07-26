@@ -118,8 +118,9 @@ describe('createInfiniteQueryController', () => {
     await waitFor(() => consumer.infinite().isSuccess)
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey }),
-    ).toBeDefined()
+      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
+        ?.state.data,
+    ).toEqual({ pages: [0], pageParams: [0] })
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
     ).toBeUndefined()
