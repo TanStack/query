@@ -105,6 +105,42 @@ describe('query', () => {
     expect(result).toBe('data3')
   })
 
+  it('should keep retrying while unfocused when refetchIntervalInBackground is true', async () => {
+    const key = queryKey()
+
+    // make page unfocused
+    const visibilityMock = mockVisibilityState('hidden')
+
+    let count = 0
+    let result
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        count++
+
+        if (count === 3) {
+          return `data${count}`
+        }
+
+        throw new Error(`error${count}`)
+      },
+      retry: 3,
+      retryDelay: 1,
+      refetchIntervalInBackground: true,
+    })
+
+    promise.then((data) => {
+      result = data
+    })
+
+    // Retries proceed even though the page stays unfocused
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBe('data3')
+
+    visibilityMock.mockRestore()
+  })
+
   it('should continue retry after reconnect and resolve all promises', async () => {
     const key = queryKey()
 

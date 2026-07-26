@@ -237,6 +237,11 @@ export interface QueryOptions<
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
   /**
+   * If set to `true`, the query will continue to refetch (and retry) while their tab/window is in the background.
+   * Defaults to `false`.
+   */
+  refetchIntervalInBackground?: boolean
+  /**
    * The time in milliseconds that unused/inactive cache data remains in memory.
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
    * When different garbage collection times are specified, the longest one will be used.
@@ -340,11 +345,6 @@ export interface QueryObserverOptions<
     | ((
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
       ) => number | false | undefined)
-  /**
-   * If set to `true`, the query will continue to refetch while their tab/window is in the background.
-   * Defaults to `false`.
-   */
-  refetchIntervalInBackground?: boolean
   /**
    * If set to `true`, the query will refetch on window focus if the data is stale.
    * If set to `false`, the query will not refetch on window focus.
