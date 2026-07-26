@@ -965,9 +965,9 @@ describe('queryClient', () => {
         queryFn: () => 'data',
         gcTime: 10,
       })
-      expect(queryCache.find({ queryKey: key })).toBeDefined()
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
       await vi.advanceTimersByTimeAsync(15)
-      expect(queryCache.find({ queryKey: key })).not.toBeDefined()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -979,7 +979,7 @@ describe('queryClient', () => {
 
       // check the query was added to the cache
       await queryClient.prefetchQuery({ queryKey: key, queryFn: fetchFn })
-      expect(queryCache.find({ queryKey: key })).toBeTruthy()
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
       // check the error doesn't occur
       expect(() =>
@@ -987,7 +987,7 @@ describe('queryClient', () => {
       ).not.toThrow()
 
       // check query was successful removed
-      expect(queryCache.find({ queryKey: key })).toBeFalsy()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -1638,7 +1638,6 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
       expect(state?.status).toEqual('pending')
       expect(state?.fetchStatus).toEqual('idle')
@@ -1660,7 +1659,6 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toEqual('initial')
     })
 
@@ -1936,7 +1934,7 @@ describe('queryClient', () => {
       // still paused because we are still offline
       expect(
         newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
-      ).toBeTruthy()
+      ).toBe(true)
 
       await newQueryClient.resumePausedMutations()
 

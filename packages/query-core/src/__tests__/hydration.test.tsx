@@ -155,7 +155,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find({ queryKey: key })?.state.data).toBe('string')
     await vi.advanceTimersByTimeAsync(100)
-    expect(hydrationCache.find({ queryKey: key })).toBeTruthy()
+    expect(hydrationCache.find({ queryKey: key })?.state.data).toBe('string')
 
     queryClient.clear()
     hydrationClient.clear()
@@ -330,9 +330,11 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
 
-    expect(hydrationCache.find({ queryKey: successKey })).toBeTruthy()
-    expect(hydrationCache.find({ queryKey: loadingKey })).toBeFalsy()
-    expect(hydrationCache.find({ queryKey: errorKey })).toBeFalsy()
+    expect(hydrationCache.find({ queryKey: successKey })?.state.data).toBe(
+      'success',
+    )
+    expect(hydrationCache.find({ queryKey: loadingKey })).toBeUndefined()
+    expect(hydrationCache.find({ queryKey: errorKey })).toBeUndefined()
 
     queryClient.clear()
     hydrationClient.clear()
