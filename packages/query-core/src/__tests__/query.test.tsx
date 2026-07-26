@@ -279,7 +279,6 @@ describe('query', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
-    expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
@@ -601,9 +600,9 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     const unsubscribe = observer.subscribe(() => undefined)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     unsubscribe()
 
     await vi.advanceTimersByTimeAsync(0)
@@ -619,11 +618,11 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(20)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     observer.refetch()
     unsubscribe()
     // unsubscribe should not remove even though gcTime has elapsed b/c query is still fetching
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     // should be removed after an additional staleTime wait
     await vi.advanceTimersByTimeAsync(30)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
@@ -636,16 +635,16 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(100)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     unsubscribe()
     await vi.advanceTimersByTimeAsync(100)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
     queryClient.setQueryData(key, 'data')
     await vi.advanceTimersByTimeAsync(100)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
   })
 
   it('should return proper count of observers', () => {
@@ -1103,9 +1102,9 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     expect(query.state.status).toBe('error')
-    expect(
-      query.state.error?.message.includes('Maximum call stack size exceeded'),
-    ).toBeTruthy()
+    expect(query.state.error?.message).toContain(
+      'Maximum call stack size exceeded',
+    )
 
     expect(consoleMock).toHaveBeenCalledWith(
       expect.stringContaining(

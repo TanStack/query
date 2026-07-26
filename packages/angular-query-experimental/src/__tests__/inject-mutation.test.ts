@@ -382,8 +382,7 @@ describe('injectMutation', () => {
     const text = debugElement.query(By.css('span')).nativeElement.textContent
     expect(text).toEqual('value')
     const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
-    expect(mutation).toBeDefined()
-    expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
+    expect(mutation?.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
 
   it('should update options on required signal input change', async () => {
