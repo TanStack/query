@@ -103,6 +103,22 @@ const baseTestCases = {
       ])
       .concat([
         {
+          name: `should pass when variable named toString (Object.prototype property) is used as dependency with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function Component() {
+              const { refetch } = useQuery({ queryFn: (value: string) => value });
+              const toString = () => refetch();
+              const callback = ${reactHookInvocation}(() => { toString() }, [toString]);
+              return;
+            }
+          `,
+        },
+      ])
+      .concat([
+        {
           name: `should pass when useQuery is imported from non-TanStack source and used with ${reactHookAlias}`,
           code: `
             ${reactHookImport}
