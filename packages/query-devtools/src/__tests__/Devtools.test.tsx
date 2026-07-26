@@ -242,14 +242,14 @@ describe('Devtools', () => {
 
   describe('query list', () => {
     it('should render a hydrated query with a custom hash function', async () => {
-      await queryClient.fetchQuery({
+      queryClient.fetchQuery({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
         queryKeyHashFn: () => 'custom-posts-hash',
       })
+      await vi.advanceTimersByTimeAsync(0)
       const dehydratedState = dehydrate(queryClient)
 
-      queryClient.clear()
       queryClient = new QueryClient()
       hydrate(queryClient, dehydratedState)
 
