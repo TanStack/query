@@ -788,6 +788,7 @@ describe('useSuspenseQuery', () => {
       </Suspense>,
     )
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 

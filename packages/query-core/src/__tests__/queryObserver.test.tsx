@@ -103,11 +103,11 @@ describe('queryObserver', () => {
         queryKey: key,
         staleTime: Infinity,
         enabled: () => enabled,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return 'data'
+          }),
       })
     })
 
@@ -267,11 +267,11 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       staleTime: Infinity,
-      queryFn: async () => {
-        await sleep(10)
-        count++
-        return 'data'
-      },
+      queryFn: () =>
+        sleep(10).then(() => {
+          count++
+          return 'data'
+        }),
     })
 
     let unsubscribe = observer.subscribe(vi.fn())

@@ -748,6 +748,7 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
@@ -838,7 +839,7 @@ describe('useSuspenseQuery', () => {
 
       const state = useSuspenseQuery({
         queryKey: stateKey,
-        queryFn: async () => sleep(10).then(() => ++count),
+        queryFn: () => sleep(10).then(() => ++count),
       })
 
       states.push(state)
