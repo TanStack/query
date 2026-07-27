@@ -1607,12 +1607,16 @@ describe('createQuery', () => {
         () => currentClient,
       )
 
-      expect(queryClient1.getQueryCache().find({ queryKey: key })?.queryKey).toEqual(key)
+      expect(
+        queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
+      ).toEqual(key)
 
       currentClient = queryClient2
       flushSync()
 
-      expect(queryClient2.getQueryCache().find({ queryKey: key })?.queryKey).toEqual(key)
+      expect(
+        queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
+      ).toEqual(key)
     }),
   )
 
