@@ -1,10 +1,16 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import SolidQueryDevtoolsPanel from '../devtoolsPanel'
 
 describe('SolidQueryDevtoolsPanel', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryClient = new QueryClient()
+  })
+
   afterEach(() => {
     vi.restoreAllMocks()
   })
@@ -16,8 +22,6 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via context', () => {
-    const queryClient = new QueryClient()
-
     expect(() =>
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -28,8 +32,6 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via props', () => {
-    const queryClient = new QueryClient()
-
     expect(() =>
       render(() => <SolidQueryDevtoolsPanel client={queryClient} />),
     ).not.toThrow()
@@ -40,7 +42,6 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setOnClose',
     )
-    const queryClient = new QueryClient()
     const onClose = vi.fn()
 
     render(() => (
@@ -55,11 +56,11 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setOnClose',
     )
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
-    expect(setOnClose).toHaveBeenCalledWith(expect.any(Function))
+    const forwarded = setOnClose.mock.calls[0]![0]
+    expect(forwarded).toBeInstanceOf(Function)
+    expect(forwarded()).toBeUndefined()
   })
 
   it('should forward "errorTypes" to the devtools instance', () => {
@@ -67,7 +68,6 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setErrorTypes',
     )
-    const queryClient = new QueryClient()
     const errorTypes = [
       { name: 'Network', initializer: () => new Error('Network') },
     ]
@@ -84,8 +84,6 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setErrorTypes',
     )
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
     expect(setErrorTypes).toHaveBeenCalledWith([])
@@ -93,8 +91,6 @@ describe('SolidQueryDevtoolsPanel', () => {
 
   it('should forward "theme" to the devtools instance', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'setTheme')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtoolsPanel client={queryClient} theme="dark" />)
 
     expect(setTheme).toHaveBeenCalledWith('dark')
@@ -102,8 +98,6 @@ describe('SolidQueryDevtoolsPanel', () => {
 
   it('should default "theme" to "system" when the prop is omitted', () => {
     const setTheme = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'setTheme')
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
     expect(setTheme).toHaveBeenCalledWith('system')
@@ -114,16 +108,12 @@ describe('SolidQueryDevtoolsPanel', () => {
       TanstackQueryDevtoolsPanel.prototype,
       'setClient',
     )
-    const queryClient = new QueryClient()
-
     render(() => <SolidQueryDevtoolsPanel client={queryClient} />)
 
     expect(setClient).toHaveBeenCalledWith(queryClient)
   })
 
   it('should preserve the default container height when "style" omits "height"', () => {
-    const queryClient = new QueryClient()
-
     const { container } = render(() => (
       <SolidQueryDevtoolsPanel
         client={queryClient}
@@ -138,8 +128,6 @@ describe('SolidQueryDevtoolsPanel', () => {
   })
 
   it('should let "style" override the default container height on the rendered element', () => {
-    const queryClient = new QueryClient()
-
     const { container } = render(() => (
       <SolidQueryDevtoolsPanel
         client={queryClient}
@@ -155,8 +143,6 @@ describe('SolidQueryDevtoolsPanel', () => {
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
     const unmount = vi.spyOn(TanstackQueryDevtoolsPanel.prototype, 'unmount')
-    const queryClient = new QueryClient()
-
     const { unmount: unmountComponent } = render(() => (
       <SolidQueryDevtoolsPanel client={queryClient} />
     ))
