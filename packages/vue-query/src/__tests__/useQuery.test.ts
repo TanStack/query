@@ -332,7 +332,8 @@ describe('useQuery', () => {
     expect(fetchFn).not.toHaveBeenCalled()
     await query.refetch()
     expect(fetchFn).toHaveBeenCalledTimes(1)
-    expect(fetchFn).toHaveBeenCalledWith(
+    expect(fetchFn).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
         queryKey: [...key, 'key11'],
       }),
@@ -341,7 +342,8 @@ describe('useQuery', () => {
     keyRef.value = 'key12'
     await query.refetch()
     expect(fetchFn).toHaveBeenCalledTimes(2)
-    expect(fetchFn).toHaveBeenCalledWith(
+    expect(fetchFn).toHaveBeenNthCalledWith(
+      2,
       expect.objectContaining({
         queryKey: [...key, 'key12'],
       }),

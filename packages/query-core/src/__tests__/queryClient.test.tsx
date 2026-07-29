@@ -965,9 +965,9 @@ describe('queryClient', () => {
         queryFn: () => 'data',
         gcTime: 10,
       })
-      expect(queryCache.find({ queryKey: key })).toBeDefined()
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
       await vi.advanceTimersByTimeAsync(15)
-      expect(queryCache.find({ queryKey: key })).not.toBeDefined()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -979,7 +979,7 @@ describe('queryClient', () => {
 
       // check the query was added to the cache
       await queryClient.prefetchQuery({ queryKey: key, queryFn: fetchFn })
-      expect(queryCache.find({ queryKey: key })).toBeTruthy()
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
       // check the error doesn't occur
       expect(() =>
@@ -987,7 +987,7 @@ describe('queryClient', () => {
       ).not.toThrow()
 
       // check query was successful removed
-      expect(queryCache.find({ queryKey: key })).toBeFalsy()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -1614,7 +1614,15 @@ describe('queryClient', () => {
 
       queryClient.resetQueries({ queryKey: key })
 
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: 'updated',
+          query,
+          action: expect.objectContaining({ type: 'setState' }),
+        }),
+      )
     })
 
     it('should reset query', async () => {
@@ -1630,7 +1638,6 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
       expect(state?.status).toEqual('pending')
       expect(state?.fetchStatus).toEqual('idle')
@@ -1652,7 +1659,6 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toEqual('initial')
     })
 
@@ -1781,8 +1787,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1816,8 +1822,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1861,8 +1867,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
@@ -1885,12 +1891,12 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       await queryClient.resumePausedMutations()
 
       // still paused because we are still offline
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1909,7 +1915,7 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       const state = dehydrate(queryClient)
 
@@ -1928,7 +1934,7 @@ describe('queryClient', () => {
       // still paused because we are still offline
       expect(
         newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
-      ).toBeTruthy()
+      ).toBe(true)
 
       await newQueryClient.resumePausedMutations()
 
@@ -2004,9 +2010,9 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
+      expect(observer3.getCurrentResult().isPaused).toBe(true)
       onlineManager.setOnline(true)
 
       await vi.advanceTimersByTimeAsync(110)

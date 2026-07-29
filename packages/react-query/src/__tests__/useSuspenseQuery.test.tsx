@@ -192,7 +192,7 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -748,6 +748,7 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
@@ -838,7 +839,7 @@ describe('useSuspenseQuery', () => {
 
       const state = useSuspenseQuery({
         queryKey: stateKey,
-        queryFn: async () => sleep(10).then(() => ++count),
+        queryFn: () => sleep(10).then(() => ++count),
       })
 
       states.push(state)

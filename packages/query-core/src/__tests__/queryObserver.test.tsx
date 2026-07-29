@@ -103,11 +103,11 @@ describe('queryObserver', () => {
         queryKey: key,
         staleTime: Infinity,
         enabled: () => enabled,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return 'data'
+          }),
       })
     })
 
@@ -267,11 +267,11 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       staleTime: Infinity,
-      queryFn: async () => {
-        await sleep(10)
-        count++
-        return 'data'
-      },
+      queryFn: () =>
+        sleep(10).then(() => {
+          count++
+          return 'data'
+        }),
     })
 
     let unsubscribe = observer.subscribe(vi.fn())
@@ -1240,10 +1240,13 @@ describe('queryObserver', () => {
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
+    const query = queryClient.getQueryCache().find({ queryKey: key })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'observerOptionsUpdated' }),
-    )
+    expect(spy).toHaveBeenCalledWith({
+      type: 'observerOptionsUpdated',
+      query,
+      observer,
+    })
 
     unsubscribe()
   })
