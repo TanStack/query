@@ -46,6 +46,20 @@ describe('pendingThenable', () => {
     await expect(thenable).resolves.toBe('data')
   })
 
+  it('should ignore a retained settlement callback invoked after it settled', async () => {
+    const thenable = pendingThenable<string>()
+    // a caller can hold on to `reject` before the thenable settles
+    const retainedReject = thenable.reject
+
+    thenable.resolve('data')
+    retainedReject(new Error('error'))
+
+    expect(thenable.status).toBe('fulfilled')
+    expect((thenable as unknown as FulfilledThenable<string>).value).toBe('data')
+    expect((thenable as unknown as RejectedThenable<string>).reason).toBeUndefined()
+    await expect(thenable).resolves.toBe('data')
+  })
+
   it('should not report an unhandled rejection when nobody awaits it', async () => {
     const onUnhandledRejection = vi.fn()
     process.on('unhandledRejection', onUnhandledRejection)
