@@ -63,6 +63,34 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  it('should not optimistically show fetching when unsubscribed', () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.resolve('data'))
+
+    function Page() {
+      const [query] = useQueries({
+        queries: [{ queryKey: key, queryFn }],
+        subscribed: false,
+      })
+
+      return (
+        <div>
+          <span>isFetching: {String(query.isFetching)}</span>
+          <span>fetchStatus: {query.fetchStatus}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+    ).toBe(0)
+    rendered.getByText('isFetching: false')
+    rendered.getByText('fetchStatus: idle')
+  })
+
   it('should track results', async () => {
     const key1 = queryKey()
     const results: Array<Array<UseQueryResult>> = []
