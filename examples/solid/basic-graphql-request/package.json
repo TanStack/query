@@ -12,12 +12,12 @@
     "@tanstack/solid-query-devtools": "^6.0.0-beta.6",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
-    "@solidjs/web": "2.0.0-beta.21",
-    "solid-js": "2.0.0-beta.21"
+    "@solidjs/web": "2.0.0-beta.29",
+    "solid-js": "2.0.0-beta.29"
   },
   "devDependencies": {
     "typescript": "5.8.3",
     "vite": "^6.4.1",
-    "vite-plugin-solid": "3.0.0-next.14"
+    "vite-plugin-solid": "3.0.0-next.21"
   }
 }
