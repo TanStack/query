@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-beta.7
+
+### Patch Changes
+
+- [#11133](https://github.com/TanStack/query/pull/11133) [`c6002fb`](https://github.com/TanStack/query/commit/c6002fb5716a1b90bd28443a6b1a29c95baf2155) - chore: upgrade to solid v2 beta 29
+
 ## 6.0.0-beta.6
 
 ### Patch Changes
