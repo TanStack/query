@@ -1,16 +1,22 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { notifyManager, shouldThrowError } from '@tanstack/query-core'
+import {
+  hydrate as coreHydrate,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import {
   createRenderEffect,
   createSignal,
   createStore,
+  getObserver,
   isPending,
   onCleanup,
   reconcile,
   refresh,
   runWithOwner,
+  sharedConfig,
   snapshot,
   untrack,
 } from 'solid-js'
@@ -246,15 +252,32 @@ export function useBaseQuery<
         if (
           unsubscribe &&
           !disposed &&
+          // Components that hydrated over a pending streamed query read
+          // through the resource (see the Proxy below), so settled data
+          // changes must re-run the resource compute for their JSX to
+          // update. Only refresh on SETTLED changes — refreshing on every
+          // in-flight transition mints a new pending promise per event and
+          // trips Solid's infinite-loop flush guard.
           (previousResult.isLoading !== result.isLoading ||
-            previousResult.isError !== result.isError)
+            previousResult.isError !== result.isError ||
+            (hydratedAsPending &&
+              !result.isLoading &&
+              previousResult.data !== result.data))
         ) {
-          try {
-            refresh(queryResource)
-          } catch {
-            // NotReadyError is expected when refreshing a memo that returns
-            // a Promise. The Loading boundary handles this during rendering.
-          }
+          // Defer to a microtask: refreshing synchronously re-runs the
+          // resource compute (which syncs the store) inside the flush that
+          // is delivering this notification, tripping Solid's infinite-loop
+          // flush guard under load.
+          queueMicrotask(() => {
+            if (disposed) return
+            try {
+              refresh(queryResource)
+            } catch {
+              // NotReadyError is expected when refreshing a memo that
+              // returns a Promise. The Loading boundary handles this during
+              // rendering.
+            }
+          })
         }
       })
     })
@@ -280,6 +303,27 @@ export function useBaseQuery<
    */
   let unsubscribe: (() => void) | null = null
   let disposed = false
+  // Set whenever the resource Promise executor actually executes. When Solid
+  // hydrates this computation over a SERIALIZED async value (a query that was
+  // still pending when the server streamed the shell), it replays the compute
+  // under a stubbed Promise (`subFetch`'s MockPromise, whose constructor never
+  // invokes the executor) purely to re-establish reactive dependencies — the
+  // executor's side effects (observer subscription, resolver wiring, store
+  // sync) are silently dropped and the memo's value is taken from the
+  // serialized payload instead. This flag lets the hydration recovery effect
+  // below detect that case and re-wire what the replay discarded.
+  let computeWired = false
+  // Whether this component is being created by the hydration walk. All of the
+  // MockPromise-replay recovery below is scoped to this case so regular
+  // client mounts keep their exact current behavior.
+  const wasHydrating = !isServer && sharedConfig.hydrating === true
+  // Queries that finished on the server before dehydration hydrate the cache
+  // synchronously, so the store already holds the resolved data during the
+  // walk and the regular store-backed reads hydrate cleanly — those must keep
+  // the exact pristine behavior. Only a query that is still PENDING at
+  // hydration (it streamed as a serialized pending promise) needs the
+  // resource-backed read path and the replay recovery below.
+  const hydratedAsPending = wasHydrating && observerResult.isLoading
 
   /*
     Fixes #7275
@@ -326,6 +370,7 @@ export function useBaseQuery<
     }
 
     return new Promise<ResourceData>((resolve, reject) => {
+      computeWired = true
       resolver = resolve
       if (isServer) {
         unsubscribe = createServerSubscriber((data) => {
@@ -394,6 +439,114 @@ export function useBaseQuery<
     }
   })
 
+  if (wasHydrating) {
+    // Hydration recovery. Solid restores this computation's memo from the
+    // value the server serialized, so the compute's wiring never runs on
+    // the client:
+    //
+    //  - SYNC serialized value (the query settled on the server before the
+    //    shell flushed): the compute is skipped entirely.
+    //  - ASYNC serialized value (the query streamed as a pending promise):
+    //    the compute is replayed under Solid's MockPromise stub whose
+    //    constructor never invokes the executor (see `computeWired`).
+    //
+    // Either way the QueryObserver subscription that normally gets wired
+    // inside the resource Promise executor is dropped — the component
+    // renders the hydrated snapshot correctly but never reacts to cache
+    // updates (setQueryData, refetches, invalidations notify zero
+    // subscribers).
+    //
+    // IMPORTANT CONSTRAINTS, both learned the hard way:
+    //
+    //  1. No owned computations may be created here. The server did not
+    //     create them, so a client-only createRenderEffect shifts the
+    //     hydration key of every subsequent computation in the component
+    //     and JSX claiming fails ("unclaimed server-rendered node"
+    //     warnings, duplicated inert DOM). Recovery therefore runs on
+    //     unowned timers, guarded by `disposed`.
+    //  2. Wiring must wait until hydration has FULLY completed. Boundary
+    //     hydration is asynchronous (solid-js resumes Loading boundaries
+    //     from streamed scripts), and subscribing earlier delivers an
+    //     immediate observer notification (structuralSharing is disabled,
+    //     so every result is a fresh object) whose store write re-renders
+    //     the component mid-walk and breaks claiming the same way.
+    //     `sharedConfig.done` flips true once all boundaries have resumed,
+    //     so poll it.
+    const recoverAfterHydration = () => {
+      if (disposed) return
+      if (
+        sharedConfig.hydrating ||
+        !(sharedConfig as any).done ||
+        untrack(isRestoring)
+      ) {
+        setTimeout(recoverAfterHydration, 16)
+        return
+      }
+      // The executor may have run natively in the meantime (e.g. an options
+      // change re-ran the compute) — it wires the subscription itself.
+      if (!unsubscribe) {
+        unsubscribe = createClientSubscriber()
+        // Catch up on cache changes that happened between store creation
+        // and the subscription being established (e.g. a streamed query
+        // chunk hydrated by the router integration). Skip the write when
+        // nothing changed so a clean hydration stays untouched.
+        const current = untrack(() =>
+          observer.getOptimisticResult(defaultedOptions()),
+        )
+        const previous = observerResult
+        if (
+          current.status !== previous.status ||
+          current.dataUpdatedAt !== previous.dataUpdatedAt ||
+          current.data !== previous.data
+        ) {
+          observerResult = current
+          runWithOwner(null, () => {
+            setStateWithReconciliation(current)
+          })
+        }
+      }
+      if (hydratedAsPending && !computeWired) {
+        finishPendingRecovery()
+      }
+    }
+    // Second stage for streamed-pending queries: once the hydrated resource
+    // settles (the streamed value arrived), seed the cache from the
+    // serialized snapshot when nothing fresher exists (standalone Solid SSR
+    // setups without a router integration streaming the cache separately),
+    // then refresh the resource: the compute re-runs with the native
+    // Promise, so its executor performs the full normal wiring against the
+    // now-warm cache and the resource resolves with a live result.
+    const finishPendingRecovery = () => {
+      if (disposed || computeWired) return
+      if (untrack(() => isPending(queryResource))) {
+        setTimeout(finishPendingRecovery, 16)
+        return
+      }
+      const resolved = untrack(queryResource)
+      const hydrationData = (resolved as any)?.hydrationData
+      if (hydrationData && hydrationData.state?.data !== undefined) {
+        const existing = client().getQueryCache().get(hydrationData.queryHash)
+        if (
+          !existing ||
+          (existing.state.data === undefined &&
+            existing.state.dataUpdatedAt < hydrationData.state.dataUpdatedAt)
+        ) {
+          coreHydrate(client(), {
+            mutations: [],
+            queries: [hydrationData],
+          })
+        }
+      }
+      try {
+        refresh(queryResource)
+      } catch {
+        // NotReadyError is expected when refreshing a memo that returns a
+        // Promise. The Loading boundary handles this during rendering.
+      }
+    }
+    recoverAfterHydration()
+  }
+
   // Properties that should never throw — these let users access error info
   // even outside an ErrorBoundary.
   const errorPassthroughProps = new Set([
@@ -426,9 +579,32 @@ export function useBaseQuery<
       // would render stale loading values. Reading the resolved resource keeps
       // the streamed SSR HTML consistent with the serialized resource, which
       // is what the client hydrates against.
-      if (isServer) {
-        const resolved = queryResource()
-        if (prop in resolved) {
+      //
+      // The same resource-first read applies on the CLIENT for components
+      // created by the hydration walk. When a query streams as a pending
+      // promise, Solid replays the resource compute under a stubbed Promise
+      // to recover the serialized value, so the executor that normally
+      // subscribes and syncs the store never ran and `state` would stay
+      // stuck at pending. Reading through the resource keeps the component
+      // on the server's async timeline (suspend until the streamed value
+      // arrives, then render the serialized snapshot). Reads stay on the
+      // resource for the lifetime of the hydrated component — JSX created
+      // during hydration tracks the resource, and the client subscriber
+      // refreshes it on every settled result change, so updates keep
+      // flowing after recovery.
+      if (isServer || (hydratedAsPending && !untrack(isRestoring))) {
+        // Untracked client reads (e.g. logging in component setup) of a
+        // still-pending resource would throw Solid's untracked-pending-read
+        // error. Serve the store's optimistic pending state instead — the
+        // same value an untracked setup read sees on a regular mount.
+        if (!isServer && !getObserver() && isPending(queryResource)) {
+          return Reflect.get(target, prop, receiver)
+        }
+        // Hydrated snapshots can transiently be undefined (e.g. a replayed
+        // compute whose serialized value has not been delivered yet), even
+        // though the declared type is always an object.
+        const resolved = queryResource() as ResourceData | undefined
+        if (resolved && prop in resolved) {
           return Reflect.get(resolved, prop)
         }
       }
