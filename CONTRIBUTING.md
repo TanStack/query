@@ -31,7 +31,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
     corepack enable && corepack prepare
     ```
 
-  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`
+  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in [.nvmrc](./.nvmrc)
 
     ```bash
     nvm use
@@ -135,26 +135,6 @@ https://github.com/fulopkovacs/form/assets/43729152/9d35a3c3-8153-4e74-9cb2-af27
 
 If you want to run an example without installing dependencies for the whole repo, just follow the instructions from the example's README.md file. It will then be run against the latest TanStack Query release.
 
-## Online one-click setup
-
-You can use Gitpod (An Online open-source VS Code-like IDE that is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
-
-- clone the `TanStack/query` repo.
-- install all the dependencies in `/` and `/docs`.
-- run below in the root(`/`) to Auto-build files.
-
-  ```bash
-  npm start
-  ```
-
-- run below in `/docs`.
-
-  ```bash
-  npm run dev
-  ```
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/TanStack/query)
-
 ## Changesets
 
 This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. If your PR should release a new package version (patch, minor, or major), please run `pnpm changeset` and commit the file. If needed, changeset descriptions can be more descriptive, and will be included in the changelog. If your PR affects docs, examples, styles, etc., you probably don't need to generate a changeset.
@@ -179,7 +159,7 @@ To run tests in a local environment, you should use `nx` commands from the root 
 To run tests for **all packages**, run:
 
 ```bash
-npm run test
+pnpm run test
 ```
 
 ### ✅ Run tests for a specific package
@@ -187,13 +167,13 @@ npm run test
 To run tests for a specific package, use the following command:
 
 ```bash
-npx nx run @tanstack/{package-name}:test:lib
+pnpm nx run @tanstack/{package-name}:test:lib
 ```
 
 For example:
 
 ```bash
-npx nx run @tanstack/react-query:test:lib
+pnpm nx run @tanstack/react-query:test:lib
 ```
 
 ### ⚠️ Caution
