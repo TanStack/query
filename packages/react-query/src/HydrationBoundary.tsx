@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { hydrate, isServer } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
@@ -9,6 +9,12 @@ import type {
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
+
+// Hook choice has to be static, so this intentionally uses the static
+// isServer check instead of environmentManager
+const useIsomorphicLayoutEffect = isServer
+  ? React.useEffect
+  : React.useLayoutEffect
 
 export interface HydrationBoundaryProps {
   state: DehydratedState | null | undefined
@@ -31,7 +37,7 @@ export const HydrationBoundary = ({
   const client = useQueryClient(queryClient)
 
   const optionsRef = React.useRef(options)
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     optionsRef.current = options
   })
 
@@ -101,7 +107,14 @@ export const HydrationBoundary = ({
       return undefined
     }, [client, state])
 
-  React.useEffect(() => {
+  // This must be a layout effect so the queue is hydrated before any
+  // useSyncExternalStore subscriptions in children run in their passive
+  // effects. A remounting observer that subscribes before hydration would
+  // see the old, possibly stale data and kick off a redundant refetch of
+  // the data the dehydrated state already contains. Layout effects still
+  // only run when the tree commits, so aborted transitions keep discarding
+  // the queue.
+  useIsomorphicLayoutEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
     }
