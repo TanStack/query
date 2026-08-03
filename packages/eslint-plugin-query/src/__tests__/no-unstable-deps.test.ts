@@ -405,3 +405,29 @@ reactHookNames.forEach((reactHookName) => {
     },
   )
 })
+
+const protoMethodNames = [
+  'toString',
+  'valueOf',
+  'constructor',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+] as const
+
+ruleTester.run('no-unstable-deps', rule, {
+  valid: protoMethodNames.map((method) => ({
+    name: `should not flag variable from "${method}()" call as unstable dep`,
+    code: `
+      import { useCallback } from "React";
+
+      function Component() {
+        const result = ${method}();
+        const cb = useCallback(() => { result }, [result]);
+        return null;
+      }
+    `,
+  })),
+  invalid: [],
+})
