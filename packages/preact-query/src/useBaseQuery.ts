@@ -71,8 +71,17 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
 
+  const query = client
+    .getQueryCache()
+    .get<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      TQueryKey
+    >(defaultedOptions.queryHash)
+
   ensureSuspenseTimers(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
 
   useClearResetErrorBoundary(errorResetBoundary)
 
