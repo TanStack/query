@@ -99,6 +99,14 @@ export class MutationObserver<
     }
   }
 
+  protected onSubscribe(): void {
+    if (this.#currentMutation) {
+      this.#currentMutation.addObserver(this)
+      this.#updateResult()
+      this.#notify()
+    }
+  }
+
   onMutationUpdate(
     action: Action<TData, TError, TVariables, TOnMutateResult>,
   ): void {
