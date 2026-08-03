@@ -37,8 +37,13 @@ export const ensurePreventErrorBoundaryRetry = <
     options.experimental_prefetchInRender ||
     throwOnError
   ) {
-    // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
+    // Prevent retrying failed query if the error boundary has not been reset yet.
+    // Allow retries on a fresh mount after the error boundary has unmounted the
+    // failed observer.
+    if (
+      !errorResetBoundary.isReset() &&
+      (options.suspense || query?.getObserversCount())
+    ) {
       options.retryOnMount = false
     }
   }
