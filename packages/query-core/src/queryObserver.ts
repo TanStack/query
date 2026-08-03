@@ -317,7 +317,44 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    let unsubscribe = () => {}
+    let resolveEarly:
+      | ((result: QueryObserverResult<TData, TError>) => void)
+      | undefined
+
+    const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
+      (resolve) => {
+        resolveEarly = resolve
+        unsubscribe = this.#client.getQueryCache().subscribe((event) => {
+          if (
+            event.type === 'updated' &&
+            event.query.queryHash === query.queryHash &&
+            query.state.data !== undefined
+          ) {
+            unsubscribe()
+            resolve(this.createResult(query, defaultedOptions))
+          }
+        })
+      },
+    )
+
+    return Promise.race([
+      query
+        .fetch()
+        .then(() => {
+          const result = this.createResult(query, defaultedOptions)
+          // Settle the subscriber promise so both branches always settle.
+          // This value is ignored by Promise.race since the fetch branch already won.
+          if (resolveEarly) {
+            resolveEarly(result)
+          }
+          return result
+        })
+        .finally(() => {
+          unsubscribe()
+        }),
+      cachePromise,
+    ])
   }
 
   protected fetch(
