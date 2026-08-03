@@ -24,18 +24,27 @@ import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
+// Distributive over `TResult` so each member of the discriminated union
+// (success / pending / error / placeholder / refetch-error / loading-error)
+// produces its own ref-mapped object, instead of collapsing into a single
+// `{ data: Ref<TData | undefined>, ... }`. This preserves narrowing through
+// `reactive()` and direct property access on the un-destructured result.
+// See packages/vue-query/src/__tests__/useQuery.test-d.ts for the contracts
+// this preserves (and the destructure-without-reactive limitation).
 export type UseBaseQueryReturnType<
   TData,
   TError,
   TResult = QueryObserverResult<TData, TError>,
-> = {
-  [K in keyof TResult]: K extends
-    | 'fetchNextPage'
-    | 'fetchPreviousPage'
-    | 'refetch'
-    ? TResult[K]
-    : Ref<Readonly<TResult>[K]>
-} & {
+> = (TResult extends unknown
+  ? {
+      [K in keyof TResult]: K extends
+        | 'fetchNextPage'
+        | 'fetchPreviousPage'
+        | 'refetch'
+        ? TResult[K]
+        : Ref<Readonly<TResult>[K]>
+    }
+  : never) & {
   suspense: () => Promise<TResult>
 }
 
