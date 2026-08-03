@@ -2552,6 +2552,9 @@ importers:
       '@eslint/js':
         specifier: ^9.36.0
         version: 9.39.4
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       globals:
         specifier: ^17.4.0
         version: 17.5.0
