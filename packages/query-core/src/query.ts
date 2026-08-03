@@ -559,6 +559,7 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
+      refetchIntervalInBackground: context.options.refetchIntervalInBackground,
       canRun: () => true,
     })
 

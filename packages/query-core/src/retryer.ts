@@ -18,6 +18,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode: NetworkMode | undefined
+  refetchIntervalInBackground?: boolean
   canRun: () => boolean
 }
 
@@ -102,7 +103,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   const canContinue = () =>
-    focusManager.isFocused() &&
+    (config.refetchIntervalInBackground === true || focusManager.isFocused()) &&
     (config.networkMode === 'always' || onlineManager.isOnline()) &&
     config.canRun()
 
