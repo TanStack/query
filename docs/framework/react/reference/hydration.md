@@ -98,7 +98,7 @@ hydrate(queryClient, dehydratedState, options)
 
 If the queries you're trying to hydrate already exist in the queryCache, `hydrate` will only overwrite them if the data is newer than the data present in the cache. Otherwise, it will **not** get applied.
 
-[//]: # 'HydrationBoundary'
+[//]: # (HydrationBoundary)
 
 ## `HydrationBoundary`
 
@@ -125,4 +125,4 @@ function App() {
   - `queryClient?: QueryClient`
     - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
-[//]: # 'HydrationBoundary'
+[//]: # (HydrationBoundary)

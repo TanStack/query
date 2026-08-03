@@ -40,7 +40,7 @@ On a more technical note, TanStack Query will likely:
 - Have a direct impact on your end-users by making your application feel faster and more responsive than ever before
 - Potentially help you save on bandwidth and increase memory performance
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ## Enough talk, show me some code already!
 
@@ -90,8 +90,8 @@ function Example() {
 }
 ```
 
-[//]: # 'Example'
-[//]: # 'Materials'
+[//]: # (Example)
+[//]: # (Materials)
 
 ## You talked me into it, so what now?
 
@@ -99,4 +99,4 @@ function Example() {
 - Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation.md) and [API Reference](./reference/useQuery.md)
 - See the Article [Why You Want React Query](https://tkdodo.eu/blog/why-you-want-react-query).
 
-[//]: # 'Materials'
+[//]: # (Materials)

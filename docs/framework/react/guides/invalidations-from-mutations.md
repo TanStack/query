@@ -7,17 +7,17 @@ Invalidating queries is only half the battle. Knowing **when** to invalidate the
 
 For example, assume we have a mutation to post a new todo:
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 const mutation = useMutation({ mutationFn: postTodo })
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `client`'s `invalidateQueries` function:
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -40,18 +40,18 @@ const mutation = useMutation({
 })
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 Returning a Promise on `onSuccess` makes sure the data is updated before the mutation is entirely complete (i.e., isPending is true until onSuccess is fulfilled)
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./mutations.md)
 
-[//]: # 'Materials'
+[//]: # (Materials)
 
 ## Further reading
 
 For a technique to automatically invalidate Queries after Mutations, have a look at [TkDodo's article on Automatic Query Invalidation after Mutations](https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations).
 
-[//]: # 'Materials'
+[//]: # (Materials)

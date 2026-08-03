@@ -129,7 +129,7 @@ if (axios.isAxiosError(query.error)) {
 
 [typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgYygUwIYzQRQK5pQCecAvnAGZQQhwDkAAjBgHYDOzyA1gPRsQAbYABMAtAEcCxOgFgAUKEiw4GAB7AIbStVp01GtrLnyYRMGjgBxanjBwAvIjgiAXHBZ4QAI0Jl585Ah2eAo0GGQAC2sIWy1HAAoASjcABR1gNjQAHmjbAG0AXQA+BxL9TQA6AHMw+LoeKpswQ0SKmAi0Fnj0Nkh2C3sSnr7MiuEsDET-OUDguElCEkdUTGx8Rfik0rh4hHk4A-mpIgBpNCI3PLpGmOa6AoAaOH3DheIAMRY3UPCoprYHvJSIkpsY5G8iBVCNQoPIeDxDnAAHoAfmmwAoO3KbAqGQAgupNABRKAw+IQqGk6AgxAvA4U6HQOlweGI1FA+RAA)
 
-[//]: # 'RegisterErrorType'
+[//]: # (RegisterErrorType)
 
 ```tsx
 import '@tanstack/solid-query'
@@ -150,7 +150,7 @@ query.error
 //    ^? (property) error: unknown | null
 ```
 
-[//]: # 'RegisterErrorType'
+[//]: # (RegisterErrorType)
 
 ## Registering global `Meta`
 

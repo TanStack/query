@@ -16,7 +16,7 @@ When `enabled` is `false`:
 
 > TypeScript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 function Todos() {
@@ -50,7 +50,7 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 Permanently disabling a query opts out of many great features that TanStack Query has to offer (like background refetches), and it's also not the idiomatic way. It takes you from the declarative approach (defining dependencies when your query should run) into an imperative mode (fetch whenever I click here). It is also not possible to pass parameters to `refetch`. Oftentimes, all you want is a lazy query that defers the initial fetch:
 
@@ -58,7 +58,7 @@ Permanently disabling a query opts out of many great features that TanStack Quer
 
 The enabled option can not only be used to permanently disable a query, but also to enable / disable it at a later time. A good example would be a filter form where you only want to fire off the first request once the user has entered a filter value:
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 function Todos() {
@@ -81,7 +81,7 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ### isLoading (Previously: `isInitialLoading`)
 
@@ -99,7 +99,7 @@ If you are using TypeScript, you can use the `skipToken` to disable a query. Thi
 
 > **IMPORTANT**: `refetch` from `useQuery` will not work with `skipToken`. Calling `refetch()` on a query that uses `skipToken` will result in a `Missing queryFn` error because there is no valid query function to execute. If you need to manually trigger queries, consider using `enabled: false` instead, which allows `refetch()` to work properly. Other than this limitation, `skipToken` works the same as `enabled: false`.
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```tsx
 import { skipToken, useQuery } from '@tanstack/react-query'
@@ -123,4 +123,4 @@ function Todos() {
 }
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)

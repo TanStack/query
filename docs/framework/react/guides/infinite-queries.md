@@ -40,7 +40,7 @@ With this information, we can create a "Load More" UI by:
 - Returning the information for the next query in `getNextPageParam`
 - Calling `fetchNextPage` function
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -97,7 +97,7 @@ function Projects() {
 }
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 It's essential to understand that calling `fetchNextPage` while an ongoing fetch is in progress runs the risk of overwriting data refreshes happening in the background. This situation becomes particularly critical when rendering a list and triggering `fetchNextPage` simultaneously.
 
@@ -107,13 +107,13 @@ If you intend to enable simultaneous fetching, you can utilize the `{ cancelRefe
 
 To ensure a seamless querying process without conflicts, it's highly recommended to verify that the query is not in an `isFetching` state, especially if the user won't directly control that call.
 
-[//]: # 'Example1'
+[//]: # (Example1)
 
 ```jsx
 <List onEndReached={() => hasNextPage && !isFetching && fetchNextPage()} />
 ```
 
-[//]: # 'Example1'
+[//]: # (Example1)
 
 ## What happens when an infinite query needs to be refetched?
 
@@ -123,7 +123,7 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```tsx
 useInfiniteQuery({
@@ -135,13 +135,13 @@ useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ## What if I want to show the pages in reversed order?
 
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ```tsx
 useInfiniteQuery({
@@ -154,13 +154,13 @@ useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ## What if I want to manually update the infinite query?
 
 ### Manually removing first page:
 
-[//]: # 'Example5'
+[//]: # (Example5)
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
@@ -169,11 +169,11 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example5'
+[//]: # (Example5)
 
 ### Manually removing a single value from an individual page:
 
-[//]: # 'Example6'
+[//]: # (Example6)
 
 ```tsx
 const newPagesArray =
@@ -187,11 +187,11 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example6'
+[//]: # (Example6)
 
 ### Keep only the first page:
 
-[//]: # 'Example7'
+[//]: # (Example7)
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
@@ -200,7 +200,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example7'
+[//]: # (Example7)
 
 Make sure to always keep the same data structure of pages and pageParams!
 
@@ -215,7 +215,7 @@ The solution is to use a "Limited Infinite Query". This is made possible by usin
 
 In the following example only 3 pages are kept in the query data pages array. If a refetch is needed, only 3 pages will be refetched sequentially.
 
-[//]: # 'Example8'
+[//]: # (Example8)
 
 ```tsx
 useInfiniteQuery({
@@ -228,13 +228,13 @@ useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example8'
+[//]: # (Example8)
 
 ## What if my API doesn't return a cursor?
 
 If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Because `getNextPageParam` and `getPreviousPageParam` also get the `pageParam`of the current page, you can use it to calculate the next / previous page param.
 
-[//]: # 'Example9'
+[//]: # (Example9)
 
 ```tsx
 return useInfiniteQuery({
@@ -256,11 +256,11 @@ return useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example9'
-[//]: # 'Materials'
+[//]: # (Example9)
+[//]: # (Materials)
 
 ## Further reading
 
 To get a better understanding of how Infinite Queries work under the hood, see the article [How Infinite Queries work](https://tkdodo.eu/blog/how-infinite-queries-work).
 
-[//]: # 'Materials'
+[//]: # (Materials)

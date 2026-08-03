@@ -15,7 +15,7 @@ However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. a
 
 ## Using `fetch`
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ```tsx
 const query = useQuery({
@@ -40,11 +40,11 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example'
+[//]: # (Example)
 
 ## Using `axios` [v0.22.0+](https://github.com/axios/axios/releases/tag/v0.22.0)
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ```tsx
 import axios from 'axios'
@@ -59,11 +59,11 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example2'
+[//]: # (Example2)
 
 ### Using `axios` with version lower than v0.22.0
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ```tsx
 import axios from 'axios'
@@ -90,11 +90,11 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example3'
+[//]: # (Example3)
 
 ## Using `XMLHttpRequest`
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ```tsx
 const query = useQuery({
@@ -116,13 +116,13 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example4'
+[//]: # (Example4)
 
 ## Using `graphql-request`
 
 An `AbortSignal` can be set in the client `request` method.
 
-[//]: # 'Example5'
+[//]: # (Example5)
 
 ```tsx
 const client = new GraphQLClient(endpoint)
@@ -135,13 +135,13 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example5'
+[//]: # (Example5)
 
 ## Using `graphql-request` with version lower than v4.0.0
 
 An `AbortSignal` can be set in the `GraphQLClient` constructor.
 
-[//]: # 'Example6'
+[//]: # (Example6)
 
 ```tsx
 const query = useQuery({
@@ -155,13 +155,13 @@ const query = useQuery({
 })
 ```
 
-[//]: # 'Example6'
+[//]: # (Example6)
 
 ## Manual Cancellation
 
 You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, TanStack Query will additionally also cancel the Promise.
 
-[//]: # 'Example7'
+[//]: # (Example7)
 
 ```tsx
 const query = useQuery({
@@ -186,7 +186,7 @@ return (
 )
 ```
 
-[//]: # 'Example7'
+[//]: # (Example7)
 
 ## `Cancel Options`
 
@@ -208,8 +208,8 @@ A cancel options object supports the following properties:
 
 ## Limitations
 
-[//]: # 'Limitations'
+[//]: # (Limitations)
 
 Cancellation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
 
-[//]: # 'Limitations'
+[//]: # (Limitations)
