@@ -149,14 +149,15 @@ describe('React hydration', () => {
         </QueryClientProvider>,
       )
 
-      // Existing observer should not have updated at this point,
-      // as that would indicate a side effect in the render phase
-      expect(rendered.getByText('string')).toBeInTheDocument()
+      // The existing observer picks up the hydrated data once effects have
+      // flushed, but not during the render phase (the aborted transition
+      // test guards the render phase)
+      expect(rendered.getByText('should change')).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText('added')).toBeInTheDocument()
 
       await vi.advanceTimersByTimeAsync(0)
-      // After effects phase has had time to run, the observer should have updated
+      // Nothing changes after the effects phase has had time to run
       expect(rendered.queryByText('string')).not.toBeInTheDocument()
       expect(rendered.getByText('should change')).toBeInTheDocument()
 
@@ -479,6 +480,65 @@ describe('React hydration', () => {
     hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
+  })
+
+  it('should not refetch an inactive query when hydrated data is fresh', async () => {
+    const queryClient = new QueryClient()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'client'))
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['data'],
+        queryFn,
+        staleTime: 1000,
+      })
+      return <div>{data}</div>
+    }
+
+    // First visit fetches and caches the data
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('client')).toBeInTheDocument()
+
+    // Navigate away; the cached data goes stale while the page is unmounted
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <div />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(2000)
+
+    // A loader fetches fresh data on the revisit and dehydrates it
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    queryFn.mockClear()
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    // Hydration lands before the remounted useQuery subscribes, so the
+    // fresh data is used as is instead of triggering a refetch
+    expect(rendered.getByText('loader')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('loader')).toBeInTheDocument()
+
+    queryClient.clear()
   })
 
   it('should not refetch when query has enabled set to false', async () => {
