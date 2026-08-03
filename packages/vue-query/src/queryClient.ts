@@ -33,6 +33,14 @@ import type {
   Updater,
 } from '@tanstack/query-core'
 
+type MaybeRefDeepOrGetter<T> = MaybeRefDeep<T> | (() => T)
+
+function cloneDeepUnrefOrGet<T>(value: MaybeRefDeepOrGetter<T>): T {
+  const unwrapped = typeof value === 'function' ? (value as () => T)() : value
+
+  return cloneDeepUnref(unwrapped as MaybeRefDeep<T>)
+}
+
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
     const vueQueryConfig = {
@@ -301,11 +309,11 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
+    options: MaybeRefDeepOrGetter<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
-    return super.fetchQuery(cloneDeepUnref(options))
+    return super.fetchQuery(cloneDeepUnrefOrGet(options))
   }
 
   prefetchQuery<

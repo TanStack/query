@@ -338,6 +338,20 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
+
+    it('should unwrap getter function options', () => {
+      const queryClient = new QueryClient()
+
+      queryClient.fetchQuery(() => ({
+        queryKey: queryKeyRef,
+        queryFn: fn,
+      }))
+
+      expect(QueryClientOrigin.prototype.fetchQuery).toHaveBeenCalledWith({
+        queryKey: queryKeyUnref,
+        queryFn: fn,
+      })
+    })
   })
 
   describe('prefetchQuery', () => {
