@@ -2518,7 +2518,7 @@ importers:
         specifier: 8.58.1
         version: 8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       typescript:
-        specifier: ^5.4.0 || ^6.0.0
+        specifier: ^5.4.0 || ^6.0.0 || ^7.0.0
         version: 5.9.3
     devDependencies:
       '@typescript-eslint/parser':
