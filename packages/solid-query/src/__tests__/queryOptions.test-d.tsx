@@ -1,6 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
+  queryOptions as coreQueryOptions,
   dataTagErrorSymbol,
   dataTagSymbol,
   skipToken,
@@ -38,6 +39,17 @@ describe('queryOptions', () => {
 
     const { data } = useQuery(() => options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+  it('should work when core queryOptions are passed to useQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = useQuery(() => options)
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
   })
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({

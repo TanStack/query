@@ -1,6 +1,9 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { dataTagSymbol } from '@tanstack/query-core'
+import {
+  queryOptions as coreQueryOptions,
+  dataTagSymbol,
+} from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
@@ -38,6 +41,37 @@ describe('queryOptions', () => {
 
     const { data } = reactive(useQuery(options))
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+  it('should work when core queryOptions are returned from a useQuery getter', () => {
+    const key = queryKey()
+
+    const { data } = reactive(
+      useQuery(() =>
+        coreQueryOptions({
+          queryKey: key,
+          queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+          staleTime: (query) => (query.state.data ? 1000 : 0),
+        }),
+      ),
+    )
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+  })
+  it('should not support passing core queryOptions directly to useQuery', () => {
+    const key = queryKey()
+    const options = coreQueryOptions({
+      queryKey: key,
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+      staleTime: (query) => (query.state.data ? 1000 : 0),
+    })
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<{
+      id: string
+      title: string
+    }>()
+
+    // @ts-expect-error core queryOptions must be wrapped in a getter
+    useQuery(options)
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const key = queryKey()

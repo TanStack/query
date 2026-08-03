@@ -2,6 +2,7 @@ import {
   QueriesObserver,
   QueryClient,
   dataTagSymbol,
+  queryOptions as coreQueryOptions,
   skipToken,
 } from '@tanstack/query-core'
 import type {
@@ -47,6 +48,17 @@ describe('queryOptions', () => {
 
     const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+  it('should work when core queryOptions are passed to useQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = useQuery(options)
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
   })
   it('should work when passed to useSuspenseQuery', () => {
     const options = queryOptions({
