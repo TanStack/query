@@ -1507,6 +1507,21 @@ describe('Devtools', () => {
     // fixed row height is 16 * QUERY_ROW_HEIGHT_MULTIPLIER (1.5) = 24px, and the
     // ResizeObserver stub reports a 500px viewport, giving a window of
     // ceil(500 / 24) + 2 * OVERSCAN = 33 rows.
+    function scrollTo(
+      rendered: ReturnType<typeof renderDevtools>,
+      scrollTop: number,
+    ) {
+      const scroller = rendered.container.querySelector(
+        '.tsqd-queries-overflow-container',
+      ) as HTMLElement
+      Object.defineProperty(scroller, 'scrollTop', {
+        value: scrollTop,
+        writable: true,
+        configurable: true,
+      })
+      fireEvent.scroll(scroller)
+    }
+
     function seedQueries(count: number, prefix = 'q') {
       for (let i = 0; i < count; i++) {
         queryClient.setQueryData([`${prefix}-${i}`], i)
@@ -1684,6 +1699,79 @@ describe('Devtools', () => {
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
+    })
+
+    it('reuses row elements across a cache event', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      queryClient.setQueryData(['q-0'], 'updated')
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      expect(
+        after.filter((row) => row.hasAttribute('data-row-id')),
+      ).toHaveLength(before.length)
+    })
+
+    it('reuses every row element when a scroll does not shift the window', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      // Smaller than the overscan margin, so the rendered window is unchanged
+      // and every row must be the very same element afterwards.
+      scrollTo(rendered, 24)
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      expect(
+        after.filter((row) => row.hasAttribute('data-row-id')),
+      ).toHaveLength(before.length)
+    })
+
+    it('reuses the overlapping rows when a scroll shifts the window', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      // Past the overscan margin, so the window really moves and some rows are
+      // recycled. The rows still in view must not have been rebuilt.
+      scrollTo(rendered, OVERSCAN * 24 + 24)
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      const reused = after.filter((row) => row.hasAttribute('data-row-id'))
+      expect(reused.length).toBeGreaterThan(0)
+      expect(reused.length).toBe(after.length - (after.length - reused.length))
+    })
+
+    it('keeps a reused row up to date with its own query', () => {
+      queryClient.setQueryData(['solo'], 'first')
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const row = rendered.getByLabelText(/Query key \["solo"\]/)
+      row.setAttribute('data-row-id', 'solo')
+      expect(row.querySelector('.tsqd-query-observer-count')?.textContent).toBe(
+        '0',
+      )
+
+      // Reuse must not mean frozen. Adding an observer changes state the row
+      // renders, and it has to show up on the very same element.
+      const observer = new QueryObserver(queryClient, { queryKey: ['solo'] })
+      const unsubscribe = observer.subscribe(() => {})
+
+      const updated = rendered.getByLabelText(/Query key \["solo"\]/)
+      expect(updated).toHaveAttribute('data-row-id', 'solo')
+      expect(
+        updated.querySelector('.tsqd-query-observer-count')?.textContent,
+      ).toBe('1')
+
+      unsubscribe()
     })
 
     describe('adapts to different heights', () => {

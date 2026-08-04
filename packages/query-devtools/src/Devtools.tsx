@@ -692,7 +692,7 @@ function VirtualList<T>(props: {
   overflowClass: string
   containerClass: string
   rowClass: string
-  children: (item: T) => JSX.Element
+  children: (item: Accessor<T>) => JSX.Element
 }): JSX.Element {
   let scrollRef!: HTMLDivElement
   const [scrollTop, setScrollTop] = createSignal(0)
@@ -794,14 +794,23 @@ function VirtualList<T>(props: {
     <div ref={scrollRef} class={props.overflowClass}>
       <div class={props.containerClass} style={{ height: `${totalSize()}px` }}>
         <Key by={(row) => row.key} each={virtualRows()}>
-          {(row) => (
-            <div
-              class={props.rowClass}
-              style={{ transform: `translateY(${row().start}px)` }}
-            >
-              {props.children(row().item)}
-            </div>
-          )}
+          {(row) => {
+            // The window is rebuilt from scratch on every recomputation, so each
+            // row's wrapper is a new object and the keyed item signal always
+            // notifies. Reading the item here would make this child a tracked
+            // expression and rebuild the row's whole subtree on every scroll and
+            // cache event, so hand the row an accessor instead and let it read
+            // the item through a prop.
+            const item = createMemo(() => row().item)
+            return (
+              <div
+                class={props.rowClass}
+                style={{ transform: `translateY(${row().start}px)` }}
+              >
+                {props.children(item)}
+              </div>
+            )
+          }}
         </Key>
       </div>
     </div>
@@ -951,9 +960,8 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   const [rowFontSize, setRowFontSize] = createSignal(16)
   onMount(() => {
     const readRowFontSize = () => {
-      const value = getComputedStyle(containerRef).getPropertyValue(
-        '--tsqd-font-size',
-      )
+      const value =
+        getComputedStyle(containerRef).getPropertyValue('--tsqd-font-size')
       const parsed = Number.parseFloat(value)
       if (Number.isFinite(parsed) && parsed > 0) {
         setRowFontSize(parsed)
@@ -1503,10 +1511,13 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               styles().overflowQueryContainer,
               'tsqd-queries-overflow-container',
             )}
-            containerClass={cx('tsqd-queries-container', styles().virtualSpacer)}
+            containerClass={cx(
+              'tsqd-queries-container',
+              styles().virtualSpacer,
+            )}
             rowClass={styles().virtualRow}
           >
-            {(query) => <QueryRow query={query} />}
+            {(query) => <QueryRow query={query()} />}
           </VirtualList>
         </Show>
         <Show when={selectedView() === 'mutations'}>
@@ -1515,9 +1526,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             getKey={(m) => String(m.mutationId)}
             rowHeight={rowHeight()}
             pinnedKey={
-              selectedMutationId() != null
-                ? String(selectedMutationId())
-                : null
+              selectedMutationId() != null ? String(selectedMutationId()) : null
             }
             overflowClass={cx(
               styles().overflowQueryContainer,
@@ -1529,7 +1538,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             )}
             rowClass={styles().virtualRow}
           >
-            {(mutation) => <MutationRow mutation={mutation} />}
+            {(mutation) => <MutationRow mutation={mutation()} />}
           </VirtualList>
         </Show>
       </div>
