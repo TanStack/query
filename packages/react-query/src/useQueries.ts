@@ -4,6 +4,7 @@ import * as React from 'react'
 import {
   QueriesObserver,
   QueryObserver,
+  isServer,
   noop,
   notifyManager,
 } from '@tanstack/query-core'
@@ -19,6 +20,7 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
+  willFetch,
 } from './suspense'
 import type {
   DefinedUseQueryResult,
@@ -322,6 +324,33 @@ export function useQueries<
 
   if (firstSingleResultWhichShouldThrow?.error) {
     throw firstSingleResultWhichShouldThrow.error
+  }
+
+  // Handle experimental_prefetchInRender for each query that has it enabled
+  if (!isServer) {
+    const observers = observer.getObservers()
+    optimisticResult.forEach((result, index) => {
+      const opts = defaultedQueries[index]
+      if (
+        opts?.experimental_prefetchInRender &&
+        willFetch(result, isRestoring)
+      ) {
+        const queryObserver = observers[index]
+        const query = client
+          .getQueryCache()
+          .get(opts.queryHash)
+
+        const promise = !query?.state.dataUpdateCount
+          ? // New cache entry: fetch immediately to ensure .promise is resolved even if the component is unmounted
+            fetchOptimistic(opts, queryObserver!, errorResetBoundary)
+          : // Existing cache entry: subscribe to the "cache promise" to finalize the currentThenable once data comes in
+            query?.promise
+
+        promise?.catch(noop).finally(() => {
+          queryObserver?.updateResult()
+        })
+      }
+    })
   }
 
   return getCombinedResult(trackResult())
