@@ -2753,11 +2753,17 @@ const setupMutationCacheSubscription = () => {
   })
 
   const unsubscribe = mutationCache().subscribe(() => {
-    for (const [callback, setter] of mutationCacheMap.entries()) {
-      queueMicrotask(() => {
-        setter(callback(mutationCache))
+    // One microtask around the whole fan-out, with the writes batched inside
+    // it, so a mutation-cache event produces a single downstream update rather
+    // than one per subscriber. The batch has to live inside the microtask: a
+    // batch around the loop would exit before any deferred setter ran.
+    queueMicrotask(() => {
+      batch(() => {
+        for (const [callback, setter] of mutationCacheMap.entries()) {
+          setter(callback(mutationCache))
+        }
       })
-    }
+    })
   })
 
   onCleanup(() => {
