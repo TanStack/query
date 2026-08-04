@@ -1771,40 +1771,25 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
 }
 
 const QueryStatusCount: Component = () => {
-  const stale = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'stale').length,
-  )
+  // Tally every status in one pass. Five independent subscriptions each walked
+  // the whole cache on every cache event, so the status badges alone cost five
+  // full scans per event. `getQueryStatusLabel` returns exactly these five
+  // labels, so the tally is exhaustive.
+  const counts = createSubscribeToQueryCacheBatcher((queryCache) => {
+    const tally = { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 }
+    for (const query of queryCache().getAll()) {
+      tally[getQueryStatusLabel(query)]++
+    }
+    return tally
+  })
 
-  const fresh = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fresh').length,
-  )
-
-  const fetching = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fetching').length,
-  )
-
-  const paused = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'paused').length,
-  )
-
-  const inactive = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'inactive').length,
-  )
+  // Memos so each badge still only updates when its own count changes, as it
+  // did when every count had its own equality-checked signal.
+  const stale = createMemo(() => counts().stale)
+  const fresh = createMemo(() => counts().fresh)
+  const fetching = createMemo(() => counts().fetching)
+  const paused = createMemo(() => counts().paused)
+  const inactive = createMemo(() => counts().inactive)
 
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -1828,57 +1813,28 @@ const QueryStatusCount: Component = () => {
 }
 
 const MutationStatusCount: Component = () => {
-  const success = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'green',
-        ).length,
-  )
+  // Tally every status color in one pass; four independent subscriptions each
+  // walked the whole cache on every mutation-cache event. `gray` is counted
+  // even though no badge displays it, because an idle mutation resolves to it
+  // and the tally has to stay exhaustive.
+  const counts = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const tally = { green: 0, yellow: 0, purple: 0, red: 0, gray: 0 }
+    for (const mutation of mutationCache().getAll()) {
+      tally[
+        getMutationStatusColor({
+          isPaused: mutation.state.isPaused,
+          status: mutation.state.status,
+        })
+      ]++
+    }
+    return tally
+  })
 
-  const pending = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'yellow',
-        ).length,
-  )
-
-  const paused = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'purple',
-        ).length,
-  )
-
-  const error = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'red',
-        ).length,
-  )
+  // Memos so each badge still only updates when its own count changes.
+  const success = createMemo(() => counts().green)
+  const pending = createMemo(() => counts().yellow)
+  const paused = createMemo(() => counts().purple)
+  const error = createMemo(() => counts().red)
 
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget

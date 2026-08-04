@@ -551,6 +551,35 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/Inactive: \d+/)).toBeInTheDocument()
     })
 
+    it('tallies each status into its own badge', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByLabelText('Fresh: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Stale: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Fetching: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Paused: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Inactive: 0')).toBeInTheDocument()
+
+      // Observed and never stale, so this lands in "fresh" and nowhere else.
+      queryClient.setQueryData(['fresh-one'], 1)
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['fresh-one'],
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+
+      // No observer, so this lands in "inactive".
+      queryClient.setQueryData(['inactive-one'], 1)
+
+      expect(rendered.getByLabelText('Fresh: 1')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Stale: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Fetching: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Paused: 0')).toBeInTheDocument()
+
+      unsubscribe()
+    })
+
     it('should reflect the inactive count when a query is added without observers', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
