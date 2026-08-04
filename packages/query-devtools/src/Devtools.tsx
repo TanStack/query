@@ -2763,7 +2763,6 @@ const setupQueryCacheSubscription = () => {
   })
 
   onCleanup(() => {
-    queryCacheMap.clear()
     unsubscribe()
   })
 
@@ -2821,7 +2820,6 @@ const setupMutationCacheSubscription = () => {
   })
 
   onCleanup(() => {
-    mutationCacheMap.clear()
     unsubscribe()
   })
 
