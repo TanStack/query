@@ -10,7 +10,6 @@ import {
   onMount,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
@@ -20,6 +19,8 @@ import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
+  createStylesCache,
+  cssForTarget,
   displayValue,
   getMutationStatusColor,
   getQueryStatusColor,
@@ -80,6 +81,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
+import type * as goober from 'goober'
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
 interface DevtoolsPanelProps {
@@ -115,9 +117,7 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -285,9 +285,7 @@ const PiPPanel: Component<{
 }> = (props) => {
   const pip = usePiPWindow()
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -354,9 +352,7 @@ export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -411,9 +407,7 @@ export const ParentPanel: Component<{
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -822,9 +816,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1555,9 +1547,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
 const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1666,9 +1656,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1792,9 +1780,7 @@ const QueryStatusCount: Component = () => {
   const inactive = createMemo(() => counts().inactive)
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1837,9 +1823,7 @@ const MutationStatusCount: Component = () => {
   const error = createMemo(() => counts().red)
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1858,9 +1842,7 @@ const MutationStatusCount: Component = () => {
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1973,9 +1955,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 
 const QueryDetails = () => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -2503,9 +2483,7 @@ const QueryDetails = () => {
 
 const MutationDetails = () => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -3897,5 +3875,7 @@ const stylesFactory = (
   }
 }
 
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)
+const cachedStyles = createStylesCache(stylesFactory)
+
+const lightStyles = (css: (typeof goober)['css']) => cachedStyles('light', css)
+const darkStyles = (css: (typeof goober)['css']) => cachedStyles('dark', css)
