@@ -168,6 +168,13 @@ for (const pkg of [
     exclude: ['./packages/query-core/**/*'],
   },
   {
+    entryPoints: [resolve(__dirname, '../packages/octane-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/octane-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/octane/reference'),
+    exclude: ['./packages/query-core/**/*'],
+    trimGeneratedMarkdown: true,
+  },
+  {
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
