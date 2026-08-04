@@ -675,6 +675,10 @@
               "to": "framework/angular/guides/queries"
             },
             {
+              "label": "Resources",
+              "to": "framework/angular/guides/resources"
+            },
+            {
               "label": "Query Keys",
               "to": "framework/angular/guides/query-keys"
             },
