@@ -8,6 +8,7 @@ import {
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+import { useIsHydrating } from './IsHydratingProvider'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -222,6 +223,7 @@ export function useQueries<
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
+  const hydratingQueries = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
@@ -236,9 +238,14 @@ export function useQueries<
           ? 'isRestoring'
           : 'optimistic'
 
+        // Check if this query is pending hydration
+        if (hydratingQueries.has(defaultedOptions.queryHash)) {
+          defaultedOptions._isHydrating = true
+        }
+
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, hydratingQueries],
   )
 
   defaultedQueries.forEach((queryOptions) => {
