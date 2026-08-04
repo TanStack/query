@@ -1993,59 +1993,44 @@ const QueryDetails = () => {
     return useQueryDevtoolsContext().errorTypes || []
   })
 
+  // The cache is keyed by query hash, so resolve the selected query directly
+  // instead of scanning every query in the cache on each event.
   const activeQuery = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash()),
+    (queryCache) => queryCache().get(selectedQueryHash()!),
     false,
   )
 
   const activeQueryFresh = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache()
-      .getAll()
-      .find((query) => query.queryHash === selectedQueryHash())
+    return queryCache().get(selectedQueryHash()!)
   }, false)
 
   const activeQueryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state,
+    (queryCache) => queryCache().get(selectedQueryHash()!)?.state,
     false,
   )
 
   const activeQueryStateData = createSubscribeToQueryCacheBatcher(
     (queryCache) => {
-      return queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state.data
+      return queryCache().get(selectedQueryHash()!)?.state.data
     },
     false,
   )
 
   const statusLabel = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash()!)
     if (!query) return 'inactive'
     return getQueryStatusLabel(query)
   })
 
   const queryStatus = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash()!)
     if (!query) return 'pending'
     return query.state.status
   })
 
   const observerCount = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())
-        ?.getObserversCount() ?? 0,
+      queryCache().get(selectedQueryHash()!)?.getObserversCount() ?? 0,
   )
 
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
@@ -2528,37 +2513,28 @@ const MutationDetails = () => {
   const { colors } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
-  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === selectedMutationId(),
-    )
-    if (!mutation) return false
-    return mutation.state.isPaused
-  })
-
-  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === selectedMutationId(),
-    )
-    if (!mutation) return 'idle'
-    return mutation.state.status
-  })
-
-  const color = createMemo(() =>
-    getMutationStatusColor({
-      isPaused: isPaused(),
-      status: status(),
-    }),
-  )
-
+  // The mutation cache has no keyed lookup, so the scan cannot be avoided - but
+  // all three values come from the same mutation, so one scan serves them all.
+  // The equality check stays disabled: a mutation's object identity does not
+  // change across status transitions, so the subscription would otherwise never
+  // notify and the pane would freeze on its first rendered state.
   const activeMutation = createSubscribeToMutationCacheBatcher(
     (mutationCache) =>
       mutationCache()
         .getAll()
         .find((mutation) => mutation.mutationId === selectedMutationId()),
     false,
+  )
+
+  const isPaused = createMemo(() => activeMutation()?.state.isPaused ?? false)
+
+  const status = createMemo(() => activeMutation()?.state.status ?? 'idle')
+
+  const color = createMemo(() =>
+    getMutationStatusColor({
+      isPaused: isPaused(),
+      status: status(),
+    }),
   )
 
   const getQueryStatusColors = () => {

@@ -826,6 +826,39 @@ describe('Devtools', () => {
     })
   })
 
+  describe('mutation details status', () => {
+    it('follows the selected mutation through a status transition', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      let resolve: (value: string) => void = () => {}
+      const mutation = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['status-transition'],
+        mutationFn: () =>
+          new Promise<string>((r) => {
+            resolve = r
+          }),
+      })
+      const executed = mutation.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+
+      fireEvent.click(rendered.getByLabelText(/Mutation submitted at/))
+      expect(rendered.getByText('Mutation Details')).toBeInTheDocument()
+
+      const details = rendered.getByText('Mutation Details').closest('div')
+        ?.parentElement as HTMLElement
+      expect(details.textContent).toContain('pending')
+
+      resolve('ok')
+      await executed
+      // The mutation fan-out is dispatched on a microtask.
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(details.textContent).toContain('success')
+    })
+  })
+
   describe('mutation sort order', () => {
     it('should toggle the mutation sort order in the mutations view', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
