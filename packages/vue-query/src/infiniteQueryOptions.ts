@@ -2,10 +2,54 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  InfiniteQueryObserverOptions,
   NonUndefinedGuard,
   QueryKey,
 } from '@tanstack/query-core'
-import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
+
+import type {
+  DeepUnwrapRef,
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  ShallowOption,
+} from './types'
+
+export type UseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = MaybeRef<
+  {
+    [Property in keyof InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >]: Property extends 'enabled'
+      ? MaybeRefOrGetter<
+          InfiniteQueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            DeepUnwrapRef<TQueryKey>,
+            TPageParam
+          >[Property]
+        >
+      : MaybeRefDeep<
+          InfiniteQueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            DeepUnwrapRef<TQueryKey>,
+            TPageParam
+          >[Property]
+        >
+  } & ShallowOption
+>
 
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
