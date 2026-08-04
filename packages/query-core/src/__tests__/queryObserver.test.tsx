@@ -553,6 +553,25 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => ({ count: 1 }))
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      placeholderData: { count: 0 },
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+
+    const result = observer.getCurrentResult()
+
+    expect(result.isError).toBe(true)
+    expect(result.isPlaceholderData).toBe(false)
+    expect(result.data).toBeUndefined()
+  })
+
   it('should return stale data if selector throws an error', async () => {
     const key = queryKey()
     const results: Array<QueryObserverResult> = []
