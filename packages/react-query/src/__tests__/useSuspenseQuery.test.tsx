@@ -162,6 +162,38 @@ describe('useSuspenseQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should resolve suspense with cached data when data is set while fetching', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'fetched'),
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      queryClient.setQueryData(key, 'cached')
+    })
+
+    expect(rendered.getByText('data: cached')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(100))
+    expect(rendered.getByText('data: fetched')).toBeInTheDocument()
+  })
+
   it('should remove query instance when component unmounted', async () => {
     const key = queryKey()
 

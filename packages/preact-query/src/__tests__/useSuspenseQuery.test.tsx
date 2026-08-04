@@ -176,6 +176,45 @@ describe('useSuspenseQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should resolve suspense with cached data when data is set while fetching', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'fetched'),
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    await act(async () => {
+      queryClient.setQueryData(key, 'cached')
+    })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0)
+    })
+
+    expect(rendered.getByText('data: cached')).toBeInTheDocument()
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(100)
+    })
+    expect(rendered.getByText('data: fetched')).toBeInTheDocument()
+  })
+
   it('should remove query instance when component unmounted', async () => {
     const key = queryKey()
 
@@ -602,12 +641,12 @@ describe('useSuspenseQuery', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
+    let succeed = true
 
-    function Page({ succeed }: { succeed: boolean }) {
+    function Page() {
       const [nonce] = useState(0)
-      const queryKeys = [`${key}-${succeed}`]
       const result = useSuspenseQuery({
-        queryKey: queryKeys,
+        queryKey: key,
         queryFn: () =>
           sleep(10).then(() => {
             if (!succeed) throw new Error('Suspense Error Bingo')
@@ -624,16 +663,9 @@ describe('useSuspenseQuery', () => {
 
     function App() {
       const { reset } = useQueryErrorResetBoundary()
-      const [succeed, setSucceed] = useState(true)
 
       return (
         <div>
-          <button
-            aria-label="set-fail"
-            onClick={() => {
-              setSucceed(false)
-            }}
-          />
           <button
             aria-label="fail"
             onClick={() => {
@@ -645,7 +677,7 @@ describe('useSuspenseQuery', () => {
             fallbackRender={() => <div>error boundary</div>}
           >
             <Suspense fallback="loading">
-              <Page succeed={succeed} />
+              <Page />
             </Suspense>
           </ErrorBoundary>
         </div>
@@ -657,16 +689,22 @@ describe('useSuspenseQuery', () => {
     // render suspense fallback (loading)
     expect(rendered.getByText('loading')).toBeInTheDocument()
     // resolve promise -> render Page (rendered)
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    // change query result to error by updating state above Suspense
-    fireEvent.click(rendered.getByLabelText('set-fail'))
+    // change query result to error
+    succeed = false
 
     // reset query -> and throw error
-    fireEvent.click(rendered.getByLabelText('fail'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('fail'))
+    })
     // render error boundary fallback (error boundary)
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(

@@ -83,6 +83,47 @@ export function pendingThenable<T>(): PendingThenable<T> {
   return thenable
 }
 
+export function updateThenable<T>(
+  thenable: Thenable<T>,
+  result: { data: T | undefined; error: unknown; status: 'error' | string },
+  finalizePending = true,
+): Thenable<T> {
+  const hasData = result.data !== undefined
+  const isErrorWithoutData = result.status === 'error' && !hasData
+
+  const finalizeThenableIfPossible = (pending: PendingThenable<T>) => {
+    if (isErrorWithoutData) {
+      pending.reject(result.error)
+    } else if (hasData) {
+      pending.resolve(result.data as T)
+    }
+  }
+
+  const recreateThenable = () => {
+    const pending = pendingThenable<T>()
+    finalizeThenableIfPossible(pending)
+    return pending
+  }
+
+  switch (thenable.status) {
+    case 'pending':
+      if (finalizePending) {
+        finalizeThenableIfPossible(thenable)
+      }
+      return thenable
+    case 'fulfilled':
+      if (isErrorWithoutData || result.data !== thenable.value) {
+        return recreateThenable()
+      }
+      return thenable
+    case 'rejected':
+      if (!isErrorWithoutData || result.error !== thenable.reason) {
+        return recreateThenable()
+      }
+      return thenable
+  }
+}
+
 /**
  * This function takes a Promise-like input and detects whether the data
  * is synchronously available or not.

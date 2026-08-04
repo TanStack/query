@@ -11,6 +11,7 @@ import { notifyManager } from './notifyManager'
 import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { pendingThenable, updateThenable } from './thenable'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -29,6 +30,7 @@ import type {
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
+import type { Thenable } from './thenable'
 
 // TYPES
 
@@ -169,6 +171,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #promise: Thenable<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -186,6 +189,8 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
+    this.#promise = pendingThenable()
+    this.#updatePromise()
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -196,8 +201,12 @@ export class Query<
     return this.#queryType
   }
 
-  get promise(): Promise<TData> | undefined {
-    return this.#retryer?.promise
+  get promise(): Promise<TData> {
+    return this.#promise
+  }
+
+  #updatePromise(): void {
+    this.#promise = updateThenable(this.#promise, this.state)
   }
 
   setOptions(
@@ -696,6 +705,7 @@ export class Query<
     }
 
     this.state = reducer(this.state)
+    this.#updatePromise()
 
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
