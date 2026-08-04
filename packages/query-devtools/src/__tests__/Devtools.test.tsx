@@ -324,7 +324,9 @@ describe('Devtools', () => {
         queryFn: () => [{ id: 1 }],
         queryKeyHashFn: () => 'custom-posts-hash',
       })
-      await vi.advanceTimersByTimeAsync(0)
+      // Whole-cache tallies are coalesced, so a stream of changes settles once
+      // the coalescing window closes rather than once per change.
+      await vi.advanceTimersByTimeAsync(50)
       const dehydratedState = dehydrate(queryClient)
 
       queryClient = new QueryClient()
@@ -599,7 +601,7 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/Inactive: \d+/)).toBeInTheDocument()
     })
 
-    it('tallies each status into its own badge', () => {
+    it('tallies each status into its own badge', async () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(rendered.getByLabelText('Fresh: 0')).toBeInTheDocument()
@@ -618,6 +620,10 @@ describe('Devtools', () => {
 
       // No observer, so this lands in "inactive".
       queryClient.setQueryData(['inactive-one'], 1)
+
+      // Whole-cache tallies are coalesced, so a run of changes settles once the
+      // coalescing window closes rather than once per change.
+      await vi.advanceTimersByTimeAsync(50)
 
       expect(rendered.getByLabelText('Fresh: 1')).toBeInTheDocument()
       expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()

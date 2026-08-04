@@ -861,6 +861,8 @@ export const ContentView: Component<ContentViewProps> = (props) => {
       return queryCache().getAll().length
     },
     false,
+    () => true,
+    true,
   )
 
   // Every cache event recomputes the list, and the result is usually the
@@ -1783,13 +1785,18 @@ const QueryStatusCount: Component = () => {
   // the whole cache on every cache event, so the status badges alone cost five
   // full scans per event. `getQueryStatusLabel` returns exactly these five
   // labels, so the tally is exhaustive.
-  const counts = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const tally = { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 }
-    for (const query of queryCache().getAll()) {
-      tally[getQueryStatusLabel(query)]++
-    }
-    return tally
-  })
+  const counts = createSubscribeToQueryCacheBatcher(
+    (queryCache) => {
+      const tally = { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 }
+      for (const query of queryCache().getAll()) {
+        tally[getQueryStatusLabel(query)]++
+      }
+      return tally
+    },
+    true,
+    () => true,
+    true,
+  )
 
   // Memos so each badge still only updates when its own count changes, as it
   // did when every count had its own equality-checked signal.
@@ -2678,13 +2685,106 @@ const MutationDetails = () => {
   )
 }
 
+// Longest a coalesced subscriber will wait before reflecting a change, in
+// milliseconds. Roughly one frame: long enough to fold a stream of cache
+// events into a single pass, short enough to stay imperceptible.
+const COALESCE_WINDOW_MS = 16
+
+// Share of the main thread a coalesced subscriber is allowed to take when its
+// passes cost more than the window. The next window is widened to this
+// multiple of the last pass, so the panel keeps well clear of starving the
+// application no matter how large the cache grows.
+const COALESCE_PASS_MULTIPLE = 3
+
+// Monotonic, unlike `Date.now`, which can step backwards on a clock
+// correction and would then hold a subscriber closed for the size of the step.
+const now = () =>
+  typeof performance !== 'undefined' ? performance.now() : Date.now()
+
+type QueryCacheSubscriber = {
+  setter: Setter<any>
+  shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
+  // Subscribers whose callback walks the whole cache opt into coalescing, so
+  // a stream of events costs one pass per window rather than one per event.
+  coalesce: boolean
+  scheduled: boolean
+  running: boolean
+  missedWhileRunning: boolean
+  timeout: ReturnType<typeof setTimeout> | undefined
+  lastRun: number
+  lastPassMs: number
+}
+
 const queryCacheMap = new Map<
   (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
+  QueryCacheSubscriber
 >()
+
+// A window is at least one frame, and widens when a pass costs enough that a
+// frame would not contain it, which caps the share of the main thread a
+// subscriber can take however large the cache grows.
+const windowFor = (value: QueryCacheSubscriber) =>
+  Math.max(COALESCE_WINDOW_MS, value.lastPassMs * COALESCE_PASS_MULTIPLE)
+
+// Runs a coalesced subscriber and records what it cost, so the next window can
+// be widened to match. `lastRun` is stamped on the way out rather than on the
+// way in: the window has to measure the gap between passes, not the gap
+// between their start times, or an expensive pass consumes its own window.
+const runPass = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+) => {
+  const started = now()
+  // Marked for the duration of the pass so that a cache event raised from
+  // inside it is deferred rather than starting a nested pass. It is a separate
+  // flag from `scheduled`, which means a trailing pass is already armed: an
+  // event arriving mid-pass has nothing armed to pick it up, so it has to be
+  // remembered and armed once the pass unwinds.
+  value.running = true
+  try {
+    value.setter(callback(queryCache))
+  } finally {
+    const finished = now()
+    value.lastPassMs = finished - started
+    value.lastRun = finished
+    value.running = false
+  }
+}
+
+// Arms the single trailing pass that everything arriving inside a window folds
+// into.
+const scheduleTrailingPass = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+  delay: number,
+) => {
+  value.scheduled = true
+  value.timeout = setTimeout(() => {
+    value.scheduled = false
+    value.timeout = undefined
+    // The entry may have been disposed, or replaced, while the pass was
+    // pending; either way this pass no longer owns the signal.
+    if (queryCacheMap.get(callback) !== value) return
+    batch(() => runPassAndRearm(callback, value, queryCache))
+  }, delay)
+}
+
+// Both exits from a pass have to behave the same way. An event raised while a
+// pass was unwinding has nothing in flight that can reflect it, so it is
+// remembered and armed here; doing this on only one of the two paths would turn
+// a would-be nested pass into a silently lost one.
+const runPassAndRearm = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+) => {
+  runPass(callback, value, queryCache)
+  if (!value.missedWhileRunning) return
+  value.missedWhileRunning = false
+  scheduleTrailingPass(callback, value, queryCache, windowFor(value))
+}
 
 const setupQueryCacheSubscription = () => {
   const queryCache = createMemo(() => {
@@ -2696,7 +2796,37 @@ const setupQueryCacheSubscription = () => {
     batch(() => {
       for (const [callback, value] of queryCacheMap.entries()) {
         if (!value.shouldUpdate(q)) continue
-        value.setter(callback(queryCache))
+
+        if (!value.coalesce) {
+          value.setter(callback(queryCache))
+          continue
+        }
+
+        // A pass is already scheduled for this subscriber; it will pick the
+        // latest state up when it runs.
+        if (value.scheduled) continue
+
+        // Raised from inside a pass that is still unwinding. Nothing in flight
+        // can reflect it, so record it and let the pass arm a trailing one.
+        if (value.running) {
+          value.missedWhileRunning = true
+          continue
+        }
+
+        // Without the floor in `windowFor`, a pass costing more than the
+        // window would leave every event outside the window, so nothing would
+        // coalesce and the passes would run back to back - the stall this is
+        // meant to prevent.
+        const window = windowFor(value)
+        const elapsed = now() - value.lastRun
+        if (elapsed >= window) {
+          runPassAndRearm(callback, value, queryCache)
+          continue
+        }
+
+        // Mid-window: fold this and everything else that arrives into one
+        // trailing pass.
+        scheduleTrailingPass(callback, value, queryCache, window - elapsed)
       }
     })
   })
@@ -2712,6 +2842,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   callback: (queryCache: Accessor<QueryCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
+  coalesce: boolean = false,
 ) => {
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
@@ -2727,13 +2858,27 @@ const createSubscribeToQueryCacheBatcher = <T,>(
     setValue(callback(queryCache))
   })
 
-  queryCacheMap.set(callback, {
-    setter: setValue,
+  const entry = {
+    setter: setValue as Setter<any>,
     shouldUpdate: shouldUpdate,
-  })
+    coalesce,
+    scheduled: false,
+    running: false,
+    missedWhileRunning: false,
+    timeout: undefined as ReturnType<typeof setTimeout> | undefined,
+    // Never run, so the first change is always a leading edge no matter what
+    // origin the clock happens to count from.
+    lastRun: -Infinity,
+    lastPassMs: 0,
+  }
+  queryCacheMap.set(callback, entry)
 
   onCleanup(() => {
-    queryCacheMap.delete(callback)
+    if (entry.timeout !== undefined) clearTimeout(entry.timeout)
+    // Only retract our own registration: reading the map back would let a
+    // subscriber that happened to share this callback identity be torn down
+    // by someone else's cleanup.
+    if (queryCacheMap.get(callback) === entry) queryCacheMap.delete(callback)
   })
 
   return value
