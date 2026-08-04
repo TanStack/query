@@ -42,7 +42,7 @@ export function broadcastQueryClient({
         queryHash,
         queryKey,
         state,
-      })
+      }).catch(() => {})
     }
 
     if (queryEvent.type === 'removed' && observers.length > 0) {
@@ -50,7 +50,7 @@ export function broadcastQueryClient({
         type: 'removed',
         queryHash,
         queryKey,
-      })
+      }).catch(() => {})
     }
 
     if (queryEvent.type === 'added') {
@@ -58,7 +58,7 @@ export function broadcastQueryClient({
         type: 'added',
         queryHash,
         queryKey,
-      })
+      }).catch(() => {})
     }
   })
 
