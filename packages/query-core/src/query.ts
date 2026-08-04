@@ -1,4 +1,5 @@
 import {
+  describeKey,
   ensureQueryFn,
   noop,
   replaceData,
@@ -569,10 +570,10 @@ export class Query<
       if (data === undefined) {
         if (process.env.NODE_ENV !== 'production') {
           console.error(
-            `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+            `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${describeKey(this.queryKey)}`,
           )
         }
-        throw new Error(`${this.queryHash} data is undefined`)
+        throw new Error(`${describeKey(this.queryKey)} data is undefined`)
       }
 
       this.setData(data)
