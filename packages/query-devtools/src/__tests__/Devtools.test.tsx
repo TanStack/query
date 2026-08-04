@@ -338,6 +338,54 @@ describe('Devtools', () => {
     })
   })
 
+  describe('list identity', () => {
+    it('reflects an update that reorders the list under a time-based sort', async () => {
+      queryClient.setQueryData(['a'], 1)
+      // Fake timers freeze the clock, so without this both queries would carry
+      // the same `dataUpdatedAt` and a time-based sort could not order them.
+      await vi.advanceTimersByTimeAsync(10)
+      queryClient.setQueryData(['b'], 1)
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { TanstackQueryDevtools_sortFn: '"Last Updated"' },
+      )
+
+      const keysInOrder = () =>
+        rendered
+          .getAllByLabelText(/Query key/)
+          .map((row) => row.getAttribute('aria-label') || '')
+
+      const before = keysInOrder()
+
+      // Touching one query changes its updatedAt, which under this sort moves
+      // it relative to the other - so holding the previous array would be wrong.
+      await vi.advanceTimersByTimeAsync(10)
+      queryClient.setQueryData(['a'], 2)
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(keysInOrder()).not.toEqual(before)
+    })
+
+    it('reflects a change that does reorder the list', async () => {
+      queryClient.setQueryData(['a'], 1)
+      queryClient.setQueryData(['b'], 1)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const keysInOrder = () =>
+        rendered
+          .getAllByLabelText(/Query key/)
+          .map((row) => row.getAttribute('aria-label'))
+
+      expect(keysInOrder()[0]).toMatch(/\["a"\]/)
+
+      // Removing the first query must change what the list renders.
+      queryClient.removeQueries({ queryKey: ['a'] })
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(keysInOrder()[0]).toMatch(/\["b"\]/)
+    })
+  })
+
   describe('view toggle', () => {
     it('should switch to mutations view when the mutations toggle is clicked', () => {
       const rendered = renderDevtools({ initialIsOpen: true })

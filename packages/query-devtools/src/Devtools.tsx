@@ -856,9 +856,26 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     return useQueryDevtoolsContext().client.getMutationCache()
   })
 
-  const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache().getAll().length
-  }, false)
+  const queryCount = createSubscribeToQueryCacheBatcher(
+    (queryCache) => {
+      return queryCache().getAll().length
+    },
+    false,
+  )
+
+  // Every cache event recomputes the list, and the result is usually the
+  // same queries in the same order - half of all events are observer
+  // notifications that cannot reorder anything. Returning a new array each
+  // time makes the whole downstream chain re-run regardless, so hold the
+  // previous array whenever the recompute produced an identical list.
+  let previousQueries: Array<Query> = []
+  const sameAsPrevious = (next: Array<Query>) => {
+    if (next.length !== previousQueries.length) return false
+    for (let i = 0; i < next.length; i++) {
+      if (next[i] !== previousQueries[i]) return false
+    }
+    return true
+  }
 
   const queries = createMemo(
     on(
@@ -887,6 +904,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         const sorted = sortFn()
           ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
           : filtered
+
+        if (sameAsPrevious(sorted)) return previousQueries
+        previousQueries = sorted
         return sorted
       },
     ),
