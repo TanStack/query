@@ -157,11 +157,11 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined) => TData`
+- `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined, context: PlaceholderDataContext) => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
-  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
+  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, the second argument will be the complete previousQuery instance, and the third argument will be a `PlaceholderDataContext` with the `client`, the `queryKey` and the `meta` of this query.
 - `structuralSharing: boolean | (oldData: unknown | undefined, newData: unknown) => unknown`
   - Optional
   - Defaults to `true`
@@ -177,7 +177,7 @@ const {
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 - `meta: Record<string, unknown>`
   - Optional
-  - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
+  - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn` and of the `PlaceholderDataContext` provided to a `placeholderData` function.
 
 **Parameter2 (QueryClient)**
 

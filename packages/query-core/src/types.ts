@@ -162,6 +162,12 @@ export type QueryFunctionContext<
       meta: QueryMeta | undefined
     }
 
+export type PlaceholderDataContext<TQueryKey extends QueryKey = QueryKey> = {
+  client: QueryClient
+  queryKey: TQueryKey
+  meta: QueryMeta | undefined
+}
+
 export type InitialDataFunction<T> = () => T | undefined
 
 type NonFunctionGuard<T> = T extends Function ? never : T
@@ -174,11 +180,16 @@ export type PlaceholderDataFunction<
 > = (
   previousData: TQueryData | undefined,
   previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+  context: PlaceholderDataContext<TQueryKey>,
 ) => TQueryData | undefined
 
-export type QueriesPlaceholderDataFunction<TQueryData> = (
+export type QueriesPlaceholderDataFunction<
+  TQueryData,
+  TQueryKey extends QueryKey = QueryKey,
+> = (
   previousData: undefined,
   previousQuery: undefined,
+  context: PlaceholderDataContext<TQueryKey>,
 ) => TQueryData | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (

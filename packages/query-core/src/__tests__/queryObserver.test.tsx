@@ -8,8 +8,8 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver, focusManager } from '..'
-import type { QueryObserverResult } from '..'
+import { QueryClient, QueryObserver, focusManager, keepPreviousData } from '..'
+import type { PlaceholderDataContext, QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -1226,6 +1226,209 @@ describe('queryObserver', () => {
     expect(stableSelect).toHaveBeenCalledTimes(2)
     expect(stableSelect.mock.calls[0]![0]).toEqual(data1)
     expect(stableSelect.mock.calls[1]![0]).toEqual(data2)
+  })
+
+  it('should pass a context with the client, queryKey and meta to the placeholderData function', () => {
+    const key = queryKey()
+    const meta = { it: 'works' }
+    const contexts: Array<PlaceholderDataContext> = []
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      meta,
+      placeholderData: (_previousData, _previousQuery, context) => {
+        contexts.push(context)
+        return 'placeholder'
+      },
+    })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'placeholder',
+    })
+
+    const context = contexts[0]!
+    expect(context.client).toBe(queryClient)
+    expect(context.queryKey).toEqual(key)
+    expect(context.meta).toBe(meta)
+  })
+
+  it('should pass a context with an undefined meta to the placeholderData function when no meta is set', () => {
+    const key = queryKey()
+    const contexts: Array<PlaceholderDataContext> = []
+
+    new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: (_previousData, _previousQuery, context) => {
+        contexts.push(context)
+        return 'placeholder'
+      },
+    })
+
+    const context = contexts[0]!
+    expect('meta' in context).toBe(true)
+    expect(context.meta).toBeUndefined()
+  })
+
+  it('should pass a context with the current queryKey and meta to the placeholderData function after the options change', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const meta1 = { query: 'one' }
+    const meta2 = { query: 'two' }
+
+    const contexts: Array<PlaceholderDataContext> = []
+    const previousKeys: Array<ReadonlyArray<unknown> | null> = []
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => 'data1',
+      meta: meta1,
+      placeholderData: (prev) => prev,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    observer.setOptions({
+      queryKey: key2,
+      queryFn: () => 'data2',
+      meta: meta2,
+      placeholderData: (prev, prevQuery, context) => {
+        contexts.push(context)
+        previousKeys.push(prevQuery?.queryKey || null)
+        return prev
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    unsubscribe()
+
+    const context = contexts[0]!
+    expect(context.queryKey).toEqual(key2)
+    expect(context.meta).toBe(meta2)
+    expect(previousKeys[0]).toBe(key1)
+  })
+
+  it('should pass each observer its own meta to the placeholderData function', () => {
+    const key = queryKey()
+
+    const meta1 = { observer: 'one' }
+    const meta2 = { observer: 'two' }
+
+    const contexts: Array<PlaceholderDataContext> = []
+
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      meta: meta1,
+      placeholderData: 'placeholder1',
+    })
+
+    new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      meta: meta2,
+      placeholderData: 'placeholder2',
+    })
+
+    observer1.getOptimisticResult(
+      queryClient.defaultQueryOptions({
+        queryKey: key,
+        queryFn: () => 'data',
+        meta: meta1,
+        placeholderData: (_previousData, _previousQuery, context) => {
+          contexts.push(context)
+          return 'placeholder1'
+        },
+      }),
+    )
+
+    expect(contexts[0]!.meta).toBe(meta1)
+  })
+
+  it('should allow reading from the cache with the client inside the placeholderData function', async () => {
+    const listKey = queryKey()
+    const detailKey = queryKey()
+
+    queryClient.setQueryData(listKey, [{ id: '1', title: 'from list' }])
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: detailKey,
+      queryFn: () => ({ id: '1', title: 'from detail' }),
+      placeholderData: (_previousData, _previousQuery, { client }) =>
+        client
+          .getQueryData<Array<{ id: string; title: string }>>(listKey)
+          ?.find((item) => item.id === '1'),
+    })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      isPlaceholderData: true,
+      data: { id: '1', title: 'from list' },
+    })
+
+    const results: Array<QueryObserverResult<unknown>> = []
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    unsubscribe()
+
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject({
+      isPlaceholderData: true,
+      data: { id: '1', title: 'from list' },
+    })
+    expect(results[1]).toMatchObject({
+      isPlaceholderData: false,
+      data: { id: '1', title: 'from detail' },
+    })
+  })
+
+  it('should still support a placeholderData function that ignores the context', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => 'data1',
+      placeholderData: keepPreviousData,
+    })
+
+    const results: Array<QueryObserverResult<unknown>> = []
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    observer.setOptions({
+      queryKey: key2,
+      queryFn: () => 'data2',
+      placeholderData: keepPreviousData,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    unsubscribe()
+
+    expect(results.length).toBe(4)
+    expect(results[2]).toMatchObject({
+      data: 'data1',
+      status: 'success',
+      isPlaceholderData: true,
+    })
+    expect(results[3]).toMatchObject({
+      data: 'data2',
+      status: 'success',
+      isPlaceholderData: false,
+    })
   })
 
   it('should notify cache listeners when setOptions is called', () => {

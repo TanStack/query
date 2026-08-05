@@ -39,7 +39,9 @@ type UseQueryOptionsForUseQueries<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'suspense'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | QueriesPlaceholderDataFunction<TQueryFnData, TQueryKey>
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
    * The `data` property on useQueries is a plain object and not a SolidJS Resource.

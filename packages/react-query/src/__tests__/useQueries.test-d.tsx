@@ -3,7 +3,13 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
-import type { OmitKeyof, QueryFunction, QueryKey } from '..'
+import type {
+  OmitKeyof,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  QueryMeta,
+} from '..'
 import type { UseQueryOptions, UseQueryResult } from '../types'
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
@@ -172,6 +178,27 @@ describe('useQueries', () => {
           UseQueryResult<boolean, Error>,
         ]
       >()
+    })
+  })
+
+  describe('placeholderData', () => {
+    it('should accept queryOptions with a placeholderData function reading its context', () => {
+      const testQueryKey = ['SomeQuery', 42, { foo: 'bar' }] as const
+
+      const options = queryOptions({
+        queryKey: testQueryKey,
+        queryFn: () => 'data',
+        placeholderData: (_previousData, _previousQuery, context) => {
+          expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
+          expectTypeOf(context.queryKey).toEqualTypeOf<typeof testQueryKey>()
+          expectTypeOf(context.meta).toEqualTypeOf<QueryMeta | undefined>()
+          return undefined
+        },
+      })
+
+      const queryResults = useQueries({ queries: [options] })
+
+      expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
     })
   })
 

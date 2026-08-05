@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver } from '..'
-import type { DefaultError } from '..'
+import { QueryClient, QueryObserver, keepPreviousData } from '..'
+import type { DefaultError, QueryMeta } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -147,6 +147,55 @@ describe('queryObserver', () => {
           >()
           return undefined
         },
+      })
+    })
+
+    it('context should have a typed queryKey', () => {
+      const testQueryKey = ['SomeQuery', 42, { foo: 'bar' }] as const
+
+      new QueryObserver(new QueryClient(), {
+        queryKey: testQueryKey,
+        placeholderData: (_previousData, _previousQuery, context) => {
+          expectTypeOf(context.queryKey).toEqualTypeOf<typeof testQueryKey>()
+          return undefined
+        },
+      })
+    })
+
+    it('context should have a typed client', () => {
+      new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        placeholderData: (_previousData, _previousQuery, context) => {
+          expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
+          return undefined
+        },
+      })
+    })
+
+    it('context should have a typed meta', () => {
+      new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        placeholderData: (_previousData, _previousQuery, context) => {
+          expectTypeOf(context.meta).toEqualTypeOf<QueryMeta | undefined>()
+          return undefined
+        },
+      })
+    })
+
+    it('should accept a function that omits the context parameter', () => {
+      new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        queryFn: () => 'data',
+        placeholderData: (previousData) => {
+          expectTypeOf(previousData).toEqualTypeOf<string | undefined>()
+          return previousData
+        },
+      })
+
+      new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        queryFn: () => 'data',
+        placeholderData: keepPreviousData,
       })
     })
   })

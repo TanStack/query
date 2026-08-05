@@ -54,5 +54,24 @@ export class BlogPostComponent {
 ```
 
 [//]: # 'ExampleCache'
+[//]: # 'ExampleCacheContext'
+
+```ts
+@Injectable({
+  providedIn: 'root',
+})
+export class BlogPostsService {
+  blogPost(blogPostId: number) {
+    return queryOptions({
+      queryKey: ['blogPost', blogPostId],
+      queryFn: () => fetch(`/blogPosts/${blogPostId}`),
+      placeholderData: (_previousData, _previousQuery, { client }) =>
+        client.getQueryData(['blogPosts'])?.find((d) => d.id === blogPostId),
+    })
+  }
+}
+```
+
+[//]: # 'ExampleCacheContext'
 [//]: # 'Materials'
 [//]: # 'Materials'

@@ -29,7 +29,7 @@ The `useQueries` hook accepts an options object with a **queries** key whose val
 
 **placeholderData**
 
-The `placeholderData` option exists for `useQueries` as well, but it doesn't get information passed from previously rendered Queries like `useQuery` does, because the input to `useQueries` can be a different number of Queries on each render.
+The `placeholderData` option exists for `useQueries` as well, but it doesn't get information passed from previously rendered Queries like `useQuery` does, because the input to `useQueries` can be a different number of Queries on each render. It does still receive the `PlaceholderDataContext` as its third argument, so the `client`, the `queryKey` and the `meta` of each Query are available.
 
 **Returns**
 
