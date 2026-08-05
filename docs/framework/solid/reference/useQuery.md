@@ -205,11 +205,11 @@ function App() {
     - Optional
     - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
     - The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, wrap the function in `useCallback`.
-  - ##### `placeholderData: TData | (previousValue: TData | undefined; previousQuery: Query | undefined,) => TData`
+  - ##### `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined, context: PlaceholderDataContext) => TData`
     - Optional
     - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
     - `placeholderData` is **not persisted** to the cache
-    - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
+    - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, the second argument will be the complete previousQuery instance, and the third argument will be a `PlaceholderDataContext` with the `client`, the `queryKey` and the `meta` of this query.
   - ##### `deferStream: boolean`
     - Optional
     - Defaults to `false`
@@ -241,7 +241,7 @@ function App() {
     - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
   - ##### `meta: Record<string, unknown>`
     - Optional
-    - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
+    - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn` and of the `PlaceholderDataContext` provided to a `placeholderData` function.
   - ##### `queryKeyHashFn: (queryKey: QueryKey) => string`
     - Optional
     - If specified, this function is used to hash the `queryKey` to a string.

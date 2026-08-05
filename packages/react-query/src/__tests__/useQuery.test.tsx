@@ -23,7 +23,12 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
+import type {
+  DefinedUseQueryResult,
+  PlaceholderDataContext,
+  QueryFunction,
+  UseQueryResult,
+} from '..'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
@@ -4381,6 +4386,51 @@ describe('useQuery', () => {
     ])
 
     expect(placeholderFunctionRunCount).toEqual(1)
+  })
+
+  it('should provide a context with the client, queryKey and meta to the placeholder data function', async () => {
+    const listKey = queryKey()
+    const detailKey = queryKey()
+    const meta = { it: 'works' }
+
+    const contexts: Array<PlaceholderDataContext> = []
+    const states: Array<UseQueryResult<{ id: string; title: string }>> = []
+
+    queryClient.setQueryData(listKey, [{ id: '1', title: 'from list' }])
+
+    function Page() {
+      const state = useQuery({
+        queryKey: [detailKey, '1'],
+        queryFn: () =>
+          sleep(10).then(() => ({ id: '1', title: 'from detail' })),
+        meta,
+        placeholderData: (_previousData, _previousQuery, context) => {
+          contexts.push(context)
+          return context.client
+            .getQueryData<Array<{ id: string; title: string }>>(listKey)
+            ?.find((item) => item.id === '1')
+        },
+      })
+
+      states.push(state)
+
+      return <div>title: {state.data?.title}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('title: from detail')
+
+    expect(states[0]).toMatchObject({
+      isPlaceholderData: true,
+      data: { id: '1', title: 'from list' },
+    })
+
+    const context = contexts[0]!
+    expect(context.client).toBe(queryClient)
+    expect(context.queryKey).toEqual([detailKey, '1'])
+    expect(context.meta).toBe(meta)
   })
 
   it('select should only run when dependencies change if memoized', async () => {

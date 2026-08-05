@@ -92,6 +92,29 @@ function BlogPost({ blogPostId }) {
 ```
 
 [//]: # 'ExampleCache'
+
+### Placeholder Data in a Query Options Factory
+
+The example above needs the `queryClient` to be available where the options are defined, which is not the case when you extract them into a [`queryOptions`](./query-options.md) factory. To cover that, the `placeholderData` function receives a third argument holding the `client`, the `queryKey` and the `meta` of the Query:
+
+[//]: # 'ExampleCacheContext'
+
+```tsx
+export const blogPostOptions = (blogPostId: string) =>
+  queryOptions({
+    queryKey: ['blogPost', blogPostId],
+    queryFn: () => fetch(`/blogPosts/${blogPostId}`),
+    placeholderData: (_previousData, _previousQuery, { client }) =>
+      client.getQueryData(['blogPosts'])?.find((d) => d.id === blogPostId),
+  })
+```
+
+[//]: # 'ExampleCacheContext'
+
+Note that the property is named `client`, not `queryClient`, to match the [`QueryFunctionContext`](./query-functions.md#queryfunctioncontext) given to the `queryFn`.
+
+> `placeholderData` runs during render, so only read from the `client` here - do not write to the cache with `setQueryData` or trigger fetches with `invalidateQueries`.
+
 [//]: # 'Materials'
 
 ## Further reading

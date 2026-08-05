@@ -45,7 +45,9 @@ type QueryObserverOptionsForCreateQueries<
   CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | QueriesPlaceholderDataFunction<TQueryFnData, TQueryKey>
 }
 
 // Avoid TS depth-limit error in case of large array literal

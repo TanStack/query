@@ -48,7 +48,9 @@ type UseQueryOptionsForUseQueries<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'subscribed'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | QueriesPlaceholderDataFunction<TQueryFnData, TQueryKey>
 }
 
 // Avoid TS depth-limit error in case of large array literal

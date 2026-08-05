@@ -505,10 +505,20 @@ export class QueryObserver<
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
-                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
+                options.placeholderData as unknown as PlaceholderDataFunction<
+                  TQueryFnData,
+                  TError,
+                  TQueryData,
+                  TQueryKey
+                >
               )(
                 this.#lastQueryWithDefinedData?.state.data,
-                this.#lastQueryWithDefinedData as any,
+                this.#lastQueryWithDefinedData,
+                {
+                  client: this.#client,
+                  queryKey: options.queryKey,
+                  meta: options.meta,
+                },
               )
             : options.placeholderData
       }
