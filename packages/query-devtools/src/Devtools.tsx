@@ -682,7 +682,6 @@ function VirtualList<T>(props: {
   getKey: (item: T) => string
   rowHeight: number
   pinnedKey?: string | null
-  overscan?: number
   overflowClass: string
   containerClass: string
   rowClass: string
@@ -745,16 +744,15 @@ function VirtualList<T>(props: {
       return [] as Array<{ key: string; item: T; start: number }>
     }
 
-    const overscan = props.overscan ?? OVERSCAN
     const height = viewportHeight()
     // Clamp the scroll offset so a shrinking list (after filtering/sorting)
     // never scrolls past the end and blanks the viewport.
     const maxScrollTop = Math.max(0, count * rowHeight - height)
     const clampedTop = Math.min(scrollTop(), maxScrollTop)
-    const first = Math.max(0, Math.floor(clampedTop / rowHeight) - overscan)
+    const first = Math.max(0, Math.floor(clampedTop / rowHeight) - OVERSCAN)
     const last = Math.min(
       count,
-      first + Math.ceil(height / rowHeight) + overscan * 2,
+      first + Math.ceil(height / rowHeight) + OVERSCAN * 2,
     )
 
     const indexes = new Set<number>()

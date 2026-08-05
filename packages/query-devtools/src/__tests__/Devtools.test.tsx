@@ -1862,8 +1862,10 @@ describe('Devtools', () => {
 
       const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
       const reused = after.filter((row) => row.hasAttribute('data-row-id'))
-      expect(reused.length).toBeGreaterThan(0)
-      expect(reused.length).toBe(after.length - (after.length - reused.length))
+
+      // The scroll advanced the window by exactly one row, so every row except
+      // the one that left the top must be the very same element.
+      expect(reused.length).toBe(before.length - 1)
     })
 
     it('keeps a reused row up to date with its own query', () => {
