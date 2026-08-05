@@ -87,6 +87,13 @@ export function useBaseQuery<
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
 
+  if (
+    defaultedOptions.experimental_prefetchInRender ||
+    defaultedOptions.suspense
+  ) {
+    errorResetBoundary.register(defaultedOptions.queryHash)
+  }
+
   // this needs to be invoked before creating the Observer because that can create a cache entry
   const isNewCacheEntry = !client
     .getQueryCache()

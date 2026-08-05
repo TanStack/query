@@ -45,6 +45,8 @@ export type {
   QueryErrorResetFunction,
 } from './QueryErrorResetBoundary'
 export {
+  useTrackQueryHash,
+  getQueryHash,
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
 } from './QueryErrorResetBoundary'
