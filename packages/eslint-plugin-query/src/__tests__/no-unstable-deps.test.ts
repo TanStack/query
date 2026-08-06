@@ -84,6 +84,26 @@ const baseTestCases = {
       ])
       .concat([
         {
+          name: `should pass when useQueries with quoted combine string key is passed to ${reactHookAlias} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ],
+                'combine': (results) => ({ data: results[0]?.data })
+              });
+              const callback = ${reactHookInvocation}(() => { queries.data }, [queries]);
+              return;
+            }
+          `,
+        },
+      ])
+      .concat([
+        {
           name: `should pass when useQueries is array-destructured and element properties are used with ${reactHookAlias}`,
           code: `
             ${reactHookImport}
@@ -96,6 +116,22 @@ const baseTestCases = {
                 ]
               });
               const callback = ${reactHookInvocation}(() => { data }, [data]);
+              return;
+            }
+          `,
+        },
+      ])
+      .concat([
+        {
+          name: `should pass when variable named toString (Object.prototype property) is used as dependency with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function Component() {
+              const { refetch } = useQuery({ queryFn: (value: string) => value });
+              const toString = () => refetch();
+              const callback = ${reactHookInvocation}(() => { toString() }, [toString]);
               return;
             }
           `,
@@ -188,6 +224,31 @@ const baseTestCases = {
                 queries: [
                   { queryKey: ['test'], queryFn: () => 'test' }
                 ]
+              });
+              const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+        {
+          name: `result of useQueries with computed combine property (not real combine) is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            const key = 'combine';
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ],
+                [key]: (results) => ({ data: results[0]?.data })
               });
               const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
               return;
