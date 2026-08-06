@@ -2,6 +2,7 @@ import {
   dataTagSymbol,
   QueryClient,
   type DefinedQueryObserverResult,
+  type InfiniteData,
   type QueryObserverResult,
 } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
@@ -205,6 +206,27 @@ describe('type inference', () => {
     )
     expectTypeOf(infinite().data?.pages).toEqualTypeOf<
       Array<{ page: number }> | undefined
+    >()
+
+    const infiniteQueryOpts = infiniteQueryOptions({
+      queryKey: ['type-inference', 'infinite-query-options'] as const,
+      initialPageParam: 0,
+      queryFn: async () => ({ page: 3 }),
+      getNextPageParam: (lastPage) => lastPage.page + 1,
+    })
+    expectTypeOf(infiniteQueryOpts.queryKey[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<{ page: number }>
+    >()
+    const cachedPages = client.getQueryData(infiniteQueryOpts.queryKey)
+    expectTypeOf(cachedPages).toEqualTypeOf<
+      InfiniteData<{ page: number }> | undefined
+    >()
+    const updatedPages = client.setQueryData(infiniteQueryOpts.queryKey, {
+      pages: [{ page: 4 }],
+      pageParams: [0],
+    })
+    expectTypeOf(updatedPages).toEqualTypeOf<
+      InfiniteData<{ page: number }> | undefined
     >()
   })
 })
