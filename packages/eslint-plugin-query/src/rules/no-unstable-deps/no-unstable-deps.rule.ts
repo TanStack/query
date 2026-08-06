@@ -79,8 +79,11 @@ export const rule = createRule({
       return firstArg.properties.some(
         (prop) =>
           prop.type === AST_NODE_TYPES.Property &&
-          prop.key.type === AST_NODE_TYPES.Identifier &&
-          prop.key.name === 'combine',
+          !prop.computed &&
+          ((prop.key.type === AST_NODE_TYPES.Identifier &&
+            prop.key.name === 'combine') ||
+            (prop.key.type === AST_NODE_TYPES.Literal &&
+              prop.key.value === 'combine')),
       )
     }
 
