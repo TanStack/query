@@ -1070,6 +1070,37 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  examples/react/nextjs-app-optimistic-updates:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.101.2
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.101.2
+        version: link:../../../packages/react-query-devtools
+      next:
+        specifier: ^16.0.7
+        version: 16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0)
+      react:
+        specifier: ^19.2.1
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.2.1
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.19.15
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
