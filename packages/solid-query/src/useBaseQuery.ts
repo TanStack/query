@@ -260,7 +260,8 @@ export function useBaseQuery<
           setStateWithReconciliation(observerResult)
           return reject(observerResult.error)
         }
-        if (!observerResult.isLoading) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- data can be undefined at runtime despite type inference
+        if (!observerResult.isLoading || observerResult.data !== undefined) {
           resolver = null
           return resolve(
             hydratableObserverResult(obs.getCurrentQuery(), observerResult),
@@ -376,9 +377,16 @@ export function useBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        if (state.data !== undefined) {
-          return queryResource.latest?.data
+        const stateData = state.data
+
+        if (!observerResult.isFetching && stateData !== undefined) {
+          return stateData
         }
+
+        if (!observerResult.isFetching && observerResult.data !== undefined) {
+          return observerResult.data
+        }
+
         return queryResource()?.data
       }
       return Reflect.get(target, prop)
