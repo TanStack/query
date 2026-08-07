@@ -1,0 +1,29 @@
+{
+  "name": "@tanstack/query-intent",
+  "version": "5.101.0",
+  "description": "Intent skills for TanStack Query, framework adapters, and ecosystem integrations",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/query-intent"
+  },
+  "homepage": "https://tanstack.com/query",
+  "type": "module",
+  "keywords": [
+    "tanstack-intent"
+  ],
+  "files": [
+    "skills",
+    "!skills/_artifacts"
+  ],
+  "intent": {
+    "version": 1,
+    "repo": "TanStack/query",
+    "docs": "https://tanstack.com/query"
+  },
+  "devDependencies": {
+    "@tanstack/intent": "^0.0.41"
+  }
+}
