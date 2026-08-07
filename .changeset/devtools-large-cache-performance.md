@@ -6,7 +6,7 @@ Stop the devtools panel freezing the page when the query cache holds thousands o
 
 The panel rendered one row per cached query and per cached mutation with no windowing, and several of its subscriptions walked the whole cache on every cache event, so both the mount cost and the per-event cost grew with the size of the cache. Opening the panel against a large cache could lock up the page, and it stayed locked up while the cache kept changing.
 
-- Both lists are virtualized: rows are a fixed height and only those intersecting the scroll viewport, plus a small overscan, are mounted.
+- Both lists are virtualized: rows are a fixed height and only those intersecting the scroll viewport, plus a small overscan, are mounted. A query key too long for its row is truncated with an ellipsis rather than wrapped.
 - `MutationRow` reads its state directly instead of resolving it through the cache.
 - The details panes resolve their query by key rather than scanning the cache, and the status badges tally all five statuses in a single pass instead of one scan each.
 - The mutation cache fan-out is batched, and tearing one panel down no longer unsubscribes another panel that is still mounted.

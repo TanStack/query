@@ -3636,8 +3636,8 @@ const stylesFactory = (
       & .tsqd-query-hash {
         user-select: text;
         font-size: ${font.size.xs};
-        display: flex;
-        align-items: center;
+        display: block;
+        line-height: ${tokens.size[6]};
         min-height: ${tokens.size[6]};
         flex: 1;
         min-width: 0;
