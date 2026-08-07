@@ -6,9 +6,10 @@ import {
   hydrate,
   onlineManager,
 } from '@tanstack/query-core'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { cleanup, fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
+import { OVERSCAN, QUERY_ROW_HEIGHT_MULTIPLIER } from '../constants'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
 
@@ -323,7 +324,9 @@ describe('Devtools', () => {
         queryFn: () => [{ id: 1 }],
         queryKeyHashFn: () => 'custom-posts-hash',
       })
-      await vi.advanceTimersByTimeAsync(0)
+      // Whole-cache tallies are coalesced, so a stream of changes settles once
+      // the coalescing window closes rather than once per change.
+      await vi.advanceTimersByTimeAsync(50)
       const dehydratedState = dehydrate(queryClient)
 
       queryClient = new QueryClient()
@@ -334,6 +337,54 @@ describe('Devtools', () => {
       expect(
         rendered.getByLabelText(/Query key custom-posts-hash/),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('list identity', () => {
+    it('reflects an update that reorders the list under a time-based sort', async () => {
+      queryClient.setQueryData(['a'], 1)
+      // Fake timers freeze the clock, so without this both queries would carry
+      // the same `dataUpdatedAt` and a time-based sort could not order them.
+      await vi.advanceTimersByTimeAsync(10)
+      queryClient.setQueryData(['b'], 1)
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { TanstackQueryDevtools_sortFn: '"Last Updated"' },
+      )
+
+      const keysInOrder = () =>
+        rendered
+          .getAllByLabelText(/Query key/)
+          .map((row) => row.getAttribute('aria-label') || '')
+
+      const before = keysInOrder()
+
+      // Touching one query changes its updatedAt, which under this sort moves
+      // it relative to the other - so holding the previous array would be wrong.
+      await vi.advanceTimersByTimeAsync(10)
+      queryClient.setQueryData(['a'], 2)
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(keysInOrder()).not.toEqual(before)
+    })
+
+    it('reflects a change that does reorder the list', async () => {
+      queryClient.setQueryData(['a'], 1)
+      queryClient.setQueryData(['b'], 1)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const keysInOrder = () =>
+        rendered
+          .getAllByLabelText(/Query key/)
+          .map((row) => row.getAttribute('aria-label'))
+
+      expect(keysInOrder()[0]).toMatch(/\["a"\]/)
+
+      // Removing the first query must change what the list renders.
+      queryClient.removeQueries({ queryKey: ['a'] })
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(keysInOrder()[0]).toMatch(/\["b"\]/)
     })
   })
 
@@ -548,6 +599,39 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/Fetching: \d+/)).toBeInTheDocument()
       expect(rendered.getByLabelText(/Paused: \d+/)).toBeInTheDocument()
       expect(rendered.getByLabelText(/Inactive: \d+/)).toBeInTheDocument()
+    })
+
+    it('tallies each status into its own badge', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByLabelText('Fresh: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Stale: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Fetching: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Paused: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Inactive: 0')).toBeInTheDocument()
+
+      // Observed and never stale, so this lands in "fresh" and nowhere else.
+      queryClient.setQueryData(['fresh-one'], 1)
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['fresh-one'],
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+
+      // No observer, so this lands in "inactive".
+      queryClient.setQueryData(['inactive-one'], 1)
+
+      // Whole-cache tallies are coalesced, so a run of changes settles once the
+      // coalescing window closes rather than once per change.
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(rendered.getByLabelText('Fresh: 1')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Stale: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Fetching: 0')).toBeInTheDocument()
+      expect(rendered.getByLabelText('Paused: 0')).toBeInTheDocument()
+
+      unsubscribe()
     })
 
     it('should reflect the inactive count when a query is added without observers', () => {
@@ -793,6 +877,39 @@ describe('Devtools', () => {
       fireEvent.click(rendered.getByLabelText(/Mutation submitted at/))
 
       expect(rendered.getByText('Mutation Details')).toBeInTheDocument()
+    })
+  })
+
+  describe('mutation details status', () => {
+    it('follows the selected mutation through a status transition', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      let resolve: (value: string) => void = () => {}
+      const mutation = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['status-transition'],
+        mutationFn: () =>
+          new Promise<string>((r) => {
+            resolve = r
+          }),
+      })
+      const executed = mutation.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+
+      fireEvent.click(rendered.getByLabelText(/Mutation submitted at/))
+      expect(rendered.getByText('Mutation Details')).toBeInTheDocument()
+
+      const details = rendered.getByText('Mutation Details').closest('div')
+        ?.parentElement as HTMLElement
+      expect(details.textContent).toContain('pending')
+
+      resolve('ok')
+      await executed
+      // The mutation fan-out is dispatched on a microtask.
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(details.textContent).toContain('success')
     })
   })
 
@@ -1498,6 +1615,405 @@ describe('Devtools', () => {
       expect(
         rendered.queryByLabelText('Tanstack query devtools'),
       ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('list virtualization', () => {
+    // In jsdom `--tsqd-font-size` resolves to the 16px root font size, so the
+    // fixed row height is 16 * QUERY_ROW_HEIGHT_MULTIPLIER (1.5) = 24px, and the
+    // ResizeObserver stub reports a 500px viewport, giving a window of
+    // ceil(500 / 24) + 2 * OVERSCAN = 33 rows.
+    function scrollTo(
+      rendered: ReturnType<typeof renderDevtools>,
+      scrollTop: number,
+    ) {
+      const scroller = rendered.container.querySelector(
+        '.tsqd-queries-overflow-container',
+      ) as HTMLElement
+      Object.defineProperty(scroller, 'scrollTop', {
+        value: scrollTop,
+        writable: true,
+        configurable: true,
+      })
+      fireEvent.scroll(scroller)
+    }
+
+    function seedQueries(count: number, prefix = 'q') {
+      for (let i = 0; i < count; i++) {
+        queryClient.setQueryData([`${prefix}-${i}`], i)
+      }
+    }
+
+    it('renders only a bounded window of rows for a large query cache', () => {
+      seedQueries(300)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const rows = rendered.container.querySelectorAll('.tsqd-query-row')
+      expect(rows.length).toBeGreaterThan(0)
+      expect(rows.length).toBeLessThan(100)
+    })
+
+    it('keeps the initial render bounded even before a resize measurement arrives', () => {
+      // A ResizeObserver that never delivers a measurement, so the window can
+      // only rely on the bounded default viewport seed (never the item count).
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          constructor(_callback: ResizeObserverCallback) {}
+          observe = vi.fn()
+          unobserve = vi.fn()
+          disconnect = vi.fn()
+        },
+      )
+      seedQueries(300)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const rows = rendered.container.querySelectorAll('.tsqd-query-row')
+      expect(rows.length).toBeGreaterThan(0)
+      expect(rows.length).toBeLessThan(100)
+    })
+
+    it('sizes the scroll spacer to the full list height', () => {
+      const count = 50
+      seedQueries(count)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const spacer = rendered.container.querySelector<HTMLElement>(
+        '.tsqd-queries-overflow-container > .tsqd-queries-container',
+      )
+      expect(spacer).not.toBeNull()
+
+      // Derive the per-row height from a rendered row's translateY offset so the
+      // assertion does not depend on how jsdom resolves --tsqd-font-size.
+      const rows = Array.from(
+        rendered.container.querySelectorAll('.tsqd-query-row'),
+      )
+      const secondRowWrapper = rows[1]?.parentElement as HTMLElement
+      const offset = Number(
+        /translateY\(([\d.]+)px\)/.exec(secondRowWrapper.style.transform)?.[1],
+      )
+      expect(offset).toBeGreaterThan(0)
+      expect(spacer!.style.height).toBe(`${count * offset}px`)
+    })
+
+    it('reveals later rows as the list is scrolled', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.queryByLabelText(/Query key \["q-0"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText(/Query key \["q-199"\]/),
+      ).not.toBeInTheDocument()
+
+      const scroller = rendered.container.querySelector(
+        '.tsqd-queries-overflow-container',
+      ) as HTMLElement
+      // Scroll to the bottom: 200 * 24 - 500 = 4300.
+      Object.defineProperty(scroller, 'scrollTop', {
+        value: 4300,
+        writable: true,
+        configurable: true,
+      })
+      fireEvent.scroll(scroller)
+
+      expect(
+        rendered.getByLabelText(/Query key \["q-199"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText(/Query key \["q-0"\]/),
+      ).not.toBeInTheDocument()
+    })
+
+    it('does not blank the list when filtering after scrolling deep', () => {
+      seedQueries(200, 'item')
+      queryClient.setQueryData(['keep-me'], 'x')
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const scroller = rendered.container.querySelector(
+        '.tsqd-queries-overflow-container',
+      ) as HTMLElement
+      Object.defineProperty(scroller, 'scrollTop', {
+        value: 4000,
+        writable: true,
+        configurable: true,
+      })
+      fireEvent.scroll(scroller)
+
+      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
+        target: { value: 'keep-me' },
+      })
+
+      expect(
+        rendered.getByLabelText(/Query key \["keep-me"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.container.querySelectorAll('.tsqd-query-row').length,
+      ).toBeGreaterThan(0)
+    })
+
+    it('re-initializes the window when switching away from and back to the queries view', () => {
+      queryClient.setQueryData(['stay'], 1)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key \["stay"\]/),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByTitle('Toggle Mutations View'))
+      expect(
+        rendered.queryByLabelText(/Query key \["stay"\]/),
+      ).not.toBeInTheDocument()
+
+      fireEvent.click(rendered.getByTitle('Toggle Queries View'))
+      expect(
+        rendered.getByLabelText(/Query key \["stay"\]/),
+      ).toBeInTheDocument()
+    })
+
+    it('keeps the selected row mounted exactly once when it scrolls out of the window', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["q-0"\]/))
+
+      const scroller = rendered.container.querySelector(
+        '.tsqd-queries-overflow-container',
+      ) as HTMLElement
+      Object.defineProperty(scroller, 'scrollTop', {
+        value: 3000,
+        writable: true,
+        configurable: true,
+      })
+      fireEvent.scroll(scroller)
+
+      expect(rendered.getAllByLabelText(/Query key \["q-0"\]/)).toHaveLength(1)
+    })
+
+    it('exposes the full query key via the title attribute', () => {
+      queryClient.setQueryData(['posts', { page: 1 }], [])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const hash = rendered.container.querySelector(
+        '.tsqd-query-hash',
+      ) as HTMLElement
+      expect(hash.getAttribute('title')).toBe('["posts",{"page":1}]')
+    })
+
+    it('renders a mutation row from its own state after the hot-path change', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['virtualized-mut'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
+
+    it('reuses row elements across a cache event', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      queryClient.setQueryData(['q-0'], 'updated')
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      expect(
+        after.filter((row) => row.hasAttribute('data-row-id')),
+      ).toHaveLength(before.length)
+    })
+
+    it('reuses every row element when a scroll does not shift the window', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      // Smaller than the overscan margin, so the rendered window is unchanged
+      // and every row must be the very same element afterwards.
+      scrollTo(rendered, 24)
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      expect(
+        after.filter((row) => row.hasAttribute('data-row-id')),
+      ).toHaveLength(before.length)
+    })
+
+    it('reuses the overlapping rows when a scroll shifts the window', () => {
+      seedQueries(200)
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const before = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      before.forEach((row, i) => row.setAttribute('data-row-id', String(i)))
+
+      // Past the overscan margin, so the window really moves and some rows are
+      // recycled. The rows still in view must not have been rebuilt.
+      scrollTo(rendered, OVERSCAN * 24 + 24)
+
+      const after = [...rendered.container.querySelectorAll('.tsqd-query-row')]
+      const reused = after.filter((row) => row.hasAttribute('data-row-id'))
+
+      // The scroll advanced the window by exactly one row, so every row except
+      // the one that left the top must be the very same element.
+      expect(reused.length).toBe(before.length - 1)
+    })
+
+    it('keeps a reused row up to date with its own query', () => {
+      queryClient.setQueryData(['solo'], 'first')
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const row = rendered.getByLabelText(/Query key \["solo"\]/)
+      row.setAttribute('data-row-id', 'solo')
+      expect(row.querySelector('.tsqd-query-observer-count')?.textContent).toBe(
+        '0',
+      )
+
+      // Reuse must not mean frozen. Adding an observer changes state the row
+      // renders, and it has to show up on the very same element.
+      const observer = new QueryObserver(queryClient, { queryKey: ['solo'] })
+      const unsubscribe = observer.subscribe(() => {})
+
+      const updated = rendered.getByLabelText(/Query key \["solo"\]/)
+      expect(updated).toHaveAttribute('data-row-id', 'solo')
+      expect(
+        updated.querySelector('.tsqd-query-observer-count')?.textContent,
+      ).toBe('1')
+
+      unsubscribe()
+    })
+
+    describe('adapts to different heights', () => {
+      afterEach(() => {
+        vi.restoreAllMocks()
+      })
+
+      // Re-point the ResizeObserver stub at a specific viewport height so we can
+      // assert the window grows/shrinks with the scroll container.
+      function stubViewportHeight(height: number) {
+        vi.stubGlobal(
+          'ResizeObserver',
+          class {
+            callback: ResizeObserverCallback
+            constructor(callback: ResizeObserverCallback) {
+              this.callback = callback
+            }
+            observe = vi.fn((target: Element) => {
+              this.callback(
+                [
+                  {
+                    target,
+                    contentRect: { width: 1000, height } as DOMRectReadOnly,
+                  } as ResizeObserverEntry,
+                ],
+                this as unknown as ResizeObserver,
+              )
+            })
+            unobserve = vi.fn()
+            disconnect = vi.fn()
+          },
+        )
+      }
+
+      // jsdom's getComputedStyle does not resolve the inherited `--tsqd-font-size`
+      // custom property, so patch getPropertyValue to drive a specific row height
+      // (rowHeight = fontSize * QUERY_ROW_HEIGHT_MULTIPLIER).
+      function stubRowFontSize(px: number) {
+        const real = CSSStyleDeclaration.prototype.getPropertyValue
+        vi.spyOn(
+          CSSStyleDeclaration.prototype,
+          'getPropertyValue',
+        ).mockImplementation(function (
+          this: CSSStyleDeclaration,
+          name: string,
+        ) {
+          return name === '--tsqd-font-size' ? `${px}px` : real.call(this, name)
+        })
+      }
+
+      const offsetOf = (row: Element | undefined) =>
+        Number(
+          /translateY\(([\d.]+)px\)/.exec(
+            (row?.parentElement as HTMLElement | undefined)?.style.transform ??
+              '',
+          )?.[1],
+        )
+
+      function readWindow(container: HTMLElement) {
+        const rows = Array.from(container.querySelectorAll('.tsqd-query-row'))
+        const rowHeight =
+          rows.length >= 2 ? offsetOf(rows[1]) - offsetOf(rows[0]) : NaN
+        const spacer = container.querySelector<HTMLElement>(
+          '.tsqd-queries-overflow-container > .tsqd-queries-container',
+        )
+        const spacerHeight = Number(
+          /([\d.]+)px/.exec(spacer?.style.height ?? '')?.[1],
+        )
+        return { rows, count: rows.length, rowHeight, spacerHeight }
+      }
+
+      // At scrollTop 0 with a list larger than the window, the number of mounted
+      // rows is ceil(viewport / rowHeight) + overscan on each side.
+      const expectedWindow = (viewport: number, rowHeight: number) =>
+        Math.ceil(viewport / rowHeight) + OVERSCAN * 2
+
+      it('grows the rendered window as the scroll viewport gets taller', () => {
+        seedQueries(150)
+        let previousCount = 0
+        for (const viewport of [120, 480]) {
+          cleanup()
+          stubViewportHeight(viewport)
+          const rendered = renderDevtools({ initialIsOpen: true })
+          const { count, rowHeight } = readWindow(rendered.container)
+
+          expect(count).toBe(expectedWindow(viewport, rowHeight))
+          expect(count).toBeGreaterThan(previousCount)
+          previousCount = count
+        }
+      })
+
+      it('derives row height from the --tsqd-font-size multiplier', () => {
+        stubRowFontSize(20)
+        seedQueries(60)
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        expect(readWindow(rendered.container).rowHeight).toBe(
+          20 * QUERY_ROW_HEIGHT_MULTIPLIER,
+        )
+      })
+
+      it('scales the spacer, row offsets, and window count with a taller row height', () => {
+        const count = 100
+        const viewport = 500 // the default ResizeObserver stub reports 500px
+        const rowHeight = 32 * QUERY_ROW_HEIGHT_MULTIPLIER // 48
+        stubRowFontSize(32)
+        seedQueries(count)
+        const rendered = renderDevtools({ initialIsOpen: true })
+
+        const window = readWindow(rendered.container)
+
+        // Taller rows -> a smaller window for the same viewport.
+        expect(window.rowHeight).toBe(rowHeight)
+        expect(window.count).toBe(expectedWindow(viewport, rowHeight))
+        // Spacer accounts for every row at the larger height.
+        expect(window.spacerHeight).toBe(count * rowHeight)
+        // Consecutive rows are spaced by exactly one (taller) row height.
+        expect(offsetOf(window.rows[1]) - offsetOf(window.rows[0])).toBe(
+          rowHeight,
+        )
+        expect(offsetOf(window.rows[2]) - offsetOf(window.rows[1])).toBe(
+          rowHeight,
+        )
+      })
     })
   })
 })
