@@ -29,8 +29,6 @@ useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```tsx
 queryClient.isFetching(key, filters) // [!code --]
 queryClient.isFetching({ queryKey, ...filters }) // [!code ++]
-queryClient.ensureQueryData(key, filters) // [!code --]
-queryClient.ensureQueryData({ queryKey, ...filters }) // [!code ++]
 queryClient.getQueriesData(key, filters) // [!code --]
 queryClient.getQueriesData({ queryKey, ...filters }) // [!code ++]
 queryClient.setQueriesData(key, updater, filters, options) // [!code --]
@@ -45,14 +43,6 @@ queryClient.invalidateQueries(key, filters, options) // [!code --]
 queryClient.invalidateQueries({ queryKey, ...filters }, options) // [!code ++]
 queryClient.refetchQueries(key, filters, options) // [!code --]
 queryClient.refetchQueries({ queryKey, ...filters }, options) // [!code ++]
-queryClient.fetchQuery(key, fn, options) // [!code --]
-queryClient.fetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchQuery(key, fn, options) // [!code --]
-queryClient.prefetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
 ```tsx
@@ -61,6 +51,39 @@ queryCache.find({ queryKey, ...filters }) // [!code ++]
 queryCache.findAll(key, filters) // [!code --]
 queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
+
+### Imperative QueryClient methods
+
+These methods are deprecated as of Tanstack Query `INSERT_FUTURE_V5_MINOR` and will be removed in v6.
+
+If you are coming from v4 or earlier:
+
+```tsx
+queryClient.fetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }) // [!code ++]
+queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.infiniteQuery({
+  queryKey: key,
+  queryFn: fn,
+  ...options,
+}) // [!code ++]
+
+queryClient.prefetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }).catch(noop) // [!code ++]
+
+queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient
+  .infiniteQuery({ queryKey: key, queryFn: fn, ...options })
+  .catch(noop) // [!code ++]
+
+queryClient.ensureQueryData(key, options) // [!code --]
+queryClient.query({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+
+queryClient.ensureInfiniteQueryData(key, options) // [!code --]
+queryClient.infiniteQuery({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+```
+
+If you are updating older v5 code, It will be the same as the above except for keeping the single options object
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
 
