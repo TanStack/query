@@ -9,6 +9,15 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from '../infiniteQueryOptions'
 
+// Regression test for exported infiniteQueryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['invalid'],
+  getNextPageParam: () => 1,
+  initialPageParam: 1,
+})
+
 describe('infiniteQueryOptions', () => {
   it('should infer defined types', () => {
     const options = infiniteQueryOptions({
