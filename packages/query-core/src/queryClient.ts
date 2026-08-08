@@ -260,13 +260,20 @@ export class QueryClient {
     const queryCache = this.#queryCache
 
     return notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
+      // Snapshot matched queries BEFORE calling reset, because reset() mutates
+      // each query's state (e.g. status flips from "error"/"success" to
+      // "pending"). Re-running the same state-based predicate afterwards would
+      // no longer match the same set, so refetch would skip the queries we
+      // just reset. Match by identity instead — query references are stable
+      // across reset.
+      const matchedQueries = queryCache.findAll(filters)
+      matchedQueries.forEach((query) => {
         query.reset()
       })
       return this.refetchQueries(
         {
           type: 'active',
-          ...filters,
+          predicate: (query) => matchedQueries.includes(query),
         },
         options,
       )
