@@ -172,7 +172,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
         return jscodeshift.callExpression(node.original.callee, [
           node.arguments[0],
           transformedArgument,
-          ...node.arguments.slice(2, 0),
+          ...node.arguments.slice(2),
         ])
       }
 
