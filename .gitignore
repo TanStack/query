@@ -10,7 +10,6 @@ yarn.lock
 build
 coverage
 dist
-dist-cjs
 dist-ts
 
 # misc
