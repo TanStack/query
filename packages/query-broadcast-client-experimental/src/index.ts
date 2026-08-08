@@ -1,12 +1,21 @@
 import { BroadcastChannel } from 'broadcast-channel'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryState } from '@tanstack/query-core'
 
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
   options?: BroadcastChannelOptions
 }
+
+type BroadcastMessage =
+  | { type: 'added' | 'removed'; queryHash: string; queryKey: QueryKey }
+  | {
+      type: 'updated'
+      queryHash: string
+      queryKey: QueryKey
+      state: QueryState
+    }
 
 export function broadcastQueryClient({
   queryClient,
@@ -25,6 +34,22 @@ export function broadcastQueryClient({
     ...options,
   })
 
+  // `postMessage` structurally clones its payload and rejects with a
+  // `DataCloneError` when the query holds non-serializable data (e.g. a
+  // `ReadableStream`, `File`, or a framework proxy). Swallow the rejection so
+  // it does not surface as an unhandled promise rejection, and log a helpful
+  // warning in development instead of an opaque `node_modules` stack trace.
+  const postMessage = (message: BroadcastMessage) => {
+    channel.postMessage(message).catch((error: unknown) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          `[broadcastQueryClient] Failed to broadcast query "${message.queryHash}". Its state is likely not serializable.`,
+          error,
+        )
+      }
+    })
+  }
+
   const queryCache = queryClient.getQueryCache()
 
   const unsubscribe = queryClient.getQueryCache().subscribe((queryEvent) => {
@@ -37,7 +62,7 @@ export function broadcastQueryClient({
     } = queryEvent
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
-      channel.postMessage({
+      postMessage({
         type: 'updated',
         queryHash,
         queryKey,
@@ -46,7 +71,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'removed' && observers.length > 0) {
-      channel.postMessage({
+      postMessage({
         type: 'removed',
         queryHash,
         queryKey,
@@ -54,7 +79,7 @@ export function broadcastQueryClient({
     }
 
     if (queryEvent.type === 'added') {
-      channel.postMessage({
+      postMessage({
         type: 'added',
         queryHash,
         queryKey,
