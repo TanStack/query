@@ -41,6 +41,38 @@ describe('mutationObserver', () => {
     unsubscribe2()
   })
 
+  it('should reconnect the observer to the current mutation on resubscribe', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutation.subscribe(subscriptionHandler)
+
+    mutation.mutate('input')
+    expect(subscriptionHandler).toHaveBeenCalledTimes(1)
+    expect(mutation.getCurrentResult()).toMatchObject({ status: 'pending' })
+
+    // Simulates React StrictMode's unmount: the observer is removed from the mutation
+    unsubscribe()
+
+    // Simulates StrictMode's remount: the observer should reattach to the in-flight mutation
+    mutation.subscribe(subscriptionHandler)
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(subscriptionHandler).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        status: 'success',
+        data: 'input',
+      }),
+    )
+    expect(mutation.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+  })
+
   it('unsubscribe should remove observer to trigger GC', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(5).then(() => text),

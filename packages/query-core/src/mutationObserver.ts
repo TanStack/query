@@ -100,7 +100,7 @@ export class MutationObserver<
   }
 
   protected onSubscribe(): void {
-    if (this.#currentMutation) {
+    if (this.listeners.size === 1 && this.#currentMutation) {
       this.#currentMutation.addObserver(this)
       this.#updateResult()
       this.#notify()
