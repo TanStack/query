@@ -172,9 +172,12 @@ const {
   - Defaults to `true`
   - If set to `false`, this instance of `useQuery` will not be subscribed to the cache. This means it won't trigger the `queryFn` on its own, and it won't receive updates if data gets into cache by other means.
 - `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
+  - Optional
+  - Defaults to `false`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+  - `useSuspenseQuery` and other suspense hooks do not accept this option; see [Suspense](../guides/suspense.md#throwonerror-default) for their default behavior
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
