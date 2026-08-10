@@ -788,14 +788,16 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     expect(queryFn).toHaveBeenCalledOnce()
   })
 
-  it.skip('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
+  it('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
-    let count = 0
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
-      return 'test' + count++
-    })
+    // `sleep` is longer than usual on purpose: with `shouldAdvanceTime`, the
+    // real time spent rendering and awaiting `takeRender` (~40ms) is added to
+    // the fake clock, so a shorter fetch would resolve before `cancel` can take
+    // effect. A longer fetch keeps the query in-flight when it is cancelled.
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(50).then(() => 'test'))
 
     const options = {
       queryKey: key,
