@@ -7,6 +7,7 @@
  * (including Solid's serialized hydration payload) is then hydrated in this
  * jsdom process with the real `hydrate()` from `@solidjs/web`.
  */
+import { hydrate as hydrateQueryClient } from '@tanstack/query-core'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   applyChunks,
@@ -146,6 +147,84 @@ describe('SSR hydration', () => {
       })
       expect(app.counts.fresh).toBe(0)
     } finally {
+      dispose()
+      container.remove()
+    }
+  })
+
+  it('coexists with a host that primes the cache through its own hydrate() channel', async () => {
+    // TanStack Start does not use the provider channel: its router
+    // integration applies a dehydrated QueryClient via query-core hydrate()
+    // before Solid's DOM hydrate() runs. Under Start both channels are live
+    // and prime the same entries; pin that the second application is silent
+    // (hydrate() only writes strictly-newer data, so equal dataUpdatedAt is
+    // a no-op with no observer notification) and that the provider's attach
+    // coordination still resolves.
+    const { string } = harness.report
+    const app = bundle.createApp()
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    bootstrapHydrationGlobals()
+    container.innerHTML = string.html
+    for (const script of Array.from(container.querySelectorAll('script'))) {
+      if (script.textContent) window.eval(script.textContent)
+      script.remove()
+    }
+
+    // The host's channel primes first, with the exact server states.
+    hydrateQueryClient(app.queryClient, {
+      queries: string.queries.map((q) => ({
+        queryKey: q.queryKey,
+        queryHash: q.queryHash,
+        state: q.state,
+        dehydratedAt: q.state.dataUpdatedAt,
+      })),
+      mutations: [],
+    })
+
+    // Record every cache update from here on: the provider channel's
+    // re-priming must not produce any for the already-primed fresh query.
+    const updatedHashes: Array<string> = []
+    const unsubscribe = app.queryClient.getQueryCache().subscribe((event) => {
+      if (event.type === 'updated') updatedHashes.push(event.query.queryHash)
+    })
+
+    const dispose = app.mount(container)
+    try {
+      // Attach coordination is not deadlocked by the pre-primed cache: the
+      // channel still yields, waiters resolve, the observer subscribes.
+      await vi.waitFor(() => {
+        expect(
+          app.queryClient
+            .getQueryCache()
+            .find({ queryKey: ['fresh'] })
+            ?.getObserversCount(),
+        ).toBe(1)
+      })
+
+      // Double-priming was silent: no state write, no observer churn, no
+      // refetch of the fresh query. (The stale query's mount refetch per
+      // normal staleness rules is the only update source.)
+      expect(
+        updatedHashes.filter((hash) => hash === '["fresh"]'),
+      ).toEqual([])
+      expect(app.counts.fresh).toBe(0)
+      expect(container.querySelector('#fresh')?.textContent).toBe(
+        'fresh-server',
+      )
+      await vi.waitFor(() => {
+        expect(app.counts.stale).toBe(1)
+      })
+
+      // And the component is live afterwards.
+      app.queryClient.setQueryData(['fresh'], 'updated-client')
+      await vi.waitFor(() => {
+        expect(container.querySelector('#fresh')?.textContent).toBe(
+          'updated-client',
+        )
+      })
+    } finally {
+      unsubscribe()
       dispose()
       container.remove()
     }
