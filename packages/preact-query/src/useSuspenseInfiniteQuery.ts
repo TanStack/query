@@ -15,6 +15,8 @@ import type {
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+type NarrowableNoInfer<T> = T extends unknown ? NoInfer<T> : never
+
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -30,7 +32,7 @@ export function useSuspenseInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> {
+): UseSuspenseInfiniteQueryResult<NarrowableNoInfer<TData>, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if ((options.queryFn as any) === skipToken) {
       console.error('skipToken is not allowed for useSuspenseInfiniteQuery')

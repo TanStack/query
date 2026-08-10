@@ -5,6 +5,8 @@ import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 
+type NarrowableNoInfer<T> = T extends unknown ? NoInfer<T> : never
+
 export function useSuspenseQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -13,7 +15,7 @@ export function useSuspenseQuery<
 >(
   options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> {
+): UseSuspenseQueryResult<NarrowableNoInfer<TData>, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if ((options.queryFn as any) === skipToken) {
       console.error('skipToken is not allowed for useSuspenseQuery')

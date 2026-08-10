@@ -18,6 +18,8 @@ import type {
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+type NarrowableNoInfer<T> = T extends unknown ? NoInfer<T> : never
+
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -33,7 +35,7 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<NarrowableNoInfer<TData>, TError>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -50,7 +52,7 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<NarrowableNoInfer<TData>, TError>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -67,7 +69,7 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<NarrowableNoInfer<TData>, TError>
 
 export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,

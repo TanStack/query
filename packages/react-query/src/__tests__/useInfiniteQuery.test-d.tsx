@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { UseInfiniteQueryResult } from '../types'
 
 describe('pageParam', () => {
   it('initialPageParam should define type of param passed to queryFunctionContext', () => {
@@ -139,5 +140,41 @@ describe('error booleans', () => {
     expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
     expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
     expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+  })
+})
+
+describe('NoInfer', () => {
+  // eslint-disable-next-line vitest/expect-expect
+  it('TData should depend only on the arguments, not the annotated result', () => {
+    // @ts-expect-error
+    const result: UseInfiniteQueryResult<InfiniteData<{ wow: string }>> =
+      useInfiniteQuery({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+
+    void result
+  })
+
+  it('should preserve discriminated-union narrowing on data', () => {
+    type Item =
+      | { type: 'first'; first: string }
+      | { type: 'second'; second: string }
+
+    const { data } = useInfiniteQuery({
+      queryKey: queryKey(),
+      queryFn: (): Item => ({ type: 'first', first: 'a' }),
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+      select: (infiniteData) => infiniteData.pages[0],
+    })
+
+    const second = data?.type === 'first' ? undefined : data
+
+    expectTypeOf(second).toEqualTypeOf<
+      { type: 'second'; second: string } | undefined
+    >()
   })
 })

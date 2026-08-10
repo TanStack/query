@@ -3,6 +3,7 @@ import { skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { UseSuspenseInfiniteQueryResult } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
@@ -90,5 +91,41 @@ describe('useSuspenseInfiniteQuery', () => {
     })
 
     expectTypeOf(query).not.toHaveProperty('isPlaceholderData')
+  })
+})
+
+describe('NoInfer', () => {
+  // eslint-disable-next-line vitest/expect-expect
+  it('TData should depend only on the arguments, not the annotated result', () => {
+    // @ts-expect-error
+    const result: UseSuspenseInfiniteQueryResult<InfiniteData<{ wow: string }>> =
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      })
+
+    void result
+  })
+
+  it('should preserve discriminated-union narrowing on data', () => {
+    type Item =
+      | { type: 'first'; first: string }
+      | { type: 'second'; second: string }
+
+    const { data } = useSuspenseInfiniteQuery({
+      queryKey: queryKey(),
+      queryFn: (): Item => ({ type: 'first', first: 'a' }),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      select: (infiniteData) => infiniteData.pages[0],
+    })
+
+    const second = data?.type === 'first' ? undefined : data
+
+    expectTypeOf(second).toEqualTypeOf<
+      { type: 'second'; second: string } | undefined
+    >()
   })
 })
