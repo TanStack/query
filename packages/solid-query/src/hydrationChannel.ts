@@ -9,10 +9,16 @@ type DehydratedQueryEntry = DehydratedState['queries'][number]
  * A single message on the dehydration channel. `entries` is *cumulative* —
  * every yield carries all entries settled so far. Two reasons:
  *
- * - Solid's hydration replay of async-iterable values collapses
- *   intermediate yields that are already buffered when the client pulls
- *   (`normalizeIterator` drains synchronously available results and keeps
- *   only the latest), so each yield must be self-contained.
+ * - It is what makes Solid's signal-path hydration replay lossless.
+ *   Yields still buffered when hydration begins are conflated to the
+ *   LATEST one (`normalizeIterator` drains synchronously available
+ *   results, keeps the last data yield, and delivers the stream's done
+ *   result on a subsequent pull), so each yield must be self-contained:
+ *   the latest cumulative snapshot alone carries everything the dropped
+ *   intermediates did. Requires the solid-js build with that conflation
+ *   behavior (> 2.0.0-beta.32); earlier betas pinned the replay at the
+ *   FIRST buffered yield, dropping every later entry and the `done`
+ *   marker.
  * - Entry objects keep their identity across yields, so seroval's
  *   cross-reference serialization emits each entry once and later yields
  *   only reference it — the cumulative shape costs bytes proportional to
@@ -37,7 +43,7 @@ export interface DehydrationChannelYield {
  * per-computation path: the server runtime tees the iterator into the
  * hydration serializer (`ctx.serialize(id, tapped)` in solid-js'
  * `processResult`) and seroval streams each yield to the client as a
- * patch chunk riding the SSR stream.
+ * script chunk riding the SSR stream.
  *
  * The iterable must terminate for the SSR stream to complete: the
  * hydration serializer's `flush()` only fires its `onDone` once all

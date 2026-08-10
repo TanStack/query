@@ -1,9 +1,8 @@
 import {
   createContext,
   createRenderEffect,
-  createStore,
+  createSignal,
   onCleanup,
-  snapshot,
   useContext,
 } from 'solid-js'
 import {
@@ -47,61 +46,42 @@ export const QueryClientProvider = (
 
   // Library-owned serialization channel for SSR dehydration.
   //
-  // Server: the store's initializer returns an async generator that
-  // writes cumulative dehydrated-query snapshots into the draft as
-  // queries settle during SSR. It is a plain async store computation, so
-  // Solid serializes it through its normal per-computation path: each
-  // yield's draft mutations ride the SSR stream as store patches (the
-  // same flush as the content that awaited them), and the entry objects
-  // inside them are deduplicated by reference (seroval) against
-  // everything else in the payload.
+  // Server: the computation's value IS the channel's async iterable, so
+  // Solid serializes it through its normal per-computation signal path:
+  // the server runtime tees the iterator into the hydration serializer
+  // (`ctx.serialize(id, tapped)` in solid-js' `processResult`) and
+  // seroval streams each cumulative dehydrated-cache snapshot to the
+  // client as a chunk riding the SSR stream, with the entry objects
+  // inside deduplicated by reference against everything else in the
+  // payload. Nothing reads the signal during SSR, so it never suspends
+  // anything.
   //
-  // The channel is store-shaped rather than signal-shaped on purpose:
-  // Solid's hydration replay applies *every* buffered yield of a store's
-  // async iterable in order (`hydrateStoreFromAsyncIterable`), while a
-  // signal's replay collapses buffered yields into the latest — and its
-  // final done-result supersedes them — which would drop entries whenever
-  // hydration begins after their chunks already arrived.
+  // Client, hydrating: Solid replays the serialized iterable through the
+  // per-computation signal path (`hydrateSignalFromAsyncIterable`).
+  // Yields that were still buffered when hydration began are conflated
+  // to the LATEST yield (`normalizeIterator`) — lossless here because
+  // every yield is a cumulative snapshot — and live yields after that
+  // apply one at a time. Requires a solid-js build with the buffered
+  // async-iterable replay conflation fix (> 2.0.0-beta.32): before it,
+  // the replay dropped every buffered yield after the first, including
+  // the terminal `done` snapshot. The render effect below hands each
+  // signal value to the coordinator, which primes the QueryClient via
+  // query-core hydrate() (newer-wins) and unblocks `useBaseQuery`
+  // subscribers waiting on their query's entry.
   //
-  // Client, hydrating: the store replays from the serialized value; the
-  // render effect below applies each state of the channel to the
-  // QueryClient via query-core hydrate() (newer-wins) and unblocks
-  // `useBaseQuery` subscribers waiting on their query's entry.
-  //
-  // Client, fresh mount: the initializer returns undefined and the store
-  // keeps its (empty) initial value.
-  const [channelState] = createStore<DehydrationChannelYield>(
-    (draft) => {
-      if (!isServer) return undefined
-      const channel = createServerDehydrationChannel(props.client)
-      return (async function* () {
-        // Settle the store's serialized first snapshot as the empty
-        // initial state, so every entry travels as a patch and keeps its
-        // object identity for seroval's reference deduplication (the
-        // first snapshot is JSON-cloned by the runtime, which would
-        // break it).
-        yield undefined
-        for await (const value of channel) {
-          draft.entries = value.entries
-          draft.done = value.done
-          yield undefined
-        }
-      })()
-    },
-    { entries: [], done: false },
+  // Client, fresh mount: the compute returns undefined and the effect
+  // never fires.
+  const [channelValue] = createSignal<DehydrationChannelYield | undefined>(
+    () => (isServer ? createServerDehydrationChannel(props.client) : undefined),
   )
   const coordinator = isServer
     ? null
     : createHydrationCoordinator(() => props.client)
   createRenderEffect(
-    () =>
-      isServer
-        ? undefined
-        : { entries: channelState.entries, done: channelState.done },
+    () => (isServer ? undefined : channelValue()),
     (value) => {
-      if (value && coordinator && (value.entries.length > 0 || value.done)) {
-        // Unwrap the store proxies so raw entry objects reach the cache.
-        coordinator.applyYield(snapshot(value) as DehydrationChannelYield)
+      if (value && coordinator) {
+        coordinator.applyYield(value)
       }
     },
   )

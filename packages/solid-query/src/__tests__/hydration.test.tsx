@@ -300,6 +300,72 @@ describe('streaming SSR hydration', () => {
     }
   })
 
+  it('applies the latest cumulative snapshot when hydration starts after the whole stream arrived (buffered-replay conflation)', async () => {
+    // Hydration long after the stream completed (slow client / late script):
+    // every channel yield — one per settle plus the terminal done snapshot —
+    // is already buffered in the deserialized stream when the provider's
+    // signal replays. Solid's signal-path replay conflates that backlog to
+    // the LATEST yield (`normalizeIterator`), which is lossless precisely
+    // because yields are cumulative. All entries must be primed and all
+    // observers attached from that one snapshot; on solid builds without
+    // the conflation fix (<= 2.0.0-beta.32) the replay pins at the first
+    // yield and everything after it (including `done`) is dropped.
+    const { chunks } = harness.report.stream
+    const app = bundle.createStreamApp()
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    bootstrapHydrationGlobals()
+
+    // Deliver the ENTIRE stream before mounting.
+    applyChunks(
+      container,
+      chunks.map((c) => c.payload),
+    )
+    const dispose = app.mount(container)
+
+    try {
+      await microtasks()
+      // Both queries primed with the server's exact states, from the single
+      // conflated snapshot.
+      for (const key of ['header', 'feed'] as const) {
+        const server = harness.report.stream.queries.find(
+          (q) => q.queryHash === `["${key}"]`,
+        )!
+        const state = app.queryClient.getQueryState([key])
+        expect(state?.data).toBe(`${key}-server`)
+        expect(state?.dataUpdatedAt).toBe(server.state.dataUpdatedAt)
+      }
+      // Both observers attach (the done snapshot was not dropped, waiters
+      // resolved) and neither fresh query refetches.
+      await vi.waitFor(() => {
+        expect(
+          app.queryClient
+            .getQueryCache()
+            .find({ queryKey: ['header'] })
+            ?.getObserversCount(),
+        ).toBe(1)
+        expect(
+          app.queryClient
+            .getQueryCache()
+            .find({ queryKey: ['feed'] })
+            ?.getObserversCount(),
+        ).toBe(1)
+      })
+      expect(app.counts).toEqual({ header: 0, feed: 0 })
+
+      // And the late-hydrated components are live.
+      app.queryClient.setQueryData(['feed'], 'updated-client')
+      await vi.waitFor(() => {
+        expect(container.querySelector('#feed')?.textContent).toBe(
+          'updated-client',
+        )
+      })
+    } finally {
+      dispose()
+      container.remove()
+    }
+  })
+
   it('hydrated components are live while the stream is still open', async () => {
     const { phase1, phase2 } = splitStream()
     const app = bundle.createStreamApp()
