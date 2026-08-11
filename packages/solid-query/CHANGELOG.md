@@ -1,5 +1,13 @@
 # @tanstack/solid-query
 
+## 6.0.0-beta.8
+
+### Patch Changes
+
+- [#11168](https://github.com/TanStack/query/pull/11168) [`67c8179`](https://github.com/TanStack/query/commit/67c817940dbea2be197d007c59982a756556d085) - chore: upgrade to solid v2 beta 33. `@tanstack/solid-query` now requires solid-js >= 2.0.0-beta.33 (peer range floor raised): the provider-owned hydration channel depends on beta.33's `normalizeIterator` buffered-replay conflation fix — on beta.32 and earlier, hydration that begins after multiple stream chunks have arrived silently drops later channel yields, leaving queries never primed and their components frozen.
+
+- [#11168](https://github.com/TanStack/query/pull/11168) [`67c8179`](https://github.com/TanStack/query/commit/67c817940dbea2be197d007c59982a756556d085) - fix: prime the query cache during hydration through a provider-owned dehydration channel, so SSR-fetched queries come up warm instead of refetching on mount. `QueryClientProvider` streams dehydrated cache entries (query-core `dehydrate()` shapes) as each query settles during SSR — entries ride the same flush as the content that awaited them — and applies them on the client via query-core `hydrate()` (newer-wins) as they arrive, attaching each hydrated component's observer as soon as its entry is primed. The vestigial per-observer-result `hydrationData` copy is no longer serialized.
+
 ## 6.0.0-beta.7
 
 ### Patch Changes
