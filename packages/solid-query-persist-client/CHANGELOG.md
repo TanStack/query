@@ -1,5 +1,14 @@
 # @tanstack/solid-query-persist-client
 
+## 6.0.0-beta.8
+
+### Patch Changes
+
+- [#11168](https://github.com/TanStack/query/pull/11168) [`67c8179`](https://github.com/TanStack/query/commit/67c817940dbea2be197d007c59982a756556d085) - chore: upgrade to solid v2 beta 33. `@tanstack/solid-query` now requires solid-js >= 2.0.0-beta.33 (peer range floor raised): the provider-owned hydration channel depends on beta.33's `normalizeIterator` buffered-replay conflation fix — on beta.32 and earlier, hydration that begins after multiple stream chunks have arrived silently drops later channel yields, leaving queries never primed and their components frozen.
+
+- Updated dependencies [[`67c8179`](https://github.com/TanStack/query/commit/67c817940dbea2be197d007c59982a756556d085), [`67c8179`](https://github.com/TanStack/query/commit/67c817940dbea2be197d007c59982a756556d085)]:
+  - @tanstack/solid-query@6.0.0-beta.8
+
 ## 6.0.0-beta.7
 
 ### Patch Changes
