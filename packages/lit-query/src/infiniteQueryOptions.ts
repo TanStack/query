@@ -1,4 +1,5 @@
 import type {
+  DataTag,
   DefaultError,
   InfiniteData,
   InfiniteQueryObserverOptions,
@@ -43,6 +44,8 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> {
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+} {
   return options
 }
