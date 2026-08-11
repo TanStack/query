@@ -205,9 +205,7 @@ describe('SSR hydration', () => {
       // Double-priming was silent: no state write, no observer churn, no
       // refetch of the fresh query. (The stale query's mount refetch per
       // normal staleness rules is the only update source.)
-      expect(
-        updatedHashes.filter((hash) => hash === '["fresh"]'),
-      ).toEqual([])
+      expect(updatedHashes.filter((hash) => hash === '["fresh"]')).toEqual([])
       expect(app.counts.fresh).toBe(0)
       expect(container.querySelector('#fresh')?.textContent).toBe(
         'fresh-server',
