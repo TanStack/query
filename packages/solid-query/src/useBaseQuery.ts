@@ -13,8 +13,10 @@ import {
   runWithOwner,
   snapshot,
   untrack,
+  useContext,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
+import { HydrationCoordinatorContext } from './hydrationChannel'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
@@ -97,8 +99,14 @@ function reconcileFn<TData, TError>(
 }
 
 /**
- * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
- * if the resource data is not serializable.
+ * Prepare an observer result for SSR serialization: the resolved resource
+ * value is serialized by seroval, which cannot handle functions, so strip
+ * `refetch` (and the infinite-query pagers). They come back when the
+ * observer attaches on the client.
+ *
+ * The query's dehydrated cache state does not ride the observer result —
+ * it travels through the provider-owned dehydration channel (see
+ * `hydrationChannel.ts`).
  */
 const hydratableObserverResult = <
   TQueryFnData,
@@ -107,7 +115,7 @@ const hydratableObserverResult = <
   TQueryKey extends QueryKey,
   TDataHydratable,
 >(
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+  _query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<TDataHydratable, TError>,
 ) => {
   if (!isServer) return result
@@ -122,15 +130,6 @@ const hydratableObserverResult = <
   if ('fetchNextPage' in result) {
     obj.fetchNextPage = undefined
     obj.fetchPreviousPage = undefined
-  }
-
-  // We will also attach the dehydrated state of the query to the result
-  // This will be removed on client after hydration
-  obj.hydrationData = {
-    state: query.state,
-    queryKey: query.queryKey,
-    queryHash: query.queryHash,
-    ...(query.meta && { meta: query.meta }),
   }
 
   return obj
@@ -281,6 +280,46 @@ export function useBaseQuery<
   let unsubscribe: (() => void) | null = null
   let disposed = false
 
+  /**
+   * Attach the client subscriber for a component that hydrated from SSR
+   * output.
+   *
+   * During hydration Solid replays the `queryResource` memo below from the
+   * serialized SSR value with `Promise` mocked, so the promise executor
+   * that normally creates the client subscriber never runs (nor could it:
+   * a mount refetch started from inside the replay would never settle).
+   * The replay is detected without touching any internals: a real
+   * `Promise` runs its executor synchronously, the hydration mock does
+   * not, so `executorRan` stays false exactly when this compute was
+   * replayed.
+   *
+   * The subscription is coordinated with the provider's dehydration
+   * channel: it attaches once this query's entry has been primed into the
+   * cache (or once the channel completes without one), so mount semantics
+   * see the hydrated cache state — a still-fresh query does not refetch, a
+   * stale one does, and cache writes that landed earlier are reconciled at
+   * attach. The wait is per-query, not global-hydration-end: a component
+   * hydrated from an early flush goes live while later boundaries are
+   * still streaming, so it is not deaf to cache writes, is seen by
+   * invalidateQueries' active-query refetch, and cannot be gc'ed while
+   * visible. Without a provider (manual `queryClient` option) it falls
+   * back to a plain microtask.
+   */
+  const coordinator = useContext(HydrationCoordinatorContext)
+  const attachHydratedSubscriber = () => {
+    if (!unsubscribe && !disposed && !isRestoring()) {
+      unsubscribe = createClientSubscriber()
+    }
+  }
+  const scheduleHydratedAttach = () => {
+    const queryHash = untrack(() => observer.getCurrentQuery().queryHash)
+    if (coordinator) {
+      coordinator.whenQueryPrimed(queryHash, attachHydratedSubscriber)
+    } else {
+      queueMicrotask(attachHydratedSubscriber)
+    }
+  }
+
   /*
     Fixes #7275
     In a few cases, the observer could unmount before the resource is loaded.
@@ -325,7 +364,9 @@ export function useBaseQuery<
       }
     }
 
-    return new Promise<ResourceData>((resolve, reject) => {
+    const replayProbe = { executorRan: false }
+    const resource = new Promise<ResourceData>((resolve, reject) => {
+      replayProbe.executorRan = true
       resolver = resolve
       if (isServer) {
         unsubscribe = createServerSubscriber((data) => {
@@ -376,6 +417,15 @@ export function useBaseQuery<
         )
       }
     })
+
+    if (!isServer && !replayProbe.executorRan) {
+      // Hydration replay: `Promise` was mocked and the executor above never
+      // ran, so no subscriber was created. Schedule the attach through the
+      // provider's hydration coordinator (see scheduleHydratedAttach).
+      scheduleHydratedAttach()
+    }
+
+    return resource
   })
 
   onCleanup(() => {
