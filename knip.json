@@ -20,6 +20,7 @@
       "ignore": ["**/__testfixtures__/**"]
     },
     "packages/solid-query": {
+      "ignore": ["src/__tests__/fixtures/**"],
       "ignoreDependencies": ["esbuild"]
     },
     "packages/solid-query-devtools": {

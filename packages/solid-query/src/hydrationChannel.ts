@@ -176,7 +176,7 @@ export function createServerDehydrationChannel(
   }
 }
 
-export interface HydrationCoordinator {
+interface HydrationCoordinator {
   /**
    * Prime the QueryClient from a channel yield. Entries already applied
    * (same queryHash and dataUpdatedAt) are skipped; the rest go through
