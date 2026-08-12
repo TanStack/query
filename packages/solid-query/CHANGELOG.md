@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.0
+
+### Patch Changes
+
+- [#11173](https://github.com/TanStack/query/pull/11173) [`7b04d61`](https://github.com/TanStack/query/commit/7b04d6195571b40383163e691c757a20c27c9392) - chore: upgrade to solid v2 rc and rename `vite-plugin-solid` to `@solidjs/vite-plugin`
+
 ## 6.0.0-beta.8
 
 ### Patch Changes
