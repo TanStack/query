@@ -85,6 +85,38 @@
 - Updated dependencies [[`4a27c6c`](https://github.com/TanStack/query/commit/4a27c6c1810956509e0e38c95f4f3fdc0b9b6f55)]:
   - @tanstack/solid-query@6.0.0-alpha.0
 
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.4
+  - @tanstack/solid-query@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.3
+  - @tanstack/solid-query@5.101.3
+
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.2
+  - @tanstack/solid-query@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.101.1
+  - @tanstack/solid-query@5.101.1
+
 ## 5.101.0
 
 ### Patch Changes

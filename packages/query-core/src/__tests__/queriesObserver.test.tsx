@@ -149,7 +149,9 @@ describe('queriesObserver', () => {
     const queryCache = queryClient.getQueryCache()
 
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
-    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
+    expect(
+      queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
+    ).toEqual(key2)
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
@@ -311,9 +313,9 @@ describe('queriesObserver', () => {
     await vi.advanceTimersByTimeAsync(20)
 
     // 1 call: pending
-    expect(subscription1Handler).toBeCalledTimes(1)
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
     // 1 call: success
-    expect(subscription2Handler).toBeCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(1)
 
     // Clean-up
     unsubscribe2()
@@ -473,7 +475,7 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
-  it('should skip combine notifications while suspense queries have no data', async () => {
+  it('should skip combine notifications while suspense queries have no data', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
@@ -506,7 +508,7 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
-  it('should skip combine notifications after suspense is enabled without structural changes', async () => {
+  it('should skip combine notifications after suspense is enabled without structural changes', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),

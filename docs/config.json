@@ -865,6 +865,10 @@
               "to": "framework/preact/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/preact/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/preact/guides/disabling-queries"
             },

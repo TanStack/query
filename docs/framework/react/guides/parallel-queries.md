@@ -56,3 +56,8 @@ function App({ users }) {
 ```
 
 [//]: # 'Example2'
+[//]: # 'TypeScriptSelect'
+
+> When using TypeScript, an inline `select` written on a query object passed to `useQueries` can't infer its `data` argument from that same object's `queryFn` — it falls back to `unknown`. Annotate the `select` parameter explicitly, or define the query with the [`queryOptions`](../reference/queryOptions.md) helper, to keep type inference. See [this known limitation](https://github.com/TanStack/query/issues/6556).
+
+[//]: # 'TypeScriptSelect'

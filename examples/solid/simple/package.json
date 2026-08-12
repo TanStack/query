@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@solidjs/vite-plugin": "^3.0.0-next.27",
-    "@tanstack/eslint-plugin-query": "^5.101.0",
+    "@tanstack/eslint-plugin-query": "^5.101.4",
     "typescript": "5.8.3",
     "vite": "^6.4.1"
   }

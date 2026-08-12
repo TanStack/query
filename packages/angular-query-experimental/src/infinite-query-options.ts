@@ -79,7 +79,7 @@ export type DefinedInitialDataInfiniteOptions<
 }
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -110,7 +110,7 @@ export function infiniteQueryOptions<
 }
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -141,7 +141,7 @@ export function infiniteQueryOptions<
 }
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -172,7 +172,7 @@ export function infiniteQueryOptions<
 }
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
