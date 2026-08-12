@@ -10,12 +10,12 @@
   "dependencies": {
     "@tanstack/solid-query": "^6.0.0-beta.8",
     "@tanstack/solid-query-devtools": "^6.0.0-beta.8",
-    "@solidjs/web": "2.0.0-beta.33",
-    "solid-js": "2.0.0-beta.33"
+    "@solidjs/web": "^2.0.0-rc.0",
+    "solid-js": "^2.0.0-rc.0"
   },
   "devDependencies": {
+    "@solidjs/vite-plugin": "^3.0.0-next.27",
     "typescript": "5.8.3",
-    "vite": "^6.4.1",
-    "vite-plugin-solid": "3.0.0-next.21"
+    "vite": "^6.4.1"
   }
 }

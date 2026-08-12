@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "6.0.0-beta.8",
+  "version": "6.0.0-rc",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -67,15 +67,15 @@
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.18.6",
-    "@solidjs/signals": "^2.0.0-beta.33",
+    "@solidjs/signals": "^2.0.0-rc.0",
     "@solidjs/testing-library": "^0.8.10",
-    "@solidjs/web": "2.0.0-beta.33",
+    "@solidjs/vite-plugin": "^3.0.0-next.27",
+    "@solidjs/web": "^2.0.0-rc.0",
     "@tanstack/solid-query": "workspace:*",
-    "babel-preset-solid": "2.0.0-beta.33",
+    "babel-preset-solid": "^2.0.0-rc.0",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "2.0.0-beta.33",
-    "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "3.0.0-next.21"
+    "solid-js": "^2.0.0-rc.0",
+    "tsup-preset-solid": "^2.2.0"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
