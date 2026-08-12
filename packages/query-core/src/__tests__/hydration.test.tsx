@@ -1938,6 +1938,72 @@ describe('dehydration and rehydration', () => {
     queryClient.clear()
   })
 
+  it('should hydrate using a custom queryKeyHashFn from the client defaults', () => {
+    const key = queryKey()
+    const queryKeyHashFn = (queryKey_: any) => `client-default-${queryKey_[0]}`
+    const dehydrated = {
+      mutations: [],
+      queries: [
+        {
+          queryKey: key,
+          queryHash: hashKey(key),
+          state: {
+            data: 'client default data',
+            dataUpdatedAt: Date.now(),
+            status: 'success' as const,
+            fetchStatus: 'idle' as const,
+          },
+        },
+      ],
+    }
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: { queries: { queryKeyHashFn } },
+    })
+    hydrate(queryClient, dehydrated)
+
+    expect(queryCache.get(`client-default-${key[0]}`)?.state.data).toBe(
+      'client default data',
+    )
+    expect(queryClient.getQueryData(key)).toBe('client default data')
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
+  })
+
+  it('should hydrate using a custom queryKeyHashFn from setQueryDefaults', () => {
+    const key = queryKey()
+    const queryKeyHashFn = (queryKey_: any) => `per-key-${queryKey_[0]}`
+    const dehydrated = {
+      mutations: [],
+      queries: [
+        {
+          queryKey: key,
+          queryHash: hashKey(key),
+          state: {
+            data: 'per-key data',
+            dataUpdatedAt: Date.now(),
+            status: 'success' as const,
+            fetchStatus: 'idle' as const,
+          },
+        },
+      ],
+    }
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    queryClient.setQueryDefaults(key, { queryKeyHashFn })
+    hydrate(queryClient, dehydrated)
+
+    expect(queryCache.get(`per-key-${key[0]}`)?.state.data).toBe('per-key data')
+    expect(queryClient.getQueryData(key)).toBe('per-key data')
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
+  })
+
   it('should hydrate using a custom queryKeyHashFn passed through hydrate options', () => {
     const key = queryKey()
     const queryKeyHashFn = (queryKey_: any) => `custom-${queryKey_[0]}`

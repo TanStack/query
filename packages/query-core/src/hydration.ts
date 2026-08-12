@@ -220,7 +220,10 @@ export function hydrate(
       // The hash is recomputed rather than read from the payload, so
       // that payloads written by the old hash implementation still resolve
       // to the same cache entry
-      const queryHash = hashQueryKeyByOptions(queryKey, queryDefaults)
+      const queryHash = hashQueryKeyByOptions(
+        queryKey,
+        client.defaultQueryOptions({ ...queryDefaults, queryKey }),
+      )
 
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
