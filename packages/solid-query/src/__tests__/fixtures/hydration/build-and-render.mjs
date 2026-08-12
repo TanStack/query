@@ -10,7 +10,7 @@ import { execFileSync } from 'node:child_process'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
-import solidPlugin from 'vite-plugin-solid'
+import solidPlugin from '@solidjs/vite-plugin'
 
 const fixtureDir = fileURLToPath(new URL('.', import.meta.url))
 const packageRoot = path.join(fixtureDir, '..', '..', '..', '..')
