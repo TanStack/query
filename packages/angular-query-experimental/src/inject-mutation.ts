@@ -87,7 +87,15 @@ export function injectMutation<
   >(() => {
     const observer = observerSignal()
     return (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
+      // `mutate` is fire and forget, so nothing else keeps the application
+      // busy while the mutation runs. The observer reports the pending state
+      // in a batched notification that only arrives in a later task, so hold a
+      // pending task from the moment the mutation starts instead.
+      const releasePendingTask = pendingTasks.add()
+      observer
+        .mutate(variables, mutateOptions)
+        .catch(noop)
+        .finally(releasePendingTask)
     }
   })
 

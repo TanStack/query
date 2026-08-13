@@ -155,6 +155,31 @@ describe('PendingTasks Integration', () => {
     })
   })
 
+  // The observer reports a running mutation through a batched notification that
+  // only lands in a later task. This test uses real timers because it asserts
+  // on what `whenStable()` does before that notification arrives.
+  describe('Task registration timing', () => {
+    it('should let whenStable wait for a mutation that was just triggered', async () => {
+      vi.useRealTimers()
+
+      const app = TestBed.inject(ApplicationRef)
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: (value: string) => sleep(5).then(() => value),
+        })),
+      )
+
+      TestBed.tick()
+      mutation.mutate('mutated')
+
+      await app.whenStable()
+
+      expect(mutation.status()).toBe('success')
+      expect(mutation.data()).toBe('mutated')
+    })
+  })
+
   describe('Race Conditions', () => {
     it('should handle query that completes during initial subscription', async () => {
       const key = queryKey()
