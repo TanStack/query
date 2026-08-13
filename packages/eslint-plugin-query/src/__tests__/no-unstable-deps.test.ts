@@ -405,3 +405,54 @@ reactHookNames.forEach((reactHookName) => {
     },
   )
 })
+
+// Identifiers that collide with properties inherited from Object.prototype must
+// not be mistaken for tracked hooks, tracked variables or React hook aliases.
+ruleTester.run('no-unstable-deps', rule, {
+  valid: [
+    {
+      name: 'should pass when a dependency is named after an inherited Object.prototype property',
+      code: `
+        import { useCallback } from "React";
+        import { useQuery } from "@tanstack/react-query";
+        import { toString } from "lodash";
+
+        function Component() {
+          const { data } = useQuery({ queryFn: () => 'data' });
+          const label = toString(data);
+          const callback = useCallback(() => label, [label, toString, constructor, valueOf]);
+          return callback;
+        }
+      `,
+    },
+    {
+      name: 'should pass when a call is named after an inherited Object.prototype property',
+      code: `
+        import { useQuery } from "@tanstack/react-query";
+        import { constructor, valueOf } from "some-library";
+
+        function Component() {
+          const query = useQuery({ queryFn: () => 'data' });
+          constructor(() => {}, [query]);
+          valueOf(() => {}, [query]);
+          return null;
+        }
+      `,
+    },
+    {
+      name: 'should pass when a custom hook is named after an inherited Object.prototype property',
+      code: `
+        import { useCallback } from "React";
+        import { useQuery } from "@tanstack/react-query";
+        import { toString } from "some-library";
+
+        function Component() {
+          const value = toString();
+          const callback = useCallback(() => value, [value]);
+          return callback;
+        }
+      `,
+    },
+  ],
+  invalid: [],
+})

@@ -48,7 +48,10 @@ export const rule = createRule({
       if (node.callee.type === 'Identifier') {
         const calleeName = node.callee.name
         // Check if the identifier is a known React hook or an alias
-        if (reactHookNames.includes(calleeName) || calleeName in hookAliasMap) {
+        if (
+          reactHookNames.includes(calleeName) ||
+          Object.hasOwn(hookAliasMap, calleeName)
+        ) {
           return calleeName
         }
       } else if (
@@ -138,7 +141,10 @@ export const rule = createRule({
         return directQueryHook
       }
 
-      if (callExpression.callee.type === AST_NODE_TYPES.Identifier) {
+      if (
+        callExpression.callee.type === AST_NODE_TYPES.Identifier &&
+        Object.hasOwn(trackedCustomHooks, callExpression.callee.name)
+      ) {
         return trackedCustomHooks[callExpression.callee.name]
       }
 
@@ -182,7 +188,7 @@ export const rule = createRule({
         if (
           dep !== null &&
           dep.type === AST_NODE_TYPES.Identifier &&
-          trackedVariables[dep.name] !== undefined
+          Object.hasOwn(trackedVariables, dep.name)
         ) {
           const queryHook = trackedVariables[dep.name]
           context.report({
