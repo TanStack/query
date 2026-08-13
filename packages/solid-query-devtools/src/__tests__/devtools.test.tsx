@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSignal, flush } from 'solid-js'
-import { render } from '@solidjs/testing-library'
+import { cleanup, render } from '@solidjs/testing-library'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import SolidQueryDevtools from '../devtools'
@@ -16,9 +16,23 @@ describe('SolidQueryDevtools', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
+    // Mounting the real devtools lazily imports the devtools UI, which is Solid
+    // 1 code that cannot resolve under this Solid 2 test setup. These tests only
+    // assert what the wrapper forwards to the instance, and the container
+    // element is rendered by the wrapper itself, so stub the mount out.
+    vi.spyOn(TanstackQueryDevtools.prototype, 'mount').mockImplementation(
+      () => {},
+    )
+    // ...and with nothing really mounted, the real unmount() would throw.
+    vi.spyOn(TanstackQueryDevtools.prototype, 'unmount').mockImplementation(
+      () => {},
+    )
   })
 
   afterEach(() => {
+    // Dispose rendered roots before restoring mocks: disposal calls unmount()
+    // on the instance, which must still be the stub from beforeEach.
+    cleanup()
     vi.restoreAllMocks()
   })
 
