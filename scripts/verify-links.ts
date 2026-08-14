@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
-import { extname, resolve } from 'node:path'
+import { extname, resolve, sep } from 'node:path'
 import { glob } from 'tinyglobby'
 // @ts-ignore Could not find a declaration file for module 'markdown-link-extractor'.
 import markdownLinkExtractor from 'markdown-link-extractor'
@@ -25,6 +25,10 @@ function isRelativeLink(link: string) {
 /** Remove any trailing .md */
 function stripExtension(p: string): string {
   return p.replace(`${extname(p)}`, '')
+}
+
+export function normalizePathForMatching(path: string): string {
+  return path.split(sep).join('/')
 }
 
 function relativeLinkExists(link: string, file: string): boolean {
@@ -53,14 +57,15 @@ function relativeLinkExists(link: string, file: string): boolean {
     return false
   }
 
-  // Check if this is an example path
-  const isExample = absPath.includes('/examples/')
+  // Normalize only the path used by the slash-based example mapping.
+  const normalizedAbsPath = normalizePathForMatching(absPath)
+  const isExample = normalizedAbsPath.includes('/examples/')
 
   let exists = false
 
   if (isExample) {
     // Transform /docs/framework/{framework}/examples/ to /examples/{framework}/
-    absPath = absPath.replace(
+    absPath = normalizedAbsPath.replace(
       /\/docs\/framework\/([^/]+)\/examples\//,
       '/examples/$1/',
     )
