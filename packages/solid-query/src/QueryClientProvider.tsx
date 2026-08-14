@@ -69,10 +69,21 @@ export const QueryClientProvider = (
   // query-core hydrate() (newer-wins) and unblocks `useBaseQuery`
   // subscribers waiting on their query's entry.
   //
-  // Client, fresh mount: the compute returns undefined and the effect
-  // never fires.
+  // Client, fresh mount: the compute runs for real and returns undefined,
+  // so the channel is closed immediately and nothing waits on it.
+  const replayProbe = { executorRan: false }
   const [channelValue] = createSignal<DehydrationChannelYield | undefined>(
-    () => (isServer ? createServerDehydrationChannel(props.client) : undefined),
+    () => {
+      if (isServer) return createServerDehydrationChannel(props.client)
+      // Replay detection, as in useBaseQuery: a real Promise runs its
+      // executor synchronously, the hydration mock does not, so the
+      // executor running means this compute was not replayed from a
+      // serialized channel.
+      void new Promise<void>(() => {
+        replayProbe.executorRan = true
+      })
+      return undefined
+    },
   )
   const coordinator = isServer
     ? null
@@ -80,8 +91,13 @@ export const QueryClientProvider = (
   createRenderEffect(
     () => (isServer ? undefined : channelValue()),
     (value) => {
-      if (value && coordinator) {
+      if (!coordinator) return
+      if (value) {
         coordinator.applyYield(value)
+      } else if (replayProbe.executorRan) {
+        // Fresh client mount: no channel was serialized, so no entry will
+        // ever be primed and consumers must not wait for one.
+        coordinator.applyYield({ entries: [], done: true })
       }
     },
   )

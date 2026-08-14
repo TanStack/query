@@ -28,7 +28,7 @@ export function createApp() {
 
 export function createStreamApp() {
   const queryClient = new QueryClient()
-  const counts: StreamCounts = { header: 0, feed: 0 }
+  const counts: StreamCounts = { header: 0, feed: 0, tags: 0 }
   return {
     queryClient,
     counts,

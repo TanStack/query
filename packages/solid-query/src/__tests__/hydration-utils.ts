@@ -36,7 +36,7 @@ export interface ServerReport {
   }
   stream: {
     chunks: Array<{ t: number; payload: string }>
-    counts: { header: number; feed: number }
+    counts: { header: number; feed: number; tags: number }
     queries: Array<QuerySnapshot>
   }
 }
@@ -49,7 +49,7 @@ export interface ClientBundle {
   }
   createStreamApp: () => {
     queryClient: QueryClient
-    counts: { header: number; feed: number }
+    counts: { header: number; feed: number; tags: number }
     mount: (container: HTMLElement) => () => void
   }
 }

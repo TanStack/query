@@ -10,7 +10,7 @@ import { StreamApp } from './StreamApp'
 import type { StreamCounts } from './StreamApp'
 
 const client = new QueryClient()
-const counts: StreamCounts = { header: 0, feed: 0 }
+const counts: StreamCounts = { header: 0, feed: 0, tags: 0 }
 
 const start = Date.now()
 const chunks: Array<{ t: number; payload: string }> = []
