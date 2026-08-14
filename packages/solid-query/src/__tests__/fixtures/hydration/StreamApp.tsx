@@ -8,12 +8,17 @@
  * attach.
  */
 import { Loading } from 'solid-js'
-import { QueryClientProvider, useQuery } from '@tanstack/solid-query'
+import {
+  QueryClientProvider,
+  useQueries,
+  useQuery,
+} from '@tanstack/solid-query'
 import type { QueryClient } from '@tanstack/solid-query'
 
 export interface StreamCounts {
   header: number
   feed: number
+  tags: number
 }
 
 export interface StreamAppProps {
@@ -50,10 +55,30 @@ function FeedQuery(props: StreamAppProps) {
   return <span id="feed">{query.data}</span>
 }
 
+// Lives in the shell, so it hydrates with the first flush — but it settles
+// after the feed, so its entry only reaches the client with the last one.
+function TagsQueries(props: StreamAppProps) {
+  const queries = useQueries(() => ({
+    queries: [
+      {
+        queryKey: ['tags'],
+        queryFn: async () => {
+          props.counts.tags++
+          await sleep(300)
+          return `tags-${props.source}`
+        },
+        staleTime: 60_000,
+      },
+    ],
+  }))
+  return <span id="tags">{queries[0].data}</span>
+}
+
 export function StreamApp(props: StreamAppProps) {
   return (
     <QueryClientProvider client={props.client}>
       <div>
+        <TagsQueries {...props} />
         <Loading fallback={<div>loading-header</div>}>
           <HeaderQuery {...props} />
         </Loading>

@@ -8,8 +8,10 @@ import {
   reconcile,
   runWithOwner,
   untrack,
+  useContext,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
+import { HydrationCoordinatorContext } from './hydrationChannel'
 import { useIsRestoring } from './isRestoring'
 import type { QueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
@@ -241,20 +243,44 @@ export function useQueries<
   // When isRestoring is true (persist client is restoring), we defer
   // subscription until restoring completes.
   let unsubscribe: () => void = noop
+  let disposed = false
+  const coordinator = useContext(HydrationCoordinatorContext)
+
+  const subscribe = () => {
+    if (disposed) return
+    unsubscribe = observer.subscribe((result) => {
+      runWithOwner(null, () => {
+        setState(
+          reconcile(
+            [...result] as Array<QueryObserverResult>,
+            // Use a key function that returns undefined so reconcile
+            // uses positional matching and recursively updates nested properties
+            () => undefined,
+          ),
+        )
+      })
+    })
+  }
+
+  // With a provider, attach once every query's entry has been primed from
+  // its dehydration channel — or once the channel completes without them.
+  // A single QueriesObserver covers all of the queries, so it can only
+  // attach when the last one is ready; attaching earlier applies mount
+  // semantics to a cache that is still being primed and refetches data that
+  // is already in flight from the SSR stream. On a fresh client mount the
+  // provider closes the channel right away, so nothing waits.
   createEffect(
     () => {
-      if (!isRestoring()) {
-        unsubscribe = observer.subscribe((result) => {
-          runWithOwner(null, () => {
-            setState(
-              reconcile(
-                [...result] as Array<QueryObserverResult>,
-                // Use a key function that returns undefined so reconcile
-                // uses positional matching and recursively updates nested properties
-                () => undefined,
-              ),
-            )
-          })
+      if (isRestoring()) return
+      const queries = defaultedQueries()
+      if (!coordinator || queries.length === 0) {
+        subscribe()
+        return
+      }
+      let pending = queries.length
+      for (const options of queries) {
+        coordinator.whenQueryPrimed(options.queryHash, () => {
+          if (--pending === 0) subscribe()
         })
       }
     },
@@ -262,6 +288,7 @@ export function useQueries<
   )
 
   onCleanup(() => {
+    disposed = true
     unsubscribe()
   })
 

@@ -298,6 +298,39 @@ describe('streaming SSR hydration', () => {
     }
   })
 
+  it('holds a hydrated useQueries back until its entries are primed', async () => {
+    // The tags query lives in the shell, so it hydrates with the first
+    // flush, but it settles last on the server, so its entry only arrives
+    // with the final one. Its observer must wait for that entry instead of
+    // applying mount semantics to a cache that is still being primed.
+    const { phase1, phase2 } = splitStream()
+    const app = bundle.createStreamApp()
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    bootstrapHydrationGlobals()
+
+    applyChunks(container, phase1)
+    const dispose = app.mount(container)
+
+    try {
+      await microtasks()
+      expect(app.queryClient.getQueryState(['tags'])?.data).toBeUndefined()
+      expect(app.counts.tags).toBe(0)
+
+      applyChunks(container, phase2)
+      await vi.waitFor(() => {
+        expect(container.querySelector('#tags')?.textContent).toBe(
+          'tags-server',
+        )
+      })
+      expect(app.counts.tags).toBe(0)
+      await tick(30)
+    } finally {
+      dispose()
+      container.remove()
+    }
+  })
+
   it('applies the latest cumulative snapshot when hydration starts after the whole stream arrived (buffered-replay conflation)', async () => {
     // Hydration long after the stream completed (slow client / late script):
     // every channel yield — one per settle plus the terminal done snapshot —
@@ -349,7 +382,7 @@ describe('streaming SSR hydration', () => {
             ?.getObserversCount(),
         ).toBe(1)
       })
-      expect(app.counts).toEqual({ header: 0, feed: 0 })
+      expect(app.counts).toEqual({ header: 0, feed: 0, tags: 0 })
 
       // And the late-hydrated components are live.
       app.queryClient.setQueryData(['feed'], 'updated-client')
