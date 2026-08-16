@@ -3,8 +3,6 @@ id: QueryClient
 title: QueryClient
 ---
 
-## `QueryClient`
-
 The `QueryClient` can be used to interact with a cache:
 
 ```tsx
