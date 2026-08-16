@@ -1334,12 +1334,60 @@
               "to": "framework/angular/reference/index"
             },
             {
-              "label": "Functions / injectQuery",
-              "to": "framework/angular/reference/functions/injectQuery"
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/angular/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / injectInfiniteQuery",
+              "to": "framework/angular/reference/functions/injectInfiniteQuery"
+            },
+            {
+              "label": "Functions / injectIsFetching",
+              "to": "framework/angular/reference/functions/injectIsFetching"
+            },
+            {
+              "label": "Functions / injectIsMutating",
+              "to": "framework/angular/reference/functions/injectIsMutating"
+            },
+            {
+              "label": "Functions / injectIsRestoring",
+              "to": "framework/angular/reference/functions/injectIsRestoring"
             },
             {
               "label": "Functions / injectMutation",
               "to": "framework/angular/reference/functions/injectMutation"
+            },
+            {
+              "label": "Functions / injectMutationState",
+              "to": "framework/angular/reference/functions/injectMutationState"
+            },
+            {
+              "label": "Functions / injectQuery",
+              "to": "framework/angular/reference/functions/injectQuery"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/angular/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Functions / provideIsRestoring",
+              "to": "framework/angular/reference/functions/provideIsRestoring"
+            },
+            {
+              "label": "Functions / provideQueryClient",
+              "to": "framework/angular/reference/functions/provideQueryClient"
+            },
+            {
+              "label": "Functions / provideTanStackQuery",
+              "to": "framework/angular/reference/functions/provideTanStackQuery"
+            },
+            {
+              "label": "Functions / queryFeature",
+              "to": "framework/angular/reference/functions/queryFeature"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/angular/reference/functions/queryOptions"
             }
           ]
         },
