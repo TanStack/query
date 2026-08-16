@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  QueryObserver,
+  dehydrate,
+  hydrate,
+  onlineManager,
+} from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
@@ -309,6 +315,25 @@ describe('Devtools', () => {
       } finally {
         window.removeEventListener('@tanstack/query-devtools-event', listener)
       }
+    })
+
+    it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      queryClient.fetchQuery({
+        queryKey: ['posts'],
+        queryFn: () => [{ id: 1 }],
+        queryKeyHashFn: () => 'custom-posts-hash',
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      const dehydratedState = dehydrate(queryClient)
+
+      queryClient = new QueryClient()
+      hydrate(queryClient, dehydratedState)
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key custom-posts-hash/),
+      ).toBeInTheDocument()
     })
   })
 
