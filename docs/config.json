@@ -1208,51 +1208,51 @@
               "to": "framework/svelte/reference/index"
             },
             {
-              "label": "Functions / createQuery",
+              "label": "createQuery",
               "to": "framework/svelte/reference/functions/createQuery"
             },
             {
-              "label": "Functions / createQueries",
+              "label": "createQueries",
               "to": "framework/svelte/reference/functions/createQueries"
             },
             {
-              "label": "Functions / createInfiniteQuery",
+              "label": "createInfiniteQuery",
               "to": "framework/svelte/reference/functions/createInfiniteQuery"
             },
             {
-              "label": "Functions / createMutation",
+              "label": "createMutation",
               "to": "framework/svelte/reference/functions/createMutation"
             },
             {
-              "label": "Functions / useIsFetching",
+              "label": "useIsFetching",
               "to": "framework/svelte/reference/functions/useIsFetching"
             },
             {
-              "label": "Functions / useIsMutating",
+              "label": "useIsMutating",
               "to": "framework/svelte/reference/functions/useIsMutating"
             },
             {
-              "label": "Functions / useMutationState",
+              "label": "useMutationState",
               "to": "framework/svelte/reference/functions/useMutationState"
             },
             {
-              "label": "Functions / useQueryClient",
+              "label": "useQueryClient",
               "to": "framework/svelte/reference/functions/useQueryClient"
             },
             {
-              "label": "Functions / queryOptions",
+              "label": "queryOptions",
               "to": "framework/svelte/reference/functions/queryOptions"
             },
             {
-              "label": "Functions / infiniteQueryOptions",
+              "label": "infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "Functions / mutationOptions",
+              "label": "mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
             },
             {
-              "label": "Functions / useHydrate",
+              "label": "useHydrate",
               "to": "framework/svelte/reference/functions/useHydrate"
             }
           ]
@@ -1342,59 +1342,59 @@
               "to": "framework/angular/reference/index"
             },
             {
-              "label": "Functions / infiniteQueryOptions",
+              "label": "infiniteQueryOptions",
               "to": "framework/angular/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "Functions / injectInfiniteQuery",
+              "label": "injectInfiniteQuery",
               "to": "framework/angular/reference/functions/injectInfiniteQuery"
             },
             {
-              "label": "Functions / injectIsFetching",
+              "label": "injectIsFetching",
               "to": "framework/angular/reference/functions/injectIsFetching"
             },
             {
-              "label": "Functions / injectIsMutating",
+              "label": "injectIsMutating",
               "to": "framework/angular/reference/functions/injectIsMutating"
             },
             {
-              "label": "Functions / injectIsRestoring",
+              "label": "injectIsRestoring",
               "to": "framework/angular/reference/functions/injectIsRestoring"
             },
             {
-              "label": "Functions / injectMutation",
+              "label": "injectMutation",
               "to": "framework/angular/reference/functions/injectMutation"
             },
             {
-              "label": "Functions / injectMutationState",
+              "label": "injectMutationState",
               "to": "framework/angular/reference/functions/injectMutationState"
             },
             {
-              "label": "Functions / injectQuery",
+              "label": "injectQuery",
               "to": "framework/angular/reference/functions/injectQuery"
             },
             {
-              "label": "Functions / mutationOptions",
+              "label": "mutationOptions",
               "to": "framework/angular/reference/functions/mutationOptions"
             },
             {
-              "label": "Functions / provideIsRestoring",
+              "label": "provideIsRestoring",
               "to": "framework/angular/reference/functions/provideIsRestoring"
             },
             {
-              "label": "Functions / provideQueryClient",
+              "label": "provideQueryClient",
               "to": "framework/angular/reference/functions/provideQueryClient"
             },
             {
-              "label": "Functions / provideTanStackQuery",
+              "label": "provideTanStackQuery",
               "to": "framework/angular/reference/functions/provideTanStackQuery"
             },
             {
-              "label": "Functions / queryFeature",
+              "label": "queryFeature",
               "to": "framework/angular/reference/functions/queryFeature"
             },
             {
-              "label": "Functions / queryOptions",
+              "label": "queryOptions",
               "to": "framework/angular/reference/functions/queryOptions"
             }
           ]
