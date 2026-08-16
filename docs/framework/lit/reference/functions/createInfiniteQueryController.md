@@ -3,8 +3,6 @@ id: createInfiniteQueryController
 title: createInfiniteQueryController
 ---
 
-# Function: createInfiniteQueryController()
-
 ```ts
 function createInfiniteQueryController<TQueryFnData, TError, TData, TQueryKey, TPageParam>(
    host,

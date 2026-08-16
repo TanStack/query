@@ -3,8 +3,6 @@ id: useSuspenseInfiniteQuery
 title: useSuspenseInfiniteQuery
 ---
 
-# Function: useSuspenseInfiniteQuery()
-
 ```ts
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```

@@ -3,8 +3,6 @@ id: mutationOptions
 title: mutationOptions
 ---
 
-# Function: mutationOptions()
-
 Allows sharing and re-using mutation options in a type-safe way.
 
 **Example**

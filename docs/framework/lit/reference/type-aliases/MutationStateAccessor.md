@@ -3,8 +3,6 @@ id: MutationStateAccessor
 title: MutationStateAccessor
 ---
 
-# Type Alias: MutationStateAccessor\<TResult\>
-
 ```ts
 type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & object;
 ```

@@ -3,8 +3,6 @@ id: UseMutationResult
 title: UseMutationResult
 ---
 
-# Type Alias: UseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```

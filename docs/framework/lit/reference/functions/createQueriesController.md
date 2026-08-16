@@ -3,8 +3,6 @@ id: createQueriesController
 title: createQueriesController
 ---
 
-# Function: createQueriesController()
-
 ```ts
 function createQueriesController<TQueryOptions, TCombinedResult>(
    host,

@@ -3,8 +3,6 @@ id: UseSuspenseInfiniteQueryResult
 title: UseSuspenseInfiniteQueryResult
 ---
 
-# Type Alias: UseSuspenseInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
 ```

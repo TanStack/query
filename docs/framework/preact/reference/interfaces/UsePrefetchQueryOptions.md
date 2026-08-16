@@ -3,8 +3,6 @@ id: UsePrefetchQueryOptions
 title: UsePrefetchQueryOptions
 ---
 
-# Interface: UsePrefetchQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 Defined in: [preact-query/src/types.ts:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L48)
 
 ## Extends

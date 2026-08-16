@@ -3,8 +3,6 @@ id: getDefaultQueryClient
 title: getDefaultQueryClient
 ---
 
-# Function: getDefaultQueryClient()
-
 ```ts
 function getDefaultQueryClient(): QueryClient | undefined;
 ```

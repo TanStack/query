@@ -3,8 +3,6 @@ id: CreateQueriesInput
 title: CreateQueriesInput
 ---
 
-# Type Alias: CreateQueriesInput\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type CreateQueriesInput<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>;
 ```

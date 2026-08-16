@@ -3,8 +3,6 @@ id: QueryClientProvider
 title: QueryClientProvider
 ---
 
-# Function: QueryClientProvider()
-
 ```ts
 function QueryClientProvider(__namedParameters): VNode;
 ```

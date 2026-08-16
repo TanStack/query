@@ -3,8 +3,6 @@ id: InfiniteQueryResultAccessor
 title: InfiniteQueryResultAccessor
 ---
 
-# Type Alias: InfiniteQueryResultAccessor\<TData, TError\>
-
 ```ts
 type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & object;
 ```

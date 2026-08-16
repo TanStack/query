@@ -3,8 +3,6 @@ id: useSuspenseQueries
 title: useSuspenseQueries
 ---
 
-# Function: useSuspenseQueries()
-
 ## Call Signature
 
 ```ts

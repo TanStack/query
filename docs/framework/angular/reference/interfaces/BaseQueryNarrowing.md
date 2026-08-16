@@ -3,8 +3,6 @@ id: BaseQueryNarrowing
 title: BaseQueryNarrowing
 ---
 
-# Interface: BaseQueryNarrowing\<TData, TError\>
-
 Defined in: [types.ts:51](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L51)
 
 ## Type Parameters

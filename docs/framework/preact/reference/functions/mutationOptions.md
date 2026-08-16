@@ -3,8 +3,6 @@ id: mutationOptions
 title: mutationOptions
 ---
 
-# Function: mutationOptions()
-
 ## Call Signature
 
 ```ts

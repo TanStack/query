@@ -3,8 +3,6 @@ id: UseSuspenseQueryResult
 title: UseSuspenseQueryResult
 ---
 
-# Type Alias: UseSuspenseQueryResult\<TData, TError\>
-
 ```ts
 type UseSuspenseQueryResult<TData, TError> = DistributiveOmit<DefinedQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
 ```

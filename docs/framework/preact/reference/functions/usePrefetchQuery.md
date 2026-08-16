@@ -3,8 +3,6 @@ id: usePrefetchQuery
 title: usePrefetchQuery
 ---
 
-# Function: usePrefetchQuery()
-
 ```ts
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): void;
 ```

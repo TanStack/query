@@ -3,8 +3,6 @@ id: usePrefetchInfiniteQuery
 title: usePrefetchInfiniteQuery
 ---
 
-# Function: usePrefetchInfiniteQuery()
-
 ```ts
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```

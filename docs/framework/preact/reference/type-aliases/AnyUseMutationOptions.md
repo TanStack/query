@@ -3,8 +3,6 @@ id: AnyUseMutationOptions
 title: AnyUseMutationOptions
 ---
 
-# Type Alias: AnyUseMutationOptions
-
 ```ts
 type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>;
 ```

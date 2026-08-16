@@ -3,8 +3,6 @@ id: UseMutateFunction
 title: UseMutateFunction
 ---
 
-# Type Alias: UseMutateFunction()\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```

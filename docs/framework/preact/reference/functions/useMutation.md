@@ -3,8 +3,6 @@ id: useMutation
 title: useMutation
 ---
 
-# Function: useMutation()
-
 ```ts
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```

@@ -3,8 +3,6 @@ id: SuspenseQueriesResults
 title: SuspenseQueriesResults
 ---
 
-# Type Alias: SuspenseQueriesResults\<T, TResults, TDepth\>
-
 ```ts
 type SuspenseQueriesResults<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseSuspenseQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseSuspenseQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? SuspenseQueriesResults<[...Tails], [...TResults, GetUseSuspenseQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> };
 ```

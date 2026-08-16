@@ -3,8 +3,6 @@ id: useQueryErrorResetBoundary
 title: useQueryErrorResetBoundary
 ---
 
-# Function: useQueryErrorResetBoundary()
-
 ```ts
 function useQueryErrorResetBoundary(): QueryErrorResetBoundaryValue;
 ```

@@ -3,8 +3,6 @@ id: HydrationBoundary
 title: HydrationBoundary
 ---
 
-# Type Alias: HydrationBoundary
-
 ```ts
 type HydrationBoundary = SvelteComponent;
 ```

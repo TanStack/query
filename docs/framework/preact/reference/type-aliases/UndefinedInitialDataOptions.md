@@ -3,8 +3,6 @@ id: UndefinedInitialDataOptions
 title: UndefinedInitialDataOptions
 ---
 
-# Type Alias: UndefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```

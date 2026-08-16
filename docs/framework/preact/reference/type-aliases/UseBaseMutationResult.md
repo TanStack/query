@@ -3,8 +3,6 @@ id: UseBaseMutationResult
 title: UseBaseMutationResult
 ---
 
-# Type Alias: UseBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;

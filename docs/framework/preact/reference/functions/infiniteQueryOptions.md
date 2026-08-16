@@ -3,8 +3,6 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
-# Function: infiniteQueryOptions()
-
 ## Call Signature
 
 ```ts

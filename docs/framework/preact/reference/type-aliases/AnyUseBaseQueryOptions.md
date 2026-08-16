@@ -3,8 +3,6 @@ id: AnyUseBaseQueryOptions
 title: AnyUseBaseQueryOptions
 ---
 
-# Type Alias: AnyUseBaseQueryOptions
-
 ```ts
 type AnyUseBaseQueryOptions = UseBaseQueryOptions<any, any, any, any, any>;
 ```
