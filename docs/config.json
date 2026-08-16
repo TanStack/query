@@ -1236,6 +1236,10 @@
               "to": "framework/svelte/reference/functions/useMutationState"
             },
             {
+              "label": "Functions / useQueryClient",
+              "to": "framework/svelte/reference/functions/useQueryClient"
+            },
+            {
               "label": "Functions / queryOptions",
               "to": "framework/svelte/reference/functions/queryOptions"
             },
@@ -1246,6 +1250,10 @@
             {
               "label": "Functions / mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Functions / useHydrate",
+              "to": "framework/svelte/reference/functions/useHydrate"
             }
           ]
         },
