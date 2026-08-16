@@ -1403,6 +1403,10 @@
           "label": "preact",
           "children": [
             {
+              "label": "Preact Reference",
+              "to": "framework/preact/reference/index"
+            },
+            {
               "label": "useQuery",
               "to": "framework/preact/reference/functions/useQuery"
             },
