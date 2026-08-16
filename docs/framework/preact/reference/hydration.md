@@ -1,0 +1,6 @@
+---
+id: hydration
+title: hydration
+ref: docs/framework/react/reference/hydration.md
+replace: { '@tanstack/react-query': '@tanstack/preact-query' }
+---
