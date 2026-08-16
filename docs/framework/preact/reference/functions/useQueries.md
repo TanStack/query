@@ -3,8 +3,6 @@ id: useQueries
 title: useQueries
 ---
 
-# Function: useQueries()
-
 ```ts
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
 ```

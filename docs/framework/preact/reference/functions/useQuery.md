@@ -3,8 +3,6 @@ id: useQuery
 title: useQuery
 ---
 
-# Function: useQuery()
-
 ## Call Signature
 
 ```ts

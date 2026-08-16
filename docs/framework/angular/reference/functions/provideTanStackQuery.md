@@ -3,8 +3,6 @@ id: provideTanStackQuery
 title: provideTanStackQuery
 ---
 
-# Function: provideTanStackQuery()
-
 ```ts
 function provideTanStackQuery(queryClient, ...features): Provider[];
 ```

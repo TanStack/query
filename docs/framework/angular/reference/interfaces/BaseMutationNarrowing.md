@@ -3,8 +3,6 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-# Interface: BaseMutationNarrowing\<TData, TError, TVariables, TOnMutateResult\>
-
 Defined in: [types.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L184)
 
 ## Type Parameters

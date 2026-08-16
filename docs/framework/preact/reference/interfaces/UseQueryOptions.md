@@ -3,8 +3,6 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-# Interface: UseQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 Defined in: [preact-query/src/types.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L64)
 
 ## Extends

@@ -3,8 +3,6 @@ id: queryOptions
 title: queryOptions
 ---
 
-# Function: queryOptions()
-
 Allows sharing and re-using query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.

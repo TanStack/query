@@ -3,8 +3,6 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-# Interface: UseInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 Defined in: [preact-query/src/types.ts:102](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L102)
 
 ## Extends

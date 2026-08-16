@@ -3,8 +3,6 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
-# Function: infiniteQueryOptions()
-
 Allows sharing and re-using infinite query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.

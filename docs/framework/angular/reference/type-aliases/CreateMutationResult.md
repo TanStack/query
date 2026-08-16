@@ -3,8 +3,6 @@ id: CreateMutationResult
 title: CreateMutationResult
 ---
 
-# Type Alias: CreateMutationResult\<TData, TError, TVariables, TOnMutateResult, TState\>
-
 ```ts
 type CreateMutationResult<TData, TError, TVariables, TOnMutateResult, TState> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">>;
 ```

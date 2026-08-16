@@ -3,8 +3,6 @@ id: QueryErrorResetBoundary
 title: QueryErrorResetBoundary
 ---
 
-# Function: QueryErrorResetBoundary()
-
 ```ts
 function QueryErrorResetBoundary(__namedParameters): Element;
 ```

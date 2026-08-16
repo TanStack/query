@@ -3,8 +3,6 @@ id: DefinedInitialDataInfiniteOptions
 title: DefinedInitialDataInfiniteOptions
 ---
 
-# Type Alias: DefinedInitialDataInfiniteOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 ```ts
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```

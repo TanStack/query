@@ -3,8 +3,6 @@ id: createQueryController
 title: createQueryController
 ---
 
-# Function: createQueryController()
-
 ```ts
 function createQueryController<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
    host,

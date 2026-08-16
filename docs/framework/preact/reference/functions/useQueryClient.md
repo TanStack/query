@@ -3,8 +3,6 @@ id: useQueryClient
 title: useQueryClient
 ---
 
-# Function: useQueryClient()
-
 ```ts
 function useQueryClient(queryClient?): QueryClient;
 ```

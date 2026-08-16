@@ -3,8 +3,6 @@ id: CreateQueryResult
 title: CreateQueryResult
 ---
 
-# Type Alias: CreateQueryResult\<TData, TError\>
-
 ```ts
 type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>;
 ```

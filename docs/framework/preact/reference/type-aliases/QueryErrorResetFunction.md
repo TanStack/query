@@ -3,8 +3,6 @@ id: QueryErrorResetFunction
 title: QueryErrorResetFunction
 ---
 
-# Type Alias: QueryErrorResetFunction()
-
 ```ts
 type QueryErrorResetFunction = () => void;
 ```

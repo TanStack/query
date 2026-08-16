@@ -3,8 +3,6 @@ id: IsRestoringProvider
 title: IsRestoringProvider
 ---
 
-# Variable: IsRestoringProvider
-
 ```ts
 const IsRestoringProvider: Provider<boolean> = IsRestoringContext.Provider;
 ```

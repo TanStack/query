@@ -3,8 +3,6 @@ id: QueriesResultAccessor
 title: QueriesResultAccessor
 ---
 
-# Type Alias: QueriesResultAccessor\<TCombinedResult\>
-
 ```ts
 type QueriesResultAccessor<TCombinedResult> = ValueAccessor<TCombinedResult> & object;
 ```

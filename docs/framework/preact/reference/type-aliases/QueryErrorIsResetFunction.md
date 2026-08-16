@@ -3,8 +3,6 @@ id: QueryErrorIsResetFunction
 title: QueryErrorIsResetFunction
 ---
 
-# Type Alias: QueryErrorIsResetFunction()
-
 ```ts
 type QueryErrorIsResetFunction = () => boolean;
 ```

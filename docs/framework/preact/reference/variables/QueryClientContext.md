@@ -3,8 +3,6 @@ id: QueryClientContext
 title: QueryClientContext
 ---
 
-# Variable: QueryClientContext
-
 ```ts
 const QueryClientContext: Context<QueryClient | undefined>;
 ```

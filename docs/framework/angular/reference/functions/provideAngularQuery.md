@@ -3,8 +3,6 @@ id: provideAngularQuery
 title: provideAngularQuery
 ---
 
-# ~~Function: provideAngularQuery()~~
-
 ```ts
 function provideAngularQuery(queryClient): Provider[];
 ```

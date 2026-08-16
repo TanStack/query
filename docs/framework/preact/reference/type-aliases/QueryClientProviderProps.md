@@ -3,8 +3,6 @@ id: QueryClientProviderProps
 title: QueryClientProviderProps
 ---
 
-# Type Alias: QueryClientProviderProps
-
 ```ts
 type QueryClientProviderProps = object;
 ```

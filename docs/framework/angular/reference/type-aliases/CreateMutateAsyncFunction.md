@@ -3,8 +3,6 @@ id: CreateMutateAsyncFunction
 title: CreateMutateAsyncFunction
 ---
 
-# Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> = MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```

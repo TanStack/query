@@ -3,8 +3,6 @@ id: useSuspenseQuery
 title: useSuspenseQuery
 ---
 
-# Function: useSuspenseQuery()
-
 ```ts
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
 ```

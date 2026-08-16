@@ -3,8 +3,6 @@ id: UseSuspenseQueryOptions
 title: UseSuspenseQueryOptions
 ---
 
-# Interface: UseSuspenseQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 Defined in: [preact-query/src/types.ts:80](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L80)
 
 ## Extends

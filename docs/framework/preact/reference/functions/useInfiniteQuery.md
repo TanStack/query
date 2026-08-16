@@ -3,8 +3,6 @@ id: useInfiniteQuery
 title: useInfiniteQuery
 ---
 
-# Function: useInfiniteQuery()
-
 ## Call Signature
 
 ```ts

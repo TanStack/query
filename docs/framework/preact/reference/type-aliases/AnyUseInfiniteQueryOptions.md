@@ -3,8 +3,6 @@ id: AnyUseInfiniteQueryOptions
 title: AnyUseInfiniteQueryOptions
 ---
 
-# Type Alias: AnyUseInfiniteQueryOptions
-
 ```ts
 type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<any, any, any, any, any>;
 ```

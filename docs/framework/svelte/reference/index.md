@@ -3,8 +3,6 @@ id: "@tanstack/svelte-query"
 title: "@tanstack/svelte-query"
 ---
 
-# @tanstack/svelte-query
-
 ## Type Aliases
 
 - [Accessor](type-aliases/Accessor.md)

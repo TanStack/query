@@ -3,8 +3,6 @@ id: QueryErrorResetBoundaryFunction
 title: QueryErrorResetBoundaryFunction
 ---
 
-# Type Alias: QueryErrorResetBoundaryFunction()
-
 ```ts
 type QueryErrorResetBoundaryFunction = (value) => ComponentChildren;
 ```

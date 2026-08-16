@@ -3,8 +3,6 @@ id: DefinedUseInfiniteQueryResult
 title: DefinedUseInfiniteQueryResult
 ---
 
-# Type Alias: DefinedUseInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```

@@ -3,8 +3,6 @@ id: DefinedCreateQueryResult
 title: DefinedCreateQueryResult
 ---
 
-# Type Alias: DefinedCreateQueryResult\<TData, TError, TState\>
-
 ```ts
 type DefinedCreateQueryResult<TData, TError, TState> = BaseQueryNarrowing<TData, TError> & MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, "safely">>;
 ```

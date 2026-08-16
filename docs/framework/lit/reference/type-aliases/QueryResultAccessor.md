@@ -3,8 +3,6 @@ id: QueryResultAccessor
 title: QueryResultAccessor
 ---
 
-# Type Alias: QueryResultAccessor\<TData, TError\>
-
 ```ts
 type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
 ```

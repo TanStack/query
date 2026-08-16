@@ -3,8 +3,6 @@ id: HydrationBoundary
 title: HydrationBoundary
 ---
 
-# Variable: HydrationBoundary
-
 ```ts
 const HydrationBoundary: LegacyComponentType;
 ```

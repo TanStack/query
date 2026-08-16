@@ -3,8 +3,6 @@ id: CreateQueriesControllerOptions
 title: CreateQueriesControllerOptions
 ---
 
-# Type Alias: CreateQueriesControllerOptions\<TQueryOptions, TCombinedResult\>
-
 ```ts
 type CreateQueriesControllerOptions<TQueryOptions, TCombinedResult> = object;
 ```

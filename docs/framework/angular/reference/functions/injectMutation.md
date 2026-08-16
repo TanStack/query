@@ -3,8 +3,6 @@ id: injectMutation
 title: injectMutation
 ---
 
-# Function: injectMutation()
-
 ```ts
 function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn, options?): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```

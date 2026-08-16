@@ -3,8 +3,6 @@ id: HydrationBoundaryProps
 title: HydrationBoundaryProps
 ---
 
-# Interface: HydrationBoundaryProps
-
 Defined in: [preact-query/src/HydrationBoundary.tsx:14](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L14)
 
 ## Properties
