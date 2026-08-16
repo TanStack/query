@@ -298,7 +298,9 @@ export class Query<
       )
     }
 
-    return false
+    // if a query has no observers, fall back to the query's own staleTime
+    // (mirrors isDisabled's no-observer fallback pattern)
+    return resolveStaleTime((this.options as any).staleTime, this) === 'static'
   }
 
   isStale(): boolean {
