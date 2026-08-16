@@ -5,7 +5,7 @@ title: UseMutationOptions
 
 # Interface: UseMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
 
-Defined in: [preact-query/src/types.ts:192](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L192)
+Defined in: [preact-query/src/types.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L191)
 
 ## Extends
 

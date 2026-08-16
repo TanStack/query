@@ -9,7 +9,7 @@ title: useIsMutating
 function useIsMutating(filters?, queryClient?): number;
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:13](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useMutationState.ts#L13)
+Defined in: [preact-query/src/useMutationState.ts:14](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L14)
 
 ## Parameters
 

@@ -9,7 +9,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:56](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L56)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L57)
 
 ## Type Declaration
 

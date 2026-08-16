@@ -9,7 +9,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:17](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L17)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:18](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L18)
 
 ## Type Parameters
 

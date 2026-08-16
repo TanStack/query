@@ -11,7 +11,7 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:20](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L20)
+Defined in: [preact-query/src/useInfiniteQuery.ts:21](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L21)
 
 ### Type Parameters
 
@@ -55,7 +55,7 @@ Defined in: [preact-query/src/useInfiniteQuery.ts:20](https://github.com/theVeda
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:37](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L37)
+Defined in: [preact-query/src/useInfiniteQuery.ts:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L38)
 
 ### Type Parameters
 
@@ -99,7 +99,7 @@ Defined in: [preact-query/src/useInfiniteQuery.ts:37](https://github.com/theVeda
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:54](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L54)
+Defined in: [preact-query/src/useInfiniteQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L55)
 
 ### Type Parameters
 

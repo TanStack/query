@@ -5,7 +5,7 @@ title: mutationOptions
 
 # Function: mutationOptions()
 
-Allows to share and re-use mutation options in a type-safe way.
+Allows sharing and re-using mutation options in a type-safe way.
 
 **Example**
 
@@ -49,7 +49,7 @@ function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): W
 
 Defined in: [mutation-options.ts:39](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L39)
 
-Allows to share and re-use mutation options in a type-safe way.
+Allows sharing and re-using mutation options in a type-safe way.
 
 **Example**
 
@@ -121,7 +121,7 @@ function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): O
 
 Defined in: [mutation-options.ts:53](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L53)
 
-Allows to share and re-use mutation options in a type-safe way.
+Allows sharing and re-using mutation options in a type-safe way.
 
 **Example**
 

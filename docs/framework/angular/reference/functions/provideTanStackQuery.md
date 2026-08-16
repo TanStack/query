@@ -13,7 +13,7 @@ Defined in: [providers.ts:105](https://github.com/TanStack/query/blob/main/packa
 
 Sets up providers necessary to enable TanStack Query functionality for Angular applications.
 
-Allows to configure a `QueryClient` and optional features such as developer tools.
+Allows configuring a `QueryClient` and optional features such as developer tools.
 
 **Example - standalone**
 

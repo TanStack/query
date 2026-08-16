@@ -9,7 +9,7 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:23](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L23)
+Defined in: [preact-query/src/QueryClientProvider.tsx:24](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L24)
 
 ## Properties
 
@@ -19,7 +19,7 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:23](https://github.com/the
 optional children: ComponentChildren;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L25)
+Defined in: [preact-query/src/QueryClientProvider.tsx:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L26)
 
 ***
 
@@ -29,4 +29,4 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/the
 client: QueryClient;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:24](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L24)
+Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L25)

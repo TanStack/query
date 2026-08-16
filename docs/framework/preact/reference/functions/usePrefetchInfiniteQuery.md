@@ -9,7 +9,7 @@ title: usePrefetchInfiniteQuery
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:9](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L9)
+Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:10](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L10)
 
 ## Type Parameters
 
