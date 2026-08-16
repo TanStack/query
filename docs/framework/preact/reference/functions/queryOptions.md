@@ -11,7 +11,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:52](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/queryOptions.ts#L52)
+Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L53)
 
 ### Type Parameters
 
@@ -47,7 +47,7 @@ Defined in: [preact-query/src/queryOptions.ts:52](https://github.com/theVedanta/
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/queryOptions.ts#L63)
+Defined in: [preact-query/src/queryOptions.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L64)
 
 ### Type Parameters
 
@@ -83,7 +83,7 @@ Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/theVedanta/
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:74](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/queryOptions.ts#L74)
+Defined in: [preact-query/src/queryOptions.ts:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L75)
 
 ### Type Parameters
 

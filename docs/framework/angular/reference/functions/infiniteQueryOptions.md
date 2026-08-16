@@ -5,7 +5,7 @@ title: infiniteQueryOptions
 
 # Function: infiniteQueryOptions()
 
-Allows to share and re-use infinite query options in a type-safe way.
+Allows sharing and re-using infinite query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -21,7 +21,7 @@ function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam
 
 Defined in: [infinite-query-options.ts:88](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L88)
 
-Allows to share and re-use infinite query options in a type-safe way.
+Allows sharing and re-using infinite query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -69,7 +69,7 @@ function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam
 
 Defined in: [infinite-query-options.ts:119](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L119)
 
-Allows to share and re-use infinite query options in a type-safe way.
+Allows sharing and re-using infinite query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -117,7 +117,7 @@ function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam
 
 Defined in: [infinite-query-options.ts:150](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L150)
 
-Allows to share and re-use infinite query options in a type-safe way.
+Allows sharing and re-using infinite query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 

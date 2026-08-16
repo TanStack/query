@@ -9,7 +9,7 @@ title: UseInfiniteQueryResult
 type UseInfiniteQueryResult<TData, TError> = InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:173](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L173)
+Defined in: [preact-query/src/types.ts:172](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L172)
 
 ## Type Parameters
 

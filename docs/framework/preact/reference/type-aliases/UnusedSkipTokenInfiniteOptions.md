@@ -9,7 +9,7 @@ title: UnusedSkipTokenInfiniteOptions
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:34](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L34)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L35)
 
 ## Type Declaration
 

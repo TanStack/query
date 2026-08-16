@@ -5,7 +5,7 @@ title: BaseMutationNarrowing
 
 # Interface: BaseMutationNarrowing\<TData, TError, TVariables, TOnMutateResult\>
 
-Defined in: [types.ts:190](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L190)
+Defined in: [types.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L184)
 
 ## Type Parameters
 
@@ -33,7 +33,7 @@ Defined in: [types.ts:190](https://github.com/TanStack/query/blob/main/packages/
 isError: SignalFunction<(this) => this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverErrorResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>>;
 ```
 
-Defined in: [types.ts:213](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L213)
+Defined in: [types.ts:207](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L207)
 
 ***
 
@@ -43,7 +43,7 @@ Defined in: [types.ts:213](https://github.com/TanStack/query/blob/main/packages/
 isIdle: SignalFunction<(this) => this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverIdleResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>>;
 ```
 
-Defined in: [types.ts:247](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L247)
+Defined in: [types.ts:241](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L241)
 
 ***
 
@@ -53,7 +53,7 @@ Defined in: [types.ts:247](https://github.com/TanStack/query/blob/main/packages/
 isPending: SignalFunction<(this) => this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverLoadingResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>>;
 ```
 
-Defined in: [types.ts:230](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L230)
+Defined in: [types.ts:224](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L224)
 
 ***
 
@@ -63,4 +63,4 @@ Defined in: [types.ts:230](https://github.com/TanStack/query/blob/main/packages/
 isSuccess: SignalFunction<(this) => this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>>;
 ```
 
-Defined in: [types.ts:196](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L196)
+Defined in: [types.ts:190](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L190)

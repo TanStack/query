@@ -9,7 +9,7 @@ title: DefinedCreateInfiniteQueryResult
 type DefinedCreateInfiniteQueryResult<TData, TError, TDefinedInfiniteQueryObserver> = MapToSignals<TDefinedInfiniteQueryObserver>;
 ```
 
-Defined in: [types.ts:123](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L123)
+Defined in: [types.ts:117](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L117)
 
 ## Type Parameters
 

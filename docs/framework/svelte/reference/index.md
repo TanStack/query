@@ -42,6 +42,7 @@ title: "@tanstack/svelte-query"
 - [getIsRestoringContext](functions/getIsRestoringContext.md)
 - [getQueryClientContext](functions/getQueryClientContext.md)
 - [infiniteQueryOptions](functions/infiniteQueryOptions.md)
+- [mutationOptions](functions/mutationOptions.md)
 - [queryOptions](functions/queryOptions.md)
 - [setIsRestoringContext](functions/setIsRestoringContext.md)
 - [setQueryClientContext](functions/setQueryClientContext.md)

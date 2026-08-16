@@ -5,7 +5,7 @@ title: UsePrefetchQueryOptions
 
 # Interface: UsePrefetchQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
-Defined in: [preact-query/src/types.ts:49](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L49)
+Defined in: [preact-query/src/types.ts:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L48)
 
 ## Extends
 
@@ -37,4 +37,4 @@ Defined in: [preact-query/src/types.ts:49](https://github.com/theVedanta/query/b
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
 ```
 
-Defined in: [preact-query/src/types.ts:58](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L58)
+Defined in: [preact-query/src/types.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L57)

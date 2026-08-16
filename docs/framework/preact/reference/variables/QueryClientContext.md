@@ -9,4 +9,4 @@ title: QueryClientContext
 const QueryClientContext: Context<QueryClient | undefined>;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:5](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L5)
+Defined in: [preact-query/src/QueryClientProvider.tsx:6](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L6)

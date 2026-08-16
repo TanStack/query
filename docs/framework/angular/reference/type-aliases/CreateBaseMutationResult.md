@@ -11,7 +11,7 @@ type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Over
 }> & object;
 ```
 
-Defined in: [types.ts:160](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L160)
+Defined in: [types.ts:154](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L154)
 
 ## Type Declaration
 

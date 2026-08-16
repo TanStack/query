@@ -9,7 +9,7 @@ title: CreateInfiniteQueryOptions
 type CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:27](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L27)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:28](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L28)
 
 Options accepted by `createInfiniteQueryController`.
 

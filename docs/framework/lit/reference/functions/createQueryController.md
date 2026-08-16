@@ -12,7 +12,7 @@ function createQueryController<TQueryFnData, TError, TData, TQueryData, TQueryKe
 queryClient?): QueryResultAccessor<TData, TError>;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:319](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L319)
+Defined in: [packages/lit-query/src/createQueryController.ts:356](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L356)
 
 Creates a Lit reactive controller that subscribes the host to a single query.
 

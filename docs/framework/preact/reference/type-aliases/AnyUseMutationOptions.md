@@ -9,4 +9,4 @@ title: AnyUseMutationOptions
 type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:191](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L191)
+Defined in: [preact-query/src/types.ts:190](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L190)

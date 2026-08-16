@@ -11,7 +11,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:4](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/mutationOptions.ts#L4)
+Defined in: [preact-query/src/mutationOptions.ts:5](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L5)
 
 ### Type Parameters
 
@@ -47,7 +47,7 @@ Defined in: [preact-query/src/mutationOptions.ts:4](https://github.com/theVedant
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:18](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/mutationOptions.ts#L18)
+Defined in: [preact-query/src/mutationOptions.ts:19](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L19)
 
 ### Type Parameters
 

@@ -5,7 +5,7 @@ title: UseSuspenseInfiniteQueryOptions
 
 # Interface: UseSuspenseInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
 
-Defined in: [preact-query/src/types.ts:128](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L128)
+Defined in: [preact-query/src/types.ts:127](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L127)
 
 ## Extends
 
@@ -41,7 +41,7 @@ Defined in: [preact-query/src/types.ts:128](https://github.com/theVedanta/query/
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [preact-query/src/types.ts:138](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L138)
+Defined in: [preact-query/src/types.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L137)
 
 ***
 
@@ -51,7 +51,7 @@ Defined in: [preact-query/src/types.ts:138](https://github.com/theVedanta/query/
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:123](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L123)
+Defined in: [preact-query/src/types.ts:122](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L122)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.
