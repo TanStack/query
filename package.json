@@ -42,6 +42,11 @@
       "test:size"
     ]
   },
+  "sherif": {
+    "ignoreRule": [
+      "unordered-dependencies"
+    ]
+  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@changesets/changelog-github": "^0.7.0",
