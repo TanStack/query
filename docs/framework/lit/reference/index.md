@@ -3,8 +3,6 @@ id: "@tanstack/lit-query"
 title: "@tanstack/lit-query"
 ---
 
-# @tanstack/lit-query
-
 ## Classes
 
 - [QueryClientProvider](classes/QueryClientProvider.md)

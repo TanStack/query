@@ -3,8 +3,6 @@ id: injectIsMutating
 title: injectIsMutating
 ---
 
-# Function: injectIsMutating()
-
 ```ts
 function injectIsMutating(filters?, options?): Signal<number>;
 ```

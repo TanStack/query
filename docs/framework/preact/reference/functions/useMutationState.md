@@ -3,13 +3,11 @@ id: useMutationState
 title: useMutationState
 ---
 
-# Function: useMutationState()
-
 ```ts
 function useMutationState<TResult>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:41](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useMutationState.ts#L41)
+Defined in: [preact-query/src/useMutationState.ts:42](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L42)
 
 ## Type Parameters
 

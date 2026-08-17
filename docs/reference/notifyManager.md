@@ -7,12 +7,12 @@ The `notifyManager` handles scheduling and batching callbacks in TanStack Query.
 
 It exposes the following methods:
 
-- [batch](#notifymanagerbatch)
-- [batchCalls](#notifymanagerbatchcalls)
-- [schedule](#notifymanagerschedule)
-- [setNotifyFunction](#notifymanagersetnotifyfunction)
-- [setBatchNotifyFunction](#notifymanagersetbatchnotifyfunction)
-- [setScheduler](#notifymanagersetscheduler)
+- [batch](#notifymanager-batch)
+- [batchCalls](#notifymanager-batchcalls)
+- [schedule](#notifymanager-schedule)
+- [setNotifyFunction](#notifymanager-setnotifyfunction)
+- [setBatchNotifyFunction](#notifymanager-setbatchnotifyfunction)
+- [setScheduler](#notifymanager-setscheduler)
 
 ## `notifyManager.batch`
 
