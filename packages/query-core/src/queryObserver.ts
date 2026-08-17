@@ -317,9 +317,39 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    query.fetch().catch(noop)
+    let unsubscribe: () => void = () => undefined
+    let resolveCache:
+      | ((result: QueryObserverResult<TData, TError>) => void)
+      | undefined
 
-    return query.promise.then(() => this.createResult(query, defaultedOptions))
+    const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
+      (resolve) => {
+        resolveCache = resolve
+        unsubscribe = this.#client.getQueryCache().subscribe((event) => {
+          if (
+            event.type === 'updated' &&
+            event.query.queryHash === query.queryHash &&
+            query.state.data !== undefined
+          ) {
+            unsubscribe()
+            resolve(this.createResult(query, defaultedOptions))
+          }
+        })
+      },
+    )
+
+    const fetchPromise = query
+      .fetch()
+      .then(() => {
+        const result = this.createResult(query, defaultedOptions)
+        resolveCache?.(result)
+        return result
+      })
+      .finally(() => {
+        unsubscribe()
+      })
+
+    return Promise.race([fetchPromise, cachePromise])
   }
 
   protected fetch(

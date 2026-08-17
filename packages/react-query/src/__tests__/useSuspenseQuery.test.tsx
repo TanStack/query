@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryErrorResetBoundary,
+  experimental_streamedQuery,
   skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
@@ -192,6 +193,75 @@ describe('useSuspenseQuery', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(100))
     expect(rendered.getByText('data: fetched')).toBeInTheDocument()
+  })
+
+  it('should continue streaming after suspense resolves with the first chunk', async () => {
+    const key = queryKey()
+    let streamSignal: AbortSignal | undefined
+    const emitted: Array<number> = []
+
+    async function* numberStreamGenerator(signal: AbortSignal) {
+      streamSignal = signal
+
+      for (let count = 1; count <= 3; count++) {
+        await sleep(10)
+        if (signal.aborted) {
+          return
+        }
+        emitted.push(count)
+        yield count
+      }
+    }
+
+    queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: {
+        queries: {
+          experimental_prefetchInRender: true,
+        },
+      },
+    })
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: experimental_streamedQuery({
+          streamFn: ({ signal }) => numberStreamGenerator(signal),
+          reducer: (_, chunk: number) => chunk,
+          initialValue: 0,
+        }),
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(streamSignal?.aborted).toBe(false)
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(streamSignal?.aborted).toBe(false)
+    expect(emitted).toEqual([1, 2])
+    expect(queryClient.getQueryData(key)).toBe(2)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: 3')).toBeInTheDocument()
+    expect(streamSignal?.aborted).toBe(false)
+
+    rendered.unmount()
   })
 
   it('should remove query instance when component unmounted', async () => {
