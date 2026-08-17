@@ -1,0 +1,86 @@
+{
+  "name": "@tanstack/octane-query",
+  "version": "5.101.4",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in Octane",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/octane-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "keywords": [
+    "octane",
+    "query",
+    "tanstack"
+  ],
+  "scripts": {
+    "clean": "premove ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto --ignore-pattern \"tests/differential/.react-cache/**\" ./src ./tests ./scripts",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build tsconfig.legacy.json",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && node scripts/check-package.mjs && node scripts/check-tsrx.mjs",
+    "build": "tsc --noEmit -p tsconfig.prod.json && node scripts/check-tsrx.mjs"
+  },
+  "type": "module",
+  "types": "./src/index.ts",
+  "module": "./src/index.ts",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./src/index.ts",
+      "module": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "!src/__tests__",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "octane": {
+    "hookSlots": {
+      "manual": [
+        "src"
+      ]
+    }
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "workspace:*",
+    "@tsrx/react": "^0.2.45",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "esbuild": "^0.27.2",
+    "npm-run-all2": "^5.0.0",
+    "octane": "catalog:",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "vite": "^8.0.16",
+    "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "octane": "^0.1.13"
+  }
+}

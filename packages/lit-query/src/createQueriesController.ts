@@ -127,7 +127,7 @@ type GetCreateQueriesResult<T> = T extends {
                 >
               : QueryObserverResult
 
-export type CreateQueriesOptions<
+type CreateQueriesOptions<
   T extends Array<any>,
   TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
