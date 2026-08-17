@@ -107,9 +107,10 @@ export function updateThenable<T>(
 
   switch (thenable.status) {
     case 'pending':
-      if (finalizePending) {
-        finalizeThenableIfPossible(thenable)
+      if (!finalizePending) {
+        return recreateThenable()
       }
+      finalizeThenableIfPossible(thenable)
       return thenable
     case 'fulfilled':
       if (isErrorWithoutData || result.data !== thenable.value) {

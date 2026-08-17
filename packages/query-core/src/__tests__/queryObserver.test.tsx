@@ -1488,6 +1488,30 @@ describe('queryObserver', () => {
     expect(result.data).toBe('data')
   })
 
+  it('should resolve the promise when switching to a query with cached data', async () => {
+    const pendingKey = queryKey()
+    const cachedKey = queryKey()
+    queryClient.setQueryData(cachedKey, 'cached')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: pendingKey,
+      queryFn: () => sleep(10).then(() => 'pending'),
+    })
+
+    const cachedOptions = queryClient.defaultQueryOptions({
+      queryKey: cachedKey,
+      queryFn: () => 'cached',
+    })
+
+    const result = observer.getOptimisticResult(cachedOptions)
+    const promise = result.promise as Promise<string> & {
+      status?: string
+    }
+
+    expect(promise.status).toBe('fulfilled')
+    await expect(promise).resolves.toBe('cached')
+  })
+
   it('should track error prop when throwOnError is true', async () => {
     const key = queryKey()
     const results: Array<QueryObserverResult> = []
