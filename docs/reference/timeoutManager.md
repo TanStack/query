@@ -11,12 +11,12 @@ By default, TimeoutManager uses the global `setTimeout` and `setInterval`, but i
 
 Its available methods are:
 
-- [`timeoutManager.setTimeoutProvider`](#timeoutmanagersettimeoutprovider)
+- [`timeoutManager.setTimeoutProvider`](#timeoutmanager-settimeoutprovider)
   - [`TimeoutProvider`](#timeoutprovider)
-- [`timeoutManager.setTimeout`](#timeoutmanagersettimeout)
-- [`timeoutManager.clearTimeout`](#timeoutmanagercleartimeout)
-- [`timeoutManager.setInterval`](#timeoutmanagersetinterval)
-- [`timeoutManager.clearInterval`](#timeoutmanagerclearinterval)
+- [`timeoutManager.setTimeout`](#timeoutmanager-settimeout)
+- [`timeoutManager.clearTimeout`](#timeoutmanager-cleartimeout)
+- [`timeoutManager.setInterval`](#timeoutmanager-setinterval)
+- [`timeoutManager.clearInterval`](#timeoutmanager-clearinterval)
 
 ## `timeoutManager.setTimeoutProvider`
 
