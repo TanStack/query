@@ -27,8 +27,8 @@
     "test:build": "publint --strict && attw --pack",
     "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "tsup --tsconfig tsconfig.prod.json",
-    "build:dev": "tsup --watch"
+    "build": "node ../../scripts/tsup.cjs --tsconfig tsconfig.prod.json",
+    "build:dev": "node ../../scripts/tsup.cjs --watch"
   },
   "type": "module",
   "main": "./build/index.cjs",
