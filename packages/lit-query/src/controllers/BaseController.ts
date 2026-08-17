@@ -7,10 +7,7 @@ import {
 } from '../context.js'
 
 type QueryClientResolutionState =
-  | 'pre-connect'
-  | 'awaiting-context'
-  | 'bound'
-  | 'missing'
+  'pre-connect' | 'awaiting-context' | 'bound' | 'missing'
 
 export abstract class BaseController<TResult> implements ReactiveController {
   protected result: TResult

@@ -416,12 +416,16 @@ class PaginationDemo extends LitElement {
           </div>
         </section>
 
-        ${query.isError
-          ? html`<p data-testid="query-error">${String(query.error)}</p>`
-          : null}
-        ${this.resetError
-          ? html`<p data-testid="reset-error">${this.resetError}</p>`
-          : null}
+        ${
+          query.isError
+            ? html`<p data-testid="query-error">${String(query.error)}</p>`
+            : null
+        }
+        ${
+          this.resetError
+            ? html`<p data-testid="reset-error">${this.resetError}</p>`
+            : null
+        }
 
         <section>
           <label for="delayInput">Delay (ms)</label>
@@ -470,22 +474,26 @@ class PaginationDemo extends LitElement {
           <div data-testid="mutation-control-status">
             mutation-control: ${this.mutationControlStatus}
           </div>
-          ${this.mutationControlError
-            ? html`<div data-testid="mutation-control-error">
-                ${this.mutationControlError}
-              </div>`
-            : null}
+          ${
+            this.mutationControlError
+              ? html`<div data-testid="mutation-control-error">
+                  ${this.mutationControlError}
+                </div>`
+              : null
+          }
         </section>
 
         <section>
           <div data-testid="create-mutation-status">
             create-mutation: ${createProject.status}
           </div>
-          ${createProject.isError
-            ? html`<div data-testid="create-mutation-error">
-                ${String(createProject.error)}
-              </div>`
-            : null}
+          ${
+            createProject.isError
+              ? html`<div data-testid="create-mutation-error">
+                  ${String(createProject.error)}
+                </div>`
+              : null
+          }
 
           <label for="projectNameInput">Project name</label>
           <input
@@ -516,11 +524,13 @@ class PaginationDemo extends LitElement {
           <div data-testid="favorite-mutation-status">
             favorite-mutation: ${favoriteProject.status}
           </div>
-          ${favoriteProject.isError
-            ? html`<div data-testid="favorite-mutation-error">
-                ${String(favoriteProject.error)}
-              </div>`
-            : null}
+          ${
+            favoriteProject.isError
+              ? html`<div data-testid="favorite-mutation-error">
+                  ${String(favoriteProject.error)}
+                </div>`
+              : null
+          }
         </section>
 
         <section>

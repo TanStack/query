@@ -34,9 +34,7 @@ export interface QueryObserverOptions<
    * Defaults reconciliation to false.
    */
   reconcile?:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    string | false | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
 export interface InfiniteQueryObserverOptions<
@@ -62,9 +60,7 @@ export interface InfiniteQueryObserverOptions<
    * Defaults reconciliation to false.
    */
   reconcile?:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
+    string | false | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
 export interface DefaultOptions<

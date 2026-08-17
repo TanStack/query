@@ -119,8 +119,7 @@ export function resolveStaleTime<
   TQueryKey extends QueryKey = QueryKey,
 >(
   staleTime:
-    | undefined
-    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
+    undefined | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): StaleTime | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
@@ -133,8 +132,7 @@ export function resolveQueryBoolean<
   TQueryKey extends QueryKey = QueryKey,
 >(
   option:
-    | undefined
-    | QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey>,
+    undefined | QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): boolean | undefined {
   return typeof option === 'function' ? option(query) : option

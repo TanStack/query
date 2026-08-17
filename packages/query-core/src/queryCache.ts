@@ -172,8 +172,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     queryHash: string,
   ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
     return this.#queries.get(queryHash) as
-      | Query<TQueryFnData, TError, TData, TQueryKey>
-      | undefined
+      Query<TQueryFnData, TError, TData, TQueryKey> | undefined
   }
 
   getAll(): Array<Query> {

@@ -535,8 +535,7 @@ export class Query<
     // Try to fetch the data
     this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
-        | Promise<TData>
-        | undefined,
+        Promise<TData> | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       onCancel: (error) => {
         if (error instanceof CancelledError && error.revert) {

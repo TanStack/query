@@ -44,8 +44,7 @@ export type DefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryFn'> & {
   initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 

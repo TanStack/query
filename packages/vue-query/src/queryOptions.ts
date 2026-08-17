@@ -16,21 +16,22 @@ export type QueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = {
-  [Property in keyof QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >]: Property extends 'enabled'
-    ?
-        | MaybeRefOrGetter<boolean | undefined>
-        | (() => QueryBooleanOption<
-            TQueryFnData,
-            TError,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >)
+  [
+    Property in keyof QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+  ]: Property extends 'enabled'
+    ? | MaybeRefOrGetter<boolean | undefined>
+      | (() => QueryBooleanOption<
+          TQueryFnData,
+          TError,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >)
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
       : QueryObserverOptions<
@@ -61,8 +62,7 @@ export type DefinedInitialQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
   initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 export function queryOptions<

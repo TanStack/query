@@ -128,12 +128,9 @@ export function useBaseQuery<
       throwOnError: defaultedOptions.throwOnError,
       query: client
         .getQueryCache()
-        .get<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >(defaultedOptions.queryHash),
+        .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+          defaultedOptions.queryHash,
+        ),
       suspense: defaultedOptions.suspense,
     })
   ) {

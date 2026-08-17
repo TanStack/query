@@ -59,12 +59,9 @@ export function useBaseQuery<
 
   const query = client
     .getQueryCache()
-    .get<
-      TQueryFnData,
-      TError,
-      TQueryData,
-      TQueryKey
-    >(defaultedOptions.queryHash)
+    .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+      defaultedOptions.queryHash,
+    )
 
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {

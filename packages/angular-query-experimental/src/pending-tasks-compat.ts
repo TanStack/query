@@ -12,8 +12,7 @@ export const PENDING_TASKS = new InjectionToken<PendingTasksCompat>(
     factory: (): PendingTasksCompat => {
       // Access via Reflect so bundlers stay quiet when the token is absent (Angular < 19).
       const token = Reflect.get(ng, 'PendingTasks') as unknown as
-        | Parameters<typeof inject>[0]
-        | undefined
+        Parameters<typeof inject>[0] | undefined
 
       const svc: PendingTasksCompat | null = token
         ? (inject(token, { optional: true }) as PendingTasksCompat | null)

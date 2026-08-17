@@ -120,8 +120,7 @@ class MutationController<
     CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>
   >
   private observer:
-    | MutationObserver<TData, TError, TVariables, TOnMutateResult>
-    | undefined
+    MutationObserver<TData, TError, TVariables, TOnMutateResult> | undefined
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
 

@@ -27,21 +27,22 @@ export type UseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = MaybeRef<
   {
-    [Property in keyof QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >]: Property extends 'enabled'
-      ?
-          | MaybeRefOrGetter<boolean | undefined>
-          | (() => QueryBooleanOption<
-              TQueryFnData,
-              TError,
-              TQueryData,
-              DeepUnwrapRef<TQueryKey>
-            >)
+    [
+      Property in keyof QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
+    ]: Property extends 'enabled'
+      ? | MaybeRefOrGetter<boolean | undefined>
+        | (() => QueryBooleanOption<
+            TQueryFnData,
+            TError,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >)
       : MaybeRefDeep<
           QueryObserverOptions<
             TQueryFnData,
@@ -73,8 +74,7 @@ export type DefinedInitialQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
   initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
@@ -131,7 +131,6 @@ export function useQuery<
   >,
   queryClient?: QueryClient,
 ):
-  | UseQueryReturnType<TData, TError>
-  | UseQueryDefinedReturnType<TData, TError> {
+  UseQueryReturnType<TData, TError> | UseQueryDefinedReturnType<TData, TError> {
   return useBaseQuery(QueryObserver, options, queryClient)
 }

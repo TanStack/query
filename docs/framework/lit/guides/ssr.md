@@ -78,8 +78,7 @@ queryClient.mount()
 hydrate(queryClient, dehydratedState)
 
 const appElement = document.querySelector('ssr-app') as
-  | (HTMLElement & { queryClient?: QueryClient })
-  | null
+  (HTMLElement & { queryClient?: QueryClient }) | null
 
 if (!appElement) {
   throw new Error('Expected the SSR app element to exist before hydration.')

@@ -37,9 +37,7 @@ export type RejectedThenable<T> = Promise<T> & Rejected
 export type PendingThenable<T> = Promise<T> & Pending<T>
 
 export type Thenable<T> =
-  | FulfilledThenable<T>
-  | RejectedThenable<T>
-  | PendingThenable<T>
+  FulfilledThenable<T> | RejectedThenable<T> | PendingThenable<T>
 
 export function pendingThenable<T>(): PendingThenable<T> {
   let resolve: Pending<T>['resolve']

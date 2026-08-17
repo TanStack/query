@@ -67,8 +67,7 @@ function getResult<TResult = MutationState>(
 
 export function useMutationState<TResult = MutationState>(
   options:
-    | MutationStateOptions<TResult>
-    | (() => MutationStateOptions<TResult>) = {},
+    MutationStateOptions<TResult> | (() => MutationStateOptions<TResult>) = {},
   queryClient?: QueryClient,
 ): Readonly<Ref<Array<TResult>>> {
   const resolvedOptions = computed(() => {
