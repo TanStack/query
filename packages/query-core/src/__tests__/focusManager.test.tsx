@@ -39,7 +39,7 @@ describe('focusManager', () => {
 
     vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
-    expect(focusManager.isFocused()).toBeTruthy()
+    expect(focusManager.isFocused()).toBe(true)
   })
 
   it('should return true for isFocused if document is undefined', () => {
@@ -49,7 +49,7 @@ describe('focusManager', () => {
     delete globalThis.document
 
     focusManager.setFocused()
-    expect(focusManager.isFocused()).toBeTruthy()
+    expect(focusManager.isFocused()).toBe(true)
     globalThis.document = document
   })
 

@@ -3,8 +3,6 @@ id: useMutationState
 title: useMutationState
 ---
 
-# Function: useMutationState()
-
 ```ts
 function useMutationState<TResult>(options, queryClient?): TResult[];
 ```

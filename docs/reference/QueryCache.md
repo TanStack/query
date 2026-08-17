@@ -22,15 +22,15 @@ const queryCache = new QueryCache({
   },
 })
 
-const query = queryCache.find(['posts'])
+const query = queryCache.find({ queryKey: ['posts'] })
 ```
 
 Its available methods are:
 
-- [`queryCache.find`](#querycachefind)
-- [`queryCache.findAll`](#querycachefindall)
-- [`queryCache.subscribe`](#querycachesubscribe)
-- [`queryCache.clear`](#querycacheclear)
+- [`queryCache.find`](#querycache-find)
+- [`queryCache.findAll`](#querycache-findall)
+- [`queryCache.subscribe`](#querycache-subscribe)
+- [`queryCache.clear`](#querycache-clear)
 - [Further reading](#further-reading)
 
 **Options**
@@ -52,12 +52,13 @@ Its available methods are:
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.dataUpdatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```tsx
-const query = queryCache.find(queryKey)
+const query = queryCache.find({ queryKey })
 ```
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters#query-filters)
+- `filters: QueryFilters`: [Query Filters](../framework/react/guides/filters#query-filters)
+  - `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 
 **Returns**
 
@@ -71,12 +72,11 @@ const query = queryCache.find(queryKey)
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```tsx
-const queries = queryCache.findAll(queryKey)
+const queries = queryCache.findAll({ queryKey })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 - `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 
 **Returns**

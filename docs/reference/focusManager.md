@@ -9,10 +9,10 @@ It can be used to change the default event listeners or to manually change the f
 
 Its available methods are:
 
-- [`setEventListener`](#focusmanagerseteventlistener)
-- [`subscribe`](#focusmanagersubscribe)
-- [`setFocused`](#focusmanagersetfocused)
-- [`isFocused`](#focusmanagerisfocused)
+- [`setEventListener`](#focusmanager-seteventlistener)
+- [`subscribe`](#focusmanager-subscribe)
+- [`setFocused`](#focusmanager-setfocused)
+- [`isFocused`](#focusmanager-isfocused)
 
 ## `focusManager.setEventListener`
 

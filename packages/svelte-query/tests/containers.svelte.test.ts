@@ -198,6 +198,13 @@ describe('createRawRef', () => {
     expect(ref).toEqual([7, 8, 9])
   })
 
+  it('should return `false` when deleting a property that does not exist', () => {
+    const [ref] = createRawRef<Record<string, number>>({ a: 1, b: 2 })
+
+    expect(Reflect.deleteProperty(ref, 'c')).toBe(false)
+    expect(ref).toEqual({ a: 1, b: 2 })
+  })
+
   it('should behave like a regular object when not using `update`', () => {
     const [ref] = createRawRef<Record<string, unknown>>({ a: 1, b: 2 })
 

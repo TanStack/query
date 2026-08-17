@@ -39,7 +39,7 @@ describe('HydrationBoundary', () => {
     })
 
     expect(rendered.getByText('data: stringCached')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(21)
+    await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: string')).toBeInTheDocument()
   })
 })

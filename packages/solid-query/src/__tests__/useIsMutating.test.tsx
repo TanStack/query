@@ -3,26 +3,24 @@ import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-} from '..'
-import { setActTimeout } from './utils'
+import { QueryClient, useIsMutating, useMutation } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -65,11 +63,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
 
@@ -78,7 +72,6 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -110,11 +103,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
@@ -124,7 +113,6 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = new QueryClient()
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
 
@@ -159,11 +147,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
@@ -172,17 +156,17 @@ describe('useIsMutating', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = new QueryClient()
+    const customClient = new QueryClient()
     const mutationKey1 = queryKey()
 
     function Page() {
-      const isMutating = useIsMutating(undefined, () => queryClient)
+      const isMutating = useIsMutating(undefined, () => customClient)
       const { mutate } = useMutation(
         () => ({
           mutationKey: mutationKey1,
           mutationFn: () => sleep(20).then(() => 'data'),
         }),
-        () => queryClient,
+        () => customClient,
       )
 
       createEffect(() => {
@@ -224,7 +208,9 @@ describe('useIsMutating', () => {
         return new MutationCacheMock(fn)
       })
 
-    const queryClient = new QueryClient()
+    // Create the client after mocking MutationCache so it uses the mock,
+    // not the centralized client from beforeEach
+    const spiedClient = new QueryClient()
     const mutationKey1 = queryKey()
 
     function IsMutating() {
@@ -254,11 +240,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(spiedClient, () => <Page />)
 
     fireEvent.click(rendered.getByText('unmount'))
 

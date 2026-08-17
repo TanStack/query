@@ -28,8 +28,8 @@ describe('useMutation', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should be able to reset `data`', async () => {
@@ -210,7 +210,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutateAsync } = useMutation({
-        mutationFn: async (_text: string) =>
+        mutationFn: (_text: string) =>
           sleep(10).then(() => {
             throw new Error('oops')
           }),
@@ -370,7 +370,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutateAsync } = useMutation({
-        mutationFn: async (_text: string) =>
+        mutationFn: (_text: string) =>
           sleep(10).then(() => {
             throw new Error('oops')
           }),
@@ -463,15 +463,15 @@ describe('useMutation', () => {
     expect(getByRole('heading').textContent).toBe('3')
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
 
-    expect(onSuccessMock).toHaveBeenCalledWith(1)
-    expect(onSuccessMock).toHaveBeenCalledWith(2)
-    expect(onSuccessMock).toHaveBeenCalledWith(3)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(3, 3)
 
     expect(onSettledMock).toHaveBeenCalledTimes(3)
 
-    expect(onSettledMock).toHaveBeenCalledWith(1)
-    expect(onSettledMock).toHaveBeenCalledWith(2)
-    expect(onSettledMock).toHaveBeenCalledWith(3)
+    expect(onSettledMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSettledMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
   })
 
   it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
@@ -568,24 +568,30 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('3')
     expect(onErrorMock).toHaveBeenCalledTimes(3)
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      1,
       'Expected mock error. All is well! 1',
     )
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      2,
       'Expected mock error. All is well! 2',
     )
-    expect(onErrorMock).toHaveBeenCalledWith(
+    expect(onErrorMock).toHaveBeenNthCalledWith(
+      3,
       'Expected mock error. All is well! 3',
     )
 
     expect(onSettledMock).toHaveBeenCalledTimes(3)
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      1,
       'Expected mock error. All is well! 1',
     )
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      2,
       'Expected mock error. All is well! 2',
     )
-    expect(onSettledMock).toHaveBeenCalledWith(
+    expect(onSettledMock).toHaveBeenNthCalledWith(
+      3,
       'Expected mock error. All is well! 3',
     )
   })
@@ -734,7 +740,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutateAsync } = useMutation({
-        mutationFn: async (_text: string) =>
+        mutationFn: (_text: string) =>
           sleep(10).then(() => {
             throw new Error('oops')
           }),
@@ -854,7 +860,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutateAsync } = useMutation({
-        mutationFn: async (_text: string) => Promise.reject(new Error('oops')),
+        mutationFn: (_text: string) => Promise.reject(new Error('oops')),
         onError: () => {
           callbacks.push('useMutation.onError')
           return Promise.resolve()
@@ -905,7 +911,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutate } = useMutation({
-        mutationFn: async (_text: string) =>
+        mutationFn: (_text: string) =>
           sleep(10).then(() => Promise.reject(new Error('oops'))),
         onError: () => {
           callbacks.push('useMutation.onError')
@@ -1232,13 +1238,13 @@ describe('useMutation', () => {
     function Page() {
       const state = useMutation({
         mutationKey: key,
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          count++
-          return count > 1
-            ? Promise.resolve(`data${count}`)
-            : Promise.reject(new Error('oops'))
-        },
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            count++
+            return count > 1
+              ? Promise.resolve(`data${count}`)
+              : Promise.reject(new Error('oops'))
+          }),
         retry: 1,
         retryDelay: 5,
         networkMode: 'offlineFirst',
@@ -1486,8 +1492,7 @@ describe('useMutation', () => {
     expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
   })
 
-  it('should pass meta to mutation', async () => {
-    const errorMock = vi.fn()
+  it('should pass meta to mutation on success', async () => {
     const successMock = vi.fn()
 
     const queryClientMutationMeta = new QueryClient({
@@ -1495,33 +1500,21 @@ describe('useMutation', () => {
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)
         },
-        onError: (_, __, ___, mutation) => {
-          errorMock(mutation.meta?.metaErrorMessage)
-        },
       }),
     })
 
     const metaSuccessMessage = 'mutation succeeded'
-    const metaErrorMessage = 'mutation failed'
 
     function Page() {
       const { mutate: succeed, isSuccess } = useMutation({
         mutationFn: () => Promise.resolve(''),
         meta: { metaSuccessMessage },
       })
-      const { mutate: error, isError } = useMutation({
-        mutationFn: () => {
-          return Promise.reject(new Error(''))
-        },
-        meta: { metaErrorMessage },
-      })
 
       return (
         <div>
           <button onClick={() => succeed()}>succeed</button>
-          <button onClick={() => error()}>error</button>
           {isSuccess && <div>successTest</div>}
-          {isError && <div>errorTest</div>}
         </div>
       )
     }
@@ -1532,14 +1525,53 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(getByText('succeed'))
-    fireEvent.click(getByText('error'))
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('successTest')).not.toBeNull()
-    expect(queryByText('errorTest')).not.toBeNull()
 
     expect(successMock).toHaveBeenCalledTimes(1)
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
+  })
+
+  it('should pass meta to mutation on error', async () => {
+    const errorMock = vi.fn()
+
+    const queryClientMutationMeta = new QueryClient({
+      mutationCache: new MutationCache({
+        onError: (_, __, ___, mutation) => {
+          errorMock(mutation.meta?.metaErrorMessage)
+        },
+      }),
+    })
+
+    const metaErrorMessage = 'mutation failed'
+
+    function Page() {
+      const { mutate: error, isError } = useMutation({
+        mutationFn: () => {
+          return Promise.reject(new Error(''))
+        },
+        meta: { metaErrorMessage },
+      })
+
+      return (
+        <div>
+          <button onClick={() => error()}>error</button>
+          {isError && <div>errorTest</div>}
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClientMutationMeta,
+      <Page />,
+    )
+
+    fireEvent.click(getByText('error'))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryByText('errorTest')).not.toBeNull()
+
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
   })
@@ -1776,10 +1808,10 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          throw mutateFnError
-        },
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw mutateFnError
+          }),
         onError: () => Promise.reject(error),
       })
 
@@ -1822,10 +1854,10 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          throw mutateFnError
-        },
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw mutateFnError
+          }),
         onSettled: () => Promise.reject(error),
         onError,
       })
@@ -1863,7 +1895,7 @@ describe('useMutation', () => {
     function Page() {
       const mutation = useMutation(
         {
-          mutationFn: async (text: string) => {
+          mutationFn: (text: string) => {
             return Promise.resolve(text)
           },
         },
@@ -1980,18 +2012,18 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
   })
 
-  it('should handle conditional logic based on mutate success or failure', async () => {
+  it('should set success message from mutate callbacks when mutation succeeds', async () => {
     function Page() {
       const [message, setMessage] = useState<string>('idle')
 
       const { mutate } = useMutation({
-        mutationFn: async (shouldFail: boolean) => {
-          await sleep(10)
-          if (shouldFail) {
-            throw new Error('submission failed')
-          }
-          return 'submitted successfully'
-        },
+        mutationFn: (shouldFail: boolean) =>
+          sleep(10).then(() => {
+            if (shouldFail) {
+              throw new Error('submission failed')
+            }
+            return 'submitted successfully'
+          }),
         retry: false,
       })
 
@@ -2007,6 +2039,38 @@ describe('useMutation', () => {
           >
             submit
           </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
+  })
+
+  it('should set error message from mutate callbacks when mutation fails', async () => {
+    function Page() {
+      const [message, setMessage] = useState<string>('idle')
+
+      const { mutate } = useMutation({
+        mutationFn: (shouldFail: boolean) =>
+          sleep(10).then(() => {
+            if (shouldFail) {
+              throw new Error('submission failed')
+            }
+            return 'submitted successfully'
+          }),
+        retry: false,
+      })
+
+      return (
+        <div>
           <button
             onClick={() =>
               mutate(true, {
@@ -2024,13 +2088,6 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
-    await vi.advanceTimersByTimeAsync(11)
-
-    expect(
-      rendered.getByText('message: success: submitted successfully'),
-    ).toBeInTheDocument()
-
     fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
     await vi.advanceTimersByTimeAsync(11)
 
@@ -2046,14 +2103,14 @@ describe('useMutation', () => {
       const [message, setMessage] = useState<string>('idle')
 
       const { mutate } = useMutation({
-        mutationFn: async () => {
-          await sleep(10)
-          attempt++
-          if (attempt < 2) {
-            throw new Error('temporary failure')
-          }
-          return 'success'
-        },
+        mutationFn: () =>
+          sleep(10).then(() => {
+            attempt++
+            if (attempt < 2) {
+              throw new Error('temporary failure')
+            }
+            return 'success'
+          }),
         retry: false,
       })
 
@@ -2252,13 +2309,13 @@ describe('useMutation', () => {
       const [result, setResult] = useState<string>('idle')
 
       const { mutateAsync } = useMutation({
-        mutationFn: async (file: string) => {
-          await sleep(10)
-          if (file === 'file2') {
-            throw new Error('upload failed')
-          }
-          return `uploaded: ${file}`
-        },
+        mutationFn: (file: string) =>
+          sleep(10).then(() => {
+            if (file === 'file2') {
+              throw new Error('upload failed')
+            }
+            return `uploaded: ${file}`
+          }),
         retry: false,
       })
 
@@ -2300,13 +2357,13 @@ describe('useMutation', () => {
       const [result, setResult] = useState<string>('idle')
 
       const { mutateAsync } = useMutation({
-        mutationFn: async (file: string) => {
-          await sleep(10)
-          if (file === 'file2') {
-            throw new Error('upload failed')
-          }
-          return `uploaded: ${file}`
-        },
+        mutationFn: (file: string) =>
+          sleep(10).then(() => {
+            if (file === 'file2') {
+              throw new Error('upload failed')
+            }
+            return `uploaded: ${file}`
+          }),
         retry: false,
       })
 

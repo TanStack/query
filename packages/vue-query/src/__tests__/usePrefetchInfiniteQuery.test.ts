@@ -19,9 +19,9 @@ describe('usePrefetchInfiniteQuery', () => {
       queryClient,
       'prefetchInfiniteQuery',
     )
-    const queryFn = vi.fn(() =>
-      Promise.resolve({ data: 'prefetched', currentPage: 1 }),
-    )
+    const queryFn = () =>
+      Promise.resolve({ data: 'prefetched', currentPage: 1 })
+    const getNextPageParam = () => undefined
 
     const key = queryKey()
 
@@ -30,7 +30,7 @@ describe('usePrefetchInfiniteQuery', () => {
         queryKey: key,
         queryFn,
         initialPageParam: 1,
-        getNextPageParam: () => undefined,
+        getNextPageParam,
       },
       queryClient,
     )
@@ -40,7 +40,7 @@ describe('usePrefetchInfiniteQuery', () => {
       queryKey: key,
       queryFn,
       initialPageParam: 1,
-      getNextPageParam: expect.any(Function),
+      getNextPageParam,
     })
   })
 
@@ -50,9 +50,8 @@ describe('usePrefetchInfiniteQuery', () => {
       queryClient,
       'prefetchInfiniteQuery',
     )
-    const queryFn = vi.fn(() =>
-      Promise.resolve({ data: 'prefetched', currentPage: 1 }),
-    )
+    const queryFn = () =>
+      Promise.resolve({ data: 'prefetched', currentPage: 1 })
 
     const key = queryKey()
     queryClient.setQueryData(key, {
@@ -81,22 +80,26 @@ describe('usePrefetchInfiniteQuery', () => {
     )
     const nestedRef = ref('value')
     const key = queryKey()
+    const queryFn = () =>
+      Promise.resolve({ data: 'prefetched', currentPage: 1 })
+    const getNextPageParam = () => undefined
 
     usePrefetchInfiniteQuery(
       {
         queryKey: [...key, nestedRef],
-        queryFn: () => Promise.resolve({ data: 'prefetched', currentPage: 1 }),
+        queryFn,
         initialPageParam: 1,
-        getNextPageParam: () => undefined,
+        getNextPageParam,
       },
       queryClient,
     )
 
-    expect(prefetchInfiniteQuerySpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        queryKey: [...key, 'value'],
-      }),
-    )
+    expect(prefetchInfiniteQuerySpy).toHaveBeenCalledWith({
+      queryKey: [...key, 'value'],
+      queryFn,
+      initialPageParam: 1,
+      getNextPageParam,
+    })
   })
 
   it('should prefetch infinite query again when query key changes reactively', async () => {
@@ -107,33 +110,37 @@ describe('usePrefetchInfiniteQuery', () => {
     )
     const keyRef = ref('first')
     const key = queryKey()
+    const queryFn = () =>
+      Promise.resolve({ data: keyRef.value, currentPage: 1 })
+    const getNextPageParam = () => undefined
 
     usePrefetchInfiniteQuery(
       () => ({
         queryKey: [...key, keyRef.value],
-        queryFn: () => Promise.resolve({ data: keyRef.value, currentPage: 1 }),
+        queryFn,
         initialPageParam: 1,
-        getNextPageParam: () => undefined,
+        getNextPageParam,
       }),
       queryClient,
     )
 
-    expect(prefetchInfiniteQuerySpy).toHaveBeenCalledTimes(1)
-    expect(prefetchInfiniteQuerySpy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        queryKey: [...key, 'first'],
-      }),
-    )
+    expect(prefetchInfiniteQuerySpy).toHaveBeenNthCalledWith(1, {
+      queryKey: [...key, 'first'],
+      queryFn,
+      initialPageParam: 1,
+      getNextPageParam,
+    })
 
     keyRef.value = 'second'
     await nextTick()
 
     expect(prefetchInfiniteQuerySpy).toHaveBeenCalledTimes(2)
-    expect(prefetchInfiniteQuerySpy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        queryKey: [...key, 'second'],
-      }),
-    )
+    expect(prefetchInfiniteQuerySpy).toHaveBeenNthCalledWith(2, {
+      queryKey: [...key, 'second'],
+      queryFn,
+      initialPageParam: 1,
+      getNextPageParam,
+    })
   })
 
   it('should warn when used outside of setup function in development mode', () => {
