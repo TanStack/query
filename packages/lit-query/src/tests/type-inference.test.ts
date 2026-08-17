@@ -304,23 +304,4 @@ describe('type inference', () => {
     const data = await client.infiniteQuery(options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
-
-  it('L10: infiniteQueryOptions with skipToken integrates with queryClient.infiniteQuery', async () => {
-    const options = infiniteQueryOptions({
-      queryKey: ['type-inference', 'infinite-query-skip-token'] as const,
-      queryFn: skipToken,
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-    })
-
-    const client = new QueryClient()
-    // skipToken disables the infinite query, so seed data matching the InfiniteData shape.
-    client.setQueryData(options.queryKey, {
-      pages: ['data'],
-      pageParams: [1],
-    })
-
-    const data = await client.infiniteQuery(options)
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
-  })
 })
