@@ -1,4 +1,5 @@
 import {
+  dataTagErrorSymbol,
   dataTagSymbol,
   QueryClient,
   type DefinedQueryObserverResult,
@@ -206,6 +207,42 @@ describe('type inference', () => {
     )
     expectTypeOf(infinite().data?.pages).toEqualTypeOf<
       Array<{ page: number }> | undefined
+    >()
+
+    const infiniteQueryOpts = infiniteQueryOptions({
+      queryKey: ['type-inference', 'infinite-query-options'] as const,
+      initialPageParam: 0,
+      queryFn: async () => ({ page: 3 }),
+      getNextPageParam: (lastPage) => lastPage.page + 1,
+    })
+    expectTypeOf(infiniteQueryOpts.queryKey[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<{ page: number }>
+    >()
+    expectTypeOf(
+      infiniteQueryOpts.queryKey[dataTagErrorSymbol],
+    ).toEqualTypeOf<Error>()
+    const cachedPages = client.getQueryData(infiniteQueryOpts.queryKey)
+    expectTypeOf(cachedPages).toEqualTypeOf<
+      InfiniteData<{ page: number }> | undefined
+    >()
+    const updatedPages = client.setQueryData(infiniteQueryOpts.queryKey, {
+      pages: [{ page: 4 }],
+      pageParams: [0],
+    })
+    expectTypeOf(updatedPages).toEqualTypeOf<
+      InfiniteData<{ page: number }> | undefined
+    >()
+    const updatedPagesViaCallback = client.setQueryData(
+      infiniteQueryOpts.queryKey,
+      (previous) => {
+        expectTypeOf(previous).toEqualTypeOf<
+          InfiniteData<{ page: number }> | undefined
+        >()
+        return previous
+      },
+    )
+    expectTypeOf(updatedPagesViaCallback).toEqualTypeOf<
+      InfiniteData<{ page: number }> | undefined
     >()
   })
 
