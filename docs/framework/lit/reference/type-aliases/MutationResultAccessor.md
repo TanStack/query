@@ -3,8 +3,6 @@ id: MutationResultAccessor
 title: MutationResultAccessor
 ---
 
-# Type Alias: MutationResultAccessor\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & object;
 ```
