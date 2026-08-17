@@ -72,7 +72,7 @@
     "@testing-library/preact": "^3.2.4",
     "cpy-cli": "^5.0.0",
     "eslint-config-preact": "^2.0.0",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^9.0.3",
     "preact": "^10.28.0",
     "preact-render-to-string": "^6.6.4",
     "typescript": "5.9.3",
