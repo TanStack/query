@@ -3,13 +3,11 @@ id: DefinedInitialDataOptions
 title: DefinedInitialDataOptions
 ---
 
-# Type Alias: DefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:40](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/queryOptions.ts#L40)
+Defined in: [preact-query/src/queryOptions.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L41)
 
 ## Type Declaration
 

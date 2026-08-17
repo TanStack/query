@@ -3,13 +3,11 @@ id: usePrefetchQuery
 title: usePrefetchQuery
 ---
 
-# Function: usePrefetchQuery()
-
 ```ts
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchQuery.tsx:5](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L5)
+Defined in: [preact-query/src/usePrefetchQuery.tsx:6](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L6)
 
 ## Type Parameters
 
