@@ -3,8 +3,6 @@ id: queryFeature
 title: queryFeature
 ---
 
-# Function: queryFeature()
-
 ```ts
 function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
 ```
