@@ -14,6 +14,7 @@ import type {
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
@@ -148,14 +149,24 @@ export class QueryClient extends QC {
     return super.getQueryState(cloneDeepUnref(queryKey))
   }
 
-  removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: QueryFilters<TTaggedQueryKey>,
-  ): void
+  removeQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(filters?: QueryFilters<TTaggedQueryKey>): void
   removeQueries(filters: MaybeRefDeep<QueryFilters> = {}): void {
     return super.removeQueries(cloneDeepUnref(filters))
   }
 
-  resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+  resetQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
     filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<ResetOptions>,
   ): Promise<void>
@@ -166,7 +177,13 @@ export class QueryClient extends QC {
     return super.resetQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
-  cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+  cancelQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
     filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<CancelOptions>,
   ): Promise<void>
@@ -177,7 +194,13 @@ export class QueryClient extends QC {
     return super.cancelQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
-  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+  invalidateQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
     filters?:
       | InvalidateQueryFilters<TTaggedQueryKey>
       | (() => InvalidateQueryFilters<TTaggedQueryKey>),
