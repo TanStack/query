@@ -3,8 +3,6 @@ id: unregisterDefaultQueryClient
 title: unregisterDefaultQueryClient
 ---
 
-# Function: unregisterDefaultQueryClient()
-
 ```ts
 function unregisterDefaultQueryClient(client): void;
 ```

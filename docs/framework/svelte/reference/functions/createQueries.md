@@ -3,8 +3,6 @@ id: createQueries
 title: createQueries
 ---
 
-# Function: createQueries()
-
 ```ts
 function createQueries<T, TCombinedResult>(createQueriesOptions, queryClient?): TCombinedResult;
 ```

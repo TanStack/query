@@ -7,6 +7,7 @@ import {
 import {
   CancelledError,
   Query,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -14,12 +15,7 @@ import {
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
-import type {
-  QueryCache,
-  QueryFunctionContext,
-  QueryKey,
-  QueryObserverResult,
-} from '..'
+import type { QueryFunctionContext, QueryKey, QueryObserverResult } from '..'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -541,6 +537,35 @@ describe('query', () => {
 
     expect(query.state.error).toBe(error)
     expect(query.state.error).not.toBeInstanceOf(CancelledError)
+  })
+
+  it('should release the retryer once its fetch has settled', async () => {
+    const key = queryKey()
+    let refetch: Promise<unknown> | undefined
+    const testCache = new QueryCache({
+      onSuccess: (_data, query) => {
+        refetch ??= query.fetch()
+      },
+    })
+    const testClient = new QueryClient({ queryCache: testCache })
+
+    const prefetch = testClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    const query = testCache.find({ queryKey: key })!
+    const firstPromise = query.promise
+    expect(firstPromise).toBeDefined()
+
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetch
+    expect(query.promise).toBeDefined()
+    expect(query.promise).not.toBe(firstPromise)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await refetch
+    expect(query.state.data).toBe('data')
+    expect(query.promise).toBeUndefined()
   })
 
   it('the previous query status should be kept when refetching', async () => {
