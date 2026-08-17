@@ -2609,6 +2609,39 @@ describe('queryClient', () => {
       expect(state?.data).toEqual('initial')
     })
 
+    it('should refetch queries matched by a state-dependent predicate', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(new Error('error'))
+        .mockResolvedValue('data')
+
+      await expect(
+        queryClient.fetchQuery({
+          queryKey: key,
+          queryFn,
+          retry: false,
+        }),
+      ).rejects.toThrow('error')
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        retry: false,
+        retryOnMount: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+
+      await queryClient.resetQueries({
+        predicate: (query) => query.state.status === 'error',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+
+      unsubscribe()
+    })
+
     it('should refetch all active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
