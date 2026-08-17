@@ -39,8 +39,8 @@ describe('useQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -750,11 +750,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return 'test' + count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return 'test' + count
+          }),
       })
 
       states.push(state)
@@ -869,10 +869,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return ++count
-        },
+        queryFn: () => sleep(10).then(() => ++count),
         notifyOnChangeProps: 'all',
       })
 
@@ -931,11 +928,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count === 1 ? result1 : result2
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count === 1 ? result1 : result2
+          }),
         notifyOnChangeProps: 'all',
       })
 
@@ -1019,11 +1016,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       })
 
@@ -1065,11 +1062,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       })
 
@@ -1105,11 +1102,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       })
 
@@ -1460,13 +1457,13 @@ describe('useQuery', () => {
     function Page({ count }: { count: number }) {
       const state = useQuery<number, Error>({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 2) {
-            throw new Error('Error test')
-          }
-          return Promise.resolve(count)
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 2) {
+              throw new Error('Error test')
+            }
+            return Promise.resolve(count)
+          }),
         retry: false,
         placeholderData: keepPreviousData,
       })
@@ -2178,11 +2175,10 @@ describe('useQuery', () => {
 
           const state = useQuery({
             queryKey: key,
-            queryFn: async () => {
-              await sleep(5)
-              fetchCounterRef.current++
-              return `fetch counter: ${fetchCounterRef.current}`
-            },
+            queryFn: () =>
+              sleep(5).then(
+                () => `fetch counter: ${++fetchCounterRef.current}`,
+              ),
             notifyOnChangeProps,
           })
 
@@ -2568,10 +2564,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
 
         staleTime: Infinity,
         refetchOnWindowFocus: 'always',
@@ -2607,10 +2600,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
 
         staleTime: 0,
         retry: 0,
@@ -3974,16 +3964,15 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return (
-            queryFn() || {
-              data: {
-                nested: true,
+        queryFn: () =>
+          sleep(10).then(
+            () =>
+              queryFn() || {
+                data: {
+                  nested: true,
+                },
               },
-            }
-          )
-        },
+          ),
       })
 
       React.useMemo(() => {
@@ -4055,10 +4044,7 @@ describe('useQuery', () => {
     function Page() {
       const queryInfo = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
         refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       })
 
@@ -4694,11 +4680,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       })
 
@@ -4765,11 +4751,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
         enabled: false,
         notifyOnChangeProps: 'all',
@@ -4933,31 +4919,31 @@ describe('useQuery', () => {
     // // render error state component
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // change to enabled to false
     fireEvent.click(rendered.getByLabelText('retry'))
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
     function Page({ id }: { id: number }) {
       const { error, isPending } = useQuery({
         queryKey: [id],
-        queryFn: async () => {
-          await sleep(10)
-          if (id % 2 === 1) {
-            return Promise.reject(new Error('Error'))
-          } else {
-            return 'data'
-          }
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (id % 2 === 1) {
+              return Promise.reject(new Error('Error'))
+            } else {
+              return 'data'
+            }
+          }),
         retry: false,
         retryOnMount: () => false,
         refetchOnMount: false,
@@ -5072,14 +5058,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 0) {
-            count++
-            throw error
-          }
-          return 5
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 0) {
+              count++
+              throw error
+            }
+            return 5
+          }),
         retry: false,
       })
 
@@ -5914,6 +5900,42 @@ describe('useQuery', () => {
       expect(
         queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
       ).toBe(1)
+    })
+
+    it('should not optimistically show fetching when unsubscribed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed,
+        })
+
+        return (
+          <div>
+            <span>isFetching: {String(query.isFetching)}</span>
+            <span>fetchStatus: {query.fetchStatus}</span>
+            <button onClick={() => setSubscribed(false)}>unsubscribe</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
+
+      fireEvent.click(rendered.getByRole('button', { name: 'unsubscribe' }))
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+      rendered.getByText('isFetching: false')
+      rendered.getByText('fetchStatus: idle')
     })
 
     it('should not be attached to the query when subscribed is false', async () => {

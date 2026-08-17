@@ -10,6 +10,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -137,7 +138,6 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: Partial<QueryState<TData, TError>>
-  setStateOptions?: SetStateOptions
 }
 
 export type Action<TData, TError> =
@@ -149,10 +149,6 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
-
-export interface SetStateOptions {
-  meta?: any
-}
 
 // CLASS
 
@@ -166,6 +162,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
+  #queryType?: 'infinite'
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -195,6 +192,10 @@ export class Query<
     return this.options.meta
   }
 
+  get queryType() {
+    return this.#queryType
+  }
+
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
   }
@@ -203,6 +204,10 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
+
+    if (options?._type) {
+      this.#queryType = options._type
+    }
 
     this.updateGcTime(this.options.gcTime)
 
@@ -241,11 +246,8 @@ export class Query<
     return data
   }
 
-  setState(
-    state: Partial<QueryState<TData, TError>>,
-    setStateOptions?: SetStateOptions,
-  ): void {
-    this.#dispatch({ type: 'setState', state, setStateOptions })
+  setState(state: Partial<QueryState<TData, TError>>): void {
+    this.#dispatch({ type: 'setState', state })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -511,7 +513,13 @@ export class Query<
 
     const context = createFetchContext()
 
-    this.options.behavior?.onFetch(context, this as unknown as Query)
+    const behavior =
+      this.#queryType === 'infinite'
+        ? (infiniteQueryBehavior(
+            (this.options as { pages?: number }).pages,
+          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
+        : this.options.behavior
+    behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
@@ -525,7 +533,7 @@ export class Query<
     }
 
     // Try to fetch the data
-    this.#retryer = createRetryer({
+    const retryer = (this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>
         | undefined,
@@ -552,10 +560,10 @@ export class Query<
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
       canRun: () => true,
-    })
+    }))
 
     try {
-      const data = await this.#retryer.start()
+      const data = await retryer.start()
       // this is more of a runtime guard
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (data === undefined) {
@@ -611,6 +619,11 @@ export class Query<
 
       throw error // rethrow the error for further handling
     } finally {
+      // The settled retryer's promise would otherwise pin this fetch's raw
+      // result (a second copy after structural sharing) for the query's lifetime
+      if (this.#retryer === retryer) {
+        this.#retryer = undefined
+      }
       // Schedule query gc after fetching
       this.scheduleGc()
     }

@@ -15,6 +15,7 @@ import type {
   DataTag,
   InitialDataFunction,
   QueryObserverResult,
+  QueryPersister,
 } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
@@ -56,6 +57,15 @@ describe('queryOptions', () => {
     const { data } = useSuspenseQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+  it('should work when passed to query', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
 
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
@@ -65,6 +75,35 @@ describe('queryOptions', () => {
 
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with select', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
+  })
+  it('should work when passed to query with enabled: false', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      enabled: false,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with skipToken', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<unknown>()
   })
   it('should work when passed to useQueries', () => {
     const options = queryOptions({
@@ -283,5 +322,41 @@ describe('queryOptions', () => {
     expectTypeOf(options.queryKey).toEqualTypeOf<
       DataTag<MyQueryKey, number, Error & { myMessage: string }>
     >()
+  })
+
+  it('should infer TQueryFnData from persister paired with a queryFn declaring a parameter (#7842)', () => {
+    const persister = undefined as unknown as QueryPersister<string, any>
+
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: (_context) => 'hello',
+      persister,
+    })
+
+    expectTypeOf(options.queryFn!).returns.toEqualTypeOf<
+      string | Promise<string>
+    >()
+  })
+
+  it('should still error when persister and queryFn return types genuinely conflict', () => {
+    const persister = undefined as unknown as QueryPersister<string, any>
+
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        // @ts-expect-error persister expects string, queryFn returns number
+        queryFn: () => 42,
+        persister,
+      }),
+    )
+
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        // @ts-expect-error persister expects string, queryFn with arg returns number
+        queryFn: (_context) => 42,
+        persister,
+      }),
+    )
   })
 })

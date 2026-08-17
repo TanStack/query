@@ -1,5 +1,135 @@
 # @tanstack/react-query
 
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies [[`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677)]:
+  - @tanstack/query-core@5.101.3
+
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies [[`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1)]:
+  - @tanstack/query-core@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- fix(react-query): do not go into optimistic fetching state when not subscribed ([#10759](https://github.com/TanStack/query/pull/10759))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 5.100.13
+
+### Patch Changes
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
+## 5.100.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
+## 5.100.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.10
+
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.6
+
+## 5.100.5
+
+### Patch Changes
+
+- Updated dependencies [[`a53ef97`](https://github.com/TanStack/query/commit/a53ef97f87decb8ea2431710f5199431d3c94c8d)]:
+  - @tanstack/query-core@5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- fix(suspense): skip calling combine when queries would suspend ([#10576](https://github.com/TanStack/query/pull/10576))
+
+- Updated dependencies [[`f85d825`](https://github.com/TanStack/query/commit/f85d825e02efbbff02e2081528ed28f5e5382f7a)]:
+  - @tanstack/query-core@5.100.3
+
+## 5.100.2
+
+### Patch Changes
+
+- Updated dependencies [[`ea4497e`](https://github.com/TanStack/query/commit/ea4497e8aa00d8c1c3a36fb1e17563a889d6ab31), [`d6a7bf3`](https://github.com/TanStack/query/commit/d6a7bf3e3e024c1a77d0536813238cc8007a5fa7), [`645d5d1`](https://github.com/TanStack/query/commit/645d5d130f5e8017cb1bf1a37987f7b980aed705)]:
+  - @tanstack/query-core@5.100.2
+
 ## 5.100.1
 
 ### Patch Changes

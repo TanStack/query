@@ -136,6 +136,27 @@
           ]
         },
         {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/lit/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/lit/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/lit/quick-start"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/lit/typescript"
+            }
+          ]
+        },
+        {
           "label": "angular",
           "children": [
             {
@@ -760,6 +781,47 @@
           ]
         },
         {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Reactive Controllers vs Hooks",
+              "to": "framework/lit/guides/reactive-controllers-vs-hooks"
+            },
+            {
+              "label": "Queries",
+              "to": "framework/lit/guides/queries"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/lit/guides/parallel-queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "framework/lit/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "framework/lit/guides/query-functions"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/lit/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "framework/lit/guides/query-invalidation"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/lit/guides/infinite-queries"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/lit/guides/ssr"
+            }
+          ]
+        },
+        {
           "label": "preact",
           "children": [
             {
@@ -801,6 +863,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/preact/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/preact/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -1142,44 +1208,129 @@
               "to": "framework/svelte/reference/index"
             },
             {
-              "label": "Functions / createQuery",
+              "label": "createQuery",
               "to": "framework/svelte/reference/functions/createQuery"
             },
             {
-              "label": "Functions / createQueries",
+              "label": "createQueries",
               "to": "framework/svelte/reference/functions/createQueries"
             },
             {
-              "label": "Functions / createInfiniteQuery",
+              "label": "createInfiniteQuery",
               "to": "framework/svelte/reference/functions/createInfiniteQuery"
             },
             {
-              "label": "Functions / createMutation",
+              "label": "createMutation",
               "to": "framework/svelte/reference/functions/createMutation"
             },
             {
-              "label": "Functions / useIsFetching",
+              "label": "useIsFetching",
               "to": "framework/svelte/reference/functions/useIsFetching"
             },
             {
-              "label": "Functions / useIsMutating",
+              "label": "useIsMutating",
               "to": "framework/svelte/reference/functions/useIsMutating"
             },
             {
-              "label": "Functions / useMutationState",
+              "label": "useMutationState",
               "to": "framework/svelte/reference/functions/useMutationState"
             },
             {
-              "label": "Functions / queryOptions",
+              "label": "useQueryClient",
+              "to": "framework/svelte/reference/functions/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
               "to": "framework/svelte/reference/functions/queryOptions"
             },
             {
-              "label": "Functions / infiniteQueryOptions",
+              "label": "infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "Functions / mutationOptions",
+              "label": "mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
+            },
+            {
+              "label": "useHydrate",
+              "to": "framework/svelte/reference/functions/useHydrate"
+            }
+          ]
+        },
+        {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Lit Reference",
+              "to": "framework/lit/reference/index"
+            },
+            {
+              "label": "QueryClientProvider",
+              "to": "framework/lit/reference/classes/QueryClientProvider"
+            },
+            {
+              "label": "Functions / createQueryController",
+              "to": "framework/lit/reference/functions/createQueryController"
+            },
+            {
+              "label": "Functions / createQueriesController",
+              "to": "framework/lit/reference/functions/createQueriesController"
+            },
+            {
+              "label": "Functions / createInfiniteQueryController",
+              "to": "framework/lit/reference/functions/createInfiniteQueryController"
+            },
+            {
+              "label": "Functions / createMutationController",
+              "to": "framework/lit/reference/functions/createMutationController"
+            },
+            {
+              "label": "Functions / useIsFetching",
+              "to": "framework/lit/reference/functions/useIsFetching"
+            },
+            {
+              "label": "Functions / useIsMutating",
+              "to": "framework/lit/reference/functions/useIsMutating"
+            },
+            {
+              "label": "Functions / useMutationState",
+              "to": "framework/lit/reference/functions/useMutationState"
+            },
+            {
+              "label": "Functions / useQueryClient",
+              "to": "framework/lit/reference/functions/useQueryClient"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/lit/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/lit/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/lit/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Context / queryClientContext",
+              "to": "framework/lit/reference/variables/queryClientContext"
+            },
+            {
+              "label": "Context / getDefaultQueryClient",
+              "to": "framework/lit/reference/functions/getDefaultQueryClient"
+            },
+            {
+              "label": "Context / registerDefaultQueryClient",
+              "to": "framework/lit/reference/functions/registerDefaultQueryClient"
+            },
+            {
+              "label": "Context / unregisterDefaultQueryClient",
+              "to": "framework/lit/reference/functions/unregisterDefaultQueryClient"
+            },
+            {
+              "label": "Context / resolveQueryClient",
+              "to": "framework/lit/reference/functions/resolveQueryClient"
             }
           ]
         },
@@ -1191,18 +1342,70 @@
               "to": "framework/angular/reference/index"
             },
             {
-              "label": "Functions / injectQuery",
+              "label": "infiniteQueryOptions",
+              "to": "framework/angular/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "injectInfiniteQuery",
+              "to": "framework/angular/reference/functions/injectInfiniteQuery"
+            },
+            {
+              "label": "injectIsFetching",
+              "to": "framework/angular/reference/functions/injectIsFetching"
+            },
+            {
+              "label": "injectIsMutating",
+              "to": "framework/angular/reference/functions/injectIsMutating"
+            },
+            {
+              "label": "injectIsRestoring",
+              "to": "framework/angular/reference/functions/injectIsRestoring"
+            },
+            {
+              "label": "injectMutation",
+              "to": "framework/angular/reference/functions/injectMutation"
+            },
+            {
+              "label": "injectMutationState",
+              "to": "framework/angular/reference/functions/injectMutationState"
+            },
+            {
+              "label": "injectQuery",
               "to": "framework/angular/reference/functions/injectQuery"
             },
             {
-              "label": "Functions / injectMutation",
-              "to": "framework/angular/reference/functions/injectMutation"
+              "label": "mutationOptions",
+              "to": "framework/angular/reference/functions/mutationOptions"
+            },
+            {
+              "label": "provideIsRestoring",
+              "to": "framework/angular/reference/functions/provideIsRestoring"
+            },
+            {
+              "label": "provideQueryClient",
+              "to": "framework/angular/reference/functions/provideQueryClient"
+            },
+            {
+              "label": "provideTanStackQuery",
+              "to": "framework/angular/reference/functions/provideTanStackQuery"
+            },
+            {
+              "label": "queryFeature",
+              "to": "framework/angular/reference/functions/queryFeature"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/angular/reference/functions/queryOptions"
             }
           ]
         },
         {
           "label": "preact",
           "children": [
+            {
+              "label": "Preact Reference",
+              "to": "framework/preact/reference/index"
+            },
             {
               "label": "useQuery",
               "to": "framework/preact/reference/functions/useQuery"
@@ -1529,6 +1732,23 @@
             {
               "label": "Infinite Queries",
               "to": "framework/svelte/examples/load-more-infinite-scroll"
+            }
+          ]
+        },
+        {
+          "label": "lit",
+          "children": [
+            {
+              "label": "Basic",
+              "to": "framework/lit/examples/basic"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/lit/examples/pagination"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/lit/examples/ssr"
             }
           ]
         },

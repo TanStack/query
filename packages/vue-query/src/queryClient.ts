@@ -21,7 +21,6 @@ import type {
   MutationFilters,
   MutationKey,
   MutationObserverOptions,
-  NoInfer,
   OmitKeyof,
   QueryFilters,
   QueryKey,
@@ -125,7 +124,7 @@ export class QueryClient extends QC {
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
   ): NoInfer<TData> | undefined {
-    return super.setQueryData(
+    return super.setQueryData<TData>(
       cloneDeepUnref(queryKey),
       updater,
       cloneDeepUnref(options),

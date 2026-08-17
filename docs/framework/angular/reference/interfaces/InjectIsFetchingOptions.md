@@ -3,8 +3,6 @@ id: InjectIsFetchingOptions
 title: InjectIsFetchingOptions
 ---
 
-# Interface: InjectIsFetchingOptions
-
 Defined in: [inject-is-fetching.ts:13](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L13)
 
 ## Properties

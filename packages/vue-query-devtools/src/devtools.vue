@@ -40,5 +40,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <div className="tsqd-parent-container" ref="div"></div>
+  <div class="tsqd-parent-container" ref="div"></div>
 </template>

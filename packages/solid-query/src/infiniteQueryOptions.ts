@@ -5,7 +5,7 @@ import type {
   NonUndefinedGuard,
   QueryKey,
 } from '@tanstack/query-core'
-import type { SolidInfiniteQueryOptions } from './types'
+import type { InfiniteQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 export type UndefinedInitialDataInfiniteOptions<
@@ -15,13 +15,7 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  SolidInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  > & {
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData?: undefined
   }
 >
@@ -34,13 +28,7 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  SolidInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  > & {
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData:
       | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
       | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)

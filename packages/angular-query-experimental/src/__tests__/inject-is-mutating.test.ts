@@ -62,6 +62,39 @@ describe('injectIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
+  it('should be able to filter by mutationKey', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    @Component({
+      template: `<div>mutating: {{ isMutating() }}</div>`,
+    })
+    class Page {
+      readonly mutation1 = injectMutation(() => ({
+        mutationKey: key1,
+        mutationFn: () => sleep(10).then(() => 'data1'),
+      }))
+      readonly mutation2 = injectMutation(() => ({
+        mutationKey: key2,
+        mutationFn: () => sleep(100).then(() => 'data2'),
+      }))
+      readonly isMutating = injectIsMutating({ mutationKey: key1 })
+    }
+
+    const rendered = await render(Page)
+
+    rendered.fixture.componentInstance.mutation1.mutate()
+    rendered.fixture.componentInstance.mutation2.mutate()
+
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+  })
+
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
       expect(() => {

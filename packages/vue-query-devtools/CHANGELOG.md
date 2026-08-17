@@ -1,5 +1,155 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.4
+  - @tanstack/vue-query@5.101.4
+
+## 6.1.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.3
+  - @tanstack/vue-query@5.101.3
+
+## 6.1.36
+
+### Patch Changes
+
+- Updated dependencies [[`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07), [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8), [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d), [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29), [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f)]:
+  - @tanstack/query-devtools@5.101.2
+  - @tanstack/vue-query@5.101.2
+
+## 6.1.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/vue-query@5.101.1
+
+## 6.1.34
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346), [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/vue-query@5.101.0
+
+## 6.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.14
+  - @tanstack/vue-query@5.100.14
+
+## 6.1.32
+
+### Patch Changes
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/vue-query@5.100.13
+  - @tanstack/query-devtools@5.100.13
+
+## 6.1.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.12
+  - @tanstack/vue-query@5.100.12
+
+## 6.1.30
+
+### Patch Changes
+
+- Use the Vue `class` attribute for devtools template containers. ([#10635](https://github.com/TanStack/query/pull/10635))
+
+- Updated dependencies [[`139e67c`](https://github.com/TanStack/query/commit/139e67ccab2c8efba7c4dccdffa6f447350446ae)]:
+  - @tanstack/vue-query@5.100.11
+  - @tanstack/query-devtools@5.100.11
+
+## 6.1.29
+
+### Patch Changes
+
+- Updated dependencies [[`4d130b9`](https://github.com/TanStack/query/commit/4d130b992d2ac396d75f921bfc530dd3a9d50577)]:
+  - @tanstack/query-devtools@5.100.10
+  - @tanstack/vue-query@5.100.10
+
+## 6.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`3d21cac`](https://github.com/TanStack/query/commit/3d21cacdec3028b700c4c2e3e0ff8dbe7a235e8c)]:
+  - @tanstack/query-devtools@5.100.9
+  - @tanstack/vue-query@5.100.9
+
+## 6.1.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.8
+  - @tanstack/vue-query@5.100.8
+
+## 6.1.26
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.7
+  - @tanstack/vue-query@5.100.7
+
+## 6.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.6
+  - @tanstack/vue-query@5.100.6
+
+## 6.1.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.5
+  - @tanstack/vue-query@5.100.5
+
+## 6.1.23
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/query-devtools@5.100.4
+  - @tanstack/vue-query@5.100.4
+
+## 6.1.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.3
+  - @tanstack/vue-query@5.100.3
+
+## 6.1.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.2
+  - @tanstack/vue-query@5.100.2
+
 ## 6.1.20
 
 ### Patch Changes

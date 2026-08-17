@@ -1,5 +1,131 @@
 # @tanstack/svelte-query
 
+## 6.1.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.4
+
+## 6.1.37
+
+### Patch Changes
+
+- Updated dependencies [[`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677)]:
+  - @tanstack/query-core@5.101.3
+
+## 6.1.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.2
+
+## 6.1.35
+
+### Patch Changes
+
+- Updated dependencies [[`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1)]:
+  - @tanstack/query-core@5.101.1
+
+## 6.1.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
+## 6.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
+## 6.1.32
+
+### Patch Changes
+
+- Updated dependencies [[`d423168`](https://github.com/TanStack/query/commit/d423168f6261a5cb3d353e53b27c8150cc271151)]:
+  - @tanstack/query-core@5.100.13
+
+## 6.1.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.12
+
+## 6.1.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.11
+
+## 6.1.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.10
+
+## 6.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
+## 6.1.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
+## 6.1.26
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
+## 6.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.6
+
+## 6.1.24
+
+### Patch Changes
+
+- Updated dependencies [[`a53ef97`](https://github.com/TanStack/query/commit/a53ef97f87decb8ea2431710f5199431d3c94c8d)]:
+  - @tanstack/query-core@5.100.5
+
+## 6.1.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.4
+
+## 6.1.22
+
+### Patch Changes
+
+- Updated dependencies [[`f85d825`](https://github.com/TanStack/query/commit/f85d825e02efbbff02e2081528ed28f5e5382f7a)]:
+  - @tanstack/query-core@5.100.3
+
+## 6.1.21
+
+### Patch Changes
+
+- Updated dependencies [[`ea4497e`](https://github.com/TanStack/query/commit/ea4497e8aa00d8c1c3a36fb1e17563a889d6ab31), [`d6a7bf3`](https://github.com/TanStack/query/commit/d6a7bf3e3e024c1a77d0536813238cc8007a5fa7), [`645d5d1`](https://github.com/TanStack/query/commit/645d5d130f5e8017cb1bf1a37987f7b980aed705)]:
+  - @tanstack/query-core@5.100.2
+
 ## 6.1.20
 
 ### Patch Changes

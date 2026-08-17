@@ -11,7 +11,6 @@ const result = useSuspenseInfiniteQuery(options)
 
 The same as for [useInfiniteQuery](./useInfiniteQuery.md), except for:
 
-- `suspense`
 - `throwOnError`
 - `enabled`
 - `placeholderData`

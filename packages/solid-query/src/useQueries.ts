@@ -13,7 +13,7 @@ import {
 } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { SolidQueryOptions, UseQueryResult } from './types'
+import type { QueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -36,7 +36,7 @@ type UseQueryOptionsForUseQueries<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'suspense'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
@@ -142,7 +142,7 @@ type QueriesOptions<
           >
         : ReadonlyArray<unknown> extends T
           ? T
-          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogeneous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
                 UseQueryOptionsForUseQueries<

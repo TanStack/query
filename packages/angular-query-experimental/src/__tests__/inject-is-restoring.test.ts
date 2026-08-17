@@ -43,12 +43,46 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(true)
   })
 
+  it('should reactively reflect changes to the provided signal', () => {
+    const restoringSignal = signal(true)
+
+    TestBed.configureTestingModule({
+      providers: [provideIsRestoring(restoringSignal.asReadonly())],
+    })
+
+    const isRestoring = TestBed.runInInjectionContext(() => {
+      return injectIsRestoring()
+    })
+
+    expect(isRestoring()).toBe(true)
+
+    restoringSignal.set(false)
+    expect(isRestoring()).toBe(false)
+
+    restoringSignal.set(true)
+    expect(isRestoring()).toBe(true)
+  })
+
   it('should be usable outside injection context when passing an injector', () => {
     const isRestoring = injectIsRestoring({
       injector: TestBed.inject(Injector),
     })
 
     expect(isRestoring()).toBe(false)
+  })
+
+  it('should return the provided signal value when using injector option', () => {
+    const restoringSignal = signal(true)
+
+    TestBed.configureTestingModule({
+      providers: [provideIsRestoring(restoringSignal.asReadonly())],
+    })
+
+    const isRestoring = injectIsRestoring({
+      injector: TestBed.inject(Injector),
+    })
+
+    expect(isRestoring()).toBe(true)
   })
 
   it('should throw NG0203 with descriptive error outside injection context', () => {

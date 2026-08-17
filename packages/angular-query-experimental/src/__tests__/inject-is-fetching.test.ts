@@ -60,6 +60,36 @@ describe('injectIsFetching', () => {
     expect(rendered.getByText('fetching: 0')).toBeInTheDocument()
   })
 
+  it('should be able to filter by queryKey', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    @Component({
+      template: `<div>fetching: {{ isFetching() }}</div>`,
+    })
+    class Page {
+      readonly query1 = injectQuery(() => ({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 'test1'),
+      }))
+      readonly query2 = injectQuery(() => ({
+        queryKey: key2,
+        queryFn: () => sleep(100).then(() => 'test2'),
+      }))
+      readonly isFetching = injectIsFetching({ queryKey: key1 })
+    }
+
+    const rendered = await render(Page)
+
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetching: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetching: 0')).toBeInTheDocument()
+  })
+
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
       expect(() => {
