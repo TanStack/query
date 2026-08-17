@@ -14,5 +14,8 @@ Module._resolveFilename = function (request, parent, isMain, options) {
   return originalResolveFilename.call(this, request, parent, isMain, options)
 }
 
-const tsupCli = path.join(path.dirname(require.resolve('tsup')), 'cli-default.js')
+const tsupCli = path.join(
+  path.dirname(require.resolve('tsup')),
+  'cli-default.js',
+)
 require(tsupCli)
