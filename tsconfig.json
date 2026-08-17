@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
