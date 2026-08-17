@@ -3,8 +3,6 @@ id: CreateInfiniteQueryResult
 title: CreateInfiniteQueryResult
 ---
 
-# Type Alias: CreateInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type CreateInfiniteQueryResult<TData, TError> = InfiniteQueryObserverResult<TData, TError>;
 ```

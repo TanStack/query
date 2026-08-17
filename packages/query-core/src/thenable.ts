@@ -56,6 +56,13 @@ export function pendingThenable<T>(): PendingThenable<T> {
   })
 
   function finalize(data: Fulfilled<T> | Rejected) {
+    if ((thenable as Thenable<T>).status !== 'pending') {
+      // a caller that kept a reference to `resolve`/`reject` can still invoke it
+      // after the promise settled, which the underlying promise ignores. Applying
+      // it here would leave the status disagreeing with the settled value.
+      return
+    }
+
     Object.assign(thenable, data)
 
     // clear pending props to avoid calling them twice

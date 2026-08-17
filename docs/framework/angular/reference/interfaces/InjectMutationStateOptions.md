@@ -3,8 +3,6 @@ id: InjectMutationStateOptions
 title: InjectMutationStateOptions
 ---
 
-# Interface: InjectMutationStateOptions
-
 Defined in: [inject-mutation-state.ts:45](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L45)
 
 ## Properties
