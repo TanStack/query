@@ -2,4 +2,4 @@
 '@tanstack/react-query': minor
 ---
 
-move usePrefetchQuery to use new methods
+react-query: update usePrefetchQuery and usePrefetchInfiniteQuery to use queryClient.query and queryClient.infiniteQuery
