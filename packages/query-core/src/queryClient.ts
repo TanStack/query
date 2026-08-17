@@ -4,7 +4,6 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  resolveQueryBoolean,
   resolveStaleTime,
   skipToken,
 } from './utils'
@@ -360,7 +359,6 @@ export class QueryClient {
     >,
   ): Promise<TData> {
     const defaultedOptions = this.defaultQueryOptions(options)
-    const disabledErrorMessage = `Query is disabled and no cached data is available for key: '${defaultedOptions.queryHash}'`
 
     // https://github.com/tannerlinsley/react-query/issues/652
     if (defaultedOptions.retry === undefined) {
@@ -368,19 +366,13 @@ export class QueryClient {
     }
 
     const query = this.#queryCache.build(this, defaultedOptions)
-    const isEnabled =
-      resolveQueryBoolean(defaultedOptions.enabled, query) !== false
-
-    if (!isEnabled && query.state.data === undefined) {
-      throw new Error(disabledErrorMessage)
-    }
 
     const isStale = query.isStaleByTime(
       resolveStaleTime(defaultedOptions.staleTime, query),
     )
 
     const queryData =
-      isStale && isEnabled
+      isStale
         ? await query.fetch(defaultedOptions)
         : (query.state.data as TQueryData)
 

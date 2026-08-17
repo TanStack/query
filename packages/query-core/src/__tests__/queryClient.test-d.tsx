@@ -249,26 +249,15 @@ describe('query', () => {
     expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
 
-  it('should infer select type with skipToken queryFn and enabled false', () => {
-    const result = new QueryClient().query({
-      queryKey: ['key'],
-      queryFn: skipToken,
-      enabled: false,
-      select: (data: string) => data.length,
-    })
-
-    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
-  })
-
-  it('should infer select type with skipToken queryFn and enabled true', () => {
-    const result = new QueryClient().query({
-      queryKey: ['key'],
-      queryFn: skipToken,
-      enabled: true,
-      select: (data: string) => data.length,
-    })
-
-    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  it('should not allow enabled', () => {
+    assertType<Parameters<QueryClient['query']>>([
+      {
+        queryKey: ['key'],
+        queryFn: skipToken,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: false,
+      },
+    ])
   })
 })
 

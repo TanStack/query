@@ -984,39 +984,39 @@ describe('queryClient', () => {
       expect(second).toBe(first)
     })
 
-    it('should throw when disabled and no cached data exists', async () => {
+    it('should fetch when disabled', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
-      const errorMsg = `Query is disabled and no cached data is available for key: '${JSON.stringify(key)}'`
 
       await expect(
         queryClient.query({
           queryKey: key,
           queryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
           enabled: false,
         }),
-      ).rejects.toThrow(errorMsg)
+      ).resolves.toBe('data')
 
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should throw when disabled by callback and no cached data exists', async () => {
+    it('should fetch when disabled by callback', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
-      const errorMsg = `Query is disabled and no cached data is available for key: '${JSON.stringify(key)}'`
 
       await expect(
         queryClient.query({
           queryKey: key,
           queryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
           enabled: () => false,
         }),
-      ).rejects.toThrow(errorMsg)
+      ).resolves.toBe('data')
 
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should return cached data when disabled and apply select', async () => {
+    it('should fetch when disabled and apply select', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
 
@@ -1025,47 +1025,30 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
         staleTime: 0,
         select: (data) => `${data}-selected`,
       })
 
-      expect(result).toBe('cached-data-selected')
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(result).toBe('fetched-data-selected')
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should return initialData consistently for disabled queries', async () => {
+    it('should fetch instead of returning initialData when disabled', async () => {
       const booleanQueryFn = vi.fn(() => Promise.resolve('fetched-data'))
-      const callbackQueryFn = vi.fn(() => Promise.resolve('fetched-data'))
 
       await expect(
         queryClient.query({
           queryKey: queryKey(),
           queryFn: booleanQueryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
           enabled: false,
           initialData: 'initial-data',
         }),
-      ).resolves.toBe('initial-data')
+      ).resolves.toBe('fetched-data')
 
-      await expect(
-        queryClient.query({
-          queryKey: queryKey(),
-          queryFn: skipToken,
-          initialData: 'initial-data',
-        }),
-      ).resolves.toBe('initial-data')
-
-      await expect(
-        queryClient.query({
-          queryKey: queryKey(),
-          queryFn: callbackQueryFn,
-          enabled: () => false,
-          initialData: 'initial-data',
-        }),
-      ).resolves.toBe('initial-data')
-
-      expect(booleanQueryFn).not.toHaveBeenCalled()
-      expect(callbackQueryFn).not.toHaveBeenCalled()
+      expect(booleanQueryFn).toHaveBeenCalledTimes(1)
     })
 
     it('should throw when skipToken is provided and no cached data exists', async () => {
@@ -1091,6 +1074,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn: skipToken,
+        staleTime: 'static',
         select: (data: unknown) => (data as string).length,
       })
 
@@ -1105,38 +1089,25 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn: skipToken,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
+        staleTime: 'static',
         select: (data: { value: string }) => data.value.toUpperCase(),
       })
 
       expect(result).toBe('CACHED-DATA')
     })
 
-    it('should throw when enabled is true and skipToken are provided with no cached data', async () => {
+    it('should throw when skipToken is provided with no cached data', async () => {
       await expect(
         queryClient.query({
           queryKey: queryKey(),
           queryFn: skipToken,
-          enabled: true,
         }),
       ).rejects.toThrow()
     })
 
-    it('should return cached data when enabled is false and skipToken are provided', async () => {
-      const key1 = queryKey()
-      queryClient.setQueryData(key1, { value: 'cached-data' })
-
-      const booleanDisabledResult = await queryClient.query({
-        queryKey: key1,
-        queryFn: skipToken,
-        enabled: false,
-        select: (data: { value: string }) => data.value.length,
-      })
-
-      expect(booleanDisabledResult).toBe('cached-data'.length)
-    })
-
-    it('should return cached data when enabled callback returns false even if queryFn would return different data', async () => {
+    it('should fetch when enabled callback returns false', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
 
@@ -1145,11 +1116,12 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: () => false,
       })
 
-      expect(result).toBe('cached-data')
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(result).toBe('fetched-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch when enabled callback returns true and cache is stale', async () => {
@@ -1164,6 +1136,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: () => true,
         staleTime: 0,
       })
@@ -1331,6 +1304,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: true,
         staleTime: 0,
       })
@@ -1472,26 +1446,26 @@ describe('queryClient', () => {
       expect(result2).toEqual(expected)
     })
 
-    it('should throw when disabled and no cached data exists', async () => {
+    it('should fetch when disabled', async () => {
       const key = queryKey()
       const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
         Promise.resolve(pageParam),
       )
-      const errorMsg = `Query is disabled and no cached data is available for key: '${JSON.stringify(key)}'`
 
       await expect(
         queryClient.infiniteQuery({
           queryKey: key,
           queryFn,
           initialPageParam: 0,
+          // @ts-expect-error enabled is not supported for imperative queries
           enabled: false,
         }),
-      ).rejects.toThrow(errorMsg)
+      ).resolves.toEqual({ pages: [0], pageParams: [0] })
 
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should return cached data when disabled and apply select', async () => {
+    it('should fetch when disabled and apply select', async () => {
       const key = queryKey()
       const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
         Promise.resolve(`'fetched-${String(pageParam)}`),
@@ -1506,12 +1480,13 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         initialPageParam: 0,
+        // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
         select: (data) => data.pages.map((page) => `${page}-selected`),
       })
 
-      expect(result).toEqual(['cached-page-selected'])
-      expect(queryFn).not.toHaveBeenCalled()
+      expect(result).toEqual(["'fetched-0-selected"])
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
     it('should return cached data when skipToken is provided', async () => {
@@ -1526,6 +1501,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn: skipToken,
         initialPageParam: 0,
+        staleTime: 'static',
       })
 
       expect(result).toEqual({
@@ -1552,64 +1528,14 @@ describe('queryClient', () => {
       expect(select).not.toHaveBeenCalled()
     })
 
-    it('should throw when enabled is true and skipToken are provided with no cached data', async () => {
+    it('should throw when skipToken is provided with no cached data', async () => {
       await expect(
         queryClient.infiniteQuery({
           queryKey: queryKey(),
           queryFn: skipToken,
           initialPageParam: 0,
-          enabled: true,
         }),
       ).rejects.toThrow()
-    })
-
-    it('should return cached data when enabled resolves false and skipToken are provided', async () => {
-      const key = queryKey()
-
-      queryClient.setQueryData(key, {
-        pages: [{ value: 'cached-page' }],
-        pageParams: [0],
-      })
-
-      const result = await queryClient.infiniteQuery({
-        queryKey: key,
-        queryFn: skipToken,
-        initialPageParam: 0,
-        enabled: () => false,
-        select: (data: { pages: Array<{ value: string }> }) =>
-          data.pages[0]?.value.length,
-      })
-
-      expect(result).toBe('cached-page'.length)
-    })
-
-    it('should fetch when enabled callback returns true and cache is stale', async () => {
-      const key = queryKey()
-
-      queryClient.setQueryData(key, {
-        pages: ['old-page'],
-        pageParams: [0],
-      })
-
-      await vi.advanceTimersByTimeAsync(1)
-
-      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-        Promise.resolve(`new-page-${String(pageParam)}`),
-      )
-
-      const result = await queryClient.infiniteQuery({
-        queryKey: key,
-        queryFn,
-        initialPageParam: 0,
-        enabled: () => true,
-        staleTime: 0,
-      })
-
-      expect(result).toEqual({
-        pages: ['new-page-0'],
-        pageParams: [0],
-      })
-      expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
     it('should evaluate staleTime callback and refetch when it returns stale', async () => {

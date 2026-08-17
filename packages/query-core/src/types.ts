@@ -498,11 +498,6 @@ export interface QueryExecuteOptions<
   'queryKey'
 > {
   initialPageParam?: never
-  /**
-   * Set this to `false` or a function that returns `false` to disable fetching.
-   * If cached data exists, it will be returned.
-   */
-  enabled?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   select?: (data: TQueryData) => TData
   /**
    * The time in milliseconds after data is considered stale.
