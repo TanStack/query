@@ -2,8 +2,8 @@
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "customConditions": null,
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "outDir": "dist-cjs",
     "declaration": false,
     "declarationMap": false
