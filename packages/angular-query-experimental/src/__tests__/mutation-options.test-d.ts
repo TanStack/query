@@ -18,11 +18,11 @@ import type { CreateMutationOptions, CreateMutationResult } from '../types'
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
     const key = queryKey()
-    // @ts-expect-error this is a good error, because onMutates does not exist!
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
-      mutationKey: key,
+      // @ts-expect-error this is a good error, because onMutates does not exist!
       onMutates: 1000,
+      mutationKey: key,
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
