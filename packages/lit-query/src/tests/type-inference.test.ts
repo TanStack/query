@@ -2,6 +2,7 @@ import {
   dataTagSymbol,
   QueryClient,
   type DefinedQueryObserverResult,
+  type InfiniteData,
   type QueryObserverResult,
 } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
@@ -206,5 +207,86 @@ describe('type inference', () => {
     expectTypeOf(infinite().data?.pages).toEqualTypeOf<
       Array<{ page: number }> | undefined
     >()
+  })
+
+  it('L3: queryOptions integrates with queryClient.query', async () => {
+    const options = queryOptions({
+      queryKey: ['type-inference', 'query'] as const,
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('L4: queryOptions with select integrates with queryClient.query', async () => {
+    const options = queryOptions({
+      queryKey: ['type-inference', 'query-select'] as const,
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
+  })
+
+  it('L5: queryOptions with enabled: false integrates with queryClient.query', async () => {
+    const options = queryOptions({
+      queryKey: ['type-inference', 'query-enabled-false'] as const,
+      queryFn: () => Promise.resolve(5),
+      enabled: false,
+    })
+
+    const client = new QueryClient()
+    // Disabled imperative queries require cached data; otherwise query() throws before type assertions run.
+    client.setQueryData(options.queryKey, 5)
+
+    const data = await client.query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('L7: infiniteQueryOptions integrates with queryClient.infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['type-inference', 'infinite-query'] as const,
+      queryFn: () => Promise.resolve('data'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('L8: infiniteQueryOptions with select integrates with queryClient.infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['type-inference', 'infinite-query-select'] as const,
+      queryFn: () => Promise.resolve('data'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+
+  it('L9: infiniteQueryOptions with enabled: false integrates with queryClient.infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['type-inference', 'infinite-query-enabled-false'] as const,
+      queryFn: () => Promise.resolve('data'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: false,
+    })
+
+    const client = new QueryClient()
+    // Disabled imperative infinite queries require cached data to avoid throwing before type assertions.
+    client.setQueryData(options.queryKey, {
+      pages: ['data'],
+      pageParams: [1],
+    })
+
+    const data = await client.infiniteQuery(options)
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 })
