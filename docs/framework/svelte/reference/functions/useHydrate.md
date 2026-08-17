@@ -3,8 +3,6 @@ id: useHydrate
 title: useHydrate
 ---
 
-# Function: useHydrate()
-
 ```ts
 function useHydrate(
    state?, 

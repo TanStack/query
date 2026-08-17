@@ -3,8 +3,6 @@ id: injectMutationState
 title: injectMutationState
 ---
 
-# Function: injectMutationState()
-
 ```ts
 function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>;
 ```
