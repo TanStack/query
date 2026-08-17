@@ -62,7 +62,7 @@
     "eslint": "^9.39.5",
     "eslint-plugin-react-hooks": "^6.1.1",
     "jsdom": "^27.4.0",
-    "knip": "^6.32.2",
+    "knip": "6.1.1",
     "markdown-link-extractor": "^4.0.4",
     "nx": "22.1.3",
     "premove": "^4.0.0",
