@@ -42,7 +42,7 @@ overrides:
   '@typescript-eslint/visitor-keys': '8.58.1'
   typescript-eslint: '8.58.1'
   vite: '^6.4.3'
-  esbuild: '^0.27.2'
+  esbuild: '0.27.4'
 
 allowBuilds:
   # root dependency
