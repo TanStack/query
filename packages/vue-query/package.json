@@ -24,14 +24,14 @@
     "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:tscurrent": "tsc --build",
-    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --build tsconfig.legacy.json",
     "test:lib": "pnpm run test:lib:2 && pnpm run test:lib:2.7 && pnpm run test:lib:3",
     "test:lib:2": "vue-demi-switch 2 vue2 && vitest",
     "test:lib:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
     "test:lib:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "node ../../scripts/tsup.cjs --tsconfig tsconfig.prod.json"
+    "build": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
