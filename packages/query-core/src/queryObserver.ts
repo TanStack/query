@@ -345,9 +345,7 @@ export class QueryObserver<
           const result = this.createResult(query, defaultedOptions)
           // Settle the subscriber promise so both branches always settle.
           // This value is ignored by Promise.race since the fetch branch already won.
-          if (resolveEarly) {
-            resolveEarly(result)
-          }
+          resolveEarly?.(result)
           return result
         })
         .finally(() => {
