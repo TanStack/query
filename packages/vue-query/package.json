@@ -16,7 +16,7 @@
   },
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
-    "compile": "tsc --build",
+    "compile": "node ../../node_modules/typescript/lib/tsc.js --build",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-demi-switch 3 && pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
