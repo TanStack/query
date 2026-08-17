@@ -17,7 +17,9 @@ describe('pendingThenable', () => {
     thenable.resolve('data')
 
     expect(thenable.status).toBe('fulfilled')
-    expect((thenable as unknown as FulfilledThenable<string>).value).toBe('data')
+    expect((thenable as unknown as FulfilledThenable<string>).value).toBe(
+      'data',
+    )
     expect(thenable.resolve).toBeUndefined()
     expect(thenable.reject).toBeUndefined()
     await expect(thenable).resolves.toBe('data')
@@ -30,7 +32,9 @@ describe('pendingThenable', () => {
     thenable.reject(reason)
 
     expect(thenable.status).toBe('rejected')
-    expect((thenable as unknown as RejectedThenable<string>).reason).toBe(reason)
+    expect((thenable as unknown as RejectedThenable<string>).reason).toBe(
+      reason,
+    )
     expect(thenable.resolve).toBeUndefined()
     expect(thenable.reject).toBeUndefined()
     await expect(thenable).rejects.toBe(reason)
@@ -55,8 +59,12 @@ describe('pendingThenable', () => {
     retainedReject(new Error('error'))
 
     expect(thenable.status).toBe('fulfilled')
-    expect((thenable as unknown as FulfilledThenable<string>).value).toBe('data')
-    expect((thenable as unknown as RejectedThenable<string>).reason).toBeUndefined()
+    expect((thenable as unknown as FulfilledThenable<string>).value).toBe(
+      'data',
+    )
+    expect(
+      (thenable as unknown as RejectedThenable<string>).reason,
+    ).toBeUndefined()
     await expect(thenable).resolves.toBe('data')
   })
 
