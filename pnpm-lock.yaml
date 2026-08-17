@@ -29,8 +29,8 @@ importers:
   .:
     devDependencies:
       '@arethetypeswrong/cli':
-        specifier: ^0.15.4
-        version: 0.15.4
+        specifier: ^0.18.5
+        version: 0.18.5
       '@changesets/changelog-github':
         specifier: ^0.7.0
         version: 0.7.0
@@ -3406,14 +3406,14 @@ packages:
       '@angular/platform-browser': 20.3.18
       rxjs: ^6.5.3 || ^7.4.0
 
-  '@arethetypeswrong/cli@0.15.4':
-    resolution: {integrity: sha512-YDbImAi1MGkouT7f2yAECpUMFhhA1J0EaXzIqoC5GGtK0xDgauLtcsZezm8tNq7d3wOFXH7OnY+IORYcG212rw==}
-    engines: {node: '>=18'}
+  '@arethetypeswrong/cli@0.18.5':
+    resolution: {integrity: sha512-gM+8vRsQOD/Uc7EnBedUhkG5OCsDWE4uoak5QvomGpMpaky0Eh41p04nIMgrWb8EOmqZUJGc6zz9hsP6E56R7g==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  '@arethetypeswrong/core@0.15.1':
-    resolution: {integrity: sha512-FYp6GBAgsNz81BkfItRz8RLZO03w5+BaeiPma1uCfmxTnxbtuMrI/dbzGiOk8VghO108uFI0oJo0OkewdSHw7g==}
-    engines: {node: '>=18'}
+  '@arethetypeswrong/core@0.18.5':
+    resolution: {integrity: sha512-9ytjzGwxjm9Uz7I9avfbt5vlQt6uk9uRRESzJjqrznl6WKvI6dwYTo+vJ3U02Wrq/mR3iql/PzhvHhKdJIAjDQ==}
+    engines: {node: '>=20'}
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -4546,6 +4546,9 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
+
+  '@braidai/lang@1.1.2':
+    resolution: {integrity: sha512-qBcknbBufNHlui137Hft8xauQMTZDKdophmLFv05r2eNmdIv/MlPuP4TdUknHG68UdWLgVZwgxVe735HzJNIwA==}
 
   '@callstack/react-theme-provider@3.0.9':
     resolution: {integrity: sha512-tTQ0uDSCL0ypeMa8T/E9wAZRGKWj8kXP7+6RYgPTfOPs9N07C9xM8P02GJ3feETap4Ux5S69D9nteq9mEj86NA==}
@@ -6054,6 +6057,9 @@ packages:
     resolution: {integrity: sha512-IY+r3bxKW6Q6sIPiMC0L533DEfRJSXibjSI3Ft/w9Q8KQBNqEIvUFXt+09wV8S5BRk0a8uSF19YWxuRwEfI90g==}
     cpu: [x64]
     os: [win32]
+
+  '@loaderkit/resolve@1.0.6':
+    resolution: {integrity: sha512-G8FdIoF5CypfwmD9rl8BXod5HDn8JqB0CCNBXDTaRZ+yRYhARrrSToX1zg1zy9jX3zLqigsELwhT4gNtkdQAUg==}
 
   '@manypkg/find-root@1.1.0':
     resolution: {integrity: sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==}
@@ -9678,6 +9684,9 @@ packages:
 
   citty@0.2.1:
     resolution: {integrity: sha512-kEV95lFBhQgtogAPlQfJJ0WGVSokvLr/UEoFPiKKOXF7pl98HfUVUD0ejsuTCld/9xH9vogSywZ5KqHzXrZpqg==}
+
+  cjs-module-lexer@1.4.3:
+    resolution: {integrity: sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q==}
 
   class-utils@0.3.6:
     resolution: {integrity: sha512-qOhPa/Fj7s6TY8H8esGu5QNpMMQxz79h+urzrNYN6mn+9BnxlDGf5QZ+XeCDsxSjPqsSR56XOZOJmpeurnLMeg==}
@@ -16084,9 +16093,6 @@ packages:
     peerDependencies:
       typescript: '>=4.0.0'
 
-  ts-expose-internals-conditionally@1.0.0-empty.0:
-    resolution: {integrity: sha512-F8m9NOF6ZhdOClDVdlM8gj3fDCav4ZIFSs/EI3ksQbAAXVSCN/Jh5OCJDDZWBuBy9psFc6jULGDlPwjMYMhJDw==}
-
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
@@ -16237,11 +16243,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  typescript@5.3.3:
-    resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@5.4.2:
     resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
     engines: {node: '>=14.17'}
@@ -16254,6 +16255,11 @@ packages:
 
   typescript@5.5.4:
     resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
+  typescript@5.6.1-rc:
+    resolution: {integrity: sha512-E3b2+1zEFu84jB0YQi9BORDjz9+jGbwwy1Zi3G0LUNw7a7cePUrHMRNy8aPh53nXpkFGVHSxIZo5vKTfYaFiBQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -17664,9 +17670,9 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@arethetypeswrong/cli@0.15.4':
+  '@arethetypeswrong/cli@0.18.5':
     dependencies:
-      '@arethetypeswrong/core': 0.15.1
+      '@arethetypeswrong/core': 0.18.5
       chalk: 4.1.2
       cli-table3: 0.6.5
       commander: 10.0.1
@@ -17674,13 +17680,15 @@ snapshots:
       marked-terminal: 7.3.0(marked@9.1.6)
       semver: 7.8.5
 
-  '@arethetypeswrong/core@0.15.1':
+  '@arethetypeswrong/core@0.18.5':
     dependencies:
       '@andrewbranch/untar.js': 1.0.4
+      '@loaderkit/resolve': 1.0.6
+      cjs-module-lexer: 1.4.3
       fflate: 0.8.3
+      lru-cache: 11.5.2
       semver: 7.8.5
-      ts-expose-internals-conditionally: 1.0.0-empty.0
-      typescript: 5.3.3
+      typescript: 5.6.1-rc
       validate-npm-package-name: 5.0.1
 
   '@asamuzakjp/css-color@3.2.0':
@@ -19945,6 +19953,8 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
+  '@braidai/lang@1.1.2': {}
+
   '@callstack/react-theme-provider@3.0.9(react@19.2.4)':
     dependencies:
       deepmerge: 3.3.0
@@ -20911,7 +20921,7 @@ snapshots:
       getenv: 1.0.0
       glob: 10.5.0
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.5
       slash: 3.0.0
       slugify: 1.6.8
       xcode: 3.0.1
@@ -21697,6 +21707,10 @@ snapshots:
   '@lmdb/lmdb-win32-x64@3.4.2':
     optional: true
 
+  '@loaderkit/resolve@1.0.6':
+    dependencies:
+      '@braidai/lang': 1.1.2
+
   '@manypkg/find-root@1.1.0':
     dependencies:
       '@babel/runtime': 7.29.7
@@ -22022,7 +22036,7 @@ snapshots:
 
   '@npmcli/fs@5.0.0':
     dependencies:
-      semver: 7.7.2
+      semver: 7.8.5
 
   '@npmcli/git@7.0.2':
     dependencies:
@@ -22032,7 +22046,7 @@ snapshots:
       lru-cache: 11.2.7
       npm-pick-manifest: 11.0.3
       proc-log: 6.1.0
-      semver: 7.7.2
+      semver: 7.8.5
       which: 6.0.1
 
   '@npmcli/installed-package-contents@4.0.0':
@@ -22049,7 +22063,7 @@ snapshots:
       hosted-git-info: 9.0.2
       json-parse-even-better-errors: 5.0.0
       proc-log: 6.1.0
-      semver: 7.7.2
+      semver: 7.8.5
       spdx-expression-parse: 4.0.0
 
   '@npmcli/promise-spawn@9.0.1':
@@ -22513,7 +22527,7 @@ snapshots:
       metro-core: 0.81.5
       node-fetch: 2.7.0
       readline: 1.3.0
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/preset-env'
@@ -25882,6 +25896,8 @@ snapshots:
       consola: 3.4.2
 
   citty@0.2.1: {}
+
+  cjs-module-lexer@1.4.3: {}
 
   class-utils@0.3.6:
     dependencies:
@@ -31011,7 +31027,7 @@ snapshots:
       make-fetch-happen: 15.0.5
       nopt: 9.0.0
       proc-log: 6.1.0
-      semver: 7.7.2
+      semver: 7.8.5
       tar: 7.5.13
       tinyglobby: 0.2.17
       which: 6.0.1
@@ -31075,7 +31091,7 @@ snapshots:
 
   npm-install-checks@8.0.0:
     dependencies:
-      semver: 7.7.2
+      semver: 7.8.5
 
   npm-normalize-package-bin@5.0.0: {}
 
@@ -31092,7 +31108,7 @@ snapshots:
     dependencies:
       hosted-git-info: 9.0.2
       proc-log: 5.0.0
-      semver: 7.7.2
+      semver: 7.8.5
       validate-npm-package-name: 6.0.2
 
   npm-packlist@10.0.4:
@@ -31105,7 +31121,7 @@ snapshots:
       npm-install-checks: 8.0.0
       npm-normalize-package-bin: 5.0.0
       npm-package-arg: 13.0.0
-      semver: 7.7.2
+      semver: 7.8.5
 
   npm-registry-fetch@19.1.1:
     dependencies:
@@ -33019,7 +33035,7 @@ snapshots:
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.7.4
+      semver: 7.8.5
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
@@ -33668,7 +33684,7 @@ snapshots:
       postcss: 8.5.8
       postcss-scss: 4.0.9(postcss@8.5.8)
       postcss-selector-parser: 7.1.1
-      semver: 7.7.4
+      semver: 7.8.5
     optionalDependencies:
       svelte: 5.55.1(@typescript-eslint/types@8.58.1)
 
@@ -34004,8 +34020,6 @@ snapshots:
       picomatch: 4.0.5
       typescript: 5.9.3
 
-  ts-expose-internals-conditionally@1.0.0-empty.0: {}
-
   ts-interface-checker@0.1.13: {}
 
   ts-pattern@5.9.0: {}
@@ -34201,13 +34215,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  typescript@5.3.3: {}
-
   typescript@5.4.2: {}
 
   typescript@5.4.5: {}
 
   typescript@5.5.4: {}
+
+  typescript@5.6.1-rc: {}
 
   typescript@5.6.3: {}
 
