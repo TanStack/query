@@ -3,13 +3,11 @@ id: useQueries
 title: useQueries
 ---
 
-# Function: useQueries()
-
 ```ts
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useQueries.ts:207](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useQueries.ts#L207)
+Defined in: [preact-query/src/useQueries.ts:207](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L207)
 
 ## Type Parameters
 
