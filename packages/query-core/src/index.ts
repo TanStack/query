@@ -20,6 +20,8 @@ export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
 export { CancelledError, isCancelledError } from './retryer'
+export type { RetryDelayValue, RetryValue } from './retryer'
+export type { QueryBehavior } from './query'
 export {
   timeoutManager,
   type ManagedTimerId,
