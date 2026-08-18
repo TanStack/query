@@ -499,4 +499,54 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  it('should track an in-flight mutation again after unsubscribing and resubscribing', async () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutationObserver.subscribe(() => undefined)
+    mutationObserver.mutate('input')
+    await vi.advanceTimersByTimeAsync(0)
+
+    // React tears down and re-establishes subscriptions while keeping the
+    // component state (StrictMode, <Activity>, re-suspending boundaries)
+    unsubscribe()
+    const subscriptionHandler = vi.fn()
+    mutationObserver.subscribe(subscriptionHandler)
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(mutationObserver.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+    expect(subscriptionHandler).toHaveBeenCalledTimes(1)
+    expect(subscriptionHandler).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'success', data: 'input' }),
+    )
+  })
+
+  it('should report the final state of a mutation that settled while unsubscribed', async () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutationObserver.subscribe(() => undefined)
+    mutationObserver.mutate('input')
+    await vi.advanceTimersByTimeAsync(0)
+
+    unsubscribe()
+
+    // mutation settles while no one is subscribed
+    await vi.advanceTimersByTimeAsync(20)
+    expect(mutationObserver.getCurrentResult().status).toBe('pending')
+
+    mutationObserver.subscribe(() => undefined)
+
+    expect(mutationObserver.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+  })
 })

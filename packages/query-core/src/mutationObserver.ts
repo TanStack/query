@@ -93,6 +93,16 @@ export class MutationObserver<
     }
   }
 
+  protected onSubscribe(): void {
+    if (this.listeners.size === 1 && this.#currentMutation) {
+      // re-attach to the mutation the first listener unsubscribing detached us
+      // from, and refresh the result in case the mutation settled while we
+      // were not watching it
+      this.#currentMutation.addObserver(this)
+      this.#updateResult()
+    }
+  }
+
   protected onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.#currentMutation?.removeObserver(this)
