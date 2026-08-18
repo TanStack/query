@@ -1,0 +1,16 @@
+{
+  "name": "react-nodenext",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:types": "pnpm run test:types:ts6 && pnpm run test:types:ts7",
+    "test:types:ts6": "node ../../node_modules/typescript/lib/tsc.js --pretty false --project tsconfig.json",
+    "test:types:ts7": "node ../../node_modules/typescript70/lib/tsc.js --pretty false --project tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7"
+  }
+}
