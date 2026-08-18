@@ -33,8 +33,8 @@ describe('useQueries with persist and memoized combine', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     Object.keys(storage).forEach((key) => delete storage[key])
+    vi.useRealTimers()
   })
 
   it('should update UI when combine is memoized with persist', async () => {

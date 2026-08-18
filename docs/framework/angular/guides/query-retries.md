@@ -33,7 +33,7 @@ const result = injectQuery(() => ({
 import {
   QueryCache,
   QueryClient,
-  QueryClientProvider,
+  provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 
 const queryClient = new QueryClient({

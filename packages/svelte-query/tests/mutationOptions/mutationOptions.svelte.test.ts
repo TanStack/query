@@ -52,7 +52,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -70,7 +70,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -98,7 +98,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -127,7 +127,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(51)
+    await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 
@@ -151,7 +151,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -169,7 +169,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -197,7 +197,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -226,7 +226,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(501)
+    await vi.advanceTimersByTimeAsync(500)
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
   })
 
@@ -253,7 +253,7 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
@@ -275,7 +275,7 @@ describe('mutationOptions', () => {
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
@@ -304,7 +304,7 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('mutationState: ["data1","data2"]'),
     ).toBeInTheDocument()
@@ -338,7 +338,7 @@ describe('mutationOptions', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutationState: ["data1"]')).toBeInTheDocument()
   })
 })

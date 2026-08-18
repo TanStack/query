@@ -3,8 +3,6 @@ id: QueryControllerResult
 title: QueryControllerResult
 ---
 
-# Type Alias: QueryControllerResult\<TData, TError\>
-
 ```ts
 type QueryControllerResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```

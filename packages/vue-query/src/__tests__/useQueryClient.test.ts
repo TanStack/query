@@ -34,7 +34,9 @@ describe('useQueryClient', () => {
   it('should throw an error when queryClient does not exist in the context', () => {
     injectSpy.mockReturnValueOnce(undefined)
 
-    expect(useQueryClient).toThrow()
+    expect(useQueryClient).toThrow(
+      "No 'queryClient' found in Vue context, use 'VueQueryPlugin' to properly initialize the library.",
+    )
     expect(injectSpy).toHaveBeenCalledTimes(1)
     expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
   })
@@ -42,7 +44,9 @@ describe('useQueryClient', () => {
   it('should throw an error when used outside of setup function', () => {
     hasInjectionContextSpy.mockReturnValueOnce(false)
 
-    expect(useQueryClient).toThrow()
+    expect(useQueryClient).toThrow(
+      'vue-query hooks can only be used inside setup() function or functions that support injection context.',
+    )
     expect(hasInjectionContextSpy).toHaveBeenCalledTimes(1)
   })
 

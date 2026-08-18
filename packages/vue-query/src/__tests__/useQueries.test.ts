@@ -264,7 +264,7 @@ describe('useQueries', () => {
     )
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(queriesResult.value).toMatchObject({
+    expect(queriesResult.value).toEqual({
       combined: true,
       res: [firstResult, secondResult],
     })

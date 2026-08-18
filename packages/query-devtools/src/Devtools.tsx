@@ -1192,7 +1192,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       class={cx(
                         styles().settingsSubTrigger,
                         'tsqd-settings-menu-sub-trigger',
-                        'tsqd-settings-menu-sub-trigger-position',
+                        'tsqd-settings-menu-sub-trigger-theme',
                       )}
                     >
                       <span>Theme</span>
@@ -2745,6 +2745,8 @@ const stylesFactory = (
         right: -8px;
         bottom: -8px;
         border-radius: 9999px;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
 
         & svg {
           position: absolute;

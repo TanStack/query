@@ -41,6 +41,7 @@ export const PiPProvider = (props: PiPProviderProps) => {
     const w = pipWindow()
     if (w != null) {
       w.close()
+      props.setLocalStore('pip_open', 'false')
       setPipWindow(null)
     }
   }

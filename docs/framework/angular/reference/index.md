@@ -3,8 +3,6 @@ id: "@tanstack/angular-query-experimental"
 title: "@tanstack/angular-query-experimental"
 ---
 
-# @tanstack/angular-query-experimental
-
 ## Interfaces
 
 - [BaseMutationNarrowing](interfaces/BaseMutationNarrowing.md)

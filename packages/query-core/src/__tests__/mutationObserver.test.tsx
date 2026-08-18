@@ -31,12 +31,12 @@ describe('mutationObserver', () => {
 
     unsubscribe1()
 
-    expect(subscription1Handler).toBeCalledTimes(1)
-    expect(subscription2Handler).toBeCalledTimes(1)
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(1)
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(subscription1Handler).toBeCalledTimes(1)
-    expect(subscription2Handler).toBeCalledTimes(2)
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
   })
