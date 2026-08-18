@@ -356,9 +356,11 @@ describe('useMutation', () => {
         mutationFn: (params: string) => sleep(10).then(() => params),
       })
 
-      await vi.waitFor(() =>
-        expect(mutation.mutateAsync(result)).resolves.toBe(result),
-      )
+      const promise = mutation.mutateAsync(result)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await expect(promise).resolves.toBe(result)
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -376,9 +378,10 @@ describe('useMutation', () => {
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
       })
 
-      await vi.waitFor(() =>
+      await Promise.all([
         expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
-      )
+        vi.advanceTimersByTimeAsync(10),
+      ])
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },

@@ -3,8 +3,6 @@ id: MutationControllerResult
 title: MutationControllerResult
 ---
 
-# Type Alias: MutationControllerResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type MutationControllerResult<TData, TError, TVariables, TOnMutateResult> = MutationObserverResult<TData, TError, TVariables, TOnMutateResult>;
 ```

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
+  addConsumeAwareSignal,
   addToEnd,
   addToStart,
   ensureQueryFn,
@@ -9,6 +10,7 @@ import {
   hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
+  isValidTimeout,
   keepPreviousData,
   matchMutation,
   partialMatchKey,
@@ -45,40 +47,40 @@ describe('core/utils', () => {
 
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
+      expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
     })
 
     it('should return `false` for non shallow equal objects', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toBe(false)
     })
 
     it('should return `false` if lengths are not equal', () => {
-      expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toBe(false)
     })
 
     it('should return false if b is undefined', () => {
-      expect(shallowEqualObjects({ a: 1 }, undefined)).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
   })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
-      expect(isPlainObject({})).toEqual(true)
+      expect(isPlainObject({})).toBe(true)
     })
 
     it('should return `false` for an array', () => {
-      expect(isPlainObject([])).toEqual(false)
+      expect(isPlainObject([])).toBe(false)
     })
 
     it('should return `false` for null', () => {
-      expect(isPlainObject(null)).toEqual(false)
+      expect(isPlainObject(null)).toBe(false)
     })
 
     it('should return `false` for undefined', () => {
-      expect(isPlainObject(undefined)).toEqual(false)
+      expect(isPlainObject(undefined)).toBe(false)
     })
 
     it('should return `true` for object with an undefined constructor', () => {
-      expect(isPlainObject(Object.create(null))).toBeTruthy()
+      expect(isPlainObject(Object.create(null))).toBe(true)
     })
 
     it('should return `false` if constructor does not have an Object-specific method', () => {
@@ -88,7 +90,7 @@ describe('core/utils', () => {
           this.abc = {}
         }
       }
-      expect(isPlainObject(new Foo())).toBeFalsy()
+      expect(isPlainObject(new Foo())).toBe(false)
     })
 
     it('should return `false` if the object has a modified prototype', () => {
@@ -101,7 +103,7 @@ describe('core/utils', () => {
         this.vertices.push(v)
       }
 
-      expect(isPlainObject(Object.create(Graph))).toBeFalsy()
+      expect(isPlainObject(Object.create(Graph))).toBe(false)
     })
 
     it('should return `false` for object with custom prototype', () => {
@@ -109,17 +111,17 @@ describe('core/utils', () => {
       const obj = Object.create(CustomProto)
       obj.b = 2
 
-      expect(isPlainObject(obj)).toBeFalsy()
+      expect(isPlainObject(obj)).toBe(false)
     })
   })
 
   describe('isPlainArray', () => {
     it('should return `true` for plain arrays', () => {
-      expect(isPlainArray([1, 2])).toEqual(true)
+      expect(isPlainArray([1, 2])).toBe(true)
     })
 
     it('should return `false` for non plain arrays', () => {
-      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toEqual(false)
+      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toBe(false)
     })
   })
 
@@ -127,43 +129,55 @@ describe('core/utils', () => {
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
-      expect(partialMatchKey(a, b)).toEqual(true)
+      expect(partialMatchKey(a, b)).toBe(true)
     })
 
     it('should return `false` if a does not include b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `true` if array a includes array b', () => {
       const a = [1, 2, 3]
       const b = [1, 2]
-      expect(partialMatchKey(a, b)).toEqual(true)
+      expect(partialMatchKey(a, b)).toBe(true)
     })
 
     it('should return `false` if a is null and b is not', () => {
       const a = [null]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if a contains null and b is not', () => {
       const a = [{ a: null, c: 'c', d: [] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if b is null and a is not', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [null]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if b contains null and a is not', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
       const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
-      expect(partialMatchKey(a, b)).toEqual(false)
+      expect(partialMatchKey(a, b)).toBe(false)
+    })
+
+    it('should treat undefined object properties as matching missing properties', () => {
+      const queryKeyWithUndefined = ['todos', { filters: undefined }]
+      const queryKeyWithoutProperty = ['todos', {}]
+
+      expect(
+        partialMatchKey(queryKeyWithoutProperty, queryKeyWithUndefined),
+      ).toBe(true)
+      expect(
+        partialMatchKey(queryKeyWithUndefined, queryKeyWithoutProperty),
+      ).toBe(true)
     })
   })
 
@@ -420,6 +434,29 @@ describe('core/utils', () => {
 
       expect(next).toBe(current)
     })
+
+    it('should stop structural sharing once the recursion depth exceeds the limit', () => {
+      const nest = (depth: number, leaf: number) => {
+        let value: any = { leaf }
+        for (let i = 0; i < depth; i++) {
+          value = { child: value }
+        }
+        return value
+      }
+
+      const prev = nest(502, 1)
+      const next = nest(502, 2)
+      const result = replaceEqualDeep(prev, next)
+
+      let resultNode = result
+      let nextNode = next
+      for (let i = 0; i < 502; i++) {
+        resultNode = resultNode.child
+        nextNode = nextNode.child
+      }
+
+      expect(resultNode).toBe(nextNode)
+    })
   })
 
   describe('matchMutation', () => {
@@ -432,14 +469,14 @@ describe('core/utils', () => {
         mutationCache: queryClient.getMutationCache(),
         options: {},
       })
-      expect(matchMutation(filters, mutation)).toBeFalsy()
+      expect(matchMutation(filters, mutation)).toBe(false)
     })
   })
 
   describe('keepPreviousData', () => {
     it('should return the parameter as is', () => {
       const x = { a: 1, b: 2 }
-      expect(keepPreviousData(x)).toEqual(x)
+      expect(keepPreviousData(x)).toBe(x)
     })
   })
 
@@ -535,6 +572,40 @@ describe('core/utils', () => {
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
     })
+
+    it('should hash undefined object properties the same as missing properties', () => {
+      const withUndefined = ['todos', { filters: undefined }]
+      const withoutProperty = ['todos', {}]
+
+      expect(hashKey(withUndefined)).toEqual(hashKey(withoutProperty))
+    })
+  })
+
+  describe('isValidTimeout', () => {
+    it('should accept valid timeout values', () => {
+      expect(isValidTimeout(0)).toBe(true)
+      expect(isValidTimeout(1_000)).toBe(true)
+    })
+
+    it('should reject a negative timeout value', () => {
+      expect(isValidTimeout(-1)).toBe(false)
+    })
+
+    it('should reject NaN', () => {
+      expect(isValidTimeout(Number.NaN)).toBe(false)
+    })
+
+    it('should reject Infinity', () => {
+      expect(isValidTimeout(Number.POSITIVE_INFINITY)).toBe(false)
+    })
+
+    it('should reject a string timeout value', () => {
+      expect(isValidTimeout('1000')).toBe(false)
+    })
+
+    it('should reject undefined', () => {
+      expect(isValidTimeout(undefined)).toBe(false)
+    })
   })
 
   describe('ensureQueryFn', () => {
@@ -601,6 +672,68 @@ describe('core/utils', () => {
       expect(shouldThrowError(true, [new Error('test error')])).toBe(true)
       expect(shouldThrowError(false, [new Error('test error')])).toBe(false)
       expect(shouldThrowError(undefined, [new Error('test error')])).toBe(false)
+    })
+  })
+
+  describe('addConsumeAwareSignal', () => {
+    it('should expose the signal on the query context while preserving its properties', () => {
+      const controller = new AbortController()
+      const key = queryKey()
+      const context = addConsumeAwareSignal(
+        { queryKey: key, meta: undefined },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.queryKey).toBe(key)
+      expect(context.signal).toBe(controller.signal)
+    })
+
+    it('should call onCancelled immediately when the signal is already aborted on first access', () => {
+      const controller = new AbortController()
+      controller.abort()
+      const onCancelled = vi.fn()
+      const object = addConsumeAwareSignal(
+        {},
+        () => controller.signal,
+        onCancelled,
+      )
+
+      // Access the signal to consume it
+      void object.signal
+
+      expect(onCancelled).toHaveBeenCalledTimes(1)
+    })
+
+    it('should flag cancellation when the consumed signal aborts, mirroring streamed/infinite queries', () => {
+      const controller = new AbortController()
+      let cancelled = false
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        () => (cancelled = true),
+      )
+
+      void context.signal
+      expect(cancelled).toBe(false)
+
+      controller.abort()
+      expect(cancelled).toBe(true)
+    })
+
+    it('should consume the signal only once across repeated accesses', () => {
+      const controller = new AbortController()
+      const addEventListener = vi.spyOn(controller.signal, 'addEventListener')
+      const context = addConsumeAwareSignal(
+        { queryKey: queryKey() },
+        () => controller.signal,
+        vi.fn(),
+      )
+
+      expect(context.signal).toBe(controller.signal)
+      expect(context.signal).toBe(controller.signal)
+
+      expect(addEventListener).toHaveBeenCalledTimes(1)
     })
   })
 })

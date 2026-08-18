@@ -94,7 +94,7 @@ export function createRawRef<T extends {} | Array<unknown>>(
     }
     for (const key of newKeys) {
       // @ts-expect-error
-      // This craziness is required because Tanstack Query defines getters for all of the keys on the object.
+      // This craziness is required because TanStack Query defines getters for all of the keys on the object.
       // These getters track property access, so if we access all of them here, we'll end up tracking everything.
       // So we wrap the property access in a special function that we can identify later to lazily access the value.
       // (See above)

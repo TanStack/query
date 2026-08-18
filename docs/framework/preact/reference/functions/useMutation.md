@@ -3,13 +3,11 @@ id: useMutation
 title: useMutation
 ---
 
-# Function: useMutation()
-
 ```ts
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:19](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useMutation.ts#L19)
+Defined in: [preact-query/src/useMutation.ts:20](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L20)
 
 ## Type Parameters
 

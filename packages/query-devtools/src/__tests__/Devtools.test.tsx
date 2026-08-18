@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  QueryObserver,
+  dehydrate,
+  hydrate,
+  onlineManager,
+} from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
@@ -89,12 +95,12 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
+    vi.useRealTimers()
   })
 
   function renderDevtools(
@@ -309,6 +315,25 @@ describe('Devtools', () => {
       } finally {
         window.removeEventListener('@tanstack/query-devtools-event', listener)
       }
+    })
+
+    it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      queryClient.fetchQuery({
+        queryKey: ['posts'],
+        queryFn: () => [{ id: 1 }],
+        queryKeyHashFn: () => 'custom-posts-hash',
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      const dehydratedState = dehydrate(queryClient)
+
+      queryClient = new QueryClient()
+      hydrate(queryClient, dehydratedState)
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key custom-posts-hash/),
+      ).toBeInTheDocument()
     })
   })
 
@@ -1078,12 +1103,13 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
+      expect(themeTrigger).not.toBe(
+        document.querySelector('.tsqd-settings-menu-sub-trigger-position'),
+      )
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       expect(
@@ -1098,12 +1124,10 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       const themeMenu = document.querySelector(

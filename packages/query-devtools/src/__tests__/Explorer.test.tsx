@@ -24,8 +24,8 @@ describe('Explorer', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   function renderExplorer(
@@ -232,7 +232,7 @@ describe('Explorer', () => {
       ).toBeInTheDocument()
       expect(consoleError).toHaveBeenCalledWith(
         'Failed to copy: ',
-        expect.any(Error),
+        new Error('denied'),
       )
     })
 

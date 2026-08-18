@@ -24,7 +24,7 @@ describe('queryCache', () => {
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
-      expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
+      expect(subscriber).toHaveBeenNthCalledWith(1, { query, type: 'added' })
       unsubscribe()
     })
 
@@ -37,7 +37,8 @@ describe('queryCache', () => {
         queryFn: () => sleep(100).then(() => 'data'),
       })
       await vi.advanceTimersByTimeAsync(100)
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should notify query cache when a query becomes stale', async () => {
@@ -71,8 +72,9 @@ describe('queryCache', () => {
         'observerResultsUpdated', // 8. Observer result updated -> stale
       ])
 
+      const cachedQuery = queryCache.find({ queryKey: key })
       queries.forEach((query) => {
-        expect(query).toBeDefined()
+        expect(query).toBe(cachedQuery)
       })
 
       unsubscribe()
@@ -89,7 +91,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key })
-      expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should notify subscribers when new query with initialData is added', async () => {
@@ -102,7 +104,8 @@ describe('queryCache', () => {
         initialData: 'initial',
       })
       await vi.advanceTimersByTimeAsync(100)
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
     it('should be able to limit cache size', async () => {
@@ -159,7 +162,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key })!
-      expect(query).toBeDefined()
+      expect(query.state.data).toBe('data1')
     })
 
     it('find should filter correctly with exact set to false', async () => {
@@ -170,7 +173,7 @@ describe('queryCache', () => {
       })
       await vi.advanceTimersByTimeAsync(100)
       const query = queryCache.find({ queryKey: key, exact: false })!
-      expect(query).toBeDefined()
+      expect(query.state.data).toBe('data1')
     })
   })
 
@@ -377,6 +380,22 @@ describe('queryCache', () => {
 
       expect(query.queryHash).toBe(customHash)
       expect(query.queryHash).not.toBe(hashKey(key))
+    })
+  })
+
+  describe('QueryCache.remove', () => {
+    it('should only delete the instance currently stored under its queryHash', () => {
+      const key = queryKey()
+
+      const staleQuery = queryCache.build(queryClient, { queryKey: key })
+      queryCache.remove(staleQuery)
+
+      const currentQuery = queryCache.build(queryClient, { queryKey: key })
+      expect(currentQuery).not.toBe(staleQuery)
+
+      queryCache.remove(staleQuery)
+
+      expect(queryCache.get(hashKey(key))).toBe(currentQuery)
     })
   })
 
