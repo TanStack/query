@@ -553,6 +553,25 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => ({ count: 1 }))
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      placeholderData: { count: 0 },
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+
+    const result = observer.getCurrentResult()
+
+    expect(result.isError).toBe(true)
+    expect(result.isPlaceholderData).toBe(false)
+    expect(result.data).toBeUndefined()
+  })
+
   it('should return stale data if selector throws an error', async () => {
     const key = queryKey()
     const results: Array<QueryObserverResult> = []
@@ -602,6 +621,135 @@ describe('queryObserver', () => {
       isFetching: false,
       data: '1',
       error,
+    })
+  })
+
+  it('should not leak the select error of the previous query into the result of a different query', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => sleep(10).then(() => ({ count: 1 })),
+      select: (): { count: number } => {
+        throw new Error('selector error')
+      },
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+    })
+
+    observer.setOptions({
+      queryKey: key2,
+      queryFn: () => sleep(10).then(() => ({ count: 2 })),
+      select: (data) => data,
+    })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      data: undefined,
+      error: null,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    unsubscribe()
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: { count: 2 },
+      error: null,
+    })
+  })
+
+  it('should not leak a stale select error through the memoized placeholderData path', async () => {
+    const keyA = queryKey()
+    const keyB = queryKey()
+    const keyC = queryKey()
+    const placeholder = { count: 0 }
+    const observer = new QueryObserver(queryClient, {
+      queryKey: keyA,
+      queryFn: () => sleep(10).then(() => ({ count: 1 })),
+      placeholderData: placeholder,
+      select: (data) => ({ selected: data.count }),
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: { selected: 1 },
+    })
+
+    observer.setOptions({
+      queryKey: keyB,
+      queryFn: () => sleep(10).then(() => ({ count: 2 })),
+      placeholderData: placeholder,
+      select: (): { selected: number } => {
+        throw new Error('selector error')
+      },
+    })
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+    })
+
+    observer.setOptions({
+      queryKey: keyC,
+      queryFn: () => sleep(10).then(() => ({ count: 3 })),
+      placeholderData: placeholder,
+      select: (data) => ({ selected: data.count }),
+    })
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: { selected: 0 },
+      error: null,
+      isPlaceholderData: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    unsubscribe()
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: { selected: 3 },
+      error: null,
+    })
+  })
+
+  it('should clear the select error when the query is reset', async () => {
+    const key = queryKey()
+    let shouldThrow = true
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ({ count: 1 })),
+      select: (data): { count: number } => {
+        if (shouldThrow) {
+          throw new Error('selector error')
+        }
+        return data
+      },
+    })
+    const unsubscribe = observer.subscribe(() => {})
+    await vi.advanceTimersByTimeAsync(10)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+    })
+
+    shouldThrow = false
+    queryClient.resetQueries({ queryKey: key })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      data: undefined,
+      error: null,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    unsubscribe()
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: { count: 1 },
+      error: null,
     })
   })
 

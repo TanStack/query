@@ -580,6 +580,10 @@ export class QueryObserver<
           this.#selectError = selectError as TError
         }
       }
+    } else if (data === undefined) {
+      // a stored select error belongs to previously selected data; once that
+      // data is gone (query switch or reset), it must not leak into this result
+      this.#selectError = null
     }
 
     if (this.#selectError) {
@@ -587,6 +591,7 @@ export class QueryObserver<
       data = this.#selectResult
       errorUpdatedAt = Date.now()
       status = 'error'
+      isPlaceholderData = false
     }
 
     const isFetching = newState.fetchStatus === 'fetching'
