@@ -3,9 +3,7 @@ id: UseSuspenseQueryOptions
 title: UseSuspenseQueryOptions
 ---
 
-# Interface: UseSuspenseQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
-Defined in: [preact-query/src/types.ts:81](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L81)
+Defined in: [preact-query/src/types.ts:80](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L80)
 
 ## Extends
 
@@ -37,7 +35,7 @@ Defined in: [preact-query/src/types.ts:81](https://github.com/theVedanta/query/b
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
 ```
 
-Defined in: [preact-query/src/types.ts:90](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L90)
+Defined in: [preact-query/src/types.ts:89](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L89)
 
 ***
 
@@ -47,7 +45,7 @@ Defined in: [preact-query/src/types.ts:90](https://github.com/theVedanta/query/b
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:46](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L46)
+Defined in: [preact-query/src/types.ts:45](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L45)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.
