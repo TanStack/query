@@ -3,13 +3,11 @@ id: MutationStateOptions
 title: MutationStateOptions
 ---
 
-# Type Alias: MutationStateOptions\<TResult\>
-
 ```ts
 type MutationStateOptions<TResult> = object;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:19](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L19)
+Defined in: [packages/lit-query/src/useMutationState.ts:20](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L20)
 
 Options accepted by `useMutationState`.
 
@@ -27,7 +25,7 @@ Options accepted by `useMutationState`.
 optional filters: Accessor<MutationFilters>;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:21](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L21)
+Defined in: [packages/lit-query/src/useMutationState.ts:22](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L22)
 
 Filters used to select mutations from the mutation cache.
 
@@ -39,7 +37,7 @@ Filters used to select mutations from the mutation cache.
 optional select: (mutation) => TResult;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:23](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L23)
+Defined in: [packages/lit-query/src/useMutationState.ts:24](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L24)
 
 Maps each matching mutation to the value returned by the accessor.
 

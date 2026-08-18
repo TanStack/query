@@ -19,7 +19,7 @@ describe('onlineManager', () => {
     // Force navigator to be undefined
     // @ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
-    expect(onlineManager.isOnline()).toBeTruthy()
+    expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
   })
@@ -28,7 +28,7 @@ describe('onlineManager', () => {
     const navigatorSpy = vi.spyOn(navigator, 'onLine', 'get')
     navigatorSpy.mockImplementation(() => true)
 
-    expect(onlineManager.isOnline()).toBeTruthy()
+    expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
   })
@@ -48,7 +48,7 @@ describe('onlineManager', () => {
 
     vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
-    expect(onlineManager.isOnline()).toBeFalsy()
+    expect(onlineManager.isOnline()).toBe(false)
   })
 
   it('setEventListener should call previous remove handler when replacing an event listener', () => {

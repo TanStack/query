@@ -115,6 +115,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     entryFileName: 'index',
     hideBreadcrumbs: true,
     hidePageHeader: true,
+    hidePageTitle: true,
     useCodeBlocks: true,
     excludePrivate: true,
     excludeInternal: true,

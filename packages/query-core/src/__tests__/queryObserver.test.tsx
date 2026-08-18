@@ -42,6 +42,34 @@ describe('queryObserver', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should go through a pending state even when the queryFn returns synchronously', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
+    const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    // A synchronous return value is still wrapped in a promise, so the query
+    // goes through a fetching state before it resolves.
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: 'data',
+    })
+
+    unsubscribe()
+  })
+
   it('should be able to read latest data after subscribing', () => {
     const key = queryKey()
     queryClient.setQueryData(key, 'data')
@@ -75,11 +103,11 @@ describe('queryObserver', () => {
         queryKey: key,
         staleTime: Infinity,
         enabled: () => enabled,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return 'data'
+          }),
       })
     })
 
@@ -239,11 +267,11 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       staleTime: Infinity,
-      queryFn: async () => {
-        await sleep(10)
-        count++
-        return 'data'
-      },
+      queryFn: () =>
+        sleep(10).then(() => {
+          count++
+          return 'data'
+        }),
     })
 
     let unsubscribe = observer.subscribe(vi.fn())
@@ -1212,10 +1240,13 @@ describe('queryObserver', () => {
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
+    const query = queryClient.getQueryCache().find({ queryKey: key })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'observerOptionsUpdated' }),
-    )
+    expect(spy).toHaveBeenCalledWith({
+      type: 'observerOptionsUpdated',
+      query,
+      observer,
+    })
 
     unsubscribe()
   })
@@ -1486,6 +1517,41 @@ describe('queryObserver', () => {
 
     expect(result.status).toBe('success')
     expect(result.data).toBe('data')
+  })
+
+  it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
+    const key = queryKey()
+
+    const queryFn = () => sleep(100).then(() => 'fetched')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    const promise = observer.fetchOptimistic({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    queryClient.setQueryData(key, 'cached')
+
+    const result = await promise
+
+    expect(result).toMatchObject({
+      data: 'cached',
+      status: 'success',
+      fetchStatus: 'fetching',
+    })
+
+    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('fetching')
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(queryClient.getQueryData(key)).toBe('fetched')
+    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
   })
 
   it('should track error prop when throwOnError is true', async () => {

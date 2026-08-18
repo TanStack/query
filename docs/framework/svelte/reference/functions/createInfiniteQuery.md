@@ -3,8 +3,6 @@ id: createInfiniteQuery
 title: createInfiniteQuery
 ---
 
-# Function: createInfiniteQuery()
-
 ```ts
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): CreateInfiniteQueryResult<TData, TError>;
 ```

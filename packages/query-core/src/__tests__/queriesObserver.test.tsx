@@ -149,7 +149,9 @@ describe('queriesObserver', () => {
     const queryCache = queryClient.getQueryCache()
 
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
-    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
+    expect(
+      queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
+    ).toEqual(key2)
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
@@ -473,7 +475,7 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
-  it('should skip combine notifications while suspense queries have no data', async () => {
+  it('should skip combine notifications while suspense queries have no data', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
@@ -506,7 +508,7 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
-  it('should skip combine notifications after suspense is enabled without structural changes', async () => {
+  it('should skip combine notifications after suspense is enabled without structural changes', () => {
     const key = queryKey()
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
@@ -767,6 +769,10 @@ describe('queriesObserver', () => {
     // 2 synchronized calls from onPropTracked callback (one per observer)
     expect(trackPropSpy).toHaveBeenCalledWith('status')
     expect(trackPropSpy).toHaveBeenCalledTimes(3)
+
+    void trackedResults[1]!.status
+
+    expect(trackPropSpy).toHaveBeenCalledTimes(4)
 
     trackPropSpy.mockRestore()
   })
