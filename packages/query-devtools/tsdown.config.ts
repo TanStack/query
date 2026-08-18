@@ -10,6 +10,13 @@ const baseConfig = {
   format: ['esm', 'cjs'] as ['esm', 'cjs'],
   outDir: 'build',
   fixedExtension: false,
+  inputOptions: {
+    // unplugin-solid only adds these externals when Rolldown does not have an
+    // external option yet. Keep them when we also externalize core in DTS.
+    external: (id: string, importer?: string) =>
+      id.startsWith('solid-js') ||
+      (id === '@tanstack/query-core' && importer?.includes('.d.')),
+  },
 }
 
 const environment = (development: boolean) => ({
