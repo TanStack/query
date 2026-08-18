@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { hydrate, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
@@ -92,7 +92,9 @@ export const HydrationBoundary = ({
           // It's actually fine to call this with queries/state that already exists
           // in the cache, or is older. hydrate() is idempotent for queries.
           // eslint-disable-next-line react-hooks/refs
-          hydrate(client, { queries: newQueries }, optionsRef.current)
+          notifyManager.batch(() => {
+            hydrate(client, { queries: newQueries }, optionsRef.current)
+          })
         }
         if (existingQueries.length > 0) {
           return existingQueries
@@ -103,7 +105,9 @@ export const HydrationBoundary = ({
 
   React.useEffect(() => {
     if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      notifyManager.batch(() => {
+        hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      })
     }
   }, [client, hydrationQueue])
 
