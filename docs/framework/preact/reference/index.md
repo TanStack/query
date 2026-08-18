@@ -3,8 +3,6 @@ id: "@tanstack/preact-query"
 title: "@tanstack/preact-query"
 ---
 
-# @tanstack/preact-query
-
 ## Interfaces
 
 - [HydrationBoundaryProps](interfaces/HydrationBoundaryProps.md)

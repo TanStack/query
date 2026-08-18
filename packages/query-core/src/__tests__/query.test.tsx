@@ -7,6 +7,7 @@ import {
 import {
   CancelledError,
   Query,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -14,12 +15,7 @@ import {
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
-import type {
-  QueryCache,
-  QueryFunctionContext,
-  QueryKey,
-  QueryObserverResult,
-} from '..'
+import type { QueryFunctionContext, QueryKey, QueryObserverResult } from '..'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -315,7 +311,6 @@ describe('query', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
-    expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
@@ -580,6 +575,35 @@ describe('query', () => {
     expect(query.state.error).not.toBeInstanceOf(CancelledError)
   })
 
+  it('should release the retryer once its fetch has settled', async () => {
+    const key = queryKey()
+    let refetch: Promise<unknown> | undefined
+    const testCache = new QueryCache({
+      onSuccess: (_data, query) => {
+        refetch ??= query.fetch()
+      },
+    })
+    const testClient = new QueryClient({ queryCache: testCache })
+
+    const prefetch = testClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    })
+    const query = testCache.find({ queryKey: key })!
+    const firstPromise = query.promise
+    expect(firstPromise).toBeDefined()
+
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetch
+    expect(query.promise).toBeDefined()
+    expect(query.promise).not.toBe(firstPromise)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await refetch
+    expect(query.state.data).toBe('data')
+    expect(query.promise).toBeUndefined()
+  })
+
   it('the previous query status should be kept when refetching', async () => {
     const key = queryKey()
 
@@ -637,9 +661,9 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     const unsubscribe = observer.subscribe(() => undefined)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     unsubscribe()
 
     await vi.advanceTimersByTimeAsync(0)
@@ -655,11 +679,11 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(20)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     observer.refetch()
     unsubscribe()
     // unsubscribe should not remove even though gcTime has elapsed b/c query is still fetching
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     // should be removed after an additional staleTime wait
     await vi.advanceTimersByTimeAsync(30)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
@@ -672,16 +696,16 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(100)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     unsubscribe()
     await vi.advanceTimersByTimeAsync(100)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
     queryClient.setQueryData(key, 'data')
     await vi.advanceTimersByTimeAsync(100)
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
   })
 
   it('should return proper count of observers', () => {
@@ -1139,9 +1163,9 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     expect(query.state.status).toBe('error')
-    expect(
-      query.state.error?.message.includes('Maximum call stack size exceeded'),
-    ).toBeTruthy()
+    expect(query.state.error?.message).toContain(
+      'Maximum call stack size exceeded',
+    )
 
     expect(consoleMock).toHaveBeenCalledWith(
       expect.stringContaining(

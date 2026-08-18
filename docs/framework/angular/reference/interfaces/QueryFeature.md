@@ -3,8 +3,6 @@ id: QueryFeature
 title: QueryFeature
 ---
 
-# Interface: QueryFeature\<TFeatureKind\>
-
 Defined in: [providers.ts:135](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L135)
 
 Helper type to represent a Query feature.

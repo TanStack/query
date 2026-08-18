@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createMemo, createRoot } from 'solid-js'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
+import { useQueryClientResolver } from '../QueryClientProvider'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {
@@ -41,7 +43,7 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
   it('allows multiple caches to be partitioned', async () => {
@@ -94,10 +96,10 @@ describe('QueryClientProvider', () => {
     expect(rendered.getByText('test1')).toBeInTheDocument()
     expect(rendered.getByText('test2')).toBeInTheDocument()
 
-    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
-    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })?.state.data).toBe('test1')
+    expect(queryCache1.find({ queryKey: key2 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key1 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
   it("uses defaultOptions for queries when they don't provide their own config", async () => {
@@ -135,7 +137,6 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
   })
 
@@ -171,6 +172,53 @@ describe('QueryClientProvider', () => {
 
     render(() => <Page />)
     expect(consoleMock).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
+
+  it('creates a query client resolver that is safe to call in reactive callbacks', () => {
+    const queryClient = new QueryClient()
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    createRoot((dispose) => {
+      const client = createMemo(() => resolveClient())
+
+      expect(client()).toBe(queryClient)
+      dispose()
+    })
+  })
+
+  it('defers missing provider errors until a resolver is called', () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    expect(() => render(() => <Page />)).not.toThrow()
+
+    expect(() =>
+      createRoot((dispose) => {
+        const client = createMemo(() => resolveClient())
+        client()
+        dispose()
+      }),
+    ).toThrow('No QueryClient set, use QueryClientProvider to set one')
 
     consoleMock.mockRestore()
   })
