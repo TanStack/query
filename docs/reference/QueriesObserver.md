@@ -3,8 +3,6 @@ id: QueriesObserver
 title: QueriesObserver
 ---
 
-## `QueriesObserver`
-
 The `QueriesObserver` can be used to observe multiple queries.
 
 ```tsx

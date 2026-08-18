@@ -3,8 +3,6 @@ id: mutationOptions
 title: mutationOptions
 ---
 
-# Function: mutationOptions()
-
 ```ts
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
