@@ -360,8 +360,9 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.includes(observer)) {
-      this.observers = this.observers.filter((x) => x !== observer)
+    const index = this.observers.indexOf(observer)
+    if (index !== -1) {
+      this.observers.splice(index, 1)
 
       if (!this.observers.length) {
         // If the transport layer does not support cancellation

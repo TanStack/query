@@ -1555,12 +1555,8 @@
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (UI)",
-              "to": "framework/react/examples/optimistic-updates-ui"
-            },
-            {
-              "label": "Optimistic Updates (Cache)",
-              "to": "framework/react/examples/optimistic-updates-cache"
+              "label": "Optimistic Updates",
+              "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
               "label": "Pagination",
