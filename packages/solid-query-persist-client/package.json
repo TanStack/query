@@ -27,7 +27,7 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsup --tsconfig tsconfig.prod.json"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "./build/index.d.ts",
@@ -69,7 +69,7 @@
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^5.0.0",
     "solid-js": "^1.9.7",
-    "tsup-preset-solid": "^2.2.0",
+    "unplugin-solid": "^2.0.0",
     "vite-plugin-solid": "^2.11.6"
   },
   "peerDependencies": {

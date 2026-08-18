@@ -26,7 +26,7 @@
     "test:types:tscurrent": "tsc --build",
     "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --build",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsup --tsconfig tsconfig.prod.json"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
