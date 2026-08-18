@@ -1,24 +1,27 @@
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
 
 const solidBrowserIds: Record<string, string> = {
-  'solid-js/web': 'solid-js/web/dist/web.js',
-  'solid-js/store': 'solid-js/store/dist/store.js',
-  'solid-js/html': 'solid-js/html/dist/html.js',
-  'solid-js/h': 'solid-js/h/dist/h.js',
-  'solid-js': 'solid-js/dist/solid.js',
+  'solid-js/web': require.resolve('solid-js/web/dist/web.js'),
+  'solid-js/store': require.resolve('solid-js/store/dist/store.js'),
+  'solid-js/html': require.resolve('solid-js/html/dist/html.js'),
+  'solid-js/h': require.resolve('solid-js/h/dist/h.js'),
+  'solid-js': require.resolve('solid-js/dist/solid.js'),
 }
 
 const solidBrowserImports = () => ({
   name: 'solid-browser-imports',
   resolveId(id: string, importer?: string) {
-    // Next.js can resolve solid-js/web through its server condition. Use the
-    // exported browser files for the runtime bundles, while keeping d.ts
+    // Resolve the browser runtime explicitly. This keeps Solid bundled in
+    // query-devtools, as it was with tsup-preset-solid, while keeping d.ts
     // imports unchanged.
     if (importer?.includes('.d.')) return undefined
     const browserId = solidBrowserIds[id]
     if (browserId) {
-      return { id: browserId, external: true }
+      return { id: browserId, external: false }
     }
     return undefined
   },
@@ -35,7 +38,7 @@ const baseConfig = {
   fixedExtension: false,
   inputOptions: {
     // Keep package imports in declaration output. Runtime Solid imports are
-    // redirected to the browser files by solidBrowserImports above.
+    // bundled from the browser files by solidBrowserImports above.
     external: (id: string, importer?: string) =>
       (id.startsWith('solid-js') && importer?.includes('.d.')) ||
       (id === '@tanstack/query-core' && importer?.includes('.d.')),
