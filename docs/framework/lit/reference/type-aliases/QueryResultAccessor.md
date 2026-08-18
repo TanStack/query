@@ -3,13 +3,11 @@ id: QueryResultAccessor
 title: QueryResultAccessor
 ---
 
-# Type Alias: QueryResultAccessor\<TData, TError\>
-
 ```ts
 type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:41](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L41)
+Defined in: [packages/lit-query/src/createQueryController.ts:42](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L42)
 
 Accessor returned by `createQueryController`.
 

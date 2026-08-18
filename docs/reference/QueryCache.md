@@ -27,10 +27,10 @@ const query = queryCache.find({ queryKey: ['posts'] })
 
 Its available methods are:
 
-- [`queryCache.find`](#querycachefind)
-- [`queryCache.findAll`](#querycachefindall)
-- [`queryCache.subscribe`](#querycachesubscribe)
-- [`queryCache.clear`](#querycacheclear)
+- [`queryCache.find`](#querycache-find)
+- [`queryCache.findAll`](#querycache-findall)
+- [`queryCache.subscribe`](#querycache-subscribe)
+- [`queryCache.clear`](#querycache-clear)
 - [Further reading](#further-reading)
 
 **Options**

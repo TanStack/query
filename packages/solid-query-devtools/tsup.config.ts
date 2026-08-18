@@ -16,6 +16,14 @@ export default defineConfig(() => {
 
   tsup_options.forEach((tsup_option) => {
     tsup_option.outDir = 'build'
+
+    if (tsup_option.dts) {
+      tsup_option.dts = {
+        compilerOptions: {
+          ignoreDeprecations: '6.0',
+        },
+      }
+    }
   })
 
   return tsup_options

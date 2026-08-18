@@ -285,7 +285,7 @@ export const ExhaustiveDepsUtils = {
   isInstanceOfKind(node: TSESTree.Node) {
     return (
       node.type === AST_NODE_TYPES.BinaryExpression &&
-      node.operator === 'instanceof'
+      (node as TSESTree.SymmetricBinaryExpression).operator === 'instanceof'
     )
   },
 

@@ -3,8 +3,6 @@ id: getIsRestoringContext
 title: getIsRestoringContext
 ---
 
-# Function: getIsRestoringContext()
-
 ```ts
 function getIsRestoringContext(): Box<boolean>;
 ```

@@ -11,8 +11,8 @@ Use this manager to override server detection globally for runtimes that are not
 
 Its available methods are:
 
-- [`isServer`](#environmentmanagerisserver)
-- [`setIsServer`](#environmentmanagersetisserver)
+- [`isServer`](#environmentmanager-isserver)
+- [`setIsServer`](#environmentmanager-setisserver)
 
 ## `environmentManager.isServer`
 

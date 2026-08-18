@@ -3,15 +3,13 @@ id: CreateBaseMutationResult
 title: CreateBaseMutationResult
 ---
 
-# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>;
 }> & object;
 ```
 
-Defined in: [types.ts:160](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L160)
+Defined in: [types.ts:154](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L154)
 
 ## Type Declaration
 

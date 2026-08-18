@@ -3,8 +3,6 @@ id: registerDefaultQueryClient
 title: registerDefaultQueryClient
 ---
 
-# Function: registerDefaultQueryClient()
-
 ```ts
 function registerDefaultQueryClient(client): void;
 ```
