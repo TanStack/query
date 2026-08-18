@@ -1,4 +1,3 @@
-import { tryResolveSync } from './thenable'
 import { noop } from './utils'
 import type {
   DefaultError,
@@ -18,6 +17,25 @@ import type { Mutation, MutationState } from './mutation'
 type TransformerFn = (data: any) => any
 function defaultTransformerFn(data: any): any {
   return data
+}
+
+function tryResolveSync(promise: PromiseLike<unknown>) {
+  let data: unknown
+
+  const thenResult = promise.then((result) => {
+    data = result
+    return result
+  }, noop) as Promise<unknown> | undefined
+
+  // .catch can be unavailable on certain kinds of thenable's
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  thenResult?.catch?.(noop)
+
+  if (data !== undefined) {
+    return { data }
+  }
+
+  return undefined
 }
 
 export interface DehydrateOptions {

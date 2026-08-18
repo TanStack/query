@@ -1055,11 +1055,6 @@ describe('useSuspenseQuery', () => {
 
     const streamedClient = new QueryClient({
       queryCache,
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
     })
 
     const rendered = renderWithClient(

@@ -26,11 +26,7 @@ export const ensurePreventErrorBoundaryRetry = <
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
-  if (
-    options.suspense ||
-    options.throwOnError ||
-    options.experimental_prefetchInRender
-  ) {
+  if (options.suspense || options.throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
       options.retryOnMount = false
