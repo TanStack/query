@@ -3,8 +3,6 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-# Type Alias: CreateInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 ```ts
 type CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```

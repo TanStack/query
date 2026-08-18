@@ -3,8 +3,6 @@ id: createMutation
 title: createMutation
 ---
 
-# Function: createMutation()
-
 ```ts
 function createMutation<TData, TError, TVariables, TContext>(options, queryClient?): CreateMutationResult<TData, TError, TVariables, TContext>;
 ```

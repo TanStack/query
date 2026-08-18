@@ -1,9 +1,9 @@
 {
-  "name": "@tanstack/query-example-react-optimistic-updates-ui",
+  "name": "@tanstack/query-example-react-nextjs-app-optimistic-updates",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start"
   },
@@ -15,6 +15,7 @@
     "react-dom": "^19.2.1"
   },
   "devDependencies": {
+    "@types/node": "26.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "typescript": "5.8.3"

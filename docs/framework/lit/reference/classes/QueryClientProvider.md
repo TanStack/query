@@ -3,8 +3,6 @@ id: QueryClientProvider
 title: QueryClientProvider
 ---
 
-# Class: QueryClientProvider
-
 Defined in: [packages/lit-query/src/QueryClientProvider.ts:64](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L64)
 
 Lit element that provides a `QueryClient` to descendant Lit Query
