@@ -49,7 +49,7 @@ Then call any function (e.g. createQuery) from any component:
 
 Svelte Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
-- Arguments to `svelte-query` primitives (like `createQuery`, `createMutation`, `useIsFetching`) are functions, so that they can be tracked in a reactive scope.
+- Arguments to `svelte-query` primitives (like `createQuery`, `createMutation`) are functions, so that they can be tracked in a reactive scope.
 
 ```ts
 // ❌ react version
@@ -148,4 +148,4 @@ createQuery(() => ({
 - Errors can be caught and reset using Svelte's native `<svelte:boundary>` component.
   Set `throwOnError` option to `true` to make sure errors are thrown to the `<svelte:boundary>` component.
 
-- Since Property tracking is handled through Svelte's fine grained reactivity, options like `notifyOnChangeProps` are not needed
+- Since property tracking is handled through Svelte's fine-grained reactivity, options like `notifyOnChangeProps` are not needed
