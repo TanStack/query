@@ -3,8 +3,6 @@ id: InfiniteQueryControllerOptions
 title: InfiniteQueryControllerOptions
 ---
 
-# Type Alias: InfiniteQueryControllerOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 ```ts
 type InfiniteQueryControllerOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>;
 ```

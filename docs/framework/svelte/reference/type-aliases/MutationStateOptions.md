@@ -3,8 +3,6 @@ id: MutationStateOptions
 title: MutationStateOptions
 ---
 
-# Type Alias: MutationStateOptions\<TResult\>
-
 ```ts
 type MutationStateOptions<TResult> = object;
 ```

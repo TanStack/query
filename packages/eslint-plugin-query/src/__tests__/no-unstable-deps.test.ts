@@ -128,6 +128,55 @@ const baseTestCases = {
             }
           `,
         },
+        {
+          name: `should pass when functions or variables with Object.prototype names are used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function Component() {
+              const toString = () => 'str';
+              const valueOf = 42;
+              const callback = ${reactHookInvocation}(() => { toString() }, [toString, valueOf]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when custom functions named after Object.prototype methods are invoked`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function toString() {
+              return 'test';
+            }
+
+            function Component() {
+              const res = toString();
+              const callback = ${reactHookInvocation}(() => { res }, [res]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when a local function named after Object.prototype method is called alongside destructured query result with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "@tanstack/react-query";
+
+            function toString() {
+              return 'formatted';
+            }
+
+            function Component() {
+              const { data } = useQuery({ queryKey: ['test'], queryFn: () => 'test' });
+              const formatted = toString();
+              const callback = ${reactHookInvocation}(() => { formatted }, [data, formatted]);
+              return;
+            }
+          `,
+        },
       ]),
   invalid: ({
     reactHookImport,
