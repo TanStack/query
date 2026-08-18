@@ -1192,6 +1192,38 @@ describe('mutations', () => {
     expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
   })
 
+  it('should release the retryer once a mutation settles', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(10).then(() => text),
+    })
+
+    observer.mutate('data')
+    await vi.advanceTimersByTimeAsync(10)
+
+    const mutation = queryClient.getMutationCache().getAll()[0]!
+    expect(mutation.state.status).toBe('success')
+
+    // continue() is the only reader of the retryer outside execute(): while a
+    // settled retryer is still referenced it hands back that retryer's promise,
+    // which resolves with the raw result it closed over
+    await expect(mutation.continue()).resolves.toBeUndefined()
+  })
+
+  it('should release the retryer of a mutation that settled with an error', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationFn: () => sleep(10).then(() => Promise.reject(new Error('oops'))),
+    })
+
+    observer.mutate(undefined).catch(() => undefined)
+    await vi.advanceTimersByTimeAsync(10)
+
+    const mutation = queryClient.getMutationCache().getAll()[0]!
+    expect(mutation.state.status).toBe('error')
+
+    // a retained retryer would hand back its rejected promise here
+    await expect(mutation.continue()).resolves.toBeUndefined()
+  })
+
   it('should not re-execute a settled mutation when it is continued', async () => {
     const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
     const observer = new MutationObserver(queryClient, { mutationFn })
