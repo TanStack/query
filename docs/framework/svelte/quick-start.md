@@ -80,7 +80,7 @@ createQuery(() => ({
   }))
 </script>
 
-  <!-- ❌ react version -- supports destructuring outside reactive context
+<!-- ❌ react version -- supports destructuring outside reactive context
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
@@ -96,13 +96,13 @@ createQuery(() => ({
   {:else if query.isError}
     <p>Error: {query.error.message}</p>
   {:else if query.isSuccess}
-  <div>
-    <h1>{query.data.name}</h1>
-    <p>{query.data.description}</p>
-    <strong>👀 {query.data.subscribers_count}</strong>
-    <strong>✨ {query.data.stargazers_count}</strong>
-    <strong>🍴 {query.data.forks_count}</strong>
-  </div>
+    <div>
+      <h1>{query.data.name}</h1>
+      <p>{query.data.description}</p>
+      <strong>👀 {query.data.subscribers_count}</strong>
+      <strong>✨ {query.data.stargazers_count}</strong>
+      <strong>🍴 {query.data.forks_count}</strong>
+    </div>
   {/if}
 </div>
 ```
@@ -113,8 +113,8 @@ createQuery(() => ({
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  let enabled = $state(false);
-  let todoCount = $state(0);
+  let enabled = $state(false)
+  let todoCount = $state(0)
 
   // ✅ passing a rune directly is safe and observers update
   // automatically when the value of a rune changes
@@ -139,7 +139,7 @@ createQuery(() => ({
   {:else if todosQuery.isSuccess}
     {#each todosQuery.data as todo}
       <button onclick={() => (todoCount = todo.id)}>{todo.title}</button>
-    {/each}    
+    {/each}
   {/if}
   <button onclick={() => (enabled = !enabled)}>Toggle enabled</button>
 </div>
