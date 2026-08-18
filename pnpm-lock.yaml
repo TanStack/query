@@ -2381,6 +2381,19 @@ importers:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
 
+  integrations/vue-declaration-emit:
+    dependencies:
+      '@tanstack/vue-query':
+        specifier: workspace:*
+        version: link:../../packages/vue-query
+      vue:
+        specifier: ^3.4.27
+        version: 3.5.31(typescript@5.8.3)
+    devDependencies:
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
   integrations/vue-vite:
     dependencies:
       '@tanstack/vue-query':
