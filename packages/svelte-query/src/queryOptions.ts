@@ -35,7 +35,7 @@ export function queryOptions<
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData>
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -45,7 +45,7 @@ export function queryOptions<
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData>
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions(options: unknown) {
   return options
