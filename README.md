@@ -1,0 +1,1 @@
+Bundle size benchmark history.
