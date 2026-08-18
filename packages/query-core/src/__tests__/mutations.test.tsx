@@ -1191,4 +1191,50 @@ describe('mutations', () => {
 
     expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
   })
+
+  it('should release the retryer once execute() has settled', async () => {
+    // Regression: Mutation.execute() left #retryer set after settling, so the
+    // retryer's resolved promise kept the raw mutation result in memory for the
+    // mutation's lifetime — a second copy alongside state.data. Mirrors the fix
+    // applied to Query.fetch() in #11163.
+    let secondExecute: Promise<unknown> | undefined
+    const testCache = new MutationCache({
+      onSuccess: (_data, _variables, _context, mutation) => {
+        // On the first success, kick off a second execute().
+        // The identity guard (this.#retryer === retryer) must keep the NEW
+        // retryer alive while clearing the OLD one.
+        secondExecute ??= mutation.execute(undefined as any)
+      },
+    })
+    const testClient = new QueryClient({ mutationCache: testCache })
+
+    const observer = new MutationObserver(testClient, {
+      mutationFn: () => sleep(10).then(() => 'data'),
+    })
+
+    const firstExecutePromise = observer.mutate()
+    const mutation = testCache.getAll()[0]!
+
+    // While the first execute is in-flight the promise must be defined.
+    expect(mutation.promise).toBeDefined()
+    const firstPromise = mutation.promise
+
+    // Let the first execute settle and the cache onSuccess callback fire,
+    // which starts the second execute synchronously.
+    await vi.advanceTimersByTimeAsync(10)
+    await firstExecutePromise.catch(() => undefined)
+
+    // A new retryer was installed by the second execute; its promise is a
+    // different object from the first one.
+    expect(mutation.promise).toBeDefined()
+    expect(mutation.promise).not.toBe(firstPromise)
+
+    // Let the second execute settle.
+    await vi.advanceTimersByTimeAsync(10)
+    await secondExecute
+
+    // After everything has settled the retryer must be released.
+    expect(mutation.state.data).toBe('data')
+    expect(mutation.promise).toBeUndefined()
+  })
 })

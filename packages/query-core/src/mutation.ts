@@ -121,6 +121,11 @@ export class Mutation<
     this.updateGcTime(this.options.gcTime)
   }
 
+  /** The active retryer's promise, or `undefined` once `execute()` has settled. */
+  get promise(): Promise<TData> | undefined {
+    return this.#retryer?.promise
+  }
+
   get meta(): MutationMeta | undefined {
     return this.options.meta
   }
@@ -181,7 +186,7 @@ export class Mutation<
       mutationKey: this.options.mutationKey,
     } satisfies MutationFunctionContext
 
-    this.#retryer = createRetryer({
+    const retryer = (this.#retryer = createRetryer({
       fn: () => {
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
@@ -200,10 +205,10 @@ export class Mutation<
       retryDelay: this.options.retryDelay,
       networkMode: this.options.networkMode,
       canRun: () => this.#mutationCache.canRun(this),
-    })
+    }))
 
     const restored = this.state.status === 'pending'
-    const isPaused = !this.#retryer.canStart()
+    const isPaused = !retryer.canStart()
 
     try {
       if (restored) {
@@ -232,7 +237,7 @@ export class Mutation<
           })
         }
       }
-      const data = await this.#retryer.start()
+      const data = await retryer.start()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(
@@ -324,6 +329,14 @@ export class Mutation<
       this.#dispatch({ type: 'error', error: error as TError })
       throw error
     } finally {
+      // The settled retryer's promise would otherwise pin this mutation's raw
+      // result for the mutation's lifetime. Clear it once execute() settles,
+      // mirroring the same fix applied to Query.fetch() in #11163.
+      // The identity check guards against a re-entrant execute() call (e.g. from
+      // a cache onSuccess callback) having already installed a new retryer.
+      if (this.#retryer === retryer) {
+        this.#retryer = undefined
+      }
       this.#mutationCache.runNext(this)
     }
   }
