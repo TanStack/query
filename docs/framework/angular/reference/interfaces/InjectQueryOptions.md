@@ -3,8 +3,6 @@ id: InjectQueryOptions
 title: InjectQueryOptions
 ---
 
-# Interface: InjectQueryOptions
-
 Defined in: [inject-query.ts:20](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L20)
 
 ## Properties

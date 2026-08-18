@@ -273,8 +273,9 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await waitFor(() => consumer.isMutating() === 0)
 
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey }),
-    ).toBeDefined()
+      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
+        ?.state.data,
+    ).toBe('query-ok')
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
     ).toBeUndefined()

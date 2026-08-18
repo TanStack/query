@@ -1153,7 +1153,7 @@ describe('createQueryController', () => {
     await waitFor(() => query().isSuccess)
 
     const cacheQuery = client.getQueryCache().find({ queryKey })
-    expect(cacheQuery).toBeDefined()
+    expect(cacheQuery?.state.data).toEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
     host.disconnect()
@@ -1195,8 +1195,8 @@ describe('createQueryController', () => {
     await consumer.updateComplete
 
     await waitFor(() => consumer.query().isSuccess)
-    expect(consumer.query().data).toBeDefined()
-    expect(consumer.queryCalls).toBeGreaterThan(0)
+    expect(consumer.queryCalls).toBe(1)
+    expect(consumer.query().data).toBe('value-1')
 
     consumer.query.destroy()
     provider.remove()
@@ -1231,7 +1231,7 @@ describe('createQueryController', () => {
     await consumer.updateComplete
     await waitFor(() => consumer.query().isSuccess)
 
-    expect(consumer.query().data).toBeDefined()
+    expect(consumer.query().data).toBe('value-1')
 
     consumer.query.destroy()
     provider.remove()

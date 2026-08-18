@@ -3,8 +3,6 @@ id: injectQuery
 title: injectQuery
 ---
 
-# Function: injectQuery()
-
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
