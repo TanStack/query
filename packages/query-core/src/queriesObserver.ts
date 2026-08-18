@@ -310,14 +310,21 @@ export class QueriesObserver<
 
   #notify(): void {
     if (this.hasListeners()) {
-      const newTracked = this.#trackResult(this.#result, this.#observerMatches)
-      const shouldSkipCombine = this.#shouldSkipCombine()
-      const previousResult = this.#combinedResult
-      const newResult = shouldSkipCombine
-        ? previousResult
-        : this.#combineResult(newTracked, this.#options?.combine)
+      let shouldNotify = true
+      const combine = this.#options?.combine
 
-      if (shouldSkipCombine || previousResult !== newResult) {
+      if (combine) {
+        const newTracked = this.#trackResult(this.#result, this.#observerMatches)
+        const shouldSkipCombine = this.#shouldSkipCombine()
+        const previousResult = this.#combinedResult
+        const newResult = shouldSkipCombine
+          ? previousResult
+          : this.#combineResult(newTracked, combine)
+
+        shouldNotify = shouldSkipCombine || previousResult !== newResult
+      }
+
+      if (shouldNotify) {
         notifyManager.batch(() => {
           this.listeners.forEach((listener) => {
             listener(this.#result)
