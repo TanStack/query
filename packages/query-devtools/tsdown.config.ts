@@ -1,6 +1,6 @@
+import { createRequire } from 'node:module'
 import { defineConfig } from 'tsdown'
 import solid from 'unplugin-solid/rolldown'
-import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
 
