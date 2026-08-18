@@ -1067,10 +1067,10 @@ importers:
   examples/react/nextjs-app-optimistic-updates:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.101.2
+        specifier: ^5.101.4
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.101.2
+        specifier: ^5.101.4
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
