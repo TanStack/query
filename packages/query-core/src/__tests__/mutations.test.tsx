@@ -1191,4 +1191,49 @@ describe('mutations', () => {
 
     expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
   })
+
+  it('should not re-execute a settled mutation when it is continued', async () => {
+    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    const observer = new MutationObserver(queryClient, { mutationFn })
+
+    observer.mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    const mutation = queryClient.getMutationCache().getAll()[0]!
+    expect(mutation.state.status).toBe('success')
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+
+    await mutation.continue()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutation.state.status).toBe('success')
+  })
+
+  it('should still continue a restored paused mutation that has no retryer', async () => {
+    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+    // a mutation restored from a dehydrated pending state has no retryer yet
+    const mutation = queryClient.getMutationCache().build(
+      queryClient,
+      { mutationFn },
+      {
+        context: undefined,
+        data: undefined,
+        error: null,
+        failureCount: 0,
+        failureReason: null,
+        isPaused: true,
+        status: 'pending',
+        variables: undefined,
+        submittedAt: Date.now(),
+      },
+    )
+
+    const continued = mutation.continue()
+    await vi.advanceTimersByTimeAsync(10)
+    await continued
+
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutation.state.status).toBe('success')
+  })
 })
