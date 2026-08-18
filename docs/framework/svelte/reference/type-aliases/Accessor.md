@@ -3,8 +3,6 @@ id: Accessor
 title: Accessor
 ---
 
-# Type Alias: Accessor()\<T\>
-
 ```ts
 type Accessor<T> = () => T;
 ```

@@ -34,10 +34,10 @@ describe('useSuspenseQueries', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
+    vi.useRealTimers()
   })
 
   function SuspenseFallback() {

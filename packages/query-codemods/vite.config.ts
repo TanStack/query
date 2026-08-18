@@ -20,7 +20,7 @@ export default defineConfig({
     watch: false,
     globals: true,
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*.{js,ts,cjs,mjs,jsx,tsx}'],
     },

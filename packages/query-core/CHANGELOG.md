@@ -1,5 +1,25 @@
 # @tanstack/query-core
 
+## 5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- [#11084](https://github.com/TanStack/query/pull/11084) [`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677) - Improve `partialMatchKey` performance in query-core.
+
+## 5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- [#10610](https://github.com/TanStack/query/pull/10610) [`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1) - fix missing `dataUpdatedAt` for streamed queries that resolve before hydration
+
+## 5.101.0
+
+## 5.100.14
+
 ## 5.100.13
 
 ### Patch Changes

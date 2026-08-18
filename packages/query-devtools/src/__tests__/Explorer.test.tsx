@@ -24,11 +24,15 @@ describe('Explorer', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
-  function renderExplorer(props: Parameters<typeof Explorer>[0]) {
+  function renderExplorer(
+    props: Parameters<typeof Explorer>[0],
+    options: { theme?: 'dark' | 'light' } = {},
+  ) {
+    const theme = options.theme ?? 'dark'
     return render(() => (
       <QueryDevtoolsContext.Provider
         value={{
@@ -38,7 +42,7 @@ describe('Explorer', () => {
           onlineManager,
         }}
       >
-        <ThemeContext.Provider value={() => 'dark'}>
+        <ThemeContext.Provider value={() => theme}>
           <Explorer {...props} />
         </ThemeContext.Provider>
       </QueryDevtoolsContext.Provider>
@@ -228,7 +232,7 @@ describe('Explorer', () => {
       ).toBeInTheDocument()
       expect(consoleError).toHaveBeenCalledWith(
         'Failed to copy: ',
-        expect.any(Error),
+        new Error('denied'),
       )
     })
 
@@ -560,6 +564,70 @@ describe('Explorer', () => {
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
 
       expect(queryClient.getQueryData(['data'])).toEqual({})
+    })
+  })
+
+  describe('theme', () => {
+    it('should render without throwing under the "light" theme', () => {
+      const value = { items: ['a'], flag: true }
+      queryClient.setQueryData(['data'], value)
+
+      expect(() =>
+        renderExplorer(
+          {
+            label: 'Data',
+            value,
+            defaultExpanded: ['Data'],
+            editable: true,
+            activeQuery: queryClient
+              .getQueryCache()
+              .find({ queryKey: ['data'] }) as Query,
+          },
+          { theme: 'light' },
+        ),
+      ).not.toThrow()
+    })
+  })
+
+  describe('"shadowDOMTarget"', () => {
+    it('should render without throwing when a "shadowDOMTarget" is provided', () => {
+      const host = document.createElement('div')
+      document.body.appendChild(host)
+      const shadowRoot = host.attachShadow({ mode: 'open' })
+      const value = { items: ['a'], flag: true }
+      queryClient.setQueryData(['data'], value)
+
+      try {
+        expect(() =>
+          render(() => (
+            <QueryDevtoolsContext.Provider
+              value={{
+                client: queryClient,
+                queryFlavor: 'TanStack Query',
+                version: '5',
+                onlineManager,
+                shadowDOMTarget: shadowRoot,
+              }}
+            >
+              <ThemeContext.Provider value={() => 'dark'}>
+                <Explorer
+                  label="Data"
+                  value={value}
+                  defaultExpanded={['Data']}
+                  editable={true}
+                  activeQuery={
+                    queryClient
+                      .getQueryCache()
+                      .find({ queryKey: ['data'] }) as Query
+                  }
+                />
+              </ThemeContext.Provider>
+            </QueryDevtoolsContext.Provider>
+          )),
+        ).not.toThrow()
+      } finally {
+        host.remove()
+      }
     })
   })
 })

@@ -14,8 +14,8 @@ describe('mutationOptions', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     useQueryClient().clear()
+    vi.useRealTimers()
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
@@ -24,7 +24,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
@@ -32,7 +32,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the getter received as a parameter without any modification (with mutationKey in mutationOptions)', () => {

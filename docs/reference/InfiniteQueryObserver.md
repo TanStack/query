@@ -3,8 +3,6 @@ id: InfiniteQueryObserver
 title: InfiniteQueryObserver
 ---
 
-## `InfiniteQueryObserver`
-
 The `InfiniteQueryObserver` can be used to observe and switch between infinite queries.
 
 ```tsx

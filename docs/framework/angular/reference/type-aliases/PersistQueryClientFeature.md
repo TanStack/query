@@ -3,8 +3,6 @@ id: PersistQueryClientFeature
 title: PersistQueryClientFeature
 ---
 
-# Type Alias: PersistQueryClientFeature
-
 ```ts
 type PersistQueryClientFeature = QueryFeature<"PersistQueryClient">;
 ```

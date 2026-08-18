@@ -1,5 +1,6 @@
 import {
   QueriesObserver,
+  replaceEqualDeep,
   type DefaultError,
   type DefinedQueryObserverResult,
   type OmitKeyof,
@@ -322,6 +323,10 @@ class QueriesController<
   private observer: QueriesObserver<TCombinedResult> | undefined
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
+  private queries: Array<QueryObserverOptions> = []
+  private combine: QueriesObserverOptions<TCombinedResult>['combine']
+  private combinedResult: TCombinedResult | undefined
+  private rawResult: Array<QueryObserverResult> = []
   private explicitInitializationError: unknown | undefined
   private placeholderInitialized = false
   private placeholderRetryableFailure = true
@@ -394,8 +399,7 @@ class QueriesController<
     }
 
     this.unsubscribe = this.observer.subscribe((next) => {
-      const { combine } = this.readResolvedOptions()
-      this.setResult(this.computeResult(next, combine))
+      this.setObserverResult(next)
     })
   }
 
@@ -405,12 +409,14 @@ class QueriesController<
         this.options,
         queryClient,
       )
-      const observer = new QueriesObserver(queryClient, queries, {
-        combine,
+      this.queries = queries
+      this.combine = combine
+      const observer = new QueriesObserver(queryClient, this.queries, {
+        combine: this.combine,
       } as QueriesObserverOptions<TCombinedResult>)
       this.queryClient = queryClient
       this.observer = observer
-      this.result = this.computeResult(observer.getCurrentResult(), combine)
+      this.assignObserverResult(observer.getCurrentResult(), true)
       this.explicitInitializationError = undefined
       this.placeholderInitialized = true
       return true
@@ -448,6 +454,10 @@ class QueriesController<
       this.unsubscribeObserver()
       this.queryClient = undefined
       this.observer = undefined
+      this.queries = []
+      this.combine = undefined
+      this.combinedResult = undefined
+      this.rawResult = []
       this.setPlaceholderResult()
       return false
     }
@@ -459,12 +469,12 @@ class QueriesController<
     this.unsubscribeObserver()
     this.queryClient = nextClient
     const { queries, combine } = this.readResolvedOptions()
-    this.observer = new QueriesObserver(this.queryClient, queries, {
-      combine,
+    this.queries = queries
+    this.combine = combine
+    this.observer = new QueriesObserver(this.queryClient, this.queries, {
+      combine: this.combine,
     } as QueriesObserverOptions<TCombinedResult>)
-    this.setResult(
-      this.computeResult(this.observer.getCurrentResult(), combine),
-    )
+    this.setObserverResult(this.observer.getCurrentResult(), true)
     this.placeholderInitialized = true
     return true
   }
@@ -475,17 +485,14 @@ class QueriesController<
     }
 
     const { queries, combine } = this.readResolvedOptions()
+    this.queries = queries
+    this.combine = combine
 
-    this.observer.setQueries(queries, {
-      combine,
+    this.observer.setQueries(this.queries, {
+      combine: this.combine,
     } as QueriesObserverOptions<TCombinedResult>)
 
-    const [rawResult, getCombinedResult] = this.observer.getOptimisticResult(
-      queries,
-      combine,
-    )
-
-    this.setResult(getCombinedResult(rawResult))
+    this.setObserverResult(this.observer.getCurrentResult(), true)
     return true
   }
 
@@ -513,11 +520,87 @@ class QueriesController<
     return typeof this.options.queries === 'function'
   }
 
-  private computeResult(
+  private createResult(rawResult: Array<QueryObserverResult>): TCombinedResult {
+    const trackedResult = this.trackResult(rawResult)
+    const combine = this.combine
+
+    if (!combine) {
+      return trackedResult as TCombinedResult
+    }
+
+    this.combinedResult = replaceEqualDeep(
+      this.combinedResult,
+      combine(trackedResult),
+    ) as TCombinedResult
+
+    return this.combinedResult
+  }
+
+  private assignObserverResult(
     rawResult: Array<QueryObserverResult>,
-    combine: QueriesObserverOptions<TCombinedResult>['combine'],
-  ): TCombinedResult {
-    return (combine ? combine(rawResult) : rawResult) as TCombinedResult
+    force = false,
+  ): void {
+    if (!force && this.hasObserverResult(rawResult)) {
+      return
+    }
+
+    this.rawResult = rawResult
+    this.result = this.createResult(rawResult)
+  }
+
+  private setObserverResult(
+    rawResult: Array<QueryObserverResult>,
+    force = false,
+  ): void {
+    if (!force && this.hasObserverResult(rawResult)) {
+      return
+    }
+
+    this.rawResult = rawResult
+    this.setResult(this.createResult(rawResult))
+  }
+
+  private hasObserverResult(rawResult: Array<QueryObserverResult>): boolean {
+    return (
+      this.rawResult.length === rawResult.length &&
+      rawResult.every((result, index) =>
+        Object.is(this.rawResult[index], result),
+      )
+    )
+  }
+
+  private getCurrentObserverResults(): Array<QueryObserverResult> {
+    if (!this.observer) {
+      return []
+    }
+
+    return this.observer
+      .getObservers()
+      .map((observer) => observer.getCurrentResult())
+  }
+
+  private trackResult(
+    rawResult: Array<QueryObserverResult>,
+  ): Array<QueryObserverResult> {
+    if (!this.observer) {
+      return rawResult
+    }
+
+    const observers = this.observer.getObservers()
+
+    return rawResult.map((result, index) => {
+      const observer = observers[index]
+
+      if (!observer || observer.options.notifyOnChangeProps) {
+        return result
+      }
+
+      return observer.trackResult(result, (accessedProp) => {
+        observers.forEach((observer) => {
+          observer.trackProp(accessedProp)
+        })
+      })
+    })
   }
 
   private static createPlaceholderResult<TCombinedResult>(
@@ -559,10 +642,15 @@ class QueriesController<
       }
     }
 
+    if (this.observer) {
+      this.assignObserverResult(this.getCurrentObserverResults())
+    }
+
     return this.current
   }
 
   private setPlaceholderResult(): void {
+    this.rawResult = []
     this.result = QueriesController.createPlaceholderResult(this.options)
     this.placeholderInitialized = true
   }

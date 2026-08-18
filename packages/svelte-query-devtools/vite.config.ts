@@ -24,7 +24,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/test-setup.ts'],
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
     },

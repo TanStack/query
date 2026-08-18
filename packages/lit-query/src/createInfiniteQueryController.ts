@@ -17,6 +17,7 @@ import {
 } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
 
 /**
  * Options accepted by `createInfiniteQueryController`.
@@ -131,6 +132,9 @@ class InfiniteQueryController<
   private observer:
     | InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     | undefined
+  private readonly resultTracker = new QueryObserverResultTracker<
+    InfiniteQueryObserverResult<TData, TError>
+  >()
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
 
@@ -162,7 +166,7 @@ class InfiniteQueryController<
     const observer = new InfiniteQueryObserver(queryClient, defaulted)
     this.queryClient = queryClient
     this.observer = observer
-    this.result = observer.getOptimisticResult(defaulted)
+    this.assignObserverResult(observer.getOptimisticResult(defaulted))
   }
 
   protected onConnected(): void {
@@ -174,7 +178,7 @@ class InfiniteQueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
@@ -200,39 +204,47 @@ class InfiniteQueryController<
     this.subscribe()
     this.observer?.updateResult()
     if (this.observer) {
-      this.setResult(this.observer.getCurrentResult())
+      this.setObserverResult(this.observer.getCurrentResult())
     }
   }
 
   refetch: InfiniteQueryObserverResult<TData, TError>['refetch'] = (
     ...args
   ) => {
-    if (!this.refreshOptions()) {
+    if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.result.refetch(...args)
+    return this.observer.refetch(...args)
   }
 
   fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage'] = (
     ...args
   ) => {
-    if (!this.refreshOptions()) {
+    if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.result.fetchNextPage(...args)
+    return this.observer.fetchNextPage(...args)
   }
 
   fetchPreviousPage: InfiniteQueryObserverResult<
     TData,
     TError
   >['fetchPreviousPage'] = (...args) => {
-    if (!this.refreshOptions()) {
+    if (!this.applyOptions() || !this.observer) {
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.result.fetchPreviousPage(...args)
+    return this.observer.fetchPreviousPage(...args)
+  }
+
+  readCurrent(): InfiniteQueryObserverResult<TData, TError> {
+    if (this.observer) {
+      this.assignObserverResult(this.observer.getCurrentResult())
+    }
+
+    return this.current
   }
 
   private subscribe(): void {
@@ -245,7 +257,7 @@ class InfiniteQueryController<
     }
 
     this.unsubscribe = this.observer.subscribe((next) => {
-      this.setResult(next)
+      this.setObserverResult(next)
     })
   }
 
@@ -260,6 +272,7 @@ class InfiniteQueryController<
       this.unsubscribeObserver()
       this.queryClient = undefined
       this.observer = undefined
+      this.resultTracker.reset()
       this.setResult(createPendingInfiniteQueryResult())
       return false
     }
@@ -272,19 +285,45 @@ class InfiniteQueryController<
     this.queryClient = nextClient
     const options = this.defaultOptions(this.queryClient)
     this.observer = new InfiniteQueryObserver(this.queryClient, options)
-    this.setResult(this.observer.getOptimisticResult(options))
+    this.setObserverResult(this.observer.getOptimisticResult(options))
     return true
   }
 
-  private refreshOptions(): boolean {
+  private applyOptions(): boolean {
     if (!this.syncClient() || !this.observer || !this.queryClient) {
       return false
     }
 
     const options = this.defaultOptions(this.queryClient)
     this.observer.setOptions(options)
-    this.setResult(this.observer.getOptimisticResult(options))
     return true
+  }
+
+  private refreshOptions(): boolean {
+    if (!this.applyOptions() || !this.observer) {
+      return false
+    }
+
+    this.setObserverResult(this.observer.getCurrentResult())
+    return true
+  }
+
+  private assignObserverResult(
+    result: InfiniteQueryObserverResult<TData, TError>,
+  ): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.result = trackedResult
+    }
+  }
+
+  private setObserverResult(
+    result: InfiniteQueryObserverResult<TData, TError>,
+  ): void {
+    const trackedResult = this.resultTracker.update(this.observer, result)
+    if (trackedResult) {
+      this.setResult(trackedResult)
+    }
   }
 
   private defaultOptions(
@@ -383,7 +422,7 @@ export function createInfiniteQueryController<
   const controller = new InfiniteQueryController(host, options, queryClient)
 
   return Object.assign(
-    createValueAccessor(() => controller.current),
+    createValueAccessor(() => controller.readCurrent()),
     {
       refetch: controller.refetch,
       fetchNextPage: controller.fetchNextPage,

@@ -3,8 +3,6 @@ id: useIsFetching
 title: useIsFetching
 ---
 
-# Function: useIsFetching()
-
 ```ts
 function useIsFetching(
    host,

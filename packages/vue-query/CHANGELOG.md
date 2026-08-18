@@ -1,5 +1,49 @@
 # @tanstack/vue-query
 
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies [[`7e3c822`](https://github.com/TanStack/query/commit/7e3c822a10896f41a8f1031c16b85096277af677)]:
+  - @tanstack/query-core@5.101.3
+
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies [[`9eff92e`](https://github.com/TanStack/query/commit/9eff92ed86e284ec0125b3a3539d028688235bd1)]:
+  - @tanstack/query-core@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- [#10826](https://github.com/TanStack/query/pull/10826) [`1348095`](https://github.com/TanStack/query/commit/134809544c27cc033ef696d79e3fe4bf75d1e6a8) - Replace deprecated isServer with environmentManager.isServer()
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.14
+
 ## 5.100.13
 
 ### Patch Changes
