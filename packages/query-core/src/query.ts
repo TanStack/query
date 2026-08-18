@@ -397,13 +397,10 @@ export class Query<
     }
   }
 
-  // When a fetch is silently cancelled, a new fetch has been started to
-  // supersede it. Any caller holding the superseded promise should follow
-  // that new fetch instead of receiving the internal `CancelledError`. This
-  // walks the chain of superseding fetches until one settles for real. When
-  // the silent cancellation does not come from a superseding fetch (e.g. the
-  // query was destroyed), `this.#retryer` still points at the settled promise,
-  // so we rethrow instead of looping.
+  // A silent cancellation may be caused by a superseding fetch. If the
+  // current retryer is different from the cancelled promise, follow it.
+  // Otherwise (for example, when the query is destroyed), preserve the
+  // cancellation. Repeat this for a chain of superseding fetches.
   #continueOnSilentCancel(promise: Promise<TData>): Promise<TData> {
     return promise.catch((error): TData | Promise<TData> => {
       if (
