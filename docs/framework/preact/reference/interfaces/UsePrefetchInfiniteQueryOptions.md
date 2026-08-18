@@ -38,4 +38,3 @@ optional queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam>;
 ### TPageParam
 
 `TPageParam` = `unknown`
-ß
