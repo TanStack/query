@@ -20,9 +20,9 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { UseQueryOptions } from './useQuery'
-import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
+import type { UseQueryOptions } from './queryOptions'
+import type { UseInfiniteQueryOptions } from './infiniteQueryOptions'
 
 export type UseBaseQueryReturnType<
   TData,
