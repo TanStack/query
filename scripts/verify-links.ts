@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
-import { extname, resolve } from 'node:path'
+import { extname, resolve, sep } from 'node:path'
 import { glob } from 'tinyglobby'
 // @ts-ignore Could not find a declaration file for module 'markdown-link-extractor'.
 import markdownLinkExtractor from 'markdown-link-extractor'
@@ -52,6 +52,11 @@ function relativeLinkExists(link: string, file: string): boolean {
     })
     return false
   }
+
+  // `resolve` uses the platform separator, but the patterns below are written
+  // with forward slashes, so match against a normalized copy of the path.
+  // Node accepts forward slashes on Windows too, so the result stays usable.
+  absPath = absPath.split(sep).join('/')
 
   // Check if this is an example path
   const isExample = absPath.includes('/examples/')

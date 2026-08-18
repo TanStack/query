@@ -553,6 +553,25 @@ describe('queryObserver', () => {
     })
   })
 
+  it('should not have isPlaceholderData true when selector throws on placeholder data', () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => ({ count: 1 }))
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      placeholderData: { count: 0 },
+      select: () => {
+        throw new Error('selector error')
+      },
+    })
+
+    const result = observer.getCurrentResult()
+
+    expect(result.isError).toBe(true)
+    expect(result.isPlaceholderData).toBe(false)
+    expect(result.data).toBeUndefined()
+  })
+
   it('should return stale data if selector throws an error', async () => {
     const key = queryKey()
     const results: Array<QueryObserverResult> = []
@@ -1646,6 +1665,41 @@ describe('queryObserver', () => {
 
     expect(result.status).toBe('success')
     expect(result.data).toBe('data')
+  })
+
+  it('should resolve fetchOptimistic with cached data while the fetch continues', async () => {
+    const key = queryKey()
+
+    const queryFn = () => sleep(100).then(() => 'fetched')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    const promise = observer.fetchOptimistic({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    queryClient.setQueryData(key, 'cached')
+
+    const result = await promise
+
+    expect(result).toMatchObject({
+      data: 'cached',
+      status: 'success',
+      fetchStatus: 'fetching',
+    })
+
+    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('fetching')
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(queryClient.getQueryData(key)).toBe('fetched')
+    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
   })
 
   it('should track error prop when throwOnError is true', async () => {

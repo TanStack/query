@@ -15,10 +15,10 @@ The `OnlineManager` manages the online state within TanStack Query. It can be us
 
 Its available methods are:
 
-- [`setEventListener`](#onlinemanagerseteventlistener)
-- [`subscribe`](#onlinemanagersubscribe)
-- [`setOnline`](#onlinemanagersetonline)
-- [`isOnline`](#onlinemanagerisonline)
+- [`setEventListener`](#onlinemanager-seteventlistener)
+- [`subscribe`](#onlinemanager-subscribe)
+- [`setOnline`](#onlinemanager-setonline)
+- [`isOnline`](#onlinemanager-isonline)
 
 ## `onlineManager.setEventListener`
 
