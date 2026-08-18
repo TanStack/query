@@ -12,5 +12,14 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.7"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }
