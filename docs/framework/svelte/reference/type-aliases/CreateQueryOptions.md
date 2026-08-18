@@ -3,8 +3,6 @@ id: CreateQueryOptions
 title: CreateQueryOptions
 ---
 
-# Type Alias: CreateQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>;
 ```

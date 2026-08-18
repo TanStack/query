@@ -3,15 +3,13 @@ id: useQuery
 title: useQuery
 ---
 
-# Function: useQuery()
-
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<NoInfer<TData>, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:19](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useQuery.ts#L19)
+Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L15)
 
 ### Type Parameters
 
@@ -51,7 +49,7 @@ Defined in: [preact-query/src/useQuery.ts:19](https://github.com/theVedanta/quer
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:29](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useQuery.ts#L29)
+Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L25)
 
 ### Type Parameters
 
@@ -91,7 +89,7 @@ Defined in: [preact-query/src/useQuery.ts:29](https://github.com/theVedanta/quer
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:39](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useQuery.ts#L39)
+Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L35)
 
 ### Type Parameters
 
