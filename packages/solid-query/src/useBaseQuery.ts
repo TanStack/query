@@ -240,34 +240,78 @@ export function useBaseQuery<
   const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
     () => {
       const obs = observer()
-      return new Promise((resolve, reject) => {
-        resolver = resolve
-        if (isServer) {
+      const shouldThrowCurrentError = () =>
+        observerResult.isError &&
+        !observerResult.isFetching &&
+        !isRestoring() &&
+        shouldThrowError(obs.options.throwOnError, [
+          observerResult.error,
+          obs.getCurrentQuery(),
+        ])
+
+      if (isServer) {
+        return new Promise((resolve, reject) => {
+          resolver = resolve
           unsubscribe = createServerSubscriber(resolve, reject)
-        } else if (!unsubscribe && !isRestoring()) {
-          unsubscribe = createClientSubscriber()
-        }
-        obs.updateResult()
+          obs.updateResult()
 
-        if (
-          observerResult.isError &&
-          !observerResult.isFetching &&
-          !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
-            observerResult.error,
-            obs.getCurrentQuery(),
-          ])
-        ) {
+          if (shouldThrowCurrentError()) {
+            setStateWithReconciliation(observerResult)
+            return reject(observerResult.error)
+          }
+          if (!observerResult.isLoading) {
+            resolver = null
+            return resolve(
+              hydratableObserverResult(obs.getCurrentQuery(), observerResult),
+            )
+          }
+
           setStateWithReconciliation(observerResult)
-          return reject(observerResult.error)
-        }
-        if (!observerResult.isLoading) {
-          resolver = null
-          return resolve(
-            hydratableObserverResult(obs.getCurrentQuery(), observerResult),
-          )
-        }
+        })
+      }
 
+      if (!unsubscribe && !isRestoring()) {
+        unsubscribe = createClientSubscriber()
+      }
+      obs.updateResult()
+
+      if (shouldThrowCurrentError()) {
+        setStateWithReconciliation(observerResult)
+        throw observerResult.error
+      }
+      /**
+       * When data is available and the observer is not in an initial loading
+       * state, we return the result synchronously (a non-thenable) instead of
+       * a resolved Promise. A Promise — even one that resolves within the same
+       * tick — leaves the resource in a pending/refreshing state for at least
+       * a microtask, which makes every enclosing <Suspense> boundary flip to
+       * its fallback and back. That flip detaches and re-inserts the
+       * boundary's DOM, restarting CSS animations and resetting
+       * focus/scroll/iframe state on every background refetch, even though no
+       * fallback is ever painted. Returning a plain value keeps the resource
+       * in its ready state, so Suspense is only triggered by genuine initial
+       * loads.
+       *
+       * The exception is when a previous fetcher promise is still pending
+       * (`resolver` is set): the boundary is already suspended — possibly
+       * inside a transition — and completing through the Promise path keeps
+       * Solid's Suspense/Transition bookkeeping intact.
+       */
+      if (!observerResult.isLoading && observerResult.data !== undefined) {
+        const result = observerResult
+        if (resolver) {
+          resolver = null
+          return new Promise((resolve) => resolve(result))
+        }
+        return result
+      }
+      if (!observerResult.isLoading) {
+        resolver = null
+        return new Promise((resolve) => resolve(observerResult))
+      }
+
+      return new Promise((resolve) => {
+        resolver = resolve
         setStateWithReconciliation(observerResult)
       })
     },
