@@ -86,12 +86,15 @@ export default function TodoListCache() {
   return (
     <div>
       <p style={{ fontSize: '0.875rem', color: '#555', marginBottom: '1rem' }}>
-        <strong>Approach 2 — via cache manipulation:</strong> <code>onMutate</code>{' '}
-        snapshots the cache and writes the optimistic item in. <code>onError</code>{' '}
-        restores the snapshot on failure.
+        <strong>Approach 2 — via cache manipulation:</strong>{' '}
+        <code>onMutate</code> snapshots the cache and writes the optimistic item
+        in. <code>onError</code> restores the snapshot on failure.
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}
+      >
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

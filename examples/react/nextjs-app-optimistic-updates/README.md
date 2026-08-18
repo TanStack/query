@@ -31,7 +31,10 @@ const mutation = useMutation({
   onMutate: async (text) => {
     await queryClient.cancelQueries({ queryKey: ['todos'] })
     const previousTodos = queryClient.getQueryData<Todo[]>(['todos'])
-    queryClient.setQueryData<Todo[]>(['todos'], (old = []) => [...old, optimistic])
+    queryClient.setQueryData<Todo[]>(['todos'], (old = []) => [
+      ...old,
+      optimistic,
+    ])
     return { previousTodos }
   },
   onError: (_err, _vars, context) => {

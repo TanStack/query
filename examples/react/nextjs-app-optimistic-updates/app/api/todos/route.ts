@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     typeof body === 'object' &&
     'text' in body &&
     typeof (body as { text: unknown }).text === 'string'
-      ? ((body as { text: string }).text.trim())
+      ? (body as { text: string }).text.trim()
       : ''
 
   if (!text) {

@@ -12,7 +12,8 @@ export default function ApproachTabs() {
   const tabStyle = (tab: Tab): React.CSSProperties => ({
     padding: '0.5rem 1rem',
     border: 'none',
-    borderBottom: activeTab === tab ? '2px solid #0070f3' : '2px solid transparent',
+    borderBottom:
+      activeTab === tab ? '2px solid #0070f3' : '2px solid transparent',
     background: 'none',
     cursor: 'pointer',
     fontWeight: activeTab === tab ? 600 : 400,
@@ -21,8 +22,17 @@ export default function ApproachTabs() {
 
   return (
     <div>
-      <div style={{ display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '1.5rem' }}>
-        <button style={tabStyle('ui-variables')} onClick={() => setActiveTab('ui-variables')}>
+      <div
+        style={{
+          display: 'flex',
+          borderBottom: '1px solid #ddd',
+          marginBottom: '1.5rem',
+        }}
+      >
+        <button
+          style={tabStyle('ui-variables')}
+          onClick={() => setActiveTab('ui-variables')}
+        >
           Via UI Variables
         </button>
         <button style={tabStyle('cache')} onClick={() => setActiveTab('cache')}>

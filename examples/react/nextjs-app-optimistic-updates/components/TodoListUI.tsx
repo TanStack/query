@@ -55,7 +55,10 @@ export default function TodoListUI() {
         manipulation needed. On error the pending item simply disappears.
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}
+      >
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -75,7 +78,10 @@ export default function TodoListUI() {
 
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {todos.map((todo) => (
-          <li key={todo.id} style={{ padding: '0.4rem 0', borderBottom: '1px solid #eee' }}>
+          <li
+            key={todo.id}
+            style={{ padding: '0.4rem 0', borderBottom: '1px solid #eee' }}
+          >
             {todo.text}
           </li>
         ))}
