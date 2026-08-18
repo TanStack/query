@@ -1166,6 +1166,30 @@ describe('mutations', () => {
     })
   })
 
+  it('should release the retryer once its mutation has settled', async () => {
+    let count = 0
+    const observer = new MutationObserver(queryClient, {
+      mutationFn: () => {
+        count += 1
+        return sleep(10).then(() => 'data')
+      },
+    })
+
+    const mutatePromise = observer.mutate()
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe('data')
+    expect(count).toBe(1)
+
+    const mutation = queryClient.getMutationCache().getAll()[0]!
+    // With the retryer cleared, continue() falls through to a fresh execute().
+    // If the settled retryer were retained, continue() would return it and skip
+    // the mutation function.
+    const continued = mutation.continue()
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(continued).resolves.toBe('data')
+    expect(count).toBe(2)
+  })
+
   it('should not remove mutation when one observer is removed but another still exists', async () => {
     const observer1 = new MutationObserver(queryClient, {
       gcTime: 10,

@@ -181,7 +181,7 @@ export class Mutation<
       mutationKey: this.options.mutationKey,
     } satisfies MutationFunctionContext
 
-    this.#retryer = createRetryer({
+    const retryer = (this.#retryer = createRetryer({
       fn: () => {
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
@@ -200,10 +200,10 @@ export class Mutation<
       retryDelay: this.options.retryDelay,
       networkMode: this.options.networkMode,
       canRun: () => this.#mutationCache.canRun(this),
-    })
+    }))
 
     const restored = this.state.status === 'pending'
-    const isPaused = !this.#retryer.canStart()
+    const isPaused = !retryer.canStart()
 
     try {
       if (restored) {
@@ -232,7 +232,7 @@ export class Mutation<
           })
         }
       }
-      const data = await this.#retryer.start()
+      const data = await retryer.start()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(
@@ -324,6 +324,11 @@ export class Mutation<
       this.#dispatch({ type: 'error', error: error as TError })
       throw error
     } finally {
+      // The settled retryer's promise would otherwise pin this mutation's
+      // variables/result for as long as MutationCache retains the instance.
+      if (this.#retryer === retryer) {
+        this.#retryer = undefined
+      }
       this.#mutationCache.runNext(this)
     }
   }
