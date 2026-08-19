@@ -162,13 +162,10 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
-    const data2 = queryClient.query(options)
-    // Should not error
-    const data3 = queryClient.fetchQuery(options)
+    const data2 = queryClient.fetchQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
     expectTypeOf(data2).toEqualTypeOf<Promise<number>>()
-    expectTypeOf(data3).toEqualTypeOf<Promise<number>>()
   })
 
   it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {

@@ -171,6 +171,16 @@ describe('query', () => {
 
     expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
+
+  it('should not accept top-level options getters', () => {
+    assertType<Parameters<QueryClient['query']>>([
+      // @ts-expect-error One-shot imperative methods do not resolve top-level getters
+      () => ({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+      }),
+    ])
+  })
 })
 
 describe('infiniteQuery', () => {
@@ -195,6 +205,18 @@ describe('infiniteQuery', () => {
     })
 
     expectTypeOf(result).toEqualTypeOf<Promise<Array<number>>>()
+  })
+
+  it('should not accept top-level options getters', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      // @ts-expect-error One-shot imperative methods do not resolve top-level getters
+      () => ({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+      }),
+    ])
   })
 
   it('should allow passing pages with getNextPageParam', () => {

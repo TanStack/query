@@ -3,6 +3,7 @@ import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { queryOptions } from '../queryOptions'
 
 vi.mock('@tanstack/query-core', async () => {
   const actual = await vi.importActual<{
@@ -368,6 +369,19 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
         staleTime,
         select,
+      })
+    })
+
+    it('should accept explicitly resolved getter options and unwrap queryKey', () => {
+      const queryClient = new QueryClient()
+      const options = queryOptions(() => ({
+        queryKey: queryKeyRef,
+      }))
+
+      queryClient.query(options())
+
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+        queryKey: queryKeyUnref,
       })
     })
   })

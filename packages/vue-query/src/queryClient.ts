@@ -236,6 +236,8 @@ export class QueryClient extends QC {
     )
   }
 
+  // These one-shot imperative methods do not resolve top-level option getters.
+  // Resolve getters explicitly before calling, e.g. queryClient.query(options()).
   query<
     TQueryFnData,
     TError = DefaultError,
@@ -261,27 +263,16 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options:
-      | MaybeRefDeep<
-          QueryExecuteOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey,
-            TPageParam
-          >
-        >
-      | (() => MaybeRefDeep<
-          QueryExecuteOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey,
-            TPageParam
-          >
-        >),
+    options: MaybeRefDeep<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
   ): Promise<TData>
   query<
     TQueryFnData,
@@ -390,6 +381,8 @@ export class QueryClient extends QC {
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
+  // These one-shot imperative methods do not resolve top-level option getters.
+  // Resolve getters explicitly before calling, e.g. queryClient.infiniteQuery(options()).
   infiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -416,25 +409,15 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options:
-      | MaybeRefDeep<
-          InfiniteQueryExecuteOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryKey,
-            TPageParam
-          >
-        >
-      | (() => MaybeRefDeep<
-          InfiniteQueryExecuteOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryKey,
-            TPageParam
-          >
-        >),
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
   ): Promise<
     Array<TData> extends Array<InfiniteData<TQueryFnData>>
       ? InfiniteData<TQueryFnData, TPageParam>
