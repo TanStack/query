@@ -53,9 +53,6 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
 
   const query = client
     .getQueryCache()
@@ -144,11 +141,6 @@ export function useBaseQuery<
   ) {
     throw result.error
   }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
 
   if (
     defaultedOptions.experimental_prefetchInRender &&
