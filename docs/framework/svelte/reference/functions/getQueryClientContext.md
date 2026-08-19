@@ -3,8 +3,6 @@ id: getQueryClientContext
 title: getQueryClientContext
 ---
 
-# Function: getQueryClientContext()
-
 ```ts
 function getQueryClientContext(): QueryClient;
 ```

@@ -3,8 +3,6 @@ id: setIsRestoringContext
 title: setIsRestoringContext
 ---
 
-# Function: setIsRestoringContext()
-
 ```ts
 function setIsRestoringContext(isRestoring): void;
 ```

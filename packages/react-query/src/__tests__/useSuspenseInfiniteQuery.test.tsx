@@ -182,4 +182,55 @@ describe('useSuspenseInfiniteQuery', () => {
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
+
+  it('should still suspense if queryClient has placeholderData config', async () => {
+    const key = queryKey()
+    const queryClientWithPlaceholder = new QueryClient({
+      defaultOptions: {
+        queries: {
+          placeholderData: (previousData: any) => previousData,
+        },
+      },
+    })
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
+
+    let count = 0
+
+    function Page() {
+      const [stateKey, setStateKey] = React.useState(key)
+
+      const state = useSuspenseInfiniteQuery({
+        queryKey: stateKey,
+        queryFn: () => sleep(10).then(() => ++count),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          data: {String(state.data?.pages.join(','))}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClientWithPlaceholder,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+  })
 })
