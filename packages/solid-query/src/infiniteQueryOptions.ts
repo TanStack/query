@@ -1,9 +1,9 @@
 import type {
-  DataTag,
   DefaultError,
   InfiniteData,
   NonUndefinedGuard,
   QueryKey,
+  QueryKeyWithDataTag,
 } from '@tanstack/query-core'
 import type { InfiniteQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
@@ -58,9 +58,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -85,9 +84,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions(options: unknown) {
   return options

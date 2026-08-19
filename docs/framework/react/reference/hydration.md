@@ -122,7 +122,8 @@ function App() {
   - Optional
   - `defaultOptions: QueryOptions`
     - The default query options to use for the hydrated queries.
-  - `queryClient?: QueryClient`
-    - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+    - Note: unlike `hydrate`, `mutations` cannot be set here.
+- `queryClient?: QueryClient`
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 [//]: # 'HydrationBoundary'

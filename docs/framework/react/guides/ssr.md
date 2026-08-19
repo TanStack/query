@@ -11,7 +11,7 @@ For deeper examples on hydration + prefetching (including code splitting), see t
 
 For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](./advanced-ssr.md).
 
-If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
+If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-next-js-pages-router-example) or the [Full Remix example](#full-remix-example) below.
 
 ## Server Rendering & React Query
 

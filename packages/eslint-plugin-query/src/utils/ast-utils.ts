@@ -46,91 +46,6 @@ export const ASTUtils = {
       ASTUtils.isPropertyWithIdentifierKey(x, key),
     )
   },
-  getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
-    const identifiers: Array<TSESTree.Identifier> = []
-
-    if (ASTUtils.isIdentifier(node)) {
-      identifiers.push(node)
-    }
-
-    if ('arguments' in node) {
-      node.arguments.forEach((x) => {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
-      })
-    }
-
-    if ('elements' in node) {
-      node.elements.forEach((x) => {
-        if (x !== null) {
-          identifiers.push(...ASTUtils.getNestedIdentifiers(x))
-        }
-      })
-    }
-
-    if ('properties' in node) {
-      node.properties.forEach((x) => {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
-      })
-    }
-
-    if ('expressions' in node) {
-      node.expressions.forEach((x) => {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
-      })
-    }
-
-    if ('left' in node) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.left))
-    }
-
-    if ('right' in node) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.right))
-    }
-
-    if (node.type === AST_NODE_TYPES.Property) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.value))
-    }
-
-    if (node.type === AST_NODE_TYPES.SpreadElement) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
-    }
-
-    if (node.type === AST_NODE_TYPES.MemberExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.object))
-    }
-
-    if (node.type === AST_NODE_TYPES.UnaryExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
-    }
-
-    if (node.type === AST_NODE_TYPES.ChainExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
-    }
-
-    if (node.type === AST_NODE_TYPES.TSNonNullExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
-    }
-
-    if (node.type === AST_NODE_TYPES.ArrowFunctionExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
-    }
-
-    if (node.type === AST_NODE_TYPES.FunctionExpression) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
-    }
-
-    if (node.type === AST_NODE_TYPES.BlockStatement) {
-      identifiers.push(
-        ...node.body.map((body) => ASTUtils.getNestedIdentifiers(body)).flat(),
-      )
-    }
-
-    if (node.type === AST_NODE_TYPES.ReturnStatement && node.argument) {
-      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
-    }
-
-    return identifiers
-  },
   traverseUpOnly(
     identifier: TSESTree.Node,
     allowedNodeTypes: Array<AST_NODE_TYPES>,
@@ -142,6 +57,21 @@ export const ASTUtils = {
     }
 
     return identifier
+  },
+  traverseUpMemberExpression(node: TSESTree.Node): TSESTree.Node {
+    const parent = node.parent
+
+    if (
+      parent !== undefined &&
+      ((parent.type === AST_NODE_TYPES.MemberExpression &&
+        parent.object === node) ||
+        parent.type === AST_NODE_TYPES.ChainExpression ||
+        parent.type === AST_NODE_TYPES.TSNonNullExpression)
+    ) {
+      return ASTUtils.traverseUpMemberExpression(parent)
+    }
+
+    return node
   },
   isDeclaredInNode(params: {
     functionNode: TSESTree.Node
@@ -184,10 +114,22 @@ export const ASTUtils = {
     const references = collectReferences(scope)
       .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
       .map((x) => {
-        const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
-          AST_NODE_TYPES.MemberExpression,
-          AST_NODE_TYPES.Identifier,
-        ])
+        const memberPath = ASTUtils.traverseUpMemberExpression(x.identifier)
+        const memberExpression = memberPath.parent
+        const isComputedCallProperty =
+          memberExpression !== undefined &&
+          memberExpression.type === AST_NODE_TYPES.MemberExpression &&
+          memberExpression.computed &&
+          memberExpression.property === memberPath &&
+          memberExpression.parent.type === AST_NODE_TYPES.CallExpression &&
+          memberExpression.parent.callee === memberExpression
+
+        const referenceNode = isComputedCallProperty
+          ? memberPath
+          : ASTUtils.traverseUpOnly(x.identifier, [
+              AST_NODE_TYPES.MemberExpression,
+              AST_NODE_TYPES.Identifier,
+            ])
 
         return {
           variable: x,
@@ -205,27 +147,6 @@ export const ASTUtils = {
     )
 
     return uniqueBy(externalRefs, (x) => x.text).map((x) => x.variable)
-  },
-  mapKeyNodeToText(
-    node: TSESTree.Node,
-    sourceCode: Readonly<TSESLint.SourceCode>,
-  ) {
-    return sourceCode.getText(
-      ASTUtils.traverseUpOnly(node, [
-        AST_NODE_TYPES.MemberExpression,
-        AST_NODE_TYPES.TSNonNullExpression,
-        AST_NODE_TYPES.Identifier,
-      ]),
-    )
-  },
-  mapKeyNodeToBaseText(
-    node: TSESTree.Node,
-    sourceCode: Readonly<TSESLint.SourceCode>,
-  ) {
-    return ASTUtils.mapKeyNodeToText(node, sourceCode).replace(
-      /(?:\?(\.)|!)/g,
-      '$1',
-    )
   },
   isValidReactComponentOrHookName(
     identifier: TSESTree.Identifier | null | undefined,
@@ -288,93 +209,5 @@ export const ASTUtils = {
     }
 
     return resolvedNode.init
-  },
-  getClosestVariableDeclarator(node: TSESTree.Node) {
-    let currentNode: TSESTree.Node | undefined = node
-
-    while (currentNode.type !== AST_NODE_TYPES.Program) {
-      if (currentNode.type === AST_NODE_TYPES.VariableDeclarator) {
-        return currentNode
-      }
-
-      currentNode = currentNode.parent
-    }
-
-    return undefined
-  },
-  getNestedReturnStatements(
-    node: TSESTree.Node,
-  ): Array<TSESTree.ReturnStatement> {
-    const returnStatements: Array<TSESTree.ReturnStatement> = []
-
-    if (node.type === AST_NODE_TYPES.ReturnStatement) {
-      returnStatements.push(node)
-    }
-
-    if ('body' in node && node.body !== undefined && node.body !== null) {
-      Array.isArray(node.body)
-        ? node.body.forEach((x) => {
-            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
-          })
-        : returnStatements.push(
-            ...ASTUtils.getNestedReturnStatements(node.body),
-          )
-    }
-
-    if ('consequent' in node) {
-      Array.isArray(node.consequent)
-        ? node.consequent.forEach((x) => {
-            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
-          })
-        : returnStatements.push(
-            ...ASTUtils.getNestedReturnStatements(node.consequent),
-          )
-    }
-
-    if ('alternate' in node && node.alternate !== null) {
-      Array.isArray(node.alternate)
-        ? node.alternate.forEach((x) => {
-            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
-          })
-        : returnStatements.push(
-            ...ASTUtils.getNestedReturnStatements(node.alternate),
-          )
-    }
-
-    if ('cases' in node) {
-      node.cases.forEach((x) => {
-        returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
-      })
-    }
-
-    if ('block' in node) {
-      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.block))
-    }
-
-    if ('handler' in node && node.handler !== null) {
-      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.handler))
-    }
-
-    if ('finalizer' in node && node.finalizer !== null) {
-      returnStatements.push(
-        ...ASTUtils.getNestedReturnStatements(node.finalizer),
-      )
-    }
-
-    if (
-      'expression' in node &&
-      node.expression !== true &&
-      node.expression !== false
-    ) {
-      returnStatements.push(
-        ...ASTUtils.getNestedReturnStatements(node.expression),
-      )
-    }
-
-    if ('test' in node && node.test !== null) {
-      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.test))
-    }
-
-    return returnStatements
   },
 }

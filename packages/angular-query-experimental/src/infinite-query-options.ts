@@ -1,11 +1,11 @@
 import type {
-  DataTag,
   DefaultError,
   InfiniteData,
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
   QueryKey,
+  QueryKeyWithDataTag,
   SkipToken,
 } from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from './types'
@@ -79,7 +79,7 @@ export type DefinedInitialDataInfiniteOptions<
 }
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -105,12 +105,11 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -136,12 +135,11 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.
@@ -167,12 +165,11 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
- * Allows to share and re-use infinite query options in a type-safe way.
+ * Allows sharing and re-using infinite query options in a type-safe way.
  *
  * The `queryKey` will be tagged with the type from `queryFn`.
  * @param options - The infinite query options to tag with the type from `queryFn`.

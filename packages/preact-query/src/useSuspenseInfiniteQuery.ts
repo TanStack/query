@@ -43,6 +43,7 @@ export function useSuspenseInfiniteQuery<
       enabled: true,
       suspense: true,
       throwOnError: defaultThrowOnError,
+      placeholderData: undefined,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,

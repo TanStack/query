@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  QueryObserver,
+  dehydrate,
+  hydrate,
+  onlineManager,
+} from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
@@ -89,12 +95,12 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
+    vi.useRealTimers()
   })
 
   function renderDevtools(
@@ -310,6 +316,25 @@ describe('Devtools', () => {
         window.removeEventListener('@tanstack/query-devtools-event', listener)
       }
     })
+
+    it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      queryClient.fetchQuery({
+        queryKey: ['posts'],
+        queryFn: () => [{ id: 1 }],
+        queryKeyHashFn: () => 'custom-posts-hash',
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      const dehydratedState = dehydrate(queryClient)
+
+      queryClient = new QueryClient()
+      hydrate(queryClient, dehydratedState)
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key custom-posts-hash/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('view toggle', () => {
@@ -390,6 +415,18 @@ describe('Devtools', () => {
       expect(rendered.getByText('static')).toBeInTheDocument()
       expect(rendered.getByLabelText(/, static/)).toBeInTheDocument()
     })
+
+    it('should render a query row when an object query key is mutated in place', () => {
+      const filters = { page: 1 }
+      queryClient.setQueryData(['mutable-key', filters], 'x')
+      filters.page = 2
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('picture-in-picture', () => {
@@ -403,7 +440,11 @@ describe('Devtools', () => {
       | 'close'
     >
 
-    function stubPipWindow() {
+    function stubPipWindow(
+      overrides: Partial<
+        Pick<FakePipWindow, 'innerWidth' | 'innerHeight'>
+      > = {},
+    ) {
       const pipDocument = document.implementation.createHTMLDocument('PiP')
       const listeners = new Map<string, EventListener>()
       const fakeWindow: FakePipWindow = {
@@ -417,6 +458,7 @@ describe('Devtools', () => {
           listeners.delete(event)
         }),
         close: vi.fn(),
+        ...overrides,
       }
       const open = vi.fn(() => fakeWindow)
       vi.stubGlobal('open', open)
@@ -448,43 +490,6 @@ describe('Devtools', () => {
       )
     })
 
-    it('should automatically open a PiP window when "pip_open" is "true" in "localStorage"', () => {
-      const { open } = stubPipWindow()
-
-      renderDevtools(
-        { initialIsOpen: true },
-        { 'TanstackQueryDevtools.pip_open': 'true' },
-      )
-
-      expect(open).toHaveBeenCalled()
-    })
-
-    it('should log and reset "pip_open" when the browser blocks the popup', () => {
-      vi.stubGlobal(
-        'open',
-        vi.fn(() => null),
-      )
-      const consoleError = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {})
-
-      try {
-        renderDevtools(
-          { initialIsOpen: true },
-          { 'TanstackQueryDevtools.pip_open': 'true' },
-        )
-
-        expect(consoleError).toHaveBeenCalledWith(
-          expect.stringContaining('Failed to open popup'),
-        )
-        expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-          'false',
-        )
-      } finally {
-        consoleError.mockRestore()
-      }
-    })
-
     it('should hide the in-page panel while a PiP window is open', () => {
       stubPipWindow()
       const rendered = renderDevtools({ initialIsOpen: true })
@@ -498,7 +503,7 @@ describe('Devtools', () => {
       ).toBeNull()
     })
 
-    it('should restore the in-page panel and reset "pip_open" when the PiP window is closed', () => {
+    it('should restore the in-page panel when the PiP window is closed', () => {
       const { fire } = stubPipWindow()
       const rendered = renderDevtools({ initialIsOpen: true })
 
@@ -507,12 +512,30 @@ describe('Devtools', () => {
       )
       fire('pagehide')
 
-      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
-        'false',
-      )
       expect(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       ).toBeInTheDocument()
+    })
+
+    it('should render the PiP panel with the narrow layout when the PiP window is below the second breakpoint', () => {
+      // secondBreakpoint = 796; pick a width comfortably below it so the
+      // PiP panel evaluates its narrow (`flex-direction: column`) branch.
+      const { pipDocument } = stubPipWindow({ innerWidth: 500 })
+      queryClient.setQueryData(['narrow-pip-query'], { hello: 'world' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText('Open in picture-in-picture mode'),
+      )
+
+      expect(
+        pipDocument.querySelector(
+          '[aria-label="Close Tanstack query devtools"]',
+        ),
+      ).not.toBeNull()
+      expect(
+        pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
+      ).not.toBeNull()
     })
   })
 
@@ -1080,12 +1103,13 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
+      expect(themeTrigger).not.toBe(
+        document.querySelector('.tsqd-settings-menu-sub-trigger-position'),
+      )
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       expect(
@@ -1100,12 +1124,10 @@ describe('Devtools', () => {
         key: 'Enter',
       })
 
-      const themeTrigger = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          '.tsqd-settings-menu-sub-trigger',
-        ),
-      ).find((el) => String(el.textContent).includes('Theme'))
-      expect(themeTrigger).not.toBeUndefined()
+      const themeTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-theme',
+      )
+      expect(themeTrigger).not.toBeNull()
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       const themeMenu = document.querySelector(

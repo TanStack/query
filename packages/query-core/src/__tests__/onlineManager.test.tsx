@@ -19,7 +19,7 @@ describe('onlineManager', () => {
     // Force navigator to be undefined
     // @ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
-    expect(onlineManager.isOnline()).toBeTruthy()
+    expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
   })
@@ -28,7 +28,7 @@ describe('onlineManager', () => {
     const navigatorSpy = vi.spyOn(navigator, 'onLine', 'get')
     navigatorSpy.mockImplementation(() => true)
 
-    expect(onlineManager.isOnline()).toBeTruthy()
+    expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
   })
@@ -48,7 +48,7 @@ describe('onlineManager', () => {
 
     vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
-    expect(onlineManager.isOnline()).toBeFalsy()
+    expect(onlineManager.isOnline()).toBe(false)
   })
 
   it('setEventListener should call previous remove handler when replacing an event listener', () => {
@@ -155,6 +155,20 @@ describe('onlineManager', () => {
     expect(setupSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
+  })
+
+  it('should update online status from window online and offline events', () => {
+    const unsubscribe = onlineManager.subscribe(() => undefined)
+
+    expect(onlineManager.isOnline()).toBe(true)
+
+    window.dispatchEvent(new Event('offline'))
+    expect(onlineManager.isOnline()).toBe(false)
+
+    window.dispatchEvent(new Event('online'))
+    expect(onlineManager.isOnline()).toBe(true)
+
+    unsubscribe()
   })
 
   it('should call listeners when setOnline is called', () => {

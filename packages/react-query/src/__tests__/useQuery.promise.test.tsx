@@ -35,8 +35,8 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should work with a basic test', async () => {
@@ -499,14 +499,14 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (++queryCount > 1) {
-            // second time this query mounts, it should not throw
-            return 'data'
-          }
-          throw new Error('Error test')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (++queryCount > 1) {
+              // second time this query mounts, it should not throw
+              return 'data'
+            }
+            throw new Error('Error test')
+          }),
         retry: false,
       })
 
@@ -788,14 +788,16 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     expect(queryFn).toHaveBeenCalledOnce()
   })
 
-  it.skip('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
+  it('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
-    let count = 0
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
-      return 'test' + count++
-    })
+    // `sleep` is longer than usual on purpose: with `shouldAdvanceTime`, the
+    // real time spent rendering and awaiting `takeRender` (~40ms) is added to
+    // the fake clock, so a shorter fetch would resolve before `cancel` can take
+    // effect. A longer fetch keeps the query in-flight when it is cancelled.
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(50).then(() => 'test'))
 
     const options = {
       queryKey: key,
@@ -1393,13 +1395,13 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     function Page() {
       const query = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = 0 }) => {
-          await sleep(10)
-          if (pageParam === 0) {
-            return { nextCursor: 1, data: 'page-1' }
-          }
-          throw new Error('page error')
-        },
+        queryFn: ({ pageParam = 0 }) =>
+          sleep(10).then(() => {
+            if (pageParam === 0) {
+              return { nextCursor: 1, data: 'page-1' }
+            }
+            throw new Error('page error')
+          }),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         retry: false,
