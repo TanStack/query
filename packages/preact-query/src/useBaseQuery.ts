@@ -53,10 +53,6 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
-
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
       console.error(
@@ -133,11 +129,6 @@ export function useBaseQuery<
   ) {
     throw result.error
   }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
