@@ -770,6 +770,10 @@ describe('queriesObserver', () => {
     expect(trackPropSpy).toHaveBeenCalledWith('status')
     expect(trackPropSpy).toHaveBeenCalledTimes(3)
 
+    void trackedResults[1]!.status
+
+    expect(trackPropSpy).toHaveBeenCalledTimes(4)
+
     trackPropSpy.mockRestore()
   })
 

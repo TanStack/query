@@ -3,8 +3,6 @@ id: injectInfiniteQuery
 title: injectInfiniteQuery
 ---
 
-# Function: injectInfiniteQuery()
-
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
 

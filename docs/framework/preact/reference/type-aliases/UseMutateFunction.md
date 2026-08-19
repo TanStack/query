@@ -3,13 +3,11 @@ id: UseMutateFunction
 title: UseMutateFunction
 ---
 
-# Type Alias: UseMutateFunction()\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```
 
-Defined in: [preact-query/src/types.ts:202](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L202)
+Defined in: [preact-query/src/types.ts:201](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L201)
 
 ## Type Parameters
 

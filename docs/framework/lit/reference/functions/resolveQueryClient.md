@@ -3,8 +3,6 @@ id: resolveQueryClient
 title: resolveQueryClient
 ---
 
-# Function: resolveQueryClient()
-
 ```ts
 function resolveQueryClient(explicit?): QueryClient;
 ```

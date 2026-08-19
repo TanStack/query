@@ -3,8 +3,6 @@ id: queryOptions
 title: queryOptions
 ---
 
-# Function: queryOptions()
-
 ## Call Signature
 
 ```ts

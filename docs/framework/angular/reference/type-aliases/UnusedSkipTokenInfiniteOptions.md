@@ -3,8 +3,6 @@ id: UnusedSkipTokenInfiniteOptions
 title: UnusedSkipTokenInfiniteOptions
 ---
 
-# Type Alias: UnusedSkipTokenInfiniteOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 ```ts
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
