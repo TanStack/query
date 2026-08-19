@@ -3,8 +3,6 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
-# Function: infiniteQueryOptions()
-
 ```ts
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```

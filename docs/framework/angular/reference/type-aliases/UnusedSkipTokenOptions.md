@@ -3,8 +3,6 @@ id: UnusedSkipTokenOptions
 title: UnusedSkipTokenOptions
 ---
 
-# Type Alias: UnusedSkipTokenOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```

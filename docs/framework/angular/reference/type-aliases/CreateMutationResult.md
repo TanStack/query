@@ -3,13 +3,11 @@ id: CreateMutationResult
 title: CreateMutationResult
 ---
 
-# Type Alias: CreateMutationResult\<TData, TError, TVariables, TOnMutateResult, TState\>
-
 ```ts
 type CreateMutationResult<TData, TError, TVariables, TOnMutateResult, TState> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">>;
 ```
 
-Defined in: [types.ts:266](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L266)
+Defined in: [types.ts:260](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L260)
 
 ## Type Parameters
 

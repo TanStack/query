@@ -3,9 +3,7 @@ id: queryOptions
 title: queryOptions
 ---
 
-# Function: queryOptions()
-
-Allows to share and re-use query options in a type-safe way.
+Allows sharing and re-using query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -35,7 +33,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<Cre
 
 Defined in: [query-options.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L76)
 
-Allows to share and re-use query options in a type-safe way.
+Allows sharing and re-using query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -93,7 +91,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyo
 
 Defined in: [query-options.ts:108](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L108)
 
-Allows to share and re-use query options in a type-safe way.
+Allows sharing and re-using query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
@@ -151,7 +149,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQu
 
 Defined in: [query-options.ts:140](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L140)
 
-Allows to share and re-use query options in a type-safe way.
+Allows sharing and re-using query options in a type-safe way.
 
 The `queryKey` will be tagged with the type from `queryFn`.
 
