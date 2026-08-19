@@ -31,6 +31,37 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it('should notify a sibling observer when another observer on the same query unsubscribes during dispatch', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockImplementation(() => sleep(10).then(() => 'data'))
+
+    const observerA = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: Infinity,
+    })
+    const observerB = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: Infinity,
+    })
+
+    let unsubscribeA = () => {}
+    unsubscribeA = observerA.subscribe((result) => {
+      if (result.status === 'success') {
+        unsubscribeA()
+      }
+    })
+    const unsubscribeB = observerB.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(15)
+
+    expect(observerB.getCurrentResult().status).toBe('success')
+    expect(observerB.getCurrentResult().data).toBe('data')
+
+    unsubscribeB()
+  })
+
   it('should trigger a fetch when subscribed', () => {
     const key = queryKey()
     const queryFn = vi

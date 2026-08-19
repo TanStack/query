@@ -704,7 +704,9 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.observers.forEach((observer) => {
+      // Iterate over a snapshot so that an observer unsubscribing during
+      // notification cannot cause a sibling observer to be skipped.
+      ;[...this.observers].forEach((observer) => {
         observer.onQueryUpdate()
       })
 
