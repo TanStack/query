@@ -59,7 +59,10 @@ interface BroadcastQueryClientOptions {
    * are never entirely silent. May return a `Promise`; any rejection is
    * caught internally.
    */
-  onBroadcastError?: (error: unknown, event: BroadcastErrorEvent) => void | Promise<void>
+  onBroadcastError?: (
+    error: unknown,
+    event: BroadcastErrorEvent,
+  ) => void | Promise<void>
 }
 
 interface BroadcastErrorEvent {
