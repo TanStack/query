@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup'
-import { legacyConfig, modernConfig } from './root.tsup.config.js'
+import { defineConfig } from 'tsdown'
+import { legacyConfig, modernConfig } from './root.tsdown.config.js'
 
 export default defineConfig([
   modernConfig({ entry: ['src/index.ts'] }),
