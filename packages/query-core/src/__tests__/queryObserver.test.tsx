@@ -33,7 +33,9 @@ describe('queryObserver', () => {
 
   it('should notify a sibling observer when another observer on the same query unsubscribes during dispatch', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockImplementation(() => sleep(10).then(() => 'data'))
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
 
     const observerA = new QueryObserver(queryClient, {
       queryKey: key,
