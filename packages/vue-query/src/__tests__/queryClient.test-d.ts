@@ -151,3 +151,107 @@ describe('fetchInfiniteQuery', () => {
     ])
   })
 })
+
+describe('query', () => {
+  it('should return the type of the query fn', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<string>>()
+  })
+
+  it('should return the selected type', () => {
+    const result = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should not accept top-level options getters', () => {
+    assertType<Parameters<QueryClient['query']>>([
+      // @ts-expect-error One-shot imperative methods do not resolve top-level getters
+      () => ({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+      }),
+    ])
+  })
+})
+
+describe('infiniteQuery', () => {
+  it('should return infinite data', async () => {
+    const data = await new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should return the selected type', () => {
+    const result = new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve({ count: 1 }),
+      getNextPageParam: () => 2,
+      initialPageParam: 1,
+      select: (data) => data.pages.map((page) => page.count),
+    })
+
+    expectTypeOf(result).toEqualTypeOf<Promise<Array<number>>>()
+  })
+
+  it('should not accept top-level options getters', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      // @ts-expect-error One-shot imperative methods do not resolve top-level getters
+      () => ({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+      }),
+    ])
+  })
+
+  it('should allow passing pages with getNextPageParam', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        pages: 5,
+      },
+    ])
+  })
+
+  it('should not allow passing pages without getNextPageParam', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      // @ts-expect-error Property 'getNextPageParam' is missing
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        pages: 5,
+      },
+    ])
+  })
+
+  it('should preserve page param inference', () => {
+    new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return Promise.resolve(pageParam.toString())
+      },
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+    })
+  })
+})
