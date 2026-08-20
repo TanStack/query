@@ -3,12 +3,7 @@ id: optimistic-updates
 title: Optimistic Updates
 ref: docs/framework/react/guides/optimistic-updates.md
 replace:
-  {
-    'React': 'Svelte',
-    'useMutation': 'createMutation',
-    'hook': 'function',
-    'useMutationState': 'createMutationState',
-  }
+  { 'React': 'Svelte', 'useMutation': 'createMutation', 'hook': 'function' }
 ---
 
 [//]: # 'ExampleUI1'
@@ -72,7 +67,7 @@ const variables = useMutationState(() => ({
 [//]: # 'Example'
 
 ```ts
-const queryClient = createQueryClient()
+const queryClient = useQueryClient()
 
 createMutation(() => ({
   mutationFn: updateTodo,

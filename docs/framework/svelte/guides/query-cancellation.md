@@ -143,7 +143,7 @@ const todosQuery = createQuery(() => ({
     },
   }))
 
-  const queryClient = new QueryClient()
+  const queryClient = useQueryClient()
 </script>
 
 <button

@@ -9,8 +9,6 @@ replace:
     'useMutation[(]': 'createMutation(() => ',
     'useMutation': 'createMutation',
     'useQuery[(]': 'createQuery(() => ',
-    ', useQueryClient': ', QueryClient',
-    'useQueryClient': 'new QueryClient',
     'hook': 'function',
   }
 ---
