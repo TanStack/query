@@ -87,7 +87,7 @@ export function usePrefetchQuery<
     > = cloneDeepUnref(resolvedOptions)
 
     if (!client.getQueryState(clonedOptions.queryKey)) {
-      void client.query(clonedOptions).then(noop).catch(noop)
+      void client.query(clonedOptions).catch(noop)
     }
   })
 }
