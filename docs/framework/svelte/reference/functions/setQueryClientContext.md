@@ -3,8 +3,6 @@ id: setQueryClientContext
 title: setQueryClientContext
 ---
 
-# Function: setQueryClientContext()
-
 ```ts
 function setQueryClientContext(client): void;
 ```

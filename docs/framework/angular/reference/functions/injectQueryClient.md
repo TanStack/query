@@ -3,8 +3,6 @@ id: injectQueryClient
 title: injectQueryClient
 ---
 
-# ~~Function: injectQueryClient()~~
-
 ```ts
 function injectQueryClient(injectOptions): QueryClient;
 ```

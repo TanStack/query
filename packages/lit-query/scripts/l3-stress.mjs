@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/query-core'
-import { createQueryController } from '../dist/index.js'
+import { createQueryController } from '../build/modern/index.js'
 
 class TestControllerHost {
   controllers = new Set()
