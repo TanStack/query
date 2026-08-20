@@ -3,8 +3,6 @@ id: ValueAccessor
 title: ValueAccessor
 ---
 
-# Type Alias: ValueAccessor\<T\>
-
 ```ts
 type ValueAccessor<T> = () => T & object;
 ```

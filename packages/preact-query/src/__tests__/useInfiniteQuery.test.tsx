@@ -29,21 +29,6 @@ interface Result {
 
 const pageSize = 10
 
-const fetchItems = async (
-  page: number,
-  ts: number,
-  noNext?: boolean,
-  noPrev?: boolean,
-): Promise<Result> => {
-  await sleep(10)
-  return {
-    items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
-    nextId: noNext ? undefined : page + 1,
-    prevId: noPrev ? undefined : page - 1,
-    ts,
-  }
-}
-
 describe('useInfiniteQuery', () => {
   let queryCache: QueryCache
   let queryClient: QueryClient
@@ -53,11 +38,6 @@ describe('useInfiniteQuery', () => {
     queryCache = new QueryCache()
     queryClient = new QueryClient({
       queryCache,
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
     })
   })
 
@@ -120,7 +100,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
@@ -156,7 +135,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -1538,12 +1516,18 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) =>
-          fetchItems(
-            pageParam,
-            fetchCountRef.current++,
-            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
-          ),
+        queryFn: ({ pageParam }): Promise<Result> => {
+          const noNext =
+            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage)
+          return sleep(10).then(() => ({
+            items: [...new Array(10)]
+              .fill(null)
+              .map((_, d) => pageParam * pageSize + d),
+            nextId: noNext ? undefined : pageParam + 1,
+            prevId: pageParam - 1,
+            ts: fetchCountRef.current++,
+          }))
+        },
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
       })

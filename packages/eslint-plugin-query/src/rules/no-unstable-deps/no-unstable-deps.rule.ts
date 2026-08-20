@@ -35,9 +35,9 @@ export const rule = createRule({
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context, _options, helpers) => {
-    const trackedVariables: Record<string, string> = {}
-    const trackedCustomHooks: Record<string, string> = {}
-    const hookAliasMap: Record<string, string> = {}
+    const trackedVariables: Record<string, string> = Object.create(null)
+    const trackedCustomHooks: Record<string, string> = Object.create(null)
+    const hookAliasMap: Record<string, string> = Object.create(null)
     const pendingVariableDeclarators: Array<TSESTree.VariableDeclarator> = []
     const pendingDependencyChecks: Array<{
       reactHook: string

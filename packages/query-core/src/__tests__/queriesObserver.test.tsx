@@ -149,7 +149,9 @@ describe('queriesObserver', () => {
     const queryCache = queryClient.getQueryCache()
 
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
-    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
+    expect(
+      queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
+    ).toEqual(key2)
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
@@ -802,6 +804,10 @@ describe('queriesObserver', () => {
     // 2 synchronized calls from onPropTracked callback (one per observer)
     expect(trackPropSpy).toHaveBeenCalledWith('status')
     expect(trackPropSpy).toHaveBeenCalledTimes(3)
+
+    void trackedResults[1]!.status
+
+    expect(trackPropSpy).toHaveBeenCalledTimes(4)
 
     trackPropSpy.mockRestore()
   })

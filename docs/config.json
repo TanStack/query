@@ -118,6 +118,10 @@
               "to": "framework/svelte/overview"
             },
             {
+              "label": "Quick Start",
+              "to": "framework/svelte/quick-start"
+            },
+            {
               "label": "Installation",
               "to": "framework/svelte/installation"
             },
@@ -1208,44 +1212,52 @@
               "to": "framework/svelte/reference/index"
             },
             {
-              "label": "Functions / createQuery",
+              "label": "createQuery",
               "to": "framework/svelte/reference/functions/createQuery"
             },
             {
-              "label": "Functions / createQueries",
+              "label": "createQueries",
               "to": "framework/svelte/reference/functions/createQueries"
             },
             {
-              "label": "Functions / createInfiniteQuery",
+              "label": "createInfiniteQuery",
               "to": "framework/svelte/reference/functions/createInfiniteQuery"
             },
             {
-              "label": "Functions / createMutation",
+              "label": "createMutation",
               "to": "framework/svelte/reference/functions/createMutation"
             },
             {
-              "label": "Functions / useIsFetching",
+              "label": "useIsFetching",
               "to": "framework/svelte/reference/functions/useIsFetching"
             },
             {
-              "label": "Functions / useIsMutating",
+              "label": "useIsMutating",
               "to": "framework/svelte/reference/functions/useIsMutating"
             },
             {
-              "label": "Functions / useMutationState",
+              "label": "useMutationState",
               "to": "framework/svelte/reference/functions/useMutationState"
             },
             {
-              "label": "Functions / queryOptions",
+              "label": "useQueryClient",
+              "to": "framework/svelte/reference/functions/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
               "to": "framework/svelte/reference/functions/queryOptions"
             },
             {
-              "label": "Functions / infiniteQueryOptions",
+              "label": "infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "Functions / mutationOptions",
+              "label": "mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
+            },
+            {
+              "label": "useHydrate",
+              "to": "framework/svelte/reference/functions/useHydrate"
             }
           ]
         },
@@ -1334,18 +1346,70 @@
               "to": "framework/angular/reference/index"
             },
             {
-              "label": "Functions / injectQuery",
+              "label": "infiniteQueryOptions",
+              "to": "framework/angular/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "injectInfiniteQuery",
+              "to": "framework/angular/reference/functions/injectInfiniteQuery"
+            },
+            {
+              "label": "injectIsFetching",
+              "to": "framework/angular/reference/functions/injectIsFetching"
+            },
+            {
+              "label": "injectIsMutating",
+              "to": "framework/angular/reference/functions/injectIsMutating"
+            },
+            {
+              "label": "injectIsRestoring",
+              "to": "framework/angular/reference/functions/injectIsRestoring"
+            },
+            {
+              "label": "injectMutation",
+              "to": "framework/angular/reference/functions/injectMutation"
+            },
+            {
+              "label": "injectMutationState",
+              "to": "framework/angular/reference/functions/injectMutationState"
+            },
+            {
+              "label": "injectQuery",
               "to": "framework/angular/reference/functions/injectQuery"
             },
             {
-              "label": "Functions / injectMutation",
-              "to": "framework/angular/reference/functions/injectMutation"
+              "label": "mutationOptions",
+              "to": "framework/angular/reference/functions/mutationOptions"
+            },
+            {
+              "label": "provideIsRestoring",
+              "to": "framework/angular/reference/functions/provideIsRestoring"
+            },
+            {
+              "label": "provideQueryClient",
+              "to": "framework/angular/reference/functions/provideQueryClient"
+            },
+            {
+              "label": "provideTanStackQuery",
+              "to": "framework/angular/reference/functions/provideTanStackQuery"
+            },
+            {
+              "label": "queryFeature",
+              "to": "framework/angular/reference/functions/queryFeature"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/angular/reference/functions/queryOptions"
             }
           ]
         },
         {
           "label": "preact",
           "children": [
+            {
+              "label": "Preact Reference",
+              "to": "framework/preact/reference/index"
+            },
             {
               "label": "useQuery",
               "to": "framework/preact/reference/functions/useQuery"
@@ -1495,12 +1559,8 @@
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (UI)",
-              "to": "framework/react/examples/optimistic-updates-ui"
-            },
-            {
-              "label": "Optimistic Updates (Cache)",
-              "to": "framework/react/examples/optimistic-updates-cache"
+              "label": "Optimistic Updates",
+              "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
               "label": "Pagination",
@@ -1577,6 +1637,10 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/react/examples/chat"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/react/examples/batching"
             }
           ]
         },

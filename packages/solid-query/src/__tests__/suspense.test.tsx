@@ -196,7 +196,7 @@ describe("useQuery's in Suspense mode", () => {
     const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await vi.advanceTimersByTimeAsync(10)

@@ -150,7 +150,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -179,7 +178,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -241,7 +239,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -270,7 +267,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -299,7 +295,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -348,11 +343,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
         initialData: 'initialData',
       }))
@@ -383,11 +378,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
         initialData: 'initialData',
       }))
@@ -418,11 +413,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
       }))
 
@@ -829,14 +824,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return [
-            { id: '1', done: false },
-            { id: '2', done: count > 1 },
-          ]
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return [
+              { id: '1', done: false },
+              { id: '2', done: count > 1 },
+            ]
+          }),
         reconcile: 'id',
       }))
 
@@ -898,11 +893,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count === 1 ? result1 : result2
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count === 1 ? result1 : result2
+          }),
         reconcile: (oldData, newData) => {
           return reconcile(newData)(oldData)
         },
@@ -1002,11 +997,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       }))
 
@@ -1075,11 +1070,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       }))
 
@@ -1117,11 +1112,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       }))
 
@@ -2358,11 +2353,11 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw new Error('some error')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw new Error('some error')
+          }),
         retry: 2,
 
         retryDelay: 100,
@@ -2422,11 +2417,11 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw new Error('some error')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw new Error('some error')
+          }),
         retry: 2,
         retryDelay: 100,
       }))
@@ -2868,11 +2863,11 @@ describe('useQuery', () => {
     function Page() {
       const query = useQuery<unknown, string>(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw `fetching error ${count}`
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw `fetching error ${count}`
+          }),
         retry: 3,
         retryDelay: 1,
       }))
@@ -3112,15 +3107,15 @@ describe('useQuery', () => {
 
       const query = useQuery<unknown, Error>(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (counter < 2) {
-            counter++
-            throw new Error('error')
-          } else {
-            return 'data'
-          }
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (counter < 2) {
+              counter++
+              throw new Error('error')
+            } else {
+              return 'data'
+            }
+          }),
         retryDelay: 10,
       }))
 
@@ -3162,11 +3157,11 @@ describe('useQuery', () => {
 
       const query = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: enabled(),
       }))
 
@@ -4322,11 +4317,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       }))
 
@@ -4393,11 +4388,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
         enabled: false,
         notifyOnChangeProps: 'all',
@@ -4681,14 +4676,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 0) {
-            count++
-            throw error
-          }
-          return 5
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 0) {
+              count++
+              throw error
+            }
+            return 5
+          }),
         retry: false,
       }))
 
@@ -4802,11 +4797,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, string, string>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -4874,11 +4869,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -4925,11 +4920,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -4971,11 +4966,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           initialData: 'initial',
         }))
 
@@ -5020,11 +5015,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           initialData: 'initial',
         }))
 
@@ -5085,11 +5080,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, Error>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('failed' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('failed' + count)
+            }),
           retry: 2,
           retryDelay: 10,
         }))
@@ -5273,11 +5268,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           refetchOnReconnect: false,
         }))
 
@@ -5400,11 +5395,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data ' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data ' + count
+            }),
           networkMode: 'always',
         }))
 
@@ -5438,11 +5433,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('error ' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('error ' + count)
+            }),
           networkMode: 'always',
           retry: 1,
           retryDelay: 5,
@@ -5488,11 +5483,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, Error>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('failed' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('failed' + count)
+            }),
           retry: 2,
           retryDelay: 1,
           networkMode: 'offlineFirst',
@@ -5746,7 +5741,9 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('status: success')).toBeInTheDocument()
-    expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(
+      queryClient1.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     setClient(queryClient2)

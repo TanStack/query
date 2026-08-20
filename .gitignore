@@ -10,7 +10,6 @@ yarn.lock
 build
 coverage
 dist
-dist-cjs
 dist-ts
 
 # misc
@@ -45,7 +44,6 @@ stats.html
 .nx/workspace-data
 .pnpm-store
 .svelte-kit
-.tsup
 .vinxi
 temp
 
