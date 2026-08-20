@@ -81,7 +81,7 @@ createMutation(() => ({
     const previousTodos = context.client.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    context.client.setQueryData(['todos'], (old) => [(...old ?? []), newTodo])
+    context.client.setQueryData(['todos'], (old) => [...(old ?? []), newTodo])
 
     // Return a result with the snapshotted value
     return { previousTodos }
