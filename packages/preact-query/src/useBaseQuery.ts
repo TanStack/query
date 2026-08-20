@@ -54,6 +54,15 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
+  const query = client
+    .getQueryCache()
+    .get<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      TQueryKey
+    >(defaultedOptions.queryHash)
+
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
       console.error(
@@ -68,7 +77,7 @@ export function useBaseQuery<
     : 'optimistic'
 
   ensureSuspenseTimers(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
 
   useClearResetErrorBoundary(errorResetBoundary)
 
@@ -122,14 +131,7 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
-      query: client
-        .getQueryCache()
-        .get<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >(defaultedOptions.queryHash),
+      query,
       suspense: defaultedOptions.suspense,
     })
   ) {
@@ -145,7 +147,7 @@ export function useBaseQuery<
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        client.getQueryCache().get(defaultedOptions.queryHash)?.promise
+        query?.promise
 
     promise?.catch(noop).finally(() => {
       // `.updateResult()` will trigger `.#currentThenable` to finalize
