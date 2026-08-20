@@ -26,7 +26,7 @@ const addTodoMutation = createMutation(() => ({
     <li>{todo.text}</li>
   {/each}
   {#if addTodoMutation.isPending}
-    <li style={{ opacity: 0.5 }}>{addTodoMutation.variables}</li>
+    <li style:opacity="0.5">{addTodoMutation.variables}</li>
   {/if}
 </ul>
 ```
@@ -36,7 +36,7 @@ const addTodoMutation = createMutation(() => ({
 
 ```svelte
 {#if addTodoMutation.isError}
-  <li style={{ color: 'red' }}>
+  <li style:color="red">
     {addTodoMutation.variables}
     <button onclick={() => addTodoMutation.mutate(addTodoMutation.variables)}>
       Retry
@@ -57,10 +57,10 @@ const mutation = createMutation(() => ({
 }))
 
 // access variables somewhere else
-const variables = useMutationState(() => ({
+const variables = useMutationState({
   filters: { mutationKey: ['addTodo'], status: 'pending' },
   select: (mutation) => mutation.state.variables,
-}))
+})
 ```
 
 [//]: # 'ExampleUI4'
@@ -81,7 +81,7 @@ createMutation(() => ({
     const previousTodos = context.client.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    context.client.setQueryData(['todos'], (old) => [...old, newTodo])
+    context.client.setQueryData(['todos'], (old) => [(...old ?? []), newTodo])
 
     // Return a result with the snapshotted value
     return { previousTodos }
@@ -121,13 +121,13 @@ createMutation(() => ({
   // If the mutation fails, use the result we returned above
   onError: (err, newTodo, onMutateResult, context) => {
     context.client.setQueryData(
-      ['todos', onMutateResult.newTodo.id],
-      onMutateResult.previousTodo,
+      ['todos', onMutateResult?.newTodo.id],
+      onMutateResult?.previousTodo,
     )
   },
   // Always refetch after error or success:
   onSettled: (newTodo, error, variables, onMutateResult, context) =>
-    context.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+    context.client.invalidateQueries({ queryKey: ['todos', newTodo?.id] }),
 }))
 ```
 
