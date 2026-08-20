@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
+import packageJson from './package.json'
+
 export default defineConfig({
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
@@ -13,12 +15,16 @@ export default defineConfig({
     },
   },
   test: {
+    name: packageJson.name,
     dir: './src',
     watch: false,
     environment: 'jsdom',
     include: ['tests/**/*.test.ts'],
     coverage: {
-      enabled: false,
+      enabled: !!process.env.CI,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/tests/**'],
     },
     typecheck: { enabled: true },
     restoreMocks: true,
