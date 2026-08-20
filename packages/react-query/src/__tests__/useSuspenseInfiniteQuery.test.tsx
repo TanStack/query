@@ -8,7 +8,7 @@ import {
   skipToken,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClientAndSuspense } from './utils'
+import { renderWithSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -51,12 +51,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -109,7 +104,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    await renderWithClientAndSuspense(queryClient, <App />)
+    await renderWithSuspense(queryClient, <App />)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
@@ -137,12 +132,7 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
@@ -172,12 +162,7 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="Loading...">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorSpy).not.toHaveBeenCalled()
 
@@ -219,11 +204,9 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClientWithPlaceholder,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
+      <Page />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()

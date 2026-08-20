@@ -18,7 +18,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClientAndSuspense } from './utils'
+import { renderWithSuspense } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 describe('useSuspenseQueries', () => {
@@ -91,11 +91,10 @@ describe('useSuspenseQueries', () => {
       return <div>data: {queriesResults.join(',')}</div>
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <SuspenseFallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -119,12 +118,7 @@ describe('useSuspenseQueries', () => {
       return <div>data: {results.map((result) => result.data).join(',')}</div>
     }
 
-    const rendered = await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     expect(queryFn1).toHaveBeenCalledTimes(1)
@@ -194,11 +188,10 @@ describe('useSuspenseQueries', () => {
       return <div>data: {queriesResults.join(',')}</div>
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={initQueries} />
-      </React.Suspense>,
+      <Page queries={initQueries} />,
+      <SuspenseFallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -243,11 +236,10 @@ describe('useSuspenseQueries', () => {
       return <div>data: {queriesResults.join(',')}</div>
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page queries={initQueries} />
-      </React.Suspense>,
+      <Page queries={initQueries} />,
+      <SuspenseFallback />,
     )
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
@@ -288,12 +280,7 @@ describe('useSuspenseQueries', () => {
       return <h1>{data}</h1>
     }
 
-    const rendered = await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -343,12 +330,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
+        <Page />
       </ErrorBoundary>,
     )
 
@@ -419,12 +404,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <App />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <App />, <SuspenseFallback />)
 
     await act(() => vi.advanceTimersByTimeAsync(localDuration))
 
@@ -483,11 +463,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <Fallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -541,11 +520,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <Fallback />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -581,11 +559,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -638,12 +615,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
+        <Page />
       </ErrorBoundary>,
     )
 
@@ -687,12 +662,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -744,7 +714,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
 
       <App />,
@@ -791,11 +761,9 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClientWithPlaceholder,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
+      <Page />,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -846,7 +814,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -902,7 +870,7 @@ describe('useSuspenseQueries', () => {
         )
       }
 
-      const rendered = await renderWithClientAndSuspense(queryClient, <App />)
+      const rendered = await renderWithSuspense(queryClient, <App />)
 
       expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -948,7 +916,7 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    await renderWithClientAndSuspense(queryClient, <App />)
+    await renderWithSuspense(queryClient, <App />)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
@@ -978,12 +946,7 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
@@ -1014,12 +977,7 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    await renderWithClientAndSuspense(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
+    await renderWithSuspense(queryClient, <Page />)
 
     expect(consoleErrorSpy).not.toHaveBeenCalled()
     consoleErrorSpy.mockRestore()
@@ -1054,11 +1012,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1107,11 +1064,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1164,11 +1120,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, fresh cached data shown immediately
@@ -1217,11 +1172,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, cached data shown immediately
@@ -1285,11 +1239,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, cached data shown immediately
@@ -1348,11 +1301,10 @@ describe('useSuspenseQueries', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(
+    const rendered = await renderWithSuspense(
       queryClient,
-      <React.Suspense fallback={<div>loading</div>}>
-        <Page />
-      </React.Suspense>,
+      <Page />,
+      <div>loading</div>,
     )
 
     // No suspend, stale cached data shown immediately with background refetch started

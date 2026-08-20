@@ -5,19 +5,9 @@ import { QueryObserver } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
 import { fallbackUse, getSuspensePromise } from '../suspense'
-import { renderWithClientAndSuspense } from './utils'
+import { renderWithSuspense } from './utils'
 import type { StaleTime } from '@tanstack/query-core'
 import type { QueryKey } from '..'
-
-async function renderWithSuspense(
-  client: QueryClient,
-  ui: React.ReactNode,
-): Promise<ReturnType<typeof renderWithClientAndSuspense>> {
-  return renderWithClientAndSuspense(
-    client,
-    <Suspense fallback="loading">{ui}</Suspense>,
-  )
-}
 
 function createTestQuery(options: {
   fetchCount: { count: number }

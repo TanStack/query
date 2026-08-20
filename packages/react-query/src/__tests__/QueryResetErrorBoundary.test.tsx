@@ -12,7 +12,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient, renderWithClientAndSuspense } from './utils'
+import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   let queryCache: QueryCache
@@ -53,7 +53,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -122,7 +122,7 @@ describe('QueryErrorResetBoundary', () => {
         )
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -192,7 +192,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -260,7 +260,7 @@ describe('QueryErrorResetBoundary', () => {
         )
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -324,7 +324,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {() => (
@@ -386,7 +386,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -450,7 +450,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -530,7 +530,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -599,7 +599,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = await renderWithSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -618,9 +618,7 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback={<div>loading</div>}>
-                <Page />
-              </React.Suspense>
+              <Page />
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,
@@ -701,7 +699,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = renderWithClient(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -914,7 +912,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = await renderWithClientAndSuspense(
+      const rendered = await renderWithSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -933,9 +931,7 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback="loading">
-                <Page />
-              </React.Suspense>
+              <Page />
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,

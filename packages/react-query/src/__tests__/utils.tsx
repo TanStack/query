@@ -22,14 +22,18 @@ export function renderWithClient(
   } as any
 }
 
-export async function renderWithClientAndSuspense(
+export async function renderWithSuspense(
   client: QueryClient,
-  ui: React.ReactElement,
+  ui: React.ReactNode,
+  fallback: React.ReactNode = 'loading',
 ): Promise<ReturnType<typeof renderWithClient>> {
   let rendered!: ReturnType<typeof renderWithClient>
 
   await act(() => {
-    rendered = renderWithClient(client, ui)
+    rendered = renderWithClient(
+      client,
+      <React.Suspense fallback={fallback}>{ui}</React.Suspense>,
+    )
   })
 
   return rendered

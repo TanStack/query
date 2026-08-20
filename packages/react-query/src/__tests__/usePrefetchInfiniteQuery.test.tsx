@@ -8,7 +8,7 @@ import {
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClientAndSuspense } from './utils'
+import { renderWithSuspense } from './utils'
 
 describe('usePrefetchInfiniteQuery', () => {
   let queryCache: QueryCache
@@ -68,7 +68,7 @@ describe('usePrefetchInfiniteQuery', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     await act(() => vi.advanceTimersByTimeAsync(30))
     rendered.getByText('data: Do you fetch on render?')
@@ -135,7 +135,7 @@ describe('usePrefetchInfiniteQuery', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     expect(rendered.getByText('data: Prefetch rocks!')).toBeInTheDocument()
     await act(async () => {
@@ -195,7 +195,7 @@ describe('usePrefetchInfiniteQuery', () => {
       )
     }
 
-    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
+    const rendered = await renderWithSuspense(queryClient, <App />)
 
     await act(() => vi.advanceTimersByTimeAsync(10))
     rendered.getByText('data: Infinite Page 1')
