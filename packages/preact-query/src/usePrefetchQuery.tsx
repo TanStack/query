@@ -23,6 +23,6 @@ export function usePrefetchQuery<
   const client = useQueryClient(queryClient)
 
   if (!client.getQueryState(options.queryKey)) {
-    void client.fetchQuery(options).then(noop).catch(noop)
+    void client.fetchQuery(options).catch(noop)
   }
 }
