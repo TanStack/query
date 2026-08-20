@@ -21,7 +21,7 @@ const config = defineConfig({
     watch: false,
     globals: true,
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
       exclude: ['src/__tests__/**'],

@@ -18,7 +18,7 @@ import type { Signal } from 'solid-js'
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 class TanstackQueryDevtoolsPanel {
@@ -34,7 +34,7 @@ class TanstackQueryDevtoolsPanel {
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
   #hideDisabledQueries: Signal<boolean | undefined>
-  #onClose: Signal<(() => unknown) | undefined>
+  #onClose: Signal<(() => void) | undefined>
   #Component: DevtoolsComponentType | undefined
   #theme: Signal<Theme | undefined>
   #dispose?: () => void
@@ -90,7 +90,7 @@ class TanstackQueryDevtoolsPanel {
     this.#client[1](client)
   }
 
-  setOnClose(onClose: () => unknown) {
+  setOnClose(onClose: () => void) {
     this.#onClose[1](() => onClose)
   }
 

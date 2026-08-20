@@ -53,9 +53,6 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
 
   const query = client
     .getQueryCache()
@@ -74,10 +71,14 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
@@ -99,7 +100,7 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
@@ -150,11 +151,6 @@ export function useBaseQuery<
   ) {
     throw result.error
   }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/svelte'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/svelte-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { sleep } from '@tanstack/query-test-utils'
@@ -60,7 +60,7 @@ const createMockErrorPersister = (
 }
 
 describe('PersistQueryClientProvider', () => {
-  test('restores cache from persister', async () => {
+  it('restores cache from persister', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
@@ -112,7 +112,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should also put useQueries into idle state', async () => {
+  it('should also put useQueries into idle state', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
@@ -164,7 +164,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
@@ -216,7 +216,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
@@ -269,7 +269,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
       queryKey: ['test'],
@@ -302,7 +302,7 @@ describe('PersistQueryClientProvider', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should await onSuccess after successful restoring', async () => {
+  it('should await onSuccess after successful restoring', async () => {
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
       queryKey: ['test'],
@@ -345,7 +345,7 @@ describe('PersistQueryClientProvider', () => {
     ])
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)

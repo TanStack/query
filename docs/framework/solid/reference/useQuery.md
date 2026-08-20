@@ -8,6 +8,7 @@ const {
   data,
   dataUpdatedAt,
   error,
+  errorUpdateCount,
   errorUpdatedAt,
   failureCount,
   failureReason,
@@ -277,8 +278,9 @@ function App() {
     - If `true`, failed queries will retry infinitely.
     - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
     - defaults to `3` on the client and `0` on the server
-  - ##### `retryOnMount: boolean`
-    - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
+  - ##### `retryOnMount: boolean | (query: Query) => boolean`
+    - If set to `false`, the query will not be retried on mount if it contains an error and has no data. Defaults to `true`.
+    - If set to a function, the function will be executed with the query to compute the value.
   - ##### `retryDelay: number | (retryAttempt: number, error: TError) => number`
     - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
     - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
@@ -289,6 +291,10 @@ function App() {
     - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
     - If set to `Infinity`, the data will never be considered stale
   - ##### `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
+    - Optional
+    - Defaults to `false`
+    - During SSR, defaults to `true`
+    - If the deprecated `suspense` option is set to `true`, defaults to `true`
     - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
     - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
     - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)

@@ -3,8 +3,6 @@ id: useIsMutating
 title: useIsMutating
 ---
 
-# Function: useIsMutating()
-
 ```ts
 function useIsMutating(filters?, queryClient?): ReactiveValue<number>;
 ```

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusManager } from '../focusManager'
 
 describe('focusManager', () => {
@@ -39,7 +39,7 @@ describe('focusManager', () => {
 
     vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
-    expect(focusManager.isFocused()).toBeTruthy()
+    expect(focusManager.isFocused()).toBe(true)
   })
 
   it('should return true for isFocused if document is undefined', () => {
@@ -49,11 +49,11 @@ describe('focusManager', () => {
     delete globalThis.document
 
     focusManager.setFocused()
-    expect(focusManager.isFocused()).toBeTruthy()
+    expect(focusManager.isFocused()).toBe(true)
     globalThis.document = document
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
+  it('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
     windowSpy.mockImplementation(
       () => undefined as unknown as Window & typeof globalThis,
@@ -76,7 +76,7 @@ describe('focusManager', () => {
     windowSpy.mockRestore()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
+  it('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -113,7 +113,7 @@ describe('focusManager', () => {
     unsubscribeSpy.mockRestore()
   })
 
-  test('should call removeEventListener when last listener unsubscribes', () => {
+  it('should call removeEventListener when last listener unsubscribes', () => {
     const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
     const removeEventListenerSpy = vi.spyOn(
@@ -131,7 +131,7 @@ describe('focusManager', () => {
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(1) // visibilitychange event
   })
 
-  test('should keep setup function even if last listener unsubscribes', () => {
+  it('should keep setup function even if last listener unsubscribes', () => {
     const setupSpy = vi.fn().mockImplementation(() => () => undefined)
 
     focusManager.setEventListener(setupSpy)
@@ -149,7 +149,7 @@ describe('focusManager', () => {
     unsubscribe2()
   })
 
-  test('should call listeners when setFocused is called', () => {
+  it('should call listeners when setFocused is called', () => {
     const listener = vi.fn()
 
     focusManager.subscribe(listener)

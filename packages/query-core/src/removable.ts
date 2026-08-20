@@ -30,7 +30,7 @@ export abstract class Removable {
   }
 
   protected clearGcTimeout() {
-    if (this.#gcTimeout) {
+    if (this.#gcTimeout !== undefined) {
       timeoutManager.clearTimeout(this.#gcTimeout)
       this.#gcTimeout = undefined
     }

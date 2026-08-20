@@ -1,5 +1,6 @@
-import { assertType, describe, expectTypeOf, it, test } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
@@ -10,11 +11,20 @@ import type {
   InitialDataFunction,
 } from '@tanstack/query-core'
 
+// Regression test for exported infiniteQueryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['invalid'],
+  getNextPageParam: () => 1,
+  initialPageParam: 1,
+})
+
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
       infiniteQueryOptions({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve('data'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -25,7 +35,7 @@ describe('infiniteQueryOptions', () => {
   })
   it('should infer types for callbacks', () => {
     infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('data'),
       staleTime: 1000,
       getNextPageParam: () => 1,
@@ -37,7 +47,7 @@ describe('infiniteQueryOptions', () => {
   })
   it('should work when passed to useInfiniteQuery', () => {
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -52,7 +62,7 @@ describe('infiniteQueryOptions', () => {
   })
   it('should work when passed to useSuspenseInfiniteQuery', () => {
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -62,9 +72,59 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
-  it('should work when passed to fetchInfiniteQuery', async () => {
+  it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
+  it('should work when passed to fetchInfiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -75,61 +135,61 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
-    const { queryKey } = infiniteQueryOptions({
-      queryKey: ['key'],
+    const { queryKey: tagged } = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
 
-    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should tag the queryKey even if no promise is returned', () => {
-    const { queryKey } = infiniteQueryOptions({
-      queryKey: ['key'],
+    const { queryKey: tagged } = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => 'string',
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
 
-    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
-    const { queryKey } = infiniteQueryOptions({
-      queryKey: ['key'],
+    const { queryKey: tagged } = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       select: (data) => data.pages,
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
 
-    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should return the proper type when passed to getQueryData', () => {
-    const { queryKey } = infiniteQueryOptions({
-      queryKey: ['key'],
+    const { queryKey: tagged } = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(queryKey)
+    const data = queryClient.getQueryData(tagged)
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
   })
   it('should properly type when passed to setQueryData', () => {
-    const { queryKey } = infiniteQueryOptions({
-      queryKey: ['key'],
+    const { queryKey: tagged } = infiniteQueryOptions({
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.setQueryData(queryKey, (prev) => {
+    const data = queryClient.setQueryData(tagged, (prev) => {
       expectTypeOf(prev).toEqualTypeOf<
         InfiniteData<string, unknown> | undefined
       >()
@@ -142,7 +202,7 @@ describe('infiniteQueryOptions', () => {
   })
   it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn:
         Math.random() > 0.5 ? skipToken : () => Promise.resolve('string'),
       getNextPageParam: () => 1,
@@ -153,10 +213,10 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
 
-  test('should not be allowed to be passed to non-infinite query functions', () => {
+  it('should not be allowed to be passed to non-infinite query functions', () => {
     const queryClient = new QueryClient()
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -179,10 +239,10 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  test('allow optional initialData function', () => {
+  it('allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
-      queryKey: ['example'],
+      queryKey: queryKey(),
       queryFn: () => initialData,
       initialData: initialData
         ? () => ({ pages: [initialData], pageParams: [] })
@@ -190,17 +250,17 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+    expectTypeOf(queryOptions.initialData).toExtend<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
       | undefined
     >()
   })
 
-  test('allow optional initialData object', () => {
+  it('allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
-      queryKey: ['example'],
+      queryKey: queryKey(),
       queryFn: () => initialData,
       initialData: initialData
         ? { pages: [initialData], pageParams: [] }
@@ -208,7 +268,7 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+    expectTypeOf(queryOptions.initialData).toExtend<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
       | undefined

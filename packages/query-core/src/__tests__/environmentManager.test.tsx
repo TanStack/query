@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { environmentManager, isServer } from '..'
 
 describe('environmentManager', () => {
@@ -6,11 +6,11 @@ describe('environmentManager', () => {
     environmentManager.setIsServer(() => isServer)
   })
 
-  test('should use the default isServer detection', () => {
+  it('should use the default isServer detection', () => {
     expect(environmentManager.isServer()).toBe(isServer)
   })
 
-  test('should allow overriding isServer globally', () => {
+  it('should allow overriding isServer globally', () => {
     environmentManager.setIsServer(() => true)
     expect(environmentManager.isServer()).toBe(true)
 
@@ -18,7 +18,7 @@ describe('environmentManager', () => {
     expect(environmentManager.isServer()).toBe(false)
   })
 
-  test('should allow overriding isServer with a function', () => {
+  it('should allow overriding isServer with a function', () => {
     let server = true
     environmentManager.setIsServer(() => server)
     expect(environmentManager.isServer()).toBe(true)

@@ -1,13 +1,15 @@
 import { QueryClient } from '@tanstack/query-core'
 import type { InfiniteData } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 
+import type { UseInfiniteQueryOptions } from '../types'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 
 describe('pageParam', () => {
   it('initialPageParam should define type of param passed to queryFunctionContext', () => {
     useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
@@ -18,7 +20,7 @@ describe('pageParam', () => {
 
   it('direction should be passed to queryFn of useInfiniteQuery', () => {
     useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ direction }) => {
         expectTypeOf(direction).toEqualTypeOf<'forward' | 'backward'>()
       },
@@ -30,7 +32,7 @@ describe('pageParam', () => {
   it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.fetchInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
@@ -41,7 +43,7 @@ describe('pageParam', () => {
   it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.prefetchInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
@@ -52,7 +54,7 @@ describe('pageParam', () => {
 describe('select', () => {
   it('should still return paginated data if no select result', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -68,7 +70,7 @@ describe('select', () => {
 
   it('should be able to transform data to arbitrary result', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -86,7 +88,7 @@ describe('select', () => {
 describe('getNextPageParam / getPreviousPageParam', () => {
   it('should get typed params', () => {
     const infiniteQuery = useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         return String(pageParam)
       },
@@ -127,7 +129,7 @@ describe('error booleans', () => {
       isLoadingError,
       isRefetchError,
     } = useInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
       },
@@ -139,5 +141,21 @@ describe('error booleans', () => {
     expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
     expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
     expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+  })
+})
+
+describe('UseInfiniteQueryOptions', () => {
+  it('should default TData to InfiniteData<TQueryFnData>', () => {
+    const options: UseInfiniteQueryOptions<number, Error> = {
+      queryKey: queryKey(),
+      queryFn: () => 5,
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+    }
+    const infiniteQuery = useInfiniteQuery(options)
+
+    expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+      InfiniteData<number, unknown> | undefined
+    >()
   })
 })

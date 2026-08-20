@@ -5,11 +5,6 @@ import { getDocsUrl } from '../../utils/get-docs-url'
 import type { ParserServicesWithTypeInformation } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
 
-const TypeFlags = {
-  Void: 16384,
-  Undefined: 32768,
-} as const
-
 export const name = 'no-void-query-fn'
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
@@ -87,5 +82,6 @@ function isIllegalReturn(checker: TypeChecker, type: Type): boolean {
     return awaited.types.some((t) => isIllegalReturn(checker, t))
   }
 
-  return awaited.flags & (TypeFlags.Void | TypeFlags.Undefined) ? true : false
+  const typeString = checker.typeToString(awaited)
+  return typeString === 'void' || typeString === 'undefined'
 }

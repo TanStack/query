@@ -149,7 +149,7 @@ export default defineComponent({
     // This won't be prefetched, it will start fetching on client side
     const { data2 } = useQuery(
       {
-        queryKey: 'todos2',
+        queryKey: ['todos2'],
         queryFn: getTodos,
       },
       queryClient,

@@ -16,7 +16,6 @@
   }))
 
   $effect(() => {
-    // svelte-ignore state_snapshot_uncloneable
     const snapshot = $state.snapshot(queries[0])
     states.current.push(snapshot)
   })

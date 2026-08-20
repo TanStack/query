@@ -55,8 +55,21 @@ export const ExhaustiveDepsUtils = {
 
     return (
       reference.identifier.name !== 'undefined' &&
+      !ExhaustiveDepsUtils.isFunctionCallTarget(reference.identifier) &&
       reference.identifier.parent.type !== AST_NODE_TYPES.NewExpression &&
       !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent)
+    )
+  },
+
+  isFunctionCallTarget(
+    identifier: TSESTree.Identifier | TSESTree.JSXIdentifier,
+  ): boolean {
+    const callee = ASTUtils.traverseUpMemberExpression(identifier)
+
+    return (
+      callee.parent !== undefined &&
+      callee.parent.type === AST_NODE_TYPES.CallExpression &&
+      callee.parent.callee === callee
     )
   },
 
@@ -272,7 +285,7 @@ export const ExhaustiveDepsUtils = {
   isInstanceOfKind(node: TSESTree.Node) {
     return (
       node.type === AST_NODE_TYPES.BinaryExpression &&
-      node.operator === 'instanceof'
+      (node as TSESTree.SymmetricBinaryExpression).operator === 'instanceof'
     )
   },
 
@@ -282,7 +295,7 @@ export const ExhaustiveDepsUtils = {
    * Example: `a?.b.c!` -> `a.b.c`
    */
   normalizeChain(text: string): string {
-    return text.replace(/(?:\?(\.)|!)/g, '$1')
+    return text.replace(/(?:\?(\.)|!)/g, '$1').replace(/\s+/g, '')
   },
 
   /**
@@ -296,11 +309,7 @@ export const ExhaustiveDepsUtils = {
   }): { path: string; root: string; coversRootMembers: boolean } | null {
     const { identifier, sourceCode } = params
 
-    const fullChainNode = ASTUtils.traverseUpOnly(identifier, [
-      AST_NODE_TYPES.MemberExpression,
-      AST_NODE_TYPES.TSNonNullExpression,
-      AST_NODE_TYPES.Identifier,
-    ])
+    const fullChainNode = ASTUtils.traverseUpMemberExpression(identifier)
 
     const fullText = ExhaustiveDepsUtils.normalizeChain(
       sourceCode.getText(fullChainNode),

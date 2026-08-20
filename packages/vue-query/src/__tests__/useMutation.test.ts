@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { reactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 
@@ -14,7 +14,7 @@ describe('useMutation', () => {
     vi.useRealTimers()
   })
 
-  test('should be in idle state initially', () => {
+  it('should be in idle state initially', () => {
     const mutation = useMutation({
       mutationFn: (params) => sleep(0).then(() => params),
     })
@@ -27,7 +27,7 @@ describe('useMutation', () => {
     })
   })
 
-  test('should change state after invoking mutate', () => {
+  it('should change state after invoking mutate', () => {
     const result = 'Mock data'
     const mutation = useMutation({
       mutationFn: (params: string) => sleep(0).then(() => params),
@@ -45,7 +45,7 @@ describe('useMutation', () => {
     })
   })
 
-  test('should return error when request fails', async () => {
+  it('should return error when request fails', async () => {
     const mutation = useMutation({
       mutationFn: () =>
         sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -62,7 +62,7 @@ describe('useMutation', () => {
     })
   })
 
-  test('should return data when request succeeds', async () => {
+  it('should return data when request succeeds', async () => {
     const result = 'Mock data'
     const mutation = useMutation({
       mutationFn: (params: string) => sleep(10).then(() => params),
@@ -82,12 +82,13 @@ describe('useMutation', () => {
     })
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const result = 'Mock data'
     const keyRef = ref('key01')
     const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
     const mutation = useMutation(() => ({
-      mutationKey: [keyRef.value],
+      mutationKey: [...key, keyRef.value],
       mutationFn: fnMock,
     }))
 
@@ -99,7 +100,7 @@ describe('useMutation', () => {
     expect(fnMock).toHaveBeenNthCalledWith(
       1,
       result,
-      expect.objectContaining({ mutationKey: ['key01'] }),
+      expect.objectContaining({ mutationKey: [...key, 'key01'] }),
     )
 
     keyRef.value = 'key02'
@@ -111,31 +112,33 @@ describe('useMutation', () => {
     expect(fnMock).toHaveBeenNthCalledWith(
       2,
       result,
-      expect.objectContaining({ mutationKey: ['key02'] }),
+      expect.objectContaining({ mutationKey: [...key, 'key02'] }),
     )
   })
 
-  test('should update reactive options', async () => {
+  it('should update reactive options', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
     const options = reactive({
-      mutationKey: ['foo'],
+      mutationKey: key1,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation = useMutation(options)
 
-    options.mutationKey = ['bar']
+    options.mutationKey = key2
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
 
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutations = mutationCache.find({ mutationKey: ['bar'] })
+    const mutations = mutationCache.find({ mutationKey: key2 })
 
-    expect(mutations?.options.mutationKey).toEqual(['bar'])
+    expect(mutations?.options.mutationKey).toEqual(key2)
   })
 
-  test('should update reactive options deeply', async () => {
+  it('should update reactive options deeply', async () => {
     type MutationKeyTest = {
       entity: string
       otherObject: {
@@ -176,14 +179,16 @@ describe('useMutation', () => {
     ).toBe(true)
   })
 
-  test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
-    const mutationKey = ref<Array<string>>(['foo2'])
+  it('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const mutationKeyRef = ref<Array<string>>(key1)
     const mutationFn = ref((params: string) => sleep(0).then(() => params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const mutation = useMutation({ mutationKey, mutationFn })
+    const mutation = useMutation({ mutationKey: mutationKeyRef, mutationFn })
 
-    mutationKey.value = ['bar2']
+    mutationKeyRef.value = key2
     let proof = false
     mutationFn.value = (params: string) => {
       proof = true
@@ -194,12 +199,12 @@ describe('useMutation', () => {
     mutation.mutate('xyz')
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutations = mutationCache.find({ mutationKey: ['bar2'] })
-    expect(mutations?.options.mutationKey).toEqual(['bar2'])
+    const mutations = mutationCache.find({ mutationKey: key2 })
+    expect(mutations?.options.mutationKey).toEqual(key2)
     expect(proof).toEqual(true)
   })
 
-  test('should reset state after invoking mutation.reset', async () => {
+  it('should reset state after invoking mutation.reset', async () => {
     const mutation = useMutation({
       mutationFn: () =>
         sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -226,7 +231,7 @@ describe('useMutation', () => {
       vi.clearAllMocks()
     })
 
-    test('should call onMutate when passed as an option', async () => {
+    it('should call onMutate when passed as an option', async () => {
       const onMutate = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
@@ -240,7 +245,7 @@ describe('useMutation', () => {
       expect(onMutate).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onError when passed as an option', async () => {
+    it('should call onError when passed as an option', async () => {
       const onError = vi.fn()
       const mutation = useMutation({
         mutationFn: () =>
@@ -255,7 +260,7 @@ describe('useMutation', () => {
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSuccess when passed as an option', async () => {
+    it('should call onSuccess when passed as an option', async () => {
       const onSuccess = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
@@ -269,7 +274,7 @@ describe('useMutation', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSettled when passed as an option', async () => {
+    it('should call onSettled when passed as an option', async () => {
       const onSettled = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
@@ -283,7 +288,7 @@ describe('useMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onError when passed as an argument of mutate function', async () => {
+    it('should call onError when passed as an argument of mutate function', async () => {
       const onError = vi.fn()
       const mutation = useMutation({
         mutationFn: () =>
@@ -297,7 +302,7 @@ describe('useMutation', () => {
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSuccess when passed as an argument of mutate function', async () => {
+    it('should call onSuccess when passed as an argument of mutate function', async () => {
       const onSuccess = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
@@ -310,7 +315,7 @@ describe('useMutation', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSettled when passed as an argument of mutate function', async () => {
+    it('should call onSettled when passed as an argument of mutate function', async () => {
       const onSettled = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
@@ -323,7 +328,7 @@ describe('useMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
-    test('should fire both onSettled functions', async () => {
+    it('should fire both onSettled functions', async () => {
       const onSettled = vi.fn()
       const onSettledOnFunction = vi.fn()
       const mutation = useMutation({
@@ -345,15 +350,17 @@ describe('useMutation', () => {
       vi.clearAllMocks()
     })
 
-    test('should resolve properly', async () => {
+    it('should resolve properly', async () => {
       const result = 'Mock data'
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
       })
 
-      await vi.waitFor(() =>
-        expect(mutation.mutateAsync(result)).resolves.toBe(result),
-      )
+      const promise = mutation.mutateAsync(result)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await expect(promise).resolves.toBe(result)
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -365,15 +372,16 @@ describe('useMutation', () => {
       })
     })
 
-    test('should throw on error', async () => {
+    it('should throw on error', async () => {
       const mutation = useMutation({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
       })
 
-      await vi.waitFor(() =>
-        expect(mutation.mutateAsync()).rejects.toThrowError('Some error'),
-      )
+      await Promise.all([
+        expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
+        vi.advanceTimersByTimeAsync(10),
+      ])
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -386,7 +394,7 @@ describe('useMutation', () => {
     })
   })
 
-  test('should warn when used outside of setup function in development mode', () => {
+  it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
@@ -405,7 +413,7 @@ describe('useMutation', () => {
   })
 
   describe('throwOnError', () => {
-    test('should evaluate throwOnError when mutation is expected to throw', async () => {
+    it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
       const { mutate } = useMutation({
@@ -421,7 +429,7 @@ describe('useMutation', () => {
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
 
-    test('should throw from error watcher when throwOnError returns true', async () => {
+    it('should throw from error watcher when throwOnError returns true', async () => {
       const throwOnErrorFn = vi.fn().mockReturnValue(true)
       const { mutate } = useMutation({
         mutationFn: () =>

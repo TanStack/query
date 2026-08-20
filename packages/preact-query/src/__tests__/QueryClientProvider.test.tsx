@@ -1,6 +1,6 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
 
 import {
   QueryCache,
@@ -19,7 +19,7 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  test('sets a specific cache for all queries to use', async () => {
+  it('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -47,10 +47,10 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
-  test('allows multiple caches to be partitioned', async () => {
+  it('allows multiple caches to be partitioned', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -100,13 +100,13 @@ describe('QueryClientProvider', () => {
     expect(rendered.getByText('test1')).toBeInTheDocument()
     expect(rendered.getByText('test2')).toBeInTheDocument()
 
-    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
-    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })?.state.data).toBe('test1')
+    expect(queryCache1.find({ queryKey: key2 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key1 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
-  test("uses defaultOptions for queries when they don't provide their own config", async () => {
+  it("uses defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -141,12 +141,11 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
   })
 
   describe('useQueryClient', () => {
-    test('should throw an error if no query client has been set', () => {
+    it('should throw an error if no query client has been set', () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)

@@ -180,7 +180,7 @@ describe('useQuery', () => {
     describe('Config object overload', () => {
       it('TData should always be defined when initialData is provided as an object', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         })
@@ -190,7 +190,7 @@ describe('useQuery', () => {
 
       it('TData should be defined when passed through queryOptions', () => {
         const options = queryOptions({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -207,7 +207,7 @@ describe('useQuery', () => {
 
       it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
         const options = queryOptions({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(1),
         })
 
@@ -221,7 +221,7 @@ describe('useQuery', () => {
 
       it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -237,7 +237,7 @@ describe('useQuery', () => {
 
       it('TData should have undefined in the union when initialData is NOT provided', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -250,7 +250,7 @@ describe('useQuery', () => {
 
       it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -264,7 +264,7 @@ describe('useQuery', () => {
 
       it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
         const { data, isSuccess } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -283,7 +283,7 @@ describe('useQuery', () => {
         // @ts-expect-error
         // eslint-disable-next-line
         const result: UseQueryResult<{ wow: string }> = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -297,7 +297,7 @@ describe('useQuery', () => {
 
       it('data should not have undefined when initialData is provided', () => {
         const { data } = useQuery({
-          queryKey: ['query-key'],
+          queryKey: queryKey(),
           initialData: 42,
         })
 
@@ -314,7 +314,7 @@ describe('useQuery', () => {
         ) => {
           return useQuery({
             ...options,
-            queryKey: ['todos-key'],
+            queryKey: queryKey(),
             queryFn: () => Promise.resolve('data'),
           })
         }
@@ -329,7 +329,7 @@ describe('useQuery', () => {
       it('should be able to use structuralSharing with unknown types', () => {
         // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
         useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => 5,
           structuralSharing: (oldData, newData) => {
             expectTypeOf(oldData).toBeUnknown()

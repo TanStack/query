@@ -23,7 +23,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 > Setting `staleTime` is the recommended way to avoid excessive refetches, but you can also customize the points in time for refetches by setting options like `refetchOnMount`, `refetchOnWindowFocus` and `refetchOnReconnect`.
 
-- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting.
+- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting. See [Polling](./polling.md) for details.
 
 - Query results that have no more active instances of `useQuery`, `useInfiniteQuery` or query observers are labeled as "inactive" and remain in the cache in case they are used again at a later time.
 - By default, "inactive" queries are garbage collected after **5 minutes**.

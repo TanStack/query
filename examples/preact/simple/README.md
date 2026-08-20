@@ -8,6 +8,8 @@
 
 ## Getting Started
 
+- `pnpm install` - Installs dependencies
+
 - `pnpm dev` - Starts a dev server at http://localhost:5173/
 
 - `pnpm build` - Builds for production, emitting to `dist/`

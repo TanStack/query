@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
+  "references": [{ "path": "../query-core" }]
+}
