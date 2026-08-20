@@ -22,6 +22,19 @@ export function renderWithClient(
   } as any
 }
 
+export async function renderWithClientAndSuspense(
+  client: QueryClient,
+  ui: React.ReactElement,
+): Promise<ReturnType<typeof renderWithClient>> {
+  let rendered!: ReturnType<typeof renderWithClient>
+
+  await act(() => {
+    rendered = renderWithClient(client, ui)
+  })
+
+  return rendered
+}
+
 export function Blink({
   duration,
   children,

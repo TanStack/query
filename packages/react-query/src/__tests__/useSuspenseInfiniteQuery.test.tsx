@@ -8,7 +8,7 @@ import {
   skipToken,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClientAndSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -51,7 +51,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -68,7 +68,9 @@ describe('useSuspenseInfiniteQuery', () => {
       status: 'success',
     })
 
-    fireEvent.click(rendered.getByText('next'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('next'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
@@ -80,7 +82,7 @@ describe('useSuspenseInfiniteQuery', () => {
     })
   })
 
-  it('should log an error when skipToken is passed as queryFn', () => {
+  it('should log an error when skipToken is passed as queryFn', async () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
@@ -107,7 +109,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    await renderWithClientAndSuspense(queryClient, <App />)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseInfiniteQuery',
@@ -115,7 +117,7 @@ describe('useSuspenseInfiniteQuery', () => {
     consoleErrorSpy.mockRestore()
   })
 
-  it('should log an error when skipToken is used in development environment', () => {
+  it('should log an error when skipToken is used in development environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
@@ -135,7 +137,7 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(
+    await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="Loading...">
         <Page />
@@ -150,7 +152,7 @@ describe('useSuspenseInfiniteQuery', () => {
     process.env.NODE_ENV = envCopy
   })
 
-  it('should not log an error when skipToken is used in production environment', () => {
+  it('should not log an error when skipToken is used in production environment', async () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
@@ -170,7 +172,7 @@ describe('useSuspenseInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(
+    await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="Loading...">
         <Page />
@@ -217,7 +219,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClientWithPlaceholder,
       <React.Suspense fallback="loading">
         <Page />
@@ -228,7 +230,9 @@ describe('useSuspenseInfiniteQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()

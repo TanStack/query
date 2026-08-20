@@ -12,8 +12,10 @@ import {
 import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
+  resolvedThenable,
   shouldSuspend,
+  use,
 } from './suspense'
 import type {
   QueryClient,
@@ -119,8 +121,12 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  if (defaultedOptions.suspense) {
+    use(
+      shouldSuspend(defaultedOptions, result)
+        ? getSuspensePromise(defaultedOptions, observer, errorResetBoundary)
+        : resolvedThenable,
+    )
   }
 
   // Handle error boundary
