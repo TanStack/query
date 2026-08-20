@@ -163,7 +163,7 @@ export type UseSuspenseQueryResult<
   TError = DefaultError,
 > = DistributiveOmit<
   DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData' | 'promise'
+  'isPlaceholderData'
 >
 
 export type DefinedUseQueryResult<
@@ -186,7 +186,7 @@ export type UseSuspenseInfiniteQueryResult<
   TError = DefaultError,
 > = OmitKeyof<
   DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData' | 'promise'
+  'isPlaceholderData'
 >
 
 export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>
