@@ -14,11 +14,11 @@
     "@tanstack/svelte-query-persist-client": "^6.1.38"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^6.1.0",
-    "@sveltejs/kit": "^2.57.1",
+    "@sveltejs/adapter-auto": "^6.1.1",
+    "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
-    "svelte": "^5.39.3",
-    "svelte-check": "^4.3.1",
+    "svelte": "^5.55.1",
+    "svelte-check": "^4.4.6",
     "typescript": "5.8.3",
     "vite": "^6.4.1"
   }
