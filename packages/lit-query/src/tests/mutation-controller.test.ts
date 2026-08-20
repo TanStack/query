@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
@@ -139,7 +140,7 @@ describe('createMutationController', () => {
       host,
       {
         mutationFn: async (value: number) => {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
           if (value < 0) {
             throw new Error('negative-not-allowed')
           }
@@ -164,7 +165,7 @@ describe('createMutationController', () => {
     await waitFor(() => mutation().isPending)
     await expect(errorPromise).rejects.toThrow('negative-not-allowed')
     await waitFor(() => mutation().isError)
-    expect(mutation().error).toBeInstanceOf(Error)
+    expect(mutation().error).toEqual(new Error('negative-not-allowed'))
   })
 
   it('M10: reset clears mutation state back to idle baseline', async () => {
@@ -188,7 +189,7 @@ describe('createMutationController', () => {
       'reset-target',
     )
     await waitFor(() => mutation().isError)
-    expect(mutation().error).toBeInstanceOf(Error)
+    expect(mutation().error).toEqual(new Error('reset-target'))
 
     mutation.reset()
     expect(mutation().isIdle).toBe(true)
@@ -221,7 +222,7 @@ describe('createMutationController', () => {
 
     expect(() => mutation.mutate(-1)).not.toThrow()
     await waitFor(() => mutation().isError)
-    expect(mutation().error).toBeInstanceOf(Error)
+    expect(mutation().error).toEqual(new Error('negative-not-allowed'))
 
     await expect(mutation.mutateAsync(-1)).rejects.toThrow(
       'negative-not-allowed',
@@ -237,7 +238,7 @@ describe('createMutationController', () => {
       host,
       {
         mutationFn: async (value: number) => {
-          await new Promise((resolve) => setTimeout(resolve, 5))
+          await sleep(5)
           if (value < 0) {
             throw new Error('callback-order-failure')
           }

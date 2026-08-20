@@ -30,21 +30,6 @@ interface Result {
 
 const pageSize = 10
 
-const fetchItems = async (
-  page: number,
-  ts: number,
-  noNext?: boolean,
-  noPrev?: boolean,
-): Promise<Result> => {
-  await sleep(10)
-  return {
-    items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
-    nextId: noNext ? undefined : page + 1,
-    prevId: noPrev ? undefined : page - 1,
-    ts,
-  }
-}
-
 describe('useInfiniteQuery', () => {
   let queryCache: QueryCache
   let queryClient: QueryClient
@@ -1617,12 +1602,18 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) =>
-          fetchItems(
-            pageParam,
-            fetchCountRef.current++,
-            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
-          ),
+        queryFn: ({ pageParam }): Promise<Result> => {
+          const noNext =
+            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage)
+          return sleep(10).then(() => ({
+            items: [...new Array(10)]
+              .fill(null)
+              .map((_, d) => pageParam * pageSize + d),
+            nextId: noNext ? undefined : pageParam + 1,
+            prevId: pageParam - 1,
+            ts: fetchCountRef.current++,
+          }))
+        },
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
       })
@@ -1803,8 +1794,15 @@ describe('useInfiniteQuery', () => {
       useTrackRenders()
       const fetchCountRef = React.useRef(0)
       const query = useInfiniteQuery({
-        queryFn: ({ pageParam }) =>
-          fetchItems(pageParam, fetchCountRef.current++),
+        queryFn: ({ pageParam }): Promise<Result> =>
+          sleep(10).then(() => ({
+            items: [...new Array(10)]
+              .fill(null)
+              .map((_, d) => pageParam * pageSize + d),
+            nextId: pageParam + 1,
+            prevId: pageParam - 1,
+            ts: fetchCountRef.current++,
+          })),
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
         queryKey: key,

@@ -88,7 +88,9 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - Will be `true` if the query failed while refetching a page.
 - `promise: Promise<TData>`
   - A stable promise that resolves to the query result.
+  [//]: # 'ReactUse'
   - This can be used with `React.use()` to fetch data
+  [//]: # 'ReactUse'
   - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.
 
 Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behaviour, resulting in outdated data. Make sure to call these functions only in response to user actions, or add conditions like `hasNextPage && !isFetching`.

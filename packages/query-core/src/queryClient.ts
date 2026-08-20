@@ -24,6 +24,7 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
@@ -31,6 +32,7 @@ import type {
   MutationOptions,
   OmitKeyof,
   QueryClientConfig,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryOptions,
@@ -135,6 +137,9 @@ export class QueryClient {
       .data
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -260,13 +265,15 @@ export class QueryClient {
     const queryCache = this.#queryCache
 
     return notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
+      const matched = queryCache.findAll(filters)
+      const queriesToRefetch = new Set(matched)
+      matched.forEach((query) => {
         query.reset()
       })
       return this.refetchQueries(
         {
           type: 'active',
-          ...filters,
+          predicate: (query) => queriesToRefetch.has(query),
         },
         options,
       )
@@ -336,6 +343,52 @@ export class QueryClient {
     return Promise.all(promises).then(noop)
   }
 
+  async query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData> {
+    const defaultedOptions = this.defaultQueryOptions(options)
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    if (defaultedOptions.retry === undefined) {
+      defaultedOptions.retry = false
+    }
+
+    const query = this.#queryCache.build(this, defaultedOptions)
+
+    const isStale = query.isStaleByTime(
+      resolveStaleTime(defaultedOptions.staleTime, query),
+    )
+
+    const queryData = isStale
+      ? await query.fetch(defaultedOptions)
+      : (query.state.data as TQueryData)
+
+    const select = defaultedOptions.select
+
+    if (select) {
+      return select(queryData)
+    }
+
+    return queryData as unknown as TData
+  }
+
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -367,6 +420,9 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -378,6 +434,32 @@ export class QueryClient {
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
+    options._type = 'infinite'
+    return this.query(options as any)
+  }
+
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -397,6 +479,9 @@ export class QueryClient {
     return this.fetchQuery(options as any)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -415,6 +500,9 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureInfiniteQueryData<
     TQueryFnData,
     TError = DefaultError,
