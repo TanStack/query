@@ -1,5 +1,5 @@
 import { tryResolveSync } from './thenable'
-import { noop } from './utils'
+import { describeKey, hashQueryKeyByOptions, noop } from './utils'
 import type {
   DefaultError,
   MutationKey,
@@ -89,7 +89,7 @@ function dehydrateQuery(
       // If not in production, log original error before rejecting redacted error
       if (process.env.NODE_ENV !== 'production') {
         console.error(
-          `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+          `A query that was dehydrated as pending ended up rejecting. [${describeKey(query.queryKey)}]: ${error}; The error will be redacted in production builds`,
         )
       }
       return Promise.reject(new Error('redacted'))
@@ -193,6 +193,11 @@ export function hydrate(
     client.getDefaultOptions().hydrate?.deserializeData ??
     defaultTransformerFn
 
+  const queryDefaults = {
+    ...client.getDefaultOptions().hydrate?.queries,
+    ...options?.defaultOptions?.queries,
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -211,15 +216,15 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({
-      queryKey,
-      state,
-      queryHash,
-      meta,
-      promise,
-      dehydratedAt,
-      queryType,
-    }) => {
+    ({ queryKey, state, meta, promise, dehydratedAt, queryType }) => {
+      // The hash is recomputed rather than read from the payload, so
+      // that payloads written by the old hash implementation still resolve
+      // to the same cache entry
+      const queryHash = hashQueryKeyByOptions(
+        queryKey,
+        client.defaultQueryOptions({ ...queryDefaults, queryKey }),
+      )
+
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
@@ -266,8 +271,7 @@ export function hydrate(
         query = queryCache.build(
           client,
           {
-            ...client.getDefaultOptions().hydrate?.queries,
-            ...options?.defaultOptions?.queries,
+            ...queryDefaults,
             queryKey,
             queryHash,
             meta,
