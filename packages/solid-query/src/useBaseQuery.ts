@@ -12,7 +12,7 @@ import {
   onCleanup,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
-import { useQueryClient } from './QueryClientProvider'
+import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
@@ -115,7 +115,8 @@ export function useBaseQuery<
 ) {
   type ResourceData = QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const resolveClient = useQueryClientResolver(queryClient)
+  const client = createMemo(() => resolveClient())
   const isRestoring = useIsRestoring()
   // There are times when we run a query on the server but the resource is never read
   // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
@@ -132,9 +133,6 @@ export function useBaseQuery<
     if (isServer) {
       defaultOptions.retry = false
       defaultOptions.throwOnError = true
-      // Enable prefetch during render for SSR - required for createResource to work
-      // Without this, queries wait for effects which never run on the server
-      defaultOptions.experimental_prefetchInRender = true
     }
     return defaultOptions
   })

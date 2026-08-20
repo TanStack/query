@@ -200,14 +200,19 @@ export class QueriesObserver<
     result: Array<QueryObserverResult>,
     matches: Array<QueryObserverMatch>,
   ) {
+    const trackedProps = new Set<keyof QueryObserverResult>()
+
     return matches.map((match, index) => {
       const observerResult = result[index]!
       return !match.defaultedQueryOptions.notifyOnChangeProps
         ? match.observer.trackResult(observerResult, (accessedProp) => {
             // track property on all observers to ensure proper (synchronized) tracking (#7000)
-            matches.forEach((m) => {
-              m.observer.trackProp(accessedProp)
-            })
+            if (!trackedProps.has(accessedProp)) {
+              trackedProps.add(accessedProp)
+              matches.forEach((m) => {
+                m.observer.trackProp(accessedProp)
+              })
+            }
           })
         : observerResult
     })
@@ -251,7 +256,7 @@ export class QueriesObserver<
 
   #shouldSkipCombine(): boolean {
     return (
-      this.#options?.combine !== undefined &&
+      !this.#options?.combine ||
       this.#observers.some((observer, index) => {
         return (
           observer.options.suspense && this.#result[index]?.data === undefined
@@ -305,12 +310,14 @@ export class QueriesObserver<
 
   #notify(): void {
     if (this.hasListeners()) {
-      const newTracked = this.#trackResult(this.#result, this.#observerMatches)
       const shouldSkipCombine = this.#shouldSkipCombine()
       const previousResult = this.#combinedResult
       const newResult = shouldSkipCombine
         ? previousResult
-        : this.#combineResult(newTracked, this.#options?.combine)
+        : this.#combineResult(
+            this.#trackResult(this.#result, this.#observerMatches),
+            this.#options?.combine,
+          )
 
       if (shouldSkipCombine || previousResult !== newResult) {
         notifyManager.batch(() => {

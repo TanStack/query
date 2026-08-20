@@ -93,6 +93,14 @@ export class MutationObserver<
     }
   }
 
+  protected onSubscribe(): void {
+    if (this.listeners.size === 1 && this.#currentMutation) {
+      this.#currentMutation.addObserver(this)
+
+      this.#updateResult()
+    }
+  }
+
   protected onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.#currentMutation?.removeObserver(this)

@@ -6,6 +6,7 @@ import type {
   DefinedQueryObserverResult,
   DistributiveOmit,
   FetchQueryOptions,
+  InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -103,7 +104,7 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -128,7 +129,7 @@ export type AnyUseSuspenseInfiniteQueryOptions =
 export interface UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -162,7 +163,7 @@ export type UseSuspenseQueryResult<
   TError = DefaultError,
 > = DistributiveOmit<
   DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData' | 'promise'
+  'isPlaceholderData'
 >
 
 export type DefinedUseQueryResult<
@@ -185,7 +186,7 @@ export type UseSuspenseInfiniteQueryResult<
   TError = DefaultError,
 > = OmitKeyof<
   DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData' | 'promise'
+  'isPlaceholderData'
 >
 
 export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>

@@ -94,6 +94,48 @@ describe('mutationObserver', () => {
     expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
   })
 
+  it('resubscribing should reattach the observer to the in-flight mutation', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutation.subscribe(vi.fn())
+
+    mutation.mutate('input')
+
+    unsubscribe()
+
+    const subscriptionHandler = vi.fn()
+    mutation.subscribe(subscriptionHandler)
+
+    await vi.advanceTimersByTimeAsync(20)
+    expect(mutation.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+    expect(subscriptionHandler).toHaveBeenCalledTimes(1)
+  })
+
+  it('resubscribing should pick up a mutation that settled while unsubscribed', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutation.subscribe(vi.fn())
+
+    mutation.mutate('input')
+
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(20)
+    mutation.subscribe(vi.fn())
+
+    expect(mutation.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+  })
+
   it('reset should remove observer to trigger GC', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(5).then(() => text),
