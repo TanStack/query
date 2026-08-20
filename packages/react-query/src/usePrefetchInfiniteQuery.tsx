@@ -28,6 +28,6 @@ export function usePrefetchInfiniteQuery<
   const client = useQueryClient(queryClient)
 
   if (!client.getQueryState(options.queryKey)) {
-    void client.infiniteQuery(options).then(noop).catch(noop)
+    void client.infiniteQuery(options).catch(noop)
   }
 }
