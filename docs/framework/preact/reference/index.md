@@ -10,6 +10,7 @@ title: "@tanstack/preact-query"
 - [UseBaseQueryOptions](interfaces/UseBaseQueryOptions.md)
 - [UseInfiniteQueryOptions](interfaces/UseInfiniteQueryOptions.md)
 - [UseMutationOptions](interfaces/UseMutationOptions.md)
+- [UsePrefetchInfiniteQueryOptions](interfaces/UsePrefetchInfiniteQueryOptions.md)
 - [UsePrefetchQueryOptions](interfaces/UsePrefetchQueryOptions.md)
 - [UseQueryOptions](interfaces/UseQueryOptions.md)
 - [UseSuspenseInfiniteQueryOptions](interfaces/UseSuspenseInfiniteQueryOptions.md)
