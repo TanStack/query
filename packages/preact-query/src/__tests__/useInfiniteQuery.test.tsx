@@ -38,11 +38,6 @@ describe('useInfiniteQuery', () => {
     queryCache = new QueryCache()
     queryClient = new QueryClient({
       queryCache,
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
     })
   })
 
@@ -105,7 +100,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
@@ -141,7 +135,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 

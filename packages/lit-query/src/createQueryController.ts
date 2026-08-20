@@ -84,7 +84,6 @@ function createPendingQueryResult<TData, TError>(): QueryObserverResult<
       TData,
       TError
     >['refetch'],
-    promise: Promise.resolve(undefined as never),
   } as unknown as QueryObserverResult<TData, TError>
 }
 
