@@ -709,7 +709,10 @@ describe('useSuspenseQuery', () => {
       return (
         <div>
           <span>{result.data}</span>
-          <button aria-label="reset" onClick={() => queryClient.resetQueries()} />
+          <button
+            aria-label="reset"
+            onClick={() => queryClient.resetQueries()}
+          />
         </div>
       )
     }
