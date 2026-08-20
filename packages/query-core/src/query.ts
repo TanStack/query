@@ -704,7 +704,9 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.observers.forEach((observer) => {
+      // Keep the current iteration stable if an observer unsubscribes
+      // synchronously while it is being notified.
+      this.observers.slice().forEach((observer) => {
         observer.onQueryUpdate()
       })
 
