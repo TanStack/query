@@ -837,10 +837,10 @@ importers:
         specifier: ^0.22.1
         version: 0.22.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-query':
-        specifier: ^5.101.2
+        specifier: ^5.101.4
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.101.2
+        specifier: ^5.101.4
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -850,7 +850,7 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.101.2
+        specifier: ^5.101.4
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
