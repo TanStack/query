@@ -3,8 +3,6 @@ id: IsFetchingAccessor
 title: IsFetchingAccessor
 ---
 
-# Type Alias: IsFetchingAccessor
-
 ```ts
 type IsFetchingAccessor = ValueAccessor<number> & object;
 ```

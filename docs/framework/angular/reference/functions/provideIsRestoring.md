@@ -3,8 +3,6 @@ id: provideIsRestoring
 title: provideIsRestoring
 ---
 
-# Function: provideIsRestoring()
-
 ```ts
 function provideIsRestoring(isRestoring): Provider;
 ```
