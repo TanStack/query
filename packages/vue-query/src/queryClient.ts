@@ -503,7 +503,7 @@ export class QueryClient extends QC {
   }
 
   /**
-   * @deprecated use void queryClient.infiniteQuery(options)instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchInfiniteQuery<
     TQueryFnData,
