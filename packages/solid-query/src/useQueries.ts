@@ -186,7 +186,7 @@ type QueriesResults<
 
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult extends object = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -223,24 +223,20 @@ export function useQueries<
       : undefined,
   )
 
-  const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
-  )
+  // The store always holds the raw, uncombined results, because the resources
+  // and proxies below are keyed by query index. `combine` is applied on top of
+  // it right before the result is handed to the caller, so the combined result
+  // of the observer is not needed here.
+  const optimisticResult = () =>
+    observer.getOptimisticResult(defaultedQueries(), undefined)[0]
+
+  const [state, setState] =
+    createStore<Array<QueryObserverResult>>(optimisticResult())
 
   createRenderEffect(
     on(
       () => queriesOptions().queries.length,
-      () =>
-        setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
+      () => setState(optimisticResult()),
     ),
   )
 
@@ -277,7 +273,6 @@ export function useQueries<
           for (let index = 0; index < dataResources_.length; index++) {
             const dataResource = dataResources_[index]!
             const unwrappedResult = { ...unwrap(result[index]) }
-            // @ts-expect-error typescript pedantry regarding the possible range of index
             setState(index, unwrap(unwrappedResult))
             dataResource[1].mutate(() => unwrap(state[index]!.data))
             dataResource[1].refetch()
@@ -340,5 +335,44 @@ export function useQueries<
   const [proxyState, setProxyState] = createStore(getProxies())
   createRenderEffect(() => setProxyState(getProxies()))
 
-  return proxyState as TCombinedResult
+  if (!queriesOptions().combine) {
+    return proxyState as unknown as TCombinedResult
+  }
+
+  // `combine` may return any shape, so the combined result cannot live in a
+  // store. It is derived from the tracked results instead, and read through a
+  // proxy so that consumers stay subscribed to the properties they access.
+  const combinedResult = createMemo(() => {
+    const combine = queriesOptions().combine
+    return combine
+      ? combine(proxyState as unknown as QueriesResults<T>)
+      : (proxyState as unknown as TCombinedResult)
+  })
+
+  // The target is only there to keep `Array.isArray` and friends in sync with
+  // what `combine` returns - every read is forwarded to the memo.
+  const target = (Array.isArray(combinedResult()) ? [] : {}) as TCombinedResult
+
+  return new Proxy(target, {
+    get: (_, property) => Reflect.get(combinedResult(), property),
+    has: (_, property) => Reflect.has(combinedResult(), property),
+    ownKeys: () => Reflect.ownKeys(combinedResult()),
+    getOwnPropertyDescriptor: (_, property) => {
+      const descriptor = Reflect.getOwnPropertyDescriptor(
+        combinedResult(),
+        property,
+      )
+
+      if (descriptor === undefined) {
+        return undefined
+      }
+
+      // Properties the target does not own itself (all of them, unless the
+      // target is an array reporting its `length`) have to stay configurable to
+      // satisfy the proxy invariants.
+      return Reflect.getOwnPropertyDescriptor(target, property)
+        ? descriptor
+        : { ...descriptor, configurable: true }
+    },
+  })
 }

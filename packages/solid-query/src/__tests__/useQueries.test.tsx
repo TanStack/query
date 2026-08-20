@@ -159,6 +159,92 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
+  it('should support a combine function that returns a shape other than the results array', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 1),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(20).then(() => 2),
+          },
+        ],
+        combine: (results) => ({
+          data: results.map((queryResult) => queryResult.data),
+          pending: results.some((queryResult) => queryResult.isPending),
+        }),
+      }))
+
+      return (
+        <div>
+          <div data-testid="data">{JSON.stringify(result.data)}</div>
+          <div data-testid="pending">{String(result.pending)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('data')).toHaveTextContent('[null,null]')
+    expect(rendered.getByTestId('pending')).toHaveTextContent('true')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('data')).toHaveTextContent('[1,null]')
+    expect(rendered.getByTestId('pending')).toHaveTextContent('true')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('data')).toHaveTextContent('[1,2]')
+    expect(rendered.getByTestId('pending')).toHaveTextContent('false')
+  })
+
+  it('should keep a combine function that returns the results array array-like', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 1),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(20).then(() => 2),
+          },
+        ],
+        combine: (results) => results,
+      }))
+
+      return (
+        <div>
+          <div data-testid="isArray">{String(Array.isArray(result))}</div>
+          <div data-testid="length">{result.length}</div>
+          <div data-testid="data">
+            {JSON.stringify(result.map((r) => r.data))}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('isArray')).toHaveTextContent('true')
+    expect(rendered.getByTestId('length')).toHaveTextContent('2')
+    expect(rendered.getByTestId('data')).toHaveTextContent('[null,null]')
+
+    await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByTestId('data')).toHaveTextContent('[1,2]')
+  })
+
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
