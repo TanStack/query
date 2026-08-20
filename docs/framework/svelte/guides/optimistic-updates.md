@@ -127,7 +127,7 @@ createMutation(() => ({
   },
   // Always refetch after error or success:
   onSettled: (newTodo, error, variables, onMutateResult, context) =>
-    context.client.invalidateQueries({ queryKey: ['todos', newTodo?.id] }),
+    context.client.invalidateQueries({ queryKey: ['todos', variables.id] }),
 }))
 ```
 
