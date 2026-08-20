@@ -824,6 +824,27 @@ describe('query', () => {
     notifySpy.mockRestore()
   })
 
+  it('should notify remaining observers when one unsubscribes during an update', () => {
+    const key = queryKey()
+    const options = { queryKey: key, enabled: false }
+    const firstObserver = new QueryObserver(queryClient, options)
+    const secondObserver = new QueryObserver(queryClient, options)
+    const secondListener = vi.fn()
+
+    let unsubscribeFirst: () => void = () => undefined
+    unsubscribeFirst = firstObserver.subscribe(() => {
+      unsubscribeFirst()
+    })
+    const unsubscribeSecond = secondObserver.subscribe(secondListener)
+
+    queryClient.setQueryData(key, 'data')
+
+    expect(secondListener).toHaveBeenCalledTimes(1)
+    expect(secondObserver.getCurrentResult().data).toBe('data')
+
+    unsubscribeSecond()
+  })
+
   it('should not change state on invalidate() if already invalidated', async () => {
     const key = queryKey()
 
