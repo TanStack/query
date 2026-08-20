@@ -16,13 +16,7 @@ describe('queryObserver', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
-    })
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 
@@ -1463,96 +1457,6 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('should return a promise that resolves when data is present', async () => {
-    const results: Array<QueryObserverResult> = []
-    const key = queryKey()
-    let count = 0
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => {
-        if (++count > 9) {
-          return Promise.resolve('data')
-        }
-        throw new Error('rejected')
-      },
-      retry: 10,
-      retryDelay: 0,
-    })
-    const unsubscribe = observer.subscribe(() => {
-      results.push(observer.getCurrentResult())
-    })
-
-    await vi.advanceTimersByTimeAsync(8)
-    expect(results.at(-1)?.data).toBe('data')
-
-    const numberOfUniquePromises = new Set(
-      results.map((result) => result.promise),
-    ).size
-    expect(numberOfUniquePromises).toBe(1)
-
-    unsubscribe()
-  })
-
-  it('should return a new promise after recovering from an error', async () => {
-    const results: Array<QueryObserverResult> = []
-    const key = queryKey()
-
-    let succeeds = false
-    let idx = 0
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => {
-        if (succeeds) {
-          return Promise.resolve('data')
-        }
-        throw new Error(`rejected #${++idx}`)
-      },
-      retry: 5,
-      retryDelay: 0,
-    })
-    const unsubscribe = observer.subscribe(() => {
-      results.push(observer.getCurrentResult())
-    })
-
-    await vi.advanceTimersByTimeAsync(4)
-    expect(results.at(-1)?.status).toBe('error')
-
-    expect(
-      results.every((result) => result.promise === results[0]!.promise),
-    ).toBe(true)
-
-    {
-      // fail again
-      const lengthBefore = results.length
-      observer.refetch()
-      await vi.advanceTimersByTimeAsync(4)
-      expect(results.length).toBeGreaterThan(lengthBefore)
-      expect(results.at(-1)?.status).toBe('error')
-
-      const numberOfUniquePromises = new Set(
-        results.map((result) => result.promise),
-      ).size
-
-      expect(numberOfUniquePromises).toBe(2)
-    }
-    {
-      // succeed
-      succeeds = true
-      observer.refetch()
-
-      await vi.advanceTimersByTimeAsync(0)
-      results.at(-1)?.status === 'success'
-
-      const numberOfUniquePromises = new Set(
-        results.map((result) => result.promise),
-      ).size
-
-      expect(numberOfUniquePromises).toBe(3)
-    }
-
-    unsubscribe()
-  })
-
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is true', () => {
     const key = queryKey()
 
@@ -1809,49 +1713,6 @@ describe('queryObserver', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     unsubscribeSecond()
-  })
-
-  it('should reject promise when experimental_prefetchInRender is disabled and thenable is pending', async () => {
-    const key = queryKey()
-    const queryClient2 = new QueryClient({
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: false,
-        },
-      },
-    })
-    const observer = new QueryObserver(queryClient2, {
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
-      enabled: false,
-    })
-
-    const result = observer.getCurrentResult()
-    const tracked = observer.trackResult(result)
-
-    await expect(tracked.promise).rejects.toThrow(
-      'experimental_prefetchInRender feature flag is not enabled',
-    )
-
-    queryClient2.clear()
-  })
-
-  it('should not reject promise when experimental_prefetchInRender is enabled', async () => {
-    const key = queryKey()
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
-    })
-
-    const unsubscribe = observer.subscribe(() => undefined)
-    const tracked = observer.trackResult(observer.getCurrentResult())
-    const promise = tracked.promise
-
-    await vi.advanceTimersByTimeAsync(10)
-
-    await expect(promise).resolves.toBe('data')
-
-    unsubscribe()
   })
 
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
