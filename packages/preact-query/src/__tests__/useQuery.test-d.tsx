@@ -17,7 +17,7 @@ describe('useQuery', () => {
   const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
   expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-  expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
+  expectTypeOf(fromQueryFn).not.toHaveProperty('promise')
 
   // it should be possible to specify the result type
   const withResult = useQuery<string>({

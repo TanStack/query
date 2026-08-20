@@ -1,4 +1,4 @@
-import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import type {
   QueryClient,
   QueryKey,
@@ -19,7 +19,6 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 import { useSyncExternalStore } from './utils'
@@ -81,11 +80,6 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
-
   const [observer] = useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
@@ -136,23 +130,6 @@ export function useBaseQuery<
     })
   ) {
     throw result.error
-  }
-
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !environmentManager.isServer() &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        query?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
   }
 
   // Handle result property usage tracking
