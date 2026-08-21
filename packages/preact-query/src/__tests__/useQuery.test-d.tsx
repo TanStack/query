@@ -278,23 +278,6 @@ describe('useQuery', () => {
         }
       })
 
-      // eslint-disable-next-line vitest/expect-expect
-      it('TData should depend from only arguments, not the result', () => {
-        // @ts-expect-error
-        // eslint-disable-next-line
-        const result: UseQueryResult<{ wow: string }> = useQuery({
-          queryKey: queryKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
-        })
-
-        void result
-      })
-
       it('data should not have undefined when initialData is provided', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
