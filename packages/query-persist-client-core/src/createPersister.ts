@@ -2,7 +2,6 @@ import {
   matchQuery,
   notifyManager,
   partialMatchKey,
-  serializeCacheKey,
 } from '@tanstack/query-core'
 import type {
   Query,
@@ -123,21 +122,13 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return true
   }
 
-  function getCacheKeyFilter(
+  function getFilterQueryHash(
     queryClient: QueryClient,
     queryKey: QueryKey | undefined,
-  ) {
-    if (!queryKey) {
-      return {}
-    }
-
-    return {
-      filterKey: serializeCacheKey(
-        queryKey,
-        queryClient.getQueryCache().config.valueSerializer,
-      ),
-      queryHash: queryClient.defaultQueryOptions({ queryKey }).queryHash,
-    }
+  ): string | undefined {
+    return queryKey
+      ? queryClient.defaultQueryOptions({ queryKey }).queryHash
+      : undefined
   }
 
   async function retrieveQuery<T>(
@@ -293,7 +284,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = queryFilters
-    const { filterKey, queryHash } = getCacheKeyFilter(queryClient, queryKey)
+    const queryHash = getFilterQueryHash(queryClient, queryKey)
+    const valueSerializer = queryClient.getQueryCache().config.valueSerializer
 
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -319,11 +311,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
               }
             } else if (
               !partialMatchKey(
-                serializeCacheKey(
-                  persistedQuery.queryKey,
-                  queryClient.getQueryCache().config.valueSerializer,
-                ),
-                filterKey!,
+                persistedQuery.queryKey,
+                queryKey,
+                valueSerializer,
               )
             ) {
               continue
@@ -351,7 +341,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = queryFilters
-    const { filterKey, queryHash } = getCacheKeyFilter(queryClient, queryKey)
+    const queryHash = getFilterQueryHash(queryClient, queryKey)
+    const valueSerializer = queryClient.getQueryCache().config.valueSerializer
 
     if (storage?.entries) {
       const entries = await storage.entries()
@@ -376,13 +367,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
               continue
             }
           } else if (
-            !partialMatchKey(
-              serializeCacheKey(
-                persistedQuery.queryKey,
-                queryClient.getQueryCache().config.valueSerializer,
-              ),
-              filterKey!,
-            )
+            !partialMatchKey(persistedQuery.queryKey, queryKey, valueSerializer)
           ) {
             continue
           }

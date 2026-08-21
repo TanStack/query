@@ -70,41 +70,49 @@ describe('core/utils', () => {
       expect(serializer).toHaveBeenCalledTimes(4)
     })
 
-    it('serializes recursive objects and arrays with copy-on-write', () => {
+    it('serializes nested objects and arrays recursively', () => {
       const serializer = vi.fn((value: unknown) =>
         typeof value === 'number' ? String(value) : value,
       )
       const untouched = { status: 'active' }
-      const nestedObject = { page: 1, filters: { limit: 2 }, untouched }
-      const nestedArray = [{ offset: 3 }, untouched]
-      const key = ['todos', nestedObject, nestedArray]
+      const key = [
+        'todos',
+        { page: 1, filters: { limit: 2 }, untouched },
+        [{ offset: 3 }, untouched],
+      ]
 
       const serialized = serializeCacheKey(key, serializer)
 
       expect(serialized).toEqual([
         'todos',
-        { page: '1', filters: { limit: '2' }, untouched },
-        [{ offset: '3' }, untouched],
+        {
+          page: '1',
+          filters: { limit: '2' },
+          untouched: { status: 'active' },
+        },
+        [{ offset: '3' }, { status: 'active' }],
       ])
       expect(serialized).not.toBe(key)
-      expect(serialized[1]).not.toBe(nestedObject)
-      expect((serialized[1] as Record<string, unknown>).untouched).toBe(
-        untouched,
-      )
-      expect(serialized[2]).not.toBe(nestedArray)
-      expect((serialized[2] as Array<unknown>)[1]).toBe(untouched)
+      expect(key).toEqual([
+        'todos',
+        { page: 1, filters: { limit: 2 }, untouched: { status: 'active' } },
+        [{ offset: 3 }, { status: 'active' }],
+      ])
     })
 
-    it('preserves unchanged objects', () => {
+    it('serializes every leaf value of the key', () => {
       const serializer = vi.fn((value: unknown) => value)
-      const nestedObject = { status: 'active', tags: ['one', 'two'] }
-      const key = ['todos', nestedObject]
+      const key = ['todos', { status: 'active', tags: ['one', 'two'] }]
 
       const serialized = serializeCacheKey(key, serializer)
 
-      expect(serialized).toBe(key)
-      expect(serialized[1]).toBe(nestedObject)
-      expect(serializer).toHaveBeenCalledTimes(4)
+      expect(serialized).toEqual(key)
+      expect(serializer.mock.calls.flat()).toEqual([
+        'todos',
+        'active',
+        'one',
+        'two',
+      ])
     })
 
     it('recursively serializes plain objects returned by the serializer', () => {
@@ -117,6 +125,15 @@ describe('core/utils', () => {
 
       expect(serialized).toEqual(['dates', { timestamp: 0 }])
       expect(serialized).not.toBe(key)
+    })
+
+    it('stops at a depth limit when the serializer is not idempotent', () => {
+      // this serializer wraps its input on every call, so it would recurse
+      // forever without the depth limit
+      const serializer = vi.fn((value: unknown) => ({ wrapped: value }))
+
+      expect(() => serializeCacheKey(['todos'], serializer)).not.toThrow()
+      expect(serializer.mock.calls.length).toBeLessThan(600)
     })
 
     it('does not cache failed serialization', () => {
@@ -135,18 +152,25 @@ describe('core/utils', () => {
     })
   })
 
-  it('should return `false` for same-length objects with different keys', () => {
-    // Both objects have the same number of keys, but the key sets differ.
-    // `b` is missing on the second object and `c` is missing on the first,
-    // so they are not shallowly equal even though both differing values
-    // happen to be `undefined`.
-    const value = Object.create({ inherited: 1 })
-    expect(shallowEqualObjects(value, value)).toBe(true)
-  })
-
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
+    })
+
+    it('should compare inherited enumerable properties', () => {
+      // the length check uses `Object.keys`, which reads own properties only,
+      // but the comparison loop is a `for...in`, which also reads the prototype
+      const proto = { inherited: 1 }
+
+      expect(
+        shallowEqualObjects(Object.create(proto), Object.create(proto)),
+      ).toBe(true)
+      expect(
+        shallowEqualObjects(
+          Object.create(proto),
+          Object.create({ inherited: 2 }),
+        ),
+      ).toBe(false)
     })
 
     it('should return `false` for non shallow equal objects', () => {

@@ -233,9 +233,8 @@ describe('queryClient', () => {
       expect(options.queryHash).toBe('["counts",[["total","1"]]]')
     })
 
-    it('should preserve unchanged key branches while serializing', () => {
-      const unchanged = { status: 'active' }
-      const key = ['todos', unchanged, new Date(0)]
+    it('should not change the original key while serializing', () => {
+      const key = ['todos', { status: 'active' }, new Date(0)]
       const testClient = new QueryClient({
         queryCache: new QueryCache({
           valueSerializer: (value) =>
@@ -248,9 +247,12 @@ describe('queryClient', () => {
         testClient.getQueryCache().config.valueSerializer,
       )
 
-      expect(cacheKey).not.toBe(key)
-      expect(cacheKey[1]).toBe(unchanged)
-      expect(cacheKey[2]).toBe(new Date(0).toISOString())
+      expect(cacheKey).toEqual([
+        'todos',
+        { status: 'active' },
+        '1970-01-01T00:00:00.000Z',
+      ])
+      expect(key).toEqual(['todos', { status: 'active' }, new Date(0)])
     })
 
     it('should use the cache hash function for query identity', () => {
@@ -355,8 +357,10 @@ describe('queryClient', () => {
         mutationFn: () => Promise.resolve(),
       })
 
-      expect(valueSerializer).toHaveBeenCalledTimes(4)
-      expect(hashFn).toHaveBeenCalledTimes(1)
+      // building a mutation does not hash its key, only filters need the hash
+      expect(valueSerializer).not.toHaveBeenCalled()
+      expect(hashFn).not.toHaveBeenCalled()
+
       const mutation = testClient.getMutationCache().getAll()[0]
       expect(mutation?.options.mutationKey).toEqual([
         'maps',
@@ -368,6 +372,7 @@ describe('queryClient', () => {
           mutationKey: ['maps', new Map([['a', 1]])],
         }).length,
       ).toBe(1)
+      expect(valueSerializer).toHaveBeenCalled()
       expect(
         testClient.getMutationCache().findAll({
           mutationKey: ['maps', new Map([['a', 2]])],

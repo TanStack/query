@@ -1,6 +1,8 @@
 import { timeoutManager } from './timeoutManager'
 import type {
   CacheKey,
+  CacheKeyConfig,
+  CacheKeyHashFunction,
   CacheKeyValueSerializer,
   DefaultError,
   FetchStatus,
@@ -157,14 +159,12 @@ export function matchQuery(
 
   if (queryKey) {
     const config = query.cacheKeyConfig
-    const serializedKey = serializeCacheKey(queryKey, config.valueSerializer)
 
     if (exact) {
-      const queryHash =
-        config.hashFn?.(serializedKey) ??
-        query.options.queryKeyHashFn?.(serializedKey) ??
-        hashKey(serializedKey)
-      if (query.queryHash !== queryHash) {
+      if (
+        query.queryHash !==
+        hashCacheKey(queryKey, config, query.options.queryKeyHashFn)
+      ) {
         return false
       }
     } else if (
@@ -210,12 +210,12 @@ export function matchMutation(
     }
 
     const config = mutation.cacheKeyConfig
-    const serializedKey = serializeCacheKey(mutationKey, config.valueSerializer)
 
     if (exact) {
-      const mutationHash =
-        config.hashFn?.(serializedKey) ?? hashKey(serializedKey)
-      if (mutation.mutationHash !== mutationHash) {
+      if (
+        hashCacheKey(mutation.options.mutationKey, config) !==
+        hashCacheKey(mutationKey, config)
+      ) {
         return false
       }
     } else if (
@@ -257,6 +257,23 @@ export function hashKey(cacheKey: CacheKey): string {
   )
 }
 
+/**
+ * Serializes a cache key, then hashes it into the cache identity string.
+ */
+export function hashCacheKey(
+  key: CacheKey,
+  config: CacheKeyConfig,
+  legacyHashFn?: CacheKeyHashFunction<any>,
+): string {
+  const serializedKey = serializeCacheKey(key, config.valueSerializer)
+
+  return (
+    config.hashFn?.(serializedKey) ??
+    legacyHashFn?.(serializedKey) ??
+    hashKey(serializedKey)
+  )
+}
+
 const cacheKeySerializationCache = new WeakMap<
   CacheKeyValueSerializer,
   WeakMap<CacheKey, CacheKey>
@@ -265,48 +282,29 @@ const cacheKeySerializationCache = new WeakMap<
 function serializeCacheKeyValue(
   value: unknown,
   serializer: CacheKeyValueSerializer,
+  depth = 0,
 ): unknown {
+  if (depth > 500) return value
+
   if (isPlainArray(value)) {
-    let result = value
-
-    for (let index = 0; index < value.length; index++) {
-      const item = value[index]
-      const serializedItem = serializeCacheKeyValue(item, serializer)
-      if (serializedItem !== item) {
-        if (result === value) {
-          result = value.slice()
-        }
-        result[index] = serializedItem
-      }
-    }
-
-    return result
+    return value.map((item) =>
+      serializeCacheKeyValue(item, serializer, depth + 1),
+    )
   }
 
   if (isPlainObject(value)) {
-    let result = value
-
+    const result: Record<string, unknown> = {}
     for (const key of Object.keys(value)) {
-      const item = value[key]
-      const serializedItem = serializeCacheKeyValue(item, serializer)
-      if (serializedItem !== item) {
-        if (result === value) {
-          result = { ...value }
-        }
-        result[key] = serializedItem
-      }
+      result[key] = serializeCacheKeyValue(value[key], serializer, depth + 1)
     }
-
     return result
   }
 
   const serializedValue = serializer(value)
-  if (serializedValue === value) {
-    return value
-  }
 
-  return Array.isArray(serializedValue) || isPlainObject(serializedValue)
-    ? serializeCacheKeyValue(serializedValue, serializer)
+  return serializedValue !== value &&
+    (isPlainArray(serializedValue) || isPlainObject(serializedValue))
+    ? serializeCacheKeyValue(serializedValue, serializer, depth + 1)
     : serializedValue
 }
 
