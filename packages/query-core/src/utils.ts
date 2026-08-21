@@ -170,7 +170,14 @@ function matchQueryWithMatcher(
 ): boolean {
   const { type = 'all', fetchStatus, predicate, queryKey, stale } = filters
 
-  if (queryKey && !cacheKeyMatcher?.(query.queryKey, query.queryHash)) {
+  if (
+    queryKey &&
+    !cacheKeyMatcher?.(
+      query.queryKey,
+      query.queryHash,
+      query.options.queryKeyHashFn,
+    )
+  ) {
     return false
   }
 
@@ -249,6 +256,7 @@ function matchMutationWithMatcher(
 type CacheKeyMatcher = (
   cacheKey: CacheKey,
   cacheHash: string | undefined,
+  hashFn?: (cacheKey: unknown) => string,
 ) => boolean
 
 /**
@@ -313,9 +321,16 @@ function createCacheKeyMatcher<TCacheKey extends CacheKey>(
   ) as TCacheKey
 
   if (exact) {
-    const hash = config.hashFn?.(serializedKey) ?? hashKey(serializedKey)
+    if (config.hashFn) {
+      const hash = config.hashFn(serializedKey)
 
-    return (_key, cacheHash) => cacheHash === hash
+      return (_key, cacheHash) => cacheHash === hash
+    }
+
+    const defaultHash = hashKey(serializedKey)
+
+    return (_key, cacheHash, hashFn) =>
+      cacheHash === (hashFn?.(serializedKey) ?? defaultHash)
   }
 
   return (key) => partialMatchKey(key, serializedKey)

@@ -76,7 +76,6 @@ function mergeCacheKeyDefaults<TOptions extends object>(
 function serializeAndHashCacheKey<TCacheKey extends CacheKey>(
   cacheKey: TCacheKey,
   config: Readonly<CacheKeyConfig<TCacheKey>>,
-  queryHash?: string,
 ): { cacheKey: CacheKey; queryHash: string } {
   const serializedCacheKey = serializeCacheKey(
     cacheKey,
@@ -86,9 +85,7 @@ function serializeAndHashCacheKey<TCacheKey extends CacheKey>(
   return {
     cacheKey: serializedCacheKey,
     queryHash:
-      queryHash ??
-      config.hashFn?.(serializedCacheKey) ??
-      hashKey(serializedCacheKey),
+      config.hashFn?.(serializedCacheKey) ?? hashKey(serializedCacheKey),
   }
 }
 
@@ -689,12 +686,10 @@ export class QueryClient {
       >
     }
 
-    const { cacheKey: serializedCacheKey, queryHash } =
-      serializeAndHashCacheKey(
-        options.queryKey,
-        this.#queryCache.config,
-        options.queryHash,
-      )
+    const serializedCacheKey = serializeCacheKey(
+      options.queryKey,
+      this.#queryCache.config.valueSerializer,
+    ) as TQueryKey
 
     const defaultedOptions = {
       ...this.#defaultOptions.queries,
@@ -703,11 +698,14 @@ export class QueryClient {
         serializedCacheKey,
       ),
       ...options,
-      queryKey: serializedCacheKey as TQueryKey,
+      queryKey: serializedCacheKey,
       _defaulted: true,
     }
 
-    defaultedOptions.queryHash = queryHash
+    defaultedOptions.queryHash ??=
+      this.#queryCache.config.hashFn?.(serializedCacheKey) ??
+      defaultedOptions.queryKeyHashFn?.(serializedCacheKey) ??
+      hashKey(serializedCacheKey)
 
     // dependent default values
     if (defaultedOptions.refetchOnReconnect === undefined) {

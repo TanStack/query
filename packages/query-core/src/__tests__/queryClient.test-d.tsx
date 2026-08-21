@@ -53,13 +53,12 @@ describe('cache key config', () => {
     expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
   })
 
-  it('should not allow query-level hash functions', () => {
+  it('should allow query-level hash functions', () => {
     const queryClient = new QueryClient()
 
     queryClient.fetchQuery({
       queryKey: ['key'],
       queryFn: () => 'data',
-      // @ts-expect-error query key hashing is configured on QueryCache
       queryKeyHashFn: () => 'hash',
     })
 

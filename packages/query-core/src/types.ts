@@ -276,6 +276,10 @@ export interface QueryOptions<
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   queryHash?: string
+  /**
+   * @deprecated Configure `hashFn` on `QueryCache` instead.
+   */
+  queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   queryKey?: TQueryKey
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)

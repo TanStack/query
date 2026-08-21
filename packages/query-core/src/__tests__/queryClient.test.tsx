@@ -248,6 +248,43 @@ describe('queryClient', () => {
       expect(hashFn).toHaveBeenCalledWith(['maps', [['a', 1]]])
     })
 
+    it('should use the query option hash function with serialized values', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const queryKeyHashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const customQueryCache = new QueryCache({ valueSerializer })
+      const testClient = new QueryClient({ queryCache: customQueryCache })
+      const key = ['maps', new Map([['a', 1]])]
+
+      const query = customQueryCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn,
+      })
+
+      expect(query.queryHash).toBe(JSON.stringify(['maps', [['a', 1]]]))
+      expect(queryKeyHashFn).toHaveBeenCalledWith(['maps', [['a', 1]]])
+      expect(customQueryCache.find({ queryKey: key })).toBe(query)
+    })
+
+    it('should prefer the cache hash function over the query option hash function', () => {
+      const cacheHashFn = vi.fn(() => 'cache-hash')
+      const queryKeyHashFn = vi.fn(() => 'query-hash')
+      const customQueryCache = new QueryCache({ hashFn: cacheHashFn })
+      const testClient = new QueryClient({ queryCache: customQueryCache })
+      const key = ['key']
+
+      const query = customQueryCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn,
+      })
+
+      expect(query.queryHash).toBe('cache-hash')
+      expect(cacheHashFn).toHaveBeenCalledWith(key)
+      expect(queryKeyHashFn).not.toHaveBeenCalled()
+      expect(customQueryCache.find({ queryKey: key })).toBe(query)
+      expect(queryKeyHashFn).not.toHaveBeenCalled()
+    })
+
     it('should use the query cache value serializer for hashing and matching', () => {
       const valueSerializer = (value: unknown) =>
         value instanceof Map ? JSON.stringify([...value.entries()]) : value
