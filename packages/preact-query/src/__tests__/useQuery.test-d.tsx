@@ -288,6 +288,23 @@ describe('useQuery', () => {
       })
     })
 
+    it('should preserve discriminated-union narrowing', () => {
+      type Result =
+        | { type: 'first'; first: string }
+        | { type: 'second'; second: string }
+
+      const query = useQuery({
+        queryKey: queryKey(),
+        queryFn: (): Result => ({ type: 'first', first: 'a' }),
+      })
+
+      const second = query.data?.type === 'first' ? undefined : query.data
+
+      expectTypeOf(second).toEqualTypeOf<
+        { type: 'second'; second: string } | undefined
+      >()
+    })
+
     describe('custom hook', () => {
       it('should allow custom hooks using UseQueryOptions', () => {
         type Data = string
