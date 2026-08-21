@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -318,10 +319,14 @@ describe('Devtools', () => {
     })
 
     it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      queryClient = new QueryClient({
+        queryCache: new QueryCache({
+          hashFn: () => 'custom-posts-hash',
+        }),
+      })
       queryClient.fetchQuery({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
-        queryKeyHashFn: () => 'custom-posts-hash',
       })
       await vi.advanceTimersByTimeAsync(0)
       const dehydratedState = dehydrate(queryClient)
@@ -384,10 +389,13 @@ describe('Devtools', () => {
 
   describe('disabled and static queries', () => {
     it('should mark a disabled query in the row label', () => {
-      const observer = queryClient.getQueryCache().build(queryClient, {
-        queryKey: ['disabled-q'],
-        queryFn: () => 'x',
-      })
+      const observer = queryClient.getQueryCache().build(
+        queryClient,
+        queryClient.defaultQueryOptions({
+          queryKey: ['disabled-q'],
+          queryFn: () => 'x',
+        }),
+      )
       observer.setOptions({
         ...observer.options,
         enabled: false,
@@ -399,10 +407,13 @@ describe('Devtools', () => {
     })
 
     it('should render a "static" indicator for a query with "staleTime: \'static\'"', () => {
-      const query = queryClient.getQueryCache().build(queryClient, {
-        queryKey: ['static-q'],
-        queryFn: () => 'x',
-      })
+      const query = queryClient.getQueryCache().build(
+        queryClient,
+        queryClient.defaultQueryOptions({
+          queryKey: ['static-q'],
+          queryFn: () => 'x',
+        }),
+      )
       const observer = new QueryObserver(queryClient, {
         queryKey: ['static-q'],
         queryFn: () => 'x',

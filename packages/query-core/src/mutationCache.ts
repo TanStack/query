@@ -1,11 +1,13 @@
 import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
-import { matchMutation, noop } from './utils'
+import { createMutationMatcher, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
+  CacheKeyConfig,
   DefaultError,
   MutationFunctionContext,
+  MutationKey,
   MutationOptions,
   NotifyEvent,
 } from './types'
@@ -15,7 +17,7 @@ import type { MutationFilters } from './utils'
 
 // TYPES
 
-interface MutationCacheConfig {
+export interface MutationCacheConfig extends CacheKeyConfig<MutationKey> {
   onError?: (
     error: DefaultError,
     variables: unknown,
@@ -95,7 +97,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   #scopes: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
-  constructor(public config: MutationCacheConfig = {}) {
+  constructor(public readonly config: MutationCacheConfig = {}) {
     super()
     this.#mutations = new Set()
     this.#scopes = new Map()
@@ -211,13 +213,18 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find((mutation) =>
-      matchMutation(defaultedFilters, mutation),
+    return this.getAll().find(
+      createMutationMatcher(defaultedFilters, this.config),
     ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
+    const mutations = this.getAll()
+    if (!Object.keys(filters).length) {
+      return mutations
+    }
+
+    return mutations.filter(createMutationMatcher(filters, this.config))
   }
 
   notify(event: MutationCacheNotifyEvent) {

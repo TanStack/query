@@ -82,10 +82,12 @@ export class MutationObserver<
       })
     }
 
+    const hashFn = this.#client.getMutationCache().config.hashFn ?? hashKey
+
     if (
       prevOptions?.mutationKey &&
       this.options.mutationKey &&
-      hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
+      hashFn(prevOptions.mutationKey) !== hashFn(this.options.mutationKey)
     ) {
       this.reset()
     } else if (this.#currentMutation?.state.status === 'pending') {

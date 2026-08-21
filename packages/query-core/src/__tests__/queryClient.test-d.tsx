@@ -1,6 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
@@ -13,11 +15,57 @@ import type {
   FetchInfiniteQueryOptions,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  MutationKey,
   MutationOptions,
   OmitKeyof,
   QueryKey,
   QueryObserverOptions,
 } from '../types'
+
+describe('cache key config', () => {
+  it('should type the query and mutation cache configuration', () => {
+    const queryCache = new QueryCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<QueryKey>()
+        return 'query-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const mutationCache = new MutationCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<MutationKey>()
+        return 'mutation-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const queryClient = new QueryClient({
+      queryCache,
+      mutationCache,
+    })
+
+    expectTypeOf(queryClient.getQueryCache().config).toEqualTypeOf(
+      queryCache.config,
+    )
+    expectTypeOf(queryClient.getMutationCache().config).toEqualTypeOf(
+      mutationCache.config,
+    )
+    queryClient.setQueryData(['key'], 'data')
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+
+  it('should not allow query-level hash functions', () => {
+    const queryClient = new QueryClient()
+
+    queryClient.fetchQuery({
+      queryKey: ['key'],
+      queryFn: () => 'data',
+      // @ts-expect-error query key hashing is configured on QueryCache
+      queryKeyHashFn: () => 'hash',
+    })
+
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+})
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {

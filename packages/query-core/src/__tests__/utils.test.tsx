@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient } from '..'
+import { MutationCache, QueryCache, QueryClient } from '..'
 import {
   addConsumeAwareSignal,
   addToEnd,
   addToStart,
   ensureQueryFn,
   hashKey,
-  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   isValidTimeout,
   keepPreviousData,
   matchMutation,
+  matchQuery,
   partialMatchKey,
   replaceEqualDeep,
   shallowEqualObjects,
@@ -23,26 +23,13 @@ import { Mutation } from '../mutation'
 import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
-  describe('hashQueryKeyByOptions', () => {
-    it('should use custom hash function when provided in options', () => {
-      const key = ['test', { a: 1, b: 2 }]
-      const customHashFn = vi.fn(() => 'custom-hash')
-
-      const result = hashQueryKeyByOptions(key, {
-        queryKeyHashFn: customHashFn,
-      })
-
-      expect(customHashFn).toHaveBeenCalledWith(key)
-      expect(result).toEqual('custom-hash')
-    })
-
-    it('should use default hash function when no options provided', () => {
-      const key = ['test', { a: 1, b: 2 }]
-      const defaultResult = hashKey(key)
-      const result = hashQueryKeyByOptions(key)
-
-      expect(result).toEqual(defaultResult)
-    })
+  it('should return `false` for same-length objects with different keys', () => {
+    // Both objects have the same number of keys, but the key sets differ.
+    // `b` is missing on the second object and `c` is missing on the first,
+    // so they are not shallowly equal even though both differing values
+    // happen to be `undefined`.
+    const value = Object.create({ inherited: 1 })
+    expect(shallowEqualObjects(value, value)).toBe(true)
   })
 
   describe('shallowEqualObjects', () => {
@@ -126,6 +113,88 @@ describe('core/utils', () => {
   })
 
   describe('partialMatchKey', () => {
+    it('should preserve values when no serializer is provided', () => {
+      const date = new Date(0)
+
+      expect(partialMatchKey([date], [date])).toBe(true)
+      expect(partialMatchKey([new Date(0)], [new Date(0)])).toBe(false)
+      expect(partialMatchKey([new Date(0)], [new Date(1000)])).toBe(false)
+    })
+
+    it('should use the value serializer for each value', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Date
+          ? value.toISOString()
+          : value instanceof Map
+            ? [...value.entries()]
+            : value
+
+      expect(
+        partialMatchKey(
+          [new Date(0), new Map([['a', 1]])],
+          [new Date(0), new Map([['a', 1]])],
+          valueSerializer,
+        ),
+      ).toBe(true)
+      expect(
+        partialMatchKey(
+          [new Date(0), new Map([['a', 1]])],
+          [new Date(0), new Map([['a', 2]])],
+          valueSerializer,
+        ),
+      ).toBe(false)
+    })
+
+    it('should serialize nested values before partially matching', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Date
+          ? value.toISOString()
+          : value instanceof Map
+            ? [...value.entries()]
+            : value
+
+      expect(
+        partialMatchKey(
+          [
+            'todos',
+            {
+              filters: {
+                date: new Date(0),
+                map: new Map([['a', 1]]),
+                status: 'open',
+              },
+            },
+          ],
+          [
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
+          ],
+          valueSerializer,
+        ),
+      ).toBe(true)
+      expect(
+        partialMatchKey(
+          [
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
+          ],
+          [
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 2]]) } },
+          ],
+          valueSerializer,
+        ),
+      ).toBe(false)
+    })
+
+    it('should not partially match distinct non-plain values without a serializer', () => {
+      const mapA = new Map([['a', 1]])
+      const mapB = new Map([['a', 1]])
+
+      expect(partialMatchKey(['maps', mapA], ['maps', mapA])).toBe(true)
+      expect(partialMatchKey(['maps', mapA], ['maps', mapB])).toBe(false)
+    })
+
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
@@ -470,6 +539,43 @@ describe('core/utils', () => {
         options: {},
       })
       expect(matchMutation(filters, mutation)).toBe(false)
+    })
+
+    it('should use the mutation cache serializer', () => {
+      const mutationCache = new MutationCache({
+        hashFn: () => 'custom-hash',
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      })
+      const queryClient = new QueryClient({ mutationCache })
+      const mutation = mutationCache.build(queryClient, {
+        mutationKey: ['date', new Date(0)],
+      })
+
+      expect(
+        matchMutation(
+          { mutationKey: ['date', new Date(0)], exact: true },
+          mutation,
+        ),
+      ).toBe(true)
+    })
+  })
+
+  describe('matchQuery', () => {
+    it('should use the query cache serializer', () => {
+      const queryCache = new QueryCache({
+        hashFn: () => 'custom-hash',
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      })
+      const queryClient = new QueryClient({ queryCache })
+      const query = queryCache.build(queryClient, {
+        queryKey: ['date', new Date(0)],
+      })
+
+      expect(
+        matchQuery({ queryKey: ['date', new Date(0)], exact: true }, query),
+      ).toBe(true)
     })
   })
 

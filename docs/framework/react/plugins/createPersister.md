@@ -126,10 +126,12 @@ The filter object supports the following properties:
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
-### `removeQueries(filters): Promise<void>`
+### `removeQueries(queryClient: QueryClient, filters?): Promise<void>`
 
 When using `queryClient.removeQueries`, the data remains in the persister and needs to be removed separately.
 This function can be used to remove queries that are currently stored by persister.
+
+The `queryClient` is required so the persister can use its query key hashing, value serialization, and matching configuration.
 
 The filter object supports the following properties:
 

@@ -11,6 +11,8 @@ The `MutationCache` is the storage for mutations.
 import { MutationCache } from '@tanstack/react-query'
 
 const mutationCache = new MutationCache({
+  valueSerializer: (value) =>
+    value instanceof Date ? value.toISOString() : value,
   onError: (error) => {
     console.log(error)
   },
@@ -28,6 +30,13 @@ Its available methods are:
 
 **Options**
 
+- `hashFn?: (mutationKey: MutationKey) => string`
+  - Optional
+  - Hashes serialized mutation keys into cache identity strings.
+- `valueSerializer?: (value: unknown) => unknown`
+  - Optional
+  - Serializes values in mutation keys before hashing and matching. It must be idempotent. The serialized key becomes the canonical mutation key exposed by mutation APIs.
+  - The key configuration must not change while the cache contains entries.
 - `onError?: (error: unknown, variables: unknown, onMutateResult: unknown, mutation: Mutation, mutationFnContext: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation encounters an error.

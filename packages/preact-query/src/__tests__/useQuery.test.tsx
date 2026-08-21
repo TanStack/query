@@ -4823,48 +4823,62 @@ describe('useQuery', () => {
     let hashes = 0
     let renders = 0
 
-    function queryKeyHashFn(x: any) {
+    function hashFn(x: any) {
       hashes++
       return JSON.stringify(x)
     }
+
+    const customQueryClient = new QueryClient({
+      queryCache: new QueryCache({ hashFn }),
+    })
 
     function Page() {
       useEffect(() => {
         renders++
       })
 
-      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      useQuery({ queryKey: key, queryFn: () => 'test' })
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithClient(customQueryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
 
     expect(renders).toBe(hashes)
+    customQueryClient.clear()
   })
 
   it('should hash query keys that contain bigints given a supported query hash function', async () => {
     const key = [queryKey(), 1n]
 
-    function queryKeyHashFn(x: any) {
+    function hashFn(x: any) {
       return JSON.stringify(x, (_, value) => {
         if (typeof value === 'bigint') return value.toString()
         return value
       })
     }
 
+    const customQueryClient = new QueryClient({
+      queryCache: new QueryCache({
+        valueSerializer: (value) =>
+          typeof value === 'bigint' ? value.toString() : value,
+        hashFn,
+      }),
+    })
+
     function Page() {
-      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      useQuery({ queryKey: key, queryFn: () => 'test' })
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithClient(customQueryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
 
-    const query = queryClient.getQueryCache().get(queryKeyHashFn(key))
+    const query = customQueryClient.getQueryCache().get(hashFn(key))
     expect(query?.state.data).toBe('test')
+    customQueryClient.clear()
   })
 
   it('should refetch when changed enabled to true in error state', async () => {

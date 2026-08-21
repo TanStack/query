@@ -42,7 +42,6 @@ const {
     meta,
     notifyOnChangeProps,
     placeholderData,
-    queryKeyHashFn,
     refetchInterval,
     refetchIntervalInBackground,
     refetchOnMount,
@@ -105,9 +104,6 @@ const {
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
   - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
   - If set to `Infinity`, will disable garbage collection
-- `queryKeyHashFn: (queryKey: QueryKey) => string`
-  - Optional
-  - If specified, this function is used to hash the `queryKey` to a string.
 - `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds

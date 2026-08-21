@@ -3,6 +3,7 @@ import {
   matchQuery,
   notifyManager,
   partialMatchKey,
+  serializeCacheKey,
 } from '@tanstack/query-core'
 import type {
   Query,
@@ -275,6 +276,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = filters
+    const config = queryClient.getQueryCache().config
+    const cacheKey = queryKey
+      ? serializeCacheKey(queryKey, config.valueSerializer)
+      : undefined
+    const cacheHash =
+      cacheKey && exact
+        ? (config.hashFn?.(cacheKey) ?? hashKey(cacheKey))
+        : undefined
 
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -295,10 +304,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
           if (queryKey) {
             if (exact) {
-              if (persistedQuery.queryHash !== hashKey(queryKey)) {
+              if (persistedQuery.queryHash !== cacheHash) {
                 continue
               }
-            } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+            } else if (!partialMatchKey(persistedQuery.queryKey, cacheKey!)) {
               continue
             }
           }
@@ -320,9 +329,18 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   }
 
   async function removeQueries(
+    queryClient: QueryClient,
     filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = filters
+    const config = queryClient.getQueryCache().config
+    const cacheKey = queryKey
+      ? serializeCacheKey(queryKey, config.valueSerializer)
+      : undefined
+    const cacheHash =
+      cacheKey && exact
+        ? (config.hashFn?.(cacheKey) ?? hashKey(cacheKey))
+        : undefined
 
     if (storage?.entries) {
       const entries = await storage.entries()
@@ -343,10 +361,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           }
 
           if (exact) {
-            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+            if (persistedQuery.queryHash !== cacheHash) {
               continue
             }
-          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+          } else if (!partialMatchKey(persistedQuery.queryKey, cacheKey!)) {
             continue
           }
 

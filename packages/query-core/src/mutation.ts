@@ -1,9 +1,12 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
+import { hashKey } from './utils'
 import type {
+  CacheKeyConfig,
   DefaultError,
   MutationFunctionContext,
+  MutationKey,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -19,6 +22,7 @@ interface MutationConfig<TData, TError, TVariables, TOnMutateResult> {
   client: QueryClient
   mutationId: number
   mutationCache: MutationCache
+  mutationHash?: string
   options: MutationOptions<TData, TError, TVariables, TOnMutateResult>
   state?: MutationState<TData, TError, TVariables, TOnMutateResult>
 }
@@ -89,6 +93,7 @@ export class Mutation<
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TOnMutateResult>
   options!: MutationOptions<TData, TError, TVariables, TOnMutateResult>
+  mutationHash?: string
   readonly mutationId: number
 
   #client: QueryClient
@@ -106,11 +111,21 @@ export class Mutation<
     this.#client = config.client
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
+    this.mutationHash =
+      config.mutationHash ??
+      (config.options.mutationKey
+        ? (this.#mutationCache.config.hashFn?.(config.options.mutationKey) ??
+          hashKey(config.options.mutationKey))
+        : undefined)
     this.#observers = []
     this.state = config.state || getDefaultState()
 
     this.setOptions(config.options)
     this.scheduleGc()
+  }
+
+  get cacheKeyConfig(): Readonly<CacheKeyConfig<MutationKey>> {
+    return this.#mutationCache.config
   }
 
   setOptions(

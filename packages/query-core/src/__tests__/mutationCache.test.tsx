@@ -348,6 +348,50 @@ describe('mutationCache', () => {
       ).toEqual([mutation2])
       expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
     })
+
+    it('should use the cache serializer once when clients share a cache', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.getTime() : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testCache = new MutationCache({ valueSerializer, hashFn })
+      const stringClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const numberClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const date = new Date(0)
+
+      testCache.build(stringClient, {
+        mutationKey: ['string', date],
+      })
+      const numberMutation = testCache.build(numberClient, {
+        mutationKey: ['number', date],
+      })
+      testCache.build(numberClient, {
+        mutationKey: ['other', date],
+      })
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(testCache.find({ mutationKey: ['number', date] })).toBe(
+        numberMutation,
+      )
+      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(hashFn).toHaveBeenCalledTimes(1)
+
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(
+        testCache.findAll({ mutationKey: ['number', date], exact: true }),
+      ).toEqual([numberMutation])
+      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(hashFn).toHaveBeenCalledTimes(1)
+
+      stringClient.clear()
+    })
   })
 
   describe('garbage collection', () => {

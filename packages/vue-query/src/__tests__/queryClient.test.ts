@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
+import { ref } from 'vue-demi'
+import {
+  QueryCache,
+  QueryClient as QueryClientOrigin,
+} from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
@@ -42,6 +47,27 @@ describe('QueryCache', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('should use the query cache key configuration', () => {
+    const queryClient = new QueryClient({
+      queryCache: new QueryCache({ hashFn: () => 'custom-hash' }),
+    })
+
+    queryClient.setQueryData(['foo'], 'data')
+    expect(queryClient.getQueryData(['foo'])).toBe('data')
+  })
+
+  it('should use the query cache value serializer', () => {
+    const queryClient = new QueryClient({
+      queryCache: new QueryCache({
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      }),
+    })
+
+    queryClient.setQueryData(['dates', new Date(0)], 'data')
+    expect(queryClient.getQueryData(['dates', new Date(0)])).toBe('data')
   })
 
   describe('isFetching', () => {
