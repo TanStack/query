@@ -362,4 +362,64 @@ describe('queryOptions', () => {
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
+
+  it('should work with branded queryKey', () => {
+    type PostId = string & { readonly __brand: 'PostId' }
+    const postId = '123' as PostId
+
+    const options = queryOptions({
+      queryKey: ['post', postId],
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+
+    const { data } = reactive(useQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<{ id: PostId } | undefined>()
+  })
+
+  it('should work with branded queryKey inside MaybeRefOrGetter', () => {
+    type PostId = string & { readonly __brand: 'PostId' }
+    const postId = '123' as PostId
+
+    const simpleOptions = queryOptions({
+      queryKey: ['post', postId],
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+
+    const { data: simpleData } = reactive(useQuery(simpleOptions))
+
+    expectTypeOf(simpleData).toEqualTypeOf<{ id: PostId } | undefined>()
+
+    const nestedOptions = queryOptions({
+      queryKey: ['post', { postId }],
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+
+    const { data: nestedData } = reactive(useQuery(nestedOptions))
+
+    expectTypeOf(nestedData).toEqualTypeOf<{ id: PostId } | undefined>()
+
+    const inlineData = reactive(
+      useQuery({
+        queryKey: ['post', postId],
+        queryFn: () => Promise.resolve({ id: postId }),
+      }),
+    )
+
+    expectTypeOf(inlineData.data).toEqualTypeOf<{ id: PostId } | undefined>()
+  })
+
+  it('should still tag the queryKey with the queryFn result when it contains branded types', () => {
+    type PostId = string & { readonly __brand: 'PostId' }
+    const postId = '123' as PostId
+
+    const { queryKey: tagged } = queryOptions({
+      queryKey: ['post', { postId }],
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<{ id: PostId }>()
+  })
 })
