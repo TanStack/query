@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
@@ -83,7 +83,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 0))
+        await sleep(0)
 
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
@@ -119,7 +119,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 0))
+        await sleep(0)
 
         expect(warnSpy).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
@@ -154,7 +154,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 10))
+        await sleep(10)
 
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
@@ -188,7 +188,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 10))
+        await sleep(10)
 
         expect(warnSpy).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
@@ -213,7 +213,7 @@ describe('broadcastQueryClient', () => {
 
       queryClient.setQueryData(key, { value: 1 })
 
-      await new Promise((r) => setTimeout(r, 0))
+      await sleep(0)
       expect(onBroadcastError).toHaveBeenCalledWith(
         cloneError,
         expect.objectContaining<BroadcastErrorEvent>({
@@ -240,7 +240,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 0))
+        await sleep(0)
         expect(warnSpy).toHaveBeenCalledWith(
           expect.stringContaining('cross-tab sync for this query was skipped'),
           cloneError,
@@ -266,7 +266,7 @@ describe('broadcastQueryClient', () => {
 
         queryClient.setQueryData(key, { value: 1 })
 
-        await new Promise((r) => setTimeout(r, 0))
+        await sleep(0)
         expect(warnSpy).not.toHaveBeenCalled()
       } finally {
         warnSpy.mockRestore()
