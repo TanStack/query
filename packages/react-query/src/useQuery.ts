@@ -1,12 +1,7 @@
 'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type {
-  DefaultError,
-  NoInfer,
-  QueryClient,
-  QueryKey,
-} from '@tanstack/query-core'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -25,7 +20,7 @@ export function useQuery<
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): DefinedUseQueryResult<NoInfer<TData>, TError>
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -35,7 +30,7 @@ export function useQuery<
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryResult<NoInfer<TData>, TError>
+): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -45,7 +40,7 @@ export function useQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryResult<NoInfer<TData>, TError>
+): UseQueryResult<TData, TError>
 
 export function useQuery(options: UseQueryOptions, queryClient?: QueryClient) {
   return useBaseQuery(options, QueryObserver, queryClient)

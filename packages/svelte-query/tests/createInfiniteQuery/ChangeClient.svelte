@@ -1,23 +1,27 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/index.js'
+  import { setQueryClientContext } from '../../src/context.js'
   import { sleep } from '@tanstack/query-test-utils'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 
   const queryKey = ['test']
 
   let firstPage = $state(0)
 
-  const query = createInfiniteQuery(
-    () => ({
-      queryKey: queryKey,
-      queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-      getNextPageParam: (lastPage) => lastPage + 1,
-      initialPageParam: firstPage,
-    }),
-    () => queryClient,
-  )
+  setQueryClientContext(queryClient)
+
+  const query = createInfiniteQuery(() => ({
+    queryKey: queryKey,
+    queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
+    getNextPageParam: (lastPage) => lastPage + 1,
+    initialPageParam: firstPage,
+  }))
 </script>
 
 <button

@@ -16,7 +16,7 @@ describe('useQuery', () => {
   const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
   expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-  expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
+  expectTypeOf(fromQueryFn).not.toHaveProperty('promise')
 
   // it should be possible to specify the result type
   const withResult = useQuery<string>({
@@ -179,7 +179,7 @@ describe('useQuery', () => {
     describe('Config object overload', () => {
       it('TData should always be defined when initialData is provided as an object', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         })
@@ -189,7 +189,7 @@ describe('useQuery', () => {
 
       it('TData should be defined when passed through queryOptions', () => {
         const options = queryOptions({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -206,7 +206,7 @@ describe('useQuery', () => {
 
       it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
         const options = queryOptions({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(1),
         })
 
@@ -220,7 +220,7 @@ describe('useQuery', () => {
 
       it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -236,7 +236,7 @@ describe('useQuery', () => {
 
       it('TData should have undefined in the union when initialData is NOT provided', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -249,7 +249,7 @@ describe('useQuery', () => {
 
       it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
         const { data } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -263,7 +263,7 @@ describe('useQuery', () => {
 
       it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
         const { data, isSuccess } = useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => {
             return {
               wow: true,
@@ -277,25 +277,26 @@ describe('useQuery', () => {
         }
       })
 
-      // eslint-disable-next-line vitest/expect-expect
-      it('TData should depend from only arguments, not the result', () => {
-        // @ts-expect-error
-        const result: UseQueryResult<{ wow: string }> = useQuery({
-          queryKey: ['key'],
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
+      it('should preserve discriminated-union narrowing', () => {
+        type Result =
+          | { type: 'first'; first: string }
+          | { type: 'second'; second: string }
+
+        const query = useQuery({
+          queryKey: queryKey(),
+          queryFn: (): Result => ({ type: 'first', first: 'a' }),
         })
 
-        void result
+        const second = query.data?.type === 'first' ? undefined : query.data
+
+        expectTypeOf(second).toEqualTypeOf<
+          { type: 'second'; second: string } | undefined
+        >()
       })
 
       it('data should not have undefined when initialData is provided', () => {
         const { data } = useQuery({
-          queryKey: ['query-key'],
+          queryKey: queryKey(),
           initialData: 42,
         })
 
@@ -312,7 +313,7 @@ describe('useQuery', () => {
         ) => {
           return useQuery({
             ...options,
-            queryKey: ['todos-key'],
+            queryKey: queryKey(),
             queryFn: () => Promise.resolve('data'),
           })
         }
@@ -327,7 +328,7 @@ describe('useQuery', () => {
       it('should be able to use structuralSharing with unknown types', () => {
         // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
         useQuery({
-          queryKey: ['key'],
+          queryKey: queryKey(),
           queryFn: () => 5,
           structuralSharing: (oldData, newData) => {
             expectTypeOf(oldData).toBeUnknown()
@@ -336,6 +337,54 @@ describe('useQuery', () => {
           },
         })
       })
+    })
+  })
+
+  describe('generic indexed access TData', () => {
+    // https://github.com/TanStack/query/issues/9937
+    it('should be assignable back to its source indexed type when passed to a generic function parameter', () => {
+      enum DataType {
+        Account = 'account',
+        Product = 'product',
+      }
+
+      interface Account {
+        name: string
+      }
+      interface Product {
+        code: string
+      }
+
+      type DataTypeToEntity = {
+        [DataType.Account]: Account
+        [DataType.Product]: Product
+      }
+
+      const getData = <TDataType extends DataType>(
+        _dataType: TDataType,
+      ): Promise<DataTypeToEntity[TDataType]> =>
+        Promise.resolve({} as DataTypeToEntity[TDataType])
+
+      const getLabel = <TDataType extends DataType>(
+        _dataType: TDataType,
+        _data: DataTypeToEntity[TDataType],
+      ) => 'test'
+
+      function Test<TDataType extends DataType>(props: {
+        dataType: TDataType
+      }) {
+        const { data } = useQuery({
+          queryKey: ['test'],
+          queryFn: () => getData(props.dataType),
+        })
+
+        // Regression guard: this call must compile. With the previous
+        // hand-rolled NoInfer, `data` failed to flow back into the generic
+        // indexed-access parameter `DataTypeToEntity[TDataType]`.
+        return data ? getLabel(props.dataType, data) : null
+      }
+
+      expectTypeOf(Test).toBeFunction()
     })
   })
 })

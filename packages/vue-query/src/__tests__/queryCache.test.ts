@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
 import { QueryCache } from '../queryCache'
@@ -10,38 +10,38 @@ describe('QueryCache', () => {
   })
 
   describe('find', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const queryCache = new QueryCache()
 
       queryCache.find({
         queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.find).toBeCalledWith({
+      expect(QueryCacheOrigin.prototype.find).toHaveBeenCalledWith({
         queryKey: ['foo', 'bar'],
       })
     })
   })
 
   describe('findAll', () => {
-    test('should properly unwrap two parameters', () => {
+    it('should properly unwrap two parameters', () => {
       const queryCache = new QueryCache()
 
       queryCache.findAll({
         queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({
+      expect(QueryCacheOrigin.prototype.findAll).toHaveBeenCalledWith({
         queryKey: ['foo', 'bar'],
       })
     })
 
-    test('should default to empty filters', () => {
+    it('should default to empty filters', () => {
       const queryCache = new QueryCache()
 
       queryCache.findAll()
 
-      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({})
+      expect(QueryCacheOrigin.prototype.findAll).toHaveBeenCalledWith({})
     })
   })
 })

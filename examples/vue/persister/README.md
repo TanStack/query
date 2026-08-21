@@ -1,4 +1,4 @@
-# Basic example
+# Persister example
 
 To run this example:
 

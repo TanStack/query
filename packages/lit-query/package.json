@@ -1,0 +1,72 @@
+{
+  "name": "@tanstack/lit-query",
+  "version": "0.2.11",
+  "description": "Lit adapter for TanStack Query Core",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/lit-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto .",
+    "lint:fix": "eslint --concurrency=auto . --fix",
+    "test:types": "tsc --noEmit",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:watch": "pnpm run test:lib:dev",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsdown --tsconfig tsconfig.prod.json",
+    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
+    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
+    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
+    "perf:l3:raw": "node scripts/l3-stress.mjs"
+  },
+  "type": "module",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src",
+    "!src/tests"
+  ],
+  "dependencies": {
+    "@lit/context": "^1.1.6",
+    "@tanstack/query-core": "workspace:*",
+    "lit": "^3.3.1"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "^5.0.0",
+    "lit": ">=2.8.0 <4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@tanstack/query-test-utils": "workspace:*",
+    "globals": "^17.4.0",
+    "typescript-eslint": "^8.54.0"
+  }
+}

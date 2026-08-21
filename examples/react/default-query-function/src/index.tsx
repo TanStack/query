@@ -146,5 +146,6 @@ function Post({
   )
 }
 
-const rootElement = document.getElementById('root') as HTMLElement
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Missing #root element')
 ReactDOM.createRoot(rootElement).render(<App />)

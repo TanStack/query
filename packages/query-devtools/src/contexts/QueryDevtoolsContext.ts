@@ -29,7 +29,7 @@ export interface QueryDevtoolsProps {
   initialIsOpen?: boolean
   errorTypes?: Array<DevtoolsErrorType>
   shadowDOMTarget?: ShadowRoot
-  onClose?: () => unknown
+  onClose?: () => void
   hideDisabledQueries?: boolean
   theme?: Theme
 }

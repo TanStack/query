@@ -2,6 +2,7 @@
   "name": "@tanstack/query-example-vue-2.7-basic",
   "private": true,
   "scripts": {
+    "postinstall": "vue-demi-switch 2.7",
     "dev": "vite",
     "_build": "vite build",
     "_build:dev": "vite build -m development",

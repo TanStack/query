@@ -19,7 +19,6 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
 import type {
   DefinedUseQueryResult,
@@ -163,7 +162,7 @@ export type QueriesOptions<
           >
         : ReadonlyArray<unknown> extends T
           ? T
-          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogeneous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
                 UseQueryOptionsForUseQueries<
@@ -224,6 +223,7 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const subscribed = options.subscribed !== false
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -235,11 +235,13 @@ export function useQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
           ? 'isRestoring'
-          : 'optimistic'
+          : subscribed
+            ? 'optimistic'
+            : undefined
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, subscribed],
   )
 
   defaultedQueries.forEach((queryOptions) => {
@@ -266,7 +268,7 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
@@ -294,13 +296,9 @@ export function useQueries<
     ? optimisticResult.flatMap((result, index) => {
         const opts = defaultedQueries[index]
 
-        if (opts) {
+        if (opts && shouldSuspend(opts, result)) {
           const queryObserver = new QueryObserver(client, opts)
-          if (shouldSuspend(opts, result)) {
-            return fetchOptimistic(opts, queryObserver, errorResetBoundary)
-          } else if (willFetch(result, isRestoring)) {
-            void fetchOptimistic(opts, queryObserver, errorResetBoundary)
-          }
+          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
         }
         return []
       })

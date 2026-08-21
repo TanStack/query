@@ -28,9 +28,9 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-export const defaultTimeoutProvider: TimeoutProvider<
-  ReturnType<typeof setTimeout>
-> = {
+type SystemTimerId = ReturnType<typeof setTimeout>
+
+export const defaultTimeoutProvider: TimeoutProvider = {
   // We need the wrapper function syntax below instead of direct references to
   // global setTimeout etc.
   //
@@ -42,10 +42,12 @@ export const defaultTimeoutProvider: TimeoutProvider<
   // have a hard reference to the original implementation at the time when this
   // file was imported.
   setTimeout: (callback, delay) => setTimeout(callback, delay),
-  clearTimeout: (timeoutId) => clearTimeout(timeoutId),
+  clearTimeout: (timeoutId) =>
+    clearTimeout(timeoutId as SystemTimerId | undefined),
 
   setInterval: (callback, delay) => setInterval(callback, delay),
-  clearInterval: (intervalId) => clearInterval(intervalId),
+  clearInterval: (intervalId) =>
+    clearInterval(intervalId as SystemTimerId | undefined),
 }
 
 /**
@@ -62,7 +64,8 @@ export const defaultTimeoutProvider: TimeoutProvider<
 export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   // We cannot have TimeoutManager<T> as we must instantiate it with a concrete
   // type at app boot; and if we leave that type, then any new timer provider
-  // would need to support ReturnType<typeof setTimeout>, which is infeasible.
+  // would need to support the default provider's concrete timer ID, which is
+  // infeasible across environments.
   //
   // We settle for type safety for the TimeoutProvider type, and accept that
   // this class is unsafe internally to allow for extension.

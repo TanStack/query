@@ -11,10 +11,11 @@ const result = useSuspenseQueries(options)
 
 The same as for [useQueries](./useQueries.md), except that each `query` can't have:
 
-- `suspense`
 - `throwOnError`
 - `enabled`
 - `placeholderData`
+
+> The [`select` typing caveat](./useQueries.md#typescript-typing-the-select-option) for `useQueries` applies here as well: annotate the `select` parameter or use the [`queryOptions`](./queryOptions.md) helper to keep type inference.
 
 **Returns**
 

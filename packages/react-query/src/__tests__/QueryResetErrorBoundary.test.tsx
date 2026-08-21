@@ -15,16 +15,19 @@ import {
 import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -725,6 +728,84 @@ describe('QueryErrorResetBoundary', () => {
 
       consoleMock.mockRestore()
     })
+
+    it('should refetch after error when staleTime is Infinity and previous data exists (#9728)', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn()
+      let count = 0
+
+      queryFn.mockImplementation(async () => {
+        await sleep(10)
+        count++
+        if (count === 2) {
+          throw new Error('Error ' + count)
+        }
+        return 'Success ' + count
+      })
+
+      function Page() {
+        const [_, forceUpdate] = React.useState(0)
+
+        React.useEffect(() => {
+          forceUpdate(1)
+        }, [])
+
+        const { data, refetch } = useQuery({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          staleTime: Infinity,
+          throwOnError: true,
+        })
+
+        return (
+          <div>
+            <div>Data: {data}</div>
+            <button onClick={() => refetch()}>Refetch</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <React.StrictMode>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <div>
+                    <div>Status: error</div>
+                    <button onClick={resetErrorBoundary}>Retry</button>
+                  </div>
+                )}
+              >
+                <Page />
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </React.StrictMode>,
+      )
+
+      // 1. First mount -> fetching -> Success
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('Data: Success 1')).toBeInTheDocument()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      // 2. Click Refetch -> Triggers fetch -> Fails (Error 2) -> ErrorBoundary
+      fireEvent.click(rendered.getByText('Refetch'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('Status: error')).toBeInTheDocument()
+      expect(queryFn).toHaveBeenCalledTimes(2)
+
+      // 3. Click Retry -> Remounts
+      // Because staleTime is Infinity and we have Data from (1),
+      // AND we are in Error state.
+      fireEvent.click(rendered.getByText('Retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('Data: Success 3')).toBeInTheDocument()
+      expect(queryFn).toHaveBeenCalledTimes(3)
+    })
   })
 
   describe('useQueries', () => {
@@ -748,7 +829,7 @@ describe('QueryErrorResetBoundary', () => {
                 }),
               retry: false,
               throwOnError: true,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -813,7 +894,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })

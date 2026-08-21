@@ -133,12 +133,17 @@ others:
     {
       title: 'Hey API',
       url: 'https://heyapi.dev/openapi-ts/plugins/tanstack-query',
-      description: 'The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.',
+      description: 'OpenAPI to TypeScript codegen. Production-ready SDKs, Zod schemas, TanStack Query hooks, and 20+ plugins. Used by Vercel, OpenCode, and PayPal.',
     },
     {
       title: 'Kubb',
       url: 'https://www.kubb.dev/',
       description: 'Generate SDKs for all your APIs',
+    },
+    {
+      title: '@codewithagents/openapi-react-query',
+      url: 'https://github.com/codewithagents/openapi-zod-ts',
+      description: 'Generate fully typed TanStack/React Query v5 hooks from an OpenAPI 3.1 spec, with Zod v4 runtime validation and an end-to-end pipeline (client, mocks, server).',
     },
     {
       title: 'OpenAPI codegen',
@@ -174,6 +179,21 @@ others:
       title: 'Rapini',
       url: 'https://github.com/rametta/rapini',
       description: '🥬 OpenAPI to React Query (or SWR) & Axios',
+    },
+    {
+      title: 'React Query Visualizer',
+      url: 'https://marketplace.visualstudio.com/items?itemName=fe-dudu.react-query-visualizer',
+      description: 'VS Code extension for TanStack Query (React Query): visualize query keys, cache invalidation/refetch flows, and file impact graph',
+    },
+    {
+      title: 'StitchAPI',
+      url: 'https://stitchapi.dev',
+      description: 'Gives TanStack Query a typed, validated, streaming-first queryFn: stitchQueryOptions supplies the fetcher, so Query keeps owning caching and revalidation. Bindings for React, Vue, Svelte, Solid, and Angular.',
+    },
+    {
+      title: 'Tanstack Query Visualizer',
+      url: 'https://tanstack-query-visualizer.sofi.coop/',
+      description: 'An interactive sandbox that visualizes the relationship between mutations and query keys.',
     },
     {
       title: 'ts-rest',

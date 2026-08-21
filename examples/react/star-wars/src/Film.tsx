@@ -3,8 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import { getFilm, getCharacter } from './api'
 
 export default function Film() {
-  let params = useParams()
-  const filmId = params.filmId!
+  const { filmId } = useParams()
+
+  if (!filmId) {
+    return <p>Invalid film ID</p>
+  }
 
   const { data, status } = useQuery({
     queryKey: ['film', filmId],
@@ -21,7 +24,7 @@ export default function Film() {
       <p>{data.opening_crawl}</p>
       <br />
       <h4 className="text-2xl">Characters</h4>
-      {data.characters.map((character: any) => {
+      {data.characters.map((character: string) => {
         const characterUrlParts = character.split('/').filter(Boolean)
         const characterId = characterUrlParts[characterUrlParts.length - 1]
         return <Character characterId={characterId} key={characterId} />

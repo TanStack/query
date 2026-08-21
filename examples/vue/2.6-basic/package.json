@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "vue-demi-switch 2",
     "dev": "vite",
     "_build": "vite build",
     "_preview": "vite preview"

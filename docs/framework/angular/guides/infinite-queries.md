@@ -51,18 +51,20 @@ export class Example {
 ```angular-html
 <div>
   @if (query.isPending()) {
-  <p>Loading...</p>
+    <p>Loading...</p>
   } @else if (query.isError()) {
-  <span>Error: {{ query?.error().message }}</span>
-  } @else { @for (page of query?.data().pages; track $index) { @for (project of
-  page.data; track project.id) {
-  <p>{{ project.name }} {{ project.id }}</p>
-  } }
-  <div>
-    <button (click)="query.fetchNextPage()" [disabled]="nextButtonDisabled()">
-      {{ nextButtonText() }}
-    </button>
-  </div>
+    <span>Error: {{ query?.error().message }}</span>
+  } @else {
+    @for (page of query?.data().pages; track $index) {
+      @for (project of page.data; track project.id) {
+        <p>{{ project.name }} {{ project.id }}</p>
+      }
+    }
+    <div>
+      <button (click)="query.fetchNextPage()" [disabled]="nextButtonDisabled()">
+        {{ nextButtonText() }}
+      </button>
+    </div>
   }
 </div>
 ```

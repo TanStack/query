@@ -1,21 +1,31 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
-import ResetExample from './ResetExample.svelte'
-import OnSuccessExample from './OnSuccessExample.svelte'
-import FailureExample from './FailureExample.svelte'
+import { createMutation } from '../../src/index.js'
+import { withEffectRoot } from '../utils.svelte.js'
+import Reset from './Reset.svelte'
+import Success from './Success.svelte'
+import Failure from './Failure.svelte'
 
 describe('createMutation', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
-  test('Able to reset `error`', async () => {
-    const rendered = render(ResetExample)
+  it('should be able to reset `error`', async () => {
+    const rendered = render(Reset, {
+      props: { queryClient },
+    })
 
     expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
 
@@ -28,12 +38,13 @@ describe('createMutation', () => {
     expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
 
-  test('Able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
+  it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
 
-    const rendered = render(OnSuccessExample, {
+    const rendered = render(Success, {
       props: {
+        queryClient,
         onSuccessMock,
         onSettledMock,
       },
@@ -58,7 +69,7 @@ describe('createMutation', () => {
     expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
   })
 
-  test('Set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
+  it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
     type Value = { count: number }
 
     const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
@@ -69,8 +80,9 @@ describe('createMutation', () => {
 
     mutationFn.mockImplementation((value) => sleep(10).then(() => value))
 
-    const rendered = render(FailureExample, {
+    const rendered = render(Failure, {
       props: {
+        queryClient,
         mutationFn,
       },
     })
@@ -95,4 +107,33 @@ describe('createMutation', () => {
     expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
     expect(rendered.getByText('Failure Reason: undefined')).toBeInTheDocument()
   })
+
+  it(
+    'should recreate observer when queryClient changes',
+    withEffectRoot(async () => {
+      const queryClient1 = new QueryClient()
+      const queryClient2 = new QueryClient()
+
+      let activeClient = $state(queryClient1)
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }),
+        () => activeClient,
+      )
+
+      mutation.mutate('first')
+      await vi.advanceTimersByTimeAsync(11)
+
+      expect(mutation.status).toBe('success')
+      expect(mutation.data).toBe('first')
+
+      activeClient = queryClient2
+      flushSync()
+
+      expect(mutation.status).toBe('idle')
+      expect(mutation.data).toBeUndefined()
+    }),
+  )
 })
