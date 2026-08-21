@@ -70,6 +70,55 @@ describe('core/utils', () => {
       expect(serializer).toHaveBeenCalledTimes(4)
     })
 
+    it('serializes recursive objects and arrays with copy-on-write', () => {
+      const serializer = vi.fn((value: unknown) =>
+        typeof value === 'number' ? String(value) : value,
+      )
+      const untouched = { status: 'active' }
+      const nestedObject = { page: 1, filters: { limit: 2 }, untouched }
+      const nestedArray = [{ offset: 3 }, untouched]
+      const key = ['todos', nestedObject, nestedArray]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual([
+        'todos',
+        { page: '1', filters: { limit: '2' }, untouched },
+        [{ offset: '3' }, untouched],
+      ])
+      expect(serialized).not.toBe(key)
+      expect(serialized[1]).not.toBe(nestedObject)
+      expect((serialized[1] as Record<string, unknown>).untouched).toBe(
+        untouched,
+      )
+      expect(serialized[2]).not.toBe(nestedArray)
+      expect((serialized[2] as Array<unknown>)[1]).toBe(untouched)
+    })
+
+    it('preserves unchanged objects', () => {
+      const serializer = vi.fn((value: unknown) => value)
+      const nestedObject = { status: 'active', tags: ['one', 'two'] }
+      const key = ['todos', nestedObject]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toBe(key)
+      expect(serialized[1]).toBe(nestedObject)
+      expect(serializer).toHaveBeenCalledTimes(4)
+    })
+
+    it('recursively serializes plain objects returned by the serializer', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Date ? { timestamp: value.getTime() } : value,
+      )
+      const key = ['dates', new Date(0)]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual(['dates', { timestamp: 0 }])
+      expect(serialized).not.toBe(key)
+    })
+
     it('does not cache failed serialization', () => {
       const serializer = vi.fn(() => {
         throw new Error('serialize failed')

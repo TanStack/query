@@ -264,44 +264,40 @@ const cacheKeySerializationCache = new WeakMap<
 
 function serializeCacheKeyValue(
   value: unknown,
-  serializer: CacheKeyValueSerializer | undefined,
+  serializer: CacheKeyValueSerializer,
 ): unknown {
-  if (Array.isArray(value)) {
-    let result: Array<unknown> | undefined
+  if (isPlainArray(value)) {
+    let result = value
 
     for (let index = 0; index < value.length; index++) {
-      if (!(index in value)) {
-        continue
-      }
-
       const item = value[index]
       const serializedItem = serializeCacheKeyValue(item, serializer)
       if (serializedItem !== item) {
-        result ??= value.slice()
+        if (result === value) {
+          result = value.slice()
+        }
         result[index] = serializedItem
       }
     }
 
-    return result ?? value
+    return result
   }
 
   if (isPlainObject(value)) {
-    let result: Record<string, unknown> | undefined
+    let result = value
 
     for (const key of Object.keys(value)) {
       const item = value[key]
       const serializedItem = serializeCacheKeyValue(item, serializer)
       if (serializedItem !== item) {
-        result ??= { ...value }
+        if (result === value) {
+          result = { ...value }
+        }
         result[key] = serializedItem
       }
     }
 
-    return result ?? value
-  }
-
-  if (!serializer) {
-    return value
+    return result
   }
 
   const serializedValue = serializer(value)
