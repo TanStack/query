@@ -173,7 +173,7 @@ function matchQueryWithMatcher(
   if (
     queryKey &&
     !cacheKeyMatcher?.(
-      query.queryKey,
+      query.cacheKey,
       query.queryHash,
       query.options.queryKeyHashFn,
     )
@@ -236,7 +236,8 @@ function matchMutationWithMatcher(
   if (mutationKey) {
     if (
       !mutation.options.mutationKey ||
-      !cacheKeyMatcher?.(mutation.options.mutationKey, mutation.mutationHash)
+      !mutation.cacheKey ||
+      !cacheKeyMatcher?.(mutation.cacheKey, mutation.mutationHash)
     ) {
       return false
     }
@@ -281,18 +282,51 @@ function serializeCacheKeyValue(
   serializer: CacheKeyValueSerializer | undefined,
 ): unknown {
   if (Array.isArray(value)) {
-    return value.map((item) => serializeCacheKeyValue(item, serializer))
+    let result: Array<unknown> | undefined
+
+    for (let index = 0; index < value.length; index++) {
+      if (!(index in value)) {
+        continue
+      }
+
+      const item = value[index]
+      const serializedItem = serializeCacheKeyValue(item, serializer)
+      if (serializedItem !== item) {
+        result ??= value.slice()
+        result[index] = serializedItem
+      }
+    }
+
+    return result ?? value
   }
 
   if (isPlainObject(value)) {
-    const result: Record<string, unknown> = {}
+    let result: Record<string, unknown> | undefined
+
     for (const key of Object.keys(value)) {
-      result[key] = serializeCacheKeyValue(value[key], serializer)
+      const item = value[key]
+      const serializedItem = serializeCacheKeyValue(item, serializer)
+      if (serializedItem !== item) {
+        result ??= { ...value }
+        result[key] = serializedItem
+      }
     }
-    return result
+
+    return result ?? value
   }
 
-  return serializer ? serializer(value) : value
+  if (!serializer) {
+    return value
+  }
+
+  const serializedValue = serializer(value)
+  if (serializedValue === value) {
+    return value
+  }
+
+  return Array.isArray(serializedValue) || isPlainObject(serializedValue)
+    ? serializeCacheKeyValue(serializedValue, serializer)
+    : serializedValue
 }
 
 export function serializeCacheKey(

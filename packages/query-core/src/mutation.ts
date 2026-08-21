@@ -1,10 +1,11 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
-import { hashKey } from './utils'
+import { hashKey, serializeCacheKey } from './utils'
 import type {
   CacheKeyConfig,
   DefaultError,
+  DefaultedMutationOptions,
   MutationFunctionContext,
   MutationKey,
   MutationMeta,
@@ -93,6 +94,7 @@ export class Mutation<
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TOnMutateResult>
   options!: MutationOptions<TData, TError, TVariables, TOnMutateResult>
+  cacheKey?: MutationKey
   mutationHash?: string
   readonly mutationId: number
 
@@ -111,16 +113,27 @@ export class Mutation<
     this.#client = config.client
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
-    this.mutationHash =
-      config.mutationHash ??
-      (config.options.mutationKey
-        ? (this.#mutationCache.config.hashFn?.(config.options.mutationKey) ??
-          hashKey(config.options.mutationKey))
-        : undefined)
     this.#observers = []
     this.state = config.state || getDefaultState()
 
     this.setOptions(config.options)
+    const cacheKey = (
+      config.options as DefaultedMutationOptions<typeof config.options>
+    )._cacheKey
+    this.cacheKey =
+      cacheKey ??
+      (config.options.mutationKey
+        ? serializeCacheKey(
+            config.options.mutationKey,
+            this.#mutationCache.config.valueSerializer,
+          )
+        : undefined)
+    this.mutationHash =
+      config.mutationHash ??
+      (this.cacheKey
+        ? (this.#mutationCache.config.hashFn?.(this.cacheKey) ??
+          hashKey(this.cacheKey))
+        : undefined)
     this.scheduleGc()
   }
 

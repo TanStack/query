@@ -1218,6 +1218,25 @@ describe('query', () => {
     expect(query.options.queryFn).toBe(queryFn)
   })
 
+  it('should serialize the cache key when constructed directly', () => {
+    const date = new Date(0)
+    const client = new QueryClient({
+      queryCache: new QueryCache({
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      }),
+    })
+
+    const query = new Query({
+      client,
+      queryKey: ['dates', date],
+      queryHash: 'dates',
+    })
+
+    expect(query.queryKey).toEqual(['dates', date])
+    expect(query.cacheKey).toEqual(['dates', date.toISOString()])
+  })
+
   it('should log error when queryKey is not an array', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     const key: unknown = 'string-key'

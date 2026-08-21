@@ -230,6 +230,7 @@ describe('InfiniteQueryObserver', () => {
       throwOnError: true,
       refetchOnReconnect: false,
       queryHash: key.join(''),
+      _cacheKey: key,
       _defaulted: true,
       behavior: undefined,
     }

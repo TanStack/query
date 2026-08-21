@@ -5,6 +5,7 @@ import { hashKey, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
+  DefaultedMutationOptions,
   MutateOptions,
   MutationFunctionContext,
   MutationObserverOptions,
@@ -71,9 +72,10 @@ export class MutationObserver<
     >,
   ) {
     const prevOptions = this.options as
-      | MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
+      | DefaultedMutationOptions<typeof this.options>
       | undefined
-    this.options = this.#client.defaultMutationOptions(options)
+    const defaultedOptions = this.#client.defaultMutationOptions(options)
+    this.options = defaultedOptions
     if (!shallowEqualObjects(this.options, prevOptions)) {
       this.#client.getMutationCache().notify({
         type: 'observerOptionsUpdated',
@@ -86,12 +88,13 @@ export class MutationObserver<
 
     if (
       prevOptions?.mutationKey &&
-      this.options.mutationKey &&
-      hashFn(prevOptions.mutationKey) !== hashFn(this.options.mutationKey)
+      defaultedOptions.mutationKey &&
+      hashFn(prevOptions._cacheKey ?? prevOptions.mutationKey) !==
+        hashFn(defaultedOptions._cacheKey ?? defaultedOptions.mutationKey)
     ) {
       this.reset()
     } else if (this.#currentMutation?.state.status === 'pending') {
-      this.#currentMutation.setOptions(this.options)
+      this.#currentMutation.setOptions(defaultedOptions)
     }
   }
 

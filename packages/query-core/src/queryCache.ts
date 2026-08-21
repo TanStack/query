@@ -113,17 +113,19 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
     const defaultedOptions = client.defaultQueryOptions(options)
     const queryKey = defaultedOptions.queryKey
+    const cacheKey = defaultedOptions._cacheKey
     const queryHash = defaultedOptions.queryHash
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {
       query = new Query({
         client,
+        cacheKey,
         queryKey,
         queryHash,
         options: defaultedOptions,
         state,
-        defaultOptions: client.getQueryDefaults(queryKey),
+        defaultOptions: client.getQueryDefaults(queryKey, cacheKey),
       })
       this.add(query)
     }

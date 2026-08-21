@@ -19,6 +19,7 @@ import type {
   CancelOptions,
   DefaultError,
   DefaultOptions,
+  DefaultedMutationOptions,
   DefaultedQueryObserverOptions,
   EnsureInfiniteQueryDataOptions,
   EnsureQueryDataOptions,
@@ -605,11 +606,11 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey: QueryKey,
+    _cacheKey?: QueryKey,
   ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
-    const cacheKey = serializeCacheKey(
-      queryKey,
-      this.#queryCache.config.valueSerializer,
-    )
+    const cacheKey =
+      _cacheKey ??
+      serializeCacheKey(queryKey, this.#queryCache.config.valueSerializer)
     return mergeCacheKeyDefaults(this.#queryDefaults.values(), cacheKey)
   }
 
@@ -698,7 +699,7 @@ export class QueryClient {
         serializedCacheKey,
       ),
       ...options,
-      queryKey: serializedCacheKey,
+      _cacheKey: serializedCacheKey,
       _defaulted: true,
     }
 
@@ -735,9 +736,9 @@ export class QueryClient {
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
     options?: T,
-  ): T {
+  ): DefaultedMutationOptions<T> {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedMutationOptions<T>
     }
     const serializedCacheKey = options?.mutationKey
       ? serializeCacheKey(
@@ -755,10 +756,10 @@ export class QueryClient {
         )),
       ...options,
       ...(serializedCacheKey && {
-        mutationKey: serializedCacheKey,
+        _cacheKey: serializedCacheKey,
       }),
       _defaulted: true,
-    } as T
+    } as DefaultedMutationOptions<T>
   }
 
   clear(): void {

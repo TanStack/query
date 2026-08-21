@@ -10,6 +10,7 @@ import type { Query, QueryState } from '../query'
 import type {
   DataTag,
   DefaultError,
+  DefaultedMutationOptions,
   DefaultedQueryObserverOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
@@ -529,7 +530,7 @@ describe('fully typed usage', () => {
 
     const mutationOptions2 = queryClient.defaultMutationOptions(mutationOptions)
     expectTypeOf(mutationOptions2).toEqualTypeOf<
-      MutationOptions<TData, TError, void, unknown>
+      DefaultedMutationOptions<MutationOptions<TData, TError, void, unknown>>
     >()
 
     queryClient.setMutationDefaults(mutationKey, {
@@ -684,7 +685,9 @@ describe('fully typed usage', () => {
 
     const mutationOptions2 = queryClient.defaultMutationOptions(mutationOptions)
     expectTypeOf(mutationOptions2).toEqualTypeOf<
-      MutationOptions<unknown, DefaultError, void, unknown>
+      DefaultedMutationOptions<
+        MutationOptions<unknown, DefaultError, void, unknown>
+      >
     >()
 
     queryClient.setMutationDefaults(mutationKey, {
