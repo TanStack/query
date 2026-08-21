@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
-import { ref } from 'vue-demi'
 import {
   QueryCache,
   QueryClient as QueryClientOrigin,
