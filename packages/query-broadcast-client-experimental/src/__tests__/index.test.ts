@@ -84,6 +84,38 @@ describe('broadcastQueryClient', () => {
 
       expect(mockPostMessage).toHaveBeenCalled()
     })
+
+    it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // Populate the cache with an existing query so the incoming message
+      // below is applied via `query.setState` rather than `queryCache.build`.
+      queryClient.setQueryData(['existing'], { value: 0 })
+      const existingQuery = queryCache.find({ queryKey: ['existing'] })!
+
+      const explodingUnsubscribe = queryCache.subscribe(() => {
+        throw new Error('boom from an unrelated cache listener')
+      })
+
+      expect(() => {
+        lastCreatedChannel.onmessage?.({
+          type: 'updated',
+          queryHash: existingQuery.queryHash,
+          queryKey: ['existing'],
+          state: { data: 2 },
+        })
+      }).toThrow('boom')
+
+      explodingUnsubscribe()
+      mockPostMessage.mockClear()
+
+      queryClient.setQueryData(['local2'], { value: 1 })
+
+      expect(mockPostMessage).toHaveBeenCalled()
+    })
   })
 
   describe('postMessage error handling', () => {
