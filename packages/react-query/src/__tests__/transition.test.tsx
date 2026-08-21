@@ -55,10 +55,6 @@ describe('react transitions', () => {
       fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
     )
 
-    // the deferred key is still the old one, so the old data stays on screen
-    // while the new query is in flight. `toBeVisible` matters here: on a
-    // fallback React keeps the old subtree mounted but hides it with
-    // `display: none`, so `toBeInTheDocument` would also pass.
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
 
