@@ -13,7 +13,6 @@ import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   getSuspensePromise,
-  resolvedThenable,
   shouldSuspend,
   use,
 } from './suspense'
@@ -123,9 +122,13 @@ export function useBaseQuery<
   // Handle suspense
   if (defaultedOptions.suspense) {
     use(
-      shouldSuspend(defaultedOptions, result)
-        ? getSuspensePromise(defaultedOptions, observer, errorResetBoundary)
-        : resolvedThenable,
+      getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        client.getQueryCache().build(client, defaultedOptions),
+        shouldSuspend(defaultedOptions, result),
+      ),
     )
   }
 

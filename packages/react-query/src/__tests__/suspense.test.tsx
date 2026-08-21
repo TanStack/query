@@ -67,17 +67,54 @@ describe('Suspense Timer Tests', () => {
       options,
       observer,
       errorResetBoundary,
+      observer.getCurrentQuery(),
     )
     const secondPromise = getSuspensePromise(
       options,
       observer,
       errorResetBoundary,
+      observer.getCurrentQuery(),
     )
 
     expect(secondPromise).toBe(firstPromise)
 
     await vi.advanceTimersByTimeAsync(10)
     await firstPromise
+  })
+
+  it('should keep the suspense promise stable after it settles', async () => {
+    const key = queryKey()
+    const options = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      suspense: true,
+    })
+    const observer = new QueryObserver(queryClient, options)
+    const errorResetBoundary = {
+      clearReset: vi.fn(),
+      isReset: () => false,
+      reset: vi.fn(),
+    }
+
+    const firstPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    await firstPromise
+
+    const secondPromise = getSuspensePromise(
+      options,
+      observer,
+      errorResetBoundary,
+      observer.getCurrentQuery(),
+      false,
+    )
+
+    expect(secondPromise).toBe(firstPromise)
   })
 
   it('should support pending, fulfilled, and rejected promise states in the React 18 fallback', async () => {

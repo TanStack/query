@@ -18,7 +18,6 @@ import {
 import {
   ensureSuspenseTimers,
   getSuspensePromise,
-  resolvedThenable,
   shouldSuspend,
   use,
 } from './suspense'
@@ -294,12 +293,14 @@ export function useQueries<
       return undefined
     }
 
-    if (shouldSuspend(opts, result)) {
-      const queryObserver = new QueryObserver(client, opts)
-      return getSuspensePromise(opts, queryObserver, errorResetBoundary)
-    }
-
-    return resolvedThenable
+    const queryObserver = new QueryObserver(client, opts)
+    return getSuspensePromise(
+      opts,
+      queryObserver,
+      errorResetBoundary,
+      client.getQueryCache().build(client, opts),
+      shouldSuspend(opts, result),
+    )
   })
 
   // Start every fetch before calling use(), because use() suspends immediately.

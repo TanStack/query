@@ -135,6 +135,48 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not warn when a suspense promise settles before a replay', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const [id, setId] = React.useState(0)
+      const { data } = useSuspenseQuery({
+        queryKey: [key, id],
+        queryFn: () => Promise.resolve(id),
+      })
+
+      return (
+        <>
+          <button onClick={() => React.startTransition(() => setId(1))}>
+            next
+          </button>
+          <div>data: {data}</div>
+        </>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    await act(async () => {
+      fireEvent.click(rendered.getByText('next'))
+    })
+
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(
+      consoleMock.mock.calls.some((call) =>
+        call.some(
+          (value) =>
+            typeof value === 'string' && value.includes('uncached promise'),
+        ),
+      ),
+    ).toBe(false)
+
+    consoleMock.mockRestore()
+  })
+
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
     const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =

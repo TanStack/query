@@ -52,6 +52,7 @@ resolvedThenable.value = undefined
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>
   promise: Promise<void>
+  settled: boolean
 }
 
 const suspensePromiseCache = new WeakMap<
@@ -108,33 +109,40 @@ export function getSuspensePromise(
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
   observer: QueryObserver<any, any, any, any, any>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<any, any, any, any>,
+  shouldFetch = true,
 ): Promise<void> {
-  const query = observer.getCurrentQuery()
+  const shouldFetchNow =
+    shouldFetch ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+
   const cached = suspensePromiseCache.get(query)
 
-  if (cached) {
+  if (cached && (!shouldFetchNow || !cached.settled)) {
     cached.fetchPromise.catch(() => errorResetBoundary.clearReset())
     return cached.promise
+  }
+
+  if (!shouldFetchNow) {
+    return resolvedThenable
   }
 
   const fetchPromise = observer.fetchOptimistic(defaultedOptions)
   // The observer result is recalculated after React retries. We only use this
   // promise to tell React when the fetch has settled.
-  const promise = fetchPromise.then(
-    () => undefined,
-    () => undefined,
-  )
-  const entry = { fetchPromise, promise }
+  const entry = {
+    fetchPromise,
+    promise: undefined as unknown as Promise<void>,
+    settled: false,
+  }
+  const settle = () => {
+    entry.settled = true
+  }
+  entry.promise = fetchPromise.then(settle, settle)
 
   suspensePromiseCache.set(query, entry)
 
-  promise.then(() => {
-    if (suspensePromiseCache.get(query) === entry) {
-      suspensePromiseCache.delete(query)
-    }
-  })
-
   fetchPromise.catch(() => errorResetBoundary.clearReset())
 
-  return promise
+  return entry.promise
 }
