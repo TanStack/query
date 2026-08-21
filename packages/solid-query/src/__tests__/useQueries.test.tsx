@@ -245,6 +245,54 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('[1,2]')
   })
 
+  it('should not throw when the shape returned by combine changes', async () => {
+    const key1 = queryKey()
+
+    function Page() {
+      const [asArray, setAsArray] = createSignal(true)
+
+      const result = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 1),
+          },
+        ],
+        combine: (
+          results,
+        ):
+          | Array<UseQueryResult<number, Error>>
+          | { data: Array<number | undefined> } =>
+          asArray()
+            ? results
+            : { data: results.map((queryResult) => queryResult.data) },
+      }))
+
+      return (
+        <div>
+          <button onClick={() => setAsArray(false)}>to object</button>
+          <div data-testid="keys">{Object.keys(result).join(',')}</div>
+          <div data-testid="data">
+            {JSON.stringify(
+              'data' in result ? result.data : (result[0]?.data ?? null),
+            )}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('keys')).toHaveTextContent('0')
+    expect(rendered.getByTestId('data')).toHaveTextContent('1')
+
+    fireEvent.click(rendered.getByRole('button', { name: /to object/i }))
+
+    expect(rendered.getByTestId('keys')).toHaveTextContent('data')
+    expect(rendered.getByTestId('data')).toHaveTextContent('[1]')
+  })
+
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
