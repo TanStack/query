@@ -714,7 +714,8 @@ export class QueryClient {
 
     return {
       ...this.#defaultOptions.mutations,
-      ...(options?.mutationKey && this.getMutationDefaults(options.mutationKey)),
+      ...(options?.mutationKey &&
+        this.getMutationDefaults(options.mutationKey)),
       ...options,
       _defaulted: true,
     } as DefaultedMutationOptions<T>
