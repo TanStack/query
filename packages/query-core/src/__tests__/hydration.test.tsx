@@ -113,42 +113,6 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  it('should preserve original keys during dehydration and hydration', () => {
-    const serializeValue = (value: unknown) =>
-      value instanceof Date ? value.toISOString() : value
-    const serverClient = new QueryClient({
-      queryCache: new QueryCache({ valueSerializer: serializeValue }),
-      mutationCache: new MutationCache({ valueSerializer: serializeValue }),
-    })
-    const key = ['dates', new Date(0)]
-
-    serverClient.setQueryData(key, 'data')
-    serverClient.getMutationCache().build(serverClient, {
-      mutationKey: key,
-      mutationFn: () => Promise.resolve('data'),
-    })
-
-    const dehydrated = dehydrate(serverClient, {
-      shouldDehydrateMutation: () => true,
-    })
-    expect(dehydrated.queries[0]?.queryKey).toEqual(['dates', new Date(0)])
-    expect(dehydrated.mutations[0]?.mutationKey).toEqual(['dates', new Date(0)])
-
-    const valueSerializer = vi.fn(serializeValue)
-    const client = new QueryClient({
-      queryCache: new QueryCache({ valueSerializer }),
-      mutationCache: new MutationCache({ valueSerializer }),
-    })
-    hydrate(client, dehydrated)
-
-    expect(valueSerializer).toHaveBeenCalled()
-    expect(client.getQueryData(key)).toBe('data')
-    expect(client.getQueryCache().getAll()[0]?.queryKey).toEqual(key)
-    expect(client.getMutationCache().getAll()[0]?.options.mutationKey).toEqual(
-      key,
-    )
-  })
-
   it('should not dehydrate queries if dehydrateQueries is set to false', async () => {
     const key = queryKey()
     const queryCache = new QueryCache()

@@ -1077,9 +1077,7 @@ describe('Utils tests', () => {
       queryKey: ReadonlyArray<unknown>,
       state?: Partial<Query['state']>,
     ): Query {
-      const query = queryClient
-        .getQueryCache()
-        .build(queryClient, queryClient.defaultQueryOptions({ queryKey }))
+      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
       if (state) {
         query.setState(state)
       }
@@ -1451,9 +1449,7 @@ describe('Utils tests', () => {
       queryKey: QueryKey,
       state?: Partial<Query['state']>,
     ): Query {
-      const query = queryClient
-        .getQueryCache()
-        .build(queryClient, queryClient.defaultQueryOptions({ queryKey }))
+      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
       if (state) {
         query.setState(state)
       }
@@ -1565,12 +1561,9 @@ describe('Utils tests', () => {
     let queryClient: QueryClient
 
     function makeState(fetchStatus: FetchStatus): Query['state'] {
-      const query = queryClient
-        .getQueryCache()
-        .build(
-          queryClient,
-          queryClient.defaultQueryOptions({ queryKey: [fetchStatus] }),
-        )
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: [fetchStatus],
+      })
       query.setState({ fetchStatus })
       return query.state
     }
