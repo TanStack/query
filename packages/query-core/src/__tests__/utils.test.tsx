@@ -15,6 +15,7 @@ import {
   matchQuery,
   partialMatchKey,
   replaceEqualDeep,
+  serializeCacheKey,
   shallowEqualObjects,
   shouldThrowError,
   skipToken,
@@ -23,6 +24,68 @@ import { Mutation } from '../mutation'
 import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
+  describe('serializeCacheKey', () => {
+    it('memoizes by serializer and key reference', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.toISOString() : value,
+      )
+      const date = new Date(0)
+      const key = ['dates', date]
+
+      const first = serializeCacheKey(key, serializer)
+      const second = serializeCacheKey(key, serializer)
+
+      expect(second).toBe(first)
+      expect(serializer).toHaveBeenCalledTimes(2)
+
+      const otherSerializer = vi.fn(serializer.getMockImplementation())
+      expect(serializeCacheKey(key, otherSerializer)).not.toBe(first)
+      expect(otherSerializer).toHaveBeenCalledTimes(2)
+
+      const otherKey = ['dates', date]
+      expect(serializeCacheKey(otherKey, serializer)).not.toBe(first)
+      expect(serializer).toHaveBeenCalledTimes(4)
+    })
+
+    it('returns the original key without a serializer', () => {
+      const key = ['maps', new Map([['a', 1]])]
+
+      expect(serializeCacheKey(key, undefined)).toBe(key)
+    })
+
+    it('caches recursive serializer results', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Map
+          ? [...value.entries()]
+          : typeof value === 'bigint'
+            ? String(value)
+            : value,
+      )
+      const key = ['counts', new Map([['total', 1n]])]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual(['counts', [['total', '1']]])
+      expect(serializeCacheKey(key, serializer)).toBe(serialized)
+      expect(serializer).toHaveBeenCalledTimes(4)
+    })
+
+    it('does not cache failed serialization', () => {
+      const serializer = vi.fn(() => {
+        throw new Error('serialize failed')
+      })
+      const key = ['broken', new Date(0)]
+
+      expect(() => serializeCacheKey(key, serializer)).toThrow(
+        'serialize failed',
+      )
+      expect(() => serializeCacheKey(key, serializer)).toThrow(
+        'serialize failed',
+      )
+      expect(serializer).toHaveBeenCalledTimes(2)
+    })
+  })
+
   it('should return `false` for same-length objects with different keys', () => {
     // Both objects have the same number of keys, but the key sets differ.
     // `b` is missing on the second object and `c` is missing on the first,

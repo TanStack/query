@@ -42,8 +42,8 @@ Its available methods are:
   - Hashes serialized query keys into cache identity strings.
 - `valueSerializer?: (value: unknown) => unknown`
   - Optional
-  - Serializes values in query keys before hashing and matching. It must be idempotent. Query APIs continue to expose the original query key. The serialized key is used internally and is stored during dehydration and persistence.
-  - The key configuration must not change while the cache contains entries.
+  - Serializes values in query keys before hashing and matching. The serializer must be deterministic and idempotent, and query keys must not be changed after use.
+  - Query APIs continue to expose the original query key. The key configuration must not change while the cache contains entries.
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.

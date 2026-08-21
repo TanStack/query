@@ -5,7 +5,6 @@ import { hashKey, serializeCacheKey } from './utils'
 import type {
   CacheKeyConfig,
   DefaultError,
-  DefaultedMutationOptions,
   MutationFunctionContext,
   MutationKey,
   MutationMeta,
@@ -94,7 +93,6 @@ export class Mutation<
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TOnMutateResult>
   options!: MutationOptions<TData, TError, TVariables, TOnMutateResult>
-  cacheKey?: MutationKey
   mutationHash?: string
   readonly mutationId: number
 
@@ -117,22 +115,17 @@ export class Mutation<
     this.state = config.state || getDefaultState()
 
     this.setOptions(config.options)
-    const cacheKey = (
-      config.options as DefaultedMutationOptions<typeof config.options>
-    )._cacheKey
-    this.cacheKey =
-      cacheKey ??
-      (config.options.mutationKey
-        ? serializeCacheKey(
-            config.options.mutationKey,
-            this.#mutationCache.config.valueSerializer,
-          )
-        : undefined)
+    const serializedMutationKey = config.options.mutationKey
+      ? serializeCacheKey(
+          config.options.mutationKey,
+          this.#mutationCache.config.valueSerializer,
+        )
+      : undefined
     this.mutationHash =
       config.mutationHash ??
-      (this.cacheKey
-        ? (this.#mutationCache.config.hashFn?.(this.cacheKey) ??
-          hashKey(this.cacheKey))
+      (serializedMutationKey
+        ? (this.#mutationCache.config.hashFn?.(serializedMutationKey) ??
+          hashKey(serializedMutationKey))
         : undefined)
     this.scheduleGc()
   }

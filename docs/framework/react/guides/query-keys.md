@@ -94,18 +94,9 @@ const queryCache = new QueryCache({
 const queryClient = new QueryClient({ queryCache })
 ```
 
-When a serializer is configured, the original `queryKey` remains available to
-query APIs and query function contexts. The serialized key is stored separately
-and is used internally for hashing and matching. Configure `MutationCache`
-separately if mutation keys need custom serialization.
+Serialized results are memoized by serializer and key reference, then used internally for hashing and matching. Configure `MutationCache` separately if mutation keys need custom serialization.
 
-If `hashFn` is provided on `QueryCache`, it receives this serialized key. The
-serialized key is used for matching, dehydration, and persistence. A query that
-is created only from restored data initially exposes this stored key. When the
-query runs with normal query options, its query function receives the original
-key from those options. The cache key configuration must not change while the
-cache contains entries. A cache that restores dehydrated or persisted entries
-must use a compatible key configuration.
+If `hashFn` is provided on `QueryCache`, it receives this serialized key. The serialized key is used for matching. Dehydration keeps the original key. Fine-grained persistence keeps the original key and normalizes it when applying partial filters. Custom persistence codecs are required to preserve runtime key types such as `Date` or `Map`. The cache key configuration must not change while the cache contains entries. A cache that restores dehydrated or persisted entries must use a compatible key configuration.
 
 ## If your query function depends on a variable, include it in your query key
 

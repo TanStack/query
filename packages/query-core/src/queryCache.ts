@@ -1,4 +1,4 @@
-import { createQueryMatcher } from './utils'
+import { matchQuery } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
@@ -113,19 +113,17 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
     const defaultedOptions = client.defaultQueryOptions(options)
     const queryKey = defaultedOptions.queryKey
-    const cacheKey = defaultedOptions._cacheKey
     const queryHash = defaultedOptions.queryHash
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {
       query = new Query({
         client,
-        cacheKey,
         queryKey,
         queryHash,
         options: defaultedOptions,
         state,
-        defaultOptions: client.getQueryDefaults(queryKey, cacheKey),
+        defaultOptions: client.getQueryDefaults(queryKey),
       })
       this.add(query)
     }
@@ -188,8 +186,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find(
-      createQueryMatcher(defaultedFilters, this.config),
+    return this.getAll().find((query) =>
+      matchQuery(defaultedFilters, query),
     ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
@@ -199,7 +197,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       return queries
     }
 
-    return queries.filter(createQueryMatcher(filters, this.config))
+    return queries.filter((query) => matchQuery(filters, query))
   }
 
   notify(event: QueryCacheNotifyEvent): void {

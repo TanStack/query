@@ -4,7 +4,6 @@ import {
   replaceData,
   resolveQueryBoolean,
   resolveStaleTime,
-  serializeCacheKey,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -41,7 +40,6 @@ interface QueryConfig<
   TQueryKey extends QueryKey = QueryKey,
 > {
   client: QueryClient
-  cacheKey?: QueryKey
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -161,7 +159,6 @@ export class Query<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
-  readonly cacheKey: QueryKey
   queryKey: TQueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -186,9 +183,6 @@ export class Query<
     this.#cache = this.#client.getQueryCache()
     this.setOptions(config.options)
     this.observers = []
-    this.cacheKey =
-      config.cacheKey ??
-      serializeCacheKey(config.queryKey, this.#cache.config.valueSerializer)
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)

@@ -1,11 +1,10 @@
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
-import { hashKey, shallowEqualObjects } from './utils'
+import { hashKey, serializeCacheKey, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
-  DefaultedMutationOptions,
   MutateOptions,
   MutationFunctionContext,
   MutationObserverOptions,
@@ -72,7 +71,7 @@ export class MutationObserver<
     >,
   ) {
     const prevOptions = this.options as
-      | DefaultedMutationOptions<typeof this.options>
+      | MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
       | undefined
     const defaultedOptions = this.#client.defaultMutationOptions(options)
     this.options = defaultedOptions
@@ -85,12 +84,14 @@ export class MutationObserver<
     }
 
     const hashFn = this.#client.getMutationCache().config.hashFn ?? hashKey
+    const valueSerializer =
+      this.#client.getMutationCache().config.valueSerializer
 
     if (
       prevOptions?.mutationKey &&
       defaultedOptions.mutationKey &&
-      hashFn(prevOptions._cacheKey ?? prevOptions.mutationKey) !==
-        hashFn(defaultedOptions._cacheKey ?? defaultedOptions.mutationKey)
+      hashFn(serializeCacheKey(prevOptions.mutationKey, valueSerializer)) !==
+        hashFn(serializeCacheKey(defaultedOptions.mutationKey, valueSerializer))
     ) {
       this.reset()
     } else if (this.#currentMutation?.state.status === 'pending') {

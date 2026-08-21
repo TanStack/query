@@ -12,6 +12,7 @@ import {
   hydrate,
   noop,
   onlineManager,
+  serializeCacheKey,
   skipToken,
 } from '..'
 import { mockOnlineManagerIsOnline } from './utils'
@@ -113,9 +114,7 @@ describe('queryClient', () => {
       const query = testClient.getQueryCache().getAll()[0]
       const mutation = testClient.getMutationCache().getAll()[0]
       expect(query?.queryKey).toEqual(['date', date])
-      expect(query?.cacheKey).toEqual(['date', date.toISOString()])
       expect(mutation?.options.mutationKey).toEqual(['date', date])
-      expect(mutation?.cacheKey).toEqual(['date', date.getTime()])
     })
 
     it('should not traverse a cache key when no value serializer is configured', () => {
@@ -139,23 +138,18 @@ describe('queryClient', () => {
         queryCache: new QueryCache({ valueSerializer }),
       })
       const key = ['dates', new Date(0)] as const
-      const serializedKey = ['dates', new Date(0).toISOString()]
       const queryFn = vi.fn((context: QueryFunctionContext<typeof key>) =>
         context.queryKey[1].getTime(),
       )
 
       const defaultedOptions = testClient.defaultQueryOptions({ queryKey: key })
       expect(defaultedOptions.queryKey).toBe(key)
-      expect(defaultedOptions._cacheKey).toEqual(serializedKey)
 
       await testClient.query({ queryKey: key, queryFn })
 
       expect(queryFn.mock.calls[0]?.[0].queryKey).toBe(key)
       expect(queryFn).toHaveReturnedWith(0)
       expect(testClient.getQueryCache().getAll()[0]?.queryKey).toBe(key)
-      expect(testClient.getQueryCache().getAll()[0]?.cacheKey).toEqual(
-        serializedKey,
-      )
     })
 
     it('should serialize nested arrays and objects recursively', () => {
@@ -199,15 +193,6 @@ describe('queryClient', () => {
           missing: undefined,
         },
       ])
-      expect(result._cacheKey).toEqual([
-        'todos',
-        {
-          page: '1',
-          filters: ['active', '2'],
-          nullable: null,
-          missing: undefined,
-        },
-      ])
       expect(result.queryHash).toBe(
         JSON.stringify([
           'todos',
@@ -245,7 +230,6 @@ describe('queryClient', () => {
         queryKey: ['counts', new Map([['total', 1n]])],
       })
 
-      expect(options._cacheKey).toEqual(['counts', [['total', '1']]])
       expect(options.queryHash).toBe('["counts",[["total","1"]]]')
     })
 
@@ -259,9 +243,10 @@ describe('queryClient', () => {
         }),
       })
 
-      const cacheKey = testClient.defaultQueryOptions({
-        queryKey: key,
-      })._cacheKey
+      const cacheKey = serializeCacheKey(
+        key,
+        testClient.getQueryCache().config.valueSerializer,
+      )
 
       expect(cacheKey).not.toBe(key)
       expect(cacheKey[1]).toBe(unchanged)
@@ -377,7 +362,6 @@ describe('queryClient', () => {
         'maps',
         new Map([['a', 1]]),
       ])
-      expect(mutation?.cacheKey).toEqual(['maps', [['a', 1]]])
 
       expect(
         testClient.getMutationCache().findAll({
@@ -446,7 +430,6 @@ describe('queryClient', () => {
 
       expect(valueSerializer).toHaveBeenCalled()
       expect(testClient.getQueryCache().getAll()[0]?.queryKey).toEqual(['key'])
-      expect(testClient.getQueryCache().getAll()[0]?.cacheKey).toEqual(['key!'])
       expect(testClient.getQueryData(['key'])).toBe('b')
     })
 
@@ -467,7 +450,6 @@ describe('queryClient', () => {
       )
 
       expect(query.queryKey).toEqual(['maps', new Map([['a', 1]])])
-      expect(query.cacheKey).toEqual(['maps', [['a', 1]]])
       expect(hashFn).toHaveBeenCalledTimes(1)
     })
 
@@ -494,7 +476,7 @@ describe('queryClient', () => {
         }),
       ).toEqual([[key, 'data']])
       expect(valueSerializer).toHaveBeenCalledTimes(4)
-      expect(hashFn).toHaveBeenCalledTimes(1)
+      expect(hashFn).toHaveBeenCalledTimes(2)
 
       valueSerializer.mockClear()
       hashFn.mockClear()

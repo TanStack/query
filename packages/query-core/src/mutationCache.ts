@@ -1,6 +1,6 @@
 import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
-import { createMutationMatcher, noop } from './utils'
+import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
@@ -213,8 +213,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find(
-      createMutationMatcher(defaultedFilters, this.config),
+    return this.getAll().find((mutation) =>
+      matchMutation(defaultedFilters, mutation),
     ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
@@ -224,7 +224,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       return mutations
     }
 
-    return mutations.filter(createMutationMatcher(filters, this.config))
+    return mutations.filter((mutation) => matchMutation(filters, mutation))
   }
 
   notify(event: MutationCacheNotifyEvent) {

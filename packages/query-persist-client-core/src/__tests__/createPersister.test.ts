@@ -5,7 +5,10 @@ import {
   experimental_createQueryPersister,
 } from '../createPersister'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { StoragePersisterOptions } from '../createPersister'
+import type {
+  PersistedQuery,
+  StoragePersisterOptions,
+} from '../createPersister'
 
 function getFreshStorage() {
   const storage = new Map()
@@ -456,6 +459,45 @@ describe('createPersister', () => {
           status: 'success',
         },
       })
+      expect(JSON.parse(await storage.getItem(storageKey))).not.toHaveProperty(
+        'serializedQueryKey',
+      )
+    })
+
+    it('should persist and restore the original query key', async () => {
+      const storage = getFreshStorage()
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value,
+      )
+      const client = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const persister = experimental_createQueryPersister({
+        storage,
+        serialize: (value) => value,
+        deserialize: (value) => value as PersistedQuery,
+      })
+      const queryKey = ['maps', new Map([['a', 1]])]
+
+      client.setQueryData(queryKey, 'data')
+      const query = client.getQueryCache().getAll()[0]!
+      valueSerializer.mockClear()
+      await persister.persistQuery(query)
+      expect(valueSerializer).not.toHaveBeenCalled()
+
+      const persisted = await storage.getItem(
+        `${PERSISTER_KEY_PREFIX}-${query.queryHash}`,
+      )
+      expect(persisted).toMatchObject({
+        queryKey,
+      })
+      expect(persisted).not.toHaveProperty('serializedQueryKey')
+
+      client.clear()
+      await persister.restoreQueries(client, { queryKey: ['maps'] })
+
+      expect(client.getQueryCache().getAll()[0]?.queryKey).toBe(queryKey)
+      expect(client.getQueryData(queryKey)).toBe('data')
     })
 
     it('should skip persistence if storage is not provided', async () => {
@@ -652,6 +694,36 @@ describe('createPersister', () => {
       })
 
       expect(client.getQueryData(queryKey)).toBe('foo')
+    })
+
+    it('should support legacy entries with normalized query keys', async () => {
+      const storage = getFreshStorage()
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const client = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const queryKey = ['maps', [['a', 1]]]
+      const queryHash = JSON.stringify(queryKey)
+      const persister = experimental_createQueryPersister({
+        storage,
+        serialize: (value) => value,
+        deserialize: (value) => value as PersistedQuery,
+      })
+
+      await storage.setItem(`${PERSISTER_KEY_PREFIX}-${queryHash}`, {
+        buster: '',
+        queryHash,
+        queryKey,
+        state: {
+          data: 'data',
+          dataUpdatedAt: Date.now(),
+        },
+      })
+
+      await persister.restoreQueries(client, { queryKey: ['maps'] })
+
+      expect(client.getQueryData(queryKey)).toBe('data')
     })
 
     it('should properly clean storage from busted entries', async () => {

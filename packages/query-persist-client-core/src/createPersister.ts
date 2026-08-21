@@ -2,6 +2,7 @@ import {
   matchQuery,
   notifyManager,
   partialMatchKey,
+  serializeCacheKey,
 } from '@tanstack/query-core'
 import type {
   Query,
@@ -15,6 +16,7 @@ import type {
 export interface PersistedQuery {
   buster: string
   queryHash: string
+  /** The original public query key. */
   queryKey: QueryKey
   state: QueryState
 }
@@ -129,10 +131,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       return {}
     }
 
-    const options = queryClient.defaultQueryOptions({ queryKey })
     return {
-      cacheKey: options._cacheKey,
-      cacheHash: options.queryHash,
+      filterKey: serializeCacheKey(
+        queryKey,
+        queryClient.getQueryCache().config.valueSerializer,
+      ),
+      queryHash: queryClient.defaultQueryOptions({ queryKey }).queryHash,
     }
   }
 
@@ -206,7 +210,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
         storageKey,
         await serialize({
           state: query.state,
-          queryKey: query.cacheKey,
+          queryKey: query.queryKey,
           queryHash: query.queryHash,
           buster: buster,
         }),
@@ -289,7 +293,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = queryFilters
-    const { cacheKey, cacheHash } = getCacheKeyFilter(queryClient, queryKey)
+    const { filterKey, queryHash } = getCacheKeyFilter(queryClient, queryKey)
 
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -310,10 +314,18 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
           if (queryKey) {
             if (exact) {
-              if (persistedQuery.queryHash !== cacheHash) {
+              if (persistedQuery.queryHash !== queryHash) {
                 continue
               }
-            } else if (!partialMatchKey(persistedQuery.queryKey, cacheKey!)) {
+            } else if (
+              !partialMatchKey(
+                serializeCacheKey(
+                  persistedQuery.queryKey,
+                  queryClient.getQueryCache().config.valueSerializer,
+                ),
+                filterKey!,
+              )
+            ) {
               continue
             }
           }
@@ -339,7 +351,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
     const { exact, queryKey } = queryFilters
-    const { cacheKey, cacheHash } = getCacheKeyFilter(queryClient, queryKey)
+    const { filterKey, queryHash } = getCacheKeyFilter(queryClient, queryKey)
 
     if (storage?.entries) {
       const entries = await storage.entries()
@@ -360,10 +372,18 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           }
 
           if (exact) {
-            if (persistedQuery.queryHash !== cacheHash) {
+            if (persistedQuery.queryHash !== queryHash) {
               continue
             }
-          } else if (!partialMatchKey(persistedQuery.queryKey, cacheKey!)) {
+          } else if (
+            !partialMatchKey(
+              serializeCacheKey(
+                persistedQuery.queryKey,
+                queryClient.getQueryCache().config.valueSerializer,
+              ),
+              filterKey!,
+            )
+          ) {
             continue
           }
 

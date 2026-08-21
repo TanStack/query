@@ -313,7 +313,7 @@ describe('queryCache', () => {
       expect(queryCache.findAll().length).toBe(2)
     })
 
-    it('should use the cache serializer once when clients share a cache', () => {
+    it('should use the shared cache serializer when clients share a cache', () => {
       const valueSerializer = vi.fn((value: unknown) =>
         value instanceof Date ? value.getTime() : value,
       )
@@ -337,7 +337,7 @@ describe('queryCache', () => {
 
       expect(testCache.find({ queryKey: ['number', date] })).toBe(numberQuery)
       expect(valueSerializer).toHaveBeenCalledTimes(2)
-      expect(hashFn).toHaveBeenCalledTimes(1)
+      expect(hashFn).toHaveBeenCalledTimes(2)
 
       valueSerializer.mockClear()
       hashFn.mockClear()
@@ -346,7 +346,7 @@ describe('queryCache', () => {
         testCache.findAll({ queryKey: ['number', date], exact: true }),
       ).toEqual([numberQuery])
       expect(valueSerializer).toHaveBeenCalledTimes(2)
-      expect(hashFn).toHaveBeenCalledTimes(1)
+      expect(hashFn).toHaveBeenCalledTimes(3)
 
       stringClient.clear()
     })

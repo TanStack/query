@@ -1,7 +1,6 @@
 import { timeoutManager } from './timeoutManager'
 import type {
   CacheKey,
-  CacheKeyConfig,
   CacheKeyValueSerializer,
   DefaultError,
   FetchStatus,
@@ -147,38 +146,32 @@ export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
 ): boolean {
-  return createQueryMatcher(filters, query.cacheKeyConfig)(query)
-}
+  const {
+    type = 'all',
+    exact,
+    fetchStatus,
+    predicate,
+    queryKey,
+    stale,
+  } = filters
 
-export function createQueryMatcher(
-  filters: QueryFilters,
-  config: Readonly<CacheKeyConfig<QueryKey>>,
-): (query: Query<any, any, any, any>) => boolean {
-  const cacheKeyMatcher = createCacheKeyMatcher(
-    filters.queryKey,
-    filters.exact,
-    config,
-  )
+  if (queryKey) {
+    const config = query.cacheKeyConfig
+    const serializedKey = serializeCacheKey(queryKey, config.valueSerializer)
 
-  return (query) => matchQueryWithMatcher(filters, query, cacheKeyMatcher)
-}
-
-function matchQueryWithMatcher(
-  filters: QueryFilters,
-  query: Query<any, any, any, any>,
-  cacheKeyMatcher?: CacheKeyMatcher,
-): boolean {
-  const { type = 'all', fetchStatus, predicate, queryKey, stale } = filters
-
-  if (
-    queryKey &&
-    !cacheKeyMatcher?.(
-      query.cacheKey,
-      query.queryHash,
-      query.options.queryKeyHashFn,
-    )
-  ) {
-    return false
+    if (exact) {
+      const queryHash =
+        config.hashFn?.(serializedKey) ??
+        query.options.queryKeyHashFn?.(serializedKey) ??
+        hashKey(serializedKey)
+      if (query.queryHash !== queryHash) {
+        return false
+      }
+    } else if (
+      !partialMatchKey(query.queryKey, queryKey, config.valueSerializer)
+    ) {
+      return false
+    }
   }
 
   if (type !== 'all') {
@@ -210,34 +203,27 @@ export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
 ): boolean {
-  return createMutationMatcher(filters, mutation.cacheKeyConfig)(mutation)
-}
-
-export function createMutationMatcher(
-  filters: MutationFilters,
-  config: Readonly<CacheKeyConfig<MutationKey>>,
-): (mutation: Mutation<any, any>) => boolean {
-  const cacheKeyMatcher = createCacheKeyMatcher(
-    filters.mutationKey,
-    filters.exact,
-    config,
-  )
-
-  return (mutation) =>
-    matchMutationWithMatcher(filters, mutation, cacheKeyMatcher)
-}
-
-function matchMutationWithMatcher(
-  filters: MutationFilters,
-  mutation: Mutation<any, any>,
-  cacheKeyMatcher?: CacheKeyMatcher,
-): boolean {
-  const { status, predicate, mutationKey } = filters
+  const { exact, status, predicate, mutationKey } = filters
   if (mutationKey) {
-    if (
-      !mutation.options.mutationKey ||
-      !mutation.cacheKey ||
-      !cacheKeyMatcher?.(mutation.cacheKey, mutation.mutationHash)
+    if (!mutation.options.mutationKey) {
+      return false
+    }
+
+    const config = mutation.cacheKeyConfig
+    const serializedKey = serializeCacheKey(mutationKey, config.valueSerializer)
+
+    if (exact) {
+      const mutationHash =
+        config.hashFn?.(serializedKey) ?? hashKey(serializedKey)
+      if (mutation.mutationHash !== mutationHash) {
+        return false
+      }
+    } else if (
+      !partialMatchKey(
+        mutation.options.mutationKey,
+        mutationKey,
+        config.valueSerializer,
+      )
     ) {
       return false
     }
@@ -253,12 +239,6 @@ function matchMutationWithMatcher(
 
   return true
 }
-
-type CacheKeyMatcher = (
-  cacheKey: CacheKey,
-  cacheHash: string | undefined,
-  hashFn?: (cacheKey: unknown) => string,
-) => boolean
 
 /**
  * Default cache key hash function.
@@ -276,6 +256,11 @@ export function hashKey(cacheKey: CacheKey): string {
       : val,
   )
 }
+
+const cacheKeySerializationCache = new WeakMap<
+  CacheKeyValueSerializer,
+  WeakMap<CacheKey, CacheKey>
+>()
 
 function serializeCacheKeyValue(
   value: unknown,
@@ -337,37 +322,20 @@ export function serializeCacheKey(
     return key
   }
 
-  return serializeCacheKeyValue(key, serializer) as CacheKey
-}
-
-function createCacheKeyMatcher<TCacheKey extends CacheKey>(
-  cacheKey: TCacheKey | undefined,
-  exact: boolean | undefined,
-  config: Readonly<CacheKeyConfig<TCacheKey>>,
-): CacheKeyMatcher | undefined {
-  if (!cacheKey) {
-    return undefined
+  let serializerCache = cacheKeySerializationCache.get(serializer)
+  if (!serializerCache) {
+    serializerCache = new WeakMap<CacheKey, CacheKey>()
+    cacheKeySerializationCache.set(serializer, serializerCache)
   }
 
-  const serializedKey = serializeCacheKey(
-    cacheKey,
-    config.valueSerializer,
-  ) as TCacheKey
-
-  if (exact) {
-    if (config.hashFn) {
-      const hash = config.hashFn(serializedKey)
-
-      return (_key, cacheHash) => cacheHash === hash
-    }
-
-    const defaultHash = hashKey(serializedKey)
-
-    return (_key, cacheHash, hashFn) =>
-      cacheHash === (hashFn?.(serializedKey) ?? defaultHash)
+  const cachedKey = serializerCache.get(key)
+  if (cachedKey) {
+    return cachedKey
   }
 
-  return (key) => partialMatchKey(key, serializedKey)
+  const serializedKey = serializeCacheKeyValue(key, serializer) as CacheKey
+  serializerCache.set(key, serializedKey)
+  return serializedKey
 }
 
 /**

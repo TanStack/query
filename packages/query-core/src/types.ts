@@ -208,9 +208,9 @@ export interface CacheKeyConfig<TCacheKey extends CacheKey = CacheKey> {
    */
   readonly hashFn?: CacheKeyHashFunction<TCacheKey>
   /**
-   * Serializes cache key values. The serializer must be idempotent because a
-   * key can be serialized more than once. The serialized key is used
-   * internally for hashing, matching, dehydration, and persistence.
+   * Serializes cache key values. The serializer must be deterministic and
+   * idempotent because a key can be serialized more than once. Query keys must
+   * not be changed after they are used.
    */
   readonly valueSerializer?: CacheKeyValueSerializer
 }
@@ -478,7 +478,6 @@ export type DefaultedQueryObserverOptions<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 > & {
-  _cacheKey: QueryKey
   _defaulted: true
 }
 
@@ -516,7 +515,6 @@ export type DefaultedInfiniteQueryObserverOptions<
   >,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 > & {
-  _cacheKey: QueryKey
   _defaulted: true
 }
 
@@ -1179,7 +1177,6 @@ export interface MutationOptions<
 export type DefaultedMutationOptions<
   TOptions extends MutationOptions<any, any, any, any>,
 > = TOptions & {
-  _cacheKey?: MutationKey
   _defaulted: true
 }
 

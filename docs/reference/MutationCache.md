@@ -35,8 +35,8 @@ Its available methods are:
   - Hashes serialized mutation keys into cache identity strings.
 - `valueSerializer?: (value: unknown) => unknown`
   - Optional
-  - Serializes values in mutation keys before hashing and matching. It must be idempotent. Mutation APIs continue to expose the original mutation key. The serialized key is used internally and is stored during dehydration and persistence.
-  - The key configuration must not change while the cache contains entries.
+  - Serializes values in mutation keys before hashing and matching. The serializer must be deterministic and idempotent, and mutation keys must not be changed after use.
+  - Mutation APIs continue to expose the original mutation key. The key configuration must not change while the cache contains entries.
 - `onError?: (error: unknown, variables: unknown, onMutateResult: unknown, mutation: Mutation, mutationFnContext: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation encounters an error.
