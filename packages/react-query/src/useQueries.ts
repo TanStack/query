@@ -224,6 +224,7 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const subscribed = options.subscribed !== false
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -235,11 +236,13 @@ export function useQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
           ? 'isRestoring'
-          : 'optimistic'
+          : subscribed
+            ? 'optimistic'
+            : undefined
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, subscribed],
   )
 
   defaultedQueries.forEach((queryOptions) => {
@@ -266,7 +269,7 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>

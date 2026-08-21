@@ -40,7 +40,7 @@ export class QueriesObserver<
   #queries: Array<QueryObserverOptions>
   #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
-  #combinedResult?: TCombinedResult
+  #combinedResult!: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
   #lastQueryHashes?: Array<string>
@@ -232,7 +232,6 @@ export class QueriesObserver<
           queryHashes.some((hash, i) => hash !== lastHashes[i]))
 
       if (
-        !this.#combinedResult ||
         this.#result !== this.#lastResult ||
         queryHashesChanged ||
         combine !== this.#lastCombine

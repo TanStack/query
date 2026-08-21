@@ -50,12 +50,13 @@ export default defineNuxtPlugin((nuxt) => {
 
 Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
-- Prefetch all the queries that you need with `queryClient.prefetchQuery` or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
 
 ```ts
 export default defineComponent({
   setup() {
-    const { data, suspense } = useQuery({
+    const queryClient = useQueryClient()
+    const { data } = useQuery({
       queryKey: ['test'],
       queryFn: fetcher,
     })
@@ -110,7 +111,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
 - Use `useContext` to get nuxt context
 - Use `useQueryClient` to get server-side instance of `queryClient`
-- Prefetch all the queries that you need with `queryClient.prefetchQuery` or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
 - Dehydrate `queryClient` to the `nuxtContext`
 
 ```vue
@@ -169,7 +170,7 @@ export default defineComponent({
 </script>
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` or `suspense` for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `queryClient.query` or `suspense` for a specific query.
 
 ## Using Vite SSR
 
@@ -237,7 +238,7 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 
 Any query with an error is automatically excluded from dehydration. This means that the default behavior is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `queryClient.query` and catch any errors to handle those manually.
 
 ### Staleness is measured from when the query was fetched on the server
 
