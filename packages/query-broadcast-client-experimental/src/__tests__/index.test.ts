@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { broadcastQueryClient } from '..'
 import type { BroadcastErrorEvent } from '..'
 import type { QueryCache } from '@tanstack/query-core'
@@ -59,6 +60,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not cause an unhandled rejection when onBroadcastError itself throws', async () => {
+      const key = queryKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -79,7 +81,7 @@ describe('broadcastQueryClient', () => {
           onBroadcastError,
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 0))
 
@@ -88,7 +90,7 @@ describe('broadcastQueryClient', () => {
           expect.objectContaining<BroadcastErrorEvent>({
             type: 'added',
             queryHash: expect.any(String) as string,
-            queryKey: ['test'],
+            queryKey: key,
           }),
         )
         expect(unhandledRejections).toHaveLength(0)
@@ -98,6 +100,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when onBroadcastError itself throws', async () => {
+      const key = queryKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const callbackError = new Error('boom')
@@ -114,7 +117,7 @@ describe('broadcastQueryClient', () => {
           },
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 0))
 
@@ -128,6 +131,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not cause an unhandled rejection when async onBroadcastError rejects', async () => {
+      const key = queryKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -148,7 +152,7 @@ describe('broadcastQueryClient', () => {
           onBroadcastError,
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 10))
 
@@ -157,7 +161,7 @@ describe('broadcastQueryClient', () => {
           expect.objectContaining<BroadcastErrorEvent>({
             type: 'added',
             queryHash: expect.any(String) as string,
-            queryKey: ['test'],
+            queryKey: key,
           }),
         )
         expect(unhandledRejections).toHaveLength(0)
@@ -167,6 +171,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should warn in dev when async onBroadcastError rejects', async () => {
+      const key = queryKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       const asyncError = new Error('async boom')
@@ -181,7 +186,7 @@ describe('broadcastQueryClient', () => {
           onBroadcastError: () => Promise.reject(asyncError),
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 10))
 
@@ -195,6 +200,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should call onBroadcastError when postMessage fails', async () => {
+      const key = queryKey()
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
@@ -205,7 +211,7 @@ describe('broadcastQueryClient', () => {
         onBroadcastError,
       })
 
-      queryClient.setQueryData(['test'], { value: 1 })
+      queryClient.setQueryData(key, { value: 1 })
 
       await new Promise((r) => setTimeout(r, 0))
       expect(onBroadcastError).toHaveBeenCalledWith(
@@ -213,12 +219,13 @@ describe('broadcastQueryClient', () => {
         expect.objectContaining<BroadcastErrorEvent>({
           type: 'added',
           queryHash: expect.any(String) as string,
-          queryKey: ['test'],
+          queryKey: key,
         }),
       )
     })
 
     it('should warn in dev when postMessage fails and onBroadcastError is not provided', async () => {
+      const key = queryKey()
       process.env['NODE_ENV'] = 'development'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -231,7 +238,7 @@ describe('broadcastQueryClient', () => {
           broadcastChannel: 'test_channel',
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 0))
         expect(warnSpy).toHaveBeenCalledWith(
@@ -244,6 +251,7 @@ describe('broadcastQueryClient', () => {
     })
 
     it('should not warn in production when postMessage fails', async () => {
+      const key = queryKey()
       process.env['NODE_ENV'] = 'production'
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
@@ -256,7 +264,7 @@ describe('broadcastQueryClient', () => {
           broadcastChannel: 'test_channel',
         })
 
-        queryClient.setQueryData(['test'], { value: 1 })
+        queryClient.setQueryData(key, { value: 1 })
 
         await new Promise((r) => setTimeout(r, 0))
         expect(warnSpy).not.toHaveBeenCalled()
