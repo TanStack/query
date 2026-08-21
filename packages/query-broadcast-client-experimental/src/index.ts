@@ -55,8 +55,16 @@ export function broadcastQueryClient({
   let transaction = false
   const tx = (cb: () => void) => {
     transaction = true
-    cb()
-    transaction = false
+    try {
+      cb()
+    } finally {
+      // Guard against `cb` throwing (e.g. `query.setState`/`queryCache.build`
+      // triggering a listener that throws while applying an incoming
+      // cross-tab message). Without this, `transaction` would stay `true`
+      // forever, silently disabling this tab's own broadcasts to other tabs
+      // for the rest of the session.
+      transaction = false
+    }
   }
 
   const channel = new BroadcastChannel(broadcastChannel, {

@@ -7,6 +7,7 @@ import type { QueryCache } from '@tanstack/query-core'
 
 const mockPostMessage = vi.fn().mockResolvedValue(undefined)
 const mockClose = vi.fn()
+let lastCreatedChannel: { onmessage: ((action: any) => void) | null }
 
 vi.mock('broadcast-channel', async (importOriginal) => {
   const actual = await importOriginal()
@@ -16,6 +17,9 @@ vi.mock('broadcast-channel', async (importOriginal) => {
       onmessage = null
       postMessage = mockPostMessage
       close = mockClose
+      constructor() {
+        lastCreatedChannel = this
+      }
     },
   }
 })
@@ -46,6 +50,40 @@ describe('broadcastQueryClient', () => {
     })
     unsubscribe()
     expect(queryCache.hasListeners()).toBe(false)
+  })
+
+  describe('incoming message handling', () => {
+    it('should keep broadcasting local changes after applying an incoming message throws', () => {
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // Simulate some other part of the app (e.g. another cache subscriber)
+      // throwing synchronously while an incoming cross-tab message is being
+      // applied locally.
+      const explodingUnsubscribe = queryCache.subscribe(() => {
+        throw new Error('boom from an unrelated cache listener')
+      })
+
+      expect(() => {
+        lastCreatedChannel.onmessage?.({
+          type: 'added',
+          queryHash: '["remote"]',
+          queryKey: ['remote'],
+          state: { data: 1 },
+        })
+      }).toThrow('boom')
+
+      explodingUnsubscribe()
+      mockPostMessage.mockClear()
+
+      // A later local change must still be broadcast to other tabs, instead
+      // of being silently swallowed because the transaction flag got stuck.
+      queryClient.setQueryData(['local'], { value: 1 })
+
+      expect(mockPostMessage).toHaveBeenCalled()
+    })
   })
 
   describe('postMessage error handling', () => {
