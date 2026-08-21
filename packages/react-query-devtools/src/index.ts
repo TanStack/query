@@ -16,3 +16,5 @@ export const ReactQueryDevtoolsPanel: (typeof DevtoolsPanel)['ReactQueryDevtools
         return null
       }
     : DevtoolsPanel.ReactQueryDevtoolsPanel
+
+export type DevtoolsPanelOptions = DevtoolsPanel.DevtoolsPanelOptions

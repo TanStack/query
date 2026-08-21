@@ -12,7 +12,6 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
   DefaultError,
@@ -25,14 +24,15 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
-  NoInfer,
   OmitKeyof,
   QueryClientConfig,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryOptions,
@@ -106,9 +106,9 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
-  isFetching<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters): number {
+  isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
+    filters?: TQueryFilters,
+  ): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
       .length
   }
@@ -119,6 +119,13 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
+  /**
+   * Imperative (non-reactive) way to retrieve data for a QueryKey.
+   * Should only be used in callbacks or functions where reading the latest data is necessary, e.g. for optimistic updates.
+   *
+   * Hint: Do not use this function inside a component, because it won't receive updates.
+   * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
+   */
   getQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
@@ -126,11 +133,13 @@ export class QueryClient {
   >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined {
     const options = this.defaultQueryOptions({ queryKey })
 
-    return this.#queryCache.get(options.queryHash)?.state.data as
-      | TInferredQueryFnData
-      | undefined
+    return this.#queryCache.get<TInferredQueryFnData>(options.queryHash)?.state
+      .data
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -159,25 +168,10 @@ export class QueryClient {
 
   getQueriesData<
     TQueryFnData = unknown,
-    TQueryFilters extends QueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = QueryFilters<TQueryFnData>,
-    TInferredQueryFnData = TQueryFilters extends QueryFilters<
-      infer TData,
-      any,
-      any,
-      any
-    >
-      ? TData
-      : TQueryFnData,
-  >(
-    filters: TQueryFilters,
-  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
+  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TInferredQueryFnData | undefined
+      const data = state.data as TQueryFnData | undefined
       return [queryKey, data]
     })
   }
@@ -193,7 +187,7 @@ export class QueryClient {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: SetDataOptions,
-  ): TInferredQueryFnData | undefined {
+  ): NoInfer<TInferredQueryFnData> | undefined {
     const defaultedOptions = this.defaultQueryOptions<
       any,
       any,
@@ -219,34 +213,21 @@ export class QueryClient {
 
   setQueriesData<
     TQueryFnData,
-    TQueryFilters extends QueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = QueryFilters<TQueryFnData>,
-    TInferredQueryFnData = TQueryFilters extends QueryFilters<
-      infer TData,
-      any,
-      any,
-      any
-    >
-      ? TData
-      : TQueryFnData,
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
   >(
     filters: TQueryFilters,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
-      NoInfer<TInferredQueryFnData> | undefined
+      NoInfer<TQueryFnData> | undefined,
+      NoInfer<TQueryFnData> | undefined
     >,
     options?: SetDataOptions,
-  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
+  ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
         .map(({ queryKey }) => [
           queryKey,
-          this.setQueryData<TInferredQueryFnData>(queryKey, updater, options),
+          this.setQueryData<TQueryFnData>(queryKey, updater, options),
         ]),
     )
   }
@@ -266,19 +247,8 @@ export class QueryClient {
     )?.state
   }
 
-  removeQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
   ): void {
     const queryCache = this.#queryCache
     notifyManager.batch(() => {
@@ -288,50 +258,30 @@ export class QueryClient {
     })
   }
 
-  resetQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
     options?: ResetOptions,
   ): Promise<void> {
     const queryCache = this.#queryCache
 
     return notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
+      const matched = queryCache.findAll(filters)
+      const queriesToRefetch = new Set(matched)
+      matched.forEach((query) => {
         query.reset()
       })
       return this.refetchQueries(
         {
           type: 'active',
-          ...filters,
+          predicate: (query) => queriesToRefetch.has(query),
         },
         options,
       )
     })
   }
 
-  cancelQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
     cancelOptions: CancelOptions = {},
   ): Promise<void> {
     const defaultedCancelOptions = { revert: true, ...cancelOptions }
@@ -345,19 +295,8 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: InvalidateQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: InvalidateQueryFilters<TTaggedQueryKey>,
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
@@ -378,19 +317,8 @@ export class QueryClient {
     })
   }
 
-  refetchQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: RefetchQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: RefetchQueryFilters<TTaggedQueryKey>,
     options: RefetchOptions = {},
   ): Promise<void> {
     const fetchOptions = {
@@ -400,7 +328,7 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .filter((query) => !query.isDisabled())
+        .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
           if (!fetchOptions.throwOnError) {
@@ -415,6 +343,52 @@ export class QueryClient {
     return Promise.all(promises).then(noop)
   }
 
+  async query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData> {
+    const defaultedOptions = this.defaultQueryOptions(options)
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    if (defaultedOptions.retry === undefined) {
+      defaultedOptions.retry = false
+    }
+
+    const query = this.#queryCache.build(this, defaultedOptions)
+
+    const isStale = query.isStaleByTime(
+      resolveStaleTime(defaultedOptions.staleTime, query),
+    )
+
+    const queryData = isStale
+      ? await query.fetch(defaultedOptions)
+      : (query.state.data as TQueryData)
+
+    const select = defaultedOptions.select
+
+    if (select) {
+      return select(queryData)
+    }
+
+    return queryData as unknown as TData
+  }
+
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -446,6 +420,9 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -457,6 +434,32 @@ export class QueryClient {
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
+    options._type = 'infinite'
+    return this.query(options as any)
+  }
+
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -472,15 +475,13 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData,
-      TPageParam
-    >(options.pages)
+    options._type = 'infinite'
     return this.fetchQuery(options as any)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -499,6 +500,9 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureInfiniteQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -514,12 +518,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData,
-      TPageParam
-    >(options.pages)
+    options._type = 'infinite'
 
     return this.ensureQueryData(options as any)
   }
@@ -589,11 +588,11 @@ export class QueryClient {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MutationKey,
     options: OmitKeyof<
-      MutationObserverOptions<TData, TError, TVariables, TContext>,
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
       'mutationKey'
     >,
   ): void {

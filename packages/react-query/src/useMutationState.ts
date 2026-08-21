@@ -1,5 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
-
 'use client'
 import * as React from 'react'
 
@@ -24,31 +22,56 @@ export function useIsMutating(
   ).length
 }
 
-type MutationStateOptions<TResult = MutationState> = {
+type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
+type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<TResult, TMutation>,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select ? options.select(mutation) : mutation.state) as TResult,
+        (options.select
+          ? options.select(mutation as TMutation)
+          : mutation.state) as TResult,
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+export function useMutationState<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
+  options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
   const result = React.useRef<Array<TResult>>(null)
-  if (!result.current) {
+  if (result.current === null) {
     result.current = getResult(mutationCache, options)
   }
 

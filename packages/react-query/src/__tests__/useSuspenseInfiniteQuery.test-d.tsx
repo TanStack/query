@@ -1,12 +1,14 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
     const { data } = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -16,22 +18,26 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   it('should not allow skipToken in queryFn', () => {
-    useSuspenseInfiniteQuery({
-      queryKey: ['key'],
-      // @ts-expect-error
-      queryFn: skipToken,
-    })
+    assertType(
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        // @ts-expect-error
+        queryFn: skipToken,
+      }),
+    )
 
-    useSuspenseInfiniteQuery({
-      queryKey: ['key'],
-      // @ts-expect-error
-      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-    })
+    assertType(
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        // @ts-expect-error
+        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+      }),
+    )
   })
 
   it('should not have pending status', () => {
     const { status } = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -41,44 +47,61 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {
-    useSuspenseInfiniteQuery({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-      // @ts-expect-error TS2345
-      placeholderData: 5,
-      enabled: true,
-    })
+    assertType(
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        // @ts-expect-error TS2345
+        placeholderData: 5,
+        enabled: true,
+      }),
+    )
 
-    useSuspenseInfiniteQuery({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-      // @ts-expect-error TS2345
-      enabled: true,
-    })
+    assertType(
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        // @ts-expect-error TS2345
+        enabled: true,
+      }),
+    )
 
-    useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+    assertType(
+      useSuspenseInfiniteQuery({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        // @ts-expect-error TS2345
+        throwOnError: true,
+      }),
+    )
+  })
+
+  it('should default TData of UseSuspenseInfiniteQueryOptions to InfiniteData<TQueryFnData>', () => {
+    const options: UseSuspenseInfiniteQueryOptions<number, Error> = {
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
-      // @ts-expect-error TS2345
-      throwOnError: true,
-    })
+    }
+    const { data } = useSuspenseInfiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
   })
 
   it('should not return isPlaceholderData', () => {
     const query = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
     })
 
-    // @ts-expect-error TS2339
-    query.isPlaceholderData
+    expectTypeOf(query).not.toHaveProperty('isPlaceholderData')
   })
 })

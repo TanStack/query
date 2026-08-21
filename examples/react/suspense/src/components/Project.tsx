@@ -22,13 +22,11 @@ export default function Project({
       <h1>
         {activeProject} {isFetching ? <Spinner /> : null}
       </h1>
-      {data ? (
-        <div>
-          <p>forks: {data.forks_count}</p>
-          <p>stars: {data.stargazers_count}</p>
-          <p>watchers: {data.watchers_count}</p>
-        </div>
-      ) : null}
+      <div>
+        <p>forks: {data.forks_count}</p>
+        <p>stars: {data.stargazers_count}</p>
+        <p>watchers: {data.watchers_count}</p>
+      </div>
       <br />
       <br />
     </div>

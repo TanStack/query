@@ -1,53 +1,46 @@
-import { describe, expect, it, vi } from 'vitest'
-import React from 'react'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as React from 'react'
+import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-
-import type { UseSuspenseQueryOptions } from '..'
-
-const generateQueryFn = (data: string) =>
-  vi
-    .fn<(...args: Array<any>) => Promise<string>>()
-    .mockImplementation(async () => {
-      await sleep(10)
-
-      return data
-    })
+import { renderWithClient } from './utils'
 
 describe('usePrefetchQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
-  function Suspended<TData = unknown>(props: {
-    queryOpts: UseSuspenseQueryOptions<TData, Error, TData, Array<string>>
-    children?: React.ReactNode
-  }) {
-    const state = useSuspenseQuery(props.queryOpts)
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
 
-    return (
-      <div>
-        <div>data: {String(state.data)}</div>
-        {props.children}
-      </div>
-    )
-  }
+  afterEach(() => {
+    queryClient.clear()
+    vi.useRealTimers()
+  })
 
   it('should prefetch query if query state does not exist', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('prefetchQuery'),
+      queryFn: vi.fn(() => sleep(10).then(() => 'prefetchQuery')),
     }
 
     const componentQueryOpts = {
       ...queryOpts,
-      queryFn: generateQueryFn('useSuspenseQuery'),
+      queryFn: () => sleep(10).then(() => 'useSuspenseQuery'),
+    }
+
+    function Page() {
+      const state = useSuspenseQuery(componentQueryOpts)
+      return <div>data: {String(state.data)}</div>
     }
 
     function App() {
@@ -55,21 +48,31 @@ describe('usePrefetchQuery', () => {
 
       return (
         <React.Suspense fallback="Loading...">
-          <Suspended queryOpts={componentQueryOpts} />
+          <Page />
         </React.Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('data: prefetchQuery'))
+    expect(rendered.getByText('Loading...')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: prefetchQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should not prefetch query if query state exists', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('The usePrefetchQuery hook is smart!'),
+      queryFn: vi.fn(() =>
+        sleep(10).then(() => 'The usePrefetchQuery hook is smart!'),
+      ),
+    }
+
+    function Page() {
+      const state = useSuspenseQuery(queryOpts)
+      return <div>data: {String(state.data)}</div>
     }
 
     function App() {
@@ -77,37 +80,43 @@ describe('usePrefetchQuery', () => {
 
       return (
         <React.Suspense fallback="Loading...">
-          <Suspended queryOpts={queryOpts} />
+          <Page />
         </React.Suspense>
       )
     }
 
-    await queryClient.fetchQuery(queryOpts)
+    queryClient.fetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
-    await waitFor(() =>
+    expect(
       rendered.getByText('data: The usePrefetchQuery hook is smart!'),
-    )
+    ).toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
   })
 
   it('should let errors fall through and not refetch failed queries', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
-    const queryFn = generateQueryFn('Not an error')
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Not an error'))
 
     const queryOpts = {
       queryKey: queryKey(),
       queryFn,
     }
 
-    queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
+    queryFn.mockImplementationOnce(() =>
+      sleep(10).then(() => {
+        throw new Error('Oops! Server error!')
+      }),
+    )
 
-      throw new Error('Oops! Server error!')
-    })
+    function Page() {
+      const state = useSuspenseQuery(queryOpts)
+      return <div>data: {String(state.data)}</div>
+    }
 
     function App() {
       usePrefetchQuery(queryOpts)
@@ -115,17 +124,18 @@ describe('usePrefetchQuery', () => {
       return (
         <ErrorBoundary fallbackRender={() => <div>Oops!</div>}>
           <React.Suspense fallback="Loading...">
-            <Suspended queryOpts={queryOpts} />
+            <Page />
           </React.Suspense>
         </ErrorBoundary>
       )
     }
 
-    await queryClient.prefetchQuery(queryOpts)
+    queryClient.prefetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Oops!'))
+    expect(rendered.getByText('Oops!')).toBeInTheDocument()
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
 
@@ -133,7 +143,7 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should not create an endless loop when using inside a suspense boundary', async () => {
-    const queryFn = generateQueryFn('prefetchedQuery')
+    const queryFn = vi.fn(() => sleep(10).then(() => 'prefetchedQuery'))
 
     const queryOpts = {
       queryKey: queryKey(),
@@ -145,36 +155,49 @@ describe('usePrefetchQuery', () => {
       return <>{children}</>
     }
 
+    function Page() {
+      const state = useSuspenseQuery(queryOpts)
+      return <div>data: {String(state.data)}</div>
+    }
+
     function App() {
       return (
         <React.Suspense>
           <Prefetch>
-            <Suspended queryOpts={queryOpts} />
+            <Page />
           </Prefetch>
         </React.Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-    await waitFor(() => rendered.getByText('data: prefetchedQuery'))
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: prefetchedQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should be able to recover from errors and try fetching again', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
-    const queryFn = generateQueryFn('This is fine :dog: :fire:')
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => 'This is fine :dog: :fire:'),
+    )
 
     const queryOpts = {
       queryKey: queryKey(),
       queryFn,
     }
 
-    queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
+    queryFn.mockImplementationOnce(() =>
+      sleep(10).then(() => {
+        throw new Error('Oops! Server error!')
+      }),
+    )
 
-      throw new Error('Oops! Server error!')
-    })
+    function Page() {
+      const state = useSuspenseQuery(queryOpts)
+      return <div>data: {String(state.data)}</div>
+    }
 
     function App() {
       const { reset } = useQueryErrorResetBoundary()
@@ -191,20 +214,24 @@ describe('usePrefetchQuery', () => {
           )}
         >
           <React.Suspense fallback="Loading...">
-            <Suspended queryOpts={queryOpts} />
+            <Page />
           </React.Suspense>
         </ErrorBoundary>
       )
     }
 
-    await queryClient.prefetchQuery(queryOpts)
+    queryClient.prefetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Oops!'))
+    expect(rendered.getByText('Oops!')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Try again'))
-    await waitFor(() => rendered.getByText('data: This is fine :dog: :fire:'))
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(
+      rendered.getByText('data: This is fine :dog: :fire:'),
+    ).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
     consoleMock.mockRestore()
   })
@@ -212,20 +239,47 @@ describe('usePrefetchQuery', () => {
   it('should not create a suspense waterfall if prefetch is fired', async () => {
     const firstQueryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('Prefetch is nice!'),
+      queryFn: vi.fn(() => sleep(10).then(() => 'Prefetch is nice!')),
     }
 
     const secondQueryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('Prefetch is really nice!!'),
+      queryFn: vi.fn(() => sleep(10).then(() => 'Prefetch is really nice!!')),
     }
 
     const thirdQueryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('Prefetch does not create waterfalls!!'),
+      queryFn: vi.fn(() =>
+        sleep(10).then(() => 'Prefetch does not create waterfalls!!'),
+      ),
     }
 
     const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+
+    function FirstQuery({ children }: { children?: React.ReactNode }) {
+      const state = useSuspenseQuery(firstQueryOpts)
+      return (
+        <div>
+          <div>data: {String(state.data)}</div>
+          {children}
+        </div>
+      )
+    }
+
+    function SecondQuery({ children }: { children?: React.ReactNode }) {
+      const state = useSuspenseQuery(secondQueryOpts)
+      return (
+        <div>
+          <div>data: {String(state.data)}</div>
+          {children}
+        </div>
+      )
+    }
+
+    function ThirdQuery() {
+      const state = useSuspenseQuery(thirdQueryOpts)
+      return <div>data: {String(state.data)}</div>
+    }
 
     function App() {
       usePrefetchQuery(firstQueryOpts)
@@ -234,11 +288,11 @@ describe('usePrefetchQuery', () => {
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended queryOpts={firstQueryOpts}>
-            <Suspended queryOpts={secondQueryOpts}>
-              <Suspended queryOpts={thirdQueryOpts} />
-            </Suspended>
-          </Suspended>
+          <FirstQuery>
+            <SecondQuery>
+              <ThirdQuery />
+            </SecondQuery>
+          </FirstQuery>
         </React.Suspense>
       )
     }
@@ -253,12 +307,15 @@ describe('usePrefetchQuery', () => {
     expect(
       queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
-    await waitFor(() => rendered.getByText('data: Prefetch is really nice!!'))
-    await waitFor(() =>
+    expect(rendered.getByText('Loading...')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: Prefetch is nice!')).toBeInTheDocument()
+    expect(
+      rendered.getByText('data: Prefetch is really nice!!'),
+    ).toBeInTheDocument()
+    expect(
       rendered.getByText('data: Prefetch does not create waterfalls!!'),
-    )
+    ).toBeInTheDocument()
     expect(Fallback).toHaveBeenCalledTimes(1)
     expect(firstQueryOpts.queryFn).toHaveBeenCalledTimes(1)
     expect(secondQueryOpts.queryFn).toHaveBeenCalledTimes(1)

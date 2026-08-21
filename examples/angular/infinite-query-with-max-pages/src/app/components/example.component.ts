@@ -16,9 +16,9 @@ import { ProjectsService } from '../services/projects.service'
   imports: [ProjectStyleDirective],
 })
 export class ExampleComponent {
-  projectsService = inject(ProjectsService)
+  readonly projectsService = inject(ProjectsService)
 
-  query = injectInfiniteQuery(() => ({
+  readonly query = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => {
       return lastValueFrom(this.projectsService.getProjects(pageParam))
@@ -29,20 +29,22 @@ export class ExampleComponent {
     maxPages: 3,
   }))
 
-  nextButtonDisabled = computed(
+  readonly nextButtonDisabled = computed(
     () => !this.#hasNextPage() || this.#isFetchingNextPage(),
   )
-  nextButtonText = computed(() =>
+
+  readonly nextButtonText = computed(() =>
     this.#isFetchingNextPage()
       ? 'Loading more...'
       : this.#hasNextPage()
         ? 'Load newer'
         : 'Nothing more to load',
   )
-  previousButtonDisabled = computed(
+
+  readonly previousButtonDisabled = computed(
     () => !this.#hasPreviousPage() || this.#isFetchingNextPage(),
   )
-  previousButtonText = computed(() =>
+  readonly previousButtonText = computed(() =>
     this.#isFetchingPreviousPage()
       ? 'Loading more...'
       : this.#hasPreviousPage()
@@ -50,8 +52,8 @@ export class ExampleComponent {
         : 'Nothing more to load',
   )
 
-  #hasPreviousPage = this.query.hasPreviousPage
-  #hasNextPage = this.query.hasNextPage
-  #isFetchingPreviousPage = this.query.isFetchingPreviousPage
-  #isFetchingNextPage = this.query.isFetchingNextPage
+  readonly #hasPreviousPage = this.query.hasPreviousPage
+  readonly #hasNextPage = this.query.hasNextPage
+  readonly #isFetchingPreviousPage = this.query.isFetchingPreviousPage
+  readonly #isFetchingNextPage = this.query.isFetchingNextPage
 }

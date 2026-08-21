@@ -1,10 +1,12 @@
 import type {
-  DataTag,
   DefaultError,
   InfiniteData,
+  NonUndefinedGuard,
   QueryKey,
+  QueryKeyWithDataTag,
 } from '@tanstack/query-core'
-import type { FunctionedParams, SolidInfiniteQueryOptions } from './types'
+import type { InfiniteQueryOptions } from './types'
+import type { Accessor } from 'solid-js'
 
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -12,20 +14,11 @@ export type UndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FunctionedParams<
-  SolidInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
-  > & {
+> = Accessor<
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData?: undefined
   }
 >
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -34,15 +27,8 @@ export type DefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FunctionedParams<
-  SolidInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
-  > & {
+> = Accessor<
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData:
       | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
       | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
@@ -72,9 +58,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -99,9 +84,8 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
-}
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 export function infiniteQueryOptions(options: unknown) {
   return options

@@ -1,22 +1,26 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryClient } from '@tanstack/query-core'
-import { QueryCache, queryOptions, skipToken, useQueries } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-import type {
-  QueryFunction,
-  QueryKey,
-  QueryObserverResult,
-  UseQueryOptions,
-  UseQueryResult,
-} from '..'
-import type { QueryFunctionContext } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
+import { renderWithClient } from './utils'
+import type { QueryObserverResult, UseQueryResult } from '..'
 
 describe('useQueries', () => {
-  const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+    vi.useRealTimers()
+  })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -28,17 +32,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(200)
-              return 2
-            },
+            queryFn: () => sleep(200).then(() => 2),
           },
         ],
       })
@@ -56,12 +54,41 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await vi.advanceTimersByTimeAsync(201)
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  it('should not optimistically show fetching when unsubscribed', () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.resolve('data'))
+
+    function Page() {
+      const [query] = useQueries({
+        queries: [{ queryKey: key, queryFn }],
+        subscribed: false,
+      })
+
+      return (
+        <div>
+          <span>isFetching: {String(query.isFetching)}</span>
+          <span>fetchStatus: {query.fetchStatus}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+    ).toBe(0)
+    rendered.getByText('isFetching: false')
+    rendered.getByText('fetchStatus: idle')
   })
 
   it('should track results', async () => {
@@ -74,11 +101,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              count++
-              return count
-            },
+            queryFn: () =>
+              sleep(10).then(() => {
+                count++
+                return count
+              }),
           },
         ],
       })
@@ -94,7 +121,8 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject([{ data: undefined }])
@@ -102,678 +130,13 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     // only one render for data update, no render for isFetching transition
     expect(results.length).toBe(3)
 
     expect(results[2]).toMatchObject([{ data: 2 }])
-  })
-
-  it('handles type parameter - tuple of tuples', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-
-    // @ts-expect-error (Page component is not rendered)
-    function Page() {
-      const result1 = useQueries<
-        [[number], [string], [Array<string>, boolean]]
-      >({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 1,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key3,
-            queryFn: () => ['string[]'],
-          },
-        ],
-      })
-      expectTypeOf(result1[0]).toEqualTypeOf<UseQueryResult<number, unknown>>()
-      expectTypeOf(result1[1]).toEqualTypeOf<UseQueryResult<string, unknown>>()
-      expectTypeOf(result1[2]).toEqualTypeOf<
-        UseQueryResult<Array<string>, boolean>
-      >()
-      expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
-      expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
-      expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
-
-      // TData (3rd element) takes precedence over TQueryFnData (1st element)
-      const result2 = useQueries<
-        [[string, unknown, string], [string, unknown, number]]
-      >({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return a.toLowerCase()
-            },
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
-            },
-          },
-        ],
-      })
-      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
-      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
-      expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
-
-      // types should be enforced
-      useQueries<[[string, unknown, string], [string, boolean, number]]>({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return a.toLowerCase()
-            },
-            placeholderData: 'string',
-            // @ts-expect-error (initialData: string)
-            initialData: 123,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
-            },
-            placeholderData: 'string',
-            // @ts-expect-error (initialData: string)
-            initialData: 123,
-          },
-        ],
-      })
-
-      // field names should be enforced
-      useQueries<[[string]]>({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            // @ts-expect-error (invalidField)
-            someInvalidField: [],
-          },
-        ],
-      })
-    }
-  })
-
-  it('handles type parameter - tuple of objects', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-
-    // @ts-expect-error (Page component is not rendered)
-    function Page() {
-      const result1 = useQueries<
-        [
-          { queryFnData: number },
-          { queryFnData: string },
-          { queryFnData: Array<string>; error: boolean },
-        ]
-      >({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 1,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key3,
-            queryFn: () => ['string[]'],
-          },
-        ],
-      })
-      expectTypeOf(result1[0]).toEqualTypeOf<UseQueryResult<number, unknown>>()
-      expectTypeOf(result1[1]).toEqualTypeOf<UseQueryResult<string, unknown>>()
-      expectTypeOf(result1[2]).toEqualTypeOf<
-        UseQueryResult<Array<string>, boolean>
-      >()
-      expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
-      expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
-      expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
-
-      // TData (data prop) takes precedence over TQueryFnData (queryFnData prop)
-      const result2 = useQueries<
-        [
-          { queryFnData: string; data: string },
-          { queryFnData: string; data: number },
-        ]
-      >({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return a.toLowerCase()
-            },
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
-            },
-          },
-        ],
-      })
-      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
-      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
-      expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
-
-      // can pass only TData (data prop) although TQueryFnData will be left unknown
-      const result3 = useQueries<[{ data: string }, { data: number }]>({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<unknown>()
-              return a as string
-            },
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<unknown>()
-              return a as number
-            },
-          },
-        ],
-      })
-      expectTypeOf(result3[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
-      expectTypeOf(result3[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
-      expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
-
-      // types should be enforced
-      useQueries<
-        [
-          { queryFnData: string; data: string },
-          { queryFnData: string; data: number; error: boolean },
-        ]
-      >({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return a.toLowerCase()
-            },
-            placeholderData: 'string',
-            // @ts-expect-error (initialData: string)
-            initialData: 123,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
-            },
-            placeholderData: 'string',
-            // @ts-expect-error (initialData: string)
-            initialData: 123,
-          },
-        ],
-      })
-
-      // field names should be enforced
-      useQueries<[{ queryFnData: string }]>({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            // @ts-expect-error (invalidField)
-            someInvalidField: [],
-          },
-        ],
-      })
-    }
-  })
-
-  it('correctly returns types when passing through queryOptions', () => {
-    // @ts-expect-error (Page component is not rendered)
-    function Page() {
-      // data and results types are correct when using queryOptions
-      const result4 = useQueries({
-        queries: [
-          queryOptions({
-            queryKey: ['key1'],
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return a.toLowerCase()
-            },
-          }),
-          queryOptions({
-            queryKey: ['key2'],
-            queryFn: () => 'string',
-            select: (a) => {
-              expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
-            },
-          }),
-        ],
-      })
-      expectTypeOf(result4[0]).toEqualTypeOf<UseQueryResult<string, Error>>()
-      expectTypeOf(result4[1]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result4[0].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result4[1].data).toEqualTypeOf<number | undefined>()
-    }
-  })
-
-  it('handles array literal without type parameter to infer result type', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const key4 = queryKey()
-    const key5 = queryKey()
-
-    type BizError = { code: number }
-    const throwOnError = (_error: BizError) => true
-
-    // @ts-expect-error (Page component is not rendered)
-    function Page() {
-      // Array.map preserves TQueryFnData
-      const result1 = useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-        })),
-      })
-      expectTypeOf(result1).toEqualTypeOf<
-        Array<UseQueryResult<number, Error>>
-      >()
-      if (result1[0]) {
-        expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
-      }
-
-      // Array.map preserves TError
-      const result1_err = useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-          throwOnError,
-        })),
-      })
-      expectTypeOf(result1_err).toEqualTypeOf<
-        Array<UseQueryResult<number, BizError>>
-      >()
-      if (result1_err[0]) {
-        expectTypeOf(result1_err[0].data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(result1_err[0].error).toEqualTypeOf<BizError | null>()
-      }
-
-      // Array.map preserves TData
-      const result2 = useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-          select: (data: number) => data.toString(),
-        })),
-      })
-      expectTypeOf(result2).toEqualTypeOf<
-        Array<UseQueryResult<string, Error>>
-      >()
-
-      const result2_err = useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-          select: (data: number) => data.toString(),
-          throwOnError,
-        })),
-      })
-      expectTypeOf(result2_err).toEqualTypeOf<
-        Array<UseQueryResult<string, BizError>>
-      >()
-
-      const result3 = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 1,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key3,
-            queryFn: () => ['string[]'],
-            select: () => 123,
-          },
-          {
-            queryKey: key5,
-            queryFn: () => 'string',
-            throwOnError,
-          },
-        ],
-      })
-      expectTypeOf(result3[0]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result3[1]).toEqualTypeOf<UseQueryResult<string, Error>>()
-      expectTypeOf(result3[2]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result3[0].data).toEqualTypeOf<number | undefined>()
-      expectTypeOf(result3[1].data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(result3[3].data).toEqualTypeOf<string | undefined>()
-      // select takes precedence over queryFn
-      expectTypeOf(result3[2].data).toEqualTypeOf<number | undefined>()
-      // infer TError from throwOnError
-      expectTypeOf(result3[3].error).toEqualTypeOf<BizError | null>()
-
-      // initialData/placeholderData are enforced
-      useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            placeholderData: 'string',
-            // @ts-expect-error (initialData: string)
-            initialData: 123,
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 123,
-            // @ts-expect-error (placeholderData: number)
-            placeholderData: 'string',
-            initialData: 123,
-          },
-        ],
-      })
-
-      // select and throwOnError params are "indirectly" enforced
-      useQueries({
-        queries: [
-          // unfortunately TS will not suggest the type for you
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-          },
-          // however you can add a type to the callback
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-          },
-          // the type you do pass is enforced
-          {
-            queryKey: key3,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key4,
-            queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
-          },
-          {
-            queryKey: key5,
-            queryFn: () => 'string',
-            throwOnError,
-          },
-        ],
-      })
-
-      // callbacks are also indirectly enforced with Array.map
-      useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-          select: (data: number) => data.toString(),
-        })),
-      })
-      useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () => i + 10,
-          select: (data: number) => data.toString(),
-        })),
-      })
-
-      // results inference works when all the handlers are defined
-      const result4 = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key2,
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: key4,
-            queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
-          },
-          {
-            queryKey: key5,
-            queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
-            throwOnError,
-          },
-        ],
-      })
-      expectTypeOf(result4[0]).toEqualTypeOf<UseQueryResult<string, Error>>()
-      expectTypeOf(result4[1]).toEqualTypeOf<UseQueryResult<string, Error>>()
-      expectTypeOf(result4[2]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result4[3]).toEqualTypeOf<UseQueryResult<number, BizError>>()
-
-      // handles when queryFn returns a Promise
-      const result5 = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => Promise.resolve('string'),
-          },
-        ],
-      })
-      expectTypeOf(result5[0]).toEqualTypeOf<UseQueryResult<string, Error>>()
-
-      // Array as const does not throw error
-      const result6 = useQueries({
-        queries: [
-          {
-            queryKey: ['key1'],
-            queryFn: () => 'string',
-          },
-          {
-            queryKey: ['key1'],
-            queryFn: () => 123,
-          },
-          {
-            queryKey: key5,
-            queryFn: () => 'string',
-            throwOnError,
-          },
-        ],
-      } as const)
-      expectTypeOf(result6[0]).toEqualTypeOf<UseQueryResult<string, Error>>()
-      expectTypeOf(result6[1]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result6[2]).toEqualTypeOf<UseQueryResult<string, BizError>>()
-
-      // field names should be enforced - array literal
-      useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            // @ts-expect-error (invalidField)
-            someInvalidField: [],
-          },
-        ],
-      })
-
-      // field names should be enforced - Array.map() result
-      useQueries({
-        // @ts-expect-error (invalidField)
-        queries: Array(10).map(() => ({
-          someInvalidField: '',
-        })),
-      })
-
-      // field names should be enforced - array literal
-      useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => 'string',
-            // @ts-expect-error (invalidField)
-            someInvalidField: [],
-          },
-        ],
-      })
-
-      // supports queryFn using fetch() to return Promise<any> - Array.map() result
-      useQueries({
-        queries: Array(50).map((_, i) => ({
-          queryKey: ['key', i] as const,
-          queryFn: () =>
-            fetch('return Promise<any>').then((resp) => resp.json()),
-        })),
-      })
-
-      // supports queryFn using fetch() to return Promise<any> - array literal
-      useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () =>
-              fetch('return Promise<any>').then((resp) => resp.json()),
-          },
-        ],
-      })
-    }
-  })
-
-  it('handles strongly typed queryFn factories and useQueries wrappers', () => {
-    // QueryKey + queryFn factory
-    type QueryKeyA = ['queryA']
-    const getQueryKeyA = (): QueryKeyA => ['queryA']
-    type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
-    const getQueryFunctionA: GetQueryFunctionA = () => async () => {
-      return 1
-    }
-    type SelectorA = (data: number) => [number, string]
-    const getSelectorA = (): SelectorA => (data) => [data, data.toString()]
-
-    type QueryKeyB = ['queryB', string]
-    const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
-    type GetQueryFunctionB = () => QueryFunction<string, QueryKeyB>
-    const getQueryFunctionB: GetQueryFunctionB = () => async () => {
-      return '1'
-    }
-    type SelectorB = (data: string) => [string, number]
-    const getSelectorB = (): SelectorB => (data) => [data, +data]
-
-    // Wrapper with strongly typed array-parameter
-    function useWrappedQueries<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey extends QueryKey,
-    >(queries: Array<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>) {
-      return useQueries({
-        queries: queries.map(
-          // no need to type the mapped query
-          (query) => {
-            const { queryFn: fn, queryKey: key } = query
-            expectTypeOf(fn).toEqualTypeOf<
-              | typeof skipToken
-              | QueryFunction<TQueryFnData, TQueryKey, never>
-              | undefined
-            >()
-            return {
-              queryKey: key,
-              queryFn:
-                fn && fn !== skipToken
-                  ? (ctx: QueryFunctionContext<TQueryKey>) => {
-                      // eslint-disable-next-line vitest/valid-expect
-                      expectTypeOf<TQueryKey>(ctx.queryKey)
-                      return fn.call({}, ctx)
-                    }
-                  : undefined,
-            }
-          },
-        ),
-      })
-    }
-
-    // @ts-expect-error (Page component is not rendered)
-    function Page() {
-      const result = useQueries({
-        queries: [
-          {
-            queryKey: getQueryKeyA(),
-            queryFn: getQueryFunctionA(),
-          },
-          {
-            queryKey: getQueryKeyB('id'),
-            queryFn: getQueryFunctionB(),
-          },
-        ],
-      })
-      expectTypeOf(result[0]).toEqualTypeOf<UseQueryResult<number, Error>>()
-      expectTypeOf(result[1]).toEqualTypeOf<UseQueryResult<string, Error>>()
-
-      const withSelector = useQueries({
-        queries: [
-          {
-            queryKey: getQueryKeyA(),
-            queryFn: getQueryFunctionA(),
-            select: getSelectorA(),
-          },
-          {
-            queryKey: getQueryKeyB('id'),
-            queryFn: getQueryFunctionB(),
-            select: getSelectorB(),
-          },
-        ],
-      })
-      expectTypeOf(withSelector[0]).toEqualTypeOf<
-        UseQueryResult<[number, string], Error>
-      >()
-      expectTypeOf(withSelector[1]).toEqualTypeOf<
-        UseQueryResult<[string, number], Error>
-      >()
-
-      const withWrappedQueries = useWrappedQueries(
-        Array(10).map(() => ({
-          queryKey: getQueryKeyA(),
-          queryFn: getQueryFunctionA(),
-          select: getSelectorA(),
-        })),
-      )
-
-      expectTypeOf(withWrappedQueries).toEqualTypeOf<
-        Array<UseQueryResult<number, Error>>
-      >()
-    }
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
@@ -805,11 +168,11 @@ describe('useQueries', () => {
           },
           {
             queryKey: key3,
-            queryFn: async () => 2,
+            queryFn: () => Promise.resolve(2),
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
@@ -836,8 +199,9 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('single query error'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
     consoleMock.mockRestore()
   })
 
@@ -866,7 +230,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key2,
-            queryFn: async () => 2,
+            queryFn: () => Promise.resolve(2),
           },
           {
             queryKey: key3,
@@ -876,7 +240,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
@@ -903,8 +267,9 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('single query error'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
     consoleMock.mockRestore()
   })
 
@@ -932,7 +297,8 @@ describe('useQueries', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() => rendered.getByText('data: custom client'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
   it('should combine queries', async () => {
@@ -973,9 +339,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
       rendered.getByText('data: true first result,second result'),
-    )
+    ).toBeInTheDocument()
   })
 
   it('should not return new instances when called without queries', async () => {
@@ -989,10 +356,12 @@ describe('useQueries', () => {
         queries: ids.map((id) => {
           return {
             queryKey: [key, id],
-            queryFn: async () => async () => {
-              return {
-                id,
-                content: { value: Math.random() },
+            queryFn: () => {
+              return () => {
+                return Promise.resolve({
+                  id,
+                  content: { value: Math.random() },
+                })
               }
             },
           }
@@ -1015,19 +384,21 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: {"empty":"object"}'))
-    await waitFor(() => rendered.getByText('count: 0'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: {"empty":"object"}')).toBeInTheDocument()
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
 
     expect(resultChanged).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() => rendered.getByText('count: 1'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
     // there should be no further effect calls because the returned object is structurally shared
     expect(resultChanged).toBe(1)
   })
 
-  it('should not have infinite render loops with empty queries (#6645)', async () => {
+  it('should not have infinite render loops with empty queries (#6645)', () => {
     let renderCount = 0
 
     function Page() {
@@ -1044,8 +415,6 @@ describe('useQueries', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-
     expect(renderCount).toBe(1)
   })
 
@@ -1058,17 +427,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(5)
-              return Promise.resolve('query1')
-            },
+            queryFn: () => sleep(5).then(() => Promise.resolve('query1')),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(20)
-              return Promise.resolve('query2')
-            },
+            queryFn: () => sleep(20).then(() => Promise.resolve('query2')),
           },
         ],
         combine: ([query1, query2]) => {
@@ -1082,11 +445,13 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() =>
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText(
         'data: {"data":{"query1":"query1","query2":"query2"}}',
       ),
-    )
+    ).toBeInTheDocument()
   })
 
   it('should track property access through combine function', async () => {
@@ -1101,17 +466,13 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return Promise.resolve('first result ' + count)
-              },
+              queryFn: () =>
+                sleep(5).then(() => Promise.resolve('first result ' + count)),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(50)
-                return Promise.resolve('second result ' + count)
-              },
+              queryFn: () =>
+                sleep(50).then(() => Promise.resolve('second result ' + count)),
             },
           ],
           combine: (queryResults) => {
@@ -1141,9 +502,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
       rendered.getByText('data: true first result 0,second result 0'),
-    )
+    ).toBeInTheDocument()
 
     expect(results.length).toBe(3)
 
@@ -1169,13 +531,14 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
       rendered.getByText('data: true first result 1,second result 1'),
-    )
+    ).toBeInTheDocument()
 
     const length = results.length
 
-    expect([4, 5]).toContain(results.length)
+    expect([4, 5, 6]).toContain(results.length)
 
     expect(results[results.length - 1]).toStrictEqual({
       combined: true,
@@ -1185,7 +548,7 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
   })
@@ -1198,21 +561,11 @@ describe('useQueries', () => {
       const { isLoading } = useQueries({
         queries: ids.map((id) => ({
           queryKey: [key, id],
-          queryFn: () => {
-            return new Promise<{
-              id: number
-              title: string
-            }>((resolve, reject) => {
-              if (id === 2) {
-                setTimeout(() => {
-                  reject(new Error('FAILURE'))
-                }, 10)
-              }
-              setTimeout(() => {
-                resolve({ id, title: `Post ${id}` })
-              }, 10)
-            })
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (id === 2) throw new Error('FAILURE')
+              return { id, title: `Post ${id}` }
+            }),
           retry: false,
         })),
         combine: (results) => {
@@ -1235,9 +588,10 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('Loading Status: Loading...'))
+    expect(rendered.getByText('Loading Status: Loading...')).toBeInTheDocument()
 
-    await waitFor(() => rendered.getByText('Loading Status: Loaded'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument()
   })
 
   it('should not have stale closures with combine (#6648)', async () => {
@@ -1275,11 +629,13 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: 0 result'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 0 result')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() => rendered.getByText('data: 1 result'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 1 result')).toBeInTheDocument()
   })
 
   it('should optimize combine if it is a stable reference', async () => {
@@ -1298,17 +654,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result:' + value
-              },
+              queryFn: () => sleep(10).then(() => 'first result:' + value),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result:' + value
-              },
+              queryFn: () => sleep(20).then(() => 'second result:' + value),
             },
           ],
           combine: React.useCallback((results: Array<QueryObserverResult>) => {
@@ -1335,32 +685,36 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: true first result:0,second result:0'),
-    )
+    ).toBeInTheDocument()
 
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
 
-    await client.refetchQueries()
+    client.refetchQueries()
+
+    await vi.advanceTimersByTimeAsync(21)
     // no increase because result hasn't changed
     expect(spy).toHaveBeenCalledTimes(3)
 
     fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
 
-    // no increase because just a re-render
-    expect(spy).toHaveBeenCalledTimes(3)
+    // one extra call due to recomputing the combined result on rerender
+    expect(spy).toHaveBeenCalledTimes(4)
 
     value = 1
 
-    await client.refetchQueries()
+    client.refetchQueries()
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: true first result:1,second result:1'),
-    )
+    ).toBeInTheDocument()
 
-    // two value changes = two re-renders
-    expect(spy).toHaveBeenCalledTimes(5)
+    // refetch with new values triggers: both pending -> one pending -> both resolved
+    expect(spy).toHaveBeenCalledTimes(7)
   })
 
   it('should re-run combine if the functional reference changes', async () => {
@@ -1378,17 +732,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result'
-              },
+              queryFn: () => sleep(20).then(() => 'second result'),
             },
           ],
           combine: React.useCallback(
@@ -1419,9 +767,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: 0 first result,second result'),
-    )
+    ).toBeInTheDocument()
 
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
@@ -1447,19 +796,19 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                queryFns.push('first result')
-                return 'first result'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  queryFns.push('first result')
+                  return 'first result'
+                }),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                queryFns.push('second result')
-                return 'second result'
-              },
+              queryFn: () =>
+                sleep(20).then(() => {
+                  queryFns.push('second result')
+                  return 'second result'
+                }),
             },
           ],
           combine: () => 'foo',
@@ -1478,11 +827,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: foo'))
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
-    await waitFor(() =>
-      expect(queryFns).toEqual(['first result', 'second result']),
-    )
+    expect(queryFns).toEqual(['first result', 'second result'])
 
     expect(renders).toBe(1)
   })
@@ -1502,24 +850,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1542,8 +881,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: pending'))
-    await waitFor(() => rendered.getByText('data: foo'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
     // one with pending, one with foo
     expect(renders).toBe(2)
@@ -1562,24 +903,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1608,17 +940,345 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: pending'))
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: first result, second result, third result'),
-    )
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /update/i }))
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText(
         'data: first result updated, second result, third result',
       ),
+    ).toBeInTheDocument()
+  })
+
+  it('should not re-run stable combine on unrelated re-render', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+
+    function Page() {
+      const [unrelatedState, setUnrelatedState] = React.useState(0)
+
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(10).then(() => 'first result'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => sleep(20).then(() => 'second result'),
+            },
+          ],
+          combine: React.useCallback((results: Array<QueryObserverResult>) => {
+            const result = {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+            spy(result)
+            return result
+          }, []),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <div>unrelated: {unrelatedState}</div>
+          <button onClick={() => setUnrelatedState((s) => s + 1)}>
+            increment
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: true first result,second result'),
+    ).toBeInTheDocument()
+
+    // initial renders: both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 1')).toBeInTheDocument()
+
+    // combine should NOT re-run for unrelated re-render with stable reference
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 2')).toBeInTheDocument()
+
+    // still no extra calls to combine
+    expect(spy).toHaveBeenCalledTimes(3)
+  })
+
+  it('should not cause infinite re-renders when removing last query', async () => {
+    let renderCount = 0
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const [queries, setQueries] = React.useState([
+        {
+          queryKey: key1,
+          queryFn: () => 'data1',
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'data2',
+        },
+      ])
+      renderCount++
+
+      const result = useQueries({ queries })
+
+      return (
+        <div>
+          <div data-testid="render-count">renders: {renderCount}</div>
+          <div data-testid="query-count">queries: {result.length}</div>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: key1,
+                  queryFn: () => 'data1',
+                },
+              ])
+            }}
+          >
+            remove last
+          </button>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: key2,
+                  queryFn: () => 'data2',
+                },
+              ])
+            }}
+          >
+            remove first
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+  })
+
+  it('should return correct results when queries count changes with stable combine reference', async () => {
+    const combine = (results: Array<QueryObserverResult>) => results
+    const key = queryKey()
+
+    const results: Array<{ n: number; length: number }> = []
+
+    function Page() {
+      const [n, setN] = React.useState(0)
+
+      const queries = useQueries(
+        {
+          queries: [...Array(n).keys()].map((i) => ({
+            queryKey: [...key, i],
+            queryFn: () => i,
+          })),
+          combine,
+        },
+        queryClient,
+      )
+
+      results.push({ n, length: queries.length })
+
+      return (
+        <div>
+          <span data-testid="n">{n}</span>
+          <span data-testid="length">{queries.length}</span>
+          <button onClick={() => setN(n + 1)}>Increase</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    expect(rendered.getByTestId('n').textContent).toBe('0')
+    expect(rendered.getByTestId('length').textContent).toBe('0')
+
+    fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('n').textContent).toBe('1')
+    expect(rendered.getByTestId('length').textContent).toBe('1')
+
+    fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('n').textContent).toBe('2')
+    expect(rendered.getByTestId('length').textContent).toBe('2')
+
+    results.forEach((result) => {
+      expect(result.length).toBe(result.n)
+    })
+  })
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
     )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
+  it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
   })
 })

@@ -6,15 +6,15 @@
     errorRate,
     queryTimeMin,
     queryTimeMax,
-  } from '../lib/stores'
+  } from '../lib/stores.svelte'
   import App from './App.svelte'
 
   const queryClient = useQueryClient()
 
   queryClient.setDefaultOptions({
     queries: {
-      staleTime: $staleTime,
-      gcTime: $gcTime,
+      staleTime: staleTime.value,
+      gcTime: gcTime.value,
     },
   })
 </script>
@@ -29,7 +29,7 @@
     type="number"
     min="0"
     step="1000"
-    bind:value={$staleTime}
+    bind:value={staleTime.value}
     style="width: 100px"
   />
 </div>
@@ -39,7 +39,7 @@
     type="number"
     min="0"
     step="1000"
-    bind:value={$gcTime}
+    bind:value={gcTime.value}
     style="width: 100px"
   />
 </div>
@@ -51,7 +51,7 @@
     min="0"
     max="1"
     step=".05"
-    bind:value={$errorRate}
+    bind:value={errorRate.value}
     style="width: 100px"
   />
 </div>
@@ -61,7 +61,7 @@
     type="number"
     min="1"
     step="500"
-    bind:value={$queryTimeMin}
+    bind:value={queryTimeMin.value}
     style="width: 100px"
   />{' '}
 </div>
@@ -71,7 +71,7 @@
     type="number"
     min="1"
     step="500"
-    bind:value={$queryTimeMax}
+    bind:value={queryTimeMax.value}
     style="width: 100px"
   />
 </div>

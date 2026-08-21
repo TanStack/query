@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { asyncThrottle } from '../asyncThrottle'
-import { sleep as delay } from './utils'
 
 describe('asyncThrottle', () => {
   beforeEach(() => {
@@ -11,12 +11,12 @@ describe('asyncThrottle', () => {
     vi.useRealTimers()
   })
 
-  test('basic', async () => {
+  it('basic', async () => {
     const interval = 10
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(1)
+        await sleep(1)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -36,7 +36,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersToNextTimerAsync()
     await vi.advanceTimersByTimeAsync(interval)
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -44,12 +44,12 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('Bug #3331 case 1: Special timing', async () => {
+  it('Bug #3331 case 1: Special timing', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(30)
+        await sleep(30)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -68,7 +68,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersToNextTimerAsync()
     await vi.advanceTimersByTimeAsync(interval)
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(4)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -76,12 +76,12 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
+  it('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(interval + 10)
+        await sleep(interval + 10)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -98,7 +98,7 @@ describe('asyncThrottle', () => {
     await vi.advanceTimersByTimeAsync(interval + 10)
     await vi.advanceTimersByTimeAsync(interval + 10)
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -106,13 +106,13 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('"func" throw error not break next invoke', async () => {
+  it('"func" throw error not break next invoke', async () => {
     const interval = 10
 
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         if (id === 1) throw new Error('error')
-        await delay(1)
+        await sleep(1)
         if (complete) {
           complete(id)
         }
@@ -126,11 +126,11 @@ describe('asyncThrottle', () => {
     new Promise((resolve) => testFunc(2, resolve))
     await vi.advanceTimersByTimeAsync(interval)
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc).toHaveBeenCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
-  test('"onError" should be called when "func" throw error', () => {
+  it('"onError" should be called when "func" throw error', () => {
     const err = new Error('error')
     const handleError = (e: unknown) => {
       expect(e).toBe(err)
@@ -145,7 +145,7 @@ describe('asyncThrottle', () => {
     testFunc()
   })
 
-  test('should throw error when "func" is not a function', () => {
-    expect(() => asyncThrottle(1 as any)).toThrowError()
+  it('should throw error when "func" is not a function', () => {
+    expect(() => asyncThrottle(1 as any)).toThrow()
   })
 })

@@ -26,7 +26,6 @@ export function useSuspenseInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,
@@ -44,6 +43,7 @@ export function useSuspenseInfiniteQuery<
       enabled: true,
       suspense: true,
       throwOnError: defaultThrowOnError,
+      placeholderData: undefined,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,

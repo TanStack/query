@@ -3,7 +3,12 @@ import { Mutation } from './mutation'
 import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
-import type { DefaultError, MutationOptions, NotifyEvent } from './types'
+import type {
+  DefaultError,
+  MutationFunctionContext,
+  MutationOptions,
+  NotifyEvent,
+} from './types'
 import type { QueryClient } from './queryClient'
 import type { Action, MutationState } from './mutation'
 import type { MutationFilters } from './utils'
@@ -14,25 +19,29 @@ interface MutationCacheConfig {
   onError?: (
     error: DefaultError,
     variables: unknown,
-    context: unknown,
+    onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSuccess?: (
     data: unknown,
     variables: unknown,
-    context: unknown,
+    onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: unknown | undefined,
     error: DefaultError | null,
     variables: unknown,
-    context: unknown,
+    onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
 }
 
@@ -93,12 +102,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.#mutationId = 0
   }
 
-  build<TData, TError, TVariables, TContext>(
+  build<TData, TError, TVariables, TOnMutateResult>(
     client: QueryClient,
-    options: MutationOptions<TData, TError, TVariables, TContext>,
-    state?: MutationState<TData, TError, TVariables, TContext>,
-  ): Mutation<TData, TError, TVariables, TContext> {
+    options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    state?: MutationState<TData, TError, TVariables, TOnMutateResult>,
+  ): Mutation<TData, TError, TVariables, TOnMutateResult> {
     const mutation = new Mutation({
+      client,
       mutationCache: this,
       mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
@@ -195,15 +205,15 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     TData = unknown,
     TError = DefaultError,
     TVariables = any,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     filters: MutationFilters,
-  ): Mutation<TData, TError, TVariables, TContext> | undefined {
+  ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((mutation) =>
       matchMutation(defaultedFilters, mutation),
-    ) as Mutation<TData, TError, TVariables, TContext> | undefined
+    ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {

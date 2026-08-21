@@ -1,12 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-
-import { dynamicAliases } from './root.vite.config'
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths({ ignoreConfigErrors: true })],
+  plugins: [react()],
+  // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
-    alias: dynamicAliases,
+    conditions: ['@tanstack/custom-condition'],
+  },
+  environments: {
+    ssr: {
+      resolve: {
+        conditions: ['@tanstack/custom-condition'],
+      },
+    },
   },
 })

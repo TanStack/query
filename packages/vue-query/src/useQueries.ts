@@ -24,7 +24,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
-import type { DeepUnwrapRef, MaybeRefDeep } from './types'
+import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -185,7 +185,7 @@ export type UseQueriesOptions<
           >
         : ReadonlyArray<unknown> extends T
           ? T
-          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogeneous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
                 UseQueryOptionsForUseQueries<
@@ -238,8 +238,9 @@ export function useQueries<
   {
     queries,
     ...options
-  }: {
+  }: ShallowOption & {
     queries:
+      | (() => MaybeRefDeep<UseQueriesOptionsArg<T>>)
       | MaybeRefDeep<UseQueriesOptionsArg<T>>
       | MaybeRefDeep<
           readonly [
@@ -247,7 +248,6 @@ export function useQueries<
           ]
         >
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
-    shallow?: boolean
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
@@ -262,8 +262,12 @@ export function useQueries<
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() => {
+    const resolvedQueries =
+      typeof queries === 'function'
+        ? (queries as () => MaybeRefDeep<UseQueriesOptionsArg<T>>)()
+        : queries
     // Only unref the top level array.
-    const queriesRaw = unref(queries) as ReadonlyArray<any>
+    const queriesRaw = unref(resolvedQueries) as ReadonlyArray<any>
 
     // Unref the rest for each element in the top level array.
     return queriesRaw.map((queryOptions) => {
@@ -274,7 +278,7 @@ export function useQueries<
       }
 
       const defaulted = client.defaultQueryOptions(clonedOptions)
-      defaulted._optimisticResults = client.isRestoring.value
+      defaulted._optimisticResults = client.isRestoring?.value
         ? 'isRestoring'
         : 'optimistic'
 
@@ -317,20 +321,22 @@ export function useQueries<
     // noop
   }
 
-  watch(
-    client.isRestoring,
-    (isRestoring) => {
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe(() => {
-          state.value = getOptimisticResult()
-        })
+  if (client.isRestoring) {
+    watch(
+      client.isRestoring,
+      (isRestoring) => {
+        if (!isRestoring) {
+          unsubscribe()
+          unsubscribe = observer.subscribe(() => {
+            state.value = getOptimisticResult()
+          })
 
-        state.value = getOptimisticResult()
-      }
-    },
-    { immediate: true },
-  )
+          state.value = getOptimisticResult()
+        }
+      },
+      { immediate: true },
+    )
+  }
 
   watch(defaultedQueries, (queriesValue) => {
     observer.setQueries(
@@ -344,9 +350,7 @@ export function useQueries<
     unsubscribe()
   })
 
-  return process.env.NODE_ENV === 'production'
-    ? state
-    : options.shallow
-      ? shallowReadonly(state)
-      : (readonly(state) as Readonly<Ref<TCombinedResult>>)
+  return options.shallow
+    ? shallowReadonly(state)
+    : (readonly(state) as Readonly<Ref<TCombinedResult>>)
 }

@@ -1,11 +1,11 @@
-import { createQuery } from '@tanstack/solid-query'
-import type { Component } from 'solid-js'
+import { useQuery } from '@tanstack/solid-query'
 import { resetErrorBoundaries } from 'solid-js'
 import { createSignal } from 'solid-js'
 import { For } from 'solid-js'
-import { fetchPost } from '~/utils/api'
 import { Example } from './example'
 import { QueryBoundary } from './query-boundary'
+import type { Component } from 'solid-js'
+import { fetchPost } from '~/utils/api'
 
 export interface PostViewerProps {
   deferStream?: boolean
@@ -17,7 +17,7 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
   const [simulateError, setSimulateError] = createSignal(props.simulateError)
   const [postId, setPostId] = createSignal(1)
 
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ['posts', postId()],
     queryFn: () =>
       fetchPost({

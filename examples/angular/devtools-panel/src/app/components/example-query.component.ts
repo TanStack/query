@@ -22,7 +22,8 @@ interface Response {
       @if (query.isError()) {
         <div>An error has occurred: {{ query.error().message }}</div>
       }
-      @if (query.data(); as data) {
+      @if (query.isSuccess()) {
+        @let data = query.data();
         <h1>{{ data.name }}</h1>
         <p>{{ data.description }}</p>
         <strong>👀 {{ data.subscribers_count }}</strong>
@@ -33,9 +34,9 @@ interface Response {
   `,
 })
 export class ExampleQueryComponent {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(

@@ -22,7 +22,7 @@ Examples of **incorrect** code for this rule:
 
 ```tsx
 /* eslint "@tanstack/query/no-unstable-deps": "warn" */
-import { useCallback } from 'React'
+import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 function Component() {
@@ -38,7 +38,7 @@ Examples of **correct** code for this rule:
 
 ```tsx
 /* eslint "@tanstack/query/no-unstable-deps": "warn" */
-import { useCallback } from 'React'
+import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 function Component() {

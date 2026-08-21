@@ -7,11 +7,13 @@ Wave your hands in the air and shout hooray because React Query comes with dedic
 
 When you begin your React Query journey, you'll want these devtools by your side. They help visualize all the inner workings of React Query and will likely save you hours of debugging if you find yourself in a pinch!
 
-> Please note that for now, the devtools **do not support React Native**. If you would like to help us make the devtools platform-agnostic, please let us know!
+> For Chrome, Firefox, and Edge users: Third-party browser extensions are available for debugging TanStack Query directly in browser DevTools. These provide the same functionality as the framework-specific devtools packages:
+>
+> - <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai">Devtools for Chrome</a>
+> - <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/">Devtools for Firefox</a>
+> - <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj">Devtools for Edge</a>
 
-> Exciting News: We now have a separate package for React Native React Query DevTools! This new addition brings native support, allowing you to integrate DevTools directly into your React Native projects. Check it out and contribute here: [react-native-react-query-devtools](https://github.com/LovesWorking/react-native-react-query-devtools)
-
-> An external tool is also available that enables the use of React Query DevTools via an external dashboard. Find out more and contribute on [react-query-external-sync](https://github.com/LovesWorking/react-query-external-sync)
+> For React Native users: A third-party native macOS app is available for debugging React Query in ANY js-based application. Monitor queries across devices in real-time. Check it out here: [rn-better-dev-tools](https://github.com/LovesWorking/rn-better-dev-tools)
 
 > Note that since version 5, the dev tools support observing mutations as well.
 
@@ -72,11 +74,11 @@ function App() {
 
 ### Options
 
-- `initialIsOpen: Boolean`
+- `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
-  - The position of the React Query logo to open and close the devtools panel
+  - The position of the TanStack logo to open and close the devtools panel
   - If `relative`, the button is placed in the location that you render the devtools.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
@@ -90,6 +92,9 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Embedded Mode
 
@@ -122,7 +127,7 @@ function App() {
   - Default: `{ height: '500px' }`
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
-- `onClose?: () => unknown`
+- `onClose?: () => void`
   - Callback function that is called when the devtools panel is closed
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
@@ -133,6 +138,9 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Devtools in production
 

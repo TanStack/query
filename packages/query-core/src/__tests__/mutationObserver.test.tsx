@@ -1,27 +1,24 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/dom'
-import { MutationObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type { QueryClient } from '..'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { MutationObserver, QueryClient } from '..'
 
 describe('mutationObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = createQueryClient()
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
-  test('onUnsubscribe should not remove the current mutation observer if there is still a subscription', async () => {
+  it('onUnsubscribe should not remove the current mutation observer if there is still a subscription', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (text: string) => {
-        await sleep(20)
-        return text
-      },
+      mutationFn: (text: string) => sleep(20).then(() => text),
     })
 
     const subscription1Handler = vi.fn()
@@ -34,23 +31,19 @@ describe('mutationObserver', () => {
 
     unsubscribe1()
 
-    await waitFor(() => {
-      // 1 call: loading
-      expect(subscription1Handler).toBeCalledTimes(1)
-      // 2 calls: loading, success
-      expect(subscription2Handler).toBeCalledTimes(2)
-    })
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(1)
 
-    // Clean-up
+    await vi.advanceTimersByTimeAsync(20)
+    expect(subscription1Handler).toHaveBeenCalledTimes(1)
+    expect(subscription2Handler).toHaveBeenCalledTimes(2)
+
     unsubscribe2()
   })
 
-  test('unsubscribe should remove observer to trigger GC', async () => {
+  it('unsubscribe should remove observer to trigger GC', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (text: string) => {
-        await sleep(5)
-        return text
-      },
+      mutationFn: (text: string) => sleep(5).then(() => text),
       gcTime: 10,
     })
 
@@ -58,23 +51,62 @@ describe('mutationObserver', () => {
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
-    await mutation.mutate('input')
+    mutation.mutate('input')
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
 
     unsubscribe()
 
-    await waitFor(() =>
-      expect(queryClient.getMutationCache().findAll()).toHaveLength(0),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
   })
 
-  test('reset should remove observer to trigger GC', async () => {
+  it('resubscribing should reattach the observer to the in-flight mutation', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (text: string) => {
-        await sleep(5)
-        return text
-      },
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutation.subscribe(vi.fn())
+
+    mutation.mutate('input')
+
+    unsubscribe()
+
+    const subscriptionHandler = vi.fn()
+    mutation.subscribe(subscriptionHandler)
+
+    await vi.advanceTimersByTimeAsync(20)
+    expect(mutation.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+    expect(subscriptionHandler).toHaveBeenCalledTimes(1)
+  })
+
+  it('resubscribing should pick up a mutation that settled while unsubscribed', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(20).then(() => text),
+    })
+
+    const unsubscribe = mutation.subscribe(vi.fn())
+
+    mutation.mutate('input')
+
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(20)
+    mutation.subscribe(vi.fn())
+
+    expect(mutation.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'input',
+    })
+  })
+
+  it('reset should remove observer to trigger GC', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => sleep(5).then(() => text),
       gcTime: 10,
     })
 
@@ -82,35 +114,33 @@ describe('mutationObserver', () => {
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
-    await mutation.mutate('input')
+    mutation.mutate('input')
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
 
     mutation.reset()
 
-    await waitFor(() =>
-      expect(queryClient.getMutationCache().findAll()).toHaveLength(0),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
 
     unsubscribe()
   })
 
-  test('changing mutation keys should reset the observer', async () => {
+  it('changing mutation keys should reset the observer', async () => {
     const key = queryKey()
     const mutation = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
-      mutationFn: async (text: string) => {
-        await sleep(5)
-        return text
-      },
+      mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
     const subscriptionHandler = vi.fn()
 
     const unsubscribe = mutation.subscribe(subscriptionHandler)
 
-    await mutation.mutate('input')
+    mutation.mutate('input')
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(mutation.getCurrentResult()).toMatchObject({
       status: 'success',
       data: 'input',
@@ -127,22 +157,20 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation keys should not affect already existing mutations', async () => {
+  it('changing mutation keys should not affect already existing mutations', async () => {
     const key = queryKey()
     const mutationObserver = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
-      mutationFn: async (text: string) => {
-        await sleep(5)
-        return text
-      },
+      mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
     const subscriptionHandler = vi.fn()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
-    await mutationObserver.mutate('input')
+    mutationObserver.mutate('input')
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(
       queryClient.getMutationCache().find({ mutationKey: [...key, '1'] }),
     ).toMatchObject({
@@ -170,21 +198,19 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should not affect successful mutations', async () => {
+  it('changing mutation meta should not affect successful mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
-      mutationFn: async (text: string) => {
-        await sleep(5)
-        return text
-      },
+      mutationFn: (text: string) => sleep(5).then(() => text),
     })
 
     const subscriptionHandler = vi.fn()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
-    await mutationObserver.mutate('input')
+    mutationObserver.mutate('input')
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
@@ -208,11 +234,8 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('mutation cache should have different meta when updated between mutations', async () => {
-    const mutationFn = async (text: string) => {
-      await sleep(5)
-      return text
-    }
+  it('mutation cache should have different meta when updated between mutations', async () => {
+    const mutationFn = (text: string) => sleep(5).then(() => text)
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
       mutationFn,
@@ -222,14 +245,16 @@ describe('mutationObserver', () => {
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
-    await mutationObserver.mutate('input')
+    mutationObserver.mutate('input')
+    await vi.advanceTimersByTimeAsync(5)
 
     mutationObserver.setOptions({
       meta: { a: 2 },
       mutationFn,
     })
 
-    await mutationObserver.mutate('input')
+    mutationObserver.mutate('input')
+    await vi.advanceTimersByTimeAsync(5)
 
     const mutations = queryClient.getMutationCache().findAll()
     expect(mutations[0]).toMatchObject({
@@ -250,21 +275,20 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should not affect rejected mutations', async () => {
+  it('changing mutation meta should not affect rejected mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
-      mutationFn: async (_: string) => {
-        await sleep(5)
-        return Promise.reject(new Error('err'))
-      },
+      mutationFn: (_: string) =>
+        sleep(5).then(() => Promise.reject(new Error('err'))),
     })
 
     const subscriptionHandler = vi.fn()
 
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
-    await mutationObserver.mutate('input').catch(() => undefined)
+    mutationObserver.mutate('input').catch(() => undefined)
 
+    await vi.advanceTimersByTimeAsync(5)
     expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
@@ -286,13 +310,10 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should affect pending mutations', async () => {
+  it('changing mutation meta should affect pending mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
-      mutationFn: async (text: string) => {
-        await sleep(20)
-        return text
-      },
+      mutationFn: (text: string) => sleep(20).then(() => text),
     })
 
     const subscriptionHandler = vi.fn()
@@ -300,9 +321,7 @@ describe('mutationObserver', () => {
     const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
 
     mutationObserver.mutate('input')
-
-    await sleep(0)
-
+    await vi.advanceTimersByTimeAsync(5)
     expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
@@ -320,6 +339,205 @@ describe('mutationObserver', () => {
         status: 'pending',
       },
     })
+
+    unsubscribe()
+  })
+
+  it('mutation callbacks should be called in correct order with correct arguments for success case', async () => {
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
+
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    mutationObserver.mutate('success', {
+      onSuccess,
+      onSettled,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('SUCCESS', 'success', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(
+      'SUCCESS',
+      null,
+      'success',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+
+    unsubscribe()
+  })
+
+  it('mutation callbacks should be called in correct order with correct arguments for error case', async () => {
+    const onError = vi.fn()
+    const onSettled = vi.fn()
+
+    const error = new Error('error')
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (_: string) => Promise.reject(error),
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    mutationObserver
+      .mutate('error', {
+        onError,
+        onSettled,
+      })
+      .catch(() => {})
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError).toHaveBeenCalledWith(error, 'error', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(
+      undefined,
+      error,
+      'error',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+
+    unsubscribe()
+  })
+
+  describe('erroneous mutation callback', () => {
+    it('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const onSuccessError = new Error('onSuccess-error')
+      const onSuccess = vi.fn(() => {
+        throw onSuccessError
+      })
+      const onSettledError = new Error('onSettled-error')
+      const onSettled = vi.fn(() => {
+        throw onSettledError
+      })
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
+      })
+
+      const subscriptionHandler = vi.fn()
+      const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+      mutationObserver.mutate('success', {
+        onSuccess,
+        onSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledTimes(1)
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onSuccessError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+
+      expect(subscriptionHandler).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+    })
+
+    it('onError and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const onErrorError = new Error('onError-error')
+      const onError = vi.fn(() => {
+        throw onErrorError
+      })
+      const onSettledError = new Error('onSettled-error')
+      const onSettled = vi.fn(() => {
+        throw onSettledError
+      })
+
+      const error = new Error('error')
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (_: string) => Promise.reject(error),
+      })
+
+      const subscriptionHandler = vi.fn()
+      const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+      mutationObserver
+        .mutate('error', {
+          onError,
+          onSettled,
+        })
+        .catch(() => {})
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledTimes(1)
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onErrorError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+
+      expect(subscriptionHandler).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+    })
+  })
+
+  it('should not notify cache when setOptions is called with same options', () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => Promise.resolve(text),
+    })
+
+    const notifySpy = vi.spyOn(queryClient.getMutationCache(), 'notify')
+
+    const unsubscribe = mutationObserver.subscribe(() => undefined)
+
+    notifySpy.mockClear()
+
+    // Call setOptions with the same options
+    mutationObserver.setOptions({
+      mutationFn: mutationObserver.options.mutationFn,
+    })
+
+    expect(notifySpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'observerOptionsUpdated' }),
+    )
 
     unsubscribe()
   })

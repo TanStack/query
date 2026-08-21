@@ -5,6 +5,7 @@ type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'
 export type DevtoolsPosition = XPosition | YPosition
 export type DevtoolsButtonPosition = `${YPosition}-${XPosition}` | 'relative'
+export type Theme = 'dark' | 'light' | 'system'
 
 export interface DevtoolsErrorType {
   /**
@@ -28,7 +29,9 @@ export interface QueryDevtoolsProps {
   initialIsOpen?: boolean
   errorTypes?: Array<DevtoolsErrorType>
   shadowDOMTarget?: ShadowRoot
-  onClose?: () => unknown
+  onClose?: () => void
+  hideDisabledQueries?: boolean
+  theme?: Theme
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({

@@ -12,6 +12,8 @@ export const checkedProperties = [
   'getNextPageParam',
 ] as const
 
+export type InfiniteQueryProperties = (typeof checkedProperties)[number]
+
 export const sortRules = [
   [['queryFn'], ['getPreviousPageParam', 'getNextPageParam']],
 ] as const

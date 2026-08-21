@@ -1,15 +1,19 @@
 import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { onlineManager } from '@tanstack/query-core'
-import { QueryClient } from '../QueryClient'
-import type { QueryClientConfig } from '..'
-import type { ParentProps } from 'solid-js'
+import { render } from '@solidjs/testing-library'
+import { QueryClientProvider } from '..'
+import type { JSX, ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
+import type { QueryClient } from '..'
 
-let queryKeyCount = 0
-export function queryKey() {
-  queryKeyCount++
-  return [`query_${queryKeyCount}`]
+export function renderWithClient(
+  client: QueryClient,
+  ui: () => JSX.Element,
+): ReturnType<typeof render> {
+  return render(() => (
+    <QueryClientProvider client={client}>{ui()}</QueryClientProvider>
+  ))
 }
 
 export function Blink(
@@ -32,26 +36,10 @@ export function Blink(
   )
 }
 
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
-}
-
-export function mockVisibilityState(
-  value: DocumentVisibilityState,
-): MockInstance<() => DocumentVisibilityState> {
-  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
-}
-
 export function mockOnlineManagerIsOnline(
   value: boolean,
 ): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
-}
-
-export function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve, _reject) => {
-    setTimeout(resolve, timeout)
-  })
 }
 
 export function setActTimeout(fn: () => void, ms?: number) {

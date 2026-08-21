@@ -3,12 +3,16 @@
   import AwaitOnSuccess from './AwaitOnSuccess.svelte'
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { Writable } from 'svelte/store'
+  import { StatelessRef } from '../utils.svelte'
 
-  export let queryClient: QueryClient
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let onSuccess: () => Promise<void>
-  export let states: Writable<Array<string>>
+  interface Props {
+    queryClient: QueryClient
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    onSuccess: () => Promise<void>
+    states: StatelessRef<Array<string>>
+  }
+
+  let { queryClient, persistOptions, onSuccess, states }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>

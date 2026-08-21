@@ -11,13 +11,14 @@ import type {
   DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
+  Theme,
 } from './contexts'
 import type { Signal } from 'solid-js'
 
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 class TanstackQueryDevtoolsPanel {
@@ -32,8 +33,10 @@ class TanstackQueryDevtoolsPanel {
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
-  #onClose: Signal<(() => unknown) | undefined>
+  #hideDisabledQueries: Signal<boolean | undefined>
+  #onClose: Signal<(() => void) | undefined>
   #Component: DevtoolsComponentType | undefined
+  #theme: Signal<Theme | undefined>
   #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsPanelConfig) {
@@ -49,6 +52,8 @@ class TanstackQueryDevtoolsPanel {
       styleNonce,
       shadowDOMTarget,
       onClose,
+      hideDisabledQueries,
+      theme,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
@@ -60,7 +65,9 @@ class TanstackQueryDevtoolsPanel {
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
     this.#errorTypes = createSignal(errorTypes)
+    this.#hideDisabledQueries = createSignal(hideDisabledQueries)
     this.#onClose = createSignal(onClose)
+    this.#theme = createSignal(theme)
   }
 
   setButtonPosition(position: DevtoolsButtonPosition) {
@@ -83,8 +90,12 @@ class TanstackQueryDevtoolsPanel {
     this.#client[1](client)
   }
 
-  setOnClose(onClose: () => unknown) {
+  setOnClose(onClose: () => void) {
     this.#onClose[1](() => onClose)
+  }
+
+  setTheme(theme?: Theme) {
+    this.#theme[1](theme)
   }
 
   mount<T extends HTMLElement>(el: T) {
@@ -96,8 +107,10 @@ class TanstackQueryDevtoolsPanel {
       const [pos] = this.#position
       const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
+      const [hideDisabledQueries] = this.#hideDisabledQueries
       const [queryClient] = this.#client
       const [onClose] = this.#onClose
+      const [theme] = this.#theme
       let Devtools: DevtoolsComponentType
 
       if (this.#Component) {
@@ -130,8 +143,14 @@ class TanstackQueryDevtoolsPanel {
             get errorTypes() {
               return errors()
             },
+            get hideDisabledQueries() {
+              return hideDisabledQueries()
+            },
             get onClose() {
               return onClose()
+            },
+            get theme() {
+              return theme()
             },
           }}
         />

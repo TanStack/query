@@ -1,29 +1,26 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/dom'
-import { CancelledError, InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type {
-  InfiniteData,
-  InfiniteQueryObserverResult,
-  QueryCache,
-  QueryClient,
-} from '..'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
+import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
   let queryCache: QueryCache
 
   beforeEach(() => {
-    queryClient = createQueryClient()
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
-  test('InfiniteQueryBehavior should throw an error if the queryFn is not defined', async () => {
+  it('should throw an error if the queryFn is not defined', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -41,18 +38,17 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await waitFor(() => {
-      const query = queryCache.find({ queryKey: key })!
-      return expect(observerResult).toMatchObject({
-        isError: true,
-        error: new Error(`Missing queryFn: '${query.queryHash}'`),
-      })
+    await vi.advanceTimersByTimeAsync(0)
+    const query = queryCache.find({ queryKey: key })!
+    expect(observerResult).toMatchObject({
+      isError: true,
+      error: new Error(`Missing queryFn: '${query.queryHash}'`),
     })
 
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should apply the maxPages option to limit the number of pages', async () => {
+  it('should apply the maxPages option to limit the number of pages', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -79,12 +75,11 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [1] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
@@ -201,7 +196,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should support query cancellation', async () => {
+  it('should support query cancellation', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -231,14 +226,13 @@ describe('InfiniteQueryBehavior', () => {
     query.cancel()
 
     // Wait for the first page to be cancelled
-    await waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        isError: true,
-        error: new CancelledError(),
-        data: undefined,
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      isError: true,
+      error: new CancelledError(),
+      data: undefined,
+    })
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
@@ -254,7 +248,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should not refetch pages if the query is cancelled', async () => {
+  it('should not refetch pages if the query is cancelled', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -280,12 +274,11 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [1] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
 
     queryFnSpy.mockClear()
 
@@ -323,7 +316,9 @@ describe('InfiniteQueryBehavior', () => {
 
     // Cancel the query
     const query = observer.getCurrentQuery()
-    query.cancel()
+    await query.cancel()
+
+    vi.advanceTimersByTime(10)
 
     expect(observerResult).toMatchObject({
       isFetching: false,
@@ -338,7 +333,47 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should not enter an infinite loop when a page errors while retry is on #8046', async () => {
+  it('should surface the abort reason when cancellation happens between refetched pages', async () => {
+    const key = queryKey()
+    const abortController = new AbortController()
+    const queryFn = vi.fn().mockImplementation(({ pageParam, signal }) => {
+      void signal.aborted
+
+      if (pageParam === 1) {
+        abortController.abort()
+      }
+
+      return pageParam
+    })
+
+    const behavior = infiniteQueryBehavior<number, Error, number, number>()
+    const context = {
+      client: queryClient,
+      queryKey: key,
+      fetchOptions: undefined,
+      options: {
+        queryKey: key,
+        queryFn,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+      },
+      state: {
+        data: {
+          pages: [1, 2],
+          pageParams: [1, 2],
+        },
+      },
+      fetchFn: () => Promise.resolve(),
+      signal: abortController.signal,
+    }
+
+    behavior.onFetch(context as any, {} as any)
+
+    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
     const key = queryKey()
 
@@ -370,7 +405,6 @@ describe('InfiniteQueryBehavior', () => {
       TestResponse,
       Error,
       InfiniteData<TestResponse>,
-      TestResponse,
       typeof key,
       number
     >(queryClient, {
@@ -385,15 +419,21 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Fetch Page 1
-    const page1Data = await observer.fetchNextPage()
+    const fetchPage1Promise = observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    const page1Data = await fetchPage1Promise
     expect(page1Data.data?.pageParams).toEqual([1])
 
     // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
-    const page2Data = await observer.fetchNextPage()
+    const fetchPage2Promise = observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(70)
+    const page2Data = await fetchPage2Promise
     expect(page2Data.data?.pageParams).toEqual([1, 2])
 
     // Fetch Page 3
-    const page3Data = await observer.fetchNextPage()
+    const fetchPage3Promise = observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    const page3Data = await fetchPage3Promise
     expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
 
     // Now the real deal; re-fetching this query **should not** stamp into an
@@ -401,17 +441,18 @@ describe('InfiniteQueryBehavior', () => {
     // once it reaches the page where it errors.
     // For this to work, we'd need to reset the error count so we actually retry
     errorCount = 0
-    const reFetchedData = await observer.refetch()
-
+    const reFetchPromise = observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    const reFetchedData = await reFetchPromise
     expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
   })
 
-  test('should fetch even if initialPageParam is null', async () => {
+  it('should fetch even if initialPageParam is null', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
       getNextPageParam: () => null,
       initialPageParam: null,
     })
@@ -424,12 +465,68 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: ['data'], pageParams: [null] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: ['data'], pageParams: [null] },
+    })
+
+    unsubscribe()
+  })
+
+  it('should not fetch next page when getNextPageParam returns null', async () => {
+    const key = queryKey()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
+      getNextPageParam: (lastPage) => (lastPage === 1 ? null : lastPage + 1),
+      initialPageParam: 1,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
+
+    await observer.fetchNextPage()
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
+
+    unsubscribe()
+  })
+
+  it('should use persister when provided', async () => {
+    const key = queryKey()
+
+    const persisterSpy = vi.fn().mockImplementation(async (fn) => {
+      return await fn()
+    })
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
+      getNextPageParam: (lastPage) => lastPage + 1,
+      initialPageParam: 1,
+      persister: persisterSpy,
+    })
+
+    const unsubscribe = observer.subscribe(() => {})
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(persisterSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe()
   })

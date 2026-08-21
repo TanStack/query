@@ -4,7 +4,7 @@
 export * from '@tanstack/query-core'
 
 // React Query
-export * from './types'
+export type * from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
@@ -51,5 +51,6 @@ export {
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
+export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
-export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'

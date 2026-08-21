@@ -1,3 +1,4 @@
+import { noop } from './utils'
 import type {
   DefaultError,
   MutationKey,
@@ -16,6 +17,25 @@ import type { Mutation, MutationState } from './mutation'
 type TransformerFn = (data: any) => any
 function defaultTransformerFn(data: any): any {
   return data
+}
+
+function tryResolveSync(promise: PromiseLike<unknown>) {
+  let data: unknown
+
+  const thenResult = promise.then((result) => {
+    data = result
+    return result
+  }, noop) as Promise<unknown> | undefined
+
+  // .catch can be unavailable on certain kinds of thenable's
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  thenResult?.catch?.(noop)
+
+  if (data !== undefined) {
+    return { data }
+  }
+
+  return undefined
 }
 
 export interface DehydrateOptions {
@@ -46,6 +66,11 @@ interface DehydratedQuery {
   state: QueryState
   promise?: Promise<unknown>
   meta?: QueryMeta
+  queryType?: 'infinite'
+  // This is only optional because older versions of Query might have dehydrated
+  // without it which we need to handle for backwards compatibility.
+  // This should be changed to required in the future.
+  dehydratedAt?: number
 }
 
 export interface DehydratedState {
@@ -73,7 +98,32 @@ function dehydrateQuery(
   serializeData: TransformerFn,
   shouldRedactErrors: (error: unknown) => boolean,
 ): DehydratedQuery {
+  const dehydratePromise = () => {
+    const promise = query.promise?.then(serializeData).catch((error) => {
+      if (!shouldRedactErrors(error)) {
+        // Reject original error if it should not be redacted
+        return Promise.reject(error)
+      }
+      // If not in production, log original error before rejecting redacted error
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(
+          `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+        )
+      }
+      return Promise.reject(new Error('redacted'))
+    })
+
+    // Avoid unhandled promise rejections
+    // We need the promise we dehydrate to reject to get the correct result into
+    // the query cache, but we also want to avoid unhandled promise rejections
+    // in whatever environment the prefetches are happening in.
+    promise?.catch(noop)
+
+    return promise
+  }
+
   return {
+    dehydratedAt: Date.now(),
     state: {
       ...query.state,
       ...(query.state.data !== undefined && {
@@ -83,21 +133,10 @@ function dehydrateQuery(
     queryKey: query.queryKey,
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
-      promise: query.promise?.then(serializeData).catch((error) => {
-        if (!shouldRedactErrors(error)) {
-          // Reject original error if it should not be redacted
-          return Promise.reject(error)
-        }
-        // If not in production, log original error before rejecting redacted error
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(
-            `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
-          )
-        }
-        return Promise.reject(new Error('redacted'))
-      }),
+      promise: dehydratePromise(),
     }),
     ...(query.meta && { meta: query.meta }),
+    ...(query.queryType && { queryType: query.queryType }),
   }
 }
 
@@ -109,7 +148,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
-export function defaultshouldRedactErrors(_: unknown) {
+function defaultShouldRedactErrors(_: unknown) {
   return true
 }
 
@@ -137,7 +176,7 @@ export function dehydrate(
   const shouldRedactErrors =
     options.shouldRedactErrors ??
     client.getDefaultOptions().dehydrate?.shouldRedactErrors ??
-    defaultshouldRedactErrors
+    defaultShouldRedactErrors
 
   const serializeData =
     options.serializeData ??
@@ -189,52 +228,110 @@ export function hydrate(
     )
   })
 
-  queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
-    let query = queryCache.get(queryHash)
+  queries.forEach(
+    ({
+      queryKey,
+      state,
+      queryHash,
+      meta,
+      promise,
+      dehydratedAt,
+      queryType,
+    }) => {
+      const syncData = promise ? tryResolveSync(promise) : undefined
+      const rawData = state.data === undefined ? syncData?.data : state.data
+      const data = rawData === undefined ? rawData : deserializeData(rawData)
 
-    const data =
-      state.data === undefined ? state.data : deserializeData(state.data)
+      let query = queryCache.get(queryHash)
+      const existingQueryIsPending = query?.state.status === 'pending'
+      const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
 
-    // Do not hydrate if an existing query exists with newer data
-    if (query) {
-      if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
-        // omit fetchStatus from dehydrated state
-        // so that query stays in its current fetchStatus
-        const { fetchStatus: _ignored, ...serializedState } = state
-        query.setState({
-          ...serializedState,
-          data,
-        })
+      // Do not hydrate if an existing query exists with newer data
+      if (query) {
+        const hasNewerSyncData =
+          syncData &&
+          // We only need this undefined check to handle older dehydration
+          // payloads that might not have dehydratedAt
+          dehydratedAt !== undefined &&
+          dehydratedAt > query.state.dataUpdatedAt
+        if (
+          state.dataUpdatedAt > query.state.dataUpdatedAt ||
+          hasNewerSyncData
+        ) {
+          // Omit fetchStatus from dehydrated state so that query stays in its current fetchStatus
+          const { fetchStatus: _ignored, ...serializedState } = state
+          query.setState({
+            ...serializedState,
+            data,
+            // If the query was pending at the moment of dehydration, but resolved to have data
+            // before hydration, we can assume the query should be hydrated as successful.
+            //
+            // Since you can opt into dehydrating failed queries, and those can have data from
+            // previous successful fetches, we make sure we only do this for pending queries.
+            ...(state.status === 'pending' &&
+              data !== undefined && {
+                status: 'success' as const,
+                dataUpdatedAt: dehydratedAt ?? Date.now(),
+                // Preserve existing fetchStatus if the existing query is actively fetching.
+                ...(!existingQueryIsFetching && {
+                  fetchStatus: 'idle' as const,
+                }),
+              }),
+          })
+        }
+      } else {
+        // Restore query
+        query = queryCache.build(
+          client,
+          {
+            ...client.getDefaultOptions().hydrate?.queries,
+            ...options?.defaultOptions?.queries,
+            queryKey,
+            queryHash,
+            meta,
+            _type: queryType,
+          },
+          // Reset fetch status to idle to avoid
+          // query being stuck in fetching state upon hydration
+          {
+            ...state,
+            data,
+            fetchStatus: 'idle',
+            // Like above, if the query was pending at the moment of dehydration but has data,
+            // we can assume it should be hydrated as successful.
+            status:
+              state.status === 'pending' && data !== undefined
+                ? 'success'
+                : state.status,
+            ...(state.status === 'pending' &&
+              data !== undefined && {
+                dataUpdatedAt: dehydratedAt ?? Date.now(),
+              }),
+          },
+        )
       }
-    } else {
-      // Restore query
-      query = queryCache.build(
-        client,
-        {
-          ...client.getDefaultOptions().hydrate?.queries,
-          ...options?.defaultOptions?.queries,
-          queryKey,
-          queryHash,
-          meta,
-        },
-        // Reset fetch status to idle to avoid
-        // query being stuck in fetching state upon hydration
-        {
-          ...state,
-          data,
-          fetchStatus: 'idle',
-        },
-      )
-    }
 
-    if (promise) {
-      // Note: `Promise.resolve` required cause
-      // RSC transformed promises are not thenable
-      const initialPromise = Promise.resolve(promise).then(deserializeData)
-
-      // this doesn't actually fetch - it just creates a retryer
-      // which will re-use the passed `initialPromise`
-      void query.fetch(undefined, { initialPromise })
-    }
-  })
+      if (
+        promise &&
+        // If the data was synchronously available, there is no need to set up
+        // a retryer and thus no reason to call fetch
+        !syncData &&
+        !existingQueryIsPending &&
+        !existingQueryIsFetching &&
+        // Only hydrate if dehydration is newer than any existing data,
+        // this is always true for new queries
+        (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
+      ) {
+        // This doesn't actually fetch - it just creates a retryer
+        // which will re-use the passed `initialPromise`
+        query
+          .fetch(undefined, {
+            // RSC transformed promises are not thenable
+            initialPromise: Promise.resolve(promise).then(deserializeData),
+          })
+          // Avoid unhandled promise rejections
+          .catch(noop)
+      }
+    },
+  )
 }

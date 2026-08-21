@@ -1,7 +1,7 @@
 // @ts-check
 
 // @ts-ignore Needed due to moduleResolution Node vs Bundler
-import { tanstackConfig } from '@tanstack/config/eslint'
+import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
 
@@ -18,21 +18,25 @@ export default [
         {
           cspell: {
             words: [
+              'Promisable', // Our public interface
+              'TSES', // @typescript-eslint package's interface
               'codemod', // We support our codemod
               'combinate', // Library name
+              'datatag', // Query options tagging
               'extralight', // Our public interface
               'jscodeshift',
-              'Promisable', // Our public interface
+              'refetches', // Query refetch operations
               'retryer', // Our public interface
               'solidjs', // Our target framework
               'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
               'tanstack', // Our package scope
               'todos', // Too general word to be caught as error
-              'TSES', // @typescript-eslint package's interface
               'tsqd', // Our public interface (TanStack Query Devtools shorthand)
-              'tsup', // We use tsup as builder
+              'tsdown', // We use tsdown as builder
               'typecheck', // Field of vite.config.ts
               'vue-demi', // dependency of @tanstack/vue-query
+              'ɵkind', // Angular specific
+              'ɵproviders', // Angular specific
             ],
           },
         },
@@ -40,6 +44,7 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      'prefer-const': 'off',
     },
   },
   {
@@ -47,7 +52,16 @@ export default [
     plugins: { vitest },
     rules: {
       ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'warn',
+      'vitest/consistent-test-it': [
+        'error',
+        { fn: 'it', withinDescribe: 'it' },
+      ],
+      'vitest/no-standalone-expect': [
+        'error',
+        {
+          additionalTestBlockFunctions: ['itIf'],
+        },
+      ],
     },
     settings: { vitest: { typecheck: true } },
   },

@@ -6,68 +6,66 @@
     queryTimeMax,
     list,
     editingIndex,
-  } from '$lib/stores'
-  import { derived, writable } from 'svelte/store'
-  import type { Todos } from '$lib/stores'
+  } from '$lib/stores.svelte'
+  import type { Todos } from '$lib/stores.svelte'
 
-  export let initialFilter: string
+  let { initialFilter }: { initialFilter: string } = $props()
 
-  let filter = writable(initialFilter)
+  let filter = $state(initialFilter)
 
   const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {
-          if (Math.random() < $errorRate) {
+          if (Math.random() < errorRate.value) {
             return reject(
               new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
             )
           }
-          resolve($list.filter((d) => d.name.includes(filter)))
+          resolve(list.value.filter((d) => d.name.includes(filter)))
         },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+        queryTimeMin.value +
+          Math.random() * (queryTimeMax.value - queryTimeMin.value),
       )
     })
   }
 
-  const query = createQuery(
-    derived(filter, ($filter) => ({
-      queryKey: ['todos', { filter: $filter }],
-      queryFn: () => fetchTodos({ filter: $filter }),
-    })),
-  )
+  const query = createQuery(() => ({
+    queryKey: ['todos', { filter: filter }],
+    queryFn: () => fetchTodos({ filter: filter }),
+  }))
 </script>
 
 <div>
   <label>
     Filter:{' '}
-    <input bind:value={$filter} />
+    <input bind:value={filter} />
   </label>
 </div>
 
-{#if $query.status === 'pending'}
-  <span>Loading... (Attempt: {$query.failureCount + 1})</span>
-{:else if $query.status === 'error'}
+{#if query.status === 'pending'}
+  <span>Loading... (Attempt: {query.failureCount + 1})</span>
+{:else if query.status === 'error'}
   <span>
-    Error: {$query.error.message}
+    Error: {query.error.message}
     <br />
-    <button on:click={() => $query.refetch()}>Retry</button>
+    <button onclick={() => query.refetch()}>Retry</button>
   </span>
 {:else}
   <ul>
-    {#if $query.data}
-      {#each $query.data as todo}
+    {#if query.data}
+      {#each query.data as todo}
         <li>
           {todo.name}{' '}
-          <button on:click={() => editingIndex.set(todo.id)}> Edit </button>
+          <button onclick={() => (editingIndex.value = todo.id)}> Edit </button>
         </li>
       {/each}
     {/if}
   </ul>
   <div>
-    {#if $query.isFetching}
+    {#if query.isFetching}
       <span>
-        Background Refreshing... (Attempt: {$query.failureCount + 1})
+        Background Refreshing... (Attempt: {query.failureCount + 1})
       </span>
     {:else}
       <span>&nbsp;</span>

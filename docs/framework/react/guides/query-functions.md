@@ -5,6 +5,8 @@ title: Query Functions
 
 A query function can be literally any function that **returns a promise**. The promise that is returned should either **resolve the data** or **throw an error**.
 
+On success, the resolved value may be anything **except `undefined`**. Queries that resolve to `undefined` will be [treated as failed](https://tanstack.com/query/latest/docs/framework/react/guides/migrating-to-react-query-4#undefined-is-an-illegal-cache-value-for-successful-queries). To store "nothing" as a successful result in the query cache, resolve `null` instead.
+
 All of the following are valid query function configurations:
 
 [//]: # 'Example'
@@ -99,15 +101,15 @@ function fetchTodoList({ queryKey }) {
 
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
-- `queryKey: QueryKey`: [Query Keys](../query-keys)
-- `client: QueryClient`: [QueryClient](../../../../reference/QueryClient)
+- `queryKey: QueryKey`: [Query Keys](./query-keys.md)
+- `client: QueryClient`: [QueryClient](../../../reference/QueryClient.md)
 - `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
-  - Can be used for [Query Cancellation](../query-cancellation)
+  - Can be used for [Query Cancellation](./query-cancellation.md)
 - `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query
 
-Additionally, [Infinite Queries](../infinite-queries) get the following options passed:
+Additionally, [Infinite Queries](./infinite-queries.md) get the following options passed:
 
 - `pageParam: TPageParam`
   - the page parameter used to fetch the current page

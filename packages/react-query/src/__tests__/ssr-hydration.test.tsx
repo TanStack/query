@@ -2,15 +2,16 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-
+import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   dehydrate,
   hydrate,
   useQuery,
 } from '..'
-import { createQueryClient, setIsServer, sleep } from './utils'
+import { setIsServer } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -23,7 +24,7 @@ const ReactHydrate = (element: React.ReactElement, container: Element) => {
 }
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
-  await sleep(ms || 1)
+  await vi.advanceTimersByTimeAsync(ms || 1)
   return value
 }
 
@@ -36,22 +37,26 @@ describe('Server side rendering with de/rehydration', () => {
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
+    vi.useFakeTimers()
   })
 
   afterAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
+    vi.useRealTimers()
   })
+
   it('should not mismatch on success', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (
@@ -63,16 +68,16 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
 
     const prefetchCache = new QueryCache()
-    const prefetchClient = createQueryClient({
+    const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['success'],
+      queryKey: key,
       queryFn: () => fetchDataSuccess('success'),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    const renderClient = createQueryClient({
+    const renderClient = new QueryClient({
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
@@ -96,7 +101,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(
@@ -124,11 +129,12 @@ describe('Server side rendering with de/rehydration', () => {
     const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
     })
+    const key = queryKey()
 
     // -- Shared part --
     function ErrorComponent() {
       const result = useQuery({
-        queryKey: ['error'],
+        queryKey: key,
         queryFn: () => fetchDataError(),
         retry: false,
       })
@@ -140,16 +146,16 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
     const prefetchCache = new QueryCache()
-    const prefetchClient = createQueryClient({
+    const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
-      queryKey: ['error'],
+      queryKey: key,
       queryFn: () => fetchDataError(),
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    const renderClient = createQueryClient({
+    const renderClient = new QueryClient({
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
@@ -172,7 +178,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(
@@ -185,7 +191,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(50)
+    await vi.advanceTimersByTimeAsync(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
       'ErrorComponent - status:error fetching:false data:undefined',
@@ -201,11 +207,12 @@ describe('Server side rendering with de/rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (
@@ -216,9 +223,9 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const prefetchClient = createQueryClient()
+    const prefetchClient = new QueryClient()
     const dehydratedStateServer = dehydrate(prefetchClient)
-    const renderClient = createQueryClient()
+    const renderClient = new QueryClient()
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
@@ -239,7 +246,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(
@@ -253,7 +260,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(50)
+    await vi.advanceTimersByTimeAsync(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
       'SuccessComponent - status:success fetching:false data:success!',

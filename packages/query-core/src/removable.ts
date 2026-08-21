@@ -1,8 +1,11 @@
-import { isServer, isValidTimeout } from './utils'
+import { timeoutManager } from './timeoutManager'
+import { environmentManager } from './environmentManager'
+import { isValidTimeout } from './utils'
+import type { ManagedTimerId } from './timeoutManager'
 
 export abstract class Removable {
   gcTime!: number
-  #gcTimeout?: ReturnType<typeof setTimeout>
+  #gcTimeout?: ManagedTimerId
 
   destroy(): void {
     this.clearGcTimeout()
@@ -12,7 +15,7 @@ export abstract class Removable {
     this.clearGcTimeout()
 
     if (isValidTimeout(this.gcTime)) {
-      this.#gcTimeout = setTimeout(() => {
+      this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)
     }
@@ -22,13 +25,13 @@ export abstract class Removable {
     // Default to 5 minutes (Infinity for server-side) if no gcTime is set
     this.gcTime = Math.max(
       this.gcTime || 0,
-      newGcTime ?? (isServer ? Infinity : 5 * 60 * 1000),
+      newGcTime ?? (environmentManager.isServer() ? Infinity : 5 * 60 * 1000),
     )
   }
 
   protected clearGcTimeout() {
-    if (this.#gcTimeout) {
-      clearTimeout(this.#gcTimeout)
+    if (this.#gcTimeout !== undefined) {
+      timeoutManager.clearTimeout(this.#gcTimeout)
       this.#gcTimeout = undefined
     }
   }

@@ -1,0 +1,1204 @@
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent, render } from '@testing-library/preact'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { IsRestoringProvider, QueryCache, QueryClient, useQueries } from '..'
+import type { QueryObserverResult, UseQueryResult } from '..'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
+
+describe('useQueries', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+    vi.useRealTimers()
+  })
+
+  it('should return the correct states', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: Array<Array<UseQueryResult>> = []
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 1),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(200).then(() => 2),
+          },
+        ],
+      })
+      results.push(result)
+
+      return (
+        <div>
+          <div>
+            data1: {String(result[0].data ?? 'null')}, data2:{' '}
+            {String(result[1].data ?? 'null')}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(201)
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
+
+    expect(results.length).toBe(3)
+    expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
+    expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
+    expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  it('should track results', async () => {
+    const key1 = queryKey()
+    const results: Array<Array<UseQueryResult>> = []
+    let count = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              sleep(10).then(() => {
+                count++
+                return count
+              }),
+          },
+        ],
+      })
+      results.push(result)
+
+      return (
+        <div>
+          <div>data: {String(result[0].data ?? 'null')} </div>
+          <button onClick={() => result[0].refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject([{ data: undefined }])
+    expect(results[1]).toMatchObject([{ data: 1 }])
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+
+    // only one render for data update, no render for isFetching transition
+    expect(results.length).toBe(3)
+
+    expect(results[2]).toMatchObject([{ data: 2 }])
+  })
+
+  it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const key4 = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              Promise.reject(
+                new Error(
+                  'this should not throw because throwOnError is not set',
+                ),
+              ),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => Promise.reject(new Error('single query error')),
+            throwOnError: true,
+            retry: false,
+          },
+          {
+            queryKey: key3,
+            queryFn: () => Promise.resolve(2),
+          },
+          {
+            queryKey: key4,
+            queryFn: () =>
+              Promise.reject(
+                new Error('this should not throw because query#2 already did'),
+              ),
+            throwOnError: true,
+            retry: false,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error.message}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
+  it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const key4 = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              Promise.reject(
+                new Error(
+                  'this should not throw because throwOnError function resolves to false',
+                ),
+              ),
+            throwOnError: () => false,
+            retry: false,
+          },
+          {
+            queryKey: key2,
+            queryFn: () => Promise.resolve(2),
+          },
+          {
+            queryKey: key3,
+            queryFn: () => Promise.reject(new Error('single query error')),
+            throwOnError: () => true,
+            retry: false,
+          },
+          {
+            queryKey: key4,
+            queryFn: () =>
+              Promise.reject(
+                new Error('this should not throw because query#3 already did'),
+              ),
+            throwOnError: true,
+            retry: false,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error.message}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = async () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn,
+            },
+          ],
+        },
+        queryClient,
+      )
+
+      return <div>data: {queries[0].data}</div>
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: custom client')).toBeInTheDocument()
+  })
+
+  it('should combine queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => Promise.resolve('first result'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => Promise.resolve('second result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('data: true first result,second result'),
+    ).toBeInTheDocument()
+  })
+
+  it('should not return new instances when called without queries', async () => {
+    const key = queryKey()
+    const ids: Array<number> = []
+    let resultChanged = 0
+
+    function Page() {
+      const [count, setCount] = useState(0)
+      const result = useQueries({
+        queries: ids.map((id) => {
+          return {
+            queryKey: [key, id],
+            queryFn: () => {
+              return () => {
+                return Promise.resolve({
+                  id,
+                  content: { value: Math.random() },
+                })
+              }
+            },
+          }
+        }),
+        combine: () => ({ empty: 'object' }),
+      })
+
+      useEffect(() => {
+        resultChanged++
+      }, [result])
+
+      return (
+        <div>
+          <div>count: {count}</div>
+          <div>data: {JSON.stringify(result)}</div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: {"empty":"object"}')).toBeInTheDocument()
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
+
+    expect(resultChanged).toBe(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+    // there should be no further effect calls because the returned object is structurally shared
+    expect(resultChanged).toBe(1)
+  })
+
+  it('should not have infinite render loops with empty queries (#6645)', () => {
+    let renderCount = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [],
+      })
+
+      useEffect(() => {
+        renderCount++
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    expect(renderCount).toBe(1)
+  })
+
+  it('should only call combine with query results', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(5).then(() => Promise.resolve('query1')),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(20).then(() => Promise.resolve('query2')),
+          },
+        ],
+        combine: ([query1, query2]) => {
+          return {
+            data: { query1: query1.data, query2: query2.data },
+          }
+        },
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText(
+        'data: {"data":{"query1":"query1","query2":"query2"}}',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should track property access through combine function', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    let count = 0
+    const results: Array<unknown> = []
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () =>
+                sleep(5).then(() => Promise.resolve(`first result ${count}`)),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(50).then(() => Promise.resolve(`second result ${count}`)),
+            },
+          ],
+          combine: (queryResults) => {
+            return {
+              combined: true,
+              refetch: () => queryResults.forEach((res) => res.refetch()),
+              res: queryResults
+                .flatMap((res) => (res.data ? [res.data] : []))
+                .join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      results.push(queries)
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <button onClick={() => queries.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
+      rendered.getByText('data: true first result 0,second result 0'),
+    ).toBeInTheDocument()
+
+    expect(results.length).toBe(3)
+
+    expect(results[0]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: '',
+    })
+
+    expect(results[1]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0',
+    })
+
+    expect(results[2]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0,second result 0',
+    })
+
+    count++
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
+      rendered.getByText('data: true first result 1,second result 1'),
+    ).toBeInTheDocument()
+
+    const length = results.length
+
+    expect([4, 5, 6]).toContain(results.length)
+
+    expect(results[results.length - 1]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 1,second result 1',
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await vi.advanceTimersByTimeAsync(100)
+    // no further re-render because data didn't change
+    expect(results.length).toBe(length)
+  })
+
+  it('should synchronously track properties of all observer even if a property (isLoading) is only accessed on one observer (#7000)', async () => {
+    const key = queryKey()
+    const ids = [1, 2]
+
+    function Page() {
+      const { isLoading } = useQueries({
+        queries: ids.map((id) => ({
+          queryKey: [key, id],
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (id === 2) throw new Error('FAILURE')
+              return { id, title: `Post ${id}` }
+            }),
+          retry: false,
+        })),
+        combine: (results) => {
+          // this tracks data on all observers
+          void results.forEach((result) => result.data)
+          return {
+            // .some aborts early, so `isLoading` might not be accessed (and thus tracked) on all observers
+            // leading to missing re-renders
+            isLoading: results.some((result) => result.isLoading),
+          }
+        },
+      })
+
+      return (
+        <div>
+          <p>Loading Status: {isLoading ? 'Loading...' : 'Loaded'}</p>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('Loading Status: Loading...')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument()
+  })
+
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => Promise.resolve('result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              count,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.count)} {queries.res}
+          </div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 0 result')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 1 result')).toBeInTheDocument()
+  })
+
+  it('should optimize combine if it is a stable reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+    let value = 0
+
+    function Page() {
+      const [state, setState] = useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(10).then(() => `first result:${value}`),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => sleep(20).then(() => `second result:${value}`),
+            },
+          ],
+          combine: useCallback((results: Array<QueryObserverResult>) => {
+            const result = {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+            spy(result)
+            return result
+          }, []),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <button onClick={() => setState(state + 1)}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: true first result:0,second result:0'),
+    ).toBeInTheDocument()
+
+    // both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    client.refetchQueries()
+
+    await vi.advanceTimersByTimeAsync(21)
+    // no increase because result hasn't changed
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    // one extra call due to recomputing the combined result on rerender
+    expect(spy).toHaveBeenCalledTimes(4)
+
+    value = 1
+
+    client.refetchQueries()
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: true first result:1,second result:1'),
+    ).toBeInTheDocument()
+
+    // refetch with new values triggers: both pending -> one pending -> both resolved
+    expect(spy).toHaveBeenCalledTimes(7)
+  })
+
+  it('should re-run combine if the functional reference changes', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+
+    function Page() {
+      const [state, setState] = useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: () => sleep(10).then(() => 'first result'),
+            },
+            {
+              queryKey: [key2],
+              queryFn: () => sleep(20).then(() => 'second result'),
+            },
+          ],
+          combine: useCallback(
+            (results: Array<QueryObserverResult>) => {
+              const result = {
+                combined: true,
+                state,
+                res: results.map((res) => res.data).join(','),
+              }
+              spy(result)
+              return result
+            },
+            [state],
+          ),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.state)} {queries.res}
+          </div>
+          <button onClick={() => setState(state + 1)}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: 0 first result,second result'),
+    ).toBeInTheDocument()
+
+    // both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    // state changed, re-run combine
+    expect(spy).toHaveBeenCalledTimes(4)
+  })
+
+  it('should not re-render if combine returns a stable reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const queryFns: Array<string> = []
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: () =>
+                sleep(10).then(() => {
+                  queryFns.push('first result')
+                  return 'first result'
+                }),
+            },
+            {
+              queryKey: [key2],
+              queryFn: () =>
+                sleep(20).then(() => {
+                  queryFns.push('second result')
+                  return 'second result'
+                }),
+            },
+          ],
+          combine: () => 'foo',
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
+
+    expect(queryFns).toEqual(['first result', 'second result'])
+
+    expect(renders).toBe(1)
+  })
+
+  it('should re-render once combine returns a different reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: () => sleep(10).then(() => 'first result'),
+            },
+            {
+              queryKey: [key2],
+              queryFn: () => sleep(15).then(() => 'second result'),
+            },
+            {
+              queryKey: [key3],
+              queryFn: () => sleep(20).then(() => 'third result'),
+            },
+          ],
+          combine: (results) => {
+            const isPending = results.some((res) => res.isPending)
+
+            return isPending ? 'pending' : 'foo'
+          },
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
+
+    // one with pending, one with foo
+    expect(renders).toBe(2)
+  })
+
+  it('should track properties correctly with combine', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: () => sleep(10).then(() => 'first result'),
+            },
+            {
+              queryKey: [key2],
+              queryFn: () => sleep(15).then(() => 'second result'),
+            },
+            {
+              queryKey: [key3],
+              queryFn: () => sleep(20).then(() => 'third result'),
+            },
+          ],
+          combine: (results) => {
+            if (results.find((r) => r.isPending)) {
+              return 'pending'
+            }
+            return results.map((r) => r.data).join(', ')
+          },
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>data: {data}</div>
+          <button
+            onClick={() => {
+              client.setQueryData([key1], 'first result updated')
+            }}
+          >
+            update
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: first result, second result, third result'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /update/i }))
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText(
+        'data: first result updated, second result, third result',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should not re-run stable combine on unrelated re-render', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+
+    function Page() {
+      const [unrelatedState, setUnrelatedState] = useState(0)
+
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(10).then(() => 'first result'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => sleep(20).then(() => 'second result'),
+            },
+          ],
+          combine: useCallback((results: Array<QueryObserverResult>) => {
+            const result = {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+            spy(result)
+            return result
+          }, []),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <div>unrelated: {unrelatedState}</div>
+          <button onClick={() => setUnrelatedState((s) => s + 1)}>
+            increment
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: true first result,second result'),
+    ).toBeInTheDocument()
+
+    // initial renders: both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 1')).toBeInTheDocument()
+
+    // combine should NOT re-run for unrelated re-render with stable reference
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 2')).toBeInTheDocument()
+
+    // still no extra calls to combine
+    expect(spy).toHaveBeenCalledTimes(3)
+  })
+
+  it('should not cause infinite re-renders when removing last query', async () => {
+    let renderCount = 0
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const [queries, setQueries] = useState([
+        {
+          queryKey: key1,
+          queryFn: () => 'data1',
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'data2',
+        },
+      ])
+      renderCount++
+
+      const result = useQueries({ queries })
+
+      return (
+        <div>
+          <div data-testid="render-count">renders: {renderCount}</div>
+          <div data-testid="query-count">queries: {result.length}</div>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: key1,
+                  queryFn: () => 'data1',
+                },
+              ])
+            }}
+          >
+            remove last
+          </button>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: key2,
+                  queryFn: () => 'data2',
+                },
+              ])
+            }}
+          >
+            remove first
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+  })
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
+  it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+})

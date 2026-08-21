@@ -4,7 +4,6 @@ import { OptimisticUpdatesComponent } from './components/optimistic-updates.comp
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  standalone: true,
   template: `<optimistic-updates />`,
   imports: [OptimisticUpdatesComponent],
 })

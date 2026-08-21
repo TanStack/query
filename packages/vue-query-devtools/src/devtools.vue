@@ -19,6 +19,8 @@ const devtools = new TanstackQueryDevtools({
   errorTypes: props.errorTypes,
   styleNonce: props.styleNonce,
   shadowDOMTarget: props.shadowDOMTarget,
+  hideDisabledQueries: props.hideDisabledQueries,
+  theme: props.theme,
 })
 
 watchEffect(() => {
@@ -26,17 +28,17 @@ watchEffect(() => {
   devtools.setPosition(props.position || 'bottom')
   devtools.setInitialIsOpen(props.initialIsOpen)
   devtools.setErrorTypes(props.errorTypes || [])
+  devtools.setTheme(props.theme || 'system')
 })
 
 onMounted(() => {
   devtools.mount(div.value as HTMLElement)
-})
-
-onScopeDispose(() => {
-  devtools.unmount()
+  onScopeDispose(() => {
+    devtools.unmount()
+  })
 })
 </script>
 
 <template>
-  <div className="tsqd-parent-container" ref="div"></div>
+  <div class="tsqd-parent-container" ref="div"></div>
 </template>

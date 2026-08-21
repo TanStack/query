@@ -1,0 +1,155 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
+import { ref } from '../utils.svelte.js'
+import Base from './Base.svelte'
+import Select from './Select.svelte'
+import ChangeClient from './ChangeClient.svelte'
+import type { QueryObserverResult } from '@tanstack/query-core'
+
+describe('createInfiniteQuery', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+    vi.useRealTimers()
+  })
+
+  it('should return the correct states for a successful query', async () => {
+    let states = ref<Array<QueryObserverResult>>([])
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        states,
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Status: success')).toBeInTheDocument()
+
+    expect(states.value).toHaveLength(2)
+
+    expect(states.value[0]).toEqual({
+      data: undefined,
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      fetchNextPage: expect.any(Function),
+      fetchPreviousPage: expect.any(Function),
+      hasNextPage: false,
+      hasPreviousPage: false,
+      isError: false,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isFetching: true,
+      isPaused: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isLoading: true,
+      isPending: true,
+      isInitialLoading: true,
+      isLoadingError: false,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: true,
+      isSuccess: false,
+      isEnabled: true,
+      refetch: expect.any(Function),
+      status: 'pending',
+      fetchStatus: 'fetching',
+    })
+
+    expect(states.value[1]).toEqual({
+      data: { pages: [0], pageParams: [0] },
+      dataUpdatedAt: expect.any(Number),
+      error: null,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      fetchNextPage: expect.any(Function),
+      fetchPreviousPage: expect.any(Function),
+      hasNextPage: true,
+      hasPreviousPage: false,
+      isError: false,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isFetching: false,
+      isPaused: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isLoading: false,
+      isPending: false,
+      isInitialLoading: false,
+      isLoadingError: false,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: true,
+      isSuccess: true,
+      isEnabled: true,
+      refetch: expect.any(Function),
+      status: 'success',
+      fetchStatus: 'idle',
+    })
+  })
+
+  it('should be able to select a part of the data', async () => {
+    let states = ref<Array<QueryObserverResult>>([])
+
+    const rendered = render(Select, {
+      props: {
+        queryClient,
+        states,
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+
+    expect(states.value).toHaveLength(2)
+
+    expect(states.value[0]).toMatchObject({
+      data: undefined,
+      isSuccess: false,
+    })
+
+    expect(states.value[1]).toMatchObject({
+      data: { pages: ['count: 1'] },
+      isSuccess: true,
+    })
+  })
+
+  it('should be able to set new pages with the query client', async () => {
+    const rendered = render(ChangeClient, {
+      props: {
+        queryClient,
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('Data: {"pages":[0],"pageParams":[0]}'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
+    ).toBeInTheDocument()
+  })
+})

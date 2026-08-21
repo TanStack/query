@@ -21,7 +21,7 @@ import type { MutationCache } from './mutationCache'
 export type MutationFilters = MaybeRefDeep<MF>
 
 export function useIsMutating(
-  filters: MutationFilters = {},
+  filters: MutationFilters | (() => MutationFilters) = {},
   queryClient?: QueryClient,
 ): Ref<number> {
   if (process.env.NODE_ENV === 'development') {
@@ -37,7 +37,7 @@ export function useIsMutating(
   const mutationState = useMutationState(
     {
       filters: computed(() => ({
-        ...cloneDeepUnref(filters),
+        ...cloneDeepUnref(typeof filters === 'function' ? filters() : filters),
         status: 'pending' as const,
       })),
     },
@@ -48,36 +48,69 @@ export function useIsMutating(
   return length
 }
 
-export type MutationStateOptions<TResult = MutationState> = {
+type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
+export type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<TResult, TMutation>,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select ? options.select(mutation) : mutation.state) as TResult,
+        (options.select
+          ? options.select(mutation as TMutation)
+          : mutation.state) as TResult,
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+export function useMutationState<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+>(
+  options:
+    | MutationStateOptions<TResult, TMutation>
+    | (() => MutationStateOptions<TResult, TMutation>) = {},
   queryClient?: QueryClient,
 ): Readonly<Ref<Array<TResult>>> {
-  const filters = computed(() => cloneDeepUnref(options.filters))
+  const resolvedOptions = computed(() => {
+    const newOptions = typeof options === 'function' ? options() : options
+    return {
+      filters: cloneDeepUnref(newOptions.filters),
+      select: newOptions.select,
+    }
+  })
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = shallowRef(getResult(mutationCache, options))
+  const state = shallowRef(getResult(mutationCache, resolvedOptions.value))
   const unsubscribe = mutationCache.subscribe(() => {
-    state.value = getResult(mutationCache, options)
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
-  watch(filters, () => {
-    state.value = getResult(mutationCache, options)
+  watch(resolvedOptions, () => {
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
   onScopeDispose(() => {

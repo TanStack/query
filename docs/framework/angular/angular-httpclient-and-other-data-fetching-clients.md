@@ -11,7 +11,7 @@ Because TanStack Query's fetching mechanisms are agnostically built on Promises,
 
 - Mock responses in unit tests using [provideHttpClientTesting](https://angular.dev/guide/http/testing).
 - [Interceptors](https://angular.dev/guide/http/interceptors) can be used for a wide range of functionality including adding authentication headers, performing logging, etc. While some data fetching libraries have their own interceptor system, `HttpClient` interceptors are integrated with Angular's dependency injection system.
-- `HttpClient` automatically informs [`PendingTasks`](https://angular.dev/api/core/PendingTasks#), which enables Angular to be aware of pending requests. Unit tests and SSR can use the resulting application _stableness_ information to wait for pending requests to finish. This makes unit testing much easier for [Zoneless](https://angular.dev/guide/experimental/zoneless) applications.
+- `HttpClient` automatically informs [`PendingTasks`](https://angular.dev/api/core/PendingTasks#), which enables Angular to be aware of pending requests. Unit tests and SSR can use the resulting application _stableness_ information to wait for pending requests to finish. This makes unit testing much easier for [Zoneless](https://angular.dev/guide/zoneless) applications.
 - When using SSR, `HttpClient` will [cache requests](https://angular.dev/guide/ssr#caching-data-when-using-HttpClient) performed on the server. This will prevent unneeded requests on the client. `HttpClient` SSR caching works out of the box. TanStack Query has its own hydration functionality which may be more powerful but requires some setup. Which one fits your needs best depends on your use case.
 
 ### Using observables in `queryFn`

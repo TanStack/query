@@ -10,7 +10,8 @@ interface Response {
   providedIn: 'root',
 })
 export class AutocompleteService {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
+
   getSuggestions = (term: string = '') =>
     term.trim() === ''
       ? of({ suggestions: [] })

@@ -1,7 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { pendingThenable } from './thenable'
-import { isServer, sleep } from './utils'
+import { environmentManager } from './environmentManager'
+import { noop, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
@@ -9,9 +9,7 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
-  abort?: () => void
-  onError?: (error: TError) => void
-  onSuccess?: (data: TData) => void
+  onCancel?: (error: TError) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
@@ -29,7 +27,10 @@ export interface Retryer<TData = unknown> {
   continueRetry: () => void
   canStart: () => boolean
   start: () => Promise<TData>
+  status: () => 'pending' | 'resolved' | 'rejected'
 }
+
+type RetryerStatus = 'pending' | 'resolved' | 'rejected'
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
@@ -65,6 +66,9 @@ export class CancelledError extends Error {
   }
 }
 
+/**
+ * @deprecated Use instanceof `CancelledError` instead.
+ */
 export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
@@ -74,16 +78,25 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 ): Retryer<TData> {
   let isRetryCancelled = false
   let failureCount = 0
-  let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
+  let status: RetryerStatus = 'pending'
+  let promiseResolve: (data: TData) => void
+  let promiseReject: (error: TError) => void
 
-  const thenable = pendingThenable<TData>()
+  const promise = new Promise<TData>((resolve, reject) => {
+    promiseResolve = resolve
+    promiseReject = reject
+  })
+  promise.catch(noop)
+
+  const isResolved = () => status !== 'pending'
 
   const cancel = (cancelOptions?: CancelOptions): void => {
-    if (!isResolved) {
-      reject(new CancelledError(cancelOptions))
+    if (!isResolved()) {
+      const error = new CancelledError(cancelOptions) as TError
+      reject(error)
 
-      config.abort?.()
+      config.onCancel?.(error)
     }
   }
   const cancelRetry = () => {
@@ -102,34 +115,32 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const canStart = () => canFetch(config.networkMode) && config.canRun()
 
   const resolve = (value: any) => {
-    if (!isResolved) {
-      isResolved = true
-      config.onSuccess?.(value)
+    if (!isResolved()) {
       continueFn?.()
-      thenable.resolve(value)
+      status = 'resolved'
+      promiseResolve(value)
     }
   }
 
   const reject = (value: any) => {
-    if (!isResolved) {
-      isResolved = true
-      config.onError?.(value)
+    if (!isResolved()) {
       continueFn?.()
-      thenable.reject(value)
+      status = 'rejected'
+      promiseReject(value)
     }
   }
 
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved || canContinue()) {
+        if (isResolved() || canContinue()) {
           continueResolve(value)
         }
       }
       config.onPause?.()
     }).then(() => {
       continueFn = undefined
-      if (!isResolved) {
+      if (!isResolved()) {
         config.onContinue?.()
       }
     })
@@ -138,7 +149,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   // Create loop function
   const run = () => {
     // Do nothing if already resolved
-    if (isResolved) {
+    if (isResolved()) {
       return
     }
 
@@ -159,12 +170,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       .then(resolve)
       .catch((error) => {
         // Stop if the fetch is already resolved
-        if (isResolved) {
+        if (isResolved()) {
           return
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? (isServer ? 0 : 3)
+        const retry = config.retry ?? (environmentManager.isServer() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'
@@ -203,11 +214,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   return {
-    promise: thenable,
+    promise,
+    status: () => status,
     cancel,
     continue: () => {
       continueFn?.()
-      return thenable
+      return promise
     },
     cancelRetry,
     continueRetry,
@@ -219,7 +231,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       } else {
         pause().then(run)
       }
-      return thenable
+      return promise
     },
   }
 }

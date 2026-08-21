@@ -3,6 +3,9 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
+import type { UseQueryOptions } from './useQuery'
+import type { Ref } from 'vue-demi'
+import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
 import type {
   CancelOptions,
   DefaultError,
@@ -11,16 +14,15 @@ import type {
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InferDataFromTag,
-  InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationFilters,
   MutationKey,
   MutationObserverOptions,
-  NoInfer,
   OmitKeyof,
-  QueryClientConfig,
+  QueryExecuteOptions,
   QueryFilters,
   QueryKey,
   QueryObserverOptions,
@@ -31,9 +33,6 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
-import type { UseQueryOptions } from './useQuery'
-import type { Ref } from 'vue-demi'
-import type { MaybeRefDeep, NoUnknown } from './types'
 
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
@@ -45,7 +44,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring: Ref<boolean> = ref(false)
+  isRestoring?: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))
@@ -67,6 +66,9 @@ export class QueryClient extends QC {
     return super.getQueryData(cloneDeepUnref(queryKey))
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -115,18 +117,18 @@ export class QueryClient extends QC {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TInferredQueryFnData | undefined
+  ): NoInfer<TInferredQueryFnData> | undefined
   setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TData | undefined
+  ): NoInfer<TData> | undefined
   setQueryData<TData>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): TData | undefined {
-    return super.setQueryData(
+  ): NoInfer<TData> | undefined {
+    return super.setQueryData<TData>(
       cloneDeepUnref(queryKey),
       updater,
       cloneDeepUnref(options),
@@ -151,37 +153,15 @@ export class QueryClient extends QC {
     return super.getQueryState(cloneDeepUnref(queryKey))
   }
 
-  removeQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
   ): void
   removeQueries(filters: MaybeRefDeep<QueryFilters> = {}): void {
     return super.removeQueries(cloneDeepUnref(filters))
   }
 
-  resetQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<ResetOptions>,
   ): Promise<void>
   resetQueries(
@@ -191,19 +171,8 @@ export class QueryClient extends QC {
     return super.resetQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
-  cancelQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<CancelOptions>,
   ): Promise<void>
   cancelQueries(
@@ -213,40 +182,24 @@ export class QueryClient extends QC {
     return super.cancelQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
-  invalidateQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: InvalidateQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?:
+      | InvalidateQueryFilters<TTaggedQueryKey>
+      | (() => InvalidateQueryFilters<TTaggedQueryKey>),
     options?: MaybeRefDeep<InvalidateOptions>,
   ): Promise<void>
-  invalidateQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters: MaybeRefDeep<
-      InvalidateQueryFilters<
-        TInferredQueryFnData,
-        TInferredError,
-        TInferredQueryFnData,
-        TTaggedQueryKey
-      >
-    > = {},
-    options: MaybeRefDeep<InvalidateOptions> = {},
+  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters:
+      | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
+      | (() => InvalidateQueryFilters<TTaggedQueryKey>) = {},
+    options: MaybeRefDeep<InvalidateOptions> | (() => InvalidateOptions) = {},
   ): Promise<void> {
-    const filtersCloned = cloneDeepUnref(filters)
-    const optionsCloned = cloneDeepUnref(options)
+    const filtersCloned = cloneDeepUnref(
+      filters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
+    )
+    const optionsCloned = cloneDeepUnref(
+      options as MaybeRefDeep<InvalidateOptions>,
+    )
 
     super.invalidateQueries(
       { ...filtersCloned, refetchType: 'none' },
@@ -257,12 +210,7 @@ export class QueryClient extends QC {
       return Promise.resolve()
     }
 
-    const refetchFilters: RefetchQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    > = {
+    const refetchFilters: RefetchQueryFilters<TTaggedQueryKey> = {
       ...filtersCloned,
       type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
     }
@@ -274,19 +222,8 @@ export class QueryClient extends QC {
     })
   }
 
-  refetchQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: RefetchQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+  refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: RefetchQueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<RefetchOptions>,
   ): Promise<void>
   refetchQueries(
@@ -299,6 +236,69 @@ export class QueryClient extends QC {
     )
   }
 
+  // These one-shot imperative methods do not resolve top-level option getters.
+  // Resolve getters explicitly before calling, e.g. queryClient.query(options()).
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData> {
+    return super.query(cloneDeepUnref(options))
+  }
+
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -321,9 +321,17 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-    >,
+    options:
+      | MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >
+      | (() => FetchQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >),
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
@@ -339,6 +347,9 @@ export class QueryClient extends QC {
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -370,6 +381,75 @@ export class QueryClient extends QC {
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
+  // These one-shot imperative methods do not resolve top-level option getters.
+  // Resolve getters explicitly before calling, e.g. queryClient.infiniteQuery(options()).
+  infiniteQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
+    return super.infiniteQuery(cloneDeepUnref(options))
+  }
+
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -422,6 +502,9 @@ export class QueryClient extends QC {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated use void queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -502,11 +585,11 @@ export class QueryClient extends QC {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MaybeRefDeep<MutationKey>,
     options: MaybeRefDeep<
-      MutationObserverOptions<TData, TError, TVariables, TContext>
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
     >,
   ): void {
     super.setMutationDefaults(

@@ -1,0 +1,30 @@
+---
+id: QueryClientProviderProps
+title: QueryClientProviderProps
+---
+
+```ts
+type QueryClientProviderProps = object;
+```
+
+Defined in: [preact-query/src/QueryClientProvider.tsx:24](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L24)
+
+## Properties
+
+### children?
+
+```ts
+optional children: ComponentChildren;
+```
+
+Defined in: [preact-query/src/QueryClientProvider.tsx:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L26)
+
+***
+
+### client
+
+```ts
+client: QueryClient;
+```
+
+Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L25)

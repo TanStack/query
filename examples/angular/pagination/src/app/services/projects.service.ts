@@ -15,7 +15,7 @@ interface ProjectResponse {
   providedIn: 'root',
 })
 export class ProjectsService {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
   getProjects(page: number) {
     return this.#http.get<ProjectResponse>(`/api/projects?page=${page}`)

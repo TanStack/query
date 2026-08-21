@@ -34,33 +34,68 @@ export const rule = createRule({
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context, _, helpers) => {
+    const queryResultVariables = new Set<string>()
+
     return {
       CallExpression: (node) => {
-        if (
-          !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
-          !helpers.isTanstackQueryImport(node.callee) ||
-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator
-        ) {
+        if (node.parent.type !== AST_NODE_TYPES.VariableDeclarator) {
           return
         }
 
         const returnValue = node.parent.id
+
+        const isDirectHook =
+          ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) &&
+          helpers.isTanstackQueryImport(node.callee)
+
+        if (!isDirectHook) {
+          // The type-aware path can only report when the result is rest
+          // destructured or assigned to an identifier that may later be
+          // spread. Skip the expensive type lookup for any other binding.
+          const canReportQueryResult =
+            returnValue.type === AST_NODE_TYPES.Identifier ||
+            NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)
+
+          if (
+            !canReportQueryResult ||
+            !NoRestDestructuringUtils.isQueryResultCall(
+              node,
+              context.sourceCode.parserServices,
+            )
+          ) {
+            return
+          }
+        }
+
+        const calleeName = ASTUtils.isIdentifier(node.callee)
+          ? node.callee.name
+          : null
+
         if (
-          node.callee.name !== 'useQueries' &&
-          node.callee.name !== 'useSuspenseQueries'
+          calleeName !== 'useQueries' &&
+          calleeName !== 'useSuspenseQueries'
         ) {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
-            context.report({
+            return context.report({
               node: node.parent,
               messageId: 'objectRestDestructure',
             })
           }
+
+          if (returnValue.type === AST_NODE_TYPES.Identifier) {
+            queryResultVariables.add(returnValue.name)
+          }
+
           return
         }
 
         if (returnValue.type !== AST_NODE_TYPES.ArrayPattern) {
+          if (returnValue.type === AST_NODE_TYPES.Identifier) {
+            queryResultVariables.add(returnValue.name)
+          }
           return
         }
+
         returnValue.elements.forEach((queryResult) => {
           if (queryResult === null) {
             return
@@ -72,6 +107,31 @@ export const rule = createRule({
             })
           }
         })
+      },
+
+      VariableDeclarator: (node) => {
+        if (
+          node.init?.type === AST_NODE_TYPES.Identifier &&
+          queryResultVariables.has(node.init.name) &&
+          NoRestDestructuringUtils.isObjectRestDestructuring(node.id)
+        ) {
+          context.report({
+            node,
+            messageId: 'objectRestDestructure',
+          })
+        }
+      },
+
+      SpreadElement: (node) => {
+        if (
+          node.argument.type === AST_NODE_TYPES.Identifier &&
+          queryResultVariables.has(node.argument.name)
+        ) {
+          context.report({
+            node,
+            messageId: 'objectRestDestructure',
+          })
+        }
       },
     }
   }),

@@ -1,0 +1,151 @@
+# @tanstack/eslint-plugin-query
+
+## 5.101.4
+
+### Patch Changes
+
+- [#11067](https://github.com/TanStack/query/pull/11067) [`7ac45ed`](https://github.com/TanStack/query/commit/7ac45ed45cbc28a54ac2fcfb1faccfcd87fb7b75) - Relax `exhaustive-deps` so function call targets are not required in query keys while values referenced in nested callbacks are still checked.
+
+## 5.101.3
+
+## 5.101.2
+
+## 5.101.1
+
+## 5.101.0
+
+### Minor Changes
+
+- [#10775](https://github.com/TanStack/query/pull/10775) [`dc54932`](https://github.com/TanStack/query/commit/dc549328642e3d5b7417c0ad070d9fbf38c195a4) - `no-rest-destructuring` now also flags rest destructuring on custom hooks that return a TanStack Query result. Detection uses the TypeScript type checker and runs only when typed linting is enabled, so untyped projects are unaffected. Closes [#8951](https://github.com/TanStack/query/issues/8951).
+
+## 5.100.14
+
+## 5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- fix(no-unstable-deps): handle array-destructured useQueries and useSuspenseQueries results ([#10747](https://github.com/TanStack/query/pull/10747))
+
+- Fix `no-unstable-deps` false positives for `useSuspenseQueries` results returned from `combine`. ([#10642](https://github.com/TanStack/query/pull/10642))
+
+## 5.100.11
+
+## 5.100.10
+
+## 5.100.9
+
+## 5.100.8
+
+## 5.100.7
+
+## 5.100.6
+
+## 5.100.5
+
+## 5.100.4
+
+## 5.100.3
+
+## 5.100.2
+
+## 5.100.1
+
+## 5.100.0
+
+## 5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- fix(eslint-plugin-query): fix `no-void-query-fn` false positive on enum returns for typescript 6. ([#10460](https://github.com/TanStack/query/pull/10460))
+
+## 5.99.0
+
+## 5.98.0
+
+## 5.97.0
+
+### Minor Changes
+
+- feat(eslint): support eslint v10 and typescript v6 ([#10182](https://github.com/TanStack/query/pull/10182))
+
+## 5.96.2
+
+### Patch Changes
+
+- fix(eslint-plugin): normalize whitespace in allowList variable matching for multiline expressions ([#10337](https://github.com/TanStack/query/pull/10337))
+
+## 5.96.1
+
+## 5.96.0
+
+### Minor Changes
+
+- Add `prefer-query-options` rule and `recommendedStrict` config ([#10359](https://github.com/TanStack/query/pull/10359))
+
+## 5.95.2
+
+## 5.95.1
+
+## 5.95.0
+
+### Minor Changes
+
+- BREAKING (eslint-plugin): The `exhaustive-deps` rule now reports member expression dependencies more granularly for call expressions (e.g. `a.b.foo()` suggests `a.b`), which may cause existing code that previously passed the rule to now report missing dependencies. To accommodate stable variables and types, the rule now accepts an `allowlist` option with `variables` and `types` arrays to exclude specific dependencies from enforcement. ([#10295](https://github.com/TanStack/query/pull/10295))
+
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+## 5.91.5
+
+### Patch Changes
+
+- Fix `exhaustive-deps` to detect dependencies used inside nested `queryFn` callbacks/control flow, and avoid false positives when those dependencies are already present in complex `queryKey` expressions. ([#10258](https://github.com/TanStack/query/pull/10258))
+
+## 5.91.4
+
+### Patch Changes
+
+- fix(eslint-plugin-query): declare typescript as optional peer dependency ([#10007](https://github.com/TanStack/query/pull/10007))
+
+## 5.91.3
+
+### Patch Changes
+
+- exhaustive-deps rule fixed for vue files ([#10011](https://github.com/TanStack/query/pull/10011))
+
+## 5.91.2
+
+### Patch Changes
+
+- fix: allow useQueries with combine property in no-unstable-deps rule ([#9720](https://github.com/TanStack/query/pull/9720))
+
+## 5.91.1
+
+### Patch Changes
+
+- avoid typescript import in no-void-query-fn rule ([#9759](https://github.com/TanStack/query/pull/9759))
+
+## 5.91.0
+
+### Minor Changes
+
+- feat: improve type of exported plugin ([#9700](https://github.com/TanStack/query/pull/9700))
+
+## 5.90.2
+
+### Patch Changes
+
+- fix: exhaustive-deps with variables and type assertions ([#9687](https://github.com/TanStack/query/pull/9687))

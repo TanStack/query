@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { dataTagSymbol } from '@tanstack/query-core'
-import { createInfiniteQuery } from '../createInfiniteQuery'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
+import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
 import type {
@@ -8,13 +9,74 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from '../infiniteQueryOptions'
 
-const doNotRun = (_callback: () => void) => {}
+// Regression test for exported infiniteQueryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['invalid'],
+  getNextPageParam: () => 1,
+  initialPageParam: 1,
+})
 
 describe('infiniteQueryOptions', () => {
-  it('should infer defined types', () => {
+  it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,
       queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<{ wow: boolean }>>()
+  })
+
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialPageParam: 0,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ wow: boolean }, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: ['key'],
+      queryFn: skipToken,
+      initialPageParam: 0,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
+
+  it('should infer defined types', () => {
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => 10,
+      queryKey: queryKey(),
       queryFn: () => ({ wow: true }),
       initialData: {
         pageParams: [undefined],
@@ -23,59 +85,55 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 0,
     })
 
-    doNotRun(() => {
-      expectTypeOf(createInfiniteQuery(() => options).data).toEqualTypeOf<
-        InfiniteData<{ wow: boolean }, unknown>
-      >()
+    expectTypeOf(useInfiniteQuery(() => options).data).toEqualTypeOf<
+      InfiniteData<{ wow: boolean }, unknown>
+    >()
 
-      expectTypeOf(options).toMatchTypeOf<
-        ReturnType<
-          DefinedInitialDataInfiniteOptions<
-            { wow: boolean },
-            Error,
-            InfiniteData<{ wow: boolean }, unknown>,
-            Array<string>,
-            number | undefined
-          >
+    expectTypeOf(options).toExtend<
+      ReturnType<
+        DefinedInitialDataInfiniteOptions<
+          { wow: boolean },
+          Error,
+          InfiniteData<{ wow: boolean }, unknown>,
+          Array<string>,
+          number | undefined
         >
-      >()
+      >
+    >()
 
-      expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
-        InfiniteData<{ wow: boolean }>
-      >()
-    })
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<{ wow: boolean }>
+    >()
   })
 
   it('should work without defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => undefined,
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => ({ wow: true }),
       initialPageParam: 0,
     })
 
-    doNotRun(() => {
-      expectTypeOf(() => createInfiniteQuery(() => options).data).toEqualTypeOf<
-        () => InfiniteData<{ wow: boolean }, unknown> | undefined
-      >()
+    expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
+      () => InfiniteData<{ wow: boolean }, unknown> | undefined
+    >()
 
-      expectTypeOf(options).toMatchTypeOf<
-        ReturnType<
-          UndefinedInitialDataInfiniteOptions<
-            { wow: boolean },
-            Error,
-            InfiniteData<{ wow: boolean }, unknown>,
-            Array<string>,
-            number
-          >
+    expectTypeOf(options).toExtend<
+      ReturnType<
+        UndefinedInitialDataInfiniteOptions<
+          { wow: boolean },
+          Error,
+          InfiniteData<{ wow: boolean }, unknown>,
+          Array<string>,
+          number
         >
-      >()
+      >
+    >()
 
-      expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
-        InfiniteData<{
-          wow: boolean
-        }>
-      >()
-    })
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<{
+        wow: boolean
+      }>
+    >()
   })
 })

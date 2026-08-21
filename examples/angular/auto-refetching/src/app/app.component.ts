@@ -4,7 +4,6 @@ import { AutoRefetchingExampleComponent } from './components/auto-refetching.com
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  standalone: true,
   template: `<auto-refetching-example />`,
   imports: [AutoRefetchingExampleComponent],
 })

@@ -33,9 +33,9 @@ Feature/Capability Key:
 | Parallel Queries                                   | ✅                                       | ✅                                       | ✅                                         | ✅                                   | ✅                                                                        |
 | Dependent Queries                                  | ✅                                       | ✅                                       | ✅                                         | ✅                                   | ✅                                                                        |
 | Paginated Queries                                  | ✅                                       | ✅                                       | ✅                                         | ✅                                   | ✅                                                                        |
-| Infinite Queries                                   | ✅                                       | ✅                                       | ✅                                         | 🛑                                   | 🛑                                                                        |
-| Bi-directional Infinite Queries                    | ✅                                       | 🔶                                       | 🔶                                         | 🛑                                   | 🛑                                                                        |
-| Infinite Query Refetching                          | ✅                                       | ✅                                       | 🛑                                         | 🛑                                   | 🛑                                                                        |
+| Infinite Queries                                   | ✅                                       | ✅                                       | ✅                                         | ✅                                   | 🛑                                                                        |
+| Bi-directional Infinite Queries                    | ✅                                       | 🔶                                       | 🔶                                         | ✅                                   | 🛑                                                                        |
+| Infinite Query Refetching                          | ✅                                       | ✅                                       | 🛑                                         | ✅                                   | 🛑                                                                        |
 | Lagged Query Data<sup>1</sup>                      | ✅                                       | ✅                                       | ✅                                         | ✅                                   | ✅                                                                        |
 | Selectors                                          | ✅                                       | 🛑                                       | ✅                                         | ✅                                   | N/A                                                                       |
 | Initial Data                                       | ✅                                       | ✅                                       | ✅                                         | ✅                                   | ✅                                                                        |
@@ -79,10 +79,10 @@ Feature/Capability Key:
 
 > **<sup>8</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
 
-[bpl-react-query]: https://bundlephobia.com/result?p=react-query
-[bp-react-query]: https://badgen.net/bundlephobia/minzip/react-query?label=💾
-[gh-react-query]: https://github.com/tannerlinsley/react-query
-[stars-react-query]: https://img.shields.io/github/stars/tannerlinsley/react-query?label=%F0%9F%8C%9F
+[bpl-react-query]: https://bundlephobia.com/result?p=@tanstack/react-query
+[bp-react-query]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query?label=💾
+[gh-react-query]: https://github.com/TanStack/query
+[stars-react-query]: https://img.shields.io/github/stars/TanStack/query?label=%F0%9F%8C%9F
 [swr]: https://github.com/vercel/swr
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=💾
 [gh-swr]: https://github.com/vercel/swr

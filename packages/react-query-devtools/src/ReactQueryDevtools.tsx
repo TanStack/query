@@ -6,6 +6,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -15,8 +16,8 @@ export interface DevtoolsOptions {
    */
   initialIsOpen?: boolean
   /**
-   * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+   * The position of the TanStack logo to open and close the devtools panel.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
    * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
@@ -42,6 +43,15 @@ export interface DevtoolsOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
+   */
+  theme?: Theme
 }
 
 export function ReactQueryDevtools(
@@ -56,6 +66,8 @@ export function ReactQueryDevtools(
     errorTypes,
     styleNonce,
     shadowDOMTarget,
+    hideDisabledQueries,
+    theme,
   } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
@@ -69,6 +81,8 @@ export function ReactQueryDevtools(
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      hideDisabledQueries,
+      theme,
     }),
   )
 
@@ -95,6 +109,10 @@ export function ReactQueryDevtools(
   React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
   }, [errorTypes, devtools])
+
+  React.useEffect(() => {
+    devtools.setTheme(theme)
+  }, [theme, devtools])
 
   React.useEffect(() => {
     if (ref.current) {

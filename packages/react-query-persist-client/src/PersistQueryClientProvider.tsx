@@ -12,43 +12,43 @@ import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/react-query'
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => Promise<unknown> | unknown
+  onError?: () => Promise<unknown> | unknown
 }
 
 export const PersistQueryClientProvider = ({
-  client,
   children,
   persistOptions,
   onSuccess,
+  onError,
   ...props
 }: PersistQueryClientProviderProps): React.JSX.Element => {
   const [isRestoring, setIsRestoring] = React.useState(true)
-  const refs = React.useRef({ persistOptions, onSuccess })
+  const refs = React.useRef({ persistOptions, onSuccess, onError })
   const didRestore = React.useRef(false)
 
   React.useEffect(() => {
-    refs.current = { persistOptions, onSuccess }
+    refs.current = { persistOptions, onSuccess, onError }
   })
 
   React.useEffect(() => {
     const options = {
       ...refs.current.persistOptions,
-      queryClient: client,
+      queryClient: props.client,
     }
     if (!didRestore.current) {
       didRestore.current = true
-      persistQueryClientRestore(options).then(async () => {
-        try {
-          await refs.current.onSuccess?.()
-        } finally {
+      persistQueryClientRestore(options)
+        .then(() => refs.current.onSuccess?.())
+        .catch(() => refs.current.onError?.())
+        .finally(() => {
           setIsRestoring(false)
-        }
-      })
+        })
     }
     return isRestoring ? undefined : persistQueryClientSubscribe(options)
-  }, [client, isRestoring])
+  }, [props.client, isRestoring])
 
   return (
-    <QueryClientProvider client={client} {...props}>
+    <QueryClientProvider {...props}>
       <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
     </QueryClientProvider>
   )
