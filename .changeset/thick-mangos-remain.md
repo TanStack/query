@@ -1,7 +1,7 @@
 ---
-"@tanstack/query-core": patch
-"@tanstack/react-query": patch
-"@tanstack/solid-query": patch
+"@tanstack/query-core": minor
+"@tanstack/react-query": minor
+"@tanstack/solid-query": minor
 ---
 
 feat(core): add queryKey to QueryObserverResult
