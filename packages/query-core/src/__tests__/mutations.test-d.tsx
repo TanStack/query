@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import type { DefaultError, MutateFunction, MutateOptions } from 'src/types'
+
+import type { DefaultError, MutateFunction, MutateOptions } from '../types'
 
 describe('MutateFunction', () => {
   it('void variables', () => {
