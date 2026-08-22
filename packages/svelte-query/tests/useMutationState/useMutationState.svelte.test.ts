@@ -157,3 +157,54 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
   })
 })
+
+describe('useMutationState - array shrinks when mutations no longer match filter', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+    vi.useRealTimers()
+  })
+
+  it('should remove mutations that no longer match the filter', async () => {
+    const firstKey = queryKey()
+    const secondKey = queryKey()
+    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        successMutationOpts: () => ({
+          mutationKey: firstKey,
+          mutationFn,
+        }),
+        errorMutationOpts: () => ({
+          mutationKey: secondKey,
+          mutationFn,
+        }),
+        mutationStateOpts: {
+          filters: { status: 'pending' },
+        },
+      },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('Data: ["pending","pending"]'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Both mutations settled — zero now match status: 'pending'
+    // Previously Object.assign never shrank the array so this stayed ["pending","pending"]
+    expect(rendered.getByText('Data: []')).toBeInTheDocument()
+  })
+})
