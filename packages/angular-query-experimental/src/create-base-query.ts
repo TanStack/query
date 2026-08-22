@@ -144,6 +144,19 @@ export function createBaseQuery<
           }),
         )
 
+    // Subscribing can start a fetch straight away, but the first observer
+    // notification is batched and only arrives in a later task. Without this
+    // check the app is considered stable in between, so `whenStable()` resolves
+    // while the query is still fetching.
+    untracked(() => {
+      if (
+        !pendingTaskRef &&
+        observer.getCurrentResult().fetchStatus !== 'idle'
+      ) {
+        pendingTaskRef = pendingTasks.add()
+      }
+    })
+
     onCleanup(() => {
       if (pendingTaskRef) {
         pendingTaskRef()
