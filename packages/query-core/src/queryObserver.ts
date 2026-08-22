@@ -611,6 +611,7 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
+      queryKey: query.queryKey,
       isEnabled: resolveQueryBoolean(options.enabled, query) !== false,
     }
 
