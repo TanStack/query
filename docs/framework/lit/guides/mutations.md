@@ -164,3 +164,21 @@ private readonly favoriteMutation = createMutationController(
 ```
 
 For the exact runnable flow, see the [Pagination example](../examples/pagination).
+
+## Rendering
+
+For convenience, the mutation accessor also includes a `render` method, based on the [Task API](https://lit.dev/docs/data/task/#rendering-tasks). It takes an object of renderers for each status, and returns the output of the matching renderer:
+
+```ts
+render() {
+  return html`
+    <button @click=${() => this.addTodo.mutate({ title: 'New todo' })}>
+      Add Todo
+    </button>
+    ${this.addTodo.render({
+      pending: ({ isIdle }) => isIdle ? nothing : html`<p>Adding...</p>`,
+      error: ({ error }) => html`<p>Oops, something went wrong: ${error.message}</p>`,
+      success: ({ data }) => html`<p>Added todo: ${data.title}</p>`,
+    })}`
+}
+```
