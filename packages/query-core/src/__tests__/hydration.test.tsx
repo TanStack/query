@@ -22,6 +22,8 @@ describe('dehydration and rehydration', () => {
       const queryClient = new QueryClient()
       queryClient.setQueryData(key, 'data')
       const query = queryClient.getQueryCache().find({ queryKey: key })!
+      const dehydratedAt = new Date('2024-01-01T00:00:00.000Z')
+      vi.setSystemTime(dehydratedAt)
 
       const dehydrated = dehydrateQuery(query)
 
@@ -30,7 +32,7 @@ describe('dehydration and rehydration', () => {
         queryKey: key,
         state: query.state,
       })
-      expect(dehydrated.dehydratedAt).toBe(Date.now())
+      expect(dehydrated.dehydratedAt).toBe(dehydratedAt.getTime())
       expect(dehydrated.state).not.toBe(query.state)
       expect(dehydrated.promise).toBeUndefined()
 
