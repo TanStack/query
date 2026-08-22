@@ -47,12 +47,7 @@ describe('MutateFunction', () => {
   })
 
   it('unknown variables', () => {
-    const mutate = {} as MutateFunction<
-      unknown,
-      DefaultError,
-      unknown,
-      unknown
-    >
+    const mutate = {} as MutateFunction<unknown, DefaultError, unknown, unknown>
 
     expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<unknown>()
 
@@ -202,8 +197,7 @@ describe('MutateFunction', () => {
       >()
 
       expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
-        | undefined
-        | MutateOptions<unknown, DefaultError, void | string, unknown>
+        undefined | MutateOptions<unknown, DefaultError, void | string, unknown>
       >()
 
       mutate() // can be called with no arguments
