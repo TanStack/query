@@ -2,6 +2,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryClient,
+  queryOptions as coreQueryOptions,
   dataTagSymbol,
   injectQuery,
   queryOptions,
@@ -67,6 +68,19 @@ it('should work when passed to injectQuery', () => {
 
   const { data } = injectQuery(() => options)
   expectTypeOf(data).toEqualTypeOf<Signal<number | undefined>>()
+})
+
+it('should work when core queryOptions are passed to injectQuery', () => {
+  const key = queryKey()
+  const options = coreQueryOptions({
+    queryKey: key,
+    queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+  })
+
+  const { data } = injectQuery(() => options)
+  expectTypeOf(data).toEqualTypeOf<
+    Signal<{ id: string; title: string } | undefined>
+  >()
 })
 
 it('should work when passed to fetchQuery', () => {
