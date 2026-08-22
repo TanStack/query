@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -7,6 +8,57 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+
+type SuspenseThenable<T> = Promise<T> & {
+  status?: 'pending' | 'fulfilled' | 'rejected'
+  value?: T
+  reason?: unknown
+}
+
+export const fallbackUse = <T>(thenable: SuspenseThenable<T>): T => {
+  switch (thenable.status) {
+    case 'pending':
+      throw thenable
+    case 'fulfilled':
+      return thenable.value as T
+    case 'rejected':
+      throw thenable.reason
+    default:
+      thenable.status = 'pending'
+      thenable.then(
+        (value) => {
+          thenable.status = 'fulfilled'
+          thenable.value = value
+        },
+        (reason) => {
+          thenable.status = 'rejected'
+          thenable.reason = reason
+        },
+      )
+      throw thenable
+  }
+}
+
+// React 18 does not have `use`
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+export const use = React.use || fallbackUse
+
+export const resolvedThenable = Promise.resolve(
+  undefined,
+) as SuspenseThenable<void>
+resolvedThenable.status = 'fulfilled'
+resolvedThenable.value = undefined
+
+type SuspensePromiseEntry = {
+  fetchPromise: Promise<unknown>
+  promise: Promise<void>
+  settled: boolean
+}
+
+const suspensePromiseCache = new WeakMap<
+  Query<any, any, any, any>,
+  SuspensePromiseEntry
+>()
 
 export const defaultThrowOnError = <
   TQueryFnData = unknown,
@@ -46,30 +98,72 @@ export const ensureSuspenseTimers = (
   }
 }
 
+// `undefined` skips the fetch, `false` fetches without suspending,
+// and `true` fetches and suspends.
 export const shouldSuspend = (
   defaultedOptions:
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
-
-export const fetchOptimistic = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  defaultedOptions: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset()
-  })
+  query: Query<any, any, any, any>,
+): boolean | undefined => {
+  if (!defaultedOptions?.suspense) {
+    return undefined
+  }
+
+  if (
+    result.isPending ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+  ) {
+    return true
+  }
+
+  if (result.isFetching && result.isPlaceholderData) {
+    return false
+  }
+
+  return undefined
+}
+
+export function getSuspensePromise(
+  defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
+  observer: QueryObserver<any, any, any, any, any>,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<any, any, any, any>,
+  shouldFetch = true,
+): Promise<void> {
+  const shouldFetchNow =
+    shouldFetch ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+
+  const cached = suspensePromiseCache.get(query)
+
+  if (cached && (!shouldFetchNow || !cached.settled)) {
+    cached.fetchPromise.catch(() => errorResetBoundary.clearReset())
+    return cached.promise
+  }
+
+  if (!shouldFetchNow) {
+    return resolvedThenable
+  }
+
+  const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+  // The observer result is recalculated after React retries. We only use this
+  // promise to tell React when the fetch has settled.
+  const entry = {
+    fetchPromise,
+    promise: undefined as unknown as Promise<void>,
+    settled: false,
+  }
+  const settle = () => {
+    entry.settled = true
+  }
+  entry.promise = fetchPromise.then(settle, settle)
+
+  suspensePromiseCache.set(query, entry)
+
+  fetchPromise.catch(() => errorResetBoundary.clearReset())
+
+  return entry.promise
+}

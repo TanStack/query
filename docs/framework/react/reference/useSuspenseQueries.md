@@ -13,7 +13,8 @@ The same as for [useQueries](./useQueries.md), except that each `query` can't ha
 
 - `throwOnError`
 - `enabled`
-- `placeholderData`
+
+`placeholderData` is supported, but its callback does not receive information from previously rendered Queries. This matches `useQueries`, because the number and order of Queries can change between renders.
 
 > The [`select` typing caveat](./useQueries.md#typescript-typing-the-select-option) for `useQueries` applies here as well: annotate the `select` parameter or use the [`queryOptions`](./queryOptions.md) helper to keep type inference.
 
@@ -22,9 +23,10 @@ The same as for [useQueries](./useQueries.md), except that each `query` can't ha
 Same structure as [useQueries](./useQueries.md), except that for each `query`:
 
 - `data` is guaranteed to be defined
-- `isPlaceholderData` is missing
 - `status` is either `success` or `error`
   - the derived flags are set accordingly.
+
+Each result includes `isPlaceholderData`.
 
 **Caveats**
 

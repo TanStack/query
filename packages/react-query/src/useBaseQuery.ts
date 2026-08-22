@@ -12,8 +12,9 @@ import {
 import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
+  use,
 } from './suspense'
 import type {
   QueryClient,
@@ -119,8 +120,27 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  if (defaultedOptions.suspense) {
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    const suspend = shouldSuspend(
+      defaultedOptions,
+      result,
+      errorResetBoundary,
+      suspenseQuery,
+    )
+
+    if (suspend !== undefined) {
+      const promise = getSuspensePromise(
+        defaultedOptions,
+        observer,
+        errorResetBoundary,
+        suspenseQuery,
+      )
+
+      if (suspend) {
+        use(promise)
+      }
+    }
   }
 
   // Handle error boundary
