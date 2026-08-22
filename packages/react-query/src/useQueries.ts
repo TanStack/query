@@ -296,14 +296,22 @@ export function useQueries<
       return undefined
     }
 
+    const query = client.getQueryCache().build(client, opts)
+    const suspend = shouldSuspend(opts, result, errorResetBoundary, query)
+
+    if (suspend === undefined) {
+      return undefined
+    }
+
     const queryObserver = new QueryObserver(client, opts)
-    return getSuspensePromise(
+    const promise = getSuspensePromise(
       opts,
       queryObserver,
       errorResetBoundary,
-      client.getQueryCache().build(client, opts),
-      shouldSuspend(opts, result),
+      query,
     )
+
+    return suspend ? promise : undefined
   })
 
   // Start every fetch before calling use(), because use() suspends immediately.

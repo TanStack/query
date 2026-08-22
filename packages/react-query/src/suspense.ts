@@ -98,12 +98,33 @@ export const ensureSuspenseTimers = (
   }
 }
 
+// `undefined` skips the fetch, `false` fetches without suspending,
+// and `true` fetches and suspends.
 export const shouldSuspend = (
   defaultedOptions:
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<any, any, any, any>,
+): boolean | undefined => {
+  if (!defaultedOptions?.suspense) {
+    return undefined
+  }
+
+  if (
+    result.isPending ||
+    (query.state.status === 'error' && errorResetBoundary.isReset())
+  ) {
+    return true
+  }
+
+  if (result.isFetching && result.isPlaceholderData) {
+    return false
+  }
+
+  return undefined
+}
 
 export function getSuspensePromise(
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,

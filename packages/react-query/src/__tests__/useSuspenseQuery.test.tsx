@@ -8,6 +8,7 @@ import {
   QueryClient,
   QueryErrorResetBoundary,
   experimental_streamedQuery,
+  keepPreviousData,
   skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
@@ -920,16 +921,61 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
+  it('should use cache-derived placeholderData without suspending', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => ({ id: 1, text: 'full' })))
+    const states: Array<UseSuspenseQueryResult<{ id: number; text: string }>> =
+      []
+
+    queryClient.setQueryData([...key, 'list'], [{ id: 1, text: 'preview' }])
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: [...key, 'detail', 1],
+        queryFn,
+        placeholderData: () =>
+          queryClient
+            .getQueryData<Array<{ id: number; text: string }>>([...key, 'list'])
+            ?.find((item) => item.id === 1),
+      })
+
+      states.push(state)
+      return <div>data: {state.data.text}</div>
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: preview')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(states.at(-1)).toMatchObject({
+      isPlaceholderData: true,
+      isFetching: true,
+      status: 'success',
+    })
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+
+    expect(rendered.getByText('data: full')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      isPlaceholderData: false,
+      isFetching: false,
+      status: 'success',
+    })
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use keepPreviousData from queryClient defaults', async () => {
     const key = queryKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: keepPreviousData,
         },
       },
     })
     const states: Array<UseSuspenseQueryResult<number>> = []
+    const fallback = vi.fn(() => <div>loading</div>)
 
     let count = 0
 
@@ -954,18 +1000,138 @@ describe('useSuspenseQuery', () => {
     const rendered = await renderWithSuspense(
       queryClientWithPlaceholder,
       <Page />,
+      React.createElement(fallback),
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(fallback).toHaveBeenCalledTimes(1)
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     await act(async () => {
       fireEvent.click(rendered.getByLabelText('toggle'))
     })
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      data: 1,
+      isPlaceholderData: true,
+      isFetching: true,
+    })
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(states.at(-1)).toMatchObject({
+      data: 2,
+      isPlaceholderData: false,
+      isFetching: false,
+    })
+    expect(fallback).toHaveBeenCalledTimes(1)
+  })
+
+  it('should suspend when placeholderData returns undefined', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+        placeholderData: () => undefined,
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(rendered.getByText('data: data')).toBeInTheDocument()
+  })
+
+  it('should stop suspending when placeholderData becomes defined', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(100).then(() => 'data'))
+
+    function Content({ showPlaceholder }: { showPlaceholder: boolean }) {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn,
+        placeholderData: showPlaceholder ? 'placeholder' : undefined,
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    function Page() {
+      const [showPlaceholder, setShowPlaceholder] = React.useState(false)
+
+      return (
+        <div>
+          <button onClick={() => setShowPlaceholder(true)}>
+            show placeholder
+          </button>
+          <React.Suspense fallback="loading">
+            <Content showPlaceholder={showPlaceholder} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await act(async () => {
+      fireEvent.click(rendered.getByText('show placeholder'))
+    })
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(101))
+    expect(rendered.getByText('data: data')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw a placeholder-backed fetch error to the error boundary', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    const queryFn = vi.fn(
+      (): Promise<string> =>
+        sleep(10).then(() => Promise.reject(new Error('failed'))),
+    )
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn,
+        placeholderData: 'placeholder',
+        retry: false,
+      })
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <ErrorBoundary fallback={<div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    consoleMock.mockRestore()
   })
 
   it('should log an error when skipToken is passed as queryFn', async () => {

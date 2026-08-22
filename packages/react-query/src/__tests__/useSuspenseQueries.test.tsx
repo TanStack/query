@@ -46,7 +46,7 @@ describe('useSuspenseQueries', () => {
     return <div>loading</div>
   }
 
-  it('should suspend on mount', () => {
+  it('should suspend on mount', async () => {
     function Page() {
       const queriesResults = useSuspenseQueries(
         {
@@ -66,11 +66,13 @@ describe('useSuspenseQueries', () => {
       return null
     }
 
-    render(
-      <React.Suspense fallback={<SuspenseFallback />}>
-        <Page />
-      </React.Suspense>,
-    )
+    await act(async () => {
+      render(
+        <React.Suspense fallback={<SuspenseFallback />}>
+          <Page />
+        </React.Suspense>,
+      )
+    })
 
     expect(onSuspend).toHaveBeenCalledOnce()
   })
@@ -733,30 +735,52 @@ describe('useSuspenseQueries', () => {
     expect(queryFnCount).toBe(2)
   })
 
-  it('should still suspense if queryClient has placeholderData config', async () => {
+  it('should use queryClient placeholderData config', async () => {
     const key = queryKey()
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: 'placeholder',
         },
       },
     })
+    const queryFn1 = vi.fn((count: number) =>
+      sleep(10).then(() => 'data1-' + count),
+    )
+    const queryFn2 = vi.fn((count: number) =>
+      sleep(10).then(() => 'data2-' + count),
+    )
 
     function Page() {
       const [count, setCount] = React.useState(0)
-      const [isPending, startTransition] = React.useTransition()
-      const { data } = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => 'data' + count),
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, 1, count],
+            queryFn: () => queryFn1(count),
+          },
+          {
+            queryKey: [...key, 2, count],
+            queryFn: () => queryFn2(count),
+          },
+        ],
       })
 
       return (
         <div>
-          <button onClick={() => startTransition(() => setCount(count + 1))}>
+          <button
+            onClick={() =>
+              React.startTransition(() => setCount((value) => value + 1))
+            }
+          >
             inc
           </button>
-          <div>{isPending ? 'pending' : data}</div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+          <div>
+            placeholder: {String(result1.isPlaceholderData)},
+            {String(result2.isPlaceholderData)}
+          </div>
         </div>
       )
     }
@@ -766,16 +790,118 @@ describe('useSuspenseQueries', () => {
       <Page />,
     )
 
-    expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('data0')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data1: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('data2: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: true,true')).toBeInTheDocument()
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1: data1-0')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2-0')).toBeInTheDocument()
 
     await act(async () => {
       fireEvent.click(rendered.getByText('inc'))
     })
-    expect(rendered.getByText('pending')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
-    expect(rendered.getByText('data1')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('data1: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('data2: placeholder')).toBeInTheDocument()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(2)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1: data1-1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2-1')).toBeInTheDocument()
+    expect(rendered.getByText('placeholder: false,false')).toBeInTheDocument()
+  })
+
+  it('should start placeholder and pending queries before suspending', async () => {
+    const key = queryKey()
+    const placeholderQueryFn = vi.fn(() => sleep(10).then(() => 'data1'))
+    const pendingQueryFn = vi.fn(() => sleep(10).then(() => 'data2'))
+    const fallback = vi.fn(() => <div>loading</div>)
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, 1],
+            queryFn: placeholderQueryFn,
+            placeholderData: 'placeholder',
+          },
+          { queryKey: [...key, 2], queryFn: pendingQueryFn },
+        ],
+      })
+
+      return (
+        <div>
+          {result1.data},{result2.data}
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(
+      queryClient,
+      <Page />,
+      React.createElement(fallback),
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(fallback).toHaveBeenCalledTimes(1)
+    expect(placeholderQueryFn).toHaveBeenCalledTimes(1)
+    expect(pendingQueryFn).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1,data2')).toBeInTheDocument()
+    expect(fallback).toHaveBeenCalledTimes(1)
+    expect(placeholderQueryFn).toHaveBeenCalledTimes(1)
+    expect(pendingQueryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use placeholderData with useDeferredValue', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn((count: number) =>
+      sleep(10).then(() => 'data' + count),
+    )
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const deferredCount = React.useDeferredValue(count)
+      const [result] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: [...key, deferredCount],
+            queryFn: () => queryFn(deferredCount),
+            placeholderData: 'placeholder',
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <button onClick={() => setCount((value) => value + 1)}>inc</button>
+          <div>data: {result.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: data0')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(rendered.getByText('inc'))
+    })
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {

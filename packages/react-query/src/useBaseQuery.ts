@@ -121,15 +121,26 @@ export function useBaseQuery<
 
   // Handle suspense
   if (defaultedOptions.suspense) {
-    use(
-      getSuspensePromise(
+    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
+    const suspend = shouldSuspend(
+      defaultedOptions,
+      result,
+      errorResetBoundary,
+      suspenseQuery,
+    )
+
+    if (suspend !== undefined) {
+      const promise = getSuspensePromise(
         defaultedOptions,
         observer,
         errorResetBoundary,
-        client.getQueryCache().build(client, defaultedOptions),
-        shouldSuspend(defaultedOptions, result),
-      ),
-    )
+        suspenseQuery,
+      )
+
+      if (suspend) {
+        use(promise)
+      }
+    }
   }
 
   // Handle error boundary
