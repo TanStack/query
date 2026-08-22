@@ -44,7 +44,7 @@ export function useMutationState<
         getResult(mutationCache, options),
       )
       if (result !== nextResult) {
-        Object.assign(result, nextResult)
+        result.splice(0, result.length, ...nextResult)
       }
     })
 
