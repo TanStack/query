@@ -167,6 +167,67 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should not re-suspend a cache-warm query when it only becomes stale', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'cached')
+
+    const fallbackMounts: number[] = []
+    const removals: number[] = []
+
+    function Fallback() {
+      fallbackMounts.push(Date.now())
+      return <div data-testid="fallback">loading</div>
+    }
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.resolve('fresh'),
+        staleTime: 1000,
+      }))
+
+      return (
+        <div data-testid="root">
+          <span>{state.data}</span>
+          <input data-testid="input" />
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback={<Fallback />}>
+        <Page />
+      </Suspense>
+    ))
+
+    await Promise.resolve()
+    await Promise.resolve()
+
+    const root = rendered.getByTestId('root')
+    const baselineFallbackMounts = fallbackMounts.length
+    const observer = new MutationObserver((records) => {
+      for (const record of records) {
+        removals.push(record.removedNodes.length)
+      }
+    })
+    observer.observe(root.parentElement!, { childList: true })
+
+    const input = rendered.getByTestId('input') as HTMLInputElement
+    input.focus()
+    expect(document.activeElement).toBe(input)
+
+    await vi.advanceTimersByTimeAsync(1001)
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(rendered.queryByTestId('fallback')).toBeNull()
+    expect(document.activeElement).toBe(input)
+    expect(removals.reduce((sum, count) => sum + count, 0)).toBe(0)
+    expect(fallbackMounts.length).toBe(baselineFallbackMounts)
+
+    observer.disconnect()
+  })
+
   it('should remove query instance when component unmounted', async () => {
     const key = queryKey()
 
