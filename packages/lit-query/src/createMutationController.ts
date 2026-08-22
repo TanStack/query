@@ -1,7 +1,7 @@
 import {
   MutationObserver,
   type DefaultError,
-  type MutateOptions,
+  type MutateFunction,
   type MutationObserverOptions,
   type MutationObserverResult,
 } from '@tanstack/query-core'
@@ -44,10 +44,9 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
      *
      * Throws synchronously if no `QueryClient` can be resolved.
      */
-    mutate: (
-      variables: TVariables,
-      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
-    ) => void
+    mutate: (...args: Parameters<
+      MutateFunction<TData, TError, TVariables, TOnMutateResult>
+    >) => void
     /**
      * Starts the mutation and returns the observer promise.
      *
@@ -190,14 +189,15 @@ class MutationController<
   }
 
   mutate = (
-    variables: TVariables,
-    mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ...args: Parameters<
+      MutateFunction<TData, TError, TVariables, TOnMutateResult>
+    >
   ): void => {
     if (!this.syncClient() || !this.observer) {
       throw createMissingQueryClientError()
     }
 
-    void this.observer.mutate(variables, mutateOptions).catch(() => {
+    void this.observer.mutate(args[0] as TVariables, args[1]).catch(() => {
       // Intentionally swallow in sync mutate path.
     })
   }
@@ -212,7 +212,7 @@ class MutationController<
       return Promise.reject(createMissingQueryClientError())
     }
 
-    return this.observer.mutate(...args)
+    return this.observer.mutate(args[0] as TVariables, args[1])
   }
 
   reset: MutationObserverResult<
