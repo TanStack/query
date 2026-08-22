@@ -6,6 +6,17 @@ import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
+
+export const exportedQueryOptionsGetter = queryOptions(() => ({
+  queryKey: ['invalid'],
+}))
+
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
     const key = queryKey()
@@ -38,6 +49,25 @@ describe('queryOptions', () => {
 
     const { data } = reactive(useQuery(options))
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+  it('should work when passed to query', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with select', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const key = queryKey()
