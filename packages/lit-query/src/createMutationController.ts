@@ -44,9 +44,11 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
      *
      * Throws synchronously if no `QueryClient` can be resolved.
      */
-    mutate: (...args: Parameters<
-      MutateFunction<TData, TError, TVariables, TOnMutateResult>
-    >) => void
+    mutate: (
+      ...args: Parameters<
+        MutateFunction<TData, TError, TVariables, TOnMutateResult>
+      >
+    ) => void
     /**
      * Starts the mutation and returns the observer promise.
      *
