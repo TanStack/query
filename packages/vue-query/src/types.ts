@@ -31,7 +31,7 @@ export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T
-    : T extends { __brand: infer _ }
+    : T extends Primitive
       ? T
       : T extends object
         ? {

@@ -373,5 +373,18 @@ describe('queryOptions', () => {
       }),
     )
     expectTypeOf(inlineData).toEqualTypeOf<{ id: PostId } | undefined>()
+
+    const brandedObjectOptions = queryOptions({
+      queryKey: [
+        'post',
+        { __brand: 'post' as const, postId: ref('123') },
+      ] as const,
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+    const { data: brandedObjectData } = reactive(useQuery(brandedObjectOptions))
+    expectTypeOf(brandedObjectData).toEqualTypeOf<{ id: PostId } | undefined>()
+    expectTypeOf(brandedObjectOptions.queryKey[1].postId).toMatchTypeOf<
+      string | ReturnType<typeof ref>
+    >()
   })
 })
