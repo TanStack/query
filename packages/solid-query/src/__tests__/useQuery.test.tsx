@@ -944,6 +944,81 @@ describe('useQuery', () => {
     return null
   })
 
+  it('should only reconcile when observer data changes', async () => {
+    const key = queryKey()
+    const firstData = { count: 1 }
+    const secondData = { count: 2 }
+    const thirdData = { count: 3 }
+    const queryResults = [firstData, secondData, secondData, thirdData]
+    const reconciliationInputs: Array<[number | undefined, number]> = []
+    let fetchCount = 0
+    const reconcileData = vi.fn(
+      (oldData: { count: number } | undefined, newData: { count: number }) => {
+        reconciliationInputs.push([oldData?.count, newData.count])
+        return reconcile(newData)(oldData)
+      },
+    )
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => queryResults[fetchCount++]!),
+        reconcile: reconcileData,
+      }))
+
+      return (
+        <div>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <span>data: {state.data?.count}</span>
+          <span>fetch status: {state.fetchStatus}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(reconcileData).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('fetch status: fetching')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(rendered.getByText('fetch status: idle')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(2)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('fetch status: fetching')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(2)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(rendered.getByText('fetch status: idle')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(2)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('fetch status: fetching')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(2)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 3')).toBeInTheDocument()
+    expect(rendered.getByText('fetch status: idle')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(3)
+    expect(reconciliationInputs).toEqual([
+      [undefined, 1],
+      [1, 2],
+      [2, 3],
+    ])
+  })
+
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
     const results: Array<UseQueryResult<string>> = []
