@@ -46,12 +46,9 @@ export function createMutation<
     observer.setOptions(options())
   })
 
-  const mutate: CreateMutateFunction<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  > = (...args) => {
+  const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = (
+    ...args
+  ) => {
     observer.mutate(args[0] as TVariables, args[1]).catch(noop)
   }
 
