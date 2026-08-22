@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { Suspense, startTransition, useDeferredValue } from 'react'
+import { startTransition, useDeferredValue } from 'react'
 import { QueryClient, useSuspenseQuery } from '..'
-import { renderWithClient } from './utils'
+import { renderWithSuspense } from './utils'
 
 describe('react transitions', () => {
   let queryClient: QueryClient
@@ -38,12 +38,7 @@ describe('react transitions', () => {
       )
     }
 
-    const rendered = await renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -83,12 +78,7 @@ describe('react transitions', () => {
       )
     }
 
-    const rendered = await renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
+    const rendered = await renderWithSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
