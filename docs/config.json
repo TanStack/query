@@ -118,6 +118,10 @@
               "to": "framework/svelte/overview"
             },
             {
+              "label": "Quick Start",
+              "to": "framework/svelte/quick-start"
+            },
+            {
               "label": "Installation",
               "to": "framework/svelte/installation"
             },
@@ -1555,12 +1559,8 @@
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (UI)",
-              "to": "framework/react/examples/optimistic-updates-ui"
-            },
-            {
-              "label": "Optimistic Updates (Cache)",
-              "to": "framework/react/examples/optimistic-updates-cache"
+              "label": "Optimistic Updates",
+              "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
               "label": "Pagination",
@@ -1637,6 +1637,10 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/react/examples/chat"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/react/examples/batching"
             }
           ]
         },

@@ -360,8 +360,9 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.includes(observer)) {
-      this.observers = this.observers.filter((x) => x !== observer)
+    const index = this.observers.indexOf(observer)
+    if (index !== -1) {
+      this.observers.splice(index, 1)
 
       if (!this.observers.length) {
         // If the transport layer does not support cancellation
@@ -703,7 +704,9 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.observers.forEach((observer) => {
+      // Keep the current iteration stable if an observer unsubscribes
+      // synchronously while it is being notified.
+      this.observers.slice().forEach((observer) => {
         observer.onQueryUpdate()
       })
 
