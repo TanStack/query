@@ -22,9 +22,9 @@ const mutationCache = new MutationCache({
 
 Its available methods are:
 
-- [`getAll`](#mutationcachegetall)
-- [`subscribe`](#mutationcachesubscribe)
-- [`clear`](#mutationcacheclear)
+- [`getAll`](#mutationcache-getall)
+- [`subscribe`](#mutationcache-subscribe)
+- [`clear`](#mutationcache-clear)
 
 **Options**
 

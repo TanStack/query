@@ -507,6 +507,5 @@ describe('mutationOptions', () => {
     const lastSnapshot = mutationStateArray[mutationStateArray.length - 1]!
     expect(lastSnapshot.length).toEqual(1)
     expect(lastSnapshot[0]?.data).toEqual('data1')
-    expect(lastSnapshot[1]).toBeFalsy()
   })
 })

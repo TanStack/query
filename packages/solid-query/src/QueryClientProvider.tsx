@@ -5,11 +5,14 @@ import {
   useContext,
 } from 'solid-js'
 import type { QueryClient } from './QueryClient'
-import type { JSX } from 'solid-js'
+import type { Accessor, JSX } from 'solid-js'
 
 export const QueryClientContext = createContext<
   (() => QueryClient) | undefined
 >(undefined)
+
+const queryClientContextError =
+  'No QueryClient set, use QueryClientProvider to set one'
 
 export const useQueryClient = (queryClient?: QueryClient) => {
   if (queryClient) {
@@ -18,10 +21,29 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   const client = useContext(QueryClientContext)
 
   if (!client) {
-    throw new Error('No QueryClient set, use QueryClientProvider to set one')
+    throw new Error(queryClientContextError)
   }
 
   return client()
+}
+
+export const useQueryClientResolver = (
+  queryClient?: Accessor<QueryClient | undefined>,
+): Accessor<QueryClient> => {
+  const contextClient = useContext(QueryClientContext)
+
+  return () => {
+    const resolvedClient = queryClient?.()
+    if (resolvedClient) {
+      return resolvedClient
+    }
+
+    if (!contextClient) {
+      throw new Error(queryClientContextError)
+    }
+
+    return contextClient()
+  }
 }
 
 export type QueryClientProviderProps = {

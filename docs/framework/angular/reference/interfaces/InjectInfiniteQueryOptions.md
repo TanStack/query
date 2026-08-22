@@ -3,8 +3,6 @@ id: InjectInfiniteQueryOptions
 title: InjectInfiniteQueryOptions
 ---
 
-# Interface: InjectInfiniteQueryOptions
-
 Defined in: [inject-infinite-query.ts:25](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L25)
 
 ## Properties

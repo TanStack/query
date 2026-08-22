@@ -3,8 +3,6 @@ id: QueryFeatures
 title: QueryFeatures
 ---
 
-# Type Alias: QueryFeatures
-
 ```ts
 type QueryFeatures = 
   | DevtoolsFeature

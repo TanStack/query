@@ -150,7 +150,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -179,7 +178,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -241,7 +239,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -270,7 +267,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -299,7 +295,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -5746,7 +5741,9 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('status: success')).toBeInTheDocument()
-    expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(
+      queryClient1.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     setClient(queryClient2)

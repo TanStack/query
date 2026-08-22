@@ -3,8 +3,6 @@ id: createMutationController
 title: createMutationController
 ---
 
-# Function: createMutationController()
-
 ```ts
 function createMutationController<TData, TError, TVariables, TOnMutateResult>(
    host,
