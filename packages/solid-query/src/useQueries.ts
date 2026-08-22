@@ -186,7 +186,7 @@ type QueriesResults<
 
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult extends object = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -223,24 +223,20 @@ export function useQueries<
       : undefined,
   )
 
-  const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
-  )
+  // The store always holds the raw, uncombined results, because the resources
+  // and proxies below are keyed by query index. `combine` is applied on top of
+  // it right before the result is handed to the caller, so the combined result
+  // of the observer is not needed here.
+  const optimisticResult = () =>
+    observer.getOptimisticResult(defaultedQueries(), undefined)[0]
+
+  const [state, setState] =
+    createStore<Array<QueryObserverResult>>(optimisticResult())
 
   createRenderEffect(
     on(
       () => queriesOptions().queries.length,
-      () =>
-        setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
+      () => setState(optimisticResult()),
     ),
   )
 
@@ -277,7 +273,6 @@ export function useQueries<
           for (let index = 0; index < dataResources_.length; index++) {
             const dataResource = dataResources_[index]!
             const unwrappedResult = { ...unwrap(result[index]) }
-            // @ts-expect-error typescript pedantry regarding the possible range of index
             setState(index, unwrap(unwrappedResult))
             dataResource[1].mutate(() => unwrap(state[index]!.data))
             dataResource[1].refetch()
@@ -340,5 +335,65 @@ export function useQueries<
   const [proxyState, setProxyState] = createStore(getProxies())
   createRenderEffect(() => setProxyState(getProxies()))
 
-  return proxyState as TCombinedResult
+  // Whether `combine` is used has to be decided once, because a component
+  // cannot hand out a different value later on. Removing it after the fact is
+  // still handled by the memo below, which falls back to the results array.
+  if (!queriesOptions().combine) {
+    return proxyState as unknown as TCombinedResult
+  }
+
+  // `combine` may return any shape, so the combined result cannot live in a
+  // store. It is derived from the tracked results instead, and read through a
+  // proxy so that consumers stay subscribed to the properties they access.
+  const combinedResult = createMemo(() => {
+    const combine = queriesOptions().combine
+    return combine
+      ? combine(proxyState as unknown as QueriesResults<T>)
+      : (proxyState as unknown as TCombinedResult)
+  })
+
+  // A proxy target cannot be swapped later on, so its kind is taken from the
+  // first combined result to keep `Array.isArray` and `JSON.stringify` in line
+  // with what `combine` returns. Every read is forwarded to the memo, but the
+  // properties the target owns itself - `length`, if it is an array - have to
+  // keep being reported even when a later combined result no longer has them,
+  // because they are non-configurable.
+  const target = (Array.isArray(combinedResult()) ? [] : {}) as TCombinedResult
+
+  const getTargetDescriptor = (property: PropertyKey) =>
+    Reflect.getOwnPropertyDescriptor(target, property)
+
+  return new Proxy(target, {
+    get: (_, property) => Reflect.get(combinedResult(), property),
+    has: (_, property) =>
+      Reflect.has(combinedResult(), property) ||
+      getTargetDescriptor(property) !== undefined,
+    ownKeys: () => [
+      ...new Set([
+        ...Reflect.ownKeys(combinedResult()),
+        ...Reflect.ownKeys(target),
+      ]),
+    ],
+    getOwnPropertyDescriptor: (_, property) => {
+      const descriptor = Reflect.getOwnPropertyDescriptor(
+        combinedResult(),
+        property,
+      )
+      const targetDescriptor = getTargetDescriptor(property)
+
+      if (targetDescriptor) {
+        // Report the target's own flags, or the proxy invariants are violated.
+        return descriptor
+          ? {
+              ...targetDescriptor,
+              value: Reflect.get(combinedResult(), property),
+            }
+          : targetDescriptor
+      }
+
+      // Properties the target does not own have to stay configurable, again to
+      // satisfy the proxy invariants.
+      return descriptor && { ...descriptor, configurable: true }
+    },
+  })
 }
