@@ -4,7 +4,7 @@
 export * from '@tanstack/query-core'
 
 // Svelte Query
-export * from './types.js'
+export type * from './types.js'
 export * from './context.js'
 
 export { createQuery } from './createQuery.js'
