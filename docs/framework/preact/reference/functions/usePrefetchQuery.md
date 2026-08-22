@@ -4,10 +4,10 @@ title: usePrefetchQuery
 ---
 
 ```ts
-function usePrefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): void;
+function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchQuery.tsx:6](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L6)
+Defined in: [preact-query/src/usePrefetchQuery.tsx:7](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L7)
 
 ## Type Parameters
 
@@ -23,6 +23,10 @@ Defined in: [preact-query/src/usePrefetchQuery.tsx:6](https://github.com/TanStac
 
 `TData` = `TQueryFnData`
 
+### TQueryData
+
+`TQueryData` = `TQueryFnData`
+
 ### TQueryKey
 
 `TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
@@ -31,7 +35,7 @@ Defined in: [preact-query/src/usePrefetchQuery.tsx:6](https://github.com/TanStac
 
 ### options
 
-[`UsePrefetchQueryOptions`](../interfaces/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`UsePrefetchQueryOptions`](../interfaces/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
 ### queryClient?
 

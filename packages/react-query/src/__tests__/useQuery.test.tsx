@@ -124,7 +124,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -153,10 +152,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
@@ -216,7 +212,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -245,7 +240,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -274,11 +268,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
-    expect(states[1]!.promise).toEqual(states[2]!.promise)
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
