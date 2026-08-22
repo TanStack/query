@@ -36,8 +36,8 @@ export function useMutation<
     TError,
     TVariables,
     TOnMutateResult
-  > = (variables, mutateOptions) => {
-    observer.mutate(variables, mutateOptions).catch(noop)
+  > = (...args) => {
+    observer.mutate(args[0] as TVariables, args[1]).catch(noop)
   }
 
   const [state, setState] = createStore<

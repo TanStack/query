@@ -6,6 +6,7 @@ export {
   defaultShouldDehydrateMutation,
   defaultShouldDehydrateQuery,
   dehydrate,
+  dehydrateQuery,
   hydrate,
 } from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
