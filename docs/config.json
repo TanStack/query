@@ -1407,88 +1407,84 @@
           "label": "preact",
           "children": [
             {
-              "label": "Preact Reference",
-              "to": "framework/preact/reference/index"
-            },
-            {
               "label": "useQuery",
-              "to": "framework/preact/reference/functions/useQuery"
+              "to": "framework/preact/reference/useQuery"
             },
             {
               "label": "useQueries",
-              "to": "framework/preact/reference/functions/useQueries"
+              "to": "framework/preact/reference/useQueries"
             },
             {
               "label": "useInfiniteQuery",
-              "to": "framework/preact/reference/functions/useInfiniteQuery"
+              "to": "framework/preact/reference/useInfiniteQuery"
             },
             {
               "label": "useMutation",
-              "to": "framework/preact/reference/functions/useMutation"
+              "to": "framework/preact/reference/useMutation"
             },
             {
               "label": "useIsFetching",
-              "to": "framework/preact/reference/functions/useIsFetching"
+              "to": "framework/preact/reference/useIsFetching"
             },
             {
               "label": "useIsMutating",
-              "to": "framework/preact/reference/functions/useIsMutating"
+              "to": "framework/preact/reference/useIsMutating"
             },
             {
               "label": "useMutationState",
-              "to": "framework/preact/reference/functions/useMutationState"
+              "to": "framework/preact/reference/useMutationState"
             },
             {
               "label": "useSuspenseQuery",
-              "to": "framework/preact/reference/functions/useSuspenseQuery"
+              "to": "framework/preact/reference/useSuspenseQuery"
             },
             {
               "label": "useSuspenseInfiniteQuery",
-              "to": "framework/preact/reference/functions/useSuspenseInfiniteQuery"
+              "to": "framework/preact/reference/useSuspenseInfiniteQuery"
             },
             {
               "label": "useSuspenseQueries",
-              "to": "framework/preact/reference/functions/useSuspenseQueries"
+              "to": "framework/preact/reference/useSuspenseQueries"
             },
             {
               "label": "QueryClientProvider",
-              "to": "framework/preact/reference/functions/QueryClientProvider"
+              "to": "framework/preact/reference/QueryClientProvider"
             },
             {
               "label": "useQueryClient",
-              "to": "framework/preact/reference/functions/useQueryClient"
+              "to": "framework/preact/reference/useQueryClient"
             },
             {
               "label": "queryOptions",
-              "to": "framework/preact/reference/functions/queryOptions"
+              "to": "framework/preact/reference/queryOptions"
             },
             {
               "label": "infiniteQueryOptions",
-              "to": "framework/preact/reference/functions/infiniteQueryOptions"
+              "to": "framework/preact/reference/infiniteQueryOptions"
             },
             {
               "label": "mutationOptions",
-              "to": "framework/preact/reference/functions/mutationOptions"
+              "to": "framework/preact/reference/mutationOptions"
             },
             {
               "label": "usePrefetchQuery",
-              "to": "framework/preact/reference/functions/usePrefetchQuery"
+              "to": "framework/preact/reference/usePrefetchQuery"
             },
             {
               "label": "usePrefetchInfiniteQuery",
-              "to": "framework/preact/reference/functions/usePrefetchInfiniteQuery"
+              "to": "framework/preact/reference/usePrefetchInfiniteQuery"
             },
             {
               "label": "QueryErrorResetBoundary",
-              "to": "framework/preact/reference/functions/QueryErrorResetBoundary"
+              "to": "framework/preact/reference/QueryErrorResetBoundary"
             },
             {
               "label": "useQueryErrorResetBoundary",
-              "to": "framework/preact/reference/functions/useQueryErrorResetBoundary"
+              "to": "framework/preact/reference/useQueryErrorResetBoundary"
             },
             {
               "label": "hydration",
-              "to": "framework/preact/reference/functions/HydrationBoundary"
+              "to": "framework/preact/reference/hydration"
             }
           ]
         }

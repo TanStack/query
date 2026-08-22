@@ -5,6 +5,8 @@ title: useQueryErrorResetBoundary
 
 This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
 
+[//]: # 'ReactErrorBoundaryExample'
+
 ```tsx
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -26,3 +28,5 @@ const App = () => {
   )
 }
 ```
+
+[//]: # 'ReactErrorBoundaryExample'
