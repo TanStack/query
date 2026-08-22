@@ -3,11 +3,19 @@ id: UsePrefetchQueryOptions
 title: UsePrefetchQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L48)
+```ts
+type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+```
 
-## Extends
+Defined in: [preact-query/src/types.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L50)
 
-- `OmitKeyof`\<`FetchQueryOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\>
+## Type Declaration
+
+### queryFn?
+
+```ts
+optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
+```
 
 ## Type Parameters
 
@@ -23,16 +31,10 @@ Defined in: [preact-query/src/types.ts:48](https://github.com/TanStack/query/blo
 
 `TData` = `TQueryFnData`
 
+### TQueryData
+
+`TQueryData` = `TQueryFnData`
+
 ### TQueryKey
 
 `TQueryKey` *extends* `QueryKey` = `QueryKey`
-
-## Properties
-
-### queryFn?
-
-```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
-```
-
-Defined in: [preact-query/src/types.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L57)
