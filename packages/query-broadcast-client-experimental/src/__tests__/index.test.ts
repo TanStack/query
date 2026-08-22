@@ -54,6 +54,9 @@ describe('broadcastQueryClient', () => {
 
   describe('incoming message handling', () => {
     it('should keep broadcasting local changes after applying an incoming message throws', () => {
+      const remoteKey = queryKey()
+      const localKey = queryKey()
+
       broadcastQueryClient({
         queryClient,
         broadcastChannel: 'test_channel',
@@ -69,8 +72,8 @@ describe('broadcastQueryClient', () => {
       expect(() => {
         lastCreatedChannel.onmessage?.({
           type: 'added',
-          queryHash: '["remote"]',
-          queryKey: ['remote'],
+          queryHash: JSON.stringify(remoteKey),
+          queryKey: remoteKey,
           state: { data: 1 },
         })
       }).toThrow('boom')
@@ -80,12 +83,15 @@ describe('broadcastQueryClient', () => {
 
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
-      queryClient.setQueryData(['local'], { value: 1 })
+      queryClient.setQueryData(localKey, { value: 1 })
 
       expect(mockPostMessage).toHaveBeenCalled()
     })
 
     it('should keep broadcasting local changes after query.setState throws for an existing query', () => {
+      const existingKey = queryKey()
+      const localKey = queryKey()
+
       broadcastQueryClient({
         queryClient,
         broadcastChannel: 'test_channel',
@@ -93,8 +99,8 @@ describe('broadcastQueryClient', () => {
 
       // Populate the cache with an existing query so the incoming message
       // below is applied via `query.setState` rather than `queryCache.build`.
-      queryClient.setQueryData(['existing'], { value: 0 })
-      const existingQuery = queryCache.find({ queryKey: ['existing'] })!
+      queryClient.setQueryData(existingKey, { value: 0 })
+      const existingQuery = queryCache.find({ queryKey: existingKey })!
 
       const explodingUnsubscribe = queryCache.subscribe(() => {
         throw new Error('boom from an unrelated cache listener')
@@ -104,7 +110,7 @@ describe('broadcastQueryClient', () => {
         lastCreatedChannel.onmessage?.({
           type: 'updated',
           queryHash: existingQuery.queryHash,
-          queryKey: ['existing'],
+          queryKey: existingKey,
           state: { data: 2 },
         })
       }).toThrow('boom')
@@ -112,7 +118,7 @@ describe('broadcastQueryClient', () => {
       explodingUnsubscribe()
       mockPostMessage.mockClear()
 
-      queryClient.setQueryData(['local2'], { value: 1 })
+      queryClient.setQueryData(localKey, { value: 1 })
 
       expect(mockPostMessage).toHaveBeenCalled()
     })
