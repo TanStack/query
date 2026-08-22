@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, vi, it } from 'vitest'
 
 import {
   HydrationBoundary,
+  IsRestoringProvider,
   QueryClient,
   QueryClientProvider,
   dehydrate,
@@ -167,13 +168,15 @@ describe('Preact hydration', () => {
       queryClient.clear()
     })
 
-    // When we hydrate in transitions that are later aborted, it could be
-    // confusing to both developers and users if we suddenly updated existing
-    // state on the screen (why did this update when it was not stale, nothing
-    // remounted, I didn't change tabs etc?).
-    // Any queries that does not exist in the cache yet can still be hydrated
-    // since they don't have any observers on the current page that would update.
-    it('should hydrate new but not existing queries if transition is aborted', async () => {
+    // Preact has no equivalent of a render that never happened. A tree that
+    // suspends is diffed and committed, layout effects and all, and only then
+    // gets swapped out for the fallback. What keeps the current page intact is
+    // that queries with observers wait for a passive effect, and those never
+    // run for a tree that suspended, see the test further down with a sidebar
+    // that survives the transition. Here the rerender introduces a new root,
+    // which remounts everything and unsubscribes the observer before the
+    // boundary even renders, so by then this is a query nobody is watching.
+    it('should hydrate an unobserved query even if the render that carried it suspends', async () => {
       const initialDehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
@@ -235,6 +238,11 @@ describe('Preact hydration', () => {
         )
 
         expect(rendered.getByText('loading')).toBeInTheDocument()
+        // The tree committed before the fallback took over, so its data is in
+        // the cache even though none of it made it to the screen
+        expect(queryClient.getQueryData(stringKey)).toEqual([
+          'should not change',
+        ])
       })
 
       startTransition(() => {
@@ -247,21 +255,15 @@ describe('Preact hydration', () => {
           </QueryClientProvider>,
         )
 
-        // This query existed before the transition so it should stay the same
-        expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
-        expect(
-          rendered.queryByText('should not change'),
-        ).not.toBeInTheDocument()
+        // Both pages render what the cache holds, the query that already
+        // existed included
+        expect(rendered.getByText('should not change')).toBeInTheDocument()
+        expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()
         // New query data should be available immediately because it was
         // hydrated in the previous transition, even though the new dehydrated
         // state did not contain it
         expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
       })
-
-      await vi.advanceTimersByTimeAsync(20)
-      // It should stay the same even after effects have had a chance to run
-      expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
-      expect(rendered.queryByText('should not change')).not.toBeInTheDocument()
 
       queryClient.clear()
     })
@@ -309,6 +311,286 @@ describe('Preact hydration', () => {
       queryClient.clear()
       newClientQueryClient.clear()
     })
+  })
+
+  it('should not refetch an inactive query when hydrated data is fresh', async () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'client'))
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: 1000,
+      })
+      return <div>{data}</div>
+    }
+
+    // First visit fetches and caches the data
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('client')).toBeInTheDocument()
+
+    // Navigate away, the cached data goes stale while the page is unmounted
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <div />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(2000)
+
+    // A loader fetches fresh data for the revisit and dehydrates it
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    queryFn.mockClear()
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    // Hydration lands before the remounted useQuery subscribes, so it uses the
+    // fresh data instead of fetching it all over again
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('loader')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  it('should not refetch a query that remounts in the same commit as the boundary', async () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'client'))
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: 1000,
+      })
+      return <div>{data}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('client')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(2000)
+
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    queryFn.mockClear()
+    // Wrapping the page in the boundary remounts it, so the old observer goes
+    // away and a new one subscribes in one go. Preact tears the old tree down
+    // while it diffs, so by the time the boundary commits the query has no
+    // subscribers left
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('loader')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  it('should not hydrate a query that is on screen while a sibling suspends', async () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+
+    function Sidebar() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'sidebar'),
+        staleTime: Infinity,
+      })
+      return <div>{data}</div>
+    }
+
+    function Thrower(): never {
+      throw new Promise(() => {
+        // Never resolve
+      })
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Sidebar />
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('sidebar')).toBeInTheDocument()
+
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    // The route the app is navigating to suspends and never gets there, while
+    // the sidebar stays mounted and keeps rendering the query
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <Sidebar />
+        <Suspense fallback="loading">
+          <HydrationBoundary state={dehydratedState}>
+            <Thrower />
+          </HydrationBoundary>
+        </Suspense>
+      </QueryClientProvider>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('sidebar')).toBeInTheDocument()
+    expect(queryClient.getQueryData(key)).toBe('sidebar')
+
+    queryClient.clear()
+  })
+
+  it('should not hydrate an unsubscribed query while restoring', async () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'cached'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'client'),
+      })
+      return <div>{data}</div>
+    }
+
+    function Thrower(): never {
+      throw new Promise(() => {
+        // Never resolve
+      })
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <IsRestoringProvider value={true}>
+          <Page />
+        </IsRestoringProvider>
+      </QueryClientProvider>,
+    )
+    expect(rendered.getByText('cached')).toBeInTheDocument()
+
+    // Nothing subscribes while restoring, so a cache entry that is on screen
+    // looks exactly like one nobody is using
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <IsRestoringProvider value={true}>
+          <Page />
+          <Suspense fallback="loading">
+            <HydrationBoundary state={dehydratedState}>
+              <Thrower />
+            </HydrationBoundary>
+          </Suspense>
+        </IsRestoringProvider>
+      </QueryClientProvider>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('cached')).toBeInTheDocument()
+    expect(queryClient.getQueryData(key)).toBe('cached')
+
+    queryClient.clear()
+  })
+
+  it('should not deserialize the same query twice', async () => {
+    const key = queryKey()
+    const deserializeData = vi.fn((data: any) => data)
+    const queryClient = new QueryClient({
+      defaultOptions: { hydrate: { deserializeData } },
+    })
+
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'cached'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const loaderClient = new QueryClient()
+    loaderClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'loader'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(loaderClient)
+    loaderClient.clear()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'client'),
+        staleTime: 1000,
+      })
+      return <div>{data}</div>
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(11)
+
+    // The layout effect took care of this one, the passive effect has nothing
+    // left to do with it
+    expect(deserializeData).toHaveBeenCalledTimes(1)
+
+    queryClient.clear()
   })
 
   it('should not hydrate queries if state is null', async () => {
