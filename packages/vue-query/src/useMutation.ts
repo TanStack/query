@@ -17,7 +17,6 @@ import type {
   DefaultError,
   DistributiveOmit,
   MutateFunction,
-  MutateOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep, MutationOptions } from './types'
@@ -108,10 +107,11 @@ export function useMutation<
   })
 
   const mutate = (
-    variables: TVariables,
-    mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ...args: Parameters<
+      MutateFunction<TData, TError, TVariables, TOnMutateResult>
+    >
   ) => {
-    observer.mutate(variables, mutateOptions).catch(() => {
+    observer.mutate(args[0] as TVariables, args[1]).catch(() => {
       // This is intentional
     })
   }

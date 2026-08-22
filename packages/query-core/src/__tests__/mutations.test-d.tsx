@@ -46,6 +46,54 @@ describe('MutateFunction', () => {
     })
   })
 
+  it('unknown variables', () => {
+    const mutate = {} as MutateFunction<
+      unknown,
+      DefaultError,
+      unknown,
+      unknown
+    >
+
+    expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<unknown>()
+
+    expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+      undefined | MutateOptions<unknown, DefaultError, unknown, unknown>
+    >()
+
+    mutate() // can be called with no arguments
+  })
+
+  it('any variables', () => {
+    const mutate = {} as MutateFunction<unknown, DefaultError, any, unknown>
+
+    expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<any>()
+
+    expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+      undefined | MutateOptions<unknown, DefaultError, any, unknown>
+    >()
+
+    mutate() // can be called with no arguments
+  })
+
+  it('void union variables', () => {
+    const mutate = {} as MutateFunction<
+      unknown,
+      DefaultError,
+      void | string,
+      unknown
+    >
+
+    expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<
+      void | string | undefined
+    >()
+
+    expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+      undefined | MutateOptions<unknown, DefaultError, void | string, unknown>
+    >()
+
+    mutate() // can be called with no arguments
+  })
+
   it('required non-undefinable variables', () => {
     const mutate = {} as MutateFunction<unknown, DefaultError, number, unknown>
 
@@ -108,6 +156,57 @@ describe('MutateFunction', () => {
           expectTypeOf(e).toEqualTypeOf<DefaultError>()
         },
       })
+    })
+
+    it('unknown variables', () => {
+      const mutate = {} as (
+        ...options: Parameters<
+          MutateFunction<unknown, DefaultError, unknown, unknown>
+        >
+      ) => void
+
+      expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<unknown>()
+
+      expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+        undefined | MutateOptions<unknown, DefaultError, unknown, unknown>
+      >()
+
+      mutate() // can be called with no arguments
+    })
+
+    it('any variables', () => {
+      const mutate = {} as (
+        ...options: Parameters<
+          MutateFunction<unknown, DefaultError, any, unknown>
+        >
+      ) => void
+
+      expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<any>()
+
+      expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+        undefined | MutateOptions<unknown, DefaultError, any, unknown>
+      >()
+
+      mutate() // can be called with no arguments
+    })
+
+    it('void union variables', () => {
+      const mutate = {} as (
+        ...options: Parameters<
+          MutateFunction<unknown, DefaultError, void | string, unknown>
+        >
+      ) => void
+
+      expectTypeOf<Parameters<typeof mutate>[0]>().toEqualTypeOf<
+        void | string | undefined
+      >()
+
+      expectTypeOf<Parameters<typeof mutate>[1]>().toEqualTypeOf<
+        | undefined
+        | MutateOptions<unknown, DefaultError, void | string, unknown>
+      >()
+
+      mutate() // can be called with no arguments
     })
 
     it('required non-undefinable variables', () => {
