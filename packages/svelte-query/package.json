@@ -52,7 +52,7 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/package": "^2.5.8",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/svelte": "^5.2.8",

@@ -3,13 +3,19 @@ id: UsePrefetchQueryOptions
 title: UsePrefetchQueryOptions
 ---
 
-# Interface: UsePrefetchQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
+```ts
+type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+```
 
-Defined in: [preact-query/src/types.ts:49](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L49)
+Defined in: [preact-query/src/types.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L50)
 
-## Extends
+## Type Declaration
 
-- `OmitKeyof`\<`FetchQueryOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\>
+### queryFn?
+
+```ts
+optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
+```
 
 ## Type Parameters
 
@@ -25,16 +31,10 @@ Defined in: [preact-query/src/types.ts:49](https://github.com/theVedanta/query/b
 
 `TData` = `TQueryFnData`
 
+### TQueryData
+
+`TQueryData` = `TQueryFnData`
+
 ### TQueryKey
 
 `TQueryKey` *extends* `QueryKey` = `QueryKey`
-
-## Properties
-
-### queryFn?
-
-```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
-```
-
-Defined in: [preact-query/src/types.ts:58](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L58)

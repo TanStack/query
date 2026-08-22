@@ -3,9 +3,7 @@ id: QueryErrorResetBoundaryProps
 title: QueryErrorResetBoundaryProps
 ---
 
-# Interface: QueryErrorResetBoundaryProps
-
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:43](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L43)
+Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L44)
 
 ## Properties
 
@@ -17,4 +15,4 @@ children:
   | QueryErrorResetBoundaryFunction;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:44](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L44)
+Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:45](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L45)

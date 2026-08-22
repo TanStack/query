@@ -1,24 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2022", "DOM"],
-    "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "noUncheckedIndexedAccess": true,
-    "forceConsistentCasingInFileNames": true,
-    "emitDeclarationOnly": false,
+    "outDir": "./dist-ts",
     "rootDir": ".",
-    "outDir": "dist-ts"
+    "lib": ["ES2022", "DOM"]
   },
-  "include": ["src/**/*.ts", "*.config.*", "package.json"],
-  "exclude": ["dist", "node_modules"],
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
   "references": [{ "path": "../query-core" }]
 }

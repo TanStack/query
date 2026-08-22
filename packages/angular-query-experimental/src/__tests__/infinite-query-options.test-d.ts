@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infinite-query-options'
 import { injectInfiniteQuery } from '../inject-infinite-query'
 import { injectQuery } from '../inject-query'
@@ -9,6 +9,15 @@ import type {
   InfiniteData,
   InitialDataFunction,
 } from '@tanstack/query-core'
+
+// Regression test for exported infiniteQueryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['invalid'],
+  getNextPageParam: () => 1,
+  initialPageParam: 1,
+})
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
@@ -67,6 +76,61 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
+
+  it('should work when passed to infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
+
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const key = queryKey()
     const { queryKey: tagged } = infiniteQueryOptions({

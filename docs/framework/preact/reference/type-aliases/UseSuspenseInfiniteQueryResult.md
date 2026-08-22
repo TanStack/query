@@ -3,13 +3,11 @@ id: UseSuspenseInfiniteQueryResult
 title: UseSuspenseInfiniteQueryResult
 ---
 
-# Type Alias: UseSuspenseInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
 ```
 
-Defined in: [preact-query/src/types.ts:183](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L183)
+Defined in: [preact-query/src/types.ts:182](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L182)
 
 ## Type Parameters
 
