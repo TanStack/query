@@ -43,7 +43,6 @@ const {
     initialData,
     initialDataUpdatedAt,
     meta,
-    queryKeyHashFn,
     refetchInterval,
     refetchIntervalInBackground,
     refetchOnMount,
@@ -242,9 +241,6 @@ function App() {
   - ##### `meta: Record<string, unknown>`
     - Optional
     - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
-  - ##### `queryKeyHashFn: (queryKey: QueryKey) => string`
-    - Optional
-    - If specified, this function is used to hash the `queryKey` to a string.
   - ##### `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
     - Optional
     - If set to a number, all queries will continuously refetch at this frequency in milliseconds

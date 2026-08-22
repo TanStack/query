@@ -2,8 +2,10 @@ import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
 import type {
+  CacheKeyConfig,
   DefaultError,
   MutationFunctionContext,
+  MutationKey,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -111,6 +113,10 @@ export class Mutation<
 
     this.setOptions(config.options)
     this.scheduleGc()
+  }
+
+  get cacheKeyConfig(): Readonly<CacheKeyConfig<MutationKey>> {
+    return this.#mutationCache.config
   }
 
   setOptions(

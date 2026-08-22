@@ -312,6 +312,44 @@ describe('queryCache', () => {
       })
       expect(queryCache.findAll().length).toBe(2)
     })
+
+    it('should use the shared cache serializer when clients share a cache', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.getTime() : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testCache = new QueryCache({ valueSerializer, hashFn })
+      const stringClient = new QueryClient({
+        queryCache: testCache,
+      })
+      const numberClient = new QueryClient({
+        queryCache: testCache,
+      })
+      const date = new Date(0)
+
+      testCache.build(stringClient, { queryKey: ['string', date] })
+      const numberQuery = testCache.build(numberClient, {
+        queryKey: ['number', date],
+      })
+      testCache.build(numberClient, { queryKey: ['other', date] })
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(testCache.find({ queryKey: ['number', date] })).toBe(numberQuery)
+      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(hashFn).toHaveBeenCalledTimes(2)
+
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(
+        testCache.findAll({ queryKey: ['number', date], exact: true }),
+      ).toEqual([numberQuery])
+      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(hashFn).toHaveBeenCalledTimes(3)
+
+      stringClient.clear()
+    })
   })
 
   describe('QueryCacheConfig error callbacks', () => {
@@ -362,9 +400,7 @@ describe('queryCache', () => {
     it('should compute queryHash from queryKey when queryHash is not provided', () => {
       const key = queryKey()
 
-      const query = queryCache.build(queryClient, {
-        queryKey: key,
-      })
+      const query = queryCache.build(queryClient, { queryKey: key })
 
       expect(query.queryHash).toBe(hashKey(key))
     })

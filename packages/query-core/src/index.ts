@@ -10,13 +10,16 @@ export {
 } from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
-export type { MutationCacheNotifyEvent } from './mutationCache'
+export type {
+  MutationCacheConfig,
+  MutationCacheNotifyEvent,
+} from './mutationCache'
 export { MutationObserver } from './mutationObserver'
 export { defaultScheduler, notifyManager } from './notifyManager'
 export { onlineManager } from './onlineManager'
 export { QueriesObserver } from './queriesObserver'
 export { QueryCache } from './queryCache'
-export type { QueryCacheNotifyEvent } from './queryCache'
+export type { QueryCacheConfig, QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
 export { CancelledError, isCancelledError } from './retryer'
@@ -35,6 +38,7 @@ export {
   noop,
   partialMatchKey,
   replaceEqualDeep,
+  serializeCacheKey,
   shouldThrowError,
   skipToken,
 } from './utils'

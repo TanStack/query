@@ -1,5 +1,9 @@
 import { timeoutManager } from './timeoutManager'
 import type {
+  CacheKey,
+  CacheKeyConfig,
+  CacheKeyHashFunction,
+  CacheKeyValueSerializer,
   DefaultError,
   FetchStatus,
   MutationKey,
@@ -154,11 +158,18 @@ export function matchQuery(
   } = filters
 
   if (queryKey) {
+    const config = query.cacheKeyConfig
+
     if (exact) {
-      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+      if (
+        query.queryHash !==
+        hashCacheKey(queryKey, config, query.options.queryKeyHashFn)
+      ) {
         return false
       }
-    } else if (!partialMatchKey(query.queryKey, queryKey)) {
+    } else if (
+      !partialMatchKey(query.queryKey, queryKey, config.valueSerializer)
+    ) {
       return false
     }
   }
@@ -197,11 +208,23 @@ export function matchMutation(
     if (!mutation.options.mutationKey) {
       return false
     }
+
+    const config = mutation.cacheKeyConfig
+
     if (exact) {
-      if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
+      if (
+        hashCacheKey(mutation.options.mutationKey, config) !==
+        hashCacheKey(mutationKey, config)
+      ) {
         return false
       }
-    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+    } else if (
+      !partialMatchKey(
+        mutation.options.mutationKey,
+        mutationKey,
+        config.valueSerializer,
+      )
+    ) {
       return false
     }
   }
@@ -217,20 +240,12 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
-  queryKey: TQueryKey,
-  options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
-): string {
-  const hashFn = options?.queryKeyHashFn || hashKey
-  return hashFn(queryKey)
-}
-
 /**
- * Default query & mutation keys hash function.
+ * Default cache key hash function.
  * Hashes the value into a stable hash.
  */
-export function hashKey(queryKey: QueryKey | MutationKey): string {
-  return JSON.stringify(queryKey, (_, val) =>
+export function hashKey(cacheKey: CacheKey): string {
+  return JSON.stringify(cacheKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
           .sort()
@@ -243,10 +258,100 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
 }
 
 /**
+ * Serializes a cache key, then hashes it into the cache identity string.
+ */
+export function hashCacheKey(
+  key: CacheKey,
+  config: CacheKeyConfig,
+  legacyHashFn?: CacheKeyHashFunction<any>,
+): string {
+  const serializedKey = serializeCacheKey(key, config.valueSerializer)
+
+  return (
+    config.hashFn?.(serializedKey) ??
+    legacyHashFn?.(serializedKey) ??
+    hashKey(serializedKey)
+  )
+}
+
+const cacheKeySerializationCache = new WeakMap<
+  CacheKeyValueSerializer,
+  WeakMap<CacheKey, CacheKey>
+>()
+
+function serializeCacheKeyValue(
+  value: unknown,
+  serializer: CacheKeyValueSerializer,
+  depth = 0,
+): unknown {
+  if (depth > 500) return value
+
+  if (isPlainArray(value)) {
+    return value.map((item) =>
+      serializeCacheKeyValue(item, serializer, depth + 1),
+    )
+  }
+
+  if (isPlainObject(value)) {
+    const result: Record<string, unknown> = {}
+    for (const key of Object.keys(value)) {
+      result[key] = serializeCacheKeyValue(value[key], serializer, depth + 1)
+    }
+    return result
+  }
+
+  const serializedValue = serializer(value)
+
+  return serializedValue !== value &&
+    (isPlainArray(serializedValue) || isPlainObject(serializedValue))
+    ? serializeCacheKeyValue(serializedValue, serializer, depth + 1)
+    : serializedValue
+}
+
+export function serializeCacheKey(
+  key: CacheKey,
+  serializer: CacheKeyValueSerializer | undefined,
+): CacheKey {
+  if (!serializer) {
+    return key
+  }
+
+  let serializerCache = cacheKeySerializationCache.get(serializer)
+  if (!serializerCache) {
+    serializerCache = new WeakMap<CacheKey, CacheKey>()
+    cacheKeySerializationCache.set(serializer, serializerCache)
+  }
+
+  const cachedKey = serializerCache.get(key)
+  if (cachedKey) {
+    return cachedKey
+  }
+
+  const serializedKey = serializeCacheKeyValue(key, serializer) as CacheKey
+  serializerCache.set(key, serializedKey)
+  return serializedKey
+}
+
+/**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
-export function partialMatchKey(a: any, b: any): boolean {
+export function partialMatchKey(
+  a: CacheKey,
+  b: CacheKey,
+  valueSerializer?: CacheKeyValueSerializer,
+): boolean
+export function partialMatchKey(
+  a: any,
+  b: any,
+  valueSerializer?: CacheKeyValueSerializer,
+): boolean {
+  a = serializeCacheKey(a, valueSerializer)
+  b = serializeCacheKey(b, valueSerializer)
+
+  return partialMatchKeyImpl(a, b)
+}
+
+function partialMatchKeyImpl(a: any, b: any): boolean {
   if (a === b) {
     return true
   }
@@ -258,16 +363,20 @@ export function partialMatchKey(a: any, b: any): boolean {
   if (a && b && typeof a === 'object' && typeof b === 'object') {
     if (Array.isArray(a) && Array.isArray(b)) {
       for (let i = 0; i < b.length; i++) {
-        if (!partialMatchKey(a[i], b[i])) {
+        if (!partialMatchKeyImpl(a[i], b[i])) {
           return false
         }
       }
       return true
     }
 
+    if (!isPlainObject(a) || !isPlainObject(b)) {
+      return false
+    }
+
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
-      if (!partialMatchKey(a[key], b[key])) {
+      if (!partialMatchKeyImpl(a[key], b[key])) {
         return false
       }
     }

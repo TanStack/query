@@ -348,6 +348,56 @@ describe('mutationCache', () => {
       ).toEqual([mutation2])
       expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
     })
+
+    it('should use the shared cache serializer when clients share a cache', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.getTime() : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testCache = new MutationCache({ valueSerializer, hashFn })
+      const stringClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const numberClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const date = new Date(0)
+
+      testCache.build(stringClient, {
+        mutationKey: ['string', date],
+      })
+      const numberMutation = testCache.build(numberClient, {
+        mutationKey: ['number', date],
+      })
+      testCache.build(numberClient, {
+        mutationKey: ['other', date],
+      })
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      // `find` defaults to `exact`, so it hashes the filter key and the key of
+      // each mutation until it finds a match. Serialized keys are memoized per
+      // key reference, thus the filter key is serialized only once.
+      expect(testCache.find({ mutationKey: ['number', date] })).toBe(
+        numberMutation,
+      )
+      expect(valueSerializer).toHaveBeenCalledTimes(6)
+      expect(hashFn).toHaveBeenCalledTimes(4)
+
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      // `findAll` examines all three mutations. The first two keys are memoized
+      // from the `find` above, so only the third key and the new filter key are
+      // serialized.
+      expect(
+        testCache.findAll({ mutationKey: ['number', date], exact: true }),
+      ).toEqual([numberMutation])
+      expect(valueSerializer).toHaveBeenCalledTimes(4)
+      expect(hashFn).toHaveBeenCalledTimes(6)
+
+      stringClient.clear()
+    })
   })
 
   describe('garbage collection', () => {

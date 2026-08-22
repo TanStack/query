@@ -14,6 +14,7 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
+  CacheKeyConfig,
   CancelOptions,
   DefaultError,
   FetchStatus,
@@ -178,10 +179,10 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.setOptions(config.options)
-    this.observers = []
     this.#client = config.client
     this.#cache = this.#client.getQueryCache()
+    this.setOptions(config.options)
+    this.observers = []
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -190,6 +191,10 @@ export class Query<
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
+  }
+
+  get cacheKeyConfig(): Readonly<CacheKeyConfig<QueryKey>> {
+    return this.#cache.config
   }
 
   get queryType() {

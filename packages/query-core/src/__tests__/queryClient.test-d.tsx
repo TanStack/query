@@ -1,6 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
@@ -8,16 +10,62 @@ import type { Query, QueryState } from '../query'
 import type {
   DataTag,
   DefaultError,
+  DefaultedMutationOptions,
   DefaultedQueryObserverOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  MutationKey,
   MutationOptions,
   OmitKeyof,
   QueryKey,
   QueryObserverOptions,
 } from '../types'
+
+describe('cache key config', () => {
+  it('should type the query and mutation cache configuration', () => {
+    const queryCache = new QueryCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<QueryKey>()
+        return 'query-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const mutationCache = new MutationCache({
+      hashFn: (key) => {
+        expectTypeOf(key).toEqualTypeOf<MutationKey>()
+        return 'mutation-hash'
+      },
+      valueSerializer: (value) => value,
+    })
+    const queryClient = new QueryClient({
+      queryCache,
+      mutationCache,
+    })
+
+    expectTypeOf(queryClient.getQueryCache().config).toEqualTypeOf(
+      queryCache.config,
+    )
+    expectTypeOf(queryClient.getMutationCache().config).toEqualTypeOf(
+      mutationCache.config,
+    )
+    queryClient.setQueryData(['key'], 'data')
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+
+  it('should allow query-level hash functions', () => {
+    const queryClient = new QueryClient()
+
+    queryClient.fetchQuery({
+      queryKey: ['key'],
+      queryFn: () => 'data',
+      queryKeyHashFn: () => 'hash',
+    })
+
+    expectTypeOf(queryClient).toEqualTypeOf<QueryClient>()
+  })
+})
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -482,7 +530,7 @@ describe('fully typed usage', () => {
 
     const mutationOptions2 = queryClient.defaultMutationOptions(mutationOptions)
     expectTypeOf(mutationOptions2).toEqualTypeOf<
-      MutationOptions<TData, TError, void, unknown>
+      DefaultedMutationOptions<MutationOptions<TData, TError, void, unknown>>
     >()
 
     queryClient.setMutationDefaults(mutationKey, {
@@ -637,7 +685,9 @@ describe('fully typed usage', () => {
 
     const mutationOptions2 = queryClient.defaultMutationOptions(mutationOptions)
     expectTypeOf(mutationOptions2).toEqualTypeOf<
-      MutationOptions<unknown, DefaultError, void, unknown>
+      DefaultedMutationOptions<
+        MutationOptions<unknown, DefaultError, void, unknown>
+      >
     >()
 
     queryClient.setMutationDefaults(mutationKey, {

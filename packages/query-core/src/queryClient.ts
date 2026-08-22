@@ -1,7 +1,6 @@
 import {
   functionalUpdate,
-  hashKey,
-  hashQueryKeyByOptions,
+  hashCacheKey,
   noop,
   partialMatchKey,
   resolveStaleTime,
@@ -12,10 +11,14 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
+import type { MutationFilters, QueryFilters, Updater } from './utils'
 import type {
+  CacheKey,
+  CacheKeyValueSerializer,
   CancelOptions,
   DefaultError,
   DefaultOptions,
+  DefaultedMutationOptions,
   DefaultedQueryObserverOptions,
   EnsureInfiniteQueryDataOptions,
   EnsureQueryDataOptions,
@@ -42,18 +45,33 @@ import type {
   SetDataOptions,
 } from './types'
 import type { QueryState } from './query'
-import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
 
 interface QueryDefaults {
-  queryKey: QueryKey
+  key: QueryKey
   defaultOptions: OmitKeyof<QueryOptions<any, any, any>, 'queryKey'>
 }
 
 interface MutationDefaults {
-  mutationKey: MutationKey
+  key: MutationKey
   defaultOptions: MutationOptions<any, any, any, any>
+}
+
+function mergeCacheKeyDefaults<TOptions extends object>(
+  defaults: Iterable<{ key: CacheKey; defaultOptions: TOptions }>,
+  key: CacheKey,
+  valueSerializer: CacheKeyValueSerializer | undefined,
+): TOptions {
+  const result = {} as TOptions
+
+  for (const keyDefault of defaults) {
+    if (partialMatchKey(key, keyDefault.key, valueSerializer)) {
+      Object.assign(result, keyDefault.defaultOptions)
+    }
+  }
+
+  return result
 }
 
 // CLASS
@@ -560,8 +578,8 @@ export class QueryClient {
       >
     >,
   ): void {
-    this.#queryDefaults.set(hashKey(queryKey), {
-      queryKey,
+    this.#queryDefaults.set(hashCacheKey(queryKey, this.#queryCache.config), {
+      key: queryKey,
       defaultOptions: options,
     })
   }
@@ -569,19 +587,11 @@ export class QueryClient {
   getQueryDefaults(
     queryKey: QueryKey,
   ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
-    const defaults = [...this.#queryDefaults.values()]
-
-    const result: OmitKeyof<
-      QueryObserverOptions<any, any, any, any, any>,
-      'queryKey'
-    > = {}
-
-    defaults.forEach((queryDefault) => {
-      if (partialMatchKey(queryKey, queryDefault.queryKey)) {
-        Object.assign(result, queryDefault.defaultOptions)
-      }
-    })
-    return result
+    return mergeCacheKeyDefaults(
+      this.#queryDefaults.values(),
+      queryKey,
+      this.#queryCache.config.valueSerializer,
+    )
   }
 
   setMutationDefaults<
@@ -596,29 +606,23 @@ export class QueryClient {
       'mutationKey'
     >,
   ): void {
-    this.#mutationDefaults.set(hashKey(mutationKey), {
-      mutationKey,
-      defaultOptions: options,
-    })
+    this.#mutationDefaults.set(
+      hashCacheKey(mutationKey, this.#mutationCache.config),
+      {
+        key: mutationKey,
+        defaultOptions: options,
+      },
+    )
   }
 
   getMutationDefaults(
     mutationKey: MutationKey,
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
-    const defaults = [...this.#mutationDefaults.values()]
-
-    const result: OmitKeyof<
-      MutationObserverOptions<any, any, any, any>,
-      'mutationKey'
-    > = {}
-
-    defaults.forEach((queryDefault) => {
-      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
-        Object.assign(result, queryDefault.defaultOptions)
-      }
-    })
-
-    return result
+    return mergeCacheKeyDefaults(
+      this.#mutationDefaults.values(),
+      mutationKey,
+      this.#mutationCache.config.valueSerializer,
+    )
   }
 
   defaultQueryOptions<
@@ -669,12 +673,11 @@ export class QueryClient {
       _defaulted: true,
     }
 
-    if (!defaultedOptions.queryHash) {
-      defaultedOptions.queryHash = hashQueryKeyByOptions(
-        defaultedOptions.queryKey,
-        defaultedOptions,
-      )
-    }
+    defaultedOptions.queryHash ??= hashCacheKey(
+      defaultedOptions.queryKey,
+      this.#queryCache.config,
+      defaultedOptions.queryKeyHashFn,
+    )
 
     // dependent default values
     if (defaultedOptions.refetchOnReconnect === undefined) {
@@ -704,17 +707,18 @@ export class QueryClient {
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
     options?: T,
-  ): T {
+  ): DefaultedMutationOptions<T> {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedMutationOptions<T>
     }
+
     return {
       ...this.#defaultOptions.mutations,
       ...(options?.mutationKey &&
         this.getMutationDefaults(options.mutationKey)),
       ...options,
       _defaulted: true,
-    } as T
+    } as DefaultedMutationOptions<T>
   }
 
   clear(): void {

@@ -74,6 +74,30 @@ useQuery({ queryKey: ['todos', undefined, page, status], ...})
 
 [//]: # 'Example4'
 
+## Custom query key values
+
+If a `queryKey` contains values that need custom serialization, configure the serializer on the `QueryCache`. The serializer is used for hashing and partial matching of every query in that cache.
+
+The serializer must be idempotent. The same key can be serialized more than once, so serializing an already serialized value must return the same value.
+
+```tsx
+const queryCache = new QueryCache({
+  valueSerializer: (value) => {
+    if (value instanceof Date) {
+      return value.toISOString()
+    }
+
+    return value
+  },
+})
+
+const queryClient = new QueryClient({ queryCache })
+```
+
+Serialized results are memoized by serializer and key reference, then used internally for hashing and matching. Configure `MutationCache` separately if mutation keys need custom serialization.
+
+If `hashFn` is provided on `QueryCache`, it receives this serialized key. The serialized key is used for matching. Dehydration keeps the original key. Fine-grained persistence keeps the original key and normalizes it when applying partial filters. Custom persistence codecs are required to preserve runtime key types such as `Date` or `Map`. The cache key configuration must not change while the cache contains entries. A cache that restores dehydrated or persisted entries must use a compatible key configuration.
+
 ## If your query function depends on a variable, include it in your query key
 
 Since query keys uniquely describe the data they are fetching, they should include any variables you use in your query function that **change**. For example:
