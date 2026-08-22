@@ -33,7 +33,13 @@ function reconcileFn<TData, TError>(
     | ((oldData: TData | undefined, newData: TData) => TData),
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
-  if (reconcileOption === false) return result
+  if (
+    reconcileOption === false ||
+    result.data === undefined ||
+    result.data === store.data
+  ) {
+    return result
+  }
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result

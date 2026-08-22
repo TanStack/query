@@ -944,6 +944,47 @@ describe('useQuery', () => {
     return null
   })
 
+  it('should only reconcile when query data changes', async () => {
+    const key = queryKey()
+    let count = 0
+    const reconcileData = vi.fn(
+      (_oldData: { count: number } | undefined, newData: { count: number }) =>
+        newData,
+    )
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ({ count: ++count })),
+        reconcile: reconcileData,
+      }))
+
+      return (
+        <div>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <span>data: {state.data?.count}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(reconcileData).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(1)
+    expect(reconcileData).toHaveBeenLastCalledWith(undefined, { count: 1 })
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    expect(reconcileData).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+    expect(reconcileData).toHaveBeenCalledTimes(2)
+    expect(reconcileData).toHaveBeenLastCalledWith({ count: 1 }, { count: 2 })
+  })
+
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
     const results: Array<UseQueryResult<string>> = []
