@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.102.1
+
+### Patch Changes
+
+- [#11260](https://github.com/TanStack/query/pull/11260) [`134890d`](https://github.com/TanStack/query/commit/134890dbdc60e4fb0313e44b512d29284ca82f96) - Type hydration input as a partial dehydrated state so omitted mutation and query collections are supported.
+
 ## 5.102.0
 
 ### Minor Changes
