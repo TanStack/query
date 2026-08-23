@@ -1,10 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
-import {
-  createRenderStream,
-  useTrackRenders,
-} from '@testing-library/react-render-stream'
+import { createRenderStream } from '@testing-library/react-render-stream'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -39,11 +36,6 @@ describe('useInfiniteQuery', () => {
     queryCache = new QueryCache()
     queryClient = new QueryClient({
       queryCache,
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
     })
   })
 
@@ -106,7 +98,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
@@ -142,7 +133,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -1776,90 +1766,5 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
-  })
-
-  it('should work with React.use()', async () => {
-    vi.useRealTimers()
-
-    const key = queryKey()
-
-    const renderStream = createRenderStream({ snapshotDOM: true })
-
-    function Loading() {
-      useTrackRenders()
-      return <>loading...</>
-    }
-
-    function MyComponent() {
-      useTrackRenders()
-      const fetchCountRef = React.useRef(0)
-      const query = useInfiniteQuery({
-        queryFn: ({ pageParam }): Promise<Result> =>
-          sleep(10).then(() => ({
-            items: [...new Array(10)]
-              .fill(null)
-              .map((_, d) => pageParam * pageSize + d),
-            nextId: pageParam + 1,
-            prevId: pageParam - 1,
-            ts: fetchCountRef.current++,
-          })),
-        getNextPageParam: (lastPage) => lastPage.nextId,
-        initialPageParam: 0,
-        queryKey: key,
-      })
-      const data = React.use(query.promise)
-      return (
-        <>
-          {data.pages.map((page, index) => (
-            <React.Fragment key={page.ts}>
-              <div>
-                <div>Page: {index + 1}</div>
-              </div>
-              {page.items.map((item) => (
-                <p key={item}>Item: {item}</p>
-              ))}
-            </React.Fragment>
-          ))}
-          <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
-        </>
-      )
-    }
-
-    function Page() {
-      useTrackRenders()
-      return (
-        <React.Suspense fallback={<Loading />}>
-          <MyComponent />
-        </React.Suspense>
-      )
-    }
-
-    const rendered = await renderStream.render(
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>,
-    )
-
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading...')
-      expect(renderedComponents).toEqual([Page, Loading])
-    }
-
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      withinDOM().getByText('Item: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
-
-    // click button
-    rendered.getByRole('button', { name: 'fetchNextPage' }).click()
-
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
   })
 })

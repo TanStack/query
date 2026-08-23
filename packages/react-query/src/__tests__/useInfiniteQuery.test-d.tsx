@@ -39,6 +39,18 @@ describe('pageParam', () => {
     })
   })
 
+  it('initialPageParam should define type of param passed to queryFunctionContext for infiniteQuery', () => {
+    const queryClient = new QueryClient()
+    queryClient.infiniteQuery({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return Promise.resolve(pageParam)
+      },
+      initialPageParam: 1,
+    })
+  })
+
   it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.prefetchInfiniteQuery({

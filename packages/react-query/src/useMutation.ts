@@ -52,8 +52,12 @@ export function useMutation<
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
-    (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
+    (
+      ...args: Parameters<
+        UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      >
+    ) => {
+      observer.mutate(args[0] as TVariables, args[1]).catch(noop)
     },
     [observer],
   )

@@ -109,7 +109,6 @@ function createPendingInfiniteQueryResult<
     isFetchingNextPage: false,
     isFetchPreviousPageError: false,
     isFetchingPreviousPage: false,
-    promise: Promise.resolve(undefined as never),
   } as unknown as InfiniteQueryObserverResult<TData, TError>
 }
 
