@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.102.2
+
+### Patch Changes
+
+- [#11263](https://github.com/TanStack/query/pull/11263) [`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc) - Export MutationCacheConfig and QueryCacheConfig.
+
 ## 5.102.1
 
 ### Patch Changes
