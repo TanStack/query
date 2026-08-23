@@ -96,6 +96,45 @@ const callback = (event) => {
 const unsubscribe = queryCache.subscribe(callback)
 ```
 
+The callback receives a discriminated union. Check `event.type` to narrow the event and access its additional properties:
+
+| `event.type`             | When it is emitted                   | Properties                                |
+| ------------------------ | ------------------------------------ | ----------------------------------------- |
+| `added`                  | A query is added to the cache        | `query: Query`                            |
+| `removed`                | A query is removed from the cache    | `query: Query`                            |
+| `updated`                | A query's state changes              | `query: Query`, `action`                  |
+| `observerAdded`          | An observer starts observing a query | `query: Query`, `observer: QueryObserver` |
+| `observerRemoved`        | An observer stops observing a query  | `query: Query`, `observer: QueryObserver` |
+| `observerResultsUpdated` | An observer's current result changes | `query: Query`                            |
+| `observerOptionsUpdated` | An observer's options change         | `query: Query`, `observer: QueryObserver` |
+
+When `event.type` is `updated`, `event.action.type` describes the state change:
+
+| `event.action.type` | State change                                   | Additional properties                                                    |
+| ------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
+| `fetch`             | A fetch starts                                 | `meta?: FetchMeta`                                                       |
+| `success`           | Data is written after a fetch or manual update | `data: TData \| undefined`, `dataUpdatedAt?: number`, `manual?: boolean` |
+| `error`             | A fetch finishes with an error                 | `error: TError`                                                          |
+| `failed`            | A fetch attempt fails and may be retried       | `failureCount: number`, `error: TError`                                  |
+| `pause`             | A fetch is paused                              |                                                                          |
+| `continue`          | A paused fetch resumes                         |                                                                          |
+| `invalidate`        | The query is invalidated                       |                                                                          |
+| `setState`          | The query state is updated directly            | `state: Partial<QueryState<TData, TError>>`                              |
+
+For example, you can detect when a paused query resumes:
+
+```tsx
+const unsubscribe = queryCache.subscribe((event) => {
+  if (event.type === 'updated' && event.action.type === 'continue') {
+    console.log('Query resumed', event.query.queryKey)
+  }
+
+  if (event.type === 'observerAdded') {
+    console.log('Observer added', event.observer)
+  }
+})
+```
+
 **Options**
 
 - `callback: (event: QueryCacheNotifyEvent) => void`
