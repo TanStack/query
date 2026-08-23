@@ -193,25 +193,16 @@ export function dehydrate(
 
 export function hydrate(
   client: QueryClient,
-  dehydratedState: unknown,
+  dehydratedState: Partial<DehydratedState>,
   options?: HydrateOptions,
 ): void {
-  if (typeof dehydratedState !== 'object' || dehydratedState === null) {
-    return
-  }
-
   const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
   const deserializeData =
     options?.defaultOptions?.deserializeData ??
     client.getDefaultOptions().hydrate?.deserializeData
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const mutations = (dehydratedState as DehydratedState).mutations || []
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const queries = (dehydratedState as DehydratedState).queries || []
-
-  mutations.forEach(({ state, ...mutationOptions }) => {
+  dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
     mutationCache.build(
       client,
       {
@@ -223,7 +214,7 @@ export function hydrate(
     )
   })
 
-  queries.forEach(
+  dehydratedState.queries?.forEach(
     ({
       queryKey,
       state,

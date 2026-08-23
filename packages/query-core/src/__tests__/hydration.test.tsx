@@ -676,22 +676,13 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockRestore()
   })
 
-  it('should not hydrate if the hydratedState is null or is not an object', () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
-    expect(() => hydrate(queryClient, null)).not.toThrow()
-    expect(() => hydrate(queryClient, 'invalid')).not.toThrow()
-
-    queryClient.clear()
-  })
-
   it('should support hydratedState with undefined queries and mutations', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
+    expect(() => hydrate(queryClient, { mutations: [] })).not.toThrow()
     expect(() => hydrate(queryClient, {})).not.toThrow()
-    expect(() => hydrate(queryClient, {})).not.toThrow()
+    expect(() => hydrate(queryClient, { queries: [] })).not.toThrow()
 
     queryClient.clear()
   })

@@ -72,4 +72,13 @@ describe('injectMutation', () => {
       >()
     })
   })
+
+  it('should allow calling mutate with no arguments when TVariables is optional undefinable', () => {
+    const mutation = injectMutation(() => ({
+      mutationFn: (_variables: number | undefined) => sleep(0).then(() => 1),
+    }))
+
+    expectTypeOf(mutation.mutate).toBeCallableWith()
+    expectTypeOf(mutation.mutateAsync).toBeCallableWith()
+  })
 })

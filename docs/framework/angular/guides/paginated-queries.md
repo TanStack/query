@@ -83,10 +83,12 @@ export class PaginationExampleComponent {
     effect(() => {
       // Prefetch the next page!
       if (!this.query.isPlaceholderData() && this.query.data()?.hasMore) {
-        this.#queryClient.prefetchQuery({
-          queryKey: ['projects', this.page() + 1],
-          queryFn: () => lastValueFrom(fetchProjects(this.page() + 1)),
-        })
+        void this.#queryClient
+          .query({
+            queryKey: ['projects', this.page() + 1],
+            queryFn: () => lastValueFrom(fetchProjects(this.page() + 1)),
+          })
+          .catch(noop)
       }
     })
   }
