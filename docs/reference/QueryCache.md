@@ -128,10 +128,6 @@ const unsubscribe = queryCache.subscribe((event) => {
   if (event.type === 'updated' && event.action.type === 'continue') {
     console.log('Query resumed', event.query.queryKey)
   }
-
-  if (event.type === 'observerAdded') {
-    console.log('Observer added', event.observer)
-  }
 })
 ```
 

@@ -108,10 +108,6 @@ const unsubscribe = mutationCache.subscribe((event) => {
   if (event.type === 'updated' && event.action.type === 'continue') {
     console.log('Mutation resumed', event.mutation.mutationId)
   }
-
-  if (event.type === 'observerAdded') {
-    console.log('Observer added', event.observer)
-  }
 })
 ```
 
