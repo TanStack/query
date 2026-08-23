@@ -15,7 +15,7 @@ import type { MutationFilters } from './utils'
 
 // TYPES
 
-interface MutationCacheConfig {
+export interface MutationCacheConfig {
   onError?: (
     error: DefaultError,
     variables: unknown,
