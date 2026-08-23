@@ -1,6 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["scripts/*.{j,t}s", "**/ts-fixture/file.ts"],
+  "treatConfigHintsAsErrors": true,
+  "treatTagHintsAsErrors": true,
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",

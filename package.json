@@ -22,7 +22,7 @@
     "test:lib:dev": "pnpm run test:lib && nx watch --all -- pnpm run test:lib",
     "test:build": "nx affected --target=test:build --exclude=examples/**",
     "test:types": "nx affected --target=test:types --exclude=examples/**",
-    "test:knip": "knip --treat-config-hints-as-errors",
+    "test:knip": "knip",
     "test:docs": "node scripts/verify-links.ts",
     "build": "nx affected --target=build --exclude=examples/** --exclude=integrations/**",
     "build:all": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
