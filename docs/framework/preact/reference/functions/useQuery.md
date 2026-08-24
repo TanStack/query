@@ -95,7 +95,7 @@ be used.
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L73)
+Defined in: [preact-query/src/useQuery.ts:89](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L89)
 
 ### Type Parameters
 
@@ -132,7 +132,7 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-### Example
+### Examples
 
 ```tsx
 import { queryOptions, useQuery } from '@tanstack/preact-query'
@@ -156,5 +156,20 @@ function Posts() {
       <div>{isFetching ? 'Background Updating...' : ' '}</div>
     </div>
   )
+}
+```
+
+A dependent query, only enabled once `postId` is set:
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function Post({ postId }: { postId: number }) {
+  const { data } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => fetchPost(postId),
+    enabled: !!postId,
+  })
+
+  return <h1>{data?.title}</h1>
 }
 ```

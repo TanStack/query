@@ -38,6 +38,39 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
+ *
+ * @example
+ * Optimistic update via `onMutate`, rolling back on `onError`:
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodo() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onMutate: async (newTodo) => {
+ *       await queryClient.cancelQueries({ queryKey: ['todos'] })
+ *       const previousTodos = queryClient.getQueryData(['todos'])
+ *
+ *       queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+ *
+ *       // Passed to `onError` as `context` if the mutation fails.
+ *       return { previousTodos }
+ *     },
+ *     onError: (_err, _newTodo, context) => {
+ *       queryClient.setQueryData(['todos'], context.previousTodos)
+ *     },
+ *     onSettled: () => {
+ *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *     },
+ *   })
+ *
+ *   return (
+ *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *   )
+ * }
+ * ```
  */
 export function useMutation<
   TData = unknown,

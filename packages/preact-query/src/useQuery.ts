@@ -69,6 +69,22 @@ export function useQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * A dependent query, only enabled once `postId` is set:
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function Post({ postId }: { postId: number }) {
+ *   const { data } = useQuery({
+ *     queryKey: ['post', postId],
+ *     queryFn: () => fetchPost(postId),
+ *     enabled: !!postId,
+ *   })
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,
