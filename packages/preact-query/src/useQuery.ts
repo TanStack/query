@@ -13,11 +13,29 @@ import type {
 import { useBaseQuery } from './useBaseQuery'
 
 /**
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ *
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
  * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
  * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ *
+ * @example
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function Posts() {
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
+ *   const { data } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *     initialData: [],
+ *   })
+ *
+ *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

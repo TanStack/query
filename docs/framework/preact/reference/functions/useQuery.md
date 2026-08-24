@@ -9,7 +9,9 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:22](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L22)
+Defined in: [preact-query/src/useQuery.ts:40](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L40)
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
 ### Type Parameters
 
@@ -50,13 +52,30 @@ The current query result. `status` is `pending` if there is no cached data and n
 has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
 display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
+### Example
+
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function Posts() {
+  // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialData: [],
+  })
+
+  return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+}
+```
+
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:39](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L39)
+Defined in: [preact-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L57)
 
 ### Type Parameters
 
@@ -103,7 +122,7 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:119](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L119)
+Defined in: [preact-query/src/useQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L137)
 
 ### Type Parameters
 

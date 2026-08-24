@@ -76,52 +76,26 @@ export type DefinedInitialDataOptions<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
+ * This overload is selected when `initialData` is set, so `queryFn` is optional and the resulting `data` is
+ * never `undefined`.
+ *
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
  * ```tsx
- * import { queryOptions } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postsOptions = queryOptions({
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
+ *   initialData: [],
  * })
- * ```
  *
- * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postOptions = (id: string) =>
- *   queryOptions({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *   })
- *
- * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
- *   return <h1>{data?.title}</h1>
+ * function Posts() {
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
+ *   const { data } = useQuery(postsOptions)
+ *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
  * }
- *
- * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.prefetchQuery(postOptions(id))
- * ```
- *
- * @example
- * The same options object works with every API that accepts query options:
- * ```tsx
- * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
- *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- * })
- *
- * useQuery(todosOptions)
- * useSuspenseQuery(todosOptions)
- * queryClient.prefetchQuery(todosOptions)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<
