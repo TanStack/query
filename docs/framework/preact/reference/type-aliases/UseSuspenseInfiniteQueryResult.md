@@ -4,10 +4,10 @@ title: UseSuspenseInfiniteQueryResult
 ---
 
 ```ts
-type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
+type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [preact-query/src/types.ts:182](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L182)
+Defined in: [preact-query/src/types.ts:219](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L219)
 
 ## Type Parameters
 

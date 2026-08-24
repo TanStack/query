@@ -6,7 +6,7 @@ title: queryOptions
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L53)
@@ -37,15 +37,15 @@ Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/qu
 
 ### Returns
 
-`Omit`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+`Omit`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L64)
+Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L63)
 
 ### Type Parameters
 
@@ -73,15 +73,15 @@ Defined in: [preact-query/src/queryOptions.ts:64](https://github.com/TanStack/qu
 
 ### Returns
 
-`OmitKeyof`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+`OmitKeyof`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L75)
+Defined in: [preact-query/src/queryOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L73)
 
 ### Type Parameters
 
@@ -109,4 +109,4 @@ Defined in: [preact-query/src/queryOptions.ts:75](https://github.com/TanStack/qu
 
 ### Returns
 
-[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>

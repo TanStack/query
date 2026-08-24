@@ -1,5 +1,32 @@
 # @tanstack/angular-query-experimental
 
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies [[`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc)]:
+  - @tanstack/query-core@5.102.2
+
+## 5.102.1
+
+### Patch Changes
+
+- Updated dependencies [[`134890d`](https://github.com/TanStack/query/commit/134890dbdc60e4fb0313e44b512d29284ca82f96)]:
+  - @tanstack/query-core@5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- [#11224](https://github.com/TanStack/query/pull/11224) [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b) - Fix `queryOptions` and `infiniteQueryOptions` return types so exported inferred options can be emitted in declaration files without leaking internal data tag symbols.
+
+- [#8737](https://github.com/TanStack/query/pull/8737) [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e) - fix: make mutation variables optional when `undefined extends TVariables`
+
+- [#11221](https://github.com/TanStack/query/pull/11221) [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93) - Remove experimental render-time prefetching and the `promise` property from query results.
+
+- Updated dependencies [[`34f7cee`](https://github.com/TanStack/query/commit/34f7ceed09c10e4a3aa2df31a106ddf02ec4e787), [`b4368c4`](https://github.com/TanStack/query/commit/b4368c43792349f6c29d1fb41f7ee1ef3a8bdd2c), [`5bb089d`](https://github.com/TanStack/query/commit/5bb089d153d33933983b7ea80f8d69b51d423698), [`ba4650c`](https://github.com/TanStack/query/commit/ba4650c05e61e33c609e051b948c9f7d31ce70d1), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`1f631b3`](https://github.com/TanStack/query/commit/1f631b3604aab6567fb3f6c90646a5a304641546), [`01a02bf`](https://github.com/TanStack/query/commit/01a02bfad32f9efbc17796be31d6399f1197a655), [`18c1c1e`](https://github.com/TanStack/query/commit/18c1c1ef94883e781ad36d36f9ea4a043ce4260b), [`5448063`](https://github.com/TanStack/query/commit/5448063f828d2270dccd41ae375e1afde35e91f2), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`5981771`](https://github.com/TanStack/query/commit/5981771abec9330b344a2617543eb05ba7c99e24), [`4a9bef6`](https://github.com/TanStack/query/commit/4a9bef6cf19b1cd6b014032d696129f12a848185), [`bef4bc7`](https://github.com/TanStack/query/commit/bef4bc780ce7cca32b7e3dea85f77d92f82a62a2), [`9656dc4`](https://github.com/TanStack/query/commit/9656dc4e5fef5f8c502579b52459f9e8c72e787c), [`326aaf1`](https://github.com/TanStack/query/commit/326aaf1333e5d9cbc46569c53f218d31684162d2), [`3e83601`](https://github.com/TanStack/query/commit/3e836010032c2586e9f1c66a271fa9114a6401f9), [`c6fc17c`](https://github.com/TanStack/query/commit/c6fc17cfad6e452261c585fabfb8c210e60531ed)]:
+  - @tanstack/query-core@5.102.0
+
 ## 5.101.4
 
 ### Patch Changes

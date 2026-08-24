@@ -1176,14 +1176,28 @@ export interface MutateOptions<
   ) => void
 }
 
+export type MutateFunctionRest<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> = undefined extends TVariables
+  ? [
+      variables?: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+  : [
+      variables: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+
 export type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
 > = (
-  variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+  ...rest: MutateFunctionRest<TData, TError, TVariables, TOnMutateResult>
 ) => Promise<TData>
 
 export interface MutationObserverBaseResult<

@@ -4,7 +4,7 @@ title: UsePrefetchQueryOptions
 ---
 
 ```ts
-type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = DistributiveOmit<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, "queryFn"> & object;
 ```
 
 Defined in: [preact-query/src/types.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L50)
@@ -14,7 +14,7 @@ Defined in: [preact-query/src/types.ts:50](https://github.com/TanStack/query/blo
 ### queryFn?
 
 ```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
+optional queryFn: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>["queryFn"], SkipToken>;
 ```
 
 ## Type Parameters
