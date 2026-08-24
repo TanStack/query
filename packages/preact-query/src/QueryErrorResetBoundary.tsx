@@ -74,11 +74,18 @@ export const useQueryErrorResetBoundary = () =>
 
 // COMPONENT
 
+/**
+ * @param value - The boundary's {@link QueryErrorResetBoundaryValue}.
+ */
 export type QueryErrorResetBoundaryFunction = (
   value: QueryErrorResetBoundaryValue,
 ) => ComponentChildren
 
 export interface QueryErrorResetBoundaryProps {
+  /**
+   * Either a plain node, or a function that receives the boundary's {@link QueryErrorResetBoundaryValue} and
+   * returns a node.
+   */
   children: QueryErrorResetBoundaryFunction | ComponentChildren
 }
 
