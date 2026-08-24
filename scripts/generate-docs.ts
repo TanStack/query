@@ -163,15 +163,15 @@ for (const pkg of [
     exclude: ['./packages/query-core/**/*'],
   },
   {
-    entryPoints: [resolve(__dirname, '../packages/preact-query/src/index.ts')],
-    tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
-    outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
-    exclude: ['./packages/query-core/**/*'],
-  },
-  {
     entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/react-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/react/reference'),
+    exclude: ['./packages/query-core/**/*'],
+  },
+  {
+    entryPoints: [resolve(__dirname, '../packages/preact-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
     exclude: ['./packages/query-core/**/*'],
   },
   {
