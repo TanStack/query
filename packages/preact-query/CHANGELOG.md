@@ -1,5 +1,14 @@
 # @tanstack/preact-query
 
+## 5.102.3
+
+### Patch Changes
+
+- [#11274](https://github.com/TanStack/query/pull/11274) [`714c285`](https://github.com/TanStack/query/commit/714c2856e09bbaf7448ccc02364887e36c18b37c) - fix(preact-query/usePrefetchQuery): replace deprecated `queryClient.fetchQuery` with `queryClient.query`
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.3
+
 ## 5.102.2
 
 ### Patch Changes
