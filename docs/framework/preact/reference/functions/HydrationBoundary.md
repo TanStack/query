@@ -3,13 +3,11 @@ id: HydrationBoundary
 title: HydrationBoundary
 ---
 
-# Function: HydrationBoundary()
-
 ```ts
-function HydrationBoundary(__namedParameters): ComponentChildren;
+function HydrationBoundary(__namedParameters): Element;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:24](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L24)
+Defined in: [preact-query/src/HydrationBoundary.tsx:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L26)
 
 ## Parameters
 
@@ -19,4 +17,4 @@ Defined in: [preact-query/src/HydrationBoundary.tsx:24](https://github.com/theVe
 
 ## Returns
 
-`ComponentChildren`
+`Element`

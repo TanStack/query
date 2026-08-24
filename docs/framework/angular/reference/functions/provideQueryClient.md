@@ -3,8 +3,6 @@ id: provideQueryClient
 title: provideQueryClient
 ---
 
-# Function: provideQueryClient()
-
 ```ts
 function provideQueryClient(queryClient): Provider;
 ```

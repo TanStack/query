@@ -3,13 +3,11 @@ id: useMutationState
 title: useMutationState
 ---
 
-# Function: useMutationState()
-
 ```ts
-function useMutationState<TResult>(options, queryClient?): TResult[];
+function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:22](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L22)
+Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:29](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L29)
 
 ## Type Parameters
 
@@ -17,11 +15,15 @@ Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:22](https://gi
 
 `TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
 
+### TMutation
+
+`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](../type-aliases/MutationTypeFromResult.md)\<`TResult`\>
+
 ## Parameters
 
 ### options
 
-[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`\> = `{}`
+[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> = `{}`
 
 ### queryClient?
 

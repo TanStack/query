@@ -3,8 +3,6 @@ id: "@tanstack/preact-query"
 title: "@tanstack/preact-query"
 ---
 
-# @tanstack/preact-query
-
 ## Interfaces
 
 - [HydrationBoundaryProps](interfaces/HydrationBoundaryProps.md)
@@ -12,7 +10,6 @@ title: "@tanstack/preact-query"
 - [UseBaseQueryOptions](interfaces/UseBaseQueryOptions.md)
 - [UseInfiniteQueryOptions](interfaces/UseInfiniteQueryOptions.md)
 - [UseMutationOptions](interfaces/UseMutationOptions.md)
-- [UsePrefetchQueryOptions](interfaces/UsePrefetchQueryOptions.md)
 - [UseQueryOptions](interfaces/UseQueryOptions.md)
 - [UseSuspenseInfiniteQueryOptions](interfaces/UseSuspenseInfiniteQueryOptions.md)
 - [UseSuspenseQueryOptions](interfaces/UseSuspenseQueryOptions.md)
@@ -48,6 +45,8 @@ title: "@tanstack/preact-query"
 - [UseMutateAsyncFunction](type-aliases/UseMutateAsyncFunction.md)
 - [UseMutateFunction](type-aliases/UseMutateFunction.md)
 - [UseMutationResult](type-aliases/UseMutationResult.md)
+- [UsePrefetchInfiniteQueryOptions](type-aliases/UsePrefetchInfiniteQueryOptions.md)
+- [UsePrefetchQueryOptions](type-aliases/UsePrefetchQueryOptions.md)
 - [UseQueryResult](type-aliases/UseQueryResult.md)
 - [UseSuspenseInfiniteQueryResult](type-aliases/UseSuspenseInfiniteQueryResult.md)
 - [UseSuspenseQueryResult](type-aliases/UseSuspenseQueryResult.md)

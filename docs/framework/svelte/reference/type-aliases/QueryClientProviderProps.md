@@ -3,13 +3,11 @@ id: QueryClientProviderProps
 title: QueryClientProviderProps
 ---
 
-# Type Alias: QueryClientProviderProps
-
 ```ts
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:147](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L147)
+Defined in: [packages/svelte-query/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L160)
 
 ## Properties
 
@@ -19,7 +17,7 @@ Defined in: [packages/svelte-query/src/types.ts:147](https://github.com/TanStack
 children: Snippet;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L149)
+Defined in: [packages/svelte-query/src/types.ts:162](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L162)
 
 ***
 
@@ -29,4 +27,4 @@ Defined in: [packages/svelte-query/src/types.ts:149](https://github.com/TanStack
 client: QueryClient;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:148](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L148)
+Defined in: [packages/svelte-query/src/types.ts:161](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L161)

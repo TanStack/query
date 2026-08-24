@@ -1,5 +1,60 @@
 # @tanstack/query-core
 
+## 5.102.2
+
+### Patch Changes
+
+- [#11263](https://github.com/TanStack/query/pull/11263) [`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc) - Export MutationCacheConfig and QueryCacheConfig.
+
+## 5.102.1
+
+### Patch Changes
+
+- [#11260](https://github.com/TanStack/query/pull/11260) [`134890d`](https://github.com/TanStack/query/commit/134890dbdc60e4fb0313e44b512d29284ca82f96) - Type hydration input as a partial dehydrated state so omitted mutation and query collections are supported.
+
+## 5.102.0
+
+### Minor Changes
+
+- [#10658](https://github.com/TanStack/query/pull/10658) [`c6fc17c`](https://github.com/TanStack/query/commit/c6fc17cfad6e452261c585fabfb8c210e60531ed) - add query and infiniteQuery methods, deprecate old imperative methods
+
+### Patch Changes
+
+- [#11161](https://github.com/TanStack/query/pull/11161) [`34f7cee`](https://github.com/TanStack/query/commit/34f7ceed09c10e4a3aa2df31a106ddf02ec4e787) - fix(query-core): clear a stale `select` error when the observer switches to a query without data, and reset `isPlaceholderData` on select-error results to match the declared result types, so a previous query's select error no longer leaks into the new result
+
+- [#11253](https://github.com/TanStack/query/pull/11253) [`b4368c4`](https://github.com/TanStack/query/commit/b4368c43792349f6c29d1fb41f7ee1ef3a8bdd2c) - Improve hydration performance by skipping no-op data transforms and default error-redaction callbacks.
+  Export dehydrateQuery.
+
+- [#11214](https://github.com/TanStack/query/pull/11214) [`5bb089d`](https://github.com/TanStack/query/commit/5bb089d153d33933983b7ea80f8d69b51d423698) - Reduce observer churn overhead by removing observers in place instead of copying the observer list for every unsubscribe.
+
+- [#11011](https://github.com/TanStack/query/pull/11011) [`ba4650c`](https://github.com/TanStack/query/commit/ba4650c05e61e33c609e051b948c9f7d31ce70d1) - fix(query-core): reset `isPlaceholderData` when `select` throws on placeholder data
+
+- [#11224](https://github.com/TanStack/query/pull/11224) [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b) - Fix `queryOptions` and `infiniteQueryOptions` return types so exported inferred options can be emitted in declaration files without leaking internal data tag symbols.
+
+- [#11225](https://github.com/TanStack/query/pull/11225) [`1f631b3`](https://github.com/TanStack/query/commit/1f631b3604aab6567fb3f6c90646a5a304641546) - Skip unused result tracking when notifying `useQueries` listeners without a `combine` function.
+
+- [#11215](https://github.com/TanStack/query/pull/11215) [`01a02bf`](https://github.com/TanStack/query/commit/01a02bfad32f9efbc17796be31d6399f1197a655) - Avoid repeatedly synchronizing the same tracked property across all observers in `useQueries`.
+
+- [#11172](https://github.com/TanStack/query/pull/11172) [`18c1c1e`](https://github.com/TanStack/query/commit/18c1c1ef94883e781ad36d36f9ea4a043ce4260b) - Reattach `MutationObserver` to its current mutation when a listener subscribes again, so a `useMutation` result no longer stays `pending` after React tears down and re-establishes the subscription mid-mutation.
+
+- [#11128](https://github.com/TanStack/query/pull/11128) [`5448063`](https://github.com/TanStack/query/commit/5448063f828d2270dccd41ae375e1afde35e91f2) - Ignore a retained `pendingThenable` settlement callback invoked after the thenable has settled. Holding a reference to `resolve`/`reject` and calling it later used to overwrite `status` and `reason` even though the underlying promise had already settled, leaving the thenable advertising a state that disagreed with its value.
+
+- [#8737](https://github.com/TanStack/query/pull/8737) [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e) - fix: make mutation variables optional when `undefined extends TVariables`
+
+- [#11221](https://github.com/TanStack/query/pull/11221) [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93) - Remove experimental render-time prefetching and the `promise` property from query results.
+
+- [#11218](https://github.com/TanStack/query/pull/11218) [`5981771`](https://github.com/TanStack/query/commit/5981771abec9330b344a2617543eb05ba7c99e24) - Release a mutation's retryer once its execution settles, so the settled promise no longer keeps that mutation's result, variables and context in memory for as long as the mutation cache retains it.
+
+- [#11163](https://github.com/TanStack/query/pull/11163) [`4a9bef6`](https://github.com/TanStack/query/commit/4a9bef6cf19b1cd6b014032d696129f12a848185) - Release a query's retryer once its fetch settles, so the settled promise no longer keeps that fetch's raw result in memory alongside the structurally shared `state.data` (or after the query is reset or removed).
+
+- [#11036](https://github.com/TanStack/query/pull/11036) [`bef4bc7`](https://github.com/TanStack/query/commit/bef4bc780ce7cca32b7e3dea85f77d92f82a62a2) - Resolve suspense when query data is set programmatically via setQueryData or streamedQuery. Previously, fetchOptimistic returned only the fetch promise, which left the Suspense boundary stuck until the queryFn completed — even when data already existed in the cache. The fix uses Promise.race with a cache subscriber to release suspense as soon as data becomes available.
+
+- [#11234](https://github.com/TanStack/query/pull/11234) [`9656dc4`](https://github.com/TanStack/query/commit/9656dc4e5fef5f8c502579b52459f9e8c72e787c) - Notify every query observer when another observer unsubscribes synchronously during the same query update.
+
+- [#11211](https://github.com/TanStack/query/pull/11211) [`326aaf1`](https://github.com/TanStack/query/commit/326aaf1333e5d9cbc46569c53f218d31684162d2) - fix: resetQueries now preserves the queries matched before query.reset() changes their state.
+
+- [#11065](https://github.com/TanStack/query/pull/11065) [`3e83601`](https://github.com/TanStack/query/commit/3e836010032c2586e9f1c66a271fa9114a6401f9) - Memoize falsy `combine` results when the function and query results are unchanged.
+
 ## 5.101.4
 
 ## 5.101.3

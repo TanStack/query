@@ -3,8 +3,6 @@ id: QueryClient
 title: QueryClient
 ---
 
-## `QueryClient`
-
 The `QueryClient` can be used to interact with a cache:
 
 ```tsx
@@ -18,39 +16,35 @@ const queryClient = new QueryClient({
   },
 })
 
-await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: fetchPosts })
+await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
 ```
 
 Its available methods are:
 
-- [`queryClient.fetchQuery`](#queryclientfetchquery)
-- [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
-- [`queryClient.prefetchQuery`](#queryclientprefetchquery)
-- [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
-- [`queryClient.getQueryData`](#queryclientgetquerydata)
-- [`queryClient.ensureQueryData`](#queryclientensurequerydata)
-- [`queryClient.ensureInfiniteQueryData`](#queryclientensureinfinitequerydata)
-- [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
-- [`queryClient.setQueryData`](#queryclientsetquerydata)
-- [`queryClient.getQueryState`](#queryclientgetquerystate)
-- [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
-- [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
-- [`queryClient.refetchQueries`](#queryclientrefetchqueries)
-- [`queryClient.cancelQueries`](#queryclientcancelqueries)
-- [`queryClient.removeQueries`](#queryclientremovequeries)
-- [`queryClient.resetQueries`](#queryclientresetqueries)
-- [`queryClient.isFetching`](#queryclientisfetching)
-- [`queryClient.isMutating`](#queryclientismutating)
-- [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
-- [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
-- [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
-- [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
-- [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
-- [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
-- [`queryClient.getQueryCache`](#queryclientgetquerycache)
-- [`queryClient.getMutationCache`](#queryclientgetmutationcache)
-- [`queryClient.clear`](#queryclientclear)
-- [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
+- [`queryClient.query`](#queryclient-query)
+- [`queryClient.infiniteQuery`](#queryclient-infinitequery)
+- [`queryClient.getQueryData`](#queryclient-getquerydata)
+- [`queryClient.getQueriesData`](#queryclient-getqueriesdata)
+- [`queryClient.setQueryData`](#queryclient-setquerydata)
+- [`queryClient.getQueryState`](#queryclient-getquerystate)
+- [`queryClient.setQueriesData`](#queryclient-setqueriesdata)
+- [`queryClient.invalidateQueries`](#queryclient-invalidatequeries)
+- [`queryClient.refetchQueries`](#queryclient-refetchqueries)
+- [`queryClient.cancelQueries`](#queryclient-cancelqueries)
+- [`queryClient.removeQueries`](#queryclient-removequeries)
+- [`queryClient.resetQueries`](#queryclient-resetqueries)
+- [`queryClient.isFetching`](#queryclient-isfetching)
+- [`queryClient.isMutating`](#queryclient-ismutating)
+- [`queryClient.getDefaultOptions`](#queryclient-getdefaultoptions)
+- [`queryClient.setDefaultOptions`](#queryclient-setdefaultoptions)
+- [`queryClient.getQueryDefaults`](#queryclient-getquerydefaults)
+- [`queryClient.setQueryDefaults`](#queryclient-setquerydefaults)
+- [`queryClient.getMutationDefaults`](#queryclient-getmutationdefaults)
+- [`queryClient.setMutationDefaults`](#queryclient-setmutationdefaults)
+- [`queryClient.getQueryCache`](#queryclient-getquerycache)
+- [`queryClient.getMutationCache`](#queryclient-getmutationcache)
+- [`queryClient.clear`](#queryclient-clear)
+- [`queryClient.resumePausedMutations`](#queryclient-resumepausedmutations)
 
 **Options**
 
@@ -65,15 +59,15 @@ Its available methods are:
   - Define defaults for all queries and mutations using this queryClient.
   - You can also define defaults to be used for [hydration](../framework/react/reference/hydration.md)
 
-## `queryClient.fetchQuery`
+## `queryClient.query`
 
-`fetchQuery` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+`query` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with an error.
 
 If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
 ```tsx
 try {
-  const data = await queryClient.fetchQuery({ queryKey, queryFn })
+  const data = await queryClient.query({ queryKey, queryFn })
 } catch (error) {
   console.log(error)
 }
@@ -83,10 +77,11 @@ Specify a `staleTime` to only fetch when the data is older than a certain amount
 
 ```tsx
 try {
-  const data = await queryClient.fetchQuery({
+  const data = await queryClient.query({
     queryKey,
     queryFn,
     staleTime: 10000,
+    select: (data) => data.items,
   })
 } catch (error) {
   console.log(error)
@@ -95,19 +90,19 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, select, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
+The options for `query` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
 
 **Returns**
 
 - `Promise<TData>`
 
-## `queryClient.fetchInfiniteQuery`
+## `queryClient.infiniteQuery`
 
-`fetchInfiniteQuery` is similar to `fetchQuery` but can be used to fetch and cache an infinite query.
+`infiniteQuery` is similar to `query` but can be used to fetch and cache an infinite query.
 
 ```tsx
 try {
-  const data = await queryClient.fetchInfiniteQuery({ queryKey, queryFn })
+  const data = await queryClient.infiniteQuery({ queryKey, queryFn })
   console.log(data.pages)
 } catch (error) {
   console.log(error)
@@ -116,109 +111,7 @@ try {
 
 **Options**
 
-The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
-
-**Returns**
-
-- `Promise<InfiniteData<TData, TPageParam>>`
-
-## `queryClient.prefetchQuery`
-
-`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that it will not throw or return any data.
-
-```tsx
-await queryClient.prefetchQuery({ queryKey, queryFn })
-```
-
-You can even use it with a default queryFn in your config!
-
-```tsx
-await queryClient.prefetchQuery({ queryKey })
-```
-
-**Options**
-
-The options for `prefetchQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
-
-**Returns**
-
-- `Promise<void>`
-  - A promise is returned that will either immediately resolve if no fetch is needed or after the query has been executed. It will not return any data or throw any errors.
-
-## `queryClient.prefetchInfiniteQuery`
-
-`prefetchInfiniteQuery` is similar to `prefetchQuery` but can be used to prefetch and cache an infinite query.
-
-```tsx
-await queryClient.prefetchInfiniteQuery({ queryKey, queryFn })
-```
-
-**Options**
-
-The options for `prefetchInfiniteQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
-
-**Returns**
-
-- `Promise<void>`
-  - A promise is returned that will either immediately resolve if no fetch is needed or after the query has been executed. It will not return any data or throw any errors.
-
-## `queryClient.getQueryData`
-
-`getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
-
-```tsx
-const data = queryClient.getQueryData(queryKey)
-```
-
-**Options**
-
-- `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
-
-**Returns**
-
-- `data: TQueryFnData | undefined`
-  - The data for the cached query, or `undefined` if the query does not exist.
-
-## `queryClient.ensureQueryData`
-
-`ensureQueryData` is an asynchronous function that can be used to get an existing query's cached data. If the query does not exist, `queryClient.fetchQuery` will be called and its results returned.
-
-```tsx
-const data = await queryClient.ensureQueryData({ queryKey, queryFn })
-```
-
-**Options**
-
-- the same options as [`fetchQuery`](#queryclientfetchquery)
-- `revalidateIfStale: boolean`
-  - Optional
-  - Defaults to `false`
-  - If set to `true`, stale data will be refetched in the background, but cached data will be returned immediately.
-
-**Returns**
-
-- `Promise<TData>`
-
-## `queryClient.ensureInfiniteQueryData`
-
-`ensureInfiniteQueryData` is an asynchronous function that can be used to get an existing infinite query's cached data. If the query does not exist, `queryClient.fetchInfiniteQuery` will be called and its results returned.
-
-```tsx
-const data = await queryClient.ensureInfiniteQueryData({
-  queryKey,
-  queryFn,
-  initialPageParam,
-  getNextPageParam,
-})
-```
-
-**Options**
-
-- the same options as [`fetchInfiniteQuery`](#queryclientfetchinfinitequery)
-- `revalidateIfStale: boolean`
-  - Optional
-  - Defaults to `false`
-  - If set to `true`, stale data will be refetched in the background, but cached data will be returned immediately.
+The options for `infiniteQuery` are exactly the same as those of [`query`](#queryclient-query), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/useInfiniteQuery.md).
 
 **Returns**
 
@@ -250,9 +143,9 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 ## `queryClient.setQueryData`
 
-`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook within the default `gcTime`, the query will be garbage collected. If the default `gcTime` has not been configured, it defaults to 5 minutes.** To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
+`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook within the default `gcTime`, the query will be garbage collected. If the default `gcTime` has not been configured, it defaults to 5 minutes.** To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclient-setqueriesdata) instead.
 
-> The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
+> The difference between using `setQueryData` and `query` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `query` to handle the asynchronous fetch.
 
 ```tsx
 queryClient.setQueryData(queryKey, updater)
@@ -302,7 +195,7 @@ console.log(state.dataUpdatedAt)
 
 ## `queryClient.setQueriesData`
 
-`setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries by using filter function or partially matching the query key. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclientsetquerydata) is called for each existing query.
+`setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries by using filter function or partially matching the query key. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclient-setquerydata) is called for each existing query.
 
 ```tsx
 queryClient.setQueriesData(filters, updater)
@@ -313,7 +206,7 @@ queryClient.setQueriesData(filters, updater)
 - `filters: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
   - if a filter is passed, queryKeys matching the filter will be updated
 - `updater: TQueryFnData | (oldData: TQueryFnData | undefined) => TQueryFnData`
-  - the [setQueryData](#queryclientsetquerydata) updater function or new data, will be called for each matching queryKey
+  - the [setQueryData](#queryclient-setquerydata) updater function or new data, will be called for each matching queryKey
 
 ## `queryClient.invalidateQueries`
 
@@ -321,7 +214,7 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 
 - If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
 - If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
-- For refetching, [queryClient.refetchQueries](#queryclientrefetchqueries) is called.
+- For refetching, [queryClient.refetchQueries](#queryclient-refetchqueries) is called.
 
 ```tsx
 await queryClient.invalidateQueries(
@@ -354,8 +247,8 @@ await queryClient.invalidateQueries(
 
 **Notes**
 
-- Unlike [`refetchQueries`](#queryclientrefetchqueries), `invalidateQueries` marks matching queries as invalidated and then refetches `active` queries (unless otherwise specified with the `refetchType` option).
-- Unlike [`removeQueries`](#queryclientremovequeries), `invalidateQueries` keeps matching queries in the cache.
+- Unlike [`refetchQueries`](#queryclient-refetchqueries), `invalidateQueries` marks matching queries as invalidated and then refetches `active` queries (unless otherwise specified with the `refetchType` option).
+- Unlike [`removeQueries`](#queryclient-removequeries), `invalidateQueries` keeps matching queries in the cache.
 
 ## `queryClient.refetchQueries`
 
@@ -400,7 +293,7 @@ This function returns a promise that will resolve when all of the queries are do
 
 - Queries that are "disabled" because they only have disabled Observers will never be refetched.
 - Queries that are "static" because they only have Observers with a Static StaleTime will never be refetched.
-- Unlike [`invalidateQueries`](#queryclientinvalidatequeries), `refetchQueries` refetches all matching queries.
+- Unlike [`invalidateQueries`](#queryclient-invalidatequeries), `refetchQueries` refetches all matching queries.
 
 ## `queryClient.cancelQueries`
 
@@ -442,7 +335,7 @@ This method does not return anything
 
 **Notes**
 
-- Unlike [`invalidateQueries`](#queryclientinvalidatequeries) or [`refetchQueries`](#queryclientrefetchqueries), `removeQueries` removes matching queries from the cache instead of refetching them.
+- Unlike [`invalidateQueries`](#queryclient-invalidatequeries) or [`refetchQueries`](#queryclient-refetchqueries), `removeQueries` removes matching queries from the cache instead of refetching them.
 
 ## `queryClient.resetQueries`
 
@@ -543,7 +436,7 @@ const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
 > Note that if several query defaults match the given query key, they will be merged together based on the order of registration.
-> See [`setQueryDefaults`](#queryclientsetquerydefaults).
+> See [`setQueryDefaults`](#queryclient-setquerydefaults).
 
 ## `queryClient.setQueryDefaults`
 
@@ -562,7 +455,7 @@ function Component() {
 - `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 - `options: QueryOptions`
 
-> As stated in [`getQueryDefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.
+> As stated in [`getQueryDefaults`](#queryclient-getquerydefaults), the order of registration of query defaults does matter.
 > Since the matching defaults are merged by `getQueryDefaults`, the registration should be made in the following order: from the **most generic key** to the **least generic one** .
 > This way, more specific defaults will override more generic defaults.
 
@@ -591,7 +484,7 @@ function Component() {
 - `mutationKey: unknown[]`
 - `options: MutationOptions`
 
-> Similar to [`setQueryDefaults`](#queryclientsetquerydefaults), the order of registration does matter here.
+> Similar to [`setQueryDefaults`](#queryclient-setquerydefaults), the order of registration does matter here.
 
 ## `queryClient.getQueryCache`
 

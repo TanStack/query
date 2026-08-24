@@ -1,19 +1,22 @@
+import { noop } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+
 import type {
   DefaultError,
-  FetchInfiniteQueryOptions,
+  InfiniteData,
   QueryClient,
   QueryKey,
 } from '@tanstack/query-core'
+import type { UsePrefetchInfiniteQueryOptions } from './types'
 
 export function usePrefetchInfiniteQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: FetchInfiniteQueryOptions<
+  options: UsePrefetchInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -21,10 +24,10 @@ export function usePrefetchInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-) {
+): void {
   const client = useQueryClient(queryClient)
 
   if (!client.getQueryState(options.queryKey)) {
-    client.prefetchInfiniteQuery(options)
+    void client.infiniteQuery(options).catch(noop)
   }
 }

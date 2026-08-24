@@ -3,13 +3,11 @@ id: UnusedSkipTokenOptions
 title: UnusedSkipTokenOptions
 ---
 
-# Type Alias: UnusedSkipTokenOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:25](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/queryOptions.ts#L25)
+Defined in: [preact-query/src/queryOptions.ts:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L26)
 
 ## Type Declaration
 
