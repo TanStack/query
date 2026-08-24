@@ -15,6 +15,9 @@ import { useBaseQuery } from './useBaseQuery'
 /**
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
+ * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+ * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
  */
 export function useQuery<
   TQueryFnData = unknown,
@@ -29,6 +32,9 @@ export function useQuery<
 /**
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
+ * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+ * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
  */
 export function useQuery<
   TQueryFnData = unknown,
@@ -43,6 +49,9 @@ export function useQuery<
 /**
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
+ * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+ * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
  *
  * @example
  * ```tsx

@@ -70,9 +70,11 @@ const isCreatingPost = useMutationState({
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:62](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L62)
+Defined in: [preact-query/src/mutationOptions.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L63)
 
-You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
+`mutationKey` is required on this overload — use this when you don't need to look the mutation up later
+(e.g. with `useMutationState`).
 
 ### Type Parameters
 
@@ -108,7 +110,6 @@ You can generally pass everything to `mutationOptions` that you can also pass to
 import { mutationOptions, useMutation } from '@tanstack/preact-query'
 
 export const createPostOptions = mutationOptions({
-  mutationKey: ['posts', 'create'],
   mutationFn: createPost,
 })
 

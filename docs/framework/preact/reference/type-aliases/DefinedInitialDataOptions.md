@@ -31,6 +31,8 @@ cache.
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
+Optional here — since `initialData` is set, the query already has data to display without a query function.
+
 ## Type Parameters
 
 ### TQueryFnData

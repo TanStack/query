@@ -65,6 +65,9 @@ export type DefinedInitialDataOptions<
   initialData:
     | NonUndefinedGuard<TQueryFnData>
     | (() => NonUndefinedGuard<TQueryFnData>)
+  /**
+   * Optional here — since `initialData` is set, the query already has data to display without a query function.
+   */
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 

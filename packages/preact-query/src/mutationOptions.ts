@@ -42,14 +42,15 @@ export function mutationOptions<
   'mutationKey'
 >
 /**
- * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
+ * `mutationKey` is required on this overload — use this when you don't need to look the mutation up later
+ * (e.g. with `useMutationState`).
  *
  * @example
  * ```tsx
  * import { mutationOptions, useMutation } from '@tanstack/preact-query'
  *
  * export const createPostOptions = mutationOptions({
- *   mutationKey: ['posts', 'create'],
  *   mutationFn: createPost,
  * })
  *

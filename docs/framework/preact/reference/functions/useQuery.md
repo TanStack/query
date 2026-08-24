@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:19](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L19)
+Defined in: [preact-query/src/useQuery.ts:22](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L22)
 
 ### Type Parameters
 
@@ -46,13 +46,17 @@ be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
+The current query result. `status` is `pending` if there is no cached data and no query attempt
+has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L33)
+Defined in: [preact-query/src/useQuery.ts:39](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L39)
 
 ### Type Parameters
 
@@ -89,13 +93,17 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
+The current query result. `status` is `pending` if there is no cached data and no query attempt
+has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:110](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L110)
+Defined in: [preact-query/src/useQuery.ts:119](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L119)
 
 ### Type Parameters
 
@@ -131,6 +139,10 @@ be used.
 ### Returns
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result. `status` is `pending` if there is no cached data and no query attempt
+has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 ### Examples
 

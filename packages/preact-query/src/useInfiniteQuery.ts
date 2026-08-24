@@ -24,6 +24,9 @@ import { useBaseQuery } from './useBaseQuery'
  *
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
+ * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
+ * `isFetchingPreviousPage`.
  */
 export function useInfiniteQuery<
   TQueryFnData,
@@ -48,6 +51,9 @@ export function useInfiniteQuery<
  *
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
+ * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
+ * `isFetchingPreviousPage`.
  */
 export function useInfiniteQuery<
   TQueryFnData,
