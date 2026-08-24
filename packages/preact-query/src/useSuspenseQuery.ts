@@ -13,6 +13,37 @@ import { useBaseQuery } from './useBaseQuery'
  * is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
  *
  * Caveat: cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQuery } from '@tanstack/preact-query'
+ *
+ * function Projects() {
+ *   // `data` is guaranteed to be defined here — no `isPending` check needed.
+ *   const { data, isFetching } = useSuspenseQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: fetchProjects,
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <h1>Projects {isFetching ? <Spinner /> : null}</h1>
+ *       {data.map((project) => (
+ *         <p key={project.id}>{project.name}</p>
+ *       ))}
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading projects...</h1>}>
+ *       <Projects />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseQuery<
   TQueryFnData = unknown,

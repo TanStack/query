@@ -77,6 +77,18 @@ export type DefinedInitialDataInfiniteOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * ```
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -105,6 +117,18 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * ```
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -133,6 +157,18 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * ```
  */
 export function infiniteQueryOptions<
   TQueryFnData,

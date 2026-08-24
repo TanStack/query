@@ -4,6 +4,21 @@ import type { UseMutationOptions } from './types'
 
 /**
  * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ *
+ * @example
+ * ```tsx
+ * import { mutationOptions, useMutation } from '@tanstack/preact-query'
+ *
+ * export const createPostOptions = mutationOptions({
+ *   mutationKey: ['posts', 'create'],
+ *   mutationFn: createPost,
+ * })
+ *
+ * function CreatePost() {
+ *   const mutation = useMutation(createPostOptions)
+ *   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
+ * }
+ * ```
  */
 export function mutationOptions<
   TData = unknown,
@@ -21,6 +36,21 @@ export function mutationOptions<
 >
 /**
  * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ *
+ * @example
+ * ```tsx
+ * import { mutationOptions, useMutation } from '@tanstack/preact-query'
+ *
+ * export const createPostOptions = mutationOptions({
+ *   mutationKey: ['posts', 'create'],
+ *   mutationFn: createPost,
+ * })
+ *
+ * function CreatePost() {
+ *   const mutation = useMutation(createPostOptions)
+ *   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
+ * }
+ * ```
  */
 export function mutationOptions<
   TData = unknown,

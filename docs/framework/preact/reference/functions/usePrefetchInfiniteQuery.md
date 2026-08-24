@@ -7,7 +7,7 @@ title: usePrefetchInfiniteQuery
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:19](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L19)
+Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L41)
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
@@ -55,3 +55,26 @@ available.
 ## Returns
 
 `void`
+
+## Example
+
+```tsx
+import { Suspense } from 'preact/compat'
+import { usePrefetchInfiniteQuery } from '@tanstack/preact-query'
+
+function App() {
+  // Fire the prefetch during render, before the suspense boundary below.
+  usePrefetchInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+  return (
+    <Suspense fallback={<h1>Loading projects...</h1>}>
+      <Projects />
+    </Suspense>
+  )
+}
+```

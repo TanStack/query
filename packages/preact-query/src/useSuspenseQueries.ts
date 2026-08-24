@@ -173,6 +173,38 @@ export type SuspenseQueriesResults<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   const results = useSuspenseQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *   })
+ *
+ *   return (
+ *     <ul>
+ *       {results.map((result) => (
+ *         <li key={result.data.id}>{result.data.title}</li>
+ *       ))}
+ *     </ul>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading posts...</h1>}>
+ *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseQueries<
   T extends Array<any>,
@@ -198,6 +230,38 @@ export function useSuspenseQueries<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   const results = useSuspenseQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *   })
+ *
+ *   return (
+ *     <ul>
+ *       {results.map((result) => (
+ *         <li key={result.data.id}>{result.data.title}</li>
+ *       ))}
+ *     </ul>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading posts...</h1>}>
+ *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseQueries<
   T extends Array<any>,

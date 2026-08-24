@@ -15,6 +15,28 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * as well as pageParam information, and should return a single variable that will be passed as the last
  * optional parameter to your query function. Return `undefined` or `null` to indicate there is no next page
  * available.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { usePrefetchInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * function App() {
+ *   // Fire the prefetch during render, before the suspense boundary below.
+ *   usePrefetchInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ *   return (
+ *     <Suspense fallback={<h1>Loading projects...</h1>}>
+ *       <Projects />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function usePrefetchInfiniteQuery<
   TQueryFnData = unknown,

@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:177](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L177)
+Defined in: [preact-query/src/useSuspenseQueries.ts:209](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L209)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -53,13 +53,46 @@ Caveat: the component will only re-mount after all queries have finished loading
 stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
 this, make sure to set a high enough `staleTime`. Cancellation does not work.
 
+### Example
+
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseQueries } from '@tanstack/preact-query'
+
+function Posts({ ids }: { ids: Array<number> }) {
+  // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+  const results = useSuspenseQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['post', id],
+      queryFn: () => fetchPost(id),
+    })),
+  })
+
+  return (
+    <ul>
+      {results.map((result) => (
+        <li key={result.data.id}>{result.data.title}</li>
+      ))}
+    </ul>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading posts...</h1>}>
+      <Posts ids={[1, 2, 3]} />
+    </Suspense>
+  )
+}
+```
+
 ## Call Signature
 
 ```ts
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:202](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L202)
+Defined in: [preact-query/src/useSuspenseQueries.ts:266](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L266)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -101,3 +134,36 @@ flags set accordingly).
 Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
 stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
 this, make sure to set a high enough `staleTime`. Cancellation does not work.
+
+### Example
+
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseQueries } from '@tanstack/preact-query'
+
+function Posts({ ids }: { ids: Array<number> }) {
+  // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+  const results = useSuspenseQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['post', id],
+      queryFn: () => fetchPost(id),
+    })),
+  })
+
+  return (
+    <ul>
+      {results.map((result) => (
+        <li key={result.data.id}>{result.data.title}</li>
+      ))}
+    </ul>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading posts...</h1>}>
+      <Posts ids={[1, 2, 3]} />
+    </Suspense>
+  )
+}
+```

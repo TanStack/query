@@ -24,6 +24,41 @@ import { useBaseQuery } from './useBaseQuery'
  * accordingly).
  *
  * Caveat: cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * function Projects() {
+ *   // `data` is guaranteed to be defined here — no `isPending` check needed.
+ *   const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       {data.pages.map((page) =>
+ *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+ *       )}
+ *       <button onClick={() => fetchNextPage()} disabled={!hasNextPage}>
+ *         Load More
+ *       </button>
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading projects...</h1>}>
+ *       <Projects />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
