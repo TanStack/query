@@ -3,13 +3,11 @@ id: usePrefetchInfiniteQuery
 title: usePrefetchInfiniteQuery
 ---
 
-# Function: usePrefetchInfiniteQuery()
-
 ```ts
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:9](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L9)
+Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:7](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L7)
 
 ## Type Parameters
 
@@ -37,7 +35,7 @@ Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:9](https://github.com
 
 ### options
 
-`FetchInfiniteQueryOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`UsePrefetchInfiniteQueryOptions`](../type-aliases/UsePrefetchInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 ### queryClient?
 

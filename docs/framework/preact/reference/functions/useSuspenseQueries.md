@@ -3,15 +3,13 @@ id: useSuspenseQueries
 title: useSuspenseQueries
 ---
 
-# Function: useSuspenseQueries()
-
 ## Call Signature
 
 ```ts
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:164](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L164)
+Defined in: [preact-query/src/useSuspenseQueries.ts:165](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L165)
 
 ### Type Parameters
 
@@ -50,7 +48,7 @@ Defined in: [preact-query/src/useSuspenseQueries.ts:164](https://github.com/theV
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:177](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L177)
+Defined in: [preact-query/src/useSuspenseQueries.ts:178](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L178)
 
 ### Type Parameters
 

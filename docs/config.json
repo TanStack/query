@@ -118,6 +118,10 @@
               "to": "framework/svelte/overview"
             },
             {
+              "label": "Quick Start",
+              "to": "framework/svelte/quick-start"
+            },
+            {
               "label": "Installation",
               "to": "framework/svelte/installation"
             },
@@ -1236,6 +1240,10 @@
               "to": "framework/svelte/reference/functions/useMutationState"
             },
             {
+              "label": "Functions / useQueryClient",
+              "to": "framework/svelte/reference/functions/useQueryClient"
+            },
+            {
               "label": "Functions / queryOptions",
               "to": "framework/svelte/reference/functions/queryOptions"
             },
@@ -1246,6 +1254,122 @@
             {
               "label": "Functions / mutationOptions",
               "to": "framework/svelte/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Functions / useHydrate",
+              "to": "framework/svelte/reference/functions/useHydrate"
+            },
+            {
+              "label": "Functions / getIsRestoringContext",
+              "to": "framework/svelte/reference/functions/getIsRestoringContext"
+            },
+            {
+              "label": "Functions / getQueryClientContext",
+              "to": "framework/svelte/reference/functions/getQueryClientContext"
+            },
+            {
+              "label": "Functions / setIsRestoringContext",
+              "to": "framework/svelte/reference/functions/setIsRestoringContext"
+            },
+            {
+              "label": "Functions / setQueryClientContext",
+              "to": "framework/svelte/reference/functions/setQueryClientContext"
+            },
+            {
+              "label": "Functions / useIsRestoring",
+              "to": "framework/svelte/reference/functions/useIsRestoring"
+            },
+            {
+              "label": "Types / Accessor",
+              "to": "framework/svelte/reference/type-aliases/Accessor"
+            },
+            {
+              "label": "Types / CreateBaseMutationResult",
+              "to": "framework/svelte/reference/type-aliases/CreateBaseMutationResult"
+            },
+            {
+              "label": "Types / CreateBaseQueryOptions",
+              "to": "framework/svelte/reference/type-aliases/CreateBaseQueryOptions"
+            },
+            {
+              "label": "Types / CreateBaseQueryResult",
+              "to": "framework/svelte/reference/type-aliases/CreateBaseQueryResult"
+            },
+            {
+              "label": "Types / CreateInfiniteQueryOptions",
+              "to": "framework/svelte/reference/type-aliases/CreateInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CreateInfiniteQueryResult",
+              "to": "framework/svelte/reference/type-aliases/CreateInfiniteQueryResult"
+            },
+            {
+              "label": "Types / CreateMutateAsyncFunction",
+              "to": "framework/svelte/reference/type-aliases/CreateMutateAsyncFunction"
+            },
+            {
+              "label": "Types / CreateMutateFunction",
+              "to": "framework/svelte/reference/type-aliases/CreateMutateFunction"
+            },
+            {
+              "label": "Types / CreateMutationOptions",
+              "to": "framework/svelte/reference/type-aliases/CreateMutationOptions"
+            },
+            {
+              "label": "Types / CreateMutationResult",
+              "to": "framework/svelte/reference/type-aliases/CreateMutationResult"
+            },
+            {
+              "label": "Types / CreateQueryOptions",
+              "to": "framework/svelte/reference/type-aliases/CreateQueryOptions"
+            },
+            {
+              "label": "Types / CreateQueryResult",
+              "to": "framework/svelte/reference/type-aliases/CreateQueryResult"
+            },
+            {
+              "label": "Types / DefinedCreateBaseQueryResult",
+              "to": "framework/svelte/reference/type-aliases/DefinedCreateBaseQueryResult"
+            },
+            {
+              "label": "Types / DefinedCreateQueryResult",
+              "to": "framework/svelte/reference/type-aliases/DefinedCreateQueryResult"
+            },
+            {
+              "label": "Types / DefinedInitialDataOptions",
+              "to": "framework/svelte/reference/type-aliases/DefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / HydrationBoundary",
+              "to": "framework/svelte/reference/type-aliases/HydrationBoundary"
+            },
+            {
+              "label": "Types / MutationStateOptions",
+              "to": "framework/svelte/reference/type-aliases/MutationStateOptions"
+            },
+            {
+              "label": "Types / MutationTypeFromResult",
+              "to": "framework/svelte/reference/type-aliases/MutationTypeFromResult"
+            },
+            {
+              "label": "Types / QueriesOptions",
+              "to": "framework/svelte/reference/type-aliases/QueriesOptions"
+            },
+            {
+              "label": "Types / QueriesResults",
+              "to": "framework/svelte/reference/type-aliases/QueriesResults"
+            },
+            {
+              "label": "Types / QueryClientProviderProps",
+              "to": "framework/svelte/reference/type-aliases/QueryClientProviderProps"
+            },
+            {
+              "label": "Types / UndefinedInitialDataOptions",
+              "to": "framework/svelte/reference/type-aliases/UndefinedInitialDataOptions"
+            },
+            {
+              "label": "Variables / HydrationBoundary",
+              "to": "framework/svelte/reference/variables/HydrationBoundary"
             }
           ]
         },
@@ -1257,7 +1381,7 @@
               "to": "framework/lit/reference/index"
             },
             {
-              "label": "QueryClientProvider",
+              "label": "Classes / QueryClientProvider",
               "to": "framework/lit/reference/classes/QueryClientProvider"
             },
             {
@@ -1323,6 +1447,102 @@
             {
               "label": "Context / resolveQueryClient",
               "to": "framework/lit/reference/functions/resolveQueryClient"
+            },
+            {
+              "label": "Types / Accessor",
+              "to": "framework/lit/reference/type-aliases/Accessor"
+            },
+            {
+              "label": "Types / CreateInfiniteQueryOptions",
+              "to": "framework/lit/reference/type-aliases/CreateInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / CreateMutationOptions",
+              "to": "framework/lit/reference/type-aliases/CreateMutationOptions"
+            },
+            {
+              "label": "Types / CreateQueriesControllerOptions",
+              "to": "framework/lit/reference/type-aliases/CreateQueriesControllerOptions"
+            },
+            {
+              "label": "Types / CreateQueriesInput",
+              "to": "framework/lit/reference/type-aliases/CreateQueriesInput"
+            },
+            {
+              "label": "Types / CreateQueryOptions",
+              "to": "framework/lit/reference/type-aliases/CreateQueryOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataOptions",
+              "to": "framework/lit/reference/type-aliases/DefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / InfiniteQueryControllerOptions",
+              "to": "framework/lit/reference/type-aliases/InfiniteQueryControllerOptions"
+            },
+            {
+              "label": "Types / InfiniteQueryResultAccessor",
+              "to": "framework/lit/reference/type-aliases/InfiniteQueryResultAccessor"
+            },
+            {
+              "label": "Types / IsFetchingAccessor",
+              "to": "framework/lit/reference/type-aliases/IsFetchingAccessor"
+            },
+            {
+              "label": "Types / IsMutatingAccessor",
+              "to": "framework/lit/reference/type-aliases/IsMutatingAccessor"
+            },
+            {
+              "label": "Types / MutationControllerOptions",
+              "to": "framework/lit/reference/type-aliases/MutationControllerOptions"
+            },
+            {
+              "label": "Types / MutationControllerResult",
+              "to": "framework/lit/reference/type-aliases/MutationControllerResult"
+            },
+            {
+              "label": "Types / MutationResultAccessor",
+              "to": "framework/lit/reference/type-aliases/MutationResultAccessor"
+            },
+            {
+              "label": "Types / MutationStateAccessor",
+              "to": "framework/lit/reference/type-aliases/MutationStateAccessor"
+            },
+            {
+              "label": "Types / MutationStateOptions",
+              "to": "framework/lit/reference/type-aliases/MutationStateOptions"
+            },
+            {
+              "label": "Types / QueriesControllerOptions",
+              "to": "framework/lit/reference/type-aliases/QueriesControllerOptions"
+            },
+            {
+              "label": "Types / QueriesResultAccessor",
+              "to": "framework/lit/reference/type-aliases/QueriesResultAccessor"
+            },
+            {
+              "label": "Types / QueryControllerOptions",
+              "to": "framework/lit/reference/type-aliases/QueryControllerOptions"
+            },
+            {
+              "label": "Types / QueryControllerResult",
+              "to": "framework/lit/reference/type-aliases/QueryControllerResult"
+            },
+            {
+              "label": "Types / QueryResultAccessor",
+              "to": "framework/lit/reference/type-aliases/QueryResultAccessor"
+            },
+            {
+              "label": "Types / UndefinedInitialDataOptions",
+              "to": "framework/lit/reference/type-aliases/UndefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenOptions",
+              "to": "framework/lit/reference/type-aliases/UnusedSkipTokenOptions"
+            },
+            {
+              "label": "Types / ValueAccessor",
+              "to": "framework/lit/reference/type-aliases/ValueAccessor"
             }
           ]
         },
@@ -1334,12 +1554,200 @@
               "to": "framework/angular/reference/index"
             },
             {
-              "label": "Functions / injectQuery",
-              "to": "framework/angular/reference/functions/injectQuery"
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/angular/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / injectInfiniteQuery",
+              "to": "framework/angular/reference/functions/injectInfiniteQuery"
+            },
+            {
+              "label": "Functions / injectIsFetching",
+              "to": "framework/angular/reference/functions/injectIsFetching"
+            },
+            {
+              "label": "Functions / injectIsMutating",
+              "to": "framework/angular/reference/functions/injectIsMutating"
+            },
+            {
+              "label": "Functions / injectIsRestoring",
+              "to": "framework/angular/reference/functions/injectIsRestoring"
             },
             {
               "label": "Functions / injectMutation",
               "to": "framework/angular/reference/functions/injectMutation"
+            },
+            {
+              "label": "Functions / injectMutationState",
+              "to": "framework/angular/reference/functions/injectMutationState"
+            },
+            {
+              "label": "Functions / injectQuery",
+              "to": "framework/angular/reference/functions/injectQuery"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/angular/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Functions / provideIsRestoring",
+              "to": "framework/angular/reference/functions/provideIsRestoring"
+            },
+            {
+              "label": "Functions / provideQueryClient",
+              "to": "framework/angular/reference/functions/provideQueryClient"
+            },
+            {
+              "label": "Functions / provideTanStackQuery",
+              "to": "framework/angular/reference/functions/provideTanStackQuery"
+            },
+            {
+              "label": "Functions / queryFeature",
+              "to": "framework/angular/reference/functions/queryFeature"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/angular/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / injectQueryClient",
+              "to": "framework/angular/reference/functions/injectQueryClient"
+            },
+            {
+              "label": "Functions / provideAngularQuery",
+              "to": "framework/angular/reference/functions/provideAngularQuery"
+            },
+            {
+              "label": "Interfaces / BaseMutationNarrowing",
+              "to": "framework/angular/reference/interfaces/BaseMutationNarrowing"
+            },
+            {
+              "label": "Interfaces / BaseQueryNarrowing",
+              "to": "framework/angular/reference/interfaces/BaseQueryNarrowing"
+            },
+            {
+              "label": "Interfaces / CreateBaseQueryOptions",
+              "to": "framework/angular/reference/interfaces/CreateBaseQueryOptions"
+            },
+            {
+              "label": "Interfaces / CreateInfiniteQueryOptions",
+              "to": "framework/angular/reference/interfaces/CreateInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / CreateMutationOptions",
+              "to": "framework/angular/reference/interfaces/CreateMutationOptions"
+            },
+            {
+              "label": "Interfaces / CreateQueryOptions",
+              "to": "framework/angular/reference/interfaces/CreateQueryOptions"
+            },
+            {
+              "label": "Interfaces / InjectInfiniteQueryOptions",
+              "to": "framework/angular/reference/interfaces/InjectInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / InjectIsFetchingOptions",
+              "to": "framework/angular/reference/interfaces/InjectIsFetchingOptions"
+            },
+            {
+              "label": "Interfaces / InjectIsMutatingOptions",
+              "to": "framework/angular/reference/interfaces/InjectIsMutatingOptions"
+            },
+            {
+              "label": "Interfaces / InjectMutationOptions",
+              "to": "framework/angular/reference/interfaces/InjectMutationOptions"
+            },
+            {
+              "label": "Interfaces / InjectMutationStateOptions",
+              "to": "framework/angular/reference/interfaces/InjectMutationStateOptions"
+            },
+            {
+              "label": "Interfaces / InjectQueryOptions",
+              "to": "framework/angular/reference/interfaces/InjectQueryOptions"
+            },
+            {
+              "label": "Interfaces / QueryFeature",
+              "to": "framework/angular/reference/interfaces/QueryFeature"
+            },
+            {
+              "label": "Types / CreateBaseMutationResult",
+              "to": "framework/angular/reference/type-aliases/CreateBaseMutationResult"
+            },
+            {
+              "label": "Types / CreateBaseQueryResult",
+              "to": "framework/angular/reference/type-aliases/CreateBaseQueryResult"
+            },
+            {
+              "label": "Types / CreateInfiniteQueryResult",
+              "to": "framework/angular/reference/type-aliases/CreateInfiniteQueryResult"
+            },
+            {
+              "label": "Types / CreateMutateAsyncFunction",
+              "to": "framework/angular/reference/type-aliases/CreateMutateAsyncFunction"
+            },
+            {
+              "label": "Types / CreateMutateFunction",
+              "to": "framework/angular/reference/type-aliases/CreateMutateFunction"
+            },
+            {
+              "label": "Types / CreateMutationResult",
+              "to": "framework/angular/reference/type-aliases/CreateMutationResult"
+            },
+            {
+              "label": "Types / CreateQueryResult",
+              "to": "framework/angular/reference/type-aliases/CreateQueryResult"
+            },
+            {
+              "label": "Types / DefinedCreateInfiniteQueryResult",
+              "to": "framework/angular/reference/type-aliases/DefinedCreateInfiniteQueryResult"
+            },
+            {
+              "label": "Types / DefinedCreateQueryResult",
+              "to": "framework/angular/reference/type-aliases/DefinedCreateQueryResult"
+            },
+            {
+              "label": "Types / DefinedInitialDataInfiniteOptions",
+              "to": "framework/angular/reference/type-aliases/DefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataOptions",
+              "to": "framework/angular/reference/type-aliases/DefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / DevtoolsFeature",
+              "to": "framework/angular/reference/type-aliases/DevtoolsFeature"
+            },
+            {
+              "label": "Types / PersistQueryClientFeature",
+              "to": "framework/angular/reference/type-aliases/PersistQueryClientFeature"
+            },
+            {
+              "label": "Types / QueriesOptions",
+              "to": "framework/angular/reference/type-aliases/QueriesOptions"
+            },
+            {
+              "label": "Types / QueriesResults",
+              "to": "framework/angular/reference/type-aliases/QueriesResults"
+            },
+            {
+              "label": "Types / QueryFeatures",
+              "to": "framework/angular/reference/type-aliases/QueryFeatures"
+            },
+            {
+              "label": "Types / UndefinedInitialDataInfiniteOptions",
+              "to": "framework/angular/reference/type-aliases/UndefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / UndefinedInitialDataOptions",
+              "to": "framework/angular/reference/type-aliases/UndefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenInfiniteOptions",
+              "to": "framework/angular/reference/type-aliases/UnusedSkipTokenInfiniteOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenOptions",
+              "to": "framework/angular/reference/type-aliases/UnusedSkipTokenOptions"
             }
           ]
         },
@@ -1347,84 +1755,268 @@
           "label": "preact",
           "children": [
             {
-              "label": "useQuery",
+              "label": "Preact Reference",
+              "to": "framework/preact/reference/index"
+            },
+            {
+              "label": "Functions / useQuery",
               "to": "framework/preact/reference/functions/useQuery"
             },
             {
-              "label": "useQueries",
+              "label": "Functions / useQueries",
               "to": "framework/preact/reference/functions/useQueries"
             },
             {
-              "label": "useInfiniteQuery",
+              "label": "Functions / useInfiniteQuery",
               "to": "framework/preact/reference/functions/useInfiniteQuery"
             },
             {
-              "label": "useMutation",
+              "label": "Functions / useMutation",
               "to": "framework/preact/reference/functions/useMutation"
             },
             {
-              "label": "useIsFetching",
+              "label": "Functions / useIsFetching",
               "to": "framework/preact/reference/functions/useIsFetching"
             },
             {
-              "label": "useIsMutating",
+              "label": "Functions / useIsMutating",
               "to": "framework/preact/reference/functions/useIsMutating"
             },
             {
-              "label": "useMutationState",
+              "label": "Functions / useMutationState",
               "to": "framework/preact/reference/functions/useMutationState"
             },
             {
-              "label": "useSuspenseQuery",
+              "label": "Functions / useSuspenseQuery",
               "to": "framework/preact/reference/functions/useSuspenseQuery"
             },
             {
-              "label": "useSuspenseInfiniteQuery",
+              "label": "Functions / useSuspenseInfiniteQuery",
               "to": "framework/preact/reference/functions/useSuspenseInfiniteQuery"
             },
             {
-              "label": "useSuspenseQueries",
+              "label": "Functions / useSuspenseQueries",
               "to": "framework/preact/reference/functions/useSuspenseQueries"
             },
             {
-              "label": "QueryClientProvider",
+              "label": "Functions / QueryClientProvider",
               "to": "framework/preact/reference/functions/QueryClientProvider"
             },
             {
-              "label": "useQueryClient",
+              "label": "Functions / useQueryClient",
               "to": "framework/preact/reference/functions/useQueryClient"
             },
             {
-              "label": "queryOptions",
+              "label": "Functions / queryOptions",
               "to": "framework/preact/reference/functions/queryOptions"
             },
             {
-              "label": "infiniteQueryOptions",
+              "label": "Functions / infiniteQueryOptions",
               "to": "framework/preact/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "mutationOptions",
+              "label": "Functions / mutationOptions",
               "to": "framework/preact/reference/functions/mutationOptions"
             },
             {
-              "label": "usePrefetchQuery",
+              "label": "Functions / usePrefetchQuery",
               "to": "framework/preact/reference/functions/usePrefetchQuery"
             },
             {
-              "label": "usePrefetchInfiniteQuery",
+              "label": "Functions / usePrefetchInfiniteQuery",
               "to": "framework/preact/reference/functions/usePrefetchInfiniteQuery"
             },
             {
-              "label": "QueryErrorResetBoundary",
+              "label": "Functions / QueryErrorResetBoundary",
               "to": "framework/preact/reference/functions/QueryErrorResetBoundary"
             },
             {
-              "label": "useQueryErrorResetBoundary",
+              "label": "Functions / useQueryErrorResetBoundary",
               "to": "framework/preact/reference/functions/useQueryErrorResetBoundary"
             },
             {
-              "label": "hydration",
+              "label": "Functions / HydrationBoundary",
               "to": "framework/preact/reference/functions/HydrationBoundary"
+            },
+            {
+              "label": "Functions / useIsRestoring",
+              "to": "framework/preact/reference/functions/useIsRestoring"
+            },
+            {
+              "label": "Interfaces / HydrationBoundaryProps",
+              "to": "framework/preact/reference/interfaces/HydrationBoundaryProps"
+            },
+            {
+              "label": "Interfaces / QueryErrorResetBoundaryProps",
+              "to": "framework/preact/reference/interfaces/QueryErrorResetBoundaryProps"
+            },
+            {
+              "label": "Interfaces / UseBaseQueryOptions",
+              "to": "framework/preact/reference/interfaces/UseBaseQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseInfiniteQueryOptions",
+              "to": "framework/preact/reference/interfaces/UseInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseMutationOptions",
+              "to": "framework/preact/reference/interfaces/UseMutationOptions"
+            },
+            {
+              "label": "Interfaces / UseQueryOptions",
+              "to": "framework/preact/reference/interfaces/UseQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseSuspenseInfiniteQueryOptions",
+              "to": "framework/preact/reference/interfaces/UseSuspenseInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseSuspenseQueryOptions",
+              "to": "framework/preact/reference/interfaces/UseSuspenseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseBaseQueryOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseBaseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseInfiniteQueryOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseMutationOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseMutationOptions"
+            },
+            {
+              "label": "Types / AnyUseQueryOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseSuspenseInfiniteQueryOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseSuspenseInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseSuspenseQueryOptions",
+              "to": "framework/preact/reference/type-aliases/AnyUseSuspenseQueryOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataInfiniteOptions",
+              "to": "framework/preact/reference/type-aliases/DefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataOptions",
+              "to": "framework/preact/reference/type-aliases/DefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / DefinedUseInfiniteQueryResult",
+              "to": "framework/preact/reference/type-aliases/DefinedUseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / DefinedUseQueryResult",
+              "to": "framework/preact/reference/type-aliases/DefinedUseQueryResult"
+            },
+            {
+              "label": "Types / QueriesOptions",
+              "to": "framework/preact/reference/type-aliases/QueriesOptions"
+            },
+            {
+              "label": "Types / QueriesResults",
+              "to": "framework/preact/reference/type-aliases/QueriesResults"
+            },
+            {
+              "label": "Types / QueryClientProviderProps",
+              "to": "framework/preact/reference/type-aliases/QueryClientProviderProps"
+            },
+            {
+              "label": "Types / QueryErrorClearResetFunction",
+              "to": "framework/preact/reference/type-aliases/QueryErrorClearResetFunction"
+            },
+            {
+              "label": "Types / QueryErrorIsResetFunction",
+              "to": "framework/preact/reference/type-aliases/QueryErrorIsResetFunction"
+            },
+            {
+              "label": "Types / QueryErrorResetBoundaryFunction",
+              "to": "framework/preact/reference/type-aliases/QueryErrorResetBoundaryFunction"
+            },
+            {
+              "label": "Types / QueryErrorResetFunction",
+              "to": "framework/preact/reference/type-aliases/QueryErrorResetFunction"
+            },
+            {
+              "label": "Types / SuspenseQueriesOptions",
+              "to": "framework/preact/reference/type-aliases/SuspenseQueriesOptions"
+            },
+            {
+              "label": "Types / SuspenseQueriesResults",
+              "to": "framework/preact/reference/type-aliases/SuspenseQueriesResults"
+            },
+            {
+              "label": "Types / UndefinedInitialDataInfiniteOptions",
+              "to": "framework/preact/reference/type-aliases/UndefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / UndefinedInitialDataOptions",
+              "to": "framework/preact/reference/type-aliases/UndefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenInfiniteOptions",
+              "to": "framework/preact/reference/type-aliases/UnusedSkipTokenInfiniteOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenOptions",
+              "to": "framework/preact/reference/type-aliases/UnusedSkipTokenOptions"
+            },
+            {
+              "label": "Types / UseBaseMutationResult",
+              "to": "framework/preact/reference/type-aliases/UseBaseMutationResult"
+            },
+            {
+              "label": "Types / UseBaseQueryResult",
+              "to": "framework/preact/reference/type-aliases/UseBaseQueryResult"
+            },
+            {
+              "label": "Types / UseInfiniteQueryResult",
+              "to": "framework/preact/reference/type-aliases/UseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / UseMutateAsyncFunction",
+              "to": "framework/preact/reference/type-aliases/UseMutateAsyncFunction"
+            },
+            {
+              "label": "Types / UseMutateFunction",
+              "to": "framework/preact/reference/type-aliases/UseMutateFunction"
+            },
+            {
+              "label": "Types / UseMutationResult",
+              "to": "framework/preact/reference/type-aliases/UseMutationResult"
+            },
+            {
+              "label": "Types / UsePrefetchInfiniteQueryOptions",
+              "to": "framework/preact/reference/type-aliases/UsePrefetchInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / UsePrefetchQueryOptions",
+              "to": "framework/preact/reference/type-aliases/UsePrefetchQueryOptions"
+            },
+            {
+              "label": "Types / UseQueryResult",
+              "to": "framework/preact/reference/type-aliases/UseQueryResult"
+            },
+            {
+              "label": "Types / UseSuspenseInfiniteQueryResult",
+              "to": "framework/preact/reference/type-aliases/UseSuspenseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / UseSuspenseQueryResult",
+              "to": "framework/preact/reference/type-aliases/UseSuspenseQueryResult"
+            },
+            {
+              "label": "Variables / IsRestoringProvider",
+              "to": "framework/preact/reference/variables/IsRestoringProvider"
+            },
+            {
+              "label": "Variables / QueryClientContext",
+              "to": "framework/preact/reference/variables/QueryClientContext"
             }
           ]
         }
@@ -1495,12 +2087,8 @@
               "to": "framework/react/examples/auto-refetching"
             },
             {
-              "label": "Optimistic Updates (UI)",
-              "to": "framework/react/examples/optimistic-updates-ui"
-            },
-            {
-              "label": "Optimistic Updates (Cache)",
-              "to": "framework/react/examples/optimistic-updates-cache"
+              "label": "Optimistic Updates",
+              "to": "framework/react/examples/nextjs-app-optimistic-updates"
             },
             {
               "label": "Pagination",
@@ -1577,6 +2165,10 @@
             {
               "label": "Chat example (streaming)",
               "to": "framework/react/examples/chat"
+            },
+            {
+              "label": "Batching",
+              "to": "framework/react/examples/batching"
             }
           ]
         },

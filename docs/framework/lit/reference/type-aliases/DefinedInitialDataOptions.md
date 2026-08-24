@@ -3,8 +3,6 @@ id: DefinedInitialDataOptions
 title: DefinedInitialDataOptions
 ---
 
-# Type Alias: DefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "queryFn"> & object;
 ```

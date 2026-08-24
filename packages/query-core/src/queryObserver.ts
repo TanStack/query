@@ -3,7 +3,6 @@ import { environmentManager } from './environmentManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
-import { pendingThenable } from './thenable'
 import {
   isValidTimeout,
   noop,
@@ -17,7 +16,6 @@ import { timeoutManager } from './timeoutManager'
 import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -56,7 +54,6 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  #currentThenable: Thenable<TData>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
@@ -82,7 +79,6 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
-    this.#currentThenable = pendingThenable()
 
     this.bindMethods()
     this.setOptions(options)
@@ -268,19 +264,6 @@ export class QueryObserver<
       get: (target, key) => {
         this.trackProp(key as keyof QueryObserverResult)
         onPropTracked?.(key as keyof QueryObserverResult)
-        if (key === 'promise') {
-          this.trackProp('data')
-          if (
-            !this.options.experimental_prefetchInRender &&
-            this.#currentThenable.status === 'pending'
-          ) {
-            this.#currentThenable.reject(
-              new Error(
-                'experimental_prefetchInRender feature flag is not enabled',
-              ),
-            )
-          }
-        }
         return Reflect.get(target, key)
       },
     })
@@ -317,7 +300,42 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    let unsubscribe = () => {}
+    let resolveEarly:
+      | ((result: QueryObserverResult<TData, TError>) => void)
+      | undefined
+
+    const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
+      (resolve) => {
+        resolveEarly = resolve
+        unsubscribe = this.#client.getQueryCache().subscribe((event) => {
+          if (
+            event.type === 'updated' &&
+            event.query.queryHash === query.queryHash &&
+            query.state.data !== undefined
+          ) {
+            unsubscribe()
+            resolve(this.createResult(query, defaultedOptions))
+          }
+        })
+      },
+    )
+
+    return Promise.race([
+      query
+        .fetch()
+        .then(() => {
+          const result = this.createResult(query, defaultedOptions)
+          // Settle the subscriber promise so both branches always settle.
+          // This value is ignored by Promise.race since the fetch branch already won.
+          resolveEarly?.(result)
+          return result
+        })
+        .finally(() => {
+          unsubscribe()
+        }),
+      cachePromise,
+    ])
   }
 
   protected fetch(
@@ -545,6 +563,10 @@ export class QueryObserver<
           this.#selectError = selectError as TError
         }
       }
+    } else if (data === undefined) {
+      // a stored select error belongs to previously selected data; once that
+      // data is gone (query switch or reset), it must not leak into this result
+      this.#selectError = null
     }
 
     if (this.#selectError) {
@@ -552,6 +574,7 @@ export class QueryObserver<
       data = this.#selectResult
       errorUpdatedAt = Date.now()
       status = 'error'
+      isPlaceholderData = false
     }
 
     const isFetching = newState.fetchStatus === 'fetching'
@@ -588,56 +611,10 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      promise: this.#currentThenable,
       isEnabled: resolveQueryBoolean(options.enabled, query) !== false,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>
-
-    if (this.options.experimental_prefetchInRender) {
-      const hasResultData = nextResult.data !== undefined
-      const isErrorWithoutData = nextResult.status === 'error' && !hasResultData
-      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (isErrorWithoutData) {
-          thenable.reject(nextResult.error)
-        } else if (hasResultData) {
-          thenable.resolve(nextResult.data as TData)
-        }
-      }
-
-      /**
-       * Create a new thenable and result promise when the results have changed
-       */
-      const recreateThenable = () => {
-        const pending =
-          (this.#currentThenable =
-          nextResult.promise =
-            pendingThenable())
-
-        finalizeThenableIfPossible(pending)
-      }
-
-      const prevThenable = this.#currentThenable
-      switch (prevThenable.status) {
-        case 'pending':
-          // Finalize the previous thenable if it was pending
-          // and we are still observing the same query
-          if (query.queryHash === prevQuery.queryHash) {
-            finalizeThenableIfPossible(prevThenable)
-          }
-          break
-        case 'fulfilled':
-          if (isErrorWithoutData || nextResult.data !== prevThenable.value) {
-            recreateThenable()
-          }
-          break
-        case 'rejected':
-          if (!isErrorWithoutData || nextResult.error !== prevThenable.reason) {
-            recreateThenable()
-          }
-          break
-      }
-    }
 
     return nextResult
   }

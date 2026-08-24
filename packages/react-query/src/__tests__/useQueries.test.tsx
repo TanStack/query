@@ -63,6 +63,34 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  it('should not optimistically show fetching when unsubscribed', () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.resolve('data'))
+
+    function Page() {
+      const [query] = useQueries({
+        queries: [{ queryKey: key, queryFn }],
+        subscribed: false,
+      })
+
+      return (
+        <div>
+          <span>isFetching: {String(query.isFetching)}</span>
+          <span>fetchStatus: {query.fetchStatus}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+    ).toBe(0)
+    rendered.getByText('isFetching: false')
+    rendered.getByText('fetchStatus: idle')
+  })
+
   it('should track results', async () => {
     const key1 = queryKey()
     const results: Array<Array<UseQueryResult>> = []
@@ -73,11 +101,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              count++
-              return count
-            },
+            queryFn: () =>
+              sleep(10).then(() => {
+                count++
+                return count
+              }),
           },
         ],
       })
@@ -144,7 +172,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
@@ -212,7 +240,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key4,
-            queryFn: async () =>
+            queryFn: () =>
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
@@ -768,19 +796,19 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                queryFns.push('first result')
-                return 'first result'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  queryFns.push('first result')
+                  return 'first result'
+                }),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                queryFns.push('second result')
-                return 'second result'
-              },
+              queryFn: () =>
+                sleep(20).then(() => {
+                  queryFns.push('second result')
+                  return 'second result'
+                }),
             },
           ],
           combine: () => 'foo',

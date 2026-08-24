@@ -7,7 +7,7 @@ React Query is now written in **TypeScript** to make sure the library and your p
 
 Things to keep in mind:
 
-- TanStack Query follows [DefinitelyTyped's support window](https://github.com/DefinitelyTyped/DefinitelyTyped#support-window) and supports TypeScript versions released within the last 2 years. At the moment, that means TypeScript **5.4** and newer.
+- TanStack Query follows [DefinitelyTyped's support window](https://github.com/DefinitelyTyped/DefinitelyTyped#support-window) and supports TypeScript versions released within the last 2 years. At the moment, that means TypeScript **5.6** and newer.
 - Changes to types in this repository are considered **non-breaking** and are usually released as **patch** semver changes (otherwise every type enhancement would be a major version!).
 - It is **highly recommended that you lock your react-query package version to a specific patch release and upgrade with the expectation that types may be fixed or upgraded between any release**
 - The non-type-related public API of React Query still follows semver very strictly.
@@ -199,7 +199,7 @@ declare module '@tanstack/react-query' {
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `query`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 import { queryOptions } from '@tanstack/react-query'
@@ -213,7 +213,7 @@ function groupOptions() {
 }
 
 useQuery(groupOptions())
-queryClient.prefetchQuery(groupOptions())
+queryClient.query(groupOptions())
 ```
 
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:

@@ -127,7 +127,7 @@ type GetCreateQueriesResult<T> = T extends {
                 >
               : QueryObserverResult
 
-export type CreateQueriesOptions<
+type CreateQueriesOptions<
   T extends Array<any>,
   TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
@@ -251,7 +251,6 @@ function createPendingQueryObserverResult(): QueryObserverResult {
       Promise.reject(
         createMissingQueryClientError(),
       )) as QueryObserverResult['refetch'],
-    promise: Promise.resolve(undefined as never),
   } as unknown as QueryObserverResult
 }
 
@@ -282,7 +281,6 @@ function createPlaceholderQueryObserverResult(
     isLoading: false,
     isSuccess: true,
     status: 'success',
-    promise: Promise.resolve(data as never),
   } as QueryObserverResult
 }
 

@@ -84,3 +84,16 @@ describe('Discriminated union return type', () => {
     expectTypeOf(mutation.variables).toEqualTypeOf<string>()
   })
 })
+
+describe('useMutation', () => {
+  it('should allow calling mutate with no arguments when TVariables is optional undefinable', () => {
+    const mutation = reactive(
+      useMutation({
+        mutationFn: (_variables: number | undefined) => sleep(0).then(() => 1),
+      }),
+    )
+
+    expectTypeOf(mutation.mutate).toBeCallableWith()
+    expectTypeOf(mutation.mutateAsync).toBeCallableWith()
+  })
+})

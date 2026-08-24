@@ -79,6 +79,14 @@ export type DataTag<
       [dataTagErrorSymbol]: TError
     }
 
+export type QueryKeyWithDataTag<
+  TQueryKey extends QueryKey = QueryKey,
+  TQueryFnData = unknown,
+  TError = DefaultError,
+> = {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+}
+
 export type InferDataFromTag<TQueryFnData, TTaggedQueryKey extends QueryKey> =
   TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
     ? TaggedValue
@@ -429,11 +437,6 @@ export interface QueryObserverOptions<
       >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
-
-  /**
-   * Enable prefetching during rendering
-   */
-  experimental_prefetchInRender?: boolean
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
@@ -486,6 +489,27 @@ export type DefaultedInfiniteQueryObserverOptions<
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
+export interface QueryExecuteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+> extends WithRequired<
+  QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
+  'queryKey'
+> {
+  initialPageParam?: never
+  select?: (data: TQueryData) => TData
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If the data is fresh it will be returned from the cache.
+   */
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
+}
+
+/** @deprecated */
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -504,6 +528,7 @@ export interface FetchQueryOptions<
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
+/** @deprecated */
 export interface EnsureQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -520,6 +545,7 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+/** @deprecated */
 export type EnsureInfiniteQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -536,13 +562,34 @@ export type EnsureInfiniteQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
-type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
+type InfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
       pages: number
       getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
     }
 
+export type InfiniteQueryExecuteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = Omit<
+  QueryExecuteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey,
+    TPageParam
+  >,
+  'initialPageParam'
+> &
+  InitialPageParam<TPageParam> &
+  InfiniteQueryPages<TQueryFnData, TPageParam>
+
+/** @deprecated */
 export type FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -560,7 +607,7 @@ export type FetchInfiniteQueryOptions<
   'initialPageParam'
 > &
   InitialPageParam<TPageParam> &
-  FetchInfiniteQueryPages<TQueryFnData, TPageParam>
+  InfiniteQueryPages<TQueryFnData, TPageParam>
 
 export interface ResultOptions {
   throwOnError?: boolean
@@ -743,55 +790,6 @@ export interface QueryObserverBaseResult<
    * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   fetchStatus: FetchStatus
-  /**
-   * A stable promise that will be resolved with the data of the query.
-   * Requires the `experimental_prefetchInRender` feature flag to be enabled.
-   * @example
-   *
-   * ### Enabling the feature flag
-   * ```ts
-   * const client = new QueryClient({
-   *   defaultOptions: {
-   *     queries: {
-   *       experimental_prefetchInRender: true,
-   *     },
-   *   },
-   * })
-   * ```
-   *
-   * ### Usage
-   * ```tsx
-   * import { useQuery } from '@tanstack/react-query'
-   * import React from 'react'
-   * import { fetchTodos, type Todo } from './api'
-   *
-   * function TodoList({ query }: { query: UseQueryResult<Todo[], Error> }) {
-   *   const data = React.use(query.promise)
-   *
-   *   return (
-   *     <ul>
-   *       {data.map(todo => (
-   *         <li key={todo.id}>{todo.title}</li>
-   *       ))}
-   *     </ul>
-   *   )
-   * }
-   *
-   * export function App() {
-   *   const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
-   *
-   *   return (
-   *     <>
-   *       <h1>Todos</h1>
-   *       <React.Suspense fallback={<div>Loading...</div>}>
-   *         <TodoList query={query} />
-   *       </React.Suspense>
-   *     </>
-   *   )
-   * }
-   * ```
-   */
-  promise: Promise<TData>
 }
 
 export interface QueryObserverPendingResult<
@@ -1178,14 +1176,28 @@ export interface MutateOptions<
   ) => void
 }
 
+export type MutateFunctionRest<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> = undefined extends TVariables
+  ? [
+      variables?: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+  : [
+      variables: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+
 export type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
 > = (
-  variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+  ...rest: MutateFunctionRest<TData, TError, TVariables, TOnMutateResult>
 ) => Promise<TData>
 
 export interface MutationObserverBaseResult<

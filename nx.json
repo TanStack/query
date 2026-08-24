@@ -69,11 +69,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
-      "outputs": [
-        "{projectRoot}/build",
-        "{projectRoot}/dist",
-        "{projectRoot}/dist-cjs"
-      ]
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
     },
     "test:build": {
       "cache": true,

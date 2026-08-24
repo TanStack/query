@@ -3,15 +3,13 @@ id: UseBaseMutationResult
 title: UseBaseMutationResult
 ---
 
-# Type Alias: UseBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;
 }> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:220](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L220)
+Defined in: [preact-query/src/types.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L256)
 
 ## Type Declaration
 

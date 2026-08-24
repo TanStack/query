@@ -3,8 +3,6 @@ id: InjectIsMutatingOptions
 title: InjectIsMutatingOptions
 ---
 
-# Interface: InjectIsMutatingOptions
-
 Defined in: [inject-is-mutating.ts:13](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L13)
 
 ## Properties

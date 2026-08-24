@@ -3,8 +3,6 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-# Type Alias: CreateMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> = OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>, "_defaulted">;
 ```

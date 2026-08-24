@@ -3,8 +3,6 @@ id: createQuery
 title: createQuery
 ---
 
-# Function: createQuery()
-
 ## Call Signature
 
 ```ts

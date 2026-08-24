@@ -3,6 +3,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
+import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 
@@ -13,6 +14,70 @@ describe('dehydration and rehydration', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('dehydrateQuery', () => {
+    it('should dehydrate a query directly without optional callbacks', () => {
+      const key = queryKey()
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(key, 'data')
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+      const dehydratedAt = new Date('2024-01-01T00:00:00.000Z')
+      vi.setSystemTime(dehydratedAt)
+
+      const dehydrated = dehydrateQuery(query)
+
+      expect(dehydrated).toMatchObject({
+        queryHash: query.queryHash,
+        queryKey: key,
+        state: query.state,
+      })
+      expect(dehydrated.dehydratedAt).toBe(dehydratedAt.getTime())
+      expect(dehydrated.state).not.toBe(query.state)
+      expect(dehydrated.promise).toBeUndefined()
+
+      queryClient.clear()
+    })
+
+    it('should serialize data when dehydrating a query directly', () => {
+      const key = queryKey()
+      const data = new Date('2024-01-01T00:00:00.000Z')
+      const serializeData = vi.fn((value: Date) => value.toISOString())
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(key, data)
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+
+      const dehydrated = dehydrateQuery(query, serializeData)
+
+      expect(dehydrated.state.data).toBe('2024-01-01T00:00:00.000Z')
+      expect(serializeData).toHaveBeenCalledExactlyOnceWith(data)
+      expect(query.state.data).toBe(data)
+
+      queryClient.clear()
+    })
+
+    it('should use shouldRedactErrors when dehydrating a query directly', async () => {
+      const key = queryKey()
+      const testError = new Error('original error')
+      const shouldRedactErrors = vi.fn(() => false)
+      const queryClient = new QueryClient()
+      const promise = queryClient
+        .prefetchQuery({
+          queryKey: key,
+          queryFn: () => Promise.reject(testError),
+          retry: false,
+        })
+        .catch(() => undefined)
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+
+      const dehydrated = dehydrateQuery(query, undefined, shouldRedactErrors)
+
+      await expect(dehydrated.promise).rejects.toBe(testError)
+      expect(shouldRedactErrors).toHaveBeenCalledExactlyOnceWith(testError)
+      await promise
+
+      queryClient.clear()
+    })
   })
 
   it('should work with serializable values', async () => {
@@ -155,7 +220,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find({ queryKey: key })?.state.data).toBe('string')
     await vi.advanceTimersByTimeAsync(100)
-    expect(hydrationCache.find({ queryKey: key })).toBeTruthy()
+    expect(hydrationCache.find({ queryKey: key })?.state.data).toBe('string')
 
     queryClient.clear()
     hydrationClient.clear()
@@ -330,9 +395,11 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
 
-    expect(hydrationCache.find({ queryKey: successKey })).toBeTruthy()
-    expect(hydrationCache.find({ queryKey: loadingKey })).toBeFalsy()
-    expect(hydrationCache.find({ queryKey: errorKey })).toBeFalsy()
+    expect(hydrationCache.find({ queryKey: successKey })?.state.data).toBe(
+      'success',
+    )
+    expect(hydrationCache.find({ queryKey: loadingKey })).toBeUndefined()
+    expect(hydrationCache.find({ queryKey: errorKey })).toBeUndefined()
 
     queryClient.clear()
     hydrationClient.clear()
@@ -609,22 +676,13 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockRestore()
   })
 
-  it('should not hydrate if the hydratedState is null or is not an object', () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
-    expect(() => hydrate(queryClient, null)).not.toThrow()
-    expect(() => hydrate(queryClient, 'invalid')).not.toThrow()
-
-    queryClient.clear()
-  })
-
   it('should support hydratedState with undefined queries and mutations', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
+    expect(() => hydrate(queryClient, { mutations: [] })).not.toThrow()
     expect(() => hydrate(queryClient, {})).not.toThrow()
-    expect(() => hydrate(queryClient, {})).not.toThrow()
+    expect(() => hydrate(queryClient, { queries: [] })).not.toThrow()
 
     queryClient.clear()
   })
@@ -1264,7 +1322,7 @@ describe('dehydration and rehydration', () => {
     await promise
   })
 
-  it('should handle errors in promises for pending queries', async () => {
+  it('should redact errors by default when shouldRedactErrors is not set', async () => {
     const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
@@ -1419,10 +1477,10 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
 
     const hydratedQuery = hydrationCache.find({ queryKey: key })
-    expect(hydratedQuery?.state.data).toBeDefined()
-    expect(hydratedQuery?.state.data).toHaveProperty('pages')
-    expect(hydratedQuery?.state.data).toHaveProperty('pageParams')
-    expect((hydratedQuery?.state.data as any).pages).toHaveLength(1)
+    expect(hydratedQuery?.state.data).toEqual({
+      pages: [{ items: ['page-0'], nextCursor: 1 }],
+      pageParams: [0],
+    })
   })
 
   it('should attach infiniteQueryBehavior during hydration', async () => {
@@ -1548,11 +1606,10 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(10)
     const result = await resultPromise
 
-    expect(result).toHaveProperty('pages')
-    expect(result).toHaveProperty('pageParams')
-    expect(Array.isArray(result.pages)).toBe(true)
-    expect(result.pages).toHaveLength(1)
-    expect(result.pages[0]).toHaveProperty('items')
+    expect(result).toEqual({
+      pages: [{ items: ['page-0'], next: 1 }],
+      pageParams: [0],
+    })
   })
 
   it('should retain infinite query type after subsequent setOptions calls', async () => {
@@ -1632,10 +1689,13 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(20)
     const result = await resultPromise
 
-    expect(result.pages).toHaveLength(2)
-    expect(result.pageParams).toHaveLength(2)
-    expect(result.pages[0]).toHaveProperty('items')
-    expect(result.pages[1]).toHaveProperty('items')
+    expect(result).toEqual({
+      pages: [
+        { items: ['item-0'], next: 1 },
+        { items: ['item-1'], next: 2 },
+      ],
+      pageParams: [0, 1],
+    })
   })
 
   // Companion to the test above: when the query already exists in the cache
