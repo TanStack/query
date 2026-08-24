@@ -7,7 +7,7 @@ title: HydrationBoundary
 function HydrationBoundary(__namedParameters): Element;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:72](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L72)
+Defined in: [preact-query/src/HydrationBoundary.tsx:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L75)
 
 `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by
 `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on

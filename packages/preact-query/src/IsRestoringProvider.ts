@@ -11,4 +11,9 @@ const IsRestoringContext = createContext(false)
  * @returns `true` while a persisted client is being restored, `false` otherwise.
  */
 export const useIsRestoring = () => useContext(IsRestoringContext)
+
+/**
+ * The Provider that `PersistQueryClientProvider` uses to signal whether a persisted client is currently
+ * being restored, read by `useIsRestoring`.
+ */
 export const IsRestoringProvider = IsRestoringContext.Provider

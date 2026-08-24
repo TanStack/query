@@ -13,7 +13,9 @@ Defined in: [preact-query/src/HydrationBoundary.tsx:14](https://github.com/TanSt
 optional children: ComponentChildren;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:28](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L28)
+Defined in: [preact-query/src/HydrationBoundary.tsx:31](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L31)
+
+The components that render once the dehydrated state has been hydrated into the cache.
 
 ***
 
@@ -44,7 +46,7 @@ optional defaultOptions: OmitKeyof<{
 optional queryClient: QueryClient;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:32](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L32)
+Defined in: [preact-query/src/HydrationBoundary.tsx:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L35)
 
 Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 

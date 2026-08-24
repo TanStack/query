@@ -3,6 +3,9 @@ import { createContext } from 'preact'
 import type { ComponentChildren, VNode } from 'preact'
 import { useContext, useEffect } from 'preact/hooks'
 
+/**
+ * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.
+ */
 export const QueryClientContext = createContext<QueryClient | undefined>(
   undefined,
 )
@@ -35,6 +38,9 @@ export type QueryClientProviderProps = {
    * The QueryClient instance to provide.
    */
   client: QueryClient
+  /**
+   * The components that get access to the provided QueryClient.
+   */
   children?: ComponentChildren
 }
 

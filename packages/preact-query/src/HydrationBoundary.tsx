@@ -25,6 +25,9 @@ export interface HydrationBoundaryProps {
       'mutations'
     >
   }
+  /**
+   * The components that render once the dehydrated state has been hydrated into the cache.
+   */
   children?: ComponentChildren
   /**
    * Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.

@@ -7,7 +7,7 @@ title: useQueryClient
 function useQueryClient(queryClient?): QueryClient;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:17](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L17)
+Defined in: [preact-query/src/QueryClientProvider.tsx:20](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L20)
 
 The `useQueryClient` hook returns the current `QueryClient` instance.
 
