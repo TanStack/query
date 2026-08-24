@@ -1,5 +1,13 @@
 # @tanstack/svelte-query-devtools
 
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.3
+  - @tanstack/svelte-query@6.1.43
+
 ## 6.1.42
 
 ### Patch Changes
