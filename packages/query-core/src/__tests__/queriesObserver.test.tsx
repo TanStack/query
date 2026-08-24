@@ -466,10 +466,9 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ]
-    const [newRaw, getNewCombined] = observer.getOptimisticResult(
-      newQueries,
-      { combine },
-    )
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(newQueries, {
+      combine,
+    })
     const newCombined = getNewCombined(newRaw)
 
     expect(newCombined.count).toBe(2)
@@ -586,10 +585,9 @@ describe('queriesObserver', () => {
     expect(initialCombined.count).toBe(2)
 
     const newQueries = [{ queryKey: key1, queryFn: queryFn1 }]
-    const [newRaw, getNewCombined] = observer.getOptimisticResult(
-      newQueries,
-      { combine },
-    )
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(newQueries, {
+      combine,
+    })
     const newCombined = getNewCombined(newRaw)
 
     expect(newCombined.count).toBe(1)
@@ -654,15 +652,13 @@ describe('queriesObserver', () => {
       { combine: combine1 },
     )
 
-    const [raw1, getCombined1] = observer.getOptimisticResult(
-      queries,
-      { combine: combine1 },
-    )
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, {
+      combine: combine1,
+    })
     const combined1 = getCombined1(raw1)
-    const [raw2, getCombined2] = observer.getOptimisticResult(
-      queries,
-      { combine: combine2 },
-    )
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, {
+      combine: combine2,
+    })
     const combined2 = getCombined2(raw2)
 
     expect(combined1.total).toBe(2)
@@ -913,16 +909,14 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    const [raw1, getCombined1] = observer.getOptimisticResult(
-      queries,
-      { combine },
-    )
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, {
+      combine,
+    })
     const combined1 = getCombined1(raw1)
 
-    const [raw2, getCombined2] = observer.getOptimisticResult(
-      queries,
-      { combine },
-    )
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, {
+      combine,
+    })
     const combined2 = getCombined2(raw2)
 
     // Same combine, same queries → cached result returned
@@ -948,16 +942,14 @@ describe('queriesObserver', () => {
         combine,
       })
 
-      const [raw1, getCombined1] = observer.getOptimisticResult(
-        queries,
-        { combine },
-      )
+      const [raw1, getCombined1] = observer.getOptimisticResult(queries, {
+        combine,
+      })
       getCombined1(raw1)
 
-      const [raw2, getCombined2] = observer.getOptimisticResult(
-        queries,
-        { combine },
-      )
+      const [raw2, getCombined2] = observer.getOptimisticResult(queries, {
+        combine,
+      })
       getCombined2(raw2)
 
       expect(combine).toHaveBeenCalledTimes(1)
