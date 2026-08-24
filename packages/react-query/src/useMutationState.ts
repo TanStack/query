@@ -94,7 +94,17 @@ export function useMutationState<
         }),
       [mutationCache],
     ),
-    () => result.current,
+    () => {
+      // recompute here so filter changes apply without a cache notification
+      const nextResult = replaceEqualDeep(
+        result.current,
+        getResult(mutationCache, options),
+      )
+      if (result.current !== nextResult) {
+        result.current = nextResult
+      }
+      return result.current
+    },
     () => result.current,
   )!
 }
