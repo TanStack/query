@@ -89,6 +89,28 @@ export type DefinedInitialDataInfiniteOptions<
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })
  * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const { data } = useInfiniteQuery(commentsOptions(postId))
+ *   return <>{data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}</>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+ * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
+ * ```
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -129,6 +151,28 @@ export function infiniteQueryOptions<
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })
  * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const { data } = useInfiniteQuery(commentsOptions(postId))
+ *   return <>{data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}</>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+ * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
+ * ```
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -168,6 +212,28 @@ export function infiniteQueryOptions<
  *   initialPageParam: 0,
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })
+ * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const { data } = useInfiniteQuery(commentsOptions(postId))
+ *   return <>{data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}</>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+ * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
  * ```
  */
 export function infiniteQueryOptions<

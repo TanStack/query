@@ -7,10 +7,13 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:123](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L123)
+Defined in: [preact-query/src/useMutationState.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L137)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` to it to narrow down your mutations, and `select` to transform the mutation state.
+
+`options.filters` narrows down the matched mutations (MutationFilters), and `options.select` transforms
+the mutation state.
 
 ## Type Parameters
 
@@ -70,4 +73,16 @@ const data = useMutationState({
   filters: { mutationKey },
   select: (mutation) => mutation.state.data,
 })
+```
+
+Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
+mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
+latest invocation:
+```tsx
+const data = useMutationState({
+  filters: { mutationKey: ['posts'] },
+  select: (mutation) => mutation.state.data,
+})
+
+const latest = data[data.length - 1]
 ```
