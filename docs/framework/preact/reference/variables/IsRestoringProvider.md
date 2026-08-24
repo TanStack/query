@@ -7,4 +7,4 @@ title: IsRestoringProvider
 const IsRestoringProvider: Provider<boolean> = IsRestoringContext.Provider;
 ```
 
-Defined in: [preact-query/src/IsRestoringProvider.ts:12](https://github.com/TanStack/query/blob/main/packages/preact-query/src/IsRestoringProvider.ts#L12)
+Defined in: [preact-query/src/IsRestoringProvider.ts:14](https://github.com/TanStack/query/blob/main/packages/preact-query/src/IsRestoringProvider.ts#L14)

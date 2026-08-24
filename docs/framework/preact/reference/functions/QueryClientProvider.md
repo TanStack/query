@@ -7,7 +7,7 @@ title: QueryClientProvider
 function QueryClientProvider(__namedParameters): VNode;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:54](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L54)
+Defined in: [preact-query/src/QueryClientProvider.tsx:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L55)
 
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application.
 

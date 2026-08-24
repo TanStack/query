@@ -8,8 +8,17 @@ export type QueryErrorIsResetFunction = () => boolean
 export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
+  /**
+   * Clears the reset state, so queries know not to try again until the boundary is reset again.
+   */
   clearReset: QueryErrorClearResetFunction
+  /**
+   * Returns whether the boundary has been reset and not yet cleared.
+   */
   isReset: QueryErrorIsResetFunction
+  /**
+   * Resets any query errors within the boundary, so queries know they can try again.
+   */
   reset: QueryErrorResetFunction
 }
 
@@ -35,6 +44,8 @@ const QueryErrorResetBoundaryContext = createContext(createValue())
 /**
  * This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
  * defined it will reset them globally.
+ *
+ * @returns The boundary's {@link QueryErrorResetBoundaryValue}.
  *
  * @example
  * ```tsx

@@ -12,6 +12,7 @@ export const QueryClientContext = createContext<QueryClient | undefined>(
  *
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
+ * @returns The current `QueryClient` instance.
  */
 export const useQueryClient = (queryClient?: QueryClient) => {
   const client = useContext(QueryClientContext)

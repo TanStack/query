@@ -96,6 +96,8 @@ export type DefinedInitialDataInfiniteOptions<
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
  *
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
  * @example
  * ```tsx
  * import { infiniteQueryOptions } from '@tanstack/preact-query'
@@ -158,6 +160,8 @@ export function infiniteQueryOptions<
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
  *
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
  * @example
  * ```tsx
  * import { infiniteQueryOptions } from '@tanstack/preact-query'
@@ -219,6 +223,8 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
  * ```tsx

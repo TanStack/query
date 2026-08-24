@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:133](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L133)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:135](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L135)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -44,6 +44,8 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 [`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 ### Returns
+
+The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Examples
 
@@ -85,7 +87,7 @@ queryClient.prefetchInfiniteQuery(commentsOptions(postId))
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:195](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L195)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:199](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L199)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -120,6 +122,8 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 [`UnusedSkipTokenInfiniteOptions`](../type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 ### Returns
+
+The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Examples
 
@@ -161,7 +165,7 @@ queryClient.prefetchInfiniteQuery(commentsOptions(postId))
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:257](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L257)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:263](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L263)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -196,6 +200,8 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 [`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 ### Returns
+
+The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Examples
 

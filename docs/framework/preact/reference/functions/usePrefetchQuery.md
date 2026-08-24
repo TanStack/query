@@ -7,7 +7,7 @@ title: usePrefetchQuery
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchQuery.tsx:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L33)
+Defined in: [preact-query/src/usePrefetchQuery.tsx:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L35)
 
 `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
 a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
@@ -49,6 +49,8 @@ a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can
 ## Returns
 
 `void`
+
+`void` — nothing is returned.
 
 ## Example
 

@@ -10,6 +10,8 @@ import type { UsePrefetchQueryOptions } from './types'
  * `usePrefetchQuery` that you can pass to `queryClient.fetchQuery`, though `queryKey` is always required, and
  * `queryFn` is required unless a default query function has been defined.
  *
+ * @returns `void` — nothing is returned.
+ *
  * @example
  * ```tsx
  * import { Suspense } from 'preact/compat'

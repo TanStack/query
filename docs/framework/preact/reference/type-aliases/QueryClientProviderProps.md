@@ -7,7 +7,7 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:30](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L30)
+Defined in: [preact-query/src/QueryClientProvider.tsx:31](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L31)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:30](https://github.com/Tan
 optional children: ComponentChildren;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:37](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L37)
+Defined in: [preact-query/src/QueryClientProvider.tsx:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L38)
 
 ***
 
@@ -27,7 +27,7 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:37](https://github.com/Tan
 client: QueryClient;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:36](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L36)
+Defined in: [preact-query/src/QueryClientProvider.tsx:37](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L37)
 
 **Required**
 

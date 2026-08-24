@@ -16,6 +16,8 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * optional parameter to your query function. Return `undefined` or `null` to indicate there is no next page
  * available.
  *
+ * @returns `void` — nothing is returned.
+ *
  * @example
  * ```tsx
  * import { Suspense } from 'preact/compat'

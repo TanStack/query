@@ -7,7 +7,7 @@ title: QueryErrorResetBoundary
 function QueryErrorResetBoundary(__namedParameters): Element;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:116](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L116)
+Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:127](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L127)
 
 When using **suspense** or **throwOnError** in your queries, you need a way to let queries know that you want to
 try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
