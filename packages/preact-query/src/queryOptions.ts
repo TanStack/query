@@ -84,6 +84,22 @@ export type DefinedInitialDataOptions<
  * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
  * queryClient.prefetchQuery(postOptions(id))
  * ```
+ *
+ * @example
+ * The same options object works with every API that accepts query options:
+ * ```tsx
+ * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+ *
+ * const todosOptions = queryOptions({
+ *   queryKey: ['todos'],
+ *   queryFn: fetchTodos,
+ * })
+ *
+ * useQuery(todosOptions)
+ * useSuspenseQuery(todosOptions)
+ * queryClient.prefetchQuery(todosOptions)
+ * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -129,6 +145,22 @@ export function queryOptions<
  * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
  * queryClient.prefetchQuery(postOptions(id))
  * ```
+ *
+ * @example
+ * The same options object works with every API that accepts query options:
+ * ```tsx
+ * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+ *
+ * const todosOptions = queryOptions({
+ *   queryKey: ['todos'],
+ *   queryFn: fetchTodos,
+ * })
+ *
+ * useQuery(todosOptions)
+ * useSuspenseQuery(todosOptions)
+ * queryClient.prefetchQuery(todosOptions)
+ * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -173,6 +205,22 @@ export function queryOptions<
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
  * queryClient.prefetchQuery(postOptions(id))
+ * ```
+ *
+ * @example
+ * The same options object works with every API that accepts query options:
+ * ```tsx
+ * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+ *
+ * const todosOptions = queryOptions({
+ *   queryKey: ['todos'],
+ *   queryFn: fetchTodos,
+ * })
+ *
+ * useQuery(todosOptions)
+ * useSuspenseQuery(todosOptions)
+ * queryClient.prefetchQuery(todosOptions)
+ * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<

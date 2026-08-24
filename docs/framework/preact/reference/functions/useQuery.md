@@ -95,7 +95,7 @@ be used.
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:89](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L89)
+Defined in: [preact-query/src/useQuery.ts:110](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L110)
 
 ### Type Parameters
 
@@ -168,6 +168,26 @@ function Post({ postId }: { postId: number }) {
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId),
     enabled: !!postId,
+  })
+
+  return <h1>{data?.title}</h1>
+}
+```
+
+Seeding a detail query from an already-cached list, to skip the loading state:
+```tsx
+import { useQuery, useQueryClient } from '@tanstack/preact-query'
+
+function Post({ postId }: { postId: number }) {
+  const queryClient = useQueryClient()
+
+  const { data } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => fetchPost(postId),
+    initialData: () =>
+      queryClient
+        .getQueryData(['posts'])
+        ?.find((post) => post.id === postId),
   })
 
   return <h1>{data?.title}</h1>

@@ -85,6 +85,27 @@ export function useQuery<
  *   return <h1>{data?.title}</h1>
  * }
  * ```
+ *
+ * @example
+ * Seeding a detail query from an already-cached list, to skip the loading state:
+ * ```tsx
+ * import { useQuery, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function Post({ postId }: { postId: number }) {
+ *   const queryClient = useQueryClient()
+ *
+ *   const { data } = useQuery({
+ *     queryKey: ['post', postId],
+ *     queryFn: () => fetchPost(postId),
+ *     initialData: () =>
+ *       queryClient
+ *         .getQueryData(['posts'])
+ *         ?.find((post) => post.id === postId),
+ *   })
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

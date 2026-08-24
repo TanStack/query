@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:88](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L88)
+Defined in: [preact-query/src/queryOptions.ts:104](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L104)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -73,13 +73,28 @@ function Post({ id }: { id: string }) {
 queryClient.prefetchQuery(postOptions(id))
 ```
 
+The same options object works with every API that accepts query options:
+```tsx
+import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+
+const todosOptions = queryOptions({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+})
+
+useQuery(todosOptions)
+useSuspenseQuery(todosOptions)
+queryClient.prefetchQuery(todosOptions)
+queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+```
+
 ## Call Signature
 
 ```ts
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:133](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L133)
+Defined in: [preact-query/src/queryOptions.ts:165](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L165)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -143,13 +158,28 @@ function Post({ id }: { id: string }) {
 queryClient.prefetchQuery(postOptions(id))
 ```
 
+The same options object works with every API that accepts query options:
+```tsx
+import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+
+const todosOptions = queryOptions({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+})
+
+useQuery(todosOptions)
+useSuspenseQuery(todosOptions)
+queryClient.prefetchQuery(todosOptions)
+queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+```
+
 ## Call Signature
 
 ```ts
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:178](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L178)
+Defined in: [preact-query/src/queryOptions.ts:226](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L226)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -211,4 +241,19 @@ function Post({ id }: { id: string }) {
 
 // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
 queryClient.prefetchQuery(postOptions(id))
+```
+
+The same options object works with every API that accepts query options:
+```tsx
+import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+
+const todosOptions = queryOptions({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+})
+
+useQuery(todosOptions)
+useSuspenseQuery(todosOptions)
+queryClient.prefetchQuery(todosOptions)
+queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
 ```

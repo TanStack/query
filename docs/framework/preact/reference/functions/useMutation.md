@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L75)
+Defined in: [preact-query/src/useMutation.ts:79](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L79)
 
 ## Type Parameters
 
@@ -43,6 +43,11 @@ be used.
 ## Returns
 
 [`UseMutationResult`](../type-aliases/UseMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+
+`mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
+argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
+mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
+made.
 
 ## Examples
 
