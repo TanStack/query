@@ -2547,6 +2547,30 @@ describe('queryClient', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
       unsubscribe()
     })
+
+    it('should match queries when a filter key property is undefined but the query key has a concrete value', async () => {
+      const key = queryKey()
+      await queryClient.fetchQuery({
+        queryKey: [key, { status: 'open' }],
+        queryFn: () => Promise.resolve('open'),
+      })
+      await queryClient.fetchQuery({
+        queryKey: [key, { assignee: 'a' }],
+        queryFn: () => Promise.resolve('assigned'),
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: [key, { status: undefined }],
+        refetchType: 'none',
+      })
+
+      expect(
+        queryClient.getQueryState([key, { status: 'open' }])?.isInvalidated,
+      ).toBe(true)
+      expect(
+        queryClient.getQueryState([key, { assignee: 'a' }])?.isInvalidated,
+      ).toBe(false)
+    })
   })
 
   describe('resetQueries', () => {

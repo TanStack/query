@@ -267,6 +267,9 @@ export function partialMatchKey(a: any, b: any): boolean {
 
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
+      if (b[key] === undefined) {
+        continue
+      }
       if (!partialMatchKey(a[key], b[key])) {
         return false
       }
