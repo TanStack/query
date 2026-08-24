@@ -6,7 +6,7 @@ title: useQuery
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
 Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L15)
@@ -41,12 +41,12 @@ Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/
 
 ### Returns
 
-[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
 Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L25)
@@ -81,12 +81,12 @@ Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/
 
 ### Returns
 
-[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
 Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L35)
@@ -121,4 +121,4 @@ Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/
 
 ### Returns
 
-[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>

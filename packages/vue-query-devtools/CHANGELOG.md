@@ -1,5 +1,13 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.2
+  - @tanstack/vue-query@5.102.2
+
 ## 6.1.40
 
 ### Patch Changes

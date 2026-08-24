@@ -9,7 +9,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:219](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L219)
+Defined in: [preact-query/src/types.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L256)
 
 ## Type Declaration
 

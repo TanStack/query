@@ -16,7 +16,7 @@ import type { QueryObserver } from './queryObserver'
 
 // TYPES
 
-interface QueryCacheConfig {
+export interface QueryCacheConfig {
   onError?: (
     error: DefaultError,
     query: Query<unknown, unknown, unknown>,

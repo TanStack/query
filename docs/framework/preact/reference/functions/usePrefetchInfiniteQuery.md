@@ -35,7 +35,7 @@ Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:7](https://github.com
 
 ### options
 
-[`UsePrefetchInfiniteQueryOptions`](../interfaces/UsePrefetchInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`UsePrefetchInfiniteQueryOptions`](../type-aliases/UsePrefetchInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 ### queryClient?
 
