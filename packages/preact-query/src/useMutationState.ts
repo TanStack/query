@@ -110,7 +110,7 @@ function getResult<
  * // Some mutation that we want to get the state for
  * const mutation = useMutation({
  *   mutationKey,
- *   mutationFn: createPost,
+ *   mutationFn: mutatePost,
  * })
  *
  * const data = useMutationState({
