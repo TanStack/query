@@ -53,6 +53,32 @@ export function useQuery<
  * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
  * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
  * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ *
+ * @example
+ * ```tsx
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ *
+ * const postsOptions = queryOptions({
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ * })
+ *
+ * function Posts() {
+ *   const { status, data, error, isFetching } = useQuery(postsOptions)
+ *
+ *   if (status === 'pending') return 'Loading...'
+ *   if (status === 'error') return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <div>
+ *       {data.map((post) => (
+ *         <p key={post.id}>{post.title}</p>
+ *       ))}
+ *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
+ *     </div>
+ *   )
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

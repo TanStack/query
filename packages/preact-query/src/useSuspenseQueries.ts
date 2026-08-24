@@ -166,6 +166,8 @@ export type SuspenseQueriesResults<
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
+ * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
  * flags set accordingly).
@@ -223,6 +225,8 @@ export function useSuspenseQueries<
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
+ * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
  * flags set accordingly).
