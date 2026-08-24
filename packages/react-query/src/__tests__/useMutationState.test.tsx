@@ -241,4 +241,55 @@ describe('useMutationState', () => {
 
     expect(variables).toEqual([[], [1], []])
   })
+
+  it('should update the result when mutation filters change without a cache update', async () => {
+    const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Variables({ mutationKey }: { mutationKey?: Array<string> }) {
+      const variables = useMutationState({
+        filters: { mutationKey },
+        select: (mutation) => mutation.state.variables,
+      })
+
+      return <div>variables: {variables.join(',')}</div>
+    }
+
+    function Page({ mutationKey }: { mutationKey?: Array<string> }) {
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: key1,
+        mutationFn: (input: number) => sleep(100).then(() => 'data' + input),
+      })
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: key2,
+        mutationFn: (input: number) => sleep(100).then(() => 'data' + input),
+      })
+
+      React.useEffect(() => {
+        mutate1(1)
+        mutate2(2)
+      }, [mutate1, mutate2])
+
+      return (
+        <div>
+          <Variables mutationKey={mutationKey} />
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Page mutationKey={undefined} />,
+    )
+
+    // both mutations are pending, and an undefined mutationKey matches both
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('variables: 1,2')).toBeInTheDocument()
+
+    // both mutations stay pending, so only the changed filters can update this
+    rendered.rerender(<Page mutationKey={key1} />)
+
+    expect(rendered.getByText('variables: 1')).toBeInTheDocument()
+  })
 })
