@@ -42,6 +42,8 @@ export interface HydrationBoundaryProps {
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
  *
+ * @returns The provided `children`, rendered once `state` has been hydrated into the cache.
+ *
  * @example
  * ```tsx
  * import { HydrationBoundary } from '@tanstack/preact-query'

@@ -47,6 +47,8 @@ export type QueryClientProviderProps = {
 /**
  * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application.
  *
+ * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
+ *
  * @example
  * ```tsx
  * import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'

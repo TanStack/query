@@ -9,6 +9,7 @@ import type { UseMutationOptions } from './types'
  *
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, with a
  * required `mutationKey`.
+ * @returns The same options object, unchanged.
  *
  * @example
  * ```tsx
@@ -65,6 +66,7 @@ export function mutationOptions<
  *
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
  * `mutationKey`.
+ * @returns The same options object, unchanged.
  *
  * @example
  * ```tsx

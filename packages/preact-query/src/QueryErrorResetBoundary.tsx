@@ -87,6 +87,9 @@ export interface QueryErrorResetBoundaryProps {
  * try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
  * reset any query errors within the boundaries of the component.
  *
+ * @returns The `children`, rendered as-is, or called with the boundary's {@link QueryErrorResetBoundaryValue}
+ * if `children` is a function.
+ *
  * @example
  * ```tsx
  * import { useErrorBoundary } from 'preact/hooks'
