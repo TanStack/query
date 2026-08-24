@@ -59,8 +59,6 @@ describe('createQuery', () => {
         expectTypeOf(query.error).toEqualTypeOf<Error | null>()
       }
 
-      const promise1 = query.promise
-
       expect(query).toEqual({
         data: undefined,
         dataUpdatedAt: 0,
@@ -87,7 +85,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
@@ -117,10 +114,7 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'success',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
-
-      expect(promise1).toBe(query.promise)
     }),
   )
 
@@ -175,7 +169,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[1]).toEqual({
@@ -204,7 +197,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[2]).toEqual({
@@ -233,7 +225,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'error',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
     }),
   )
@@ -1607,12 +1598,16 @@ describe('createQuery', () => {
         () => currentClient,
       )
 
-      expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+      expect(
+        queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
+      ).toEqual(key)
 
       currentClient = queryClient2
       flushSync()
 
-      expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+      expect(
+        queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
+      ).toEqual(key)
     }),
   )
 

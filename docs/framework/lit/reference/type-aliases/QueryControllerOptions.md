@@ -3,8 +3,6 @@ id: QueryControllerOptions
 title: QueryControllerOptions
 ---
 
-# Type Alias: QueryControllerOptions\<TQueryFnData, TError, TData, TQueryData, TQueryKey\>
-
 ```ts
 type QueryControllerOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>;
 ```

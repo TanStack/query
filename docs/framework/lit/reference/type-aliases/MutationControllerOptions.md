@@ -3,8 +3,6 @@ id: MutationControllerOptions
 title: MutationControllerOptions
 ---
 
-# Type Alias: MutationControllerOptions\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type MutationControllerOptions<TData, TError, TVariables, TOnMutateResult> = Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>;
 ```

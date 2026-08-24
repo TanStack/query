@@ -3,8 +3,6 @@ id: "@tanstack/svelte-query"
 title: "@tanstack/svelte-query"
 ---
 
-# @tanstack/svelte-query
-
 ## Type Aliases
 
 - [Accessor](type-aliases/Accessor.md)
@@ -24,6 +22,7 @@ title: "@tanstack/svelte-query"
 - [DefinedInitialDataOptions](type-aliases/DefinedInitialDataOptions.md)
 - [HydrationBoundary](type-aliases/HydrationBoundary.md)
 - [MutationStateOptions](type-aliases/MutationStateOptions.md)
+- [MutationTypeFromResult](type-aliases/MutationTypeFromResult.md)
 - [QueriesOptions](type-aliases/QueriesOptions.md)
 - [QueriesResults](type-aliases/QueriesResults.md)
 - [QueryClientProviderProps](type-aliases/QueryClientProviderProps.md)
@@ -42,6 +41,7 @@ title: "@tanstack/svelte-query"
 - [getIsRestoringContext](functions/getIsRestoringContext.md)
 - [getQueryClientContext](functions/getQueryClientContext.md)
 - [infiniteQueryOptions](functions/infiniteQueryOptions.md)
+- [mutationOptions](functions/mutationOptions.md)
 - [queryOptions](functions/queryOptions.md)
 - [setIsRestoringContext](functions/setIsRestoringContext.md)
 - [setQueryClientContext](functions/setQueryClientContext.md)

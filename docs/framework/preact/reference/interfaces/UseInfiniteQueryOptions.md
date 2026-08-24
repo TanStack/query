@@ -3,9 +3,7 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-# Interface: UseInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
-Defined in: [preact-query/src/types.ts:103](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L103)
+Defined in: [preact-query/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L139)
 
 ## Extends
 
@@ -23,7 +21,7 @@ Defined in: [preact-query/src/types.ts:103](https://github.com/theVedanta/query/
 
 ### TData
 
-`TData` = `TQueryFnData`
+`TData` = `InfiniteData`\<`TQueryFnData`\>
 
 ### TQueryKey
 
@@ -41,7 +39,7 @@ Defined in: [preact-query/src/types.ts:103](https://github.com/theVedanta/query/
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:123](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L123)
+Defined in: [preact-query/src/types.ts:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L159)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.

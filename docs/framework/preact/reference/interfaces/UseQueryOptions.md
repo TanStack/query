@@ -3,9 +3,7 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-# Interface: UseQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
-Defined in: [preact-query/src/types.ts:65](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L65)
+Defined in: [preact-query/src/types.ts:101](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L101)
 
 ## Extends
 
@@ -37,7 +35,7 @@ Defined in: [preact-query/src/types.ts:65](https://github.com/theVedanta/query/b
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:46](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L46)
+Defined in: [preact-query/src/types.ts:47](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L47)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.
