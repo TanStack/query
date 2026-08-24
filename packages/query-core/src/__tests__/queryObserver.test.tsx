@@ -8,7 +8,13 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver, focusManager } from '..'
+import {
+  QueryClient,
+  QueryObserver,
+  dehydrate,
+  focusManager,
+  hydrate,
+} from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -1932,6 +1938,71 @@ describe('queryObserver', () => {
       expect(queryFn).toHaveBeenCalledTimes(2)
 
       unsubscribe2()
+    })
+  })
+
+  describe('getServerResult', () => {
+    it('should return the current result for queries not hydrated from a promise', () => {
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+      })
+
+      expect(observer.getServerResult()).toBe(observer.getCurrentResult())
+    })
+
+    it('should return a pending view for queries hydrated from an already resolved promise', () => {
+      const key = queryKey()
+
+      const prefetchClient = new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            shouldDehydrateQuery: () => true,
+          },
+        },
+      })
+      prefetchClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve('success'),
+      })
+      const dehydrated = dehydrate(prefetchClient)
+
+      // Mimic what RSC-transformed promises do: they are already settled when
+      // they reach the client and call back into `.then` synchronously
+      dehydrated.queries[0]!.promise = {
+        then(onFulfilled: (value: string) => unknown) {
+          onFulfilled?.('success')
+          return undefined
+        },
+      } as unknown as Promise<string>
+
+      hydrate(queryClient, dehydrated)
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+      })
+
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'success',
+        data: 'success',
+        isSuccess: true,
+      })
+
+      const serverResult = observer.getServerResult()
+      expect(serverResult).toMatchObject({
+        status: 'pending',
+        isPending: true,
+        isSuccess: false,
+        isError: false,
+        data: undefined,
+        error: null,
+        fetchStatus: 'idle',
+        isLoading: false,
+      })
+      // the server snapshot must be referentially stable for useSyncExternalStore
+      expect(observer.getServerResult()).toBe(serverResult)
     })
   })
 })

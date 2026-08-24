@@ -3,6 +3,7 @@ import { environmentManager } from './environmentManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
+import { isSyncHydratedQuery } from './hydration'
 import {
   isValidTimeout,
   noop,
@@ -64,6 +65,8 @@ export class QueryObserver<
   #refetchIntervalId?: ManagedTimerId
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
+  #serverResult?: QueryObserverResult<TData, TError>
+  #serverResultState?: QueryState<TQueryData, TError>
 
   constructor(
     client: QueryClient,
@@ -254,6 +257,41 @@ export class QueryObserver<
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.#currentResult
+  }
+
+  getServerResult(): QueryObserverResult<TData, TError> {
+    const query = this.#currentQuery
+
+    // Only queries whose data was resolved synchronously from a hydrated
+    // promise can diverge from what the server rendered - the server saw them
+    // as pending. Everything else can use the current result as-is.
+    if (!isSyncHydratedQuery(query)) {
+      return this.getCurrentResult()
+    }
+
+    if (
+      this.#serverResultState === query.state &&
+      this.#serverResult !== undefined
+    ) {
+      return this.#serverResult
+    }
+
+    // Re-create the result from the pending state the server rendered, so that
+    // every derived property stays consistent with regularly created results.
+    const serverQuery = Object.create(query)
+    serverQuery.state = {
+      ...query.state,
+      status: 'pending',
+      data: undefined,
+      dataUpdatedAt: 0,
+    } satisfies QueryState<TQueryData, TError>
+
+    const serverResult = this.createResult(serverQuery, this.options)
+
+    this.#serverResultState = query.state
+    this.#serverResult = serverResult
+
+    return serverResult
   }
 
   trackResult(

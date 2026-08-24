@@ -92,10 +92,10 @@ export function useBaseQuery<
   )
 
   // note: this must be called before useSyncExternalStore
-  const result = observer.getOptimisticResult(defaultedOptions)
+  observer.getOptimisticResult(defaultedOptions)
 
   const shouldSubscribe = !isRestoring && subscribed
-  React.useSyncExternalStore(
+  const result = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = shouldSubscribe
@@ -111,7 +111,7 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    () => observer.getServerResult(),
   )
 
   React.useEffect(() => {

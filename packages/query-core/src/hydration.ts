@@ -35,6 +35,20 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   return undefined
 }
 
+// Queries whose data was resolved synchronously from a dehydrated promise.
+// The server rendered these queries as pending (the data was not part of the
+// dehydrated state), so observers need to expose a matching pending view as
+// their server snapshot during the hydration pass to avoid mismatches.
+const syncHydratedQueries = new WeakSet<Query<any, any, any, any>>()
+
+export function isSyncHydratedQuery(query: Query<any, any, any, any>): boolean {
+  return syncHydratedQueries.has(query)
+}
+
+function addSyncHydratedQuery(query: Query<any, any, any, any>): void {
+  syncHydratedQueries.add(query)
+}
+
 export interface DehydrateOptions {
   serializeData?: TransformerFn
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
@@ -236,6 +250,10 @@ export function hydrate(
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
       const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
+      const resolvesSyncData =
+        promise !== undefined &&
+        state.data === undefined &&
+        syncData !== undefined
 
       // Do not hydrate if an existing query exists with newer data
       if (query) {
@@ -269,6 +287,9 @@ export function hydrate(
                 }),
               }),
           })
+          if (resolvesSyncData) {
+            addSyncHydratedQuery(query)
+          }
         }
       } else {
         // Restore query
@@ -300,6 +321,9 @@ export function hydrate(
               }),
           },
         )
+        if (resolvesSyncData) {
+          addSyncHydratedQuery(query)
+        }
       }
 
       if (

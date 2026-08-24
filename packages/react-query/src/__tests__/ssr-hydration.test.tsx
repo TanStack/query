@@ -270,4 +270,97 @@ describe('Server side rendering with de/rehydration', () => {
     queryClient.clear()
     consoleMock.mockRestore()
   })
+
+  it('should not mismatch when a hydrated pending promise resolves synchronously on the client', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
+
+    // -- Shared part --
+    function SuccessComponent() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => fetchDataSuccess('success!'),
+      })
+      return (
+        <PrintStateComponent componentName="SuccessComponent" result={result} />
+      )
+    }
+
+    // -- Server part --
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+    // Dehydrate while the fetch is still in flight, so that the query is
+    // dehydrated as pending with a promise attached
+    prefetchClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => fetchDataSuccess('success'),
+    })
+    const dehydratedStateServer = dehydrate(prefetchClient)
+    await vi.advanceTimersByTimeAsync(10)
+    setIsServer(false)
+
+    const renderClient = new QueryClient()
+    hydrate(renderClient, dehydratedStateServer)
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
+    )
+    renderClient.clear()
+
+    const expectedMarkup =
+      'SuccessComponent - status:pending fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
+
+    // -- Client part --
+    const el = document.createElement('div')
+    el.innerHTML = markup
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    // Promises passed through RSC arrive on the client already settled and
+    // call back into `.then` synchronously - mimic that here.
+    dehydratedStateServer.queries[0]!.promise = {
+      then(onFulfilled: (value: string) => unknown) {
+        onFulfilled?.('success')
+        return undefined
+      },
+    } as unknown as Promise<string>
+
+    hydrate(queryClient, dehydratedStateServer)
+
+    const unmount = ReactHydrate(
+      <QueryClientProvider client={queryClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
+      el,
+    )
+
+    // The query jumped to success during hydration while the server rendered
+    // it as pending, which must not produce a hydration mismatch
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
+    expect(el.innerHTML).toBe(
+      'SuccessComponent - status:success fetching:false data:success!',
+    )
+
+    unmount()
+    queryClient.clear()
+    consoleMock.mockRestore()
+  })
 })
