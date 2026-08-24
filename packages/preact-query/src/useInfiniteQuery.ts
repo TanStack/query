@@ -86,8 +86,7 @@ export function useInfiniteQuery<
  *
  * const projectsOptions = infiniteQueryOptions({
  *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) =>
- *     fetch(`/api/projects?cursor=${pageParam}`).then((r) => r.json()),
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
  *   initialPageParam: 0,
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })

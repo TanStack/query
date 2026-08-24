@@ -95,7 +95,7 @@ be used.
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:76](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L76)
+Defined in: [preact-query/src/useQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L73)
 
 ### Type Parameters
 
@@ -139,10 +139,7 @@ import { queryOptions, useQuery } from '@tanstack/preact-query'
 
 const postsOptions = queryOptions({
   queryKey: ['posts'],
-  queryFn: async () => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-    return await response.json()
-  },
+  queryFn: fetchPosts,
 })
 
 function Posts() {

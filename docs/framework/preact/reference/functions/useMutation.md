@@ -49,11 +49,11 @@ be used.
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/preact-query'
 
-function Example() {
+function AddTodo() {
   const queryClient = useQueryClient()
 
   const addMutation = useMutation({
-    mutationFn: (add: string) => fetch(`/api/data?add=${add}`),
+    mutationFn: addTodo,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 

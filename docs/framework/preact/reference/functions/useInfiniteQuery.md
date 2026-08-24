@@ -109,7 +109,7 @@ be used.
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:110](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L110)
+Defined in: [preact-query/src/useInfiniteQuery.ts:109](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L109)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -168,8 +168,7 @@ import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
 
 const projectsOptions = infiniteQueryOptions({
   queryKey: ['projects'],
-  queryFn: ({ pageParam }) =>
-    fetch(`/api/projects?cursor=${pageParam}`).then((r) => r.json()),
+  queryFn: ({ pageParam }) => fetchProjects(pageParam),
   initialPageParam: 0,
   getNextPageParam: (lastPage) => lastPage.nextId,
 })

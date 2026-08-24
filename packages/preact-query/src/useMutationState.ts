@@ -110,9 +110,7 @@ function getResult<
  * // Some mutation that we want to get the state for
  * const mutation = useMutation({
  *   mutationKey,
- *   mutationFn: (newPost) => {
- *     return axios.post('/posts', newPost)
- *   },
+ *   mutationFn: createPost,
  * })
  *
  * const data = useMutationState({

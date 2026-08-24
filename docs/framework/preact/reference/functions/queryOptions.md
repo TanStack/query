@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:71](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L71)
+Defined in: [preact-query/src/queryOptions.ts:68](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L68)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -48,12 +48,9 @@ is the query key to generate options for.
 ```tsx
 import { queryOptions } from '@tanstack/preact-query'
 
-export const pokemonOptions = queryOptions({
-  queryKey: ['pokemon'],
-  queryFn: async () => {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon/25')
-    return response.json()
-  },
+export const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
 })
 ```
 
@@ -63,7 +60,7 @@ export const pokemonOptions = queryOptions({
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:99](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L99)
+Defined in: [preact-query/src/queryOptions.ts:93](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L93)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -102,12 +99,9 @@ is the query key to generate options for.
 ```tsx
 import { queryOptions } from '@tanstack/preact-query'
 
-export const pokemonOptions = queryOptions({
-  queryKey: ['pokemon'],
-  queryFn: async () => {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon/25')
-    return response.json()
-  },
+export const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
 })
 ```
 
@@ -117,7 +111,7 @@ export const pokemonOptions = queryOptions({
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:127](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L127)
+Defined in: [preact-query/src/queryOptions.ts:118](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L118)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -156,11 +150,8 @@ is the query key to generate options for.
 ```tsx
 import { queryOptions } from '@tanstack/preact-query'
 
-export const pokemonOptions = queryOptions({
-  queryKey: ['pokemon'],
-  queryFn: async () => {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon/25')
-    return response.json()
-  },
+export const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
 })
 ```

@@ -7,7 +7,7 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:125](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L125)
+Defined in: [preact-query/src/useMutationState.ts:123](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L123)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` to it to narrow down your mutations, and `select` to transform the mutation state.
@@ -62,9 +62,7 @@ const mutationKey = ['posts']
 // Some mutation that we want to get the state for
 const mutation = useMutation({
   mutationKey,
-  mutationFn: (newPost) => {
-    return axios.post('/posts', newPost)
-  },
+  mutationFn: createPost,
 })
 
 const data = useMutationState({

@@ -50,10 +50,7 @@ export function useQuery<
  *
  * const postsOptions = queryOptions({
  *   queryKey: ['posts'],
- *   queryFn: async () => {
- *     const response = await fetch('https://jsonplaceholder.typicode.com/posts')
- *     return await response.json()
- *   },
+ *   queryFn: fetchPosts,
  * })
  *
  * function Posts() {
