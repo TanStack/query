@@ -11,7 +11,7 @@ Defined in: [preact-query/src/usePrefetchQuery.tsx:38](https://github.com/TanSta
 
 `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
 a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
-`usePrefetchQuery` that you can pass to `queryClient.fetchQuery`, though `queryKey` is always required, and
+`usePrefetchQuery` that you can pass to `queryClient.query`, though `queryKey` is always required, and
 `queryFn` is required unless a default query function has been defined.
 
 ## Type Parameters
@@ -42,7 +42,7 @@ a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can
 
 [`UsePrefetchQueryOptions`](../type-aliases/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
-The [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to use — everything you can pass to `queryClient.fetchQuery`.
+The [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to use — everything you can pass to `queryClient.query`.
 
 ### queryClient?
 
