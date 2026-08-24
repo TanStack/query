@@ -9,12 +9,12 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:52](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L52)
+Defined in: [preact-query/src/useInfiniteQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L51)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set.
 
 ### Type Parameters
 
@@ -67,7 +67,6 @@ The same properties as `useQuery`, with the addition of `data.pages`, `data.page
 import { useInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
-  // `data` is never `undefined`, thanks to `initialData`.
   const { data } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => fetchProjects(pageParam),
@@ -86,7 +85,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:106](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L106)
+Defined in: [preact-query/src/useInfiniteQuery.ts:105](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L105)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -169,7 +168,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L164)
+Defined in: [preact-query/src/useInfiniteQuery.ts:163](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L163)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.

@@ -22,7 +22,7 @@ import { useBaseQuery } from './useBaseQuery'
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set.
  *
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
@@ -36,7 +36,6 @@ import { useBaseQuery } from './useBaseQuery'
  * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
- *   // `data` is never `undefined`, thanks to `initialData`.
  *   const { data } = useInfiniteQuery({
  *     queryKey: ['projects'],
  *     queryFn: ({ pageParam }) => fetchProjects(pageParam),

@@ -114,7 +114,6 @@ export type DefinedInitialDataInfiniteOptions<
  * })
  *
  * function Projects() {
- *   // `data` is never `undefined`, thanks to `initialData`.
  *   const { data } = useInfiniteQuery(projectsOptions)
  *   return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
  * }
