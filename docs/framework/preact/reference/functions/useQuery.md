@@ -50,9 +50,9 @@ be used.
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data and no query attempt
-has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
-display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
 
 ### Example
 

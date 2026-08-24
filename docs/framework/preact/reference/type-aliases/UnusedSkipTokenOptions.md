@@ -17,8 +17,8 @@ Defined in: [preact-query/src/queryOptions.ts:33](https://github.com/TanStack/qu
 optional queryFn: Exclude<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>["queryFn"], SkipToken | undefined>;
 ```
 
-`skipToken` is not allowed here — this overload is selected when no `initialData` is set, so the query
-always needs a function to actually run.
+`skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
+you don't intend to run the query yet, omit `queryFn` or use a default query function instead.
 
 ## Type Parameters
 

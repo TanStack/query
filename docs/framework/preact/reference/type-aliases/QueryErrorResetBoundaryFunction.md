@@ -7,7 +7,9 @@ title: QueryErrorResetBoundaryFunction
 type QueryErrorResetBoundaryFunction = (value) => ComponentChildren;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:80](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L80)
+Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:95](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L95)
+
+A render-prop function usable as `children` on `QueryErrorResetBoundary`.
 
 ## Parameters
 
@@ -20,3 +22,5 @@ The boundary's QueryErrorResetBoundaryValue.
 ## Returns
 
 `ComponentChildren`
+
+The children to render.

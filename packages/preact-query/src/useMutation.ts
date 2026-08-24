@@ -18,6 +18,9 @@ import { useSyncExternalStore } from './utils'
 // HOOK
 
 /**
+ * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+ * `useMutation` is the hook for that.
+ *
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.

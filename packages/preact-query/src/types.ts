@@ -58,7 +58,8 @@ export type UsePrefetchQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+   * unless a default query function has been defined.
    */
   queryFn?: Exclude<
     QueryExecuteOptions<
@@ -89,7 +90,8 @@ export type UsePrefetchInfiniteQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+   * unless a default query function has been defined.
    */
   queryFn?: Exclude<
     InfiniteQueryExecuteOptions<
@@ -249,6 +251,11 @@ export interface UseMutationOptions<
   '_defaulted'
 > {}
 
+/**
+ * The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
+ * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+ * through the mutation result, not thrown.
+ */
 export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,
@@ -260,6 +267,10 @@ export type UseMutateFunction<
   >
 ) => void
 
+/**
+ * The type of `mutateAsync`, as returned by `useMutation`. Similar to {@link UseMutateFunction}, but returns a
+ * promise which can be awaited.
+ */
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,

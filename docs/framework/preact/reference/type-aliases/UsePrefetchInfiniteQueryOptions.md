@@ -7,7 +7,7 @@ title: UsePrefetchInfiniteQueryOptions
 type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L75)
+Defined in: [preact-query/src/types.ts:76](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L76)
 
 ## Type Declaration
 
@@ -17,7 +17,8 @@ Defined in: [preact-query/src/types.ts:75](https://github.com/TanStack/query/blo
 optional queryFn: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
 ```
 
-`skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+`skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+unless a default query function has been defined.
 
 ## Type Parameters
 

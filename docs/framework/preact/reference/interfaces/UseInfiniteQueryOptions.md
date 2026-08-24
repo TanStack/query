@@ -3,7 +3,7 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L149)
+Defined in: [preact-query/src/types.ts:151](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L151)
 
 ## Extends
 
@@ -39,7 +39,7 @@ Defined in: [preact-query/src/types.ts:149](https://github.com/TanStack/query/bl
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:169](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L169)
+Defined in: [preact-query/src/types.ts:171](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L171)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.

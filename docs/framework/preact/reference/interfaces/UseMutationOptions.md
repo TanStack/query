@@ -3,7 +3,7 @@ id: UseMutationOptions
 title: UseMutationOptions
 ---
 
-Defined in: [preact-query/src/types.ts:242](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L242)
+Defined in: [preact-query/src/types.ts:244](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L244)
 
 ## Extends
 

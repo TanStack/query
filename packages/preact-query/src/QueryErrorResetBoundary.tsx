@@ -3,8 +3,20 @@ import type { ComponentChildren } from 'preact'
 import { useContext, useState } from 'preact/hooks'
 
 // CONTEXT
+
+/**
+ * Resets any query errors within the boundary, so queries know they can try again.
+ */
 export type QueryErrorResetFunction = () => void
+
+/**
+ * Returns whether the boundary has been reset and not yet cleared.
+ */
 export type QueryErrorIsResetFunction = () => boolean
+
+/**
+ * Clears the reset state, so queries know not to try again until the boundary is reset again.
+ */
 export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
@@ -75,7 +87,10 @@ export const useQueryErrorResetBoundary = () =>
 // COMPONENT
 
 /**
+ * A render-prop function usable as `children` on `QueryErrorResetBoundary`.
+ *
  * @param value - The boundary's {@link QueryErrorResetBoundaryValue}.
+ * @returns The children to render.
  */
 export type QueryErrorResetBoundaryFunction = (
   value: QueryErrorResetBoundaryValue,

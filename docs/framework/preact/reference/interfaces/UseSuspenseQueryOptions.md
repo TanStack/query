@@ -3,7 +3,7 @@ id: UseSuspenseQueryOptions
 title: UseSuspenseQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:123](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L123)
+Defined in: [preact-query/src/types.ts:125](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L125)
 
 ## Extends
 
@@ -35,7 +35,7 @@ Defined in: [preact-query/src/types.ts:123](https://github.com/TanStack/query/bl
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
 ```
 
-Defined in: [preact-query/src/types.ts:136](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L136)
+Defined in: [preact-query/src/types.ts:138](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L138)
 
 `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
 must always be provided.

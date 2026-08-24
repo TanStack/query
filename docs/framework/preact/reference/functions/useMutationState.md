@@ -7,13 +7,11 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:139](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L139)
+Defined in: [preact-query/src/useMutationState.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L137)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
-`filters` to it to narrow down your mutations, and `select` to transform the mutation state.
-
-`options.filters` narrows down the matched mutations (MutationFilters), and `options.select` transforms
-the mutation state.
+`filters` (MutationFilters) to narrow down your mutations, and `select` to transform the mutation
+state.
 
 ## Type Parameters
 

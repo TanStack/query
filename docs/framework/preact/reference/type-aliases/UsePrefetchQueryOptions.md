@@ -17,7 +17,8 @@ Defined in: [preact-query/src/types.ts:50](https://github.com/TanStack/query/blo
 optional queryFn: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>["queryFn"], SkipToken>;
 ```
 
-`skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+`skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+unless a default query function has been defined.
 
 ## Type Parameters
 

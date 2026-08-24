@@ -12,6 +12,8 @@ Defined in: [preact-query/src/useSuspenseQuery.ts:51](https://github.com/TanStac
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.
 
+Caveat: cancellation does not work.
+
 ## Type Parameters
 
 ### TQueryFnData
@@ -51,8 +53,6 @@ be used.
 
 The same object as `useQuery`, except that `data` is guaranteed to be defined, `isPlaceholderData`
 is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
-
-Caveat: cancellation does not work.
 
 ## Example
 

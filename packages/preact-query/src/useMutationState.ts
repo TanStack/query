@@ -81,10 +81,8 @@ function getResult<
 
 /**
  * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
- * `filters` to it to narrow down your mutations, and `select` to transform the mutation state.
- *
- * `options.filters` narrows down the matched mutations ({@link MutationFilters}), and `options.select` transforms
- * the mutation state.
+ * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
+ * state.
  *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
