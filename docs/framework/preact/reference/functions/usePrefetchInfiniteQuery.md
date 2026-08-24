@@ -11,7 +11,7 @@ Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:47](https://github.co
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
-everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.fetchInfiniteQuery`, though
+everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.infiniteQuery`, though
 `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required unless
 a default query function has been defined.
 
@@ -47,7 +47,7 @@ function as `context.pageParam`. Return `undefined` or `null` to indicate there 
 
 [`UsePrefetchInfiniteQueryOptions`](../type-aliases/UsePrefetchInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The [UsePrefetchInfiniteQueryOptions](../type-aliases/UsePrefetchInfiniteQueryOptions.md) to use — everything you can pass to `queryClient.fetchInfiniteQuery`.
+The [UsePrefetchInfiniteQueryOptions](../type-aliases/UsePrefetchInfiniteQueryOptions.md) to use — everything you can pass to `queryClient.infiniteQuery`.
 
 ### queryClient?
 

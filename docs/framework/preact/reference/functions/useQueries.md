@@ -49,8 +49,8 @@ shared to be as referentially stable as possible.
 
 An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
 `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
-`placeholderData` accepts a QueriesPlaceholderDataFunction rather than `useQuery`'s
-single-argument placeholder function.
+`placeholderData` accepts a QueriesPlaceholderDataFunction, which is called with `previousData`
+and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
 
 #### subscribed?
 

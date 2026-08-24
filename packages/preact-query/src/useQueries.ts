@@ -265,8 +265,8 @@ export function useQueries<
     /**
      * An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
      * `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
-     * `placeholderData` accepts a {@link QueriesPlaceholderDataFunction} rather than `useQuery`'s
-     * single-argument placeholder function.
+     * `placeholderData` accepts a {@link QueriesPlaceholderDataFunction}, which is called with `previousData`
+     * and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
      */
     queries:
       | readonly [...QueriesOptions<T>]
