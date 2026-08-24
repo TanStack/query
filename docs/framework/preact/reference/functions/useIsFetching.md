@@ -18,7 +18,7 @@ fetching in the background (useful for app-wide loading indicators).
 
 `QueryFilters`\<readonly `unknown`[]\>
 
-QueryFilters
+The QueryFilters to narrow down the matched queries.
 
 ### queryClient?
 

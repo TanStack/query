@@ -7,7 +7,7 @@ title: useSuspenseQuery
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseQuery.ts:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L48)
+Defined in: [preact-query/src/useSuspenseQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L51)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.
@@ -36,9 +36,14 @@ The options for `useSuspenseQuery` are the same as for `useQuery`, except for `t
 
 [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) to use — the same options as `useQuery`, minus the ones listed above.
+
 ### queryClient?
 
 `QueryClient`
+
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
 
 ## Returns
 

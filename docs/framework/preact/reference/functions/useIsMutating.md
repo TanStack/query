@@ -18,7 +18,7 @@ Defined in: [preact-query/src/useMutationState.ts:33](https://github.com/TanStac
 
 `MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>
 
-MutationFilters
+The MutationFilters to narrow down the matched mutations.
 
 ### queryClient?
 

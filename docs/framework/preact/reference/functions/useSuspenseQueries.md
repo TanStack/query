@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:211](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L211)
+Defined in: [preact-query/src/useSuspenseQueries.ts:212](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L212)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -28,14 +28,21 @@ The options for `useSuspenseQueries` are the same as for `useQueries`, except th
 
 #### options
 
+The `queries` array to run in Suspense, and an optional `combine` function.
+
 ##### combine?
 
 (`result`) => `TCombinedResult`
+
+Use this to combine the results of the queries into a single value. The result will be structurally
+shared to be as referentially stable as possible.
 
 ##### queries
 
   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>, `GetUseSuspenseQueryOptions`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : ...[] *extends* \[`...(...)[]`\] ? \[`...(...)[]`\] : ... *extends* ... ? ... : ... : `unknown`[] *extends* `T` ? `T` : `T` *extends* [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly ...[]\>[]\]
   \| readonly \[\{ \[K in string \| number \| symbol\]: GetUseSuspenseQueryOptions\<T\[K\<K\>\]\> \}\]
+
+An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 
@@ -95,7 +102,7 @@ function App() {
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:270](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L270)
+Defined in: [preact-query/src/useSuspenseQueries.ts:279](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L279)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -114,13 +121,20 @@ The options for `useSuspenseQueries` are the same as for `useQueries`, except th
 
 #### options
 
+The `queries` array to run in Suspense, and an optional `combine` function.
+
 ##### combine?
 
 (`result`) => `TCombinedResult`
 
+Use this to combine the results of the queries into a single value. The result will be structurally
+shared to be as referentially stable as possible.
+
 ##### queries
 
 readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>, `GetUseSuspenseQueryOptions`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : `unknown`[] *extends* \[`...Tails[]`\] ? \[`...Tails[]`\] : \[`...(...)[]`\] *extends* ...[] ? ...[] : ...[] : `unknown`[] *extends* `T` ? `T` : `T` *extends* [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : [`UseSuspenseQueryOptions`](../interfaces/UseSuspenseQueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]\]
+
+An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 

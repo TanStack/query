@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L63)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:66](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L66)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -40,9 +40,14 @@ The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery
 
 [`UseSuspenseInfiniteQueryOptions`](../interfaces/UseSuspenseInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The [UseSuspenseInfiniteQueryOptions](../interfaces/UseSuspenseInfiniteQueryOptions.md) to use — the same options as `useInfiniteQuery`, minus the ones listed above.
+
 ### queryClient?
 
 `QueryClient`
+
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
 
 ## Returns
 

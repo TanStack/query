@@ -79,6 +79,7 @@ export type DefinedInitialDataOptions<
  * This overload is selected when `initialData` is set, so `queryFn` is optional and the resulting `data` is
  * never `undefined`.
  *
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
@@ -113,6 +114,7 @@ export function queryOptions<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
+ * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
@@ -176,6 +178,7 @@ export function queryOptions<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
+ * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example

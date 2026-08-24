@@ -166,6 +166,7 @@ export type SuspenseQueriesResults<
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
+ * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
@@ -213,9 +214,16 @@ export function useSuspenseQueries<
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
+    /**
+     * An array with query option objects identical to `useSuspenseQuery`.
+     */
     queries:
       | readonly [...SuspenseQueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
+    /**
+     * Use this to combine the results of the queries into a single value. The result will be structurally
+     * shared to be as referentially stable as possible.
+     */
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
@@ -225,6 +233,7 @@ export function useSuspenseQueries<
  * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
+ * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
@@ -272,7 +281,14 @@ export function useSuspenseQueries<
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
+    /**
+     * An array with query option objects identical to `useSuspenseQuery`.
+     */
     queries: readonly [...SuspenseQueriesOptions<T>]
+    /**
+     * Use this to combine the results of the queries into a single value. The result will be structurally
+     * shared to be as referentially stable as possible.
+     */
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,

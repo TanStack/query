@@ -261,10 +261,21 @@ export function useQueries<
     queries,
     ...options
   }: {
+    /**
+     * An array with query option objects identical to `useQuery` (excluding the `queryClient` option, since
+     * the `QueryClient` can be passed in on the top level).
+     */
     queries:
       | readonly [...QueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
+    /**
+     * Use this to combine the results of the queries into a single value. The result will be structurally
+     * shared to be as referentially stable as possible.
+     */
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    /**
+     * Set this to `false` to unsubscribe this observer from updates to the query cache. Defaults to `true`.
+     */
     subscribed?: boolean
   },
   queryClient?: QueryClient,

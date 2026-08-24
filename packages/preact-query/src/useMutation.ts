@@ -18,6 +18,7 @@ import { useSyncExternalStore } from './utils'
 // HOOK
 
 /**
+ * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
  * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second

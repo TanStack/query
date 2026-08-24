@@ -16,6 +16,9 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * optional parameter to your query function. Return `undefined` or `null` to indicate there is no next page
  * available.
  *
+ * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.fetchInfiniteQuery`.
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
  * @returns `void` — nothing is returned.
  *
  * @example

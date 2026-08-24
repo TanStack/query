@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:40](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L40)
+Defined in: [preact-query/src/useQuery.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L41)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -36,6 +36,8 @@ This overload is selected when `initialData` is set, so the resulting `data` is 
 #### options
 
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
 
 #### queryClient?
 
@@ -75,7 +77,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L57)
+Defined in: [preact-query/src/useQuery.ts:85](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L85)
 
 ### Type Parameters
 
@@ -101,6 +103,8 @@ Defined in: [preact-query/src/useQuery.ts:57](https://github.com/TanStack/query/
 
 [`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
 #### queryClient?
 
 `QueryClient`
@@ -116,13 +120,40 @@ The current query result. `status` is `pending` if there is no cached data and n
 has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
 display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
+### Example
+
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+})
+
+function Posts() {
+  const { status, data, error, isFetching } = useQuery(postsOptions)
+
+  if (status === 'pending') return 'Loading...'
+  if (status === 'error') return <span>Error: {error.message}</span>
+
+  return (
+    <div>
+      {data.map((post) => (
+        <p key={post.id}>{post.title}</p>
+      ))}
+      <div>{isFetching ? 'Background Updating...' : ' '}</div>
+    </div>
+  )
+}
+```
+
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L137)
+Defined in: [preact-query/src/useQuery.ts:166](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L166)
 
 ### Type Parameters
 
@@ -147,6 +178,8 @@ Defined in: [preact-query/src/useQuery.ts:137](https://github.com/TanStack/query
 #### options
 
 [`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UseQueryOptions](../interfaces/UseQueryOptions.md) to use — everything you can pass to `useQuery`.
 
 #### queryClient?
 

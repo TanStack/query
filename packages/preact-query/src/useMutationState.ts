@@ -15,7 +15,7 @@ import { useSyncExternalStore } from './utils'
  * `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching
  * (useful for app-wide loading indicators).
  *
- * @param filters - {@link MutationFilters}
+ * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be the `number` of the mutations that your application is currently fetching.
@@ -86,6 +86,8 @@ function getResult<
  * `options.filters` narrows down the matched mutations ({@link MutationFilters}), and `options.select` transforms
  * the mutation state.
  *
+ * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
+ * mutation state.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be an Array of whatever `select` returns for each matching mutation.

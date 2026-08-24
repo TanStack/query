@@ -10,6 +10,9 @@ import type { UsePrefetchQueryOptions } from './types'
  * `usePrefetchQuery` that you can pass to `queryClient.fetchQuery`, though `queryKey` is always required, and
  * `queryFn` is required unless a default query function has been defined.
  *
+ * @param options - The {@link UsePrefetchQueryOptions} to use — everything you can pass to `queryClient.fetchQuery`.
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
  * @returns `void` — nothing is returned.
  *
  * @example

@@ -7,6 +7,9 @@ import type { UseMutationOptions } from './types'
  * `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
  * `useMutationState`.
  *
+ * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, with a
+ * required `mutationKey`.
+ *
  * @example
  * ```tsx
  * import { mutationOptions, useMutation } from '@tanstack/preact-query'
@@ -59,6 +62,9 @@ export function mutationOptions<
  * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
  * `mutationKey` is required on this overload — use this when you don't need to look the mutation up later
  * (e.g. with `useMutationState`).
+ *
+ * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
+ * `mutationKey`.
  *
  * @example
  * ```tsx

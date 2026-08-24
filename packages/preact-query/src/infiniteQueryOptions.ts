@@ -99,6 +99,7 @@ export type DefinedInitialDataInfiniteOptions<
  * This overload is selected when `initialData` is set, so `queryFn` is optional and the resulting `data` is
  * never `undefined`.
  *
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
@@ -188,6 +189,8 @@ export function infiniteQueryOptions<
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
  * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
  * ```
+ *
+ * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -257,6 +260,8 @@ export function infiniteQueryOptions<
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
  * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
  * ```
+ *
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,

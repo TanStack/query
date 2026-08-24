@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:82](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L82)
+Defined in: [preact-query/src/useMutation.ts:83](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L83)
 
 ## Type Parameters
 
@@ -32,6 +32,8 @@ Defined in: [preact-query/src/useMutation.ts:82](https://github.com/TanStack/que
 ### options
 
 [`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+
+The [UseMutationOptions](../interfaces/UseMutationOptions.md) to use — everything you can pass to `useMutation`.
 
 ### queryClient?
 

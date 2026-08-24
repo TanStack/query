@@ -7,7 +7,7 @@ title: usePrefetchInfiniteQuery
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:45](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L45)
+Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L48)
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
@@ -48,9 +48,14 @@ available.
 
 [`UsePrefetchInfiniteQueryOptions`](../type-aliases/UsePrefetchInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The [UsePrefetchInfiniteQueryOptions](../type-aliases/UsePrefetchInfiniteQueryOptions.md) to use — everything you can pass to `queryClient.fetchInfiniteQuery`.
+
 ### queryClient?
 
 `QueryClient`
+
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
 
 ## Returns
 
