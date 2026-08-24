@@ -131,6 +131,7 @@ export function queryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
@@ -145,12 +146,13 @@ export function queryOptions<
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.prefetchQuery(postOptions(id))
+ * queryClient.query(postOptions(id)).catch(noop)
  * ```
  *
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
@@ -160,7 +162,7 @@ export function queryOptions<
  *
  * useQuery(todosOptions)
  * useSuspenseQuery(todosOptions)
- * queryClient.prefetchQuery(todosOptions)
+ * queryClient.query(todosOptions).catch(noop)
  * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
@@ -195,6 +197,7 @@ export function queryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
@@ -209,12 +212,13 @@ export function queryOptions<
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.prefetchQuery(postOptions(id))
+ * queryClient.query(postOptions(id)).catch(noop)
  * ```
  *
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
@@ -224,7 +228,7 @@ export function queryOptions<
  *
  * useQuery(todosOptions)
  * useSuspenseQuery(todosOptions)
- * queryClient.prefetchQuery(todosOptions)
+ * queryClient.query(todosOptions).catch(noop)
  * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */

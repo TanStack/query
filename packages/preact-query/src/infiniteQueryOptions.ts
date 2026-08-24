@@ -164,6 +164,7 @@ export function infiniteQueryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
@@ -185,7 +186,7 @@ export function infiniteQueryOptions<
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
- * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
@@ -235,6 +236,7 @@ export function infiniteQueryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
@@ -256,7 +258,7 @@ export function infiniteQueryOptions<
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
- * queryClient.prefetchInfiniteQuery(commentsOptions(postId))
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.

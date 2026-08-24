@@ -61,15 +61,18 @@ export interface HydrationBoundaryProps {
  * @example
  * Server-side prefetch handed off to the client via `dehydrate`:
  * ```tsx
+ * import { noop } from '@tanstack/query-core'
  * import { HydrationBoundary, dehydrate } from '@tanstack/preact-query'
  *
  * async function ServerComponent() {
  *   const queryClient = getQueryClient()
  *
- *   await queryClient.prefetchQuery({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *   })
+ *   await queryClient
+ *     .query({
+ *       queryKey: ['posts'],
+ *       queryFn: fetchPosts,
+ *     })
+ *     .catch(noop)
  *
  *   return (
  *     <HydrationBoundary state={dehydrate(queryClient)}>
