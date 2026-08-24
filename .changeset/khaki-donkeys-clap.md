@@ -2,4 +2,4 @@
 '@tanstack/preact-query': patch
 ---
 
-Replace deprecated `queryClient.fetchQuery` with `queryClient.query` inside `usePrefetchQuery`
+fix(preact-query/usePrefetchQuery): replace deprecated `queryClient.fetchQuery` with `queryClient.query`
