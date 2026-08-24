@@ -9,7 +9,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:30](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L30)
+Defined in: [preact-query/src/mutationOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L40)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -43,10 +43,10 @@ You can generally pass everything to `mutationOptions` that you can also pass to
 
 `WithRequired`\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
-### Example
+### Examples
 
 ```tsx
-import { mutationOptions, useMutation, useMutationState } from '@tanstack/preact-query'
+import { mutationOptions, useMutation } from '@tanstack/preact-query'
 
 export const createPostOptions = mutationOptions({
   mutationKey: ['posts', 'create'],
@@ -57,8 +57,17 @@ function CreatePost() {
   const mutation = useMutation(createPostOptions)
   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
 }
+```
 
-// Elsewhere, e.g. to show a global "saving…" indicator:
+Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
+```tsx
+import { mutationOptions, useMutationState } from '@tanstack/preact-query'
+
+const createPostOptions = mutationOptions({
+  mutationKey: ['posts', 'create'],
+  mutationFn: createPost,
+})
+
 const isCreatingPost = useMutationState({
   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
 }).length > 0
@@ -70,7 +79,7 @@ const isCreatingPost = useMutationState({
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L63)
+Defined in: [preact-query/src/mutationOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L73)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to look the mutation up later

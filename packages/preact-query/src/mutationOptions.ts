@@ -9,7 +9,7 @@ import type { UseMutationOptions } from './types'
  *
  * @example
  * ```tsx
- * import { mutationOptions, useMutation, useMutationState } from '@tanstack/preact-query'
+ * import { mutationOptions, useMutation } from '@tanstack/preact-query'
  *
  * export const createPostOptions = mutationOptions({
  *   mutationKey: ['posts', 'create'],
@@ -20,8 +20,18 @@ import type { UseMutationOptions } from './types'
  *   const mutation = useMutation(createPostOptions)
  *   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
  * }
+ * ```
  *
- * // Elsewhere, e.g. to show a global "saving…" indicator:
+ * @example
+ * Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
+ * ```tsx
+ * import { mutationOptions, useMutationState } from '@tanstack/preact-query'
+ *
+ * const createPostOptions = mutationOptions({
+ *   mutationKey: ['posts', 'create'],
+ *   mutationFn: createPost,
+ * })
+ *
  * const isCreatingPost = useMutationState({
  *   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
  * }).length > 0
