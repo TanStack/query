@@ -3,11 +3,13 @@ import type { DefaultError, WithRequired } from '@tanstack/query-core'
 import type { UseMutationOptions } from './types'
 
 /**
- * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
+ * `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
+ * `useMutationState`.
  *
  * @example
  * ```tsx
- * import { mutationOptions, useMutation } from '@tanstack/preact-query'
+ * import { mutationOptions, useMutation, useMutationState } from '@tanstack/preact-query'
  *
  * export const createPostOptions = mutationOptions({
  *   mutationKey: ['posts', 'create'],
@@ -18,6 +20,11 @@ import type { UseMutationOptions } from './types'
  *   const mutation = useMutation(createPostOptions)
  *   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
  * }
+ *
+ * // Elsewhere, e.g. to show a global "saving…" indicator:
+ * const isCreatingPost = useMutationState({
+ *   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+ * }).length > 0
  * ```
  */
 export function mutationOptions<

@@ -64,6 +64,26 @@ export type DefinedInitialDataOptions<
  *   queryFn: fetchPosts,
  * })
  * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ *
+ * export const postOptions = (id: string) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function Post({ id }: { id: string }) {
+ *   const { data } = useQuery(postOptions(id))
+ *   return <h1>{data?.title}</h1>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
+ * queryClient.prefetchQuery(postOptions(id))
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -89,6 +109,26 @@ export function queryOptions<
  *   queryFn: fetchPosts,
  * })
  * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ *
+ * export const postOptions = (id: string) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function Post({ id }: { id: string }) {
+ *   const { data } = useQuery(postOptions(id))
+ *   return <h1>{data?.title}</h1>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
+ * queryClient.prefetchQuery(postOptions(id))
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -113,6 +153,26 @@ export function queryOptions<
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
  * })
+ * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ *
+ * export const postOptions = (id: string) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function Post({ id }: { id: string }) {
+ *   const { data } = useQuery(postOptions(id))
+ *   return <h1>{data?.title}</h1>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
+ * queryClient.prefetchQuery(postOptions(id))
  * ```
  */
 export function queryOptions<
