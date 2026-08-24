@@ -7,4 +7,4 @@ title: AnyUseSuspenseInfiniteQueryOptions
 type AnyUseSuspenseInfiniteQueryOptions = UseSuspenseInfiniteQueryOptions<any, any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:125](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L125)
+Defined in: [preact-query/src/types.ts:162](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L162)

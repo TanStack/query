@@ -10,7 +10,7 @@ function createQueriesController<TQueryOptions, TCombinedResult>(
 queryClient?): QueriesResultAccessor<TCombinedResult>;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:703](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L703)
+Defined in: [packages/lit-query/src/createQueriesController.ts:701](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L701)
 
 Creates a Lit reactive controller that subscribes the host to multiple
 queries.

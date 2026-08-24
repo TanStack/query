@@ -4,10 +4,10 @@ title: UseSuspenseQueryResult
 ---
 
 ```ts
-type UseSuspenseQueryResult<TData, TError> = DistributiveOmit<DefinedQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
+type UseSuspenseQueryResult<TData, TError> = DistributiveOmit<DefinedQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [preact-query/src/types.ts:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L159)
+Defined in: [preact-query/src/types.ts:196](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L196)
 
 ## Type Parameters
 

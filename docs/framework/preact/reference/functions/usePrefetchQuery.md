@@ -35,7 +35,7 @@ Defined in: [preact-query/src/usePrefetchQuery.tsx:7](https://github.com/TanStac
 
 ### options
 
-[`UsePrefetchQueryOptions`](../interfaces/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
+[`UsePrefetchQueryOptions`](../type-aliases/UsePrefetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
 ### queryClient?
 

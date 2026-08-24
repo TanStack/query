@@ -31,7 +31,7 @@ Removes the controller from its Lit host and unsubscribes observers.
 ### mutate()
 
 ```ts
-mutate: (variables, options?) => void;
+mutate: (...args) => void;
 ```
 
 Starts the mutation and swallows the returned promise.
@@ -40,13 +40,9 @@ Throws synchronously if no `QueryClient` can be resolved.
 
 #### Parameters
 
-##### variables
+##### args
 
-`TVariables`
-
-##### options?
-
-`MutateOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+...`Parameters`\<`MutateFunction`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
 
 #### Returns
 

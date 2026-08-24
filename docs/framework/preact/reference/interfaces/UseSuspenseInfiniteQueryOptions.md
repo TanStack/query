@@ -3,7 +3,7 @@ id: UseSuspenseInfiniteQueryOptions
 title: UseSuspenseInfiniteQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:127](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L127)
+Defined in: [preact-query/src/types.ts:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L164)
 
 ## Extends
 
@@ -21,7 +21,7 @@ Defined in: [preact-query/src/types.ts:127](https://github.com/TanStack/query/bl
 
 ### TData
 
-`TData` = `TQueryFnData`
+`TData` = `InfiniteData`\<`TQueryFnData`\>
 
 ### TQueryKey
 
@@ -39,7 +39,7 @@ Defined in: [preact-query/src/types.ts:127](https://github.com/TanStack/query/bl
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [preact-query/src/types.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L137)
+Defined in: [preact-query/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L174)
 
 ***
 
@@ -49,7 +49,7 @@ Defined in: [preact-query/src/types.ts:137](https://github.com/TanStack/query/bl
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:122](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L122)
+Defined in: [preact-query/src/types.ts:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L159)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.
