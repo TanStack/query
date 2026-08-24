@@ -32,9 +32,13 @@ import type { UseMutationOptions } from './types'
  *   mutationFn: createPost,
  * })
  *
- * const isCreatingPost = useMutationState({
- *   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
- * }).length > 0
+ * function SavingIndicator() {
+ *   const isCreatingPost = useMutationState({
+ *     filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+ *   }).length > 0
+ *
+ *   return isCreatingPost ? <span>Saving…</span> : null
+ * }
  * ```
  */
 export function mutationOptions<

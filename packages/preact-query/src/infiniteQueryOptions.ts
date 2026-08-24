@@ -176,8 +176,13 @@ export function infiniteQueryOptions<
  *   })
  *
  * function Comments({ postId }: { postId: string }) {
- *   const { data } = useInfiniteQuery(commentsOptions(postId))
- *   return <>{data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}</>
+ *   const result = useInfiniteQuery(commentsOptions(postId))
+ *   if (!result.isSuccess) return 'Loading...'
+ *   return (
+ *     <>
+ *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *     </>
+ *   )
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
@@ -240,8 +245,13 @@ export function infiniteQueryOptions<
  *   })
  *
  * function Comments({ postId }: { postId: string }) {
- *   const { data } = useInfiniteQuery(commentsOptions(postId))
- *   return <>{data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}</>
+ *   const result = useInfiniteQuery(commentsOptions(postId))
+ *   if (!result.isSuccess) return 'Loading...'
+ *   return (
+ *     <>
+ *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *     </>
+ *   )
  * }
  *
  * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:

@@ -9,7 +9,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L40)
+Defined in: [preact-query/src/mutationOptions.ts:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L44)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -68,9 +68,13 @@ const createPostOptions = mutationOptions({
   mutationFn: createPost,
 })
 
-const isCreatingPost = useMutationState({
-  filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
-}).length > 0
+function SavingIndicator() {
+  const isCreatingPost = useMutationState({
+    filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+  }).length > 0
+
+  return isCreatingPost ? <span>Saving…</span> : null
+}
 ```
 
 ## Call Signature
@@ -79,7 +83,7 @@ const isCreatingPost = useMutationState({
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L73)
+Defined in: [preact-query/src/mutationOptions.ts:77](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L77)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to look the mutation up later

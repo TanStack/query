@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:79](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L79)
+Defined in: [preact-query/src/useMutation.ts:82](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L82)
 
 ## Type Parameters
 
@@ -79,15 +79,18 @@ function AddTodo() {
     mutationFn: addTodo,
     onMutate: async (newTodo) => {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
-      const previousTodos = queryClient.getQueryData(['todos'])
+      const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
 
-      queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+      queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+        ...(old ?? []),
+        newTodo,
+      ])
 
       // Passed to `onError` as `context` if the mutation fails.
       return { previousTodos }
     },
     onError: (_err, _newTodo, context) => {
-      queryClient.setQueryData(['todos'], context.previousTodos)
+      queryClient.setQueryData(['todos'], context?.previousTodos)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })

@@ -84,7 +84,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:104](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L104)
+Defined in: [preact-query/src/useInfiniteQuery.ts:78](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L78)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -132,40 +132,13 @@ The same properties as `useQuery`, with the addition of `data.pages`, `data.page
 `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
 `isFetchingPreviousPage`.
 
-### Example
-
-```tsx
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
-
-const projectsOptions = infiniteQueryOptions({
-  queryKey: ['projects'],
-  queryFn: ({ pageParam }) => fetchProjects(pageParam),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage) => lastPage.nextId,
-})
-
-function Projects() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery(projectsOptions)
-
-  return (
-    <button
-      onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
-    >
-      Load More
-    </button>
-  )
-}
-```
-
 ## Call Signature
 
 ```ts
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:161](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L161)
+Defined in: [preact-query/src/useInfiniteQuery.ts:135](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L135)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.

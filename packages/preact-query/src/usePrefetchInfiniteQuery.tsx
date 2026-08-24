@@ -21,16 +21,18 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * @example
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { usePrefetchInfiniteQuery } from '@tanstack/preact-query'
+ * import { infiniteQueryOptions, usePrefetchInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
  *
  * function App() {
  *   // Fire the prefetch during render, before the suspense boundary below.
- *   usePrefetchInfiniteQuery({
- *     queryKey: ['projects'],
- *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *   })
+ *   usePrefetchInfiniteQuery(projectsOptions)
  *
  *   return (
  *     <Suspense fallback={<h1>Loading projects...</h1>}>

@@ -55,18 +55,18 @@ Caveat: cancellation does not work.
 import { Suspense } from 'preact/compat'
 import { useSuspenseQuery } from '@tanstack/preact-query'
 
-function Projects() {
+function Posts() {
   // `data` is guaranteed to be defined here — no `isPending` check needed.
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
   })
 
   return (
     <div>
-      <h1>Projects {isFetching ? <Spinner /> : null}</h1>
-      {data.map((project) => (
-        <p key={project.id}>{project.name}</p>
+      <h1>Posts {isFetching ? <Spinner /> : null}</h1>
+      {data.map((post) => (
+        <p key={post.id}>{post.title}</p>
       ))}
     </div>
   )
@@ -74,8 +74,8 @@ function Projects() {
 
 function App() {
   return (
-    <Suspense fallback={<h1>Loading projects...</h1>}>
-      <Projects />
+    <Suspense fallback={<h1>Loading posts...</h1>}>
+      <Posts />
     </Suspense>
   )
 }

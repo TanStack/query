@@ -75,7 +75,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L83)
+Defined in: [preact-query/src/useQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L57)
 
 ### Type Parameters
 
@@ -116,40 +116,13 @@ The current query result. `status` is `pending` if there is no cached data and n
 has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
 display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
-### Example
-
-```tsx
-import { queryOptions, useQuery } from '@tanstack/preact-query'
-
-const postsOptions = queryOptions({
-  queryKey: ['posts'],
-  queryFn: fetchPosts,
-})
-
-function Posts() {
-  const { status, data, error, isFetching } = useQuery(postsOptions)
-
-  if (status === 'pending') return 'Loading...'
-  if (status === 'error') return <span>Error: {error.message}</span>
-
-  return (
-    <div>
-      {data.map((post) => (
-        <p key={post.id}>{post.title}</p>
-      ))}
-      <div>{isFetching ? 'Background Updating...' : ' '}</div>
-    </div>
-  )
-}
-```
-
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:163](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L163)
+Defined in: [preact-query/src/useQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L137)
 
 ### Type Parameters
 
@@ -244,7 +217,7 @@ function Post({ postId }: { postId: number }) {
     queryFn: () => fetchPost(postId),
     initialData: () =>
       queryClient
-        .getQueryData(['posts'])
+        .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === postId),
   })
 
