@@ -26,7 +26,9 @@ export interface HydrationBoundaryProps {
     >
   }
   /**
-   * The components that render once the dehydrated state has been hydrated into the cache.
+   * The components to render — always rendered unconditionally, not gated on hydration. New queries are
+   * hydrated into the cache during render; queries that already exist in the cache are hydrated in an effect
+   * after commit, so `children` may render briefly before that fresher data lands.
    */
   children?: ComponentChildren
   /**
@@ -42,7 +44,8 @@ export interface HydrationBoundaryProps {
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
  *
- * @returns The provided `children`, rendered once `state` has been hydrated into the cache.
+ * @returns The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
+ * cache during render; queries already in the cache are hydrated in an effect after commit.
  *
  * @example
  * ```tsx

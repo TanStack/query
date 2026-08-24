@@ -227,11 +227,11 @@ A dependent query, only enabled once `postId` is set:
 ```tsx
 import { useQuery } from '@tanstack/preact-query'
 
-function Post({ postId }: { postId: number }) {
+function Post({ postId }: { postId: number | undefined }) {
   const { data } = useQuery({
     queryKey: ['post', postId],
-    queryFn: () => fetchPost(postId),
-    enabled: !!postId,
+    queryFn: () => fetchPost(postId!),
+    enabled: postId != null,
   })
 
   return <h1>{data?.title}</h1>

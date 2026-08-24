@@ -31,7 +31,9 @@ cache.
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
-Optional here — since `initialData` is set, the query already has data to display without a query function.
+Optional here, but omitting it is only safe when no fetch will be attempted — for example with
+`enabled: false`, or when a default query function has been defined. Otherwise, an enabled query with no
+`queryFn` still tries to fetch and fails with a "Missing queryFn" error; `initialData` does not prevent this.
 
 ## Type Parameters
 

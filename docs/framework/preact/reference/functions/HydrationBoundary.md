@@ -7,7 +7,7 @@ title: HydrationBoundary
 function HydrationBoundary(__namedParameters): Element;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:77](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L77)
+Defined in: [preact-query/src/HydrationBoundary.tsx:80](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L80)
 
 `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by
 `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on
@@ -25,7 +25,8 @@ Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
 `Element`
 
-The provided `children`, rendered once `state` has been hydrated into the cache.
+The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
+cache during render; queries already in the cache are hydrated in an effect after commit.
 
 ## Examples
 

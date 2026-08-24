@@ -219,7 +219,8 @@ export type QueriesResults<
  *
  * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
  * will be used.
- * @returns An array with all the query results. The order returned is the same as the input order.
+ * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
+ * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
  *
  * @example
  * ```tsx
@@ -262,8 +263,10 @@ export function useQueries<
     ...options
   }: {
     /**
-     * An array with query option objects identical to `useQuery` (excluding the `queryClient` option, since
-     * the `QueryClient` can be passed in on the top level).
+     * An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
+     * `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
+     * `placeholderData` accepts a {@link QueriesPlaceholderDataFunction} rather than `useQuery`'s
+     * single-argument placeholder function.
      */
     queries:
       | readonly [...QueriesOptions<T>]

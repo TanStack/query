@@ -9,14 +9,13 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:102](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L102)
+Defined in: [preact-query/src/queryOptions.ts:103](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L103)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so `queryFn` is optional and the resulting `data` is
-never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
 ### Type Parameters
 
@@ -72,7 +71,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:166](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L166)
+Defined in: [preact-query/src/queryOptions.ts:167](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L167)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -159,7 +158,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:230](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L230)
+Defined in: [preact-query/src/queryOptions.ts:231](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L231)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

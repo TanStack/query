@@ -96,7 +96,7 @@ export type DefinedInitialDataInfiniteOptions<
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set.
  *
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.

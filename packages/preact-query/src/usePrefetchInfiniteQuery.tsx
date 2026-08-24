@@ -12,9 +12,8 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * a default query function has been defined.
  *
  * `getNextPageParam` receives both the last page of the infinite list of data and the full array of all pages,
- * as well as pageParam information, and should return a single variable that will be passed as the last
- * optional parameter to your query function. Return `undefined` or `null` to indicate there is no next page
- * available.
+ * as well as pageParam information, and should return a single variable that will be passed to your query
+ * function as `context.pageParam`. Return `undefined` or `null` to indicate there is no next page available.
  *
  * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.fetchInfiniteQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will

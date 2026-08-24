@@ -7,7 +7,7 @@ title: usePrefetchInfiniteQuery
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L48)
+Defined in: [preact-query/src/usePrefetchInfiniteQuery.tsx:47](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchInfiniteQuery.tsx#L47)
 
 `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
 before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
@@ -16,9 +16,8 @@ everything to `usePrefetchInfiniteQuery` that you can pass to `queryClient.fetch
 a default query function has been defined.
 
 `getNextPageParam` receives both the last page of the infinite list of data and the full array of all pages,
-as well as pageParam information, and should return a single variable that will be passed as the last
-optional parameter to your query function. Return `undefined` or `null` to indicate there is no next page
-available.
+as well as pageParam information, and should return a single variable that will be passed to your query
+function as `context.pageParam`. Return `undefined` or `null` to indicate there is no next page available.
 
 ## Type Parameters
 
