@@ -12,6 +12,10 @@ import type {
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+/**
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ */
 export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -22,6 +26,10 @@ export function useQuery<
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError>
 
+/**
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ */
 export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -32,6 +40,39 @@ export function useQuery<
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError>
 
+/**
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ *
+ * @example
+ * ```tsx
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ *
+ * const postsOptions = queryOptions({
+ *   queryKey: ['posts'],
+ *   queryFn: async () => {
+ *     const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+ *     return await response.json()
+ *   },
+ * })
+ *
+ * function Posts() {
+ *   const { status, data, error, isFetching } = useQuery(postsOptions)
+ *
+ *   if (status === 'pending') return 'Loading...'
+ *   if (status === 'error') return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <div>
+ *       {data.map((post) => (
+ *         <p key={post.id}>{post.title}</p>
+ *       ))}
+ *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
+ *     </div>
+ *   )
+ * }
+ * ```
+ */
 export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,

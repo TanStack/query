@@ -17,6 +17,28 @@ import { useSyncExternalStore } from './utils'
 
 // HOOK
 
+/**
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ *
+ * @example
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function Example() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: (add: string) => fetch(`/api/data?add=${add}`),
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   })
+ *
+ *   return (
+ *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *   )
+ * }
+ * ```
+ */
 export function useMutation<
   TData = unknown,
   TError = DefaultError,

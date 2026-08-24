@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L15)
+Defined in: [preact-query/src/useQuery.ts:19](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L19)
 
 ### Type Parameters
 
@@ -39,6 +39,9 @@ Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
 [`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
@@ -49,7 +52,7 @@ Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L25)
+Defined in: [preact-query/src/useQuery.ts:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L33)
 
 ### Type Parameters
 
@@ -79,6 +82,9 @@ Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
@@ -89,7 +95,7 @@ Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L35)
+Defined in: [preact-query/src/useQuery.ts:76](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L76)
 
 ### Type Parameters
 
@@ -119,6 +125,39 @@ Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
+
+### Example
+
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    return await response.json()
+  },
+})
+
+function Posts() {
+  const { status, data, error, isFetching } = useQuery(postsOptions)
+
+  if (status === 'pending') return 'Loading...'
+  if (status === 'error') return <span>Error: {error.message}</span>
+
+  return (
+    <div>
+      {data.map((post) => (
+        <p key={post.id}>{post.title}</p>
+      ))}
+      <div>{isFetching ? 'Background Updating...' : ' '}</div>
+    </div>
+  )
+}
+```

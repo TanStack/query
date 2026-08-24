@@ -73,6 +73,11 @@ export type DefinedInitialDataInfiniteOptions<
     | undefined
 }
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -96,6 +101,11 @@ export function infiniteQueryOptions<
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -119,6 +129,11 @@ export function infiniteQueryOptions<
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,

@@ -15,6 +15,16 @@ import type {
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+/**
+ * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
+ * `enabled`, and `placeholderData`.
+ *
+ * @returns The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
+ * `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
+ * accordingly).
+ *
+ * Caveat: cancellation does not work.
+ */
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,

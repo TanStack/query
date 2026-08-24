@@ -11,6 +11,25 @@ import { useCallback, useEffect, useRef } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 
+/**
+ * `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching
+ * (useful for app-wide loading indicators).
+ *
+ * @param filters - {@link MutationFilters}
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns Will be the `number` of the mutations that your application is currently fetching.
+ *
+ * @example
+ * ```tsx
+ * import { useIsMutating } from '@tanstack/preact-query'
+ *
+ * // How many mutations are fetching?
+ * const isMutating = useIsMutating()
+ * // How many mutations matching the posts prefix are fetching?
+ * const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
+ * ```
+ */
 export function useIsMutating(
   filters?: MutationFilters,
   queryClient?: QueryClient,
@@ -60,6 +79,49 @@ function getResult<
     )
 }
 
+/**
+ * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
+ * `filters` to it to narrow down your mutations, and `select` to transform the mutation state.
+ *
+ * @param options.filters - {@link MutationFilters}
+ * @param options.select - Use this to transform the mutation state.
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns Will be an Array of whatever `select` returns for each matching mutation.
+ *
+ * @example
+ * Get all variables of all running mutations:
+ * ```tsx
+ * import { useMutationState } from '@tanstack/preact-query'
+ *
+ * const variables = useMutationState({
+ *   filters: { status: 'pending' },
+ *   select: (mutation) => mutation.state.variables,
+ * })
+ * ```
+ *
+ * @example
+ * Get all data for specific mutations via the `mutationKey`:
+ * ```tsx
+ * import { useMutation, useMutationState } from '@tanstack/preact-query'
+ *
+ * const mutationKey = ['posts']
+ *
+ * // Some mutation that we want to get the state for
+ * const mutation = useMutation({
+ *   mutationKey,
+ *   mutationFn: (newPost) => {
+ *     return axios.post('/posts', newPost)
+ *   },
+ * })
+ *
+ * const data = useMutationState({
+ *   // this mutation key needs to match the mutation key of the given mutation (see above)
+ *   filters: { mutationKey },
+ *   select: (mutation) => mutation.state.data,
+ * })
+ * ```
+ */
 export function useMutationState<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =

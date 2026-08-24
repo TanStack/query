@@ -32,6 +32,32 @@ const QueryErrorResetBoundaryContext = createContext(createValue())
 
 // HOOK
 
+/**
+ * This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
+ * defined it will reset them globally.
+ *
+ * @example
+ * ```tsx
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import { useQueryErrorResetBoundary } from '@tanstack/preact-query'
+ *
+ * function App({ children }: { children: ComponentChildren }) {
+ *   const { reset } = useQueryErrorResetBoundary()
+ *   const [error, resetError] = useErrorBoundary(() => reset())
+ *
+ *   if (error) {
+ *     return (
+ *       <div>
+ *         There was an error!
+ *         <button onClick={() => resetError()}>Try again</button>
+ *       </div>
+ *     )
+ *   }
+ *
+ *   return children
+ * }
+ * ```
+ */
 export const useQueryErrorResetBoundary = () =>
   useContext(QueryErrorResetBoundaryContext)
 
@@ -45,6 +71,48 @@ export interface QueryErrorResetBoundaryProps {
   children: QueryErrorResetBoundaryFunction | ComponentChildren
 }
 
+/**
+ * When using **suspense** or **throwOnError** in your queries, you need a way to let queries know that you want to
+ * try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
+ * reset any query errors within the boundaries of the component.
+ *
+ * @example
+ * ```tsx
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import { QueryErrorResetBoundary } from '@tanstack/preact-query'
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   reset,
+ * }: {
+ *   children: ComponentChildren
+ *   reset: () => void
+ * }) {
+ *   const [error, resetError] = useErrorBoundary(() => reset())
+ *
+ *   if (error) {
+ *     return (
+ *       <div>
+ *         There was an error!
+ *         <button onClick={() => resetError()}>Try again</button>
+ *       </div>
+ *     )
+ *   }
+ *
+ *   return children
+ * }
+ *
+ * const App = () => (
+ *   <QueryErrorResetBoundary>
+ *     {({ reset }) => (
+ *       <ErrorBoundary reset={reset}>
+ *         <Page />
+ *       </ErrorBoundary>
+ *     )}
+ *   </QueryErrorResetBoundary>
+ * )
+ * ```
+ */
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {

@@ -9,7 +9,9 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:5](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L5)
+Defined in: [preact-query/src/mutationOptions.ts:8](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L8)
+
+You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
 
 ### Type Parameters
 
@@ -45,7 +47,9 @@ Defined in: [preact-query/src/mutationOptions.ts:5](https://github.com/TanStack/
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:19](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L19)
+Defined in: [preact-query/src/mutationOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L25)
+
+You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
 
 ### Type Parameters
 

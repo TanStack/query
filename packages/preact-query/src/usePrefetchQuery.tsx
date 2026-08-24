@@ -4,6 +4,12 @@ import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { UsePrefetchQueryOptions } from './types'
 
+/**
+ * `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
+ * a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
+ * `usePrefetchQuery` that you can pass to `queryClient.fetchQuery`, though `queryKey` is always required, and
+ * `queryFn` is required unless a default query function has been defined.
+ */
 export function usePrefetchQuery<
   TQueryFnData = unknown,
   TError = DefaultError,

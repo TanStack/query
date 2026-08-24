@@ -7,7 +7,12 @@ title: usePrefetchQuery
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
 ```
 
-Defined in: [preact-query/src/usePrefetchQuery.tsx:7](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L7)
+Defined in: [preact-query/src/usePrefetchQuery.tsx:13](https://github.com/TanStack/query/blob/main/packages/preact-query/src/usePrefetchQuery.tsx#L13)
+
+`usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
+a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
+`usePrefetchQuery` that you can pass to `queryClient.fetchQuery`, though `queryKey` is always required, and
+`queryFn` is required unless a default query function has been defined.
 
 ## Type Parameters
 

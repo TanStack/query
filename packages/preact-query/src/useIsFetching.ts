@@ -5,6 +5,26 @@ import { useCallback } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 
+/**
+ * `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or
+ * fetching in the background (useful for app-wide loading indicators).
+ *
+ * @param filters - {@link QueryFilters}
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns Will be the `number` of the queries that your application is currently loading or fetching in the
+ * background.
+ *
+ * @example
+ * ```tsx
+ * import { useIsFetching } from '@tanstack/preact-query'
+ *
+ * // How many queries are fetching?
+ * const isFetching = useIsFetching()
+ * // How many queries matching the posts prefix are fetching?
+ * const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+ * ```
+ */
 export function useIsFetching(
   filters?: QueryFilters,
   queryClient?: QueryClient,

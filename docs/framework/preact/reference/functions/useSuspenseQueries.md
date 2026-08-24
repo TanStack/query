@@ -9,7 +9,10 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:165](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L165)
+Defined in: [preact-query/src/useSuspenseQueries.ts:177](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L177)
+
+The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+`throwOnError`, `enabled`, or `placeholderData`.
 
 ### Type Parameters
 
@@ -42,13 +45,24 @@ Defined in: [preact-query/src/useSuspenseQueries.ts:165](https://github.com/TanS
 
 `TCombinedResult`
 
+The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+flags set accordingly).
+
+Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+this, make sure to set a high enough `staleTime`. Cancellation does not work.
+
 ## Call Signature
 
 ```ts
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:178](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L178)
+Defined in: [preact-query/src/useSuspenseQueries.ts:202](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L202)
+
+The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+`throwOnError`, `enabled`, or `placeholderData`.
 
 ### Type Parameters
 
@@ -79,3 +93,11 @@ readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspe
 ### Returns
 
 `TCombinedResult`
+
+The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+flags set accordingly).
+
+Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+this, make sure to set a high enough `staleTime`. Cancellation does not work.

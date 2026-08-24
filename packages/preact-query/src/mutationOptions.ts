@@ -2,6 +2,9 @@ import type { DefaultError, WithRequired } from '@tanstack/query-core'
 
 import type { UseMutationOptions } from './types'
 
+/**
+ * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ */
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -16,6 +19,9 @@ export function mutationOptions<
   UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
+/**
+ * You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`.
+ */
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,

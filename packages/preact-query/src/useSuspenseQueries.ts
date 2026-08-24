@@ -162,6 +162,18 @@ export type SuspenseQueriesResults<
           >
         : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
 
+/**
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+ * `throwOnError`, `enabled`, or `placeholderData`.
+ *
+ * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+ * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+ * flags set accordingly).
+ *
+ * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+ * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+ * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ */
 export function useSuspenseQueries<
   T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,
@@ -175,6 +187,18 @@ export function useSuspenseQueries<
   queryClient?: QueryClient,
 ): TCombinedResult
 
+/**
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+ * `throwOnError`, `enabled`, or `placeholderData`.
+ *
+ * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+ * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+ * flags set accordingly).
+ *
+ * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+ * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+ * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ */
 export function useSuspenseQueries<
   T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,

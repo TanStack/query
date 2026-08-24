@@ -204,6 +204,55 @@ export type QueriesResults<
           >
         : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
+/**
+ * The `useQueries` hook can be used to fetch a variable number of queries.
+ *
+ * The `queries` key accepts an array with query option objects identical to `useQuery` (excluding the
+ * `queryClient` option - because the `QueryClient` can be passed in on the top level).
+ *
+ * Having the same query key more than once in the array of query objects may cause some data to be shared
+ * between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+ * structure.
+ *
+ * The `combine` option can be used to combine the results of the queries into a single value. The result will
+ * be structurally shared to be as referentially stable as possible.
+ *
+ * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns An array with all the query results. The order returned is the same as the input order.
+ *
+ * @example
+ * ```tsx
+ * import { useQueries } from '@tanstack/preact-query'
+ *
+ * const ids = [1, 2, 3]
+ * const results = useQueries({
+ *   queries: ids.map((id) => ({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *     staleTime: Infinity,
+ *   })),
+ * })
+ * ```
+ *
+ * @example
+ * Combining results into a single value:
+ * ```tsx
+ * const ids = [1, 2, 3]
+ * const combinedQueries = useQueries({
+ *   queries: ids.map((id) => ({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })),
+ *   combine: (results) => {
+ *     return {
+ *       data: results.map((result) => result.data),
+ *       pending: results.some((result) => result.isPending),
+ *     }
+ *   },
+ * })
+ * ```
+ */
 export function useQueries<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,

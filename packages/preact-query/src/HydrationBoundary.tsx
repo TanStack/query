@@ -12,7 +12,13 @@ import { useEffect, useMemo, useRef } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
 
 export interface HydrationBoundaryProps {
+  /**
+   * The state to hydrate.
+   */
   state: DehydratedState | null | undefined
+  /**
+   * Optional. Note: unlike `hydrate`, `mutations` cannot be set here.
+   */
   options?: OmitKeyof<HydrateOptions, 'defaultOptions'> & {
     defaultOptions?: OmitKeyof<
       Exclude<HydrateOptions['defaultOptions'], undefined>,
@@ -20,9 +26,28 @@ export interface HydrationBoundaryProps {
     >
   }
   children?: ComponentChildren
+  /**
+   * Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+   */
   queryClient?: QueryClient
 }
 
+/**
+ * `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by
+ * `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on
+ * update timestamp.
+ *
+ * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
+ *
+ * @example
+ * ```tsx
+ * import { HydrationBoundary } from '@tanstack/preact-query'
+ *
+ * function App() {
+ *   return <HydrationBoundary state={dehydratedState}>...</HydrationBoundary>
+ * }
+ * ```
+ */
 export const HydrationBoundary = ({
   children,
   options = {},
