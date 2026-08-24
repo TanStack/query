@@ -7,4 +7,4 @@ title: AnyUseSuspenseQueryOptions
 type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:111](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L111)
+Defined in: [preact-query/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L117)

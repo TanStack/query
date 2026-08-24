@@ -3,7 +3,7 @@ id: UseSuspenseInfiniteQueryOptions
 title: UseSuspenseInfiniteQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L164)
+Defined in: [preact-query/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L174)
 
 ## Extends
 
@@ -39,7 +39,10 @@ Defined in: [preact-query/src/types.ts:164](https://github.com/TanStack/query/bl
 optional queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [preact-query/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L174)
+Defined in: [preact-query/src/types.ts:188](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L188)
+
+`skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
+must always be provided.
 
 ***
 
@@ -49,7 +52,7 @@ Defined in: [preact-query/src/types.ts:174](https://github.com/TanStack/query/bl
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L159)
+Defined in: [preact-query/src/types.ts:169](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L169)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.

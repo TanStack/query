@@ -7,7 +7,7 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```
 
-Defined in: [preact-query/src/types.ts:238](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L238)
+Defined in: [preact-query/src/types.ts:252](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L252)
 
 ## Type Parameters
 

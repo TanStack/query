@@ -7,7 +7,7 @@ title: DefinedUseQueryResult
 type DefinedUseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:204](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L204)
+Defined in: [preact-query/src/types.ts:218](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L218)
 
 ## Type Parameters
 

@@ -24,6 +24,13 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache.
+   */
   initialData?:
     | undefined
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
@@ -42,6 +49,10 @@ export type UnusedSkipTokenInfiniteOptions<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed here — this overload is selected when no `initialData` is set, so the query
+   * always needs a function to actually run.
+   */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -67,6 +78,13 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache.
+   */
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)

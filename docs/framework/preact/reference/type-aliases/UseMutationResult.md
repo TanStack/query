@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/types.ts:273](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L273)
+Defined in: [preact-query/src/types.ts:290](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L290)
 
 ## Type Parameters
 

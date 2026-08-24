@@ -57,6 +57,9 @@ export type UsePrefetchQueryOptions<
   QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+   */
   queryFn?: Exclude<
     QueryExecuteOptions<
       TQueryFnData,
@@ -85,6 +88,9 @@ export type UsePrefetchInfiniteQueryOptions<
   >,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed here — a prefetch always needs a query function to actually run.
+   */
   queryFn?: Exclude<
     InfiniteQueryExecuteOptions<
       TQueryFnData,
@@ -123,6 +129,10 @@ export interface UseSuspenseQueryOptions<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
+  /**
+   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
+   * must always be provided.
+   */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
@@ -171,6 +181,10 @@ export interface UseSuspenseInfiniteQueryOptions<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
+  /**
+   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
+   * must always be provided.
+   */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -262,6 +276,9 @@ export type UseBaseMutationResult<
   MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
   { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
+  /**
+   * Similar to `mutate`, but returns a promise which can be awaited.
+   */
   mutateAsync: UseMutateAsyncFunction<
     TData,
     TError,

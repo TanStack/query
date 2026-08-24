@@ -7,7 +7,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L41)
+Defined in: [preact-query/src/queryOptions.ts:52](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L52)
 
 ## Type Declaration
 
@@ -18,6 +18,12 @@ initialData:
   | NonUndefinedGuard<TQueryFnData>
 | () => NonUndefinedGuard<TQueryFnData>;
 ```
+
+If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+created or cached yet). If set to a function, the function will be called **once** during the shared/root
+query initialization, and be expected to synchronously return the initial data. Initial data is
+considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+cache.
 
 ### queryFn?
 
