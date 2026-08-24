@@ -7,4 +7,4 @@ title: AnyUseQueryOptions
 type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L63)
+Defined in: [preact-query/src/types.ts:100](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L100)

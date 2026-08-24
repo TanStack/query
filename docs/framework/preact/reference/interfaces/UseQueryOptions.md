@@ -3,7 +3,7 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L64)
+Defined in: [preact-query/src/types.ts:101](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L101)
 
 ## Extends
 
@@ -35,7 +35,7 @@ Defined in: [preact-query/src/types.ts:64](https://github.com/TanStack/query/blo
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:45](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L45)
+Defined in: [preact-query/src/types.ts:47](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L47)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.

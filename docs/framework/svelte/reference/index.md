@@ -22,6 +22,7 @@ title: "@tanstack/svelte-query"
 - [DefinedInitialDataOptions](type-aliases/DefinedInitialDataOptions.md)
 - [HydrationBoundary](type-aliases/HydrationBoundary.md)
 - [MutationStateOptions](type-aliases/MutationStateOptions.md)
+- [MutationTypeFromResult](type-aliases/MutationTypeFromResult.md)
 - [QueriesOptions](type-aliases/QueriesOptions.md)
 - [QueriesResults](type-aliases/QueriesResults.md)
 - [QueryClientProviderProps](type-aliases/QueryClientProviderProps.md)

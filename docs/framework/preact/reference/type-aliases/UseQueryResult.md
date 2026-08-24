@@ -7,7 +7,7 @@ title: UseQueryResult
 type UseQueryResult<TData, TError> = UseBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:154](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L154)
+Defined in: [preact-query/src/types.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L191)
 
 ## Type Parameters
 
