@@ -38,7 +38,7 @@ optional queryFn: QueryFunction<TQueryFnData, TQueryKey, never>;
 Defined in: [preact-query/src/types.ts:138](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L138)
 
 `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-must always be provided.
+must always be provided, unless a default query function has been defined.
 
 ***
 

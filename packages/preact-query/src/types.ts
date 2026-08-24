@@ -133,7 +133,7 @@ export interface UseSuspenseQueryOptions<
 > {
   /**
    * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided.
+   * must always be provided, unless a default query function has been defined.
    */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
@@ -185,7 +185,7 @@ export interface UseSuspenseInfiniteQueryOptions<
 > {
   /**
    * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided.
+   * must always be provided, unless a default query function has been defined.
    */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
