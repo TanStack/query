@@ -16,6 +16,7 @@ export const QueryClientContext = createContext<QueryClient | undefined>(
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current `QueryClient` instance.
+ * @throws If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
  */
 export const useQueryClient = (queryClient?: QueryClient) => {
   const client = useContext(QueryClientContext)

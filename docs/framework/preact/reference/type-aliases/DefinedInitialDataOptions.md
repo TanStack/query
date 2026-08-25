@@ -7,7 +7,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L64)
+Defined in: [preact-query/src/queryOptions.ts:79](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L79)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
 `undefined`.
@@ -44,14 +44,22 @@ Optional here, but omitting it is only safe when no fetch will be attempted — 
 
 `TQueryFnData` = `unknown`
 
+The type your `queryFn` resolves to.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs.
+
 ### TQueryKey
 
 `TQueryKey` *extends* `QueryKey` = `QueryKey`
+
+The type of your `queryKey`.

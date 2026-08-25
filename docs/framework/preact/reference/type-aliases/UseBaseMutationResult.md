@@ -9,7 +9,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:373](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L373)
+Defined in: [preact-query/src/types.ts:468](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L468)
 
 The result of `useMutation`. Same as MutationObserverResult from `@tanstack/query-core`, with
 `mutate` narrowed to the fire-and-forget [UseMutateFunction](UseMutateFunction.md) signature, plus the added `mutateAsync`.
@@ -30,14 +30,23 @@ Similar to `mutate`, but returns a promise which can be awaited.
 
 `TData` = `unknown`
 
+The type your mutation function resolves to.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your mutation function may throw.
 
 ### TVariables
 
 `TVariables` = `unknown`
 
+The type of the variable passed to `mutate`/`mutateAsync`.
+
 ### TOnMutateResult
 
 `TOnMutateResult` = `unknown`
+
+The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+their `onMutateResult` parameter — useful for optimistic-update rollback data.

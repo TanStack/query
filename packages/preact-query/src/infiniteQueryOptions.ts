@@ -14,6 +14,13 @@ import type { UseInfiniteQueryOptions } from './types'
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
  * may be `undefined` while the query is `pending`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -47,6 +54,13 @@ export type UndefinedInitialDataInfiniteOptions<
  * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
  * `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be
  * `skipToken`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
 export type UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
@@ -77,6 +91,13 @@ export type UnusedSkipTokenInfiniteOptions<
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
  * never `undefined`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,

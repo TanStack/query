@@ -7,7 +7,7 @@ title: UsePrefetchQueryOptions
 type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = DistributiveOmit<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:62](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L62)
+Defined in: [preact-query/src/types.ts:78](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L78)
 
 The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except `queryFn`
 is required unless a default query function has been defined.
@@ -29,18 +29,30 @@ unless a default query function has been defined.
 
 `TQueryFnData` = `unknown`
 
+The type your `queryFn` resolves to.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
+`select` is used.
+
 ### TQueryData
 
 `TQueryData` = `TQueryFnData`
 
+The type of the data actually held in the query cache — the input to `select` and
+`placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
+
 ### TQueryKey
 
 `TQueryKey` *extends* `QueryKey` = `QueryKey`
+
+The type of your `queryKey`.

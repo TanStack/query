@@ -146,6 +146,12 @@ type GetUseQueryResult<T> =
  * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
  * `unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls
  * back to a single homogeneous options type.
+ *
+ * @template T - The type of the `queries` array as written at the call site.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -191,6 +197,12 @@ export type QueriesOptions<
  * tuple element's result type is inferred individually, up to 20 elements. A non-tuple array is mapped
  * per-element instead, still inferring each entry individually; only past 20 elements does this fall back to a
  * single homogeneous {@link UseQueryResult} type.
+ *
+ * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesResults<
   T extends Array<any>,
