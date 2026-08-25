@@ -58,7 +58,8 @@ export interface UseBaseQueryOptions<
 > {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
-   * Defaults to `true`.
+   *
+   * @defaultValue true
    */
   subscribed?: boolean
 }
@@ -251,7 +252,8 @@ export interface UseInfiniteQueryOptions<
 > {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
-   * Defaults to `true`.
+   *
+   * @defaultValue true
    */
   subscribed?: boolean
 }

@@ -7,7 +7,7 @@ title: UsePrefetchQueryOptions
 type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = DistributiveOmit<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:78](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L78)
+Defined in: [preact-query/src/types.ts:79](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L79)
 
 The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except `queryFn`
 is required unless a default query function has been defined.

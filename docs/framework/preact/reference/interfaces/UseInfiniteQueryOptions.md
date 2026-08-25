@@ -3,7 +3,7 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:236](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L236)
+Defined in: [preact-query/src/types.ts:237](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L237)
 
 The options accepted by `useInfiniteQuery`. Extends InfiniteQueryObserverOptions from
 `@tanstack/query-core` with the `preact-query`-specific `subscribed` option, minus `suspense` (which
@@ -54,7 +54,12 @@ The type of the parameter passed to `queryFn` to fetch a given page.
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L256)
+Defined in: [preact-query/src/types.ts:258](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L258)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
-Defaults to `true`.
+
+#### Default Value
+
+```ts
+true
+```
