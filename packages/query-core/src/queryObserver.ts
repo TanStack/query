@@ -369,6 +369,14 @@ export class QueryObserver<
     return promise
   }
 
+  #shouldScheduleTimer(timeout: unknown): timeout is number {
+    return (
+      !environmentManager.isServer() &&
+      resolveQueryBoolean(this.options.enabled, this.#currentQuery) !== false &&
+      isValidTimeout(timeout)
+    )
+  }
+
   #updateStaleTimeout(): void {
     this.#clearStaleTimeout()
     const staleTime = resolveStaleTime(
@@ -376,11 +384,7 @@ export class QueryObserver<
       this.#currentQuery,
     )
 
-    if (
-      environmentManager.isServer() ||
-      this.#currentResult.isStale ||
-      !isValidTimeout(staleTime)
-    ) {
+    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
       return
     }
 
@@ -411,9 +415,7 @@ export class QueryObserver<
     this.#currentRefetchInterval = nextInterval
 
     if (
-      environmentManager.isServer() ||
-      resolveQueryBoolean(this.options.enabled, this.#currentQuery) === false ||
-      !isValidTimeout(this.#currentRefetchInterval) ||
+      !this.#shouldScheduleTimer(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
       return
