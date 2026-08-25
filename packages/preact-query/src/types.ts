@@ -39,8 +39,8 @@ export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
  * `select` is used.
- * @template TQueryData - The type `select` receives as input — usually the same as `TQueryFnData`, unless a
- * `queryFn` has been shared across queries with different `select` functions.
+ * @template TQueryData - The type of the data actually held in the query cache — the input to `select` and
+ * `placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export interface UseBaseQueryOptions<
@@ -71,8 +71,8 @@ export interface UseBaseQueryOptions<
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
  * `select` is used.
- * @template TQueryData - The type `select` receives as input — usually the same as `TQueryFnData`, unless a
- * `queryFn` has been shared across queries with different `select` functions.
+ * @template TQueryData - The type of the data actually held in the query cache — the input to `select` and
+ * `placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export type UsePrefetchQueryOptions<

@@ -148,10 +148,10 @@ type GetUseQueryResult<T> =
  * back to a single homogeneous options type.
  *
  * @template T - The type of the `queries` array as written at the call site.
- * @template TResults - Internal accumulator this type builds up during recursion. Not meant to be set
- * explicitly.
- * @template TDepth - Internal recursion-depth counter, checked against the 20-element limit. Not meant to be
- * set explicitly.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -199,10 +199,10 @@ export type QueriesOptions<
  * single homogeneous {@link UseQueryResult} type.
  *
  * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
- * @template TResults - Internal accumulator this type builds up during recursion. Not meant to be set
- * explicitly.
- * @template TDepth - Internal recursion-depth counter, checked against the 20-element limit. Not meant to be
- * set explicitly.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesResults<
   T extends Array<any>,

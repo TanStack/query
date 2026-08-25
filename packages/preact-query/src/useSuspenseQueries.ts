@@ -111,10 +111,10 @@ type GetUseSuspenseQueryResult<T> =
  * single homogeneous {@link UseSuspenseQueryOptions} type.
  *
  * @template T - The type of the `queries` array as written at the call site.
- * @template TResults - Internal accumulator this type builds up during recursion. Not meant to be set
- * explicitly.
- * @template TDepth - Internal recursion-depth counter, checked against the 20-element limit. Not meant to be
- * set explicitly.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type SuspenseQueriesOptions<
   T extends Array<any>,
@@ -157,10 +157,10 @@ export type SuspenseQueriesOptions<
  * elements does this fall back to a single homogeneous {@link UseSuspenseQueryResult} type.
  *
  * @template T - The type of the `queries` array, as inferred by {@link SuspenseQueriesOptions}.
- * @template TResults - Internal accumulator this type builds up during recursion. Not meant to be set
- * explicitly.
- * @template TDepth - Internal recursion-depth counter, checked against the 20-element limit. Not meant to be
- * set explicitly.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
+ * to be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type SuspenseQueriesResults<
   T extends Array<any>,

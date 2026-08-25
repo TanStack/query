@@ -26,12 +26,12 @@ The type of the `queries` array as written at the call site.
 
 `TResults` *extends* `any`[] = \[\]
 
-Internal accumulator this type builds up during recursion. Not meant to be set
-explicitly.
+The internal accumulator that this type builds during recursion. It is not meant
+to be set explicitly.
 
 ### TDepth
 
 `TDepth` *extends* `ReadonlyArray`\<`number`\> = \[\]
 
-Internal recursion-depth counter, checked against the 20-element limit. Not meant to be
-set explicitly.
+The internal recursion-depth counter, checked against the 20-element limit. It is not
+meant to be set explicitly.

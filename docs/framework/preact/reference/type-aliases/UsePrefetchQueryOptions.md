@@ -48,8 +48,8 @@ The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when 
 
 `TQueryData` = `TQueryFnData`
 
-The type `select` receives as input — usually the same as `TQueryFnData`, unless a
-`queryFn` has been shared across queries with different `select` functions.
+The type of the data actually held in the query cache — the input to `select` and
+`placeholderData`. Defaults to, and is usually the same as, `TQueryFnData`.
 
 ### TQueryKey
 
