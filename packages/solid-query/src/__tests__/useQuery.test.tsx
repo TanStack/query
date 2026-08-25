@@ -17,6 +17,7 @@ import {
   createRenderEffect,
   createSignal,
   createTrackedEffect,
+  deep,
   reconcile,
   snapshot,
   untrack,
@@ -95,7 +96,7 @@ describe('useQuery', () => {
       createRenderEffect(
         () => ({
           status: state.status,
-          data: state.data,
+          dataUpdatedAt: state.dataUpdatedAt,
           isFetching: state.isFetching,
         }),
         () => {
@@ -345,7 +346,7 @@ describe('useQuery', () => {
         queryFn: () => sleep(10).then(() => 'data'),
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -501,7 +502,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery<string>(() => ({ queryKey: key }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -551,7 +552,7 @@ describe('useQuery', () => {
         gcTime: 0,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -615,7 +616,7 @@ describe('useQuery', () => {
         refetchOnMount: false,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -649,7 +650,7 @@ describe('useQuery', () => {
         refetchOnMount: false,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -680,7 +681,7 @@ describe('useQuery', () => {
         select: (data) => data.name,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -712,7 +713,7 @@ describe('useQuery', () => {
         select: (data) => data.name,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -744,7 +745,7 @@ describe('useQuery', () => {
         select: (data) => data.name,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -778,7 +779,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -820,7 +821,7 @@ describe('useQuery', () => {
         },
       }))
       createRenderEffect(
-        () => ({ status: state.status, data: state.data, error: state.error }),
+        () => ({ status: state.status, dataUpdatedAt: state.dataUpdatedAt, error: state.error }),
         () => {
           const s = snapshot(state)
           if (s.status === 'pending')
@@ -857,7 +858,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -906,7 +907,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -953,9 +954,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (state.isSuccess) {
-          states.push(state.data)
-        }
+        states.push(state.data)
       })
 
       const refetch = untrack(() => state.refetch)
@@ -1032,7 +1031,7 @@ describe('useQuery', () => {
       createRenderEffect(
         () => ({
           status: state.status,
-          data: state.data,
+          dataUpdatedAt: state.dataUpdatedAt,
           isFetching: state.isFetching,
         }),
         () => {
@@ -1048,7 +1047,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          data: {state.isSuccess && String(state.data[1]?.done)}
+          data: {String(state.data[1]?.done)}
         </div>
       )
     }
@@ -1152,7 +1151,7 @@ describe('useQuery', () => {
       createRenderEffect(
         () => ({
           status: state.status,
-          data: state.data,
+          dataUpdatedAt: state.dataUpdatedAt,
           isFetching: state.isFetching,
           isRefetching: state.isRefetching,
           isSuccess: state.isSuccess,
@@ -1237,7 +1236,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1286,7 +1285,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1332,7 +1331,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1389,7 +1388,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1459,7 +1458,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1542,7 +1541,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1615,7 +1614,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1692,7 +1691,7 @@ describe('useQuery', () => {
         staleTime: 100,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         (s) => {
           states1.push(s)
         },
@@ -1707,7 +1706,7 @@ describe('useQuery', () => {
         staleTime: 10,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         (s) => {
           states2.push(s)
         },
@@ -1788,7 +1787,7 @@ describe('useQuery', () => {
         staleTime: 50,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -1822,7 +1821,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2094,7 +2093,7 @@ describe('useQuery', () => {
         refetchOnWindowFocus: false,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2130,7 +2129,7 @@ describe('useQuery', () => {
         refetchOnWindowFocus: () => false,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2166,7 +2165,7 @@ describe('useQuery', () => {
         refetchOnWindowFocus: true,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2202,7 +2201,7 @@ describe('useQuery', () => {
         refetchOnWindowFocus: 'always',
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2243,7 +2242,7 @@ describe('useQuery', () => {
         refetchOnWindowFocus: (query) => (query.state.data || 0) < 1,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2305,7 +2304,7 @@ describe('useQuery', () => {
         staleTime: Infinity,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2352,7 +2351,7 @@ describe('useQuery', () => {
         staleTime: 0,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2838,7 +2837,7 @@ describe('useQuery', () => {
         staleTime: 50,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2893,7 +2892,7 @@ describe('useQuery', () => {
         initialData: 'initial',
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2935,7 +2934,7 @@ describe('useQuery', () => {
         initialData: 'initial',
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -2979,7 +2978,7 @@ describe('useQuery', () => {
         initialDataUpdatedAt: oneSecondAgo,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -3026,7 +3025,7 @@ describe('useQuery', () => {
         initialDataUpdatedAt: 0,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -3069,7 +3068,7 @@ describe('useQuery', () => {
         reconcile: false,
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -3342,7 +3341,7 @@ describe('useQuery', () => {
         queryFn: () => sleep(10).then(() => 'data'),
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -3389,7 +3388,7 @@ describe('useQuery', () => {
         queryFn: () => sleep(10).then(() => 'data'),
       }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -3464,7 +3463,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({ queryKey: key, queryFn }))
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4123,7 +4122,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4206,7 +4205,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4337,7 +4336,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4459,7 +4458,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4514,7 +4513,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4682,9 +4681,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (state.isSuccess) {
-          states.push(state.data)
-        }
+        states.push(state.data)
       })
 
       const forceUpdate = () => {
@@ -4836,7 +4833,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({ queryKey: [key, id()], queryFn }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4888,7 +4885,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -4968,7 +4965,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -5271,7 +5268,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },
@@ -6148,7 +6145,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         () => {
           states.push(snapshot(state) as any)
         },

@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
-import { Errored, Loading, createRenderEffect, createSignal } from 'solid-js'
+import {
+  Errored,
+  Loading,
+  createRenderEffect,
+  createSignal,
+  deep,
+} from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
 import { renderWithClient } from './utils'
@@ -37,14 +43,14 @@ describe("useQuery's in Loading mode", () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         (s) => {
           states.push(s)
         },
       )
 
       createRenderEffect(
-        () => [{ ...state }, () => key],
+        () => [deep(state), () => key],
         () => {
           renders++
         },
@@ -92,7 +98,7 @@ describe("useQuery's in Loading mode", () => {
       }))
 
       createRenderEffect(
-        () => ({ ...state }),
+        () => deep(state),
         (s) => {
           states.push(s)
         },
@@ -101,7 +107,7 @@ describe("useQuery's in Loading mode", () => {
       return (
         <div>
           <button onClick={() => setMultiplier(2)}>next</button>
-          data: {state.isSuccess && state.data.pages.join(',')}
+          data: {state.data.pages.join(',')}
         </div>
       )
     }

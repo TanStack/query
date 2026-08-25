@@ -3,9 +3,11 @@
 // why that happens.
 import { notifyManager, shouldThrowError } from '@tanstack/query-core'
 import {
+  NotReadyError,
   createRenderEffect,
   createSignal,
   createStore,
+  getObserver,
   isPending,
   onCleanup,
   reconcile,
@@ -498,6 +500,25 @@ export function useBaseQuery<
         ])
       ) {
         throw state.error
+      }
+
+      // `data` is typed non-nullable, so a read that happens before the first
+      // fetch settles has no value to return. Suspend instead: throwing
+      // NotReadyError from a tracking scope sends the reader to the nearest
+      // <Loading> boundary, mirroring the isServer branch above so both sides
+      // behave the same. The `state` reads here are what re-subscribe the
+      // reader, so it re-runs once the subscriber syncs the settled result.
+      //
+      // Only `isLoading` suspends (pending *and* fetching). A query that is
+      // pending but idle — disabled, or reset with no observer fetching — has
+      // nothing in flight to wait for, so it yields undefined rather than
+      // parking the boundary on a promise that never resolves.
+      //
+      // Untracked reads pass through: event handlers and effect callbacks
+      // peek at the raw value, which keeps imperative access working (and
+      // lets callers observe pending states) without suspending.
+      if (prop === 'data' && getObserver() && state.isLoading) {
+        throw new NotReadyError(observer.getCurrentQuery())
       }
 
       return Reflect.get(target, prop, receiver)
