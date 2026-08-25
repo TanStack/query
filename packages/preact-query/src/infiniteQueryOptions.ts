@@ -11,6 +11,10 @@ import type {
 
 import type { UseInfiniteQueryOptions } from './types'
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
+ * may be `undefined` while the query is `pending`.
+ */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -39,6 +43,11 @@ export type UndefinedInitialDataInfiniteOptions<
       >
 }
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
+ * `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be
+ * `skipToken`.
+ */
 export type UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -65,6 +74,10 @@ export type UnusedSkipTokenInfiniteOptions<
   >
 }
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
+ * never `undefined`.
+ */
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,

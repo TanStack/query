@@ -31,6 +31,9 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   return client
 }
 
+/**
+ * The props accepted by `QueryClientProvider`.
+ */
 export type QueryClientProviderProps = {
   /**
    * **Required**
@@ -45,7 +48,10 @@ export type QueryClientProviderProps = {
 }
 
 /**
- * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application.
+ * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
+ * calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
+ * focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
+ * comes back online).
  *
  * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
  *

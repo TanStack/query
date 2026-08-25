@@ -11,6 +11,9 @@ import { useEffect, useMemo, useRef } from 'preact/hooks'
 
 import { useQueryClient } from './QueryClientProvider'
 
+/**
+ * The props accepted by `HydrationBoundary`.
+ */
 export interface HydrationBoundaryProps {
   /**
    * The state to hydrate.

@@ -7,9 +7,12 @@ title: QueryClientProvider
 function QueryClientProvider(__namedParameters): VNode;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L63)
+Defined in: [preact-query/src/QueryClientProvider.tsx:69](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L69)
 
-Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application.
+Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
+calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
+focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
+comes back online).
 
 ## Parameters
 

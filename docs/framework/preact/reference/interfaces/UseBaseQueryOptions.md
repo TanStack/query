@@ -3,7 +3,10 @@ id: UseBaseQueryOptions
 title: UseBaseQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:30](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L30)
+Defined in: [preact-query/src/types.ts:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L38)
+
+The options shared by `useQuery`, `useSuspenseQuery`, and their infinite counterparts. Extends
+QueryObserverOptions from `@tanstack/query-core` with the `preact-query`-specific `subscribed` option.
 
 ## Extends
 
@@ -39,7 +42,7 @@ Defined in: [preact-query/src/types.ts:30](https://github.com/TanStack/query/blo
 optional subscribed: boolean;
 ```
 
-Defined in: [preact-query/src/types.ts:47](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L47)
+Defined in: [preact-query/src/types.ts:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L55)
 
 Set this to `false` to unsubscribe this observer from updates to the query cache.
 Defaults to `true`.
