@@ -1037,7 +1037,9 @@ describe('useQuery', () => {
           isFetching: state.isFetching,
         }),
         () => {
-          snapshots.push(pendingData(state.data) ? snapshot(state.data) : undefined)
+          snapshots.push(
+            pendingData(state.data) ? snapshot(state.data) : undefined,
+          )
           if (pendingData(state.data)) {
             itemRefs.push({ item0: state.data[0], item1: state.data[1] })
           }
