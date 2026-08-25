@@ -248,6 +248,15 @@ export function useQueries<
           ]
         >
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
+    /**
+     * Set this to `false` to disable structural sharing between query results.
+     * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
+     * Only applies when `combine` is provided.
+     * Defaults to `true`.
+     */
+    structuralSharing?:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
@@ -295,7 +304,7 @@ export function useQueries<
   const getOptimisticResult = () => {
     const [results, getCombinedResult] = observer.getOptimisticResult(
       defaultedQueries.value,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
+      options as QueriesObserverOptions<TCombinedResult>,
     )
 
     return getCombinedResult(
@@ -305,7 +314,7 @@ export function useQueries<
           refetch: async (...args: Array<any>) => {
             const [{ [index]: query }] = observer.getOptimisticResult(
               defaultedQueries.value,
-              (options as QueriesObserverOptions<TCombinedResult>).combine,
+              options as QueriesObserverOptions<TCombinedResult>,
             )
 
             return query!.refetch(...args)
