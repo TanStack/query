@@ -24,6 +24,10 @@ import { useBaseQuery } from './useBaseQuery'
  *
  * This overload is selected when `initialData` is set.
  *
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
@@ -69,6 +73,10 @@ export function useInfiniteQuery<
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
@@ -123,10 +131,10 @@ export function useInfiniteQuery<
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch
- * behavior, resulting in outdated data. Make sure to call these functions only in response to user actions,
- * or add conditions like `hasNextPage && !isFetching`.
- *
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
+ * @see {@link infiniteQueryOptions} to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
  * @param options - The {@link UseInfiniteQueryOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.

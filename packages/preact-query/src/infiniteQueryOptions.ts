@@ -132,6 +132,7 @@ export type DefinedInitialDataInfiniteOptions<
  *
  * This overload is selected when `initialData` is set.
  *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -226,6 +227,7 @@ export function infiniteQueryOptions<
  * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<
@@ -301,6 +303,7 @@ export function infiniteQueryOptions<
  * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<

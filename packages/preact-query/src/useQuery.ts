@@ -15,6 +15,7 @@ import { useBaseQuery } from './useBaseQuery'
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
@@ -49,6 +50,7 @@ export function useQuery<
 ): DefinedUseQueryResult<TData, TError>
 
 /**
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
@@ -93,6 +95,7 @@ export function useQuery<
 ): UseQueryResult<TData, TError>
 
 /**
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link UseQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.

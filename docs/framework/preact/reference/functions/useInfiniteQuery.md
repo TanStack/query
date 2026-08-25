@@ -9,7 +9,7 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L51)
+Defined in: [preact-query/src/useInfiniteQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L55)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -61,6 +61,16 @@ The same properties as `useQuery`, with the addition of `data.pages`, `data.page
 `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
 `isFetchingPreviousPage`.
 
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage && !isFetching`.
+
+### See
+
+[infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
+
 ### Example
 
 ```tsx
@@ -85,7 +95,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:105](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L105)
+Defined in: [preact-query/src/useInfiniteQuery.ts:113](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L113)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -135,6 +145,16 @@ The same properties as `useQuery`, with the addition of `data.pages`, `data.page
 `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
 `isFetchingPreviousPage`.
 
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage && !isFetching`.
+
+### See
+
+[infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
+
 ### Example
 
 ```tsx
@@ -168,14 +188,10 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:163](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L163)
+Defined in: [preact-query/src/useInfiniteQuery.ts:171](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L171)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
-
-Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch
-behavior, resulting in outdated data. Make sure to call these functions only in response to user actions,
-or add conditions like `hasNextPage && !isFetching`.
 
 ### Type Parameters
 
@@ -221,6 +237,16 @@ be used.
 The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
 `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
 `isFetchingPreviousPage`.
+
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage && !isFetching`.
+
+### See
+
+[infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
 
 ### Example
 
