@@ -295,7 +295,9 @@ export function useQueries<
      */
     combine?: (result: QueriesResults<T>) => TCombinedResult
     /**
-     * Set this to `false` to unsubscribe this observer from updates to the query cache. Defaults to `true`.
+     * Set this to `false` to unsubscribe this observer from updates to the query cache.
+     *
+     * @defaultValue true
      */
     subscribed?: boolean
   },

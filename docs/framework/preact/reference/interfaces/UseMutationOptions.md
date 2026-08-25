@@ -3,7 +3,7 @@ id: UseMutationOptions
 title: UseMutationOptions
 ---
 
-Defined in: [preact-query/src/types.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L409)
+Defined in: [preact-query/src/types.ts:411](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L411)
 
 The options accepted by `useMutation`. Same as MutationObserverOptions from `@tanstack/query-core`,
 minus the internal `_defaulted` flag.
