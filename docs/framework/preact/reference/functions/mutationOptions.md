@@ -9,7 +9,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L48)
+Defined in: [preact-query/src/mutationOptions.ts:49](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L49)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -47,6 +47,10 @@ required `mutationKey`.
 `WithRequired`\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object, unchanged.
+
+### See
+
+[useMutation](useMutation.md) to run the mutation these options describe.
 
 ### Examples
 
@@ -88,7 +92,7 @@ function SavingIndicator() {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:85](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L85)
+Defined in: [preact-query/src/mutationOptions.ts:87](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L87)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to look the mutation up later
@@ -126,6 +130,10 @@ The mutation options to use, identical to what you'd pass to `useMutation`, with
 `Omit`\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object, unchanged.
+
+### See
+
+[useMutation](useMutation.md) to run the mutation these options describe.
 
 ### Example
 
