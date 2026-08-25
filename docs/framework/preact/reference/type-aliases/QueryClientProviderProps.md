@@ -21,7 +21,7 @@ optional children: ComponentChildren;
 
 Defined in: [preact-query/src/QueryClientProvider.tsx:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L48)
 
-The components that get access to the provided QueryClient.
+The components that get access to the provided `QueryClient`.
 
 ***
 

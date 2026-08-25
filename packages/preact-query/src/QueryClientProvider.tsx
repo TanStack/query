@@ -43,7 +43,7 @@ export type QueryClientProviderProps = {
    */
   client: QueryClient
   /**
-   * The components that get access to the provided QueryClient.
+   * The components that get access to the provided `QueryClient`.
    */
   children?: ComponentChildren
 }
