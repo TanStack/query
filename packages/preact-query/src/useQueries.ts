@@ -143,8 +143,9 @@ type GetUseQueryResult<T> =
 
 /**
  * The `queries` array accepted by `useQueries`. Recursively unwraps each tuple element so every entry's
- * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — beyond that, or for a
- * non-tuple array, falls back to a single homogeneous options type.
+ * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
+ * `unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls
+ * back to a single homogeneous options type.
  */
 export type QueriesOptions<
   T extends Array<any>,

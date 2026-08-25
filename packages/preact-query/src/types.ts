@@ -32,8 +32,8 @@ export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
   any
 >
 /**
- * The options shared by `useQuery`, `useSuspenseQuery`, and their infinite counterparts. Extends
- * {@link QueryObserverOptions} from `@tanstack/query-core` with the `preact-query`-specific `subscribed` option.
+ * The options shared by `useQuery` and `useSuspenseQuery`. Extends {@link QueryObserverOptions} from
+ * `@tanstack/query-core` with the `preact-query`-specific `subscribed` option.
  */
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
@@ -251,8 +251,9 @@ export interface UseSuspenseInfiniteQueryOptions<
 }
 
 /**
- * The result of `useQuery` and `useInfiniteQuery` when `initialData` isn't set — `data` may be `undefined`
- * while the query is `pending`. Re-exports {@link QueryObserverResult} from `@tanstack/query-core`.
+ * The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
+ * `pending`. Re-exports {@link QueryObserverResult} from `@tanstack/query-core`. `useInfiniteQuery` returns
+ * {@link UseInfiniteQueryResult} instead.
  */
 export type UseBaseQueryResult<
   TData = unknown,
