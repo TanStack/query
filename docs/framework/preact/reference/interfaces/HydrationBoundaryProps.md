@@ -13,7 +13,12 @@ Defined in: [preact-query/src/HydrationBoundary.tsx:14](https://github.com/TanSt
 optional children: ComponentChildren;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:22](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L22)
+Defined in: [preact-query/src/HydrationBoundary.tsx:34](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L34)
+
+The components to render — always rendered unconditionally, not gated on hydration. New queries are
+hydrated into the cache during render; for queries that already exist in the cache, only newer dehydrated
+data is hydrated, and that happens in an effect after commit, so `children` may render briefly before it
+lands.
 
 ***
 
@@ -23,7 +28,9 @@ Defined in: [preact-query/src/HydrationBoundary.tsx:22](https://github.com/TanSt
 optional options: OmitKeyof<HydrateOptions, "defaultOptions"> & object;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:16](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L16)
+Defined in: [preact-query/src/HydrationBoundary.tsx:22](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L22)
+
+Optional. Note: unlike `hydrate`, `mutations` cannot be set here.
 
 #### Type Declaration
 
@@ -42,7 +49,9 @@ optional defaultOptions: OmitKeyof<{
 optional queryClient: QueryClient;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:23](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L23)
+Defined in: [preact-query/src/HydrationBoundary.tsx:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L38)
+
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 ***
 
@@ -52,4 +61,6 @@ Defined in: [preact-query/src/HydrationBoundary.tsx:23](https://github.com/TanSt
 state: DehydratedState | null | undefined;
 ```
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L15)
+Defined in: [preact-query/src/HydrationBoundary.tsx:18](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L18)
+
+The state to hydrate.

@@ -162,25 +162,133 @@ export type SuspenseQueriesResults<
           >
         : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
 
+/**
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+ * `throwOnError`, `enabled`, or `placeholderData`.
+ *
+ * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
+ * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+ * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+ * flags set accordingly).
+ *
+ * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+ * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+ * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   const results = useSuspenseQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *   })
+ *
+ *   return (
+ *     <ul>
+ *       {results.map((result) => (
+ *         <li key={result.data.id}>{result.data.title}</li>
+ *       ))}
+ *     </ul>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading posts...</h1>}>
+ *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
+ */
 export function useSuspenseQueries<
   T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
+    /**
+     * An array with query option objects identical to `useSuspenseQuery`.
+     */
     queries:
       | readonly [...SuspenseQueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
+    /**
+     * Use this to combine the results of the queries into a single value. The result will be structurally
+     * shared to be as referentially stable as possible.
+     */
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
 ): TCombinedResult
 
+/**
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
+ * `throwOnError`, `enabled`, or `placeholderData`.
+ *
+ * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
+ * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+ * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+ * flags set accordingly).
+ *
+ * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+ * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+ * this, make sure to set a high enough `staleTime`. Cancellation does not work.
+ *
+ * @example
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   const results = useSuspenseQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *   })
+ *
+ *   return (
+ *     <ul>
+ *       {results.map((result) => (
+ *         <li key={result.data.id}>{result.data.title}</li>
+ *       ))}
+ *     </ul>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading posts...</h1>}>
+ *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
+ */
 export function useSuspenseQueries<
   T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
+    /**
+     * An array with query option objects identical to `useSuspenseQuery`.
+     */
     queries: readonly [...SuspenseQueriesOptions<T>]
+    /**
+     * Use this to combine the results of the queries into a single value. The result will be structurally
+     * shared to be as referentially stable as possible.
+     */
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,

@@ -7,7 +7,7 @@ title: UnusedSkipTokenInfiniteOptions
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L35)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:42](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L42)
 
 ## Type Declaration
 
@@ -16,6 +16,9 @@ Defined in: [preact-query/src/infiniteQueryOptions.ts:35](https://github.com/Tan
 ```ts
 optional queryFn: Exclude<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
 ```
+
+`skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
+you don't intend to run the query yet, omit `queryFn` or use a default query function instead.
 
 ## Type Parameters
 

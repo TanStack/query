@@ -3,10 +3,20 @@ import { createContext } from 'preact'
 import type { ComponentChildren, VNode } from 'preact'
 import { useContext, useEffect } from 'preact/hooks'
 
+/**
+ * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.
+ */
 export const QueryClientContext = createContext<QueryClient | undefined>(
   undefined,
 )
 
+/**
+ * The `useQueryClient` hook returns the current `QueryClient` instance.
+ *
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current `QueryClient` instance.
+ */
 export const useQueryClient = (queryClient?: QueryClient) => {
   const client = useContext(QueryClientContext)
 
@@ -22,10 +32,34 @@ export const useQueryClient = (queryClient?: QueryClient) => {
 }
 
 export type QueryClientProviderProps = {
+  /**
+   * **Required**
+   *
+   * The QueryClient instance to provide.
+   */
   client: QueryClient
+  /**
+   * The components that get access to the provided QueryClient.
+   */
   children?: ComponentChildren
 }
 
+/**
+ * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application.
+ *
+ * @returns The provided `children`, wrapped so they can read the `QueryClient` via `useQueryClient`.
+ *
+ * @example
+ * ```tsx
+ * import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
+ *
+ * const queryClient = new QueryClient()
+ *
+ * function App() {
+ *   return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
+ * }
+ * ```
+ */
 export const QueryClientProvider = ({
   client,
   children,

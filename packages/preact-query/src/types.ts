@@ -57,6 +57,10 @@ export type UsePrefetchQueryOptions<
   QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+   * unless a default query function has been defined.
+   */
   queryFn?: Exclude<
     QueryExecuteOptions<
       TQueryFnData,
@@ -85,6 +89,10 @@ export type UsePrefetchInfiniteQueryOptions<
   >,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
+   * unless a default query function has been defined.
+   */
   queryFn?: Exclude<
     InfiniteQueryExecuteOptions<
       TQueryFnData,
@@ -123,6 +131,10 @@ export interface UseSuspenseQueryOptions<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
+  /**
+   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
+   * must always be provided, unless a default query function has been defined.
+   */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
@@ -171,6 +183,10 @@ export interface UseSuspenseInfiniteQueryOptions<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
 > {
+  /**
+   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
+   * must always be provided, unless a default query function has been defined.
+   */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -235,6 +251,11 @@ export interface UseMutationOptions<
   '_defaulted'
 > {}
 
+/**
+ * The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
+ * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+ * through the mutation result, not thrown.
+ */
 export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,
@@ -246,6 +267,10 @@ export type UseMutateFunction<
   >
 ) => void
 
+/**
+ * The type of `mutateAsync`, as returned by `useMutation`. Similar to {@link UseMutateFunction}, but returns a
+ * promise which can be awaited.
+ */
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
@@ -262,6 +287,9 @@ export type UseBaseMutationResult<
   MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
   { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
+  /**
+   * Similar to `mutate`, but returns a promise which can be awaited.
+   */
   mutateAsync: UseMutateAsyncFunction<
     TData,
     TError,

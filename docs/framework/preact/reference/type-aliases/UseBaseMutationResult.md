@@ -9,7 +9,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L256)
+Defined in: [preact-query/src/types.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L281)
 
 ## Type Declaration
 
@@ -18,6 +18,8 @@ Defined in: [preact-query/src/types.ts:256](https://github.com/TanStack/query/bl
 ```ts
 mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
+
+Similar to `mutate`, but returns a promise which can be awaited.
 
 ## Type Parameters
 

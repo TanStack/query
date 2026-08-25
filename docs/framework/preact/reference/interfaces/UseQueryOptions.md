@@ -3,7 +3,7 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-Defined in: [preact-query/src/types.ts:101](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L101)
+Defined in: [preact-query/src/types.ts:109](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L109)
 
 ## Extends
 
