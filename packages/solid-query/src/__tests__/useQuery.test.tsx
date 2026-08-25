@@ -821,7 +821,11 @@ describe('useQuery', () => {
         },
       }))
       createRenderEffect(
-        () => ({ status: state.status, dataUpdatedAt: state.dataUpdatedAt, error: state.error }),
+        () => ({
+          status: state.status,
+          dataUpdatedAt: state.dataUpdatedAt,
+          error: state.error,
+        }),
         () => {
           const s = snapshot(state)
           if (s.status === 'pending')
