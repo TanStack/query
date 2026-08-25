@@ -20,7 +20,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * already there or already in flight.
  *
  * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.infiniteQuery`.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns `void` — nothing is returned.
  *

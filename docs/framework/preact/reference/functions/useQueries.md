@@ -68,7 +68,7 @@ true
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ## Returns

@@ -24,7 +24,7 @@ The QueryFilters to narrow down the matched queries.
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ## Returns

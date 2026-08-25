@@ -23,7 +23,7 @@ import { useSyncExternalStore } from './utils'
  *
  * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites.
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared

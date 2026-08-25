@@ -43,7 +43,7 @@ The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns
@@ -113,7 +113,7 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns
@@ -193,7 +193,7 @@ The [UseQueryOptions](../interfaces/UseQueryOptions.md) to use — everything yo
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns

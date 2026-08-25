@@ -53,7 +53,7 @@ optional queryClient: QueryClient;
 
 Defined in: [preact-query/src/HydrationBoundary.tsx:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L41)
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used.
 
 ***
 

@@ -50,7 +50,7 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns
@@ -134,7 +134,7 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns
@@ -227,7 +227,7 @@ The [UseInfiniteQueryOptions](../interfaces/UseInfiniteQueryOptions.md) to use â
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ### Returns
