@@ -71,7 +71,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L169)
+Defined in: [preact-query/src/queryOptions.ts:172](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L172)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -120,8 +120,7 @@ export const postsOptions = queryOptions({
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
-import { noop } from '@tanstack/query-core'
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
 
 export const postOptions = (id: string) =>
   queryOptions({
@@ -140,8 +139,12 @@ queryClient.query(postOptions(id)).catch(noop)
 
 The same options object works with every API that accepts query options:
 ```tsx
-import { noop } from '@tanstack/query-core'
-import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+import {
+  noop,
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from '@tanstack/preact-query'
 
 const todosOptions = queryOptions({
   queryKey: ['todos'],
@@ -160,7 +163,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:235](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L235)
+Defined in: [preact-query/src/queryOptions.ts:241](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L241)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -209,8 +212,7 @@ export const postsOptions = queryOptions({
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
-import { noop } from '@tanstack/query-core'
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
 
 export const postOptions = (id: string) =>
   queryOptions({
@@ -229,8 +231,12 @@ queryClient.query(postOptions(id)).catch(noop)
 
 The same options object works with every API that accepts query options:
 ```tsx
-import { noop } from '@tanstack/query-core'
-import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+import {
+  noop,
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from '@tanstack/preact-query'
 
 const todosOptions = queryOptions({
   queryKey: ['todos'],
