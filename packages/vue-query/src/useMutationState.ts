@@ -10,18 +10,22 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
-  MutationFilters as MF,
   Mutation,
+  MutationFilters,
   MutationState,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep } from './types'
 import type { MutationCache } from './mutationCache'
 
-export type MutationFilters = MaybeRefDeep<MF>
+type VueMutationFilters = MaybeRefDeep<MutationFilters>
+
+export type UseIsMutatingFilters =
+  | VueMutationFilters
+  | (() => VueMutationFilters)
 
 export function useIsMutating(
-  filters: MutationFilters | (() => MutationFilters) = {},
+  filters: UseIsMutatingFilters = {},
   queryClient?: QueryClient,
 ): Ref<number> {
   if (process.env.NODE_ENV === 'development') {
@@ -64,7 +68,7 @@ export type MutationStateOptions<
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 > = {
-  filters?: MutationFilters
+  filters?: VueMutationFilters
   select?: (mutation: TMutation) => TResult
 }
 
