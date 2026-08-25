@@ -7,7 +7,9 @@ title: UseQueryResult
 type UseQueryResult<TData, TError> = UseBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L191)
+Defined in: [preact-query/src/types.ts:322](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L322)
+
+The result of `useQuery`. Same as [UseBaseQueryResult](UseBaseQueryResult.md).
 
 ## Type Parameters
 
@@ -15,6 +17,10 @@ Defined in: [preact-query/src/types.ts:191](https://github.com/TanStack/query/bl
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.

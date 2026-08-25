@@ -7,4 +7,7 @@ title: AnyUseInfiniteQueryOptions
 type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<any, any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:132](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L132)
+Defined in: [preact-query/src/types.ts:217](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L217)
+
+[UseInfiniteQueryOptions](../interfaces/UseInfiniteQueryOptions.md) with all type parameters set to `any`, useful when the specific types aren't
+relevant, e.g. when accepting options for any query in a helper function.

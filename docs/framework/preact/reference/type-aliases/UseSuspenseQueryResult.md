@@ -7,7 +7,10 @@ title: UseSuspenseQueryResult
 type UseSuspenseQueryResult<TData, TError> = DistributiveOmit<DefinedQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [preact-query/src/types.ts:196](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L196)
+Defined in: [preact-query/src/types.ts:334](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L334)
+
+The result of `useSuspenseQuery`. Same as [DefinedUseQueryResult](DefinedUseQueryResult.md), minus `isPlaceholderData` — always
+`false` on that type, so this drops the dead field rather than an active state.
 
 ## Type Parameters
 
@@ -15,6 +18,10 @@ Defined in: [preact-query/src/types.ts:196](https://github.com/TanStack/query/bl
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.

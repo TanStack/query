@@ -7,4 +7,7 @@ title: AnyUseMutationOptions
 type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:227](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L227)
+Defined in: [preact-query/src/types.ts:398](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L398)
+
+[UseMutationOptions](../interfaces/UseMutationOptions.md) with all type parameters set to `any`, useful when the specific types aren't
+relevant, e.g. when accepting options for any mutation in a helper function.

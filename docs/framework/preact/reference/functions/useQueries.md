@@ -7,7 +7,19 @@ title: useQueries
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useQueries.ts:207](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L207)
+Defined in: [preact-query/src/useQueries.ts:275](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L275)
+
+The `useQueries` hook can be used to fetch a variable number of queries.
+
+The `queries` key accepts an array with query option objects identical to `useQuery` (excluding the
+`queryClient` option - because the `QueryClient` can be passed in on the top level).
+
+Having the same query key more than once in the array of query objects may cause some data to be shared
+between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+structure.
+
+The `combine` option can be used to combine the results of the queries into a single value. The result will
+be structurally shared to be as referentially stable as possible.
 
 ## Type Parameters
 
@@ -27,19 +39,67 @@ Defined in: [preact-query/src/useQueries.ts:207](https://github.com/TanStack/que
 
 (`result`) => `TCombinedResult`
 
+Use this to combine the results of the queries into a single value. The result will be structurally
+shared to be as referentially stable as possible.
+
 #### queries
 
   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseQueryOptionsForUseQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseQueryOptionsForUseQueries`\<`Head`\>, `GetUseQueryOptionsForUseQueries`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : readonly ...[] *extends* \[`...(...)[]`\] ? \[`...(...)[]`\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `UseQueryOptionsForUseQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? `UseQueryOptionsForUseQueries`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : `UseQueryOptionsForUseQueries`\<`unknown`, `Error`, `unknown`, readonly ...[]\>[]\]
   \| readonly \[\{ \[K in string \| number \| symbol\]: GetUseQueryOptionsForUseQueries\<T\[K\<K\>\]\> \}\]
 
+An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
+`subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
+`placeholderData` accepts a QueriesPlaceholderDataFunction, which is called with `previousData`
+and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
+
 #### subscribed?
 
 `boolean`
+
+Set this to `false` to unsubscribe this observer from updates to the query cache. Defaults to `true`.
 
 ### queryClient?
 
 `QueryClient`
 
+Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+will be used.
+
 ## Returns
 
 `TCombinedResult`
+
+The combined result. Without `combine`, this is an array with all the query results, in the same
+order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+
+## Examples
+
+```tsx
+import { useQueries } from '@tanstack/preact-query'
+
+const ids = [1, 2, 3]
+const results = useQueries({
+  queries: ids.map((id) => ({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+    staleTime: Infinity,
+  })),
+})
+```
+
+Combining results into a single value:
+```tsx
+const ids = [1, 2, 3]
+const combinedQueries = useQueries({
+  queries: ids.map((id) => ({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })),
+  combine: (results) => {
+    return {
+      data: results.map((result) => result.data),
+      pending: results.some((result) => result.isPending),
+    }
+  },
+})
+```
