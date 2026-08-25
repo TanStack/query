@@ -1,5 +1,7 @@
 # @tanstack/query-devtools
 
+## 5.102.4
+
 ## 5.102.3
 
 ## 5.102.2
