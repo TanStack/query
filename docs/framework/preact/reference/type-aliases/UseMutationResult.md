@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/types.ts:396](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L396)
+Defined in: [preact-query/src/types.ts:497](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L497)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 
@@ -17,14 +17,23 @@ The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResu
 
 `TData` = `unknown`
 
+The type your mutation function resolves to.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your mutation function may throw.
 
 ### TVariables
 
 `TVariables` = `unknown`
 
+The type of the variable passed to `mutate`/`mutateAsync`.
+
 ### TOnMutateResult
 
 `TOnMutateResult` = `unknown`
+
+The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+their `onMutateResult` parameter — useful for optimistic-update rollback data.

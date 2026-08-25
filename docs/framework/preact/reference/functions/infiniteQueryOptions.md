@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:135](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L135)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:156](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L156)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -76,7 +76,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:210](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L210)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:231](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L231)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -165,7 +165,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:285](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L285)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:306](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L306)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.

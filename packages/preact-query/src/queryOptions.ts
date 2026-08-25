@@ -14,6 +14,11 @@ import type { UseQueryOptions } from './types'
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
  * `undefined` while the query is `pending`.
+ *
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
  */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -37,6 +42,11 @@ export type UndefinedInitialDataOptions<
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
  * not `skipToken` — same as {@link UndefinedInitialDataOptions}, but `queryFn` may not be `skipToken`.
+ *
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
  */
 export type UnusedSkipTokenOptions<
   TQueryFnData = unknown,
@@ -60,6 +70,11 @@ export type UnusedSkipTokenOptions<
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
  * `undefined`.
+ *
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryKey - The type of your `queryKey`.
  */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,

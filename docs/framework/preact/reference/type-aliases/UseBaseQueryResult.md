@@ -7,7 +7,7 @@ title: UseBaseQueryResult
 type UseBaseQueryResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:258](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L258)
+Defined in: [preact-query/src/types.ts:311](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L311)
 
 The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
 `pending`. Re-exports QueryObserverResult from `@tanstack/query-core`. `useInfiniteQuery` returns
@@ -19,6 +19,10 @@ The result of `useQuery` when `initialData` isn't set — `data` may be `undefin
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.
