@@ -16,7 +16,10 @@ export type UndefinedInitialDataInfiniteOptions<
   TPageParam = unknown,
 > = Accessor<
   InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-    initialData?: undefined
+    initialData?:
+      | undefined
+      | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
   }
 >
 
