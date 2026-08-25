@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.102.4
+
+### Patch Changes
+
+- [#11293](https://github.com/TanStack/query/pull/11293) [`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec) - Avoid scheduling stale timeouts for disabled query observers.
+
 ## 5.102.3
 
 ## 5.102.2
