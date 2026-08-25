@@ -415,8 +415,8 @@ export class QueryObserver<
     this.#currentRefetchInterval = nextInterval
 
     if (
-      !this.#shouldScheduleTimer(this.#currentRefetchInterval) ||
-      this.#currentRefetchInterval === 0
+      this.#currentRefetchInterval === 0 ||
+      !this.#shouldScheduleTimer(this.#currentRefetchInterval)
     ) {
       return
     }
