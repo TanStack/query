@@ -164,8 +164,11 @@ export function infiniteQueryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ * import {
+ *   infiniteQueryOptions,
+ *   noop,
+ *   useInfiniteQuery,
+ * } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
  *   infiniteQueryOptions({
@@ -236,8 +239,11 @@ export function infiniteQueryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ * import {
+ *   infiniteQueryOptions,
+ *   noop,
+ *   useInfiniteQuery,
+ * } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
  *   infiniteQueryOptions({

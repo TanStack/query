@@ -131,8 +131,7 @@ export function queryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -152,8 +151,12 @@ export function queryOptions<
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+ * import {
+ *   noop,
+ *   queryOptions,
+ *   useQuery,
+ *   useSuspenseQuery,
+ * } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
  *   queryKey: ['todos'],
@@ -197,8 +200,7 @@ export function queryOptions<
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -218,8 +220,12 @@ export function queryOptions<
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/preact-query'
+ * import {
+ *   noop,
+ *   queryOptions,
+ *   useQuery,
+ *   useSuspenseQuery,
+ * } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
  *   queryKey: ['todos'],

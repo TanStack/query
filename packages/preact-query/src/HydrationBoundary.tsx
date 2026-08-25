@@ -61,8 +61,7 @@ export interface HydrationBoundaryProps {
  * @example
  * Server-side prefetch handed off to the client via `dehydrate`:
  * ```tsx
- * import { noop } from '@tanstack/query-core'
- * import { HydrationBoundary, dehydrate } from '@tanstack/preact-query'
+ * import { HydrationBoundary, dehydrate, noop } from '@tanstack/preact-query'
  *
  * async function ServerComponent() {
  *   const queryClient = getQueryClient()
