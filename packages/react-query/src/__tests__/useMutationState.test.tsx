@@ -241,4 +241,54 @@ describe('useMutationState', () => {
 
     expect(variables).toEqual([[], [1], []])
   })
+
+  it('should update the result when mutation filters change without a cache update', async () => {
+    const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Variables({ mutationKey }: { mutationKey?: Array<string> }) {
+      const variables = useMutationState({
+        filters: { mutationKey },
+        select: (mutation) => mutation.state.variables,
+      })
+
+      return <div>variables: {variables.join(',')}</div>
+    }
+
+    function Page({ mutationKey }: { mutationKey?: Array<string> }) {
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: key1,
+        mutationFn: (input: number) => sleep(100).then(() => 'data' + input),
+      })
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: key2,
+        mutationFn: (input: number) => sleep(100).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate1(1)}>mutate1</button>
+          <button onClick={() => mutate2(2)}>mutate2</button>
+          <Variables mutationKey={mutationKey} />
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page mutationKey={key1} />)
+    expect(rendered.getByText(/^variables:\s*$/)).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('variables: 1')).toBeInTheDocument()
+
+    // Switch filters to key2 — should update without a cache notification
+    rendered.rerender(<Page mutationKey={key2} />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText(/^variables:\s*$/)).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('variables: 2')).toBeInTheDocument()
+  })
 })
