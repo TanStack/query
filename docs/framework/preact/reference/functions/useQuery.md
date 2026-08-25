@@ -6,10 +6,12 @@ title: useQuery
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L15)
+Defined in: [preact-query/src/useQuery.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L41)
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
 ### Type Parameters
 
@@ -35,21 +37,47 @@ Defined in: [preact-query/src/useQuery.ts:15](https://github.com/TanStack/query/
 
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
+
 #### queryClient?
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
-[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`DefinedUseQueryResult`](../type-aliases/DefinedUseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+
+### Example
+
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function Posts() {
+  // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialData: [],
+  })
+
+  return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+}
+```
 
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L25)
+Defined in: [preact-query/src/useQuery.ts:85](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L85)
 
 ### Type Parameters
 
@@ -75,21 +103,57 @@ Defined in: [preact-query/src/useQuery.ts:25](https://github.com/TanStack/query/
 
 [`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
 #### queryClient?
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
-[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result. `status` is `pending` if there is no cached data and no query attempt
+has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+
+### Example
+
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+})
+
+function Posts() {
+  const { status, data, error, isFetching } = useQuery(postsOptions)
+
+  if (status === 'pending') return 'Loading...'
+  if (status === 'error') return <span>Error: {error.message}</span>
+
+  return (
+    <div>
+      {data.map((post) => (
+        <p key={post.id}>{post.title}</p>
+      ))}
+      <div>{isFetching ? 'Background Updating...' : ' '}</div>
+    </div>
+  )
+}
+```
 
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<NoInfer<TData>, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L35)
+Defined in: [preact-query/src/useQuery.ts:166](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L166)
 
 ### Type Parameters
 
@@ -115,10 +179,81 @@ Defined in: [preact-query/src/useQuery.ts:35](https://github.com/TanStack/query/
 
 [`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UseQueryOptions](../interfaces/UseQueryOptions.md) to use — everything you can pass to `useQuery`.
+
 #### queryClient?
 
 `QueryClient`
 
+Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
-[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`NoInfer`\<`TData`\>, `TError`\>
+[`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result. `status` is `pending` if there is no cached data and no query attempt
+has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
+display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+
+### Examples
+
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+})
+
+function Posts() {
+  const { status, data, error, isFetching } = useQuery(postsOptions)
+
+  if (status === 'pending') return 'Loading...'
+  if (status === 'error') return <span>Error: {error.message}</span>
+
+  return (
+    <div>
+      {data.map((post) => (
+        <p key={post.id}>{post.title}</p>
+      ))}
+      <div>{isFetching ? 'Background Updating...' : ' '}</div>
+    </div>
+  )
+}
+```
+
+A dependent query, only enabled once `postId` is set:
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function Post({ postId }: { postId: number | undefined }) {
+  const { data } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => fetchPost(postId!),
+    enabled: postId != null,
+  })
+
+  return <h1>{data?.title}</h1>
+}
+```
+
+Seeding a detail query from an already-cached list, to skip the loading state:
+```tsx
+import { useQuery, useQueryClient } from '@tanstack/preact-query'
+
+function Post({ postId }: { postId: number }) {
+  const queryClient = useQueryClient()
+
+  const { data } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => fetchPost(postId),
+    initialData: () =>
+      queryClient
+        .getQueryData<Array<Post>>(['posts'])
+        ?.find((post) => post.id === postId),
+  })
+
+  return <h1>{data?.title}</h1>
+}
+```

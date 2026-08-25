@@ -7,7 +7,10 @@ title: UnusedSkipTokenOptions
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L26)
+Defined in: [preact-query/src/queryOptions.ts:51](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L51)
+
+The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
+not `skipToken` — same as [UndefinedInitialDataOptions](UndefinedInitialDataOptions.md), but `queryFn` may not be `skipToken`.
 
 ## Type Declaration
 
@@ -17,20 +20,31 @@ Defined in: [preact-query/src/queryOptions.ts:26](https://github.com/TanStack/qu
 optional queryFn: Exclude<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>["queryFn"], SkipToken | undefined>;
 ```
 
+`skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
+you don't intend to run the query yet, omit `queryFn` or use a default query function instead.
+
 ## Type Parameters
 
 ### TQueryFnData
 
 `TQueryFnData` = `unknown`
 
+The type your `queryFn` resolves to.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs.
+
 ### TQueryKey
 
 `TQueryKey` *extends* `QueryKey` = `QueryKey`
+
+The type of your `queryKey`.

@@ -17,6 +17,72 @@ import { useSyncExternalStore } from './utils'
 
 // HOOK
 
+/**
+ * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+ * `useMutation` is the hook for that.
+ *
+ * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
+ * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
+ * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
+ * mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
+ * made.
+ *
+ * @example
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodo() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   })
+ *
+ *   return (
+ *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Optimistic update via `onMutate`, rolling back on `onError`:
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodo() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onMutate: async (newTodo) => {
+ *       await queryClient.cancelQueries({ queryKey: ['todos'] })
+ *       const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *
+ *       queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *         ...(old ?? []),
+ *         newTodo,
+ *       ])
+ *
+ *       // Passed to `onError` as `context` if the mutation fails.
+ *       return { previousTodos }
+ *     },
+ *     onError: (_err, _newTodo, context) => {
+ *       queryClient.setQueryData(['todos'], context?.previousTodos)
+ *     },
+ *     onSettled: () => {
+ *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *     },
+ *   })
+ *
+ *   return (
+ *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *   )
+ * }
+ * ```
+ */
 export function useMutation<
   TData = unknown,
   TError = DefaultError,
@@ -52,8 +118,12 @@ export function useMutation<
   const mutate = useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
-    (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
+    (
+      ...args: Parameters<
+        UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      >
+    ) => {
+      observer.mutate(args[0] as TVariables, args[1]).catch(noop)
     },
     [observer],
   )
