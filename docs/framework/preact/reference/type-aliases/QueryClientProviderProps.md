@@ -35,4 +35,4 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:44](https://github.com/Tan
 
 **Required**
 
-The QueryClient instance to provide.
+The `QueryClient` instance to provide.

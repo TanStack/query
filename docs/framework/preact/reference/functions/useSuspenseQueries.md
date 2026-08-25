@@ -48,7 +48,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ### Returns
@@ -140,7 +140,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ### Returns

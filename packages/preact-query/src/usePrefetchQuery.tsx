@@ -15,7 +15,7 @@ import type { UsePrefetchQueryOptions } from './types'
  * already there or already in flight.
  *
  * @param options - The {@link UsePrefetchQueryOptions} to use — everything you can pass to `queryClient.query`.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns `void` — nothing is returned.
  *

@@ -12,7 +12,7 @@ import { useBaseQuery } from './useBaseQuery'
  * Caveat: cancellation does not work.
  *
  * @param options - The {@link UseSuspenseQueryOptions} to use — the same options as `useQuery`, minus the ones listed above.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The same object as `useQuery`, except that `data` is guaranteed to be defined, `isPlaceholderData`
  * is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).

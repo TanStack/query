@@ -44,7 +44,7 @@ The [UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) to use â
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ## Returns
