@@ -66,10 +66,26 @@ export type UseQueryOptions<
 
 /* --- Create Query and Create Base Query  Types --- */
 
+/**
+ * Reading `data` on a useQuery/useInfiniteQuery result is backed by an async
+ * resource: while the query is loading, the component is suspended into the
+ * nearest `<Loading>` boundary, so by the time `data` is actually read during
+ * render the value has settled. The type reflects that — `data` is `TData`,
+ * never `undefined`.
+ *
+ * Distributes over the result union so each status variant keeps its other
+ * discriminants (`status`, `error`, ...) and only `data` is narrowed.
+ */
+export type NonNullableData<TResult, TData> = TResult extends {
+  data: unknown
+}
+  ? Omit<TResult, 'data'> & { data: TData }
+  : never
+
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = QueryObserverResult<TData, TError>
+> = NonNullableData<QueryObserverResult<TData, TError>, TData>
 
 export type UseQueryResult<
   TData = unknown,
@@ -132,7 +148,7 @@ export type UseInfiniteQueryOptions<
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+> = NonNullableData<InfiniteQueryObserverResult<TData, TError>, TData>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,

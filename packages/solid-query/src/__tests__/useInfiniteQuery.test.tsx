@@ -18,7 +18,7 @@ import {
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import { Blink, renderWithClient, setActTimeout } from './utils'
+import { Blink, pendingData, renderWithClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -225,7 +225,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -240,7 +240,7 @@ describe('useInfiniteQuery', () => {
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <button onClick={() => setOrder('asc')}>order</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
@@ -433,7 +433,7 @@ describe('useInfiniteQuery', () => {
         () => ({ ...state }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isSuccess: state.isSuccess,
@@ -444,7 +444,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {state.isFetching}</div>
         </div>
       )
@@ -510,7 +510,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             hasNextPage: state.hasNextPage,
@@ -602,7 +602,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -620,7 +620,7 @@ describe('useInfiniteQuery', () => {
             fetchPreviousPage
           </button>
           <button onClick={() => state.refetch()}>refetch</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
@@ -747,7 +747,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -771,7 +771,7 @@ describe('useInfiniteQuery', () => {
           >
             refetch
           </button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
@@ -870,7 +870,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -887,7 +887,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
@@ -986,7 +986,7 @@ describe('useInfiniteQuery', () => {
         }),
         () => {
           states.push({
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -1005,7 +1005,7 @@ describe('useInfiniteQuery', () => {
           <button onClick={() => state.fetchPreviousPage()}>
             fetchPreviousPage
           </button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
@@ -1091,7 +1091,9 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(
         () => ({
           hasNextPage: state.hasNextPage,
-          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
+          data: pendingData(state.data)
+            ? JSON.parse(JSON.stringify(state.data))
+            : undefined,
           isFetching: state.isFetching,
           isFetchingNextPage: state.isFetchingNextPage,
           isSuccess: state.isSuccess,
@@ -1434,7 +1436,7 @@ describe('useInfiniteQuery', () => {
         () => {
           states.push({
             hasNextPage: state.hasNextPage,
-            data: state.data
+            data: pendingData(state.data)
               ? JSON.parse(JSON.stringify(state.data))
               : undefined,
             isFetching: state.isFetching,
@@ -1746,7 +1748,7 @@ describe('useInfiniteQuery', () => {
 
       return (
         <div>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {pendingData(state.data)?.pages.join(',') ?? 'null'}</div>
           <div>hasNextPage: {state.hasNextPage ? 'true' : 'false'}</div>
         </div>
       )
@@ -1796,7 +1798,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data?.pages ?? []}>
+                <For each={pendingData(state.data)?.pages ?? []}>
                   {(page, i) => (
                     <div>
                       <div>
@@ -1941,7 +1943,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data!.pages}>
+                <For each={state.data.pages}>
                   {(page, i) => (
                     <div>
                       <div>
@@ -2088,7 +2090,7 @@ describe('useInfiniteQuery', () => {
       )
       return (
         <div>
-          <h1>Status: {state.data?.pages[0]}</h1>
+          <h1>Status: {pendingData(state.data)?.pages[0]}</h1>
         </div>
       )
     }
@@ -2120,7 +2122,7 @@ describe('useInfiniteQuery', () => {
       )
       return (
         <div>
-          <h1>Status: {state.data?.pages[0]}</h1>
+          <h1>Status: {pendingData(state.data)?.pages[0]}</h1>
         </div>
       )
     }

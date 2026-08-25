@@ -32,6 +32,7 @@ import { IsRestoringContext } from '../isRestoring'
 import {
   Blink,
   mockOnlineManagerIsOnline,
+  pendingData,
   renderWithClient,
   setActTimeout,
 } from './utils'
@@ -66,7 +67,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{state.data ?? 'default'}</h1>
+          <h1>{pendingData(state.data) ?? 'default'}</h1>
         </div>
       )
     }
@@ -104,10 +105,12 @@ describe('useQuery', () => {
       )
 
       if (state.isPending) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        // `data` is typed non-nullable in every status variant: reads
+        // suspend to the nearest Loading boundary until the value exists.
+        expectTypeOf(state.data).toEqualTypeOf<string>()
         expectTypeOf(state.error).toEqualTypeOf<null>()
       } else if (state.isLoadingError) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.data).toEqualTypeOf<string>()
         expectTypeOf(state.error).toEqualTypeOf<Error>()
       } else {
         expectTypeOf(state.data).toEqualTypeOf<string>()
@@ -873,7 +876,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{state.data ?? null}</h1>
+          <h1>{pendingData(state.data) ?? null}</h1>
         </div>
       )
     }
@@ -951,7 +954,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (state.data) {
+        if (pendingData(state.data)) {
           states.push(state.data)
         }
       })
@@ -1034,8 +1037,8 @@ describe('useQuery', () => {
           isFetching: state.isFetching,
         }),
         () => {
-          snapshots.push(state.data ? snapshot(state.data) : undefined)
-          if (state.data) {
+          snapshots.push(pendingData(state.data) ? snapshot(state.data) : undefined)
+          if (pendingData(state.data)) {
             itemRefs.push({ item0: state.data[0], item1: state.data[1] })
           }
         },
@@ -1046,7 +1049,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          data: {String(state.data?.[1]?.done)}
+          data: {String(pendingData(state.data)?.[1]?.done)}
         </div>
       )
     }
@@ -2060,7 +2063,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{state.data ?? 'default'}</h1>
+          <h1>{pendingData(state.data) ?? 'default'}</h1>
         </div>
       )
     }
@@ -2843,7 +2846,7 @@ describe('useQuery', () => {
       )
       return (
         <div>
-          <div>data: {state.data ?? 'null'}</div>
+          <div>data: {pendingData(state.data) ?? 'null'}</div>
           <div>isFetching: {state.isFetching}</div>
           <div>isStale: {state.isStale}</div>
         </div>
@@ -4620,7 +4623,7 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => state.data,
+        () => pendingData(state.data),
         (data) => {
           if (data) {
             dataRefs.push(data)
@@ -4680,7 +4683,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (state.data) {
+        if (pendingData(state.data)) {
           states.push(state.data)
         }
       })
@@ -4897,7 +4900,7 @@ describe('useQuery', () => {
           <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
-          <div>data: {state.data ?? 'null'}</div>
+          <div>data: {pendingData(state.data) ?? 'null'}</div>
           <div>isFetching: {state.isFetching}</div>
         </div>
       )
@@ -4980,7 +4983,7 @@ describe('useQuery', () => {
           <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
-          <div>data: {state.data ?? 'null'}</div>
+          <div>data: {pendingData(state.data) ?? 'null'}</div>
         </div>
       )
     }

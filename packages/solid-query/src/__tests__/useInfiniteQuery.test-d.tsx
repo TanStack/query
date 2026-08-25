@@ -76,9 +76,7 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
   })
 
@@ -94,9 +92,7 @@ describe('useInfiniteQuery', () => {
       }))
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
     it('should be able to transform data to arbitrary result', () => {
@@ -113,7 +109,7 @@ describe('useInfiniteQuery', () => {
         },
       }))
 
-      expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected'>()
     })
   })
 
@@ -152,9 +148,7 @@ describe('useInfiniteQuery', () => {
       }))
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<string, unknown> | undefined
-      >()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     })
   })
 
@@ -198,9 +192,7 @@ describe('useInfiniteQuery', () => {
       )
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
   })
 })

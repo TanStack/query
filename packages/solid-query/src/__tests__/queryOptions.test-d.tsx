@@ -37,7 +37,7 @@ describe('queryOptions', () => {
     })
 
     const { data } = useQuery(() => options)
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(data).toEqualTypeOf<number>()
   })
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({

@@ -11,7 +11,7 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { QueryOptions, UseQueryResult } from './types'
+import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -25,6 +25,14 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+
+// Unlike useQuery, useQueries results are a plain reactive store with no
+// resource backing — reads never suspend, so `data` here stays nullable
+// rather than using the package-wide NonNullableData result type.
+type UseQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = QueryObserverResult<TData, TError>
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

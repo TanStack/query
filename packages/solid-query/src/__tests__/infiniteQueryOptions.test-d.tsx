@@ -52,7 +52,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
-      () => InfiniteData<{ wow: boolean }, unknown> | undefined
+      () => InfiniteData<{ wow: boolean }, unknown>
     >()
 
     expectTypeOf(options).toExtend<

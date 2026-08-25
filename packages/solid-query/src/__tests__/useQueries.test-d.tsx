@@ -5,13 +5,16 @@ import { queryOptions, useQueries } from '..'
 import { QueryClient } from '../QueryClient'
 import type * as QueryCore from '@tanstack/query-core'
 import type { OmitKeyof } from '@tanstack/query-core'
-import type {
-  QueryFunction,
-  QueryFunctionContext,
-  QueryKey,
-  UseQueryResult,
-} from '..'
+import type { QueryFunction, QueryFunctionContext, QueryKey } from '..'
 import type { QueryOptions } from '../types'
+
+// useQueries results are a plain reactive store with no resource backing
+// (reads never suspend), so unlike useQuery its `data` stays nullable —
+// assert against the raw query-core observer result here.
+type UseQueryResult<
+  TData = unknown,
+  TError = QueryCore.DefaultError,
+> = QueryCore.QueryObserverResult<TData, TError>
 
 describe('useQueries', () => {
   it('TData should have undefined in the union even when initialData is provided as an object', () => {
