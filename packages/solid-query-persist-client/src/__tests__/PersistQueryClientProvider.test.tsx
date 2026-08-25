@@ -364,7 +364,7 @@ describe('PersistQueryClientProvider', () => {
 
       return (
         <div>
-          <h1>data: {state.data ?? 'null'}</h1>
+          <h1>data: {state.data}</h1>
           <h2>fetchStatus: {state.fetchStatus}</h2>
         </div>
       )
@@ -381,7 +381,7 @@ describe('PersistQueryClientProvider', () => {
       </Loading>
     ))
 
-    expect(screen.getByText('data: null')).toBeInTheDocument()
+    expect(screen.getByText('data:')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('data: hydrated')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)

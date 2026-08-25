@@ -48,16 +48,3 @@ export function setActTimeout(fn: () => void, ms?: number) {
     fn()
   }, ms)
 }
-
-/**
- * Widen a query's `data` read back to `T | undefined`.
- *
- * The public result types declare `data` non-nullable because reads are
- * expected to suspend into a Loading boundary until the value exists. Tests
- * that intentionally observe pending or error states read `data` while the
- * underlying value is still undefined at runtime — this helper makes that
- * mismatch explicit at the call site so their guards typecheck as necessary.
- */
-export function pendingData<T>(data: T): T | undefined {
-  return data
-}

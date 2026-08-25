@@ -3,7 +3,7 @@ import { fireEvent } from '@solidjs/testing-library'
 import { Errored, Loading, createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useInfiniteQuery, useQuery } from '..'
-import { pendingData, renderWithClient } from './utils'
+import { renderWithClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Loading mode", () => {
@@ -37,9 +37,9 @@ describe("useQuery's in Loading mode", () => {
       }))
 
       createRenderEffect(
-        () => state,
+        () => ({ ...state }),
         (s) => {
-          states.push({ ...s })
+          states.push(s)
         },
       )
 
@@ -92,16 +92,16 @@ describe("useQuery's in Loading mode", () => {
       }))
 
       createRenderEffect(
-        () => state,
+        () => ({ ...state }),
         (s) => {
-          states.push({ ...s })
+          states.push(s)
         },
       )
 
       return (
         <div>
           <button onClick={() => setMultiplier(2)}>next</button>
-          data: {pendingData(state.data)?.pages.join(',')}
+          data: {state.isSuccess && state.data.pages.join(',')}
         </div>
       )
     }

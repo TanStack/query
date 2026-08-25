@@ -32,7 +32,6 @@ import { IsRestoringContext } from '../isRestoring'
 import {
   Blink,
   mockOnlineManagerIsOnline,
-  pendingData,
   renderWithClient,
   setActTimeout,
 } from './utils'
@@ -67,7 +66,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{pendingData(state.data) ?? 'default'}</h1>
+          <h1>{state.isPending ? 'default' : state.data}</h1>
         </div>
       )
     }
@@ -876,7 +875,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{pendingData(state.data) ?? null}</h1>
+          <h1>{state.data}</h1>
         </div>
       )
     }
@@ -954,7 +953,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (pendingData(state.data)) {
+        if (state.isSuccess) {
           states.push(state.data)
         }
       })
@@ -1037,10 +1036,8 @@ describe('useQuery', () => {
           isFetching: state.isFetching,
         }),
         () => {
-          snapshots.push(
-            pendingData(state.data) ? snapshot(state.data) : undefined,
-          )
-          if (pendingData(state.data)) {
+          snapshots.push(snapshot(state.data))
+          if (state.isSuccess) {
             itemRefs.push({ item0: state.data[0], item1: state.data[1] })
           }
         },
@@ -1051,7 +1048,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          data: {String(pendingData(state.data)?.[1]?.done)}
+          data: {state.isSuccess && String(state.data[1]?.done)}
         </div>
       )
     }
@@ -2065,7 +2062,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{pendingData(state.data) ?? 'default'}</h1>
+          <h1>{state.isPending ? 'default' : state.data}</h1>
         </div>
       )
     }
@@ -2848,7 +2845,7 @@ describe('useQuery', () => {
       )
       return (
         <div>
-          <div>data: {pendingData(state.data) ?? 'null'}</div>
+          <div>data: {state.data}</div>
           <div>isFetching: {state.isFetching}</div>
           <div>isStale: {state.isStale}</div>
         </div>
@@ -4625,9 +4622,9 @@ describe('useQuery', () => {
       }))
 
       createRenderEffect(
-        () => pendingData(state.data),
+        () => state.data,
         (data) => {
-          if (data) {
+          if (state.isSuccess) {
             dataRefs.push(data)
           }
         },
@@ -4685,7 +4682,7 @@ describe('useQuery', () => {
       }))
 
       createTrackedEffect(() => {
-        if (pendingData(state.data)) {
+        if (state.isSuccess) {
           states.push(state.data)
         }
       })
@@ -4902,7 +4899,7 @@ describe('useQuery', () => {
           <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
-          <div>data: {pendingData(state.data) ?? 'null'}</div>
+          <div>data: {state.data}</div>
           <div>isFetching: {state.isFetching}</div>
         </div>
       )
@@ -4985,7 +4982,7 @@ describe('useQuery', () => {
           <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
-          <div>data: {pendingData(state.data) ?? 'null'}</div>
+          <div>data: {state.data}</div>
         </div>
       )
     }
@@ -4996,7 +4993,7 @@ describe('useQuery', () => {
       </Loading>
     ))
 
-    expect(rendered.getByText('data: null')).toBeInTheDocument()
+    expect(rendered.getByText('data:')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(10)
@@ -5004,7 +5001,7 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('data: null')).toBeInTheDocument()
+    expect(rendered.getByText('data:')).toBeInTheDocument()
 
     expect(states.length).toBe(4)
 
