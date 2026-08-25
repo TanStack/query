@@ -105,7 +105,10 @@ type GetUseSuspenseQueryResult<T> =
                     UseSuspenseQueryResult
 
 /**
- * SuspenseQueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * The `queries` array accepted by `useSuspenseQueries`. Recursively unwraps each tuple element so every
+ * entry's `queryFn`/`select` are inferred individually, up to 20 elements. An opaque array (e.g. `unknown[]`)
+ * is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls back to a
+ * single homogeneous {@link UseSuspenseQueryOptions} type.
  */
 export type SuspenseQueriesOptions<
   T extends Array<any>,
@@ -142,7 +145,10 @@ export type SuspenseQueriesOptions<
               Array<UseSuspenseQueryOptions>
 
 /**
- * SuspenseQueriesResults reducer recursively maps type param to results
+ * The result type returned by `useSuspenseQueries`, when no `combine` is provided. Mirrors
+ * {@link SuspenseQueriesOptions}: each tuple element's result type is inferred individually, up to 20 elements.
+ * A non-tuple array is mapped per-element instead, still inferring each entry individually; only past 20
+ * elements does this fall back to a single homogeneous {@link UseSuspenseQueryResult} type.
  */
 export type SuspenseQueriesResults<
   T extends Array<any>,

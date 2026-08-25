@@ -7,7 +7,10 @@ title: UnusedSkipTokenOptions
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L33)
+Defined in: [preact-query/src/queryOptions.ts:41](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L41)
+
+The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
+not `skipToken` — same as [UndefinedInitialDataOptions](UndefinedInitialDataOptions.md), but `queryFn` may not be `skipToken`.
 
 ## Type Declaration
 

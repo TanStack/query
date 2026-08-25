@@ -7,7 +7,7 @@ title: useQueries
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useQueries.ts:257](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L257)
+Defined in: [preact-query/src/useQueries.ts:263](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L263)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 

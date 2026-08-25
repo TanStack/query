@@ -97,6 +97,9 @@ export type QueryErrorResetBoundaryFunction = (
   value: QueryErrorResetBoundaryValue,
 ) => ComponentChildren
 
+/**
+ * The props accepted by `QueryErrorResetBoundary`.
+ */
 export interface QueryErrorResetBoundaryProps {
   /**
    * Either a plain node, or a function that receives the boundary's {@link QueryErrorResetBoundaryValue} and

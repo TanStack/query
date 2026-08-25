@@ -11,6 +11,10 @@ import type {
 
 import type { UseQueryOptions } from './types'
 
+/**
+ * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
+ * `undefined` while the query is `pending`.
+ */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -30,6 +34,10 @@ export type UndefinedInitialDataOptions<
     | NonUndefinedGuard<TQueryFnData>
 }
 
+/**
+ * The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
+ * not `skipToken` — same as {@link UndefinedInitialDataOptions}, but `queryFn` may not be `skipToken`.
+ */
 export type UnusedSkipTokenOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -49,6 +57,10 @@ export type UnusedSkipTokenOptions<
   >
 }
 
+/**
+ * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
+ * `undefined`.
+ */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,

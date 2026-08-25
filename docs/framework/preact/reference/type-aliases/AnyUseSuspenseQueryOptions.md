@@ -7,4 +7,7 @@ title: AnyUseSuspenseQueryOptions
 type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<any, any, any, any>;
 ```
 
-Defined in: [preact-query/src/types.ts:119](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L119)
+Defined in: [preact-query/src/types.ts:147](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L147)
+
+[UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) with all type parameters set to `any`, useful when the specific types aren't
+relevant, e.g. when accepting options for any query in a helper function.

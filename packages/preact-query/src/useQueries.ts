@@ -142,7 +142,10 @@ type GetUseQueryResult<T> =
                   UseQueryResult
 
 /**
- * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * The `queries` array accepted by `useQueries`. Recursively unwraps each tuple element so every entry's
+ * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
+ * `unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls
+ * back to a single homogeneous options type.
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -184,7 +187,10 @@ export type QueriesOptions<
               Array<UseQueryOptionsForUseQueries>
 
 /**
- * QueriesResults reducer recursively maps type param to results
+ * The result type returned by `useQueries`, when no `combine` is provided. Mirrors {@link QueriesOptions}: each
+ * tuple element's result type is inferred individually, up to 20 elements. A non-tuple array is mapped
+ * per-element instead, still inferring each entry individually; only past 20 elements does this fall back to a
+ * single homogeneous {@link UseQueryResult} type.
  */
 export type QueriesResults<
   T extends Array<any>,

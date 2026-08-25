@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:212](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L212)
+Defined in: [preact-query/src/useSuspenseQueries.ts:218](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L218)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -102,7 +102,7 @@ function App() {
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:279](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L279)
+Defined in: [preact-query/src/useSuspenseQueries.ts:285](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L285)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.

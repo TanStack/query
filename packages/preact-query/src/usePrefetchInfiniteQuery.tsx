@@ -15,6 +15,10 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * as well as pageParam information, and should return a single variable that will be passed to your query
  * function as `context.pageParam`. Return `undefined` or `null` to indicate there is no next page available.
  *
+ * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
+ * over from a previous attempt — so calling this on every render is cheap and won't refetch data that's
+ * already there or already in flight.
+ *
  * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.infiniteQuery`.
  * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
  * be used.
