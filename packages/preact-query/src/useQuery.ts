@@ -83,6 +83,24 @@ export function useQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function Posts() {
+ *   const { isPending, isError, data, error } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,
@@ -130,16 +148,21 @@ export function useQuery<
  * ```
  *
  * @example
- * A dependent query, only enabled once `postId` is set:
+ * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
+ * loading state doesn't show while the query is disabled:
  * ```tsx
  * import { useQuery } from '@tanstack/preact-query'
  *
  * function Post({ postId }: { postId: number | undefined }) {
- *   const { data } = useQuery({
+ *   const { data, isLoading, isError, error } = useQuery({
  *     queryKey: ['post', postId],
  *     queryFn: () => fetchPost(postId!),
  *     enabled: postId != null,
  *   })
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isLoading) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return <h1>{data?.title}</h1>
  * }
@@ -163,6 +186,35 @@ export function useQuery<
  *   })
  *
  *   return <h1>{data?.title}</h1>
+ * }
+ * ```
+ *
+ * @example
+ * Paginated data, keeping the previous page's data visible while the next page loads:
+ * ```tsx
+ * import { keepPreviousData, useQuery } from '@tanstack/preact-query'
+ * import { useState } from 'preact/hooks'
+ *
+ * function Posts() {
+ *   const [page, setPage] = useState(0)
+ *
+ *   const { data, isPlaceholderData } = useQuery({
+ *     queryKey: ['posts', page],
+ *     queryFn: () => fetchPosts(page),
+ *     placeholderData: keepPreviousData,
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+ *       <button
+ *         disabled={isPlaceholderData}
+ *         onClick={() => setPage((old) => old + 1)}
+ *       >
+ *         Next Page
+ *       </button>
+ *     </div>
+ *   )
  * }
  * ```
  */

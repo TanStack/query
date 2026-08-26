@@ -96,15 +96,19 @@ export function useInfiniteQuery<
  * })
  *
  * function Projects() {
- *   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+ *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
  *     useInfiniteQuery(projectsOptions)
  *
  *   return (
  *     <button
  *       onClick={() => fetchNextPage()}
- *       disabled={!hasNextPage || isFetchingNextPage}
+ *       disabled={!hasNextPage || isFetching}
  *     >
- *       Load More
+ *       {isFetchingNextPage
+ *         ? 'Loading more...'
+ *         : hasNextPage
+ *           ? 'Load More'
+ *           : 'Nothing more to load'}
  *     </button>
  *   )
  * }
@@ -154,15 +158,19 @@ export function useInfiniteQuery<
  * })
  *
  * function Projects() {
- *   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+ *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
  *     useInfiniteQuery(projectsOptions)
  *
  *   return (
  *     <button
  *       onClick={() => fetchNextPage()}
- *       disabled={!hasNextPage || isFetchingNextPage}
+ *       disabled={!hasNextPage || isFetching}
  *     >
- *       Load More
+ *       {isFetchingNextPage
+ *         ? 'Loading more...'
+ *         : hasNextPage
+ *           ? 'Load More'
+ *           : 'Nothing more to load'}
  *     </button>
  *   )
  * }
