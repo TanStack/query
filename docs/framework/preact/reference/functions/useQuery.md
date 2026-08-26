@@ -81,7 +81,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:87](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L87)
+Defined in: [preact-query/src/useQuery.ts:105](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L105)
 
 ### Type Parameters
 
@@ -128,7 +128,7 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 [queryOptions](queryOptions.md) to share these options between `useQuery` and imperative APIs like `queryClient.query`.
 
-### Example
+### Examples
 
 ```tsx
 import { queryOptions, useQuery } from '@tanstack/preact-query'
@@ -155,13 +155,30 @@ function Posts() {
 }
 ```
 
+The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function Posts() {
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+}
+```
+
 ## Call Signature
 
 ```ts
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:169](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L169)
+Defined in: [preact-query/src/useQuery.ts:187](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L187)
 
 ### Type Parameters
 

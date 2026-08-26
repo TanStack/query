@@ -83,6 +83,24 @@ export function useQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function Posts() {
+ *   const { isPending, isError, data, error } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,
