@@ -4205,10 +4205,6 @@
           "label": "lit",
           "children": [
             {
-              "label": "Lit Reference",
-              "to": "framework/lit/reference/index"
-            },
-            {
               "label": "Classes / CancelledError",
               "to": "framework/lit/reference/classes/CancelledError"
             },
@@ -4251,6 +4247,26 @@
             {
               "label": "Classes / QueryObserver",
               "to": "framework/lit/reference/classes/QueryObserver"
+            },
+            {
+              "label": "Context / getDefaultQueryClient",
+              "to": "framework/lit/reference/functions/getDefaultQueryClient"
+            },
+            {
+              "label": "Context / queryClientContext",
+              "to": "framework/lit/reference/variables/queryClientContext"
+            },
+            {
+              "label": "Context / registerDefaultQueryClient",
+              "to": "framework/lit/reference/functions/registerDefaultQueryClient"
+            },
+            {
+              "label": "Context / resolveQueryClient",
+              "to": "framework/lit/reference/functions/resolveQueryClient"
+            },
+            {
+              "label": "Context / unregisterDefaultQueryClient",
+              "to": "framework/lit/reference/functions/unregisterDefaultQueryClient"
             },
             {
               "label": "Functions / createInfiniteQueryController",
@@ -4333,6 +4349,10 @@
               "to": "framework/lit/reference/functions/queryOptions"
             },
             {
+              "label": "Functions / renderResult",
+              "to": "framework/lit/reference/functions/renderResult"
+            },
+            {
               "label": "Functions / replaceEqualDeep",
               "to": "framework/lit/reference/functions/replaceEqualDeep"
             },
@@ -4357,26 +4377,6 @@
               "to": "framework/lit/reference/functions/useQueryClient"
             },
             {
-              "label": "Context / queryClientContext",
-              "to": "framework/lit/reference/variables/queryClientContext"
-            },
-            {
-              "label": "Context / getDefaultQueryClient",
-              "to": "framework/lit/reference/functions/getDefaultQueryClient"
-            },
-            {
-              "label": "Context / registerDefaultQueryClient",
-              "to": "framework/lit/reference/functions/registerDefaultQueryClient"
-            },
-            {
-              "label": "Context / unregisterDefaultQueryClient",
-              "to": "framework/lit/reference/functions/unregisterDefaultQueryClient"
-            },
-            {
-              "label": "Context / resolveQueryClient",
-              "to": "framework/lit/reference/functions/resolveQueryClient"
-            },
-            {
               "label": "Interfaces / CancelOptions",
               "to": "framework/lit/reference/interfaces/CancelOptions"
             },
@@ -4385,12 +4385,12 @@
               "to": "framework/lit/reference/interfaces/DefaultOptions"
             },
             {
-              "label": "Interfaces / DehydrateOptions",
-              "to": "framework/lit/reference/interfaces/DehydrateOptions"
-            },
-            {
               "label": "Interfaces / DehydratedState",
               "to": "framework/lit/reference/interfaces/DehydratedState"
+            },
+            {
+              "label": "Interfaces / DehydrateOptions",
+              "to": "framework/lit/reference/interfaces/DehydrateOptions"
             },
             {
               "label": "Interfaces / EnsureQueryDataOptions",
@@ -4609,6 +4609,10 @@
               "to": "framework/lit/reference/interfaces/TimeoutManager"
             },
             {
+              "label": "Lit Reference",
+              "to": "framework/lit/reference/index"
+            },
+            {
               "label": "Types / Accessor",
               "to": "framework/lit/reference/type-aliases/Accessor"
             },
@@ -4641,8 +4645,12 @@
               "to": "framework/lit/reference/type-aliases/DataTag"
             },
             {
-              "label": "Types / DefaultError",
-              "to": "framework/lit/reference/type-aliases/DefaultError"
+              "label": "Types / dataTagErrorSymbol",
+              "to": "framework/lit/reference/type-aliases/dataTagErrorSymbol"
+            },
+            {
+              "label": "Types / dataTagSymbol",
+              "to": "framework/lit/reference/type-aliases/dataTagSymbol"
             },
             {
               "label": "Types / DefaultedInfiniteQueryObserverOptions",
@@ -4651,6 +4659,10 @@
             {
               "label": "Types / DefaultedQueryObserverOptions",
               "to": "framework/lit/reference/type-aliases/DefaultedQueryObserverOptions"
+            },
+            {
+              "label": "Types / DefaultError",
+              "to": "framework/lit/reference/type-aliases/DefaultError"
             },
             {
               "label": "Types / DefinedInfiniteQueryObserverResult",
@@ -4931,14 +4943,6 @@
             {
               "label": "Types / WithRequired",
               "to": "framework/lit/reference/type-aliases/WithRequired"
-            },
-            {
-              "label": "Types / dataTagErrorSymbol",
-              "to": "framework/lit/reference/type-aliases/dataTagErrorSymbol"
-            },
-            {
-              "label": "Types / dataTagSymbol",
-              "to": "framework/lit/reference/type-aliases/dataTagSymbol"
             },
             {
               "label": "Variables / dataTagErrorSymbol",

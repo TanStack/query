@@ -9,7 +9,7 @@ title: InfiniteQueryResultAccessor
 type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:45](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L45)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:47](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L47)
 
 Accessor returned by `createInfiniteQueryController`.
 
@@ -64,3 +64,27 @@ refetch: InfiniteQueryObserverResult<TData, TError>["refetch"];
 ```
 
 Refetches the current infinite query.
+
+### render
+
+```ts
+render: <TRenderers>(renderers: TRenderers) => RendererResult<InfiniteQueryObserverResult<TData, TError>, TRenderers>;
+```
+
+Renders the query result using the appropriate renderer from the given set, based on the result's `status`.
+
+#### Type Parameters
+
+##### TRenderers
+
+`TRenderers` *extends* [`ResultRenderers`](ResultRenderers.md)\<[`InfiniteQueryObserverResult`](InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
+
+#### Parameters
+
+##### renderers
+
+`TRenderers`
+
+#### Returns
+
+[`RendererResult`](RendererResult.md)\<[`InfiniteQueryObserverResult`](InfiniteQueryObserverResult.md)\<`TData`, `TError`\>, `TRenderers`\>
