@@ -71,7 +71,7 @@ import { useSuspenseQueries } from '@tanstack/preact-query'
 
 function Posts({ ids }: { ids: Array<number> }) {
   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
-  const results = useSuspenseQueries({
+  const postQueries = useSuspenseQueries({
     queries: ids.map((id) => ({
       queryKey: ['post', id],
       queryFn: () => fetchPost(id),
@@ -80,8 +80,8 @@ function Posts({ ids }: { ids: Array<number> }) {
 
   return (
     <ul>
-      {results.map((result) => (
-        <li key={result.data.id}>{result.data.title}</li>
+      {postQueries.map((query) => (
+        <li key={query.data.id}>{query.data.title}</li>
       ))}
     </ul>
   )
@@ -196,7 +196,7 @@ import { useSuspenseQueries } from '@tanstack/preact-query'
 
 function Posts({ ids }: { ids: Array<number> }) {
   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
-  const results = useSuspenseQueries({
+  const postQueries = useSuspenseQueries({
     queries: ids.map((id) => ({
       queryKey: ['post', id],
       queryFn: () => fetchPost(id),
@@ -205,8 +205,8 @@ function Posts({ ids }: { ids: Array<number> }) {
 
   return (
     <ul>
-      {results.map((result) => (
-        <li key={result.data.id}>{result.data.title}</li>
+      {postQueries.map((query) => (
+        <li key={query.data.id}>{query.data.title}</li>
       ))}
     </ul>
   )
