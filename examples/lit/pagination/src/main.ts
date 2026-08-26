@@ -5,6 +5,7 @@ import {
   createMutationController,
   createQueryController,
   keepPreviousData,
+  noop,
 } from '@tanstack/lit-query'
 import {
   armNextProjectMutationFailureOnServer,
@@ -272,15 +273,17 @@ class PaginationDemo extends LitElement {
     this.prefetchStatus = `pending:${targetPage}`
 
     try {
-      await queryClient.prefetchQuery({
-        queryKey: projectsQueryKey(
-          targetPage,
-          this.delayMs,
-          this.forceErrorMode,
-        ),
-        queryFn: () =>
-          fetchProjectsPage(targetPage, this.delayMs, this.forceErrorMode),
-      })
+      await queryClient
+        .query({
+          queryKey: projectsQueryKey(
+            targetPage,
+            this.delayMs,
+            this.forceErrorMode,
+          ),
+          queryFn: () =>
+            fetchProjectsPage(targetPage, this.delayMs, this.forceErrorMode),
+        })
+        .catch(noop)
       this.prefetchStatus = `ready:${targetPage}`
     } catch (error) {
       this.prefetchStatus = `error:${String(error)}`

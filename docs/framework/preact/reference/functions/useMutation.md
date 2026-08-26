@@ -7,7 +7,10 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:20](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L20)
+Defined in: [preact-query/src/useMutation.ts:190](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L190)
+
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the hook for that.
 
 ## Type Parameters
 
@@ -33,10 +36,178 @@ Defined in: [preact-query/src/useMutation.ts:20](https://github.com/TanStack/que
 
 [`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
+The [UseMutationOptions](../interfaces/UseMutationOptions.md) to use — everything you can pass to `useMutation`.
+
 ### queryClient?
 
 `QueryClient`
 
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
 ## Returns
 
 [`UseMutationResult`](../type-aliases/UseMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+
+`mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
+argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
+mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
+made.
+
+## See
+
+[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites.
+
+## Examples
+
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/preact-query'
+
+function AddTodo() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
+
+  return (
+    <button
+      onClick={() =>
+        addMutation.mutate('Item', {
+          onError: (error) => console.error('Failed to add item:', error),
+        })
+      }
+    >
+      Add
+    </button>
+  )
+}
+```
+
+Rendering the mutation's own state, rather than just firing it off:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/preact-query'
+
+function AddTodo() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
+
+  return (
+    <div>
+      {addMutation.isPending ? (
+        'Adding todo...'
+      ) : (
+        <>
+          {addMutation.isError ? (
+            <div>An error occurred: {addMutation.error.message}</div>
+          ) : null}
+          <button onClick={() => addMutation.mutate('Item')}>Add</button>
+        </>
+      )}
+    </div>
+  )
+}
+```
+
+Optimistic update via `onMutate`, rolling back on `onError`:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/preact-query'
+
+function AddTodo() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
+      const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+
+      queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+        ...(old ?? []),
+        newTodo,
+      ])
+
+      // Passed to `onError` as `context` if the mutation fails.
+      return { previousTodos }
+    },
+    onError: (_err, _newTodo, context) => {
+      queryClient.setQueryData(['todos'], context?.previousTodos)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
+    },
+  })
+
+  return (
+    <button onClick={() => addMutation.mutate('Item')}>Add</button>
+  )
+}
+```
+
+Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
+promise per call instead, so you can wait for all of them:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/preact-query'
+
+function AddTodos() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
+
+  async function handleAddAll(todos: Array<string>) {
+    try {
+      await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
+    } catch (error) {
+      console.error('Failed to add todos:', error)
+    }
+  }
+
+  return (
+    <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+      Add all
+    </button>
+  )
+}
+```
+
+If some of the mutations above can fail independently of the others, and you want to know which ones
+did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
+`Promise.allSettled`:
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/preact-query'
+
+function AddTodos() {
+  const queryClient = useQueryClient()
+
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
+
+  async function handleAddAll(todos: Array<string>) {
+    const results = await Promise.allSettled(
+      todos.map((todo) => addMutation.mutateAsync(todo)),
+    )
+
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Failed to add "${todos[index]}":`, result.reason)
+      }
+    })
+  }
+
+  return (
+    <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+      Add all
+    </button>
+  )
+}
+```

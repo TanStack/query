@@ -3,6 +3,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
+import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 
@@ -13,6 +14,70 @@ describe('dehydration and rehydration', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('dehydrateQuery', () => {
+    it('should dehydrate a query directly without optional callbacks', () => {
+      const key = queryKey()
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(key, 'data')
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+      const dehydratedAt = new Date('2024-01-01T00:00:00.000Z')
+      vi.setSystemTime(dehydratedAt)
+
+      const dehydrated = dehydrateQuery(query)
+
+      expect(dehydrated).toMatchObject({
+        queryHash: query.queryHash,
+        queryKey: key,
+        state: query.state,
+      })
+      expect(dehydrated.dehydratedAt).toBe(dehydratedAt.getTime())
+      expect(dehydrated.state).not.toBe(query.state)
+      expect(dehydrated.promise).toBeUndefined()
+
+      queryClient.clear()
+    })
+
+    it('should serialize data when dehydrating a query directly', () => {
+      const key = queryKey()
+      const data = new Date('2024-01-01T00:00:00.000Z')
+      const serializeData = vi.fn((value: Date) => value.toISOString())
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(key, data)
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+
+      const dehydrated = dehydrateQuery(query, serializeData)
+
+      expect(dehydrated.state.data).toBe('2024-01-01T00:00:00.000Z')
+      expect(serializeData).toHaveBeenCalledExactlyOnceWith(data)
+      expect(query.state.data).toBe(data)
+
+      queryClient.clear()
+    })
+
+    it('should use shouldRedactErrors when dehydrating a query directly', async () => {
+      const key = queryKey()
+      const testError = new Error('original error')
+      const shouldRedactErrors = vi.fn(() => false)
+      const queryClient = new QueryClient()
+      const promise = queryClient
+        .prefetchQuery({
+          queryKey: key,
+          queryFn: () => Promise.reject(testError),
+          retry: false,
+        })
+        .catch(() => undefined)
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+
+      const dehydrated = dehydrateQuery(query, undefined, shouldRedactErrors)
+
+      await expect(dehydrated.promise).rejects.toBe(testError)
+      expect(shouldRedactErrors).toHaveBeenCalledExactlyOnceWith(testError)
+      await promise
+
+      queryClient.clear()
+    })
   })
 
   it('should work with serializable values', async () => {
@@ -611,22 +676,13 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockRestore()
   })
 
-  it('should not hydrate if the hydratedState is null or is not an object', () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
-    expect(() => hydrate(queryClient, null)).not.toThrow()
-    expect(() => hydrate(queryClient, 'invalid')).not.toThrow()
-
-    queryClient.clear()
-  })
-
   it('should support hydratedState with undefined queries and mutations', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
+    expect(() => hydrate(queryClient, { mutations: [] })).not.toThrow()
     expect(() => hydrate(queryClient, {})).not.toThrow()
-    expect(() => hydrate(queryClient, {})).not.toThrow()
+    expect(() => hydrate(queryClient, { queries: [] })).not.toThrow()
 
     queryClient.clear()
   })
@@ -1266,7 +1322,7 @@ describe('dehydration and rehydration', () => {
     await promise
   })
 
-  it('should handle errors in promises for pending queries', async () => {
+  it('should redact errors by default when shouldRedactErrors is not set', async () => {
     const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)

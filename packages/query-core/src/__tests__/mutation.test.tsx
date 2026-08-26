@@ -5,7 +5,7 @@ import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
 
-describe('mutations', () => {
+describe('mutation', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {

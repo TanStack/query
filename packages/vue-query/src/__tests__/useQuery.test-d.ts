@@ -2,6 +2,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
+import type { Ref } from 'vue-demi'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
 describe('useQuery', () => {
@@ -287,6 +288,31 @@ describe('useQuery', () => {
 
       if (query.isError) {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
+      }
+    })
+
+    it('data should be a union of refs without reactive()', () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      expectTypeOf(query.data).toEqualTypeOf<Ref<string> | Ref<undefined>>()
+    })
+
+    it('data.value should narrow on an undefined check without reactive()', () => {
+      const key = queryKey()
+
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (data.value !== undefined) {
+        expectTypeOf(data.value).toEqualTypeOf<string>()
+        expectTypeOf(data).toEqualTypeOf<Ref<string>>()
       }
     })
   })

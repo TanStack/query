@@ -11,6 +11,17 @@ import type {
 
 import type { UseInfiniteQueryOptions } from './types'
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
+ * may be `undefined` while the query is `pending`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -24,6 +35,13 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache.
+   */
   initialData?:
     | undefined
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
@@ -32,6 +50,18 @@ export type UndefinedInitialDataInfiniteOptions<
       >
 }
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
+ * `queryFn` is not `skipToken` — same as {@link UndefinedInitialDataInfiniteOptions}, but `queryFn` may not be
+ * `skipToken`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -42,6 +72,10 @@ export type UnusedSkipTokenInfiniteOptions<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn'
 > & {
+  /**
+   * `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
+   * you don't intend to run the query yet, omit `queryFn` or use a default query function instead.
+   */
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -54,6 +88,17 @@ export type UnusedSkipTokenInfiniteOptions<
   >
 }
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
+ * never `undefined`.
+ *
+ * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params.
+ * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
+ */
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -67,12 +112,48 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache.
+   */
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
     | undefined
 }
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * This overload is selected when `initialData` is set.
+ *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   initialData: { pages: [], pageParams: [] },
+ * })
+ *
+ * function Projects() {
+ *   const { data } = useInfiniteQuery(projectsOptions)
+ *   return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ * }
+ * ```
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -96,6 +177,59 @@ export function infiniteQueryOptions<
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import {
+ *   infiniteQueryOptions,
+ *   noop,
+ *   useInfiniteQuery,
+ * } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const result = useInfiniteQuery(commentsOptions(postId))
+ *   if (!result.isSuccess) return 'Loading...'
+ *   return (
+ *     <>
+ *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *     </>
+ *   )
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+ * ```
+ *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -119,6 +253,59 @@ export function infiniteQueryOptions<
 > &
   QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
+ * @example
+ * ```tsx
+ * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ *
+ * export const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ * ```
+ *
+ * @example
+ * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * ```tsx
+ * import {
+ *   infiniteQueryOptions,
+ *   noop,
+ *   useInfiniteQuery,
+ * } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const result = useInfiniteQuery(commentsOptions(postId))
+ *   if (!result.isSuccess) return 'Loading...'
+ *   return (
+ *     <>
+ *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *     </>
+ *   )
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+ * ```
+ *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,

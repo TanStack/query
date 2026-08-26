@@ -7,7 +7,12 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:18](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L18)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L74)
+
+The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
+`enabled`, and `placeholderData`.
+
+Caveat: cancellation does not work.
 
 ## Type Parameters
 
@@ -37,10 +42,63 @@ Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:18](https://github.com
 
 [`UseSuspenseInfiniteQueryOptions`](../interfaces/UseSuspenseInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The [UseSuspenseInfiniteQueryOptions](../interfaces/UseSuspenseInfiniteQueryOptions.md) to use — the same options as `useInfiniteQuery`, minus the ones listed above.
+
 ### queryClient?
 
 `QueryClient`
 
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
 ## Returns
 
 [`UseSuspenseInfiniteQueryResult`](../type-aliases/UseSuspenseInfiniteQueryResult.md)\<`TData`, `TError`\>
+
+The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
+`isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
+accordingly).
+
+## Example
+
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseInfiniteQuery } from '@tanstack/preact-query'
+
+function Projects() {
+  // `data` is guaranteed to be defined here — no `isPending` check needed.
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useSuspenseInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
+
+  return (
+    <div>
+      {data.pages.map((page) =>
+        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+      )}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading projects...</h1>}>
+      <Projects />
+    </Suspense>
+  )
+}
+```

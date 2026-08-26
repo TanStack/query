@@ -277,20 +277,21 @@ describe('useQuery', () => {
         }
       })
 
-      // eslint-disable-next-line vitest/expect-expect
-      it('TData should depend from only arguments, not the result', () => {
-        // @ts-expect-error
-        const result: UseQueryResult<{ wow: string }> = useQuery({
+      it('should preserve discriminated-union narrowing', () => {
+        type Result =
+          | { type: 'first'; first: string }
+          | { type: 'second'; second: string }
+
+        const query = useQuery({
           queryKey: queryKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
+          queryFn: (): Result => ({ type: 'first', first: 'a' }),
         })
 
-        void result
+        const second = query.data?.type === 'first' ? undefined : query.data
+
+        expectTypeOf(second).toEqualTypeOf<
+          { type: 'second'; second: string } | undefined
+        >()
       })
 
       it('data should not have undefined when initialData is provided', () => {

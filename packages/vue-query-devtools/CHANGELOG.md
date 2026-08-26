@@ -1,5 +1,49 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.44
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.4
+  - @tanstack/vue-query@5.102.4
+
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.3
+  - @tanstack/vue-query@5.102.3
+
+## 6.1.42
+
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.2
+  - @tanstack/vue-query@5.102.2
+
+## 6.1.40
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.1
+  - @tanstack/vue-query@5.102.1
+
+## 6.1.39
+
+### Patch Changes
+
+- [#10849](https://github.com/TanStack/query/pull/10849) [`3196e06`](https://github.com/TanStack/query/commit/3196e06b76ce430e35b22798094d4d551ef64c64) - fix(vue-query-devtools): use class instead of className in templates
+
+- Updated dependencies [[`97ce30b`](https://github.com/TanStack/query/commit/97ce30b51e3040752f3f4172e9fd11be4edea774), [`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`5199f08`](https://github.com/TanStack/query/commit/5199f0884ca59878bd9e5d352606af13bc5f51fb)]:
+  - @tanstack/vue-query@5.102.0
+  - @tanstack/query-devtools@5.102.0
+
 ## 6.1.38
 
 ### Patch Changes
