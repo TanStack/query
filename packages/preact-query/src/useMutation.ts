@@ -168,13 +168,13 @@ import { useSyncExternalStore } from './utils'
  *   })
  *
  *   async function handleAddAll(todos: Array<string>) {
- *     const results = await Promise.allSettled(
+ *     const addResults = await Promise.allSettled(
  *       todos.map((todo) => addMutation.mutateAsync(todo)),
  *     )
  *
- *     results.forEach((result, index) => {
- *       if (result.status === 'rejected') {
- *         console.error(`Failed to add "${todos[index]}":`, result.reason)
+ *     addResults.forEach((addResult, index) => {
+ *       if (addResult.status === 'rejected') {
+ *         console.error(`Failed to add "${todos[index]}":`, addResult.reason)
  *       }
  *     })
  *   }
