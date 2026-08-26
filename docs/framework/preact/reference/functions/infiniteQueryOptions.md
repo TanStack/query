@@ -80,7 +80,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:238](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L238)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:239](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L239)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -156,7 +156,8 @@ export const commentsOptions = (postId: string) =>
 
 function Comments({ postId }: { postId: string }) {
   const result = useInfiniteQuery(commentsOptions(postId))
-  if (!result.isSuccess) return 'Loading...'
+  if (result.isPending) return 'Loading...'
+  if (result.isError) return <span>Error: {result.error.message}</span>
   return (
     <>
       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
@@ -178,7 +179,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:319](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L319)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:321](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L321)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -254,7 +255,8 @@ export const commentsOptions = (postId: string) =>
 
 function Comments({ postId }: { postId: string }) {
   const result = useInfiniteQuery(commentsOptions(postId))
-  if (!result.isSuccess) return 'Loading...'
+  if (result.isPending) return 'Loading...'
+  if (result.isError) return <span>Error: {result.error.message}</span>
   return (
     <>
       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
