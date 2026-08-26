@@ -7,7 +7,7 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:137](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L137)
+Defined in: [preact-query/src/useMutationState.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L157)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` (MutationFilters) to narrow down your mutations, and `select` to transform the mutation
@@ -51,10 +51,14 @@ Get all variables of all running mutations:
 ```tsx
 import { useMutationState } from '@tanstack/preact-query'
 
-const variables = useMutationState({
-  filters: { status: 'pending' },
-  select: (mutation) => mutation.state.variables,
-})
+function PendingPosts() {
+  const variables = useMutationState({
+    filters: { status: 'pending' },
+    select: (mutation) => mutation.state.variables,
+  })
+
+  return <>{variables.length} posts saving...</>
+}
 ```
 
 Get all data for specific mutations via the `mutationKey`:
@@ -63,27 +67,41 @@ import { useMutation, useMutationState } from '@tanstack/preact-query'
 
 const mutationKey = ['posts']
 
-// Some mutation that we want to get the state for
-const mutation = useMutation({
-  mutationKey,
-  mutationFn: createPosts,
-})
+function Posts() {
+  // Some mutation that we want to get the state for
+  const mutation = useMutation({
+    mutationKey,
+    mutationFn: createPosts,
+  })
 
-const data = useMutationState({
-  // this mutation key needs to match the mutation key of the given mutation (see above)
-  filters: { mutationKey },
-  select: (mutation) => mutation.state.data,
-})
+  const data = useMutationState({
+    // this mutation key needs to match the mutation key of the given mutation (see above)
+    filters: { mutationKey },
+    select: (mutation) => mutation.state.data,
+  })
+
+  return (
+    <button onClick={() => mutation.mutate(['New Post'])}>
+      Create post ({data.length} saved so far)
+    </button>
+  )
+}
 ```
 
 Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
 mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
 latest invocation:
 ```tsx
-const data = useMutationState({
-  filters: { mutationKey: ['posts'] },
-  select: (mutation) => mutation.state.data,
-})
+import { useMutationState } from '@tanstack/preact-query'
 
-const latest = data[data.length - 1]
+function LatestPost() {
+  const data = useMutationState({
+    filters: { mutationKey: ['posts'] },
+    select: (mutation) => mutation.state.data,
+  })
+
+  const latest = data[data.length - 1]
+
+  return <>{latest ? 'Saved' : 'Nothing saved yet'}</>
+}
 ```
