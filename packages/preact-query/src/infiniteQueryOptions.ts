@@ -219,12 +219,12 @@ export function infiniteQueryOptions<
  *   })
  *
  * function Comments({ postId }: { postId: string }) {
- *   const result = useInfiniteQuery(commentsOptions(postId))
- *   if (result.isPending) return 'Loading...'
- *   if (result.isError) return <span>Error: {result.error.message}</span>
+ *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *   return (
  *     <>
- *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *       {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
  *     </>
  *   )
  * }
@@ -301,12 +301,12 @@ export function infiniteQueryOptions<
  *   })
  *
  * function Comments({ postId }: { postId: string }) {
- *   const result = useInfiniteQuery(commentsOptions(postId))
- *   if (result.isPending) return 'Loading...'
- *   if (result.isError) return <span>Error: {result.error.message}</span>
+ *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *   return (
  *     <>
- *       {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
+ *       {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
  *     </>
  *   )
  * }
