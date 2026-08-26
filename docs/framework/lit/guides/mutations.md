@@ -176,7 +176,7 @@ render() {
       Add Todo
     </button>
     ${this.addTodo.render({
-      pending: ({ isIdle }) => isIdle ? nothing : html`<p>Adding...</p>`,
+      pending: () => html`<p>Adding...</p>`,
       error: ({ error }) => html`<p>Oops, something went wrong: ${error.message}</p>`,
       success: ({ data }) => html`<p>Added todo: ${data.title}</p>`,
     })}`
