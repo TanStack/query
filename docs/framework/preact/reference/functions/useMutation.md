@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:182](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L182)
+Defined in: [preact-query/src/useMutation.ts:190](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L190)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -72,7 +72,15 @@ function AddTodo() {
   })
 
   return (
-    <button onClick={() => addMutation.mutate('Item')}>Add</button>
+    <button
+      onClick={() =>
+        addMutation.mutate('Item', {
+          onError: (error) => console.error('Failed to add item:', error),
+        })
+      }
+    >
+      Add
+    </button>
   )
 }
 ```

@@ -43,7 +43,15 @@ import { useSyncExternalStore } from './utils'
  *   })
  *
  *   return (
- *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *     <button
+ *       onClick={() =>
+ *         addMutation.mutate('Item', {
+ *           onError: (error) => console.error('Failed to add item:', error),
+ *         })
+ *       }
+ *     >
+ *       Add
+ *     </button>
  *   )
  * }
  * ```
