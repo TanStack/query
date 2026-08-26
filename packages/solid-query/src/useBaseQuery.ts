@@ -474,13 +474,13 @@ export function useBaseQueryLayer<
    * draft's committed `value` doubles as the previous-data signal for the
    * first-paint exception in `computeData`.
    *
-   * `ssrSource: 'hybrid'` because the derive mixes server-serialized
-   * output with a client-local source (the query cache): the serialized
-   * value is adopted for the whole stream window — server truth owns the
-   * document while it is still streaming — and the derive re-runs when
-   * hydration completes, picking up any cache writes that landed
-   * mid-stream. The default ('server') mode never re-runs, which would
-   * strand those writes on the adopted value forever.
+   * Default ('server') hydration semantics: the serialized value owns the
+   * node for the whole hydration window — server truth holds the document
+   * while the stream is open — and any cache write that lands mid-stream
+   * arms the engine's hydration-end takeover (a latched node that
+   * recomputes has diverged), committing when hydration completes.
+   * Requires solid-js > 2.0.0-rc.3 (before the takeover fix, a mid-stream
+   * divergence was lost rather than deferred).
    */
   const dataStore = createProjection<{ value: TData }>(
     (draft) => computeData(draft.value as TData | undefined),
@@ -488,7 +488,6 @@ export function useBaseQueryLayer<
     {
       key: untrack(() => options().reconcile),
       deferStream: untrack(() => options().deferStream),
-      ssrSource: 'hybrid',
     },
   )
   const data = () => dataStore.value

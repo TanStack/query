@@ -404,7 +404,14 @@ describe('streaming SSR hydration', () => {
     }
   })
 
-  it('hydrated components are live while the stream is still open', async () => {
+  // The data node has default ('server') hydration semantics: the
+  // serialized server value owns the DOM for the whole hydration window,
+  // and a latched node that recomputes mid-stream (a cache write landed)
+  // arms the engine's hydration-end takeover — the change commits when the
+  // stream closes, deferred rather than lost. Network activity is NOT
+  // deferred: observers attach per-query as the channel primes, so
+  // mid-stream invalidations refetch immediately.
+  it('cache writes during the open stream commit when hydration completes', async () => {
     const { phase1, phase2 } = splitStream()
     const app = bundle.createStreamApp()
     const container = document.createElement('div')
@@ -423,34 +430,48 @@ describe('streaming SSR hydration', () => {
       // The slow section still shows its fallback.
       expect(container.querySelector('#feed')).toBeNull()
 
-      // Newer data written while the stream is open must reach the
-      // already-hydrated component without waiting for the stream to end.
+      // A write while the stream is open reaches the CACHE immediately but
+      // not the DOM — the serialized server value holds the document.
       app.queryClient.setQueryData(['header'], 'updated-client')
-      await vi.waitFor(() => {
-        expect(container.querySelector('#header')?.textContent).toBe(
-          'updated-client',
-        )
-      })
+      await tick(30)
+      expect(app.queryClient.getQueryData(['header'])).toBe('updated-client')
+      expect(container.querySelector('#header')?.textContent).toBe(
+        'header-server',
+      )
 
-      // An invalidation while the stream is open refetches the hydrated
-      // query immediately (it is active — its observer is subscribed).
+      // An invalidation while the stream is open refetches immediately
+      // (the observer is subscribed — network is not deferred), but the
+      // result is held with the rest.
       void app.queryClient.invalidateQueries({ queryKey: ['header'] })
       await vi.waitFor(() => {
         expect(app.counts.header).toBe(1)
-        expect(container.querySelector('#header')?.textContent).toBe(
-          'header-client',
-        )
       })
+      expect(container.querySelector('#header')?.textContent).toBe(
+        'header-server',
+      )
 
-      // The late boundary still hydrates correctly afterwards.
+      // The late boundary hydrates, closing the stream — the divergence
+      // takeover re-runs the latched node and the held state commits.
       applyChunks(container, phase2)
       await vi.waitFor(() => {
         expect(container.querySelector('#feed')?.textContent).toBe(
           'feed-server',
         )
       })
+      await vi.waitFor(() => {
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'header-client',
+        )
+      })
       expect(app.counts.feed).toBe(0)
-      await tick(30)
+
+      // And fully live from then on.
+      app.queryClient.setQueryData(['header'], 'updated-live')
+      await vi.waitFor(() => {
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'updated-live',
+        )
+      })
     } finally {
       dispose()
       container.remove()
