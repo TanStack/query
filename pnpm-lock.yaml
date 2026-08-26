@@ -2995,28 +2995,28 @@ importers:
         version: 2.0.0-rc.0
       '@solidjs/testing-library':
         specifier: ^0.8.10
-        version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.0))(solid-js@2.0.0-rc.0)
+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.3))(solid-js@2.0.0-rc.3)
       '@solidjs/vite-plugin':
         specifier: ^3.0.0-next.27
-        version: 3.0.0-next.27(@solidjs/web@2.0.0-rc.0(solid-js@2.0.0-rc.0))(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-rc.0)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        version: 3.0.0-next.27(@solidjs/web@2.0.0-rc.3(solid-js@2.0.0-rc.3))(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-rc.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       '@solidjs/web':
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0(solid-js@2.0.0-rc.0)
+        specifier: ^2.0.0-rc.3
+        version: 2.0.0-rc.3(solid-js@2.0.0-rc.3)
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
       babel-preset-solid:
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0(@babel/core@7.29.0)(solid-js@2.0.0-rc.0)
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(@babel/core@7.29.0)(solid-js@2.0.0-rc.3)
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
       solid-js:
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0
+        specifier: ^2.0.0-rc.3
+        version: 2.0.0-rc.3
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.27.4)(solid-js@2.0.0-rc.0)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
+        version: 2.2.0(esbuild@0.27.4)(solid-js@2.0.0-rc.3)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
 
   packages/solid-query-persist-client:
     dependencies:
@@ -3032,13 +3032,13 @@ importers:
         version: 7.28.5(@babel/core@7.29.0)
       '@solidjs/testing-library':
         specifier: ^0.8.10
-        version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.0))(solid-js@2.0.0-rc.0)
+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.3))(solid-js@2.0.0-rc.3)
       '@solidjs/vite-plugin':
         specifier: ^3.0.0-next.27
-        version: 3.0.0-next.27(@solidjs/web@2.0.0-rc.0(solid-js@2.0.0-rc.0))(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-rc.0)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        version: 3.0.0-next.27(@solidjs/web@2.0.0-rc.3(solid-js@2.0.0-rc.3))(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-rc.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       '@solidjs/web':
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0(solid-js@2.0.0-rc.0)
+        specifier: ^2.0.0-rc.3
+        version: 2.0.0-rc.3(solid-js@2.0.0-rc.3)
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
@@ -3046,17 +3046,17 @@ importers:
         specifier: workspace:*
         version: link:../solid-query
       babel-preset-solid:
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0(@babel/core@7.29.0)(solid-js@2.0.0-rc.0)
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(@babel/core@7.29.0)(solid-js@2.0.0-rc.3)
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
       solid-js:
-        specifier: ^2.0.0-rc.0
-        version: 2.0.0-rc.0
+        specifier: ^2.0.0-rc.3
+        version: 2.0.0-rc.3
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.27.4)(solid-js@2.0.0-rc.0)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
+        version: 2.2.0(esbuild@0.27.4)(solid-js@2.0.0-rc.3)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
 
   packages/svelte-query:
     dependencies:
@@ -4696,11 +4696,6 @@ packages:
 
   '@dom-expressions/babel-plugin-jsx@0.50.0-next.41':
     resolution: {integrity: sha512-JQnjahkQysfo5P5ahsOqtA1yN3GeAIaAke1FA4s/vy+ZEOpUHbI5IpdF43+RrVghoTcgtML9tEC0fINtJ4Cmpg==}
-    peerDependencies:
-      '@babel/core': ^7.20.12
-
-  '@dom-expressions/babel-plugin-jsx@0.50.0-next.42':
-    resolution: {integrity: sha512-ol24x9RW8loPyOTzC/mQzh/zAsrsPxyTG4WRxxRlwzNK2uBWIBftWN5IwmSV51zDQa7JcT6sE6kkXFCLUvsYIQ==}
     peerDependencies:
       '@babel/core': ^7.20.12
 
@@ -8781,15 +8776,6 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0
       solid-js: ^2.0.0-beta.33
-    peerDependenciesMeta:
-      solid-js:
-        optional: true
-
-  babel-preset-solid@2.0.0-rc.0:
-    resolution: {integrity: sha512-Ap2/QQY3pICj+Q0VM/RnIOpZo7e6icZnUA0oBJuhqzoCrljqMNo3eFb2OeEa4pUQeFREJOlex4Bt1ggwrcgC8w==}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-      solid-js: ^2.0.0-rc.0
     peerDependenciesMeta:
       solid-js:
         optional: true
@@ -18636,16 +18622,6 @@ snapshots:
       parse5: 7.3.0
       validate-html-nesting: 1.2.4
 
-  '@dom-expressions/babel-plugin-jsx@0.50.0-next.42(@babel/core@7.29.0)':
-    dependencies:
-      '@babel/core': 7.29.0
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/plugin-syntax-jsx': 7.28.6(@babel/core@7.29.0)
-      '@babel/types': 7.29.0
-      html-entities: 2.3.3
-      parse5: 7.3.0
-      validate-html-nesting: 1.2.4
-
   '@dom-expressions/babel-plugin-jsx@0.50.0-next.44(@babel/core@7.29.0)':
     dependencies:
       '@babel/core': 7.29.0
@@ -21238,13 +21214,6 @@ snapshots:
     optionalDependencies:
       '@solidjs/router': 0.15.4(solid-js@1.9.12)
 
-  '@solidjs/testing-library@0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.0))(solid-js@2.0.0-rc.0)':
-    dependencies:
-      '@testing-library/dom': 10.4.1
-      solid-js: 2.0.0-rc.0
-    optionalDependencies:
-      '@solidjs/router': 0.15.4(solid-js@2.0.0-rc.0)
-
   '@solidjs/testing-library@0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-rc.3))(solid-js@2.0.0-rc.3)':
     dependencies:
       '@testing-library/dom': 10.4.1
@@ -23388,13 +23357,6 @@ snapshots:
     optionalDependencies:
       solid-js: 2.0.0-rc.3
 
-  babel-preset-solid@2.0.0-rc.0(@babel/core@7.29.0)(solid-js@2.0.0-rc.0):
-    dependencies:
-      '@babel/core': 7.29.0
-      '@dom-expressions/babel-plugin-jsx': 0.50.0-next.42(@babel/core@7.29.0)
-    optionalDependencies:
-      solid-js: 2.0.0-rc.0
-
   babel-preset-solid@2.0.0-rc.2(@babel/core@7.29.0)(solid-js@2.0.0-rc.3):
     dependencies:
       '@babel/core': 7.29.0
@@ -24949,16 +24911,6 @@ snapshots:
       babel-preset-solid: 1.9.12(@babel/core@7.29.0)(solid-js@1.9.12)
       esbuild: 0.27.4
       solid-js: 1.9.12
-    transitivePeerDependencies:
-      - supports-color
-
-  esbuild-plugin-solid@0.5.0(esbuild@0.27.4)(solid-js@2.0.0-rc.0):
-    dependencies:
-      '@babel/core': 7.29.0
-      '@babel/preset-typescript': 7.28.5(@babel/core@7.29.0)
-      babel-preset-solid: 1.9.12(@babel/core@7.29.0)(solid-js@2.0.0-rc.0)
-      esbuild: 0.27.4
-      solid-js: 2.0.0-rc.0
     transitivePeerDependencies:
       - supports-color
 
@@ -31816,15 +31768,6 @@ snapshots:
   tsup-preset-solid@2.2.0(esbuild@0.27.4)(solid-js@1.9.12)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)):
     dependencies:
       esbuild-plugin-solid: 0.5.0(esbuild@0.27.4)(solid-js@1.9.12)
-      tsup: 8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
-    transitivePeerDependencies:
-      - esbuild
-      - solid-js
-      - supports-color
-
-  tsup-preset-solid@2.2.0(esbuild@0.27.4)(solid-js@2.0.0-rc.0)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)):
-    dependencies:
-      esbuild-plugin-solid: 0.5.0(esbuild@0.27.4)(solid-js@2.0.0-rc.0)
       tsup: 8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
     transitivePeerDependencies:
       - esbuild

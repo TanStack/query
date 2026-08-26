@@ -70,11 +70,11 @@
     "@solidjs/signals": "^2.0.0-rc.0",
     "@solidjs/testing-library": "^0.8.10",
     "@solidjs/vite-plugin": "^3.0.0-next.27",
-    "@solidjs/web": "^2.0.0-rc.0",
+    "@solidjs/web": "^2.0.0-rc.3",
     "@tanstack/solid-query": "workspace:*",
-    "babel-preset-solid": "^2.0.0-rc.0",
+    "babel-preset-solid": "^2.0.0-rc.2",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^2.0.0-rc.0",
+    "solid-js": "^2.0.0-rc.3",
     "tsup-preset-solid": "^2.2.0"
   },
   "peerDependencies": {

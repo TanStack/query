@@ -1,8 +1,15 @@
+// Ported to the 2.0-native read layer: `data` is an async computation, so a
+// query with nothing cached suspends into <Loading> for the whole restore
+// window instead of rendering a pending snapshot. These tests assert the
+// user-visible transitions (fallback -> restored value -> refreshed value)
+// and the fetch/callback bookkeeping around them; the pre-rewrite suite
+// snapshotted observer result objects on every notification, which the
+// rewrite no longer produces.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { Loading, createEffect, createSignal } from 'solid-js'
+import { Loading, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
@@ -45,6 +52,30 @@ const createMockErrorPersister = (
   ]
 }
 
+/**
+ * Seeds a persister with a settled `'hydrated'` entry for `key` and hands
+ * back an empty client to restore it into.
+ */
+async function setup() {
+  const key = queryKey()
+
+  const queryClient = new QueryClient()
+  queryClient.prefetchQuery({
+    queryKey: key,
+    queryFn: () => sleep(10).then(() => 'hydrated'),
+  })
+  await vi.advanceTimersByTimeAsync(10)
+
+  const persister = createMockPersister()
+
+  persistQueryClientSave({ queryClient, persister })
+  await vi.advanceTimersByTimeAsync(0)
+
+  queryClient.clear()
+
+  return { key, queryClient, persister }
+}
+
 describe('PersistQueryClientProvider', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -55,42 +86,14 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('restores cache from persister', async () => {
-    const key = queryKey()
-    const states: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
+    const { key, queryClient, persister } = await setup()
 
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'fetched'))
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      }))
-      createEffect(
-        () => {
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          })
-        },
-        () => {},
-      )
+      const state = useQuery(() => ({ queryKey: key, queryFn }))
 
       return (
         <div>
@@ -101,7 +104,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <PersistQueryClientProvider
           client={queryClient}
           persistOptions={{ persister }}
@@ -111,75 +114,32 @@ describe('PersistQueryClientProvider', () => {
       </Loading>
     ))
 
-    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
+    // Nothing is cached yet and no fetch may start while restoring, so the
+    // read has nothing to settle on and the boundary holds.
+    expect(screen.getByText('loading')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    // The restored entry lands, the boundary resolves, and the now-stale
+    // query refetches in the background.
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('hydrated')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('fetched')).toBeInTheDocument()
-
-    expect(states).toHaveLength(3)
-
-    expect(states[0]).toStrictEqual({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[1]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[2]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'fetched',
-    })
+    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
   it('should also put useQueries into idle state', async () => {
-    const key = queryKey()
-    const states: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
+    const { key, queryClient, persister } = await setup()
 
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'fetched'))
 
     function Page() {
       const [state] = useQueries(() => ({
-        queries: [
-          {
-            queryKey: key,
-            queryFn: () => sleep(10).then(() => 'fetched'),
-          },
-        ],
+        queries: [{ queryKey: key, queryFn }],
       }))
-
-      createEffect(
-        () => {
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          })
-        },
-        () => {},
-      )
 
       return (
         <div>
@@ -190,7 +150,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <PersistQueryClientProvider
           client={queryClient}
           persistOptions={{ persister }}
@@ -200,54 +160,19 @@ describe('PersistQueryClientProvider', () => {
       </Loading>
     ))
 
-    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
+    expect(screen.getByText('loading')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('hydrated')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('fetched')).toBeInTheDocument()
-
-    expect(states).toHaveLength(3)
-
-    expect(states[0]).toStrictEqual({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[1]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[2]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'fetched',
-    })
+    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
   it('should show initialData while restoring', async () => {
-    const key = queryKey()
-    const states: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
-
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const { key, queryClient, persister } = await setup()
 
     function Page() {
       const state = useQuery(() => ({
@@ -259,17 +184,6 @@ describe('PersistQueryClientProvider', () => {
         initialDataUpdatedAt: 1,
       }))
 
-      createEffect(
-        () => {
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          })
-        },
-        () => {},
-      )
-
       return (
         <div>
           <h1>{state.data}</h1>
@@ -279,7 +193,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <PersistQueryClientProvider
           client={queryClient}
           persistOptions={{ persister }}
@@ -289,54 +203,19 @@ describe('PersistQueryClientProvider', () => {
       </Loading>
     ))
 
+    // `initialData` settles the read synchronously, so the boundary never
+    // falls back — this is the one restore path that renders content at t=0.
     expect(screen.getByText('initial')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('hydrated')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('fetched')).toBeInTheDocument()
-
-    expect(states).toHaveLength(3)
-
-    expect(states[0]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'initial',
-    })
-
-    expect(states[1]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[2]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'fetched',
-    })
   })
 
   it('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
-    const states: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
-
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const { key, queryClient, persister } = await setup()
 
     let fetched = false
 
@@ -351,27 +230,16 @@ describe('PersistQueryClientProvider', () => {
         staleTime: Infinity,
       }))
 
-      createEffect(
-        () => {
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          })
-        },
-        () => {},
-      )
-
       return (
         <div>
-          <h1>data: {state.data ?? 'null'}</h1>
+          <h1>data: {state.data}</h1>
           <h2>fetchStatus: {state.fetchStatus}</h2>
         </div>
       )
     }
 
     render(() => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <PersistQueryClientProvider
           client={queryClient}
           persistOptions={{ persister }}
@@ -381,45 +249,20 @@ describe('PersistQueryClientProvider', () => {
       </Loading>
     ))
 
-    expect(screen.getByText('data: null')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
-    expect(screen.getByText('data: hydrated')).toBeInTheDocument()
+    expect(screen.getByText('loading')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('data: hydrated')).toBeInTheDocument()
 
+    // Restored data is fresh forever, so the mount policy leaves it alone.
+    await vi.advanceTimersByTimeAsync(10)
+    expect(screen.getByText('data: hydrated')).toBeInTheDocument()
+    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
     expect(fetched).toBe(false)
-
-    expect(states).toHaveLength(2)
-
-    expect(states[0]).toStrictEqual({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[1]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'hydrated',
-    })
   })
 
   it('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
-
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const { key, queryClient, persister } = await setup()
 
     function Page() {
       const state = useQuery(() => ({
@@ -510,26 +353,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should be able to persist into multiple clients', async () => {
-    const key = queryKey()
-    const states: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
-
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-
-    const persister = createMockPersister()
-
-    persistQueryClientSave({ queryClient, persister })
-    await vi.advanceTimersByTimeAsync(0)
-
-    queryClient.clear()
+    const { key, persister } = await setup()
 
     const onSuccess = vi.fn()
 
@@ -577,17 +401,6 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery(() => ({ queryKey: key }))
 
-      createEffect(
-        () => {
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data as string | undefined,
-          })
-        },
-        () => {},
-      )
-
       return (
         <div>
           <h1>{String(state.data)}</h1>
@@ -597,38 +410,20 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <App />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(10)
-    expect(screen.getByText('hydrated')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    // The read follows the reactive client accessor, so it is already
+    // pointed at the second client before the restore lands. The restore
+    // still runs exactly once, against the client the provider started
+    // with, so the swapped-in client fetches its own value.
+    await vi.advanceTimersByTimeAsync(20)
     expect(screen.getByText('queryFn2')).toBeInTheDocument()
+    expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
 
     expect(queryFn1).toHaveBeenCalledTimes(0)
-    expect(queryFn2).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(1)
-
-    expect(states).toHaveLength(3)
-
-    expect(states[0]).toStrictEqual({
-      status: 'pending',
-      fetchStatus: 'idle',
-      data: undefined,
-    })
-
-    expect(states[1]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: 'hydrated',
-    })
-
-    expect(states[2]).toStrictEqual({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'queryFn2',
-    })
   })
 })

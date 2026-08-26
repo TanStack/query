@@ -58,7 +58,7 @@ function metaFrom(state: QueryState<any, any>): MetaState {
 
 /** Internal seam: everything the read layer builds, for hooks that extend
  * the base result (`useInfiniteQuery` pagers ride the same entry). */
-export interface BaseQueryLayer<
+interface BaseQueryLayer<
   TQueryFnData,
   TError,
   TData,
