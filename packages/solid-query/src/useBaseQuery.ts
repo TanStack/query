@@ -13,6 +13,7 @@ import {
   reconcile,
   refresh,
   runWithOwner,
+  sharedConfig,
   snapshot,
   untrack,
   useContext,
@@ -517,7 +518,21 @@ export function useBaseQuery<
       // Untracked reads pass through: event handlers and effect callbacks
       // peek at the raw value, which keeps imperative access working (and
       // lets callers observe pending states) without suspending.
-      if (prop === 'data' && getObserver() && state.isLoading) {
+      //
+      // Hydration stands down: while Solid is claiming server-rendered DOM
+      // (`sharedConfig.hydrating`), a throw here bails the claim — the
+      // server rendered this content from settled data that the streaming
+      // hydration channel may not have primed on the client yet — leaving
+      // unclaimed server nodes and crashing the reactive system with
+      // "Potential Infinite Loop Detected". Reads during that window
+      // return the store value, and the per-query hydration coordinator
+      // (see hydrationChannel.ts) re-syncs them once their entry lands.
+      if (
+        prop === 'data' &&
+        getObserver() &&
+        state.isLoading &&
+        !sharedConfig.hydrating
+      ) {
         throw new NotReadyError(observer.getCurrentQuery())
       }
 
