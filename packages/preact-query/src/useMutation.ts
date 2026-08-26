@@ -49,6 +49,36 @@ import { useSyncExternalStore } from './utils'
  * ```
  *
  * @example
+ * Rendering the mutation's own state, rather than just firing it off:
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodo() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       {addMutation.isPending ? (
+ *         'Adding todo...'
+ *       ) : (
+ *         <>
+ *           {addMutation.isError ? (
+ *             <div>An error occurred: {addMutation.error.message}</div>
+ *           ) : null}
+ *           <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *         </>
+ *       )}
+ *     </div>
+ *   )
+ * }
+ * ```
+ *
+ * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'
@@ -80,6 +110,71 @@ import { useSyncExternalStore } from './utils'
  *
  *   return (
  *     <button onClick={() => addMutation.mutate('Item')}>Add</button>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Adding several todos in a row with `mutate` only fires `onSuccess` once, for the last call —
+ * `mutateAsync` gives you a promise per call instead, so you can wait for all of them:
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodos() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   })
+ *
+ *   const handleAddAll = async (todos: Array<string>) => {
+ *     try {
+ *       await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
+ *     } catch (error) {
+ *       console.error(error)
+ *     }
+ *   }
+ *
+ *   return (
+ *     <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+ *       Add all
+ *     </button>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * If some of the mutations above can fail independently of the others, and you want to know which ones
+ * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
+ * `Promise.allSettled`:
+ * ```tsx
+ * import { useMutation, useQueryClient } from '@tanstack/preact-query'
+ *
+ * function AddTodos() {
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = useMutation({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   })
+ *
+ *   const handleAddAll = async (todos: Array<string>) => {
+ *     const results = await Promise.allSettled(
+ *       todos.map((todo) => addMutation.mutateAsync(todo)),
+ *     )
+ *
+ *     results.forEach((result, index) => {
+ *       if (result.status === 'rejected') {
+ *         console.error(`Failed to add "${todos[index]}":`, result.reason)
+ *       }
+ *     })
+ *   }
+ *
+ *   return (
+ *     <button onClick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+ *       Add all
+ *     </button>
  *   )
  * }
  * ```
