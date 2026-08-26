@@ -74,7 +74,7 @@ function Posts() {
     mutationFn: createPosts,
   })
 
-  const data = useMutationState({
+  const savedPosts = useMutationState({
     // this mutation key needs to match the mutation key of the given mutation (see above)
     filters: { mutationKey, status: 'success' },
     select: (mutation) => mutation.state.data,
@@ -82,7 +82,7 @@ function Posts() {
 
   return (
     <button onClick={() => mutation.mutate(['New Post'])}>
-      Create post ({data.length} saved so far)
+      Create post ({savedPosts.length} saved so far)
     </button>
   )
 }
@@ -95,12 +95,12 @@ latest invocation:
 import { useMutationState } from '@tanstack/preact-query'
 
 function LatestPost() {
-  const data = useMutationState({
+  const savedPosts = useMutationState({
     filters: { mutationKey: ['posts'], status: 'success' },
     select: (mutation) => mutation.state.data,
   })
 
-  const latest = data[data.length - 1]
+  const latest = savedPosts[savedPosts.length - 1]
 
   return <>{latest ? 'Saved' : 'Nothing saved yet'}</>
 }
