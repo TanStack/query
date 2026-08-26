@@ -226,6 +226,40 @@ export type SuspenseQueriesResults<
  *   )
  * }
  * ```
+ *
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *       <Dashboard />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseQueries<
   T extends Array<any>,
@@ -289,6 +323,40 @@ export function useSuspenseQueries<
  *   return (
  *     <Suspense fallback={<h1>Loading posts...</h1>}>
  *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *       <Dashboard />
  *     </Suspense>
  *   )
  * }
