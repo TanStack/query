@@ -115,8 +115,8 @@ import { useSyncExternalStore } from './utils'
  * ```
  *
  * @example
- * Adding several todos in a row with `mutate` only fires `onSuccess` once, for the last call —
- * `mutateAsync` gives you a promise per call instead, so you can wait for all of them:
+ * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
+ * promise per call instead, so you can wait for all of them:
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'
  *
