@@ -166,7 +166,7 @@ function AddTodos() {
     try {
       await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
     } catch (error) {
-      console.error(error)
+      console.error('Failed to add todos:', error)
     }
   }
 
