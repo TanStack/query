@@ -27,7 +27,15 @@ export interface UseBaseQueryOptions<
 > extends OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'suspense'
-> {}
+> {
+  /**
+   * Defer the SSR stream flush until this query resolves on the server,
+   * instead of letting the surrounding `<Loading>` boundary render its
+   * fallback into the HTML. Passed through to Solid's own per-computation
+   * `deferStream` option; server-only, ignored on the client.
+   */
+  deferStream?: boolean
+}
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -97,6 +105,11 @@ export interface InfiniteQueryOptions<
   'queryKey' | 'suspense'
 > {
   queryKey: TQueryKey
+  /**
+   * Defer the SSR stream flush until this query resolves on the server —
+   * see {@link UseBaseQueryOptions.deferStream}.
+   */
+  deferStream?: boolean
 }
 
 export type UseInfiniteQueryOptions<

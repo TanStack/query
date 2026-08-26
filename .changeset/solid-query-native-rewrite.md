@@ -13,5 +13,7 @@ transaction). The observer notification/store layer is deleted —
 Breaking: `data` is non-optional on query results (reads suspend instead of
 returning `undefined`); `mutateAsync` removed (`mutate` returns a promise);
 `reconcile` option removed (core `structuralSharing` covers referential
-stability); `suspense`/`deferStream` options removed (suspension is the
-model; stream deferral belongs to Solid's boundaries).
+stability); `suspense` option removed (suspension is the model, boundaries
+are the control point). `deferStream` is now implemented (it was declared
+but unwired on the v6 line): it passes through to Solid's per-computation
+`deferStream` memo option.

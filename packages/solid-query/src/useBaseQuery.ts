@@ -439,8 +439,14 @@ export function useBaseQueryLayer<
    * hydration completes — solid's orphaning protection re-serves the
    * serialized value on every recompute while the stream is open, so this
    * node cannot double as the live read once the cache starts changing.
+   *
+   * `deferStream` passes straight through to the engine: the server holds
+   * the stream flush for this node's first resolution instead of letting
+   * the surrounding boundary render its fallback (ignored on the client).
    */
-  const adopted = createMemo<TData>(computeData)
+  const adopted = createMemo<TData>(computeData, {
+    deferStream: untrack(() => options().deferStream),
+  })
 
   /**
    * The live face. On a hydrated mount it is a separate `transparent` memo
