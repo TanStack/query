@@ -75,7 +75,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:201](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L201)
+Defined in: [preact-query/src/queryOptions.ts:205](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L205)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -118,12 +118,17 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### Examples
 
 ```tsx
-import { queryOptions } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 
 export const postsOptions = queryOptions({
   queryKey: ['posts'],
   queryFn: fetchPosts,
 })
+
+function Posts() {
+  const { data } = useQuery(postsOptions)
+  return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+}
 ```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -147,20 +152,19 @@ queryClient.query(postOptions(id)).catch(noop)
 
 The same options object works with every API that accepts query options:
 ```tsx
-import {
-  noop,
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from '@tanstack/preact-query'
+import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
 
 const todosOptions = queryOptions({
   queryKey: ['todos'],
   queryFn: fetchTodos,
 })
 
-useQuery(todosOptions)
-useSuspenseQuery(todosOptions)
+function Todos() {
+  const { data } = useQuery(todosOptions)
+  return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+}
+
+// Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
 queryClient.query(todosOptions).catch(noop)
 queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
 ```
@@ -171,7 +175,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:271](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L271)
+Defined in: [preact-query/src/queryOptions.ts:279](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L279)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -214,12 +218,17 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### Examples
 
 ```tsx
-import { queryOptions } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 
 export const postsOptions = queryOptions({
   queryKey: ['posts'],
   queryFn: fetchPosts,
 })
+
+function Posts() {
+  const { data } = useQuery(postsOptions)
+  return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+}
 ```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -243,20 +252,19 @@ queryClient.query(postOptions(id)).catch(noop)
 
 The same options object works with every API that accepts query options:
 ```tsx
-import {
-  noop,
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from '@tanstack/preact-query'
+import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
 
 const todosOptions = queryOptions({
   queryKey: ['todos'],
   queryFn: fetchTodos,
 })
 
-useQuery(todosOptions)
-useSuspenseQuery(todosOptions)
+function Todos() {
+  const { data } = useQuery(todosOptions)
+  return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+}
+
+// Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
 queryClient.query(todosOptions).catch(noop)
 queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
 ```

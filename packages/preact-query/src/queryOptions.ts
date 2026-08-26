@@ -149,12 +149,17 @@ export function queryOptions<
  *
  * @example
  * ```tsx
- * import { queryOptions } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postsOptions = queryOptions({
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
  * })
+ *
+ * function Posts() {
+ *   const { data } = useQuery(postsOptions)
+ *   return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ * }
  * ```
  *
  * @example
@@ -180,20 +185,19 @@ export function queryOptions<
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
- * import {
- *   noop,
- *   queryOptions,
- *   useQuery,
- *   useSuspenseQuery,
- * } from '@tanstack/preact-query'
+ * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
  *   queryKey: ['todos'],
  *   queryFn: fetchTodos,
  * })
  *
- * useQuery(todosOptions)
- * useSuspenseQuery(todosOptions)
+ * function Todos() {
+ *   const { data } = useQuery(todosOptions)
+ *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
  * queryClient.query(todosOptions).catch(noop)
  * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
@@ -219,12 +223,17 @@ export function queryOptions<
  *
  * @example
  * ```tsx
- * import { queryOptions } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postsOptions = queryOptions({
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
  * })
+ *
+ * function Posts() {
+ *   const { data } = useQuery(postsOptions)
+ *   return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ * }
  * ```
  *
  * @example
@@ -250,20 +259,19 @@ export function queryOptions<
  * @example
  * The same options object works with every API that accepts query options:
  * ```tsx
- * import {
- *   noop,
- *   queryOptions,
- *   useQuery,
- *   useSuspenseQuery,
- * } from '@tanstack/preact-query'
+ * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * const todosOptions = queryOptions({
  *   queryKey: ['todos'],
  *   queryFn: fetchTodos,
  * })
  *
- * useQuery(todosOptions)
- * useSuspenseQuery(todosOptions)
+ * function Todos() {
+ *   const { data } = useQuery(todosOptions)
+ *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+ * }
+ *
+ * // Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
  * queryClient.query(todosOptions).catch(noop)
  * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
