@@ -178,7 +178,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:187](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L187)
+Defined in: [preact-query/src/useQuery.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L192)
 
 ### Type Parameters
 
@@ -252,16 +252,21 @@ function Posts() {
 }
 ```
 
-A dependent query, only enabled once `postId` is set:
+A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
+loading state doesn't show while the query is disabled:
 ```tsx
 import { useQuery } from '@tanstack/preact-query'
 
 function Post({ postId }: { postId: number | undefined }) {
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId!),
     enabled: postId != null,
   })
+
+  if (postId == null) return 'Select a post'
+  if (isLoading) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
 
   return <h1>{data?.title}</h1>
 }
