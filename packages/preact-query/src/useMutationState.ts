@@ -98,12 +98,12 @@ function getResult<
  * import { useMutationState } from '@tanstack/preact-query'
  *
  * function PendingPosts() {
- *   const variables = useMutationState({
+ *   const pendingVariables = useMutationState({
  *     filters: { status: 'pending' },
  *     select: (mutation) => mutation.state.variables,
  *   })
  *
- *   return <>{variables.length} posts saving...</>
+ *   return <>{pendingVariables.length} posts saving...</>
  * }
  * ```
  *
