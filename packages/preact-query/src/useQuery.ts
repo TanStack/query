@@ -188,6 +188,35 @@ export function useQuery<
  *   return <h1>{data?.title}</h1>
  * }
  * ```
+ *
+ * @example
+ * Paginated data, keeping the previous page's data visible while the next page loads:
+ * ```tsx
+ * import { keepPreviousData, useQuery } from '@tanstack/preact-query'
+ * import { useState } from 'preact/hooks'
+ *
+ * function Posts() {
+ *   const [page, setPage] = useState(0)
+ *
+ *   const { data, isPlaceholderData } = useQuery({
+ *     queryKey: ['posts', page],
+ *     queryFn: () => fetchPosts(page),
+ *     placeholderData: keepPreviousData,
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+ *       <button
+ *         disabled={isPlaceholderData}
+ *         onClick={() => setPage((old) => old + 1)}
+ *       >
+ *         Next Page
+ *       </button>
+ *     </div>
+ *   )
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

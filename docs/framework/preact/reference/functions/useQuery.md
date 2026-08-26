@@ -178,7 +178,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L192)
+Defined in: [preact-query/src/useQuery.ts:221](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L221)
 
 ### Type Parameters
 
@@ -289,5 +289,33 @@ function Post({ postId }: { postId: number }) {
   })
 
   return <h1>{data?.title}</h1>
+}
+```
+
+Paginated data, keeping the previous page's data visible while the next page loads:
+```tsx
+import { keepPreviousData, useQuery } from '@tanstack/preact-query'
+import { useState } from 'preact/hooks'
+
+function Posts() {
+  const [page, setPage] = useState(0)
+
+  const { data, isPlaceholderData } = useQuery({
+    queryKey: ['posts', page],
+    queryFn: () => fetchPosts(page),
+    placeholderData: keepPreviousData,
+  })
+
+  return (
+    <div>
+      {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+      <button
+        disabled={isPlaceholderData}
+        onClick={() => setPage((old) => old + 1)}
+      >
+        Next Page
+      </button>
+    </div>
+  )
 }
 ```
