@@ -37,7 +37,9 @@ describe('queryOptions', () => {
     })
 
     const { data } = useQuery(() => options)
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    // Non-optional: `data` is a suspending read — the pre-fetch gap suspends
+    // into <Loading> instead of surfacing as `undefined`.
+    expectTypeOf(data).toEqualTypeOf<number>()
   })
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({

@@ -5,7 +5,6 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverResult,
-  MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
@@ -28,21 +27,7 @@ export interface UseBaseQueryOptions<
 > extends OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'suspense'
-> {
-  /**
-   * Only applicable while rendering queries on the server with streaming.
-   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
-   * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
-   */
-  deferStream?: boolean
-  /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQuery is a SolidJS resource and will automatically suspend when the data is loading.
-   * Setting `suspense` to `false` will be a no-op.
-   */
-  suspense?: boolean
-}
+> {}
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -66,10 +51,18 @@ export type UseQueryOptions<
 
 /* --- Create Query and Create Base Query  Types --- */
 
+/**
+ * `data` is non-optional: it is a suspending async read. It never returns
+ * `undefined` — a read either suspends into the nearest `<Loading>`
+ * boundary (first fetch in flight, disabled, restoring), returns a value
+ * (committed, placeholder, initial), or throws (`<Errored>` /
+ * `throwOnError`). The v5 `TData | undefined` face existed because reads
+ * could observe the pre-fetch gap; here that gap is suspension.
+ */
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = QueryObserverResult<TData, TError>
+> = Override<QueryObserverResult<TData, TError>, { data: TData }>
 
 export type UseQueryResult<
   TData = unknown,
@@ -104,19 +97,6 @@ export interface InfiniteQueryOptions<
   'queryKey' | 'suspense'
 > {
   queryKey: TQueryKey
-  /**
-   * Only applicable while rendering queries on the server with streaming.
-   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
-   * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
-   */
-  deferStream?: boolean
-  /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
-   * Setting `suspense` to `false` will be a no-op.
-   */
-  suspense?: boolean
 }
 
 export type UseInfiniteQueryOptions<
@@ -129,10 +109,11 @@ export type UseInfiniteQueryOptions<
   InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 >
 
+/** Non-optional `data` for the same reason as {@link UseBaseQueryResult}. */
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+> = Override<InfiniteQueryObserverResult<TData, TError>, { data: TData }>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
@@ -157,23 +138,21 @@ export type UseMutationOptions<
   TOnMutateResult = unknown,
 > = Accessor<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
 
+/**
+ * One `mutate`, returning a safe-to-ignore promise: errors are also routed
+ * into reactive state, and ignoring the promise never surfaces an
+ * unhandled rejection. Call-site callbacks are gone — settle logic that
+ * used to live in `mutate(vars, { onSuccess })` is linear code after
+ * `await mutate(vars)` or a config-level callback.
+ */
 export type UseMutateFunction<
   TData = unknown,
-  TError = DefaultError,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  _TError = DefaultError,
   TVariables = void,
-  TOnMutateResult = unknown,
-> = (
-  ...args: Parameters<
-    MutateFunction<TData, TError, TVariables, TOnMutateResult>
-  >
-) => void
-
-export type UseMutateAsyncFunction<
-  TData = unknown,
-  TError = DefaultError,
-  TVariables = void,
-  TOnMutateResult = unknown,
-> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  _TOnMutateResult = unknown,
+> = (variables: TVariables) => Promise<TData>
 
 export type UseBaseMutationResult<
   TData = unknown,
@@ -181,16 +160,12 @@ export type UseBaseMutationResult<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  OmitKeyof<
+    MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+    'context'
+  >,
   { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
-> & {
-  mutateAsync: UseMutateAsyncFunction<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >
-}
+>
 
 export type UseMutationResult<
   TData = unknown,

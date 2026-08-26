@@ -1,28 +1,15 @@
-import { QueriesObserver, noop } from '@tanstack/query-core'
-import {
-  createEffect,
-  createMemo,
-  createStore,
-  merge,
-  onCleanup,
-  reconcile,
-  runWithOwner,
-  untrack,
-} from 'solid-js'
-import { useQueryClient } from './QueryClientProvider'
-import { useIsRestoring } from './isRestoring'
+import { QueryObserver } from '@tanstack/query-core'
+import { $TRACK, createMemo, repeat } from 'solid-js'
+import { useBaseQuery } from './useBaseQuery'
 import type { QueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
   OmitKeyof,
-  QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
-  QueryObserverOptions,
-  QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -35,14 +22,14 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'suspense'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
   /**
-   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQueries is a plain object and not a SolidJS Resource.
-   * It will not suspend when the data is loading.
-   * Setting `suspense` to `true` will be a no-op.
+   * @deprecated The `suspense` option has been removed. Suspense is the
+   * model: each result's `data` is an async read that suspends into the
+   * nearest `<Loading>` boundary while its first fetch is in flight, same
+   * as `useQuery`. Setting `suspense` is a no-op.
    */
   suspense?: boolean
 }
@@ -184,7 +171,7 @@ type QueriesResults<
 
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -194,95 +181,61 @@ export function useQueries<
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
-  const client = createMemo(() => useQueryClient(queryClient?.()))
-  const isRestoring = useIsRestoring()
+  /**
+   * One read layer per position, count-keyed: each row owns a full
+   * `useBaseQuery` (observer lifecycle, version signal, async data node)
+   * whose options stay reactive through the per-index accessor — option
+   * changes flow into the existing row without tearing it down, while
+   * length changes create/dispose tail rows. Every result has identical
+   * semantics to `useQuery`: reads suspend, settled data is non-nullable.
+   */
+  const length = createMemo(() => queriesOptions().queries.length)
+  const results = repeat(length, (index) => {
+    // When the array shrinks, cache events can reach this row's
+    // subscriptions before disposal runs; the row keeps answering with its
+    // last options rather than reading past the end of the shorter array.
+    let lastOptions: any
+    return useBaseQuery(
+      () => {
+        const next = queriesOptions().queries[index]
+        if (next !== undefined) lastOptions = next
+        return lastOptions
+      },
+      QueryObserver,
+      queryClient,
+    )
+  })
 
-  const defaultedQueries = createMemo(() =>
-    queriesOptions().queries.map((options) =>
-      merge(client().defaultQueryOptions(options as QueryObserverOptions), {
-        get _optimisticResults() {
-          return isRestoring() ? 'isRestoring' : 'optimistic'
-        },
-      }),
-    ),
-  )
+  const combined = createMemo(() => {
+    const combine = queriesOptions().combine
+    const list = results() as unknown as QueriesResults<T>
+    return combine
+      ? combine(list)
+      : (list as unknown as TCombinedResult)
+  })
 
-  const observer = untrack(
-    () =>
-      new QueriesObserver<TCombinedResult>(
-        client(),
-        defaultedQueries(),
-        queriesOptions().combine
-          ? ({
-              combine: queriesOptions().combine,
-            } as QueriesObserverOptions<TCombinedResult>)
-          : undefined,
-      ),
-  )
-
-  // Get initial optimistic result
-  const [, getCombinedResult] = untrack(() =>
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    ),
-  )
-
-  const initialResult = getCombinedResult()
-
-  // Store the combined result in a reactive store
-  const [state, setState] = createStore<Array<QueryObserverResult>>(
-    (Array.isArray(initialResult)
-      ? initialResult
-      : [initialResult]) as Array<QueryObserverResult>,
-  )
-
-  // Subscribe to the observer for updates reactively.
-  // When isRestoring is true (persist client is restoring), we defer
-  // subscription until restoring completes.
-  let unsubscribe: () => void = noop
-  createEffect(
-    () => {
-      if (!isRestoring()) {
-        unsubscribe = observer.subscribe((result) => {
-          runWithOwner(null, () => {
-            setState(
-              reconcile(
-                [...result] as Array<QueryObserverResult>,
-                // Use a key function that returns undefined so reconcile
-                // uses positional matching and recursively updates nested properties
-                () => undefined,
-              ),
-            )
-          })
-        })
-      }
+  // A stable facade over the combined result. Property reads pull through
+  // the memo so consumers track exactly what they touch; $TRACK hands list
+  // helpers (<For>, mapArray) the underlying array for diffing.
+  return new Proxy([] as unknown as TCombinedResult & object, {
+    get(_, prop) {
+      if (prop === $TRACK) return combined()
+      return Reflect.get(combined() as object, prop)
     },
-    () => {},
-  )
-
-  onCleanup(() => {
-    unsubscribe()
-  })
-
-  // Update observer queries when options change reactively
-  const trackedDefaultedQueries = createMemo(() => {
-    const queries = defaultedQueries()
-    runWithOwner(null, () => {
-      observer.setQueries(
-        queries,
-        queriesOptions().combine
-          ? ({
-              combine: queriesOptions().combine,
-            } as QueriesObserverOptions<TCombinedResult>)
-          : undefined,
+    has(_, prop) {
+      if (prop === $TRACK) return true
+      return Reflect.has(combined() as object, prop)
+    },
+    ownKeys() {
+      return Reflect.ownKeys(combined() as object)
+    },
+    getOwnPropertyDescriptor(_, prop) {
+      const descriptor = Reflect.getOwnPropertyDescriptor(
+        combined() as object,
+        prop,
       )
-    })
-    return queries
-  })
-
-  // Force read of trackedDefaultedQueries to ensure it runs
-  void trackedDefaultedQueries
-
-  return state as unknown as TCombinedResult
+      if (descriptor) descriptor.configurable = true
+      return descriptor
+    },
+  }) as TCombinedResult
 }

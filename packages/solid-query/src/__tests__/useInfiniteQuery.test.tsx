@@ -1,15 +1,13 @@
+// Legacy useInfiniteQuery suite ported to the 2.0 read layer: `data` is an
+// async read (first load suspends into <Loading>, page fetches and refetches
+// hold committed pages), metadata reads never suspend, and the pager surface
+// (fetchNextPage / hasNextPage / direction flags) derives from cache state.
+// State-array notification sequences from the v5 observer model are replaced
+// with DOM and getter assertions; see port-notes/useInfiniteQuery.md.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 
-import {
-  For,
-  Loading,
-  Match,
-  Switch,
-  createRenderEffect,
-  createSignal,
-  snapshot,
-} from 'solid-js'
+import { For, Loading, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -52,107 +50,81 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    let state!: UseInfiniteQueryResult<InfiniteData<number>>
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
       }))
-
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push(snapshot(state) as any)
-        },
-      )
-
-      return null
+      return <span>pages: {state.data.pages.join(',')}</span>
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(10)
+    // First fetch in flight: the data read suspends into the boundary while
+    // every metadata getter stays readable without suspending.
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(state.status).toBe('pending')
+    expect(state.fetchStatus).toBe('fetching')
+    expect(state.isPending).toBe(true)
+    expect(state.isLoading).toBe(true)
+    expect(state.isInitialLoading).toBe(true)
+    expect(state.isFetching).toBe(true)
+    expect(state.isSuccess).toBe(false)
+    expect(state.isError).toBe(false)
+    expect(state.error).toBeNull()
+    expect(state.isFetched).toBe(false)
+    expect(state.isFetchedAfterMount).toBe(false)
+    expect(state.isPaused).toBe(false)
+    expect(state.isEnabled).toBe(true)
+    expect(state.isStale).toBe(true)
+    expect(state.isPlaceholderData).toBe(false)
+    expect(state.hasNextPage).toBe(false)
+    expect(state.hasPreviousPage).toBe(false)
+    expect(state.isFetchingNextPage).toBe(false)
+    expect(state.isFetchingPreviousPage).toBe(false)
+    expect(state.isFetchNextPageError).toBe(false)
+    expect(state.isFetchPreviousPageError).toBe(false)
+    expect(state.isRefetching).toBe(false)
+    expect(state.isRefetchError).toBe(false)
+    expect(state.isLoadingError).toBe(false)
+    expect(state.dataUpdatedAt).toBe(0)
+    expect(state.errorUpdatedAt).toBe(0)
+    expect(state.failureCount).toBe(0)
+    expect(state.failureReason).toBeNull()
+    expect(state.errorUpdateCount).toBe(0)
+    expect(state.fetchNextPage).toEqual(expect.any(Function))
+    expect(state.fetchPreviousPage).toEqual(expect.any(Function))
+    expect(state.refetch).toEqual(expect.any(Function))
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toEqual({
-      data: undefined,
-      dataUpdatedAt: 0,
-      error: null,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      fetchNextPage: expect.any(Function),
-      fetchPreviousPage: expect.any(Function),
-      hasNextPage: false,
-      hasPreviousPage: false,
-      isError: false,
-      isFetched: false,
-      isFetchedAfterMount: false,
-      isFetching: true,
-      isPaused: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isPending: true,
-      isLoading: true,
-      isInitialLoading: true,
-      isLoadingError: false,
-      isPlaceholderData: false,
-      isRefetchError: false,
-      isRefetching: false,
-      isStale: true,
-      isSuccess: false,
-      isEnabled: true,
-      refetch: expect.any(Function),
-      status: 'pending',
-      fetchStatus: 'fetching',
-      promise: expect.any(Promise),
-    })
-    expect(states[1]).toEqual({
-      data: { pages: [0], pageParams: [0] },
-      dataUpdatedAt: expect.any(Number),
-      error: null,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      fetchNextPage: expect.any(Function),
-      fetchPreviousPage: expect.any(Function),
-      hasNextPage: true,
-      hasPreviousPage: false,
-      isError: false,
-      isFetched: true,
-      isFetchedAfterMount: true,
-      isFetching: false,
-      isPaused: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isPending: false,
-      isLoading: false,
-      isInitialLoading: false,
-      isLoadingError: false,
-      isPlaceholderData: false,
-      isRefetchError: false,
-      isRefetching: false,
-      isStale: true,
-      isSuccess: true,
-      isEnabled: true,
-      refetch: expect.any(Function),
-      status: 'success',
-      fetchStatus: 'idle',
-      promise: expect.any(Promise),
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('pages: 0')).toBeInTheDocument()
+
+    // Settled: guard-free data plus success metadata.
+    expect(state.data).toEqual({ pages: [0], pageParams: [0] })
+    expect(state.status).toBe('success')
+    expect(state.fetchStatus).toBe('idle')
+    expect(state.isPending).toBe(false)
+    expect(state.isLoading).toBe(false)
+    expect(state.isFetching).toBe(false)
+    expect(state.isSuccess).toBe(true)
+    expect(state.isError).toBe(false)
+    expect(state.isFetched).toBe(true)
+    expect(state.isFetchedAfterMount).toBe(true)
+    expect(state.hasNextPage).toBe(true)
+    expect(state.hasPreviousPage).toBe(false)
+    expect(state.isFetchingNextPage).toBe(false)
+    expect(state.isFetchingPreviousPage).toBe(false)
+    expect(state.isRefetching).toBe(false)
+    expect(state.dataUpdatedAt).toEqual(expect.any(Number))
+    expect(state.dataUpdatedAt).toBeGreaterThan(0)
   })
 
   it('should not throw when fetchNextPage returns an error', async () => {
@@ -198,60 +170,43 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should keep the previous data when placeholderData is set', async () => {
+    // In the 2.0 adapter the async data node natively holds the committed
+    // value while the new key's fetch is in flight — `keepPreviousData` is
+    // accepted but the hold is the platform behavior, not a placeholder.
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<string>>>> =
-      []
 
     function Page() {
       const [order, setOrder] = createSignal('desc')
 
       const state = useInfiniteQuery(() => ({
         queryKey: [key, order()],
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => `${pageParam}-${order()}`),
+        // Fetch inputs come from the queryKey, not closure reads: the
+        // key-switch fetch resolves during a transition hold, where an
+        // untracked `order()` read returns the committed (old) value.
+        queryFn: ({ pageParam, queryKey: [, keyOrder] }) =>
+          sleep(10).then(() => `${pageParam}-${keyOrder}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
         placeholderData: keepPreviousData,
-        notifyOnChangeProps: 'all',
       }))
-
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
-          isPlaceholderData: state.isPlaceholderData,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isSuccess: state.isSuccess,
-            isPlaceholderData: state.isPlaceholderData,
-          } as Partial<UseInfiniteQueryResult<InfiniteData<string>>>)
-        },
-      )
 
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <button onClick={() => setOrder('asc')}>order</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>data: {state.data.pages.join(',')}</div>
           <div>isFetching: {String(state.isFetching)}</div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 0-desc')).toBeInTheDocument()
 
@@ -260,60 +215,20 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: 0-desc,1-desc')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /order/i }))
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(5)
+    // New key's first fetch in flight: previous pages stay visible, no
+    // fallback, and the background fetch is observable.
+    expect(rendered.getByText('data: 0-desc,1-desc')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(5)
     expect(rendered.getByText('data: 0-asc')).toBeInTheDocument()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
-    expect(states.length).toBe(6)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-      isPlaceholderData: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: ['0-desc'] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-    expect(states[2]).toMatchObject({
-      data: { pages: ['0-desc'] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-    expect(states[3]).toMatchObject({
-      data: { pages: ['0-desc', '1-desc'] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-    // Set state
-    expect(states[4]).toMatchObject({
-      data: { pages: ['0-desc', '1-desc'] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    expect(states[5]).toMatchObject({
-      data: { pages: ['0-asc'] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
   })
 
   it('should be able to select a part of the data', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
-    let renderCount = 0
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -327,50 +242,29 @@ describe('useInfiniteQuery', () => {
         initialPageParam: 0,
       }))
 
-      createRenderEffect(
-        () => {
-          renderCount++
-          return { status: state.status, data: state.data }
-        },
-        () => {
-          states.push(snapshot(state) as any)
-        },
-      )
-
-      return null
+      return <span>{state.data.pages.join(',')}</span>
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(states.length).toBeGreaterThanOrEqual(2)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isSuccess: false,
-    })
-    expect(states.at(-1)).toMatchObject({
-      data: { pages: ['count: 1'] },
-      isSuccess: true,
-    })
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
   })
 
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
-    const states: Array<
-      UseInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
-    > = []
     let selectCalled = 0
 
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: (data) => {
+        select: (data: InfiniteData<{ count: number }>) => {
           selectCalled++
           return {
             pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
@@ -381,40 +275,27 @@ describe('useInfiniteQuery', () => {
         initialPageParam: 0,
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        (s) => {
-          states.push(s)
-        },
-      )
-
-      return null
+      return <span>count: {state.data.pages[0]!.count}</span>
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
 
-    expect(states.length).toBeGreaterThanOrEqual(2)
+    // Unstable select identity must not spin the graph: give it time to
+    // (wrongly) loop and confirm the call count stays bounded.
+    await vi.advanceTimersByTimeAsync(100)
     expect(selectCalled).toBeGreaterThanOrEqual(1)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isSuccess: false,
-    })
-    expect(states.at(-1)).toMatchObject({
-      data: { pages: [{ count: 1 }] },
-      isSuccess: true,
-    })
+    expect(selectCalled).toBeLessThanOrEqual(3)
   })
 
   it('should be able to reverse the data', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -424,34 +305,20 @@ describe('useInfiniteQuery', () => {
           pages: [...data.pages].reverse(),
           pageParams: [...data.pageParams].reverse(),
         }),
-        notifyOnChangeProps: 'all',
         getNextPageParam: () => 1,
         initialPageParam: 0,
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isSuccess: state.isSuccess,
-          })
-        },
-      )
-
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {state.isFetching}</div>
+          <div>data: {state.data.pages.join(',')}</div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -462,30 +329,10 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1,0')).toBeInTheDocument()
-
-    expect(states.length).toBeGreaterThanOrEqual(4)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [0] },
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: { pages: [0] },
-      isSuccess: true,
-    })
-    expect(states.at(-1)).toMatchObject({
-      data: { pages: [1, 0] },
-      isSuccess: true,
-    })
   })
 
   it('should be able to fetch a previous page', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
 
     function Page() {
       const start = 10
@@ -495,92 +342,56 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         initialPageParam: start,
-        notifyOnChangeProps: 'all',
       }))
 
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          hasNextPage: state.hasNextPage,
-          hasPreviousPage: state.hasPreviousPage,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isSuccess: state.isSuccess,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            hasNextPage: state.hasNextPage,
-            hasPreviousPage: state.hasPreviousPage,
-            isFetching: state.isFetching,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isFetchingPreviousPage: state.isFetchingPreviousPage,
-            isSuccess: state.isSuccess,
-          })
-        },
+      return (
+        <div>
+          <button onClick={() => state.fetchPreviousPage()}>
+            fetchPreviousPage
+          </button>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>
+            hasNext: {String(state.hasNextPage)}, hasPrev:{' '}
+            {String(state.hasPreviousPage)}
+          </div>
+          <div>
+            fetchingPrev: {String(state.isFetchingPreviousPage)}, fetchingNext:{' '}
+            {String(state.isFetchingNextPage)}
+          </div>
+        </div>
       )
-
-      setActTimeout(() => {
-        state.fetchPreviousPage()
-      }, 20)
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(30)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('hasNext: true, hasPrev: true')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      hasNextPage: false,
-      hasPreviousPage: false,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: true,
-      hasPreviousPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: true,
-      hasPreviousPage: true,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: true,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: { pages: [9, 10] },
-      hasNextPage: true,
-      hasPreviousPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isSuccess: true,
-    })
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i }),
+    )
+    await vi.advanceTimersByTimeAsync(0)
+    // Previous-page fetch in flight: committed page holds, direction is
+    // observable and scoped to the backward flag only.
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(
+      rendered.getByText('fetchingPrev: true, fetchingNext: false'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 9,10')).toBeInTheDocument()
+    expect(
+      rendered.getByText('fetchingPrev: false, fetchingNext: false'),
+    ).toBeInTheDocument()
   })
 
   it('should be able to refetch when providing page params automatically', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -589,29 +400,7 @@ describe('useInfiniteQuery', () => {
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
-        notifyOnChangeProps: 'all',
       }))
-
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isRefetching: state.isRefetching,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isRefetching: state.isRefetching,
-            isFetchingPreviousPage: state.isFetchingPreviousPage,
-          })
-        },
-      )
 
       return (
         <div>
@@ -620,14 +409,18 @@ describe('useInfiniteQuery', () => {
             fetchPreviousPage
           </button>
           <button onClick={() => state.refetch()}>refetch</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>
+            fetchingNext: {String(state.isFetchingNextPage)}, fetchingPrev:{' '}
+            {String(state.isFetchingPreviousPage)}, refetching:{' '}
+            {String(state.isRefetching)}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -636,87 +429,49 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText(
+        'fetchingNext: true, fetchingPrev: false, refetching: false',
+      ),
+    ).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 10,11')).toBeInTheDocument()
 
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText(
+        'fetchingNext: false, fetchingPrev: true, refetching: false',
+      ),
+    ).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 9,10,11')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-    await vi.advanceTimersByTimeAsync(30)
-    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    fireEvent.click(rendered.getByRole('button', { name: /^refetch/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    // A full refetch reports as a refetch, not a page fetch, and holds the
+    // committed pages while all page params are replayed.
+    expect(
+      rendered.getByText(
+        'fetchingNext: false, fetchingPrev: false, refetching: true',
+      ),
+    ).toBeInTheDocument()
+    expect(rendered.getByText('data: 9,10,11')).toBeInTheDocument()
 
-    expect(states.length).toBe(8)
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Fetch next page
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isRefetching: false,
-    })
-    // Fetch next page done
-    expect(states[3]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Fetch previous page
-    expect(states[4]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: true,
-      isRefetching: false,
-    })
-    // Fetch previous page done
-    expect(states[5]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: false,
-    })
-    // Refetch
-    expect(states[6]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: true,
-    })
-    // Refetch done
-    expect(states[7]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: false,
-    })
+    await vi.advanceTimersByTimeAsync(30)
+    expect(rendered.getByText('data: 9,10,11')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'fetchingNext: false, fetchingPrev: false, refetching: false',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should return the correct states when refetch fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
-
     let isRefetch = false
 
     function Page() {
@@ -730,36 +485,8 @@ describe('useInfiniteQuery', () => {
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
-        notifyOnChangeProps: 'all',
         retry: false,
       }))
-
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
-          isRefetching: state.isRefetching,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchNextPageError: state.isFetchNextPageError,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isFetchPreviousPageError: state.isFetchPreviousPageError,
-            isFetchingPreviousPage: state.isFetchingPreviousPage,
-            isRefetchError: state.isRefetchError as true,
-            isRefetching: state.isRefetching,
-          })
-        },
-      )
 
       return (
         <div>
@@ -771,14 +498,19 @@ describe('useInfiniteQuery', () => {
           >
             refetch
           </button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>status: {state.status}</div>
+          <div>
+            refetchError: {String(state.isRefetchError)}, nextError:{' '}
+            {String(state.isFetchNextPageError)}, prevError:{' '}
+            {String(state.isFetchPreviousPageError)}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -788,59 +520,19 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
-    expect(states.length).toBe(4)
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Refetch
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: true,
-    })
-    // Refetch failed
-    expect(states[3]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: true,
-      isRefetching: false,
-    })
+    // Committed pages keep serving; the failure is a refetch error, not a
+    // page-fetch error, and does not crash into a boundary.
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('status: error')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'refetchError: true, nextError: false, prevError: false',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should return the correct states when fetchNextPage fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -853,48 +545,25 @@ describe('useInfiniteQuery', () => {
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
-        notifyOnChangeProps: 'all',
         retry: false,
       }))
-
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
-          isRefetching: state.isRefetching,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchNextPageError: state.isFetchNextPageError,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isFetchPreviousPageError: state.isFetchPreviousPageError,
-            isFetchingPreviousPage: state.isFetchingPreviousPage,
-            isRefetchError: state.isRefetchError as true,
-            isRefetching: state.isRefetching,
-          })
-        },
-      )
 
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>status: {state.status}</div>
+          <div>
+            refetchError: {String(state.isRefetchError)}, nextError:{' '}
+            {String(state.isFetchNextPageError)}, prevError:{' '}
+            {String(state.isFetchPreviousPageError)}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -904,59 +573,17 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
-    expect(states.length).toBe(4)
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Fetch next page
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: true,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Fetch next page failed
-    expect(states[3]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: true,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('status: error')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'refetchError: false, nextError: true, prevError: false',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should return the correct states when fetchPreviousPage fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -969,50 +596,27 @@ describe('useInfiniteQuery', () => {
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
-        notifyOnChangeProps: 'all',
         retry: false,
       }))
-
-      createRenderEffect(
-        () => ({
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
-          isRefetching: state.isRefetching,
-        }),
-        () => {
-          states.push({
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchNextPageError: state.isFetchNextPageError,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isFetchPreviousPageError: state.isFetchPreviousPageError,
-            isFetchingPreviousPage: state.isFetchingPreviousPage,
-            isRefetchError: state.isRefetchError as true,
-            isRefetching: state.isRefetching,
-          })
-        },
-      )
 
       return (
         <div>
           <button onClick={() => state.fetchPreviousPage()}>
             fetchPreviousPage
           </button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>status: {state.status}</div>
+          <div>
+            refetchError: {String(state.isRefetchError)}, nextError:{' '}
+            {String(state.isFetchNextPageError)}, prevError:{' '}
+            {String(state.isFetchPreviousPageError)}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -1024,137 +628,69 @@ describe('useInfiniteQuery', () => {
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
-    expect(states.length).toBe(4)
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Fetch previous page
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: false,
-      isFetchingPreviousPage: true,
-      isRefetchError: false,
-      isRefetching: false,
-    })
-    // Fetch previous page failed
-    expect(states[3]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchNextPageError: false,
-      isFetchingNextPage: false,
-      isFetchPreviousPageError: true,
-      isFetchingPreviousPage: false,
-      isRefetchError: false,
-      isRefetching: false,
-    })
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('status: error')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'refetchError: false, nextError: false, prevError: true',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    let state!: UseInfiniteQueryResult<InfiniteData<number>>
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery(() => ({
+      state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: start,
-        notifyOnChangeProps: 'all',
       }))
 
-      createRenderEffect(
-        () => ({
-          hasNextPage: state.hasNextPage,
-          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
-        }),
-        (s) => {
-          states.push(s)
-        },
+      return (
+        <div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>
+            fetchingNext: {String(state.isFetchingNextPage)}, refetching:{' '}
+            {String(state.isRefetching)}
+          </div>
+        </div>
       )
-
-      setActTimeout(() => {
-        state.refetch()
-      }, 100)
-      setActTimeout(() => {
-        state.fetchNextPage()
-      }, 110)
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(160)
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
 
-    expect(states.length).toBe(5)
-    expect(states[0]).toMatchObject({
-      hasNextPage: false,
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-    })
-    expect(states[4]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    void state.refetch()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('fetchingNext: false, refetching: true'),
+    ).toBeInTheDocument()
+
+    // fetchNextPage cancels the in-flight refetch and takes over. The
+    // committed UI is frozen by the in-progress hold (updates during a hold
+    // commit atomically at settle), so the direction handoff is asserted
+    // through untracked getter reads, which see current cache state.
+    void state.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(state.isFetchingNextPage).toBe(true)
+    expect(state.isRefetching).toBe(false)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('data: 10,11')).toBeInTheDocument()
+    expect(
+      rendered.getByText('fetchingNext: false, refetching: false'),
+    ).toBeInTheDocument()
   })
 
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
@@ -1306,55 +842,37 @@ describe('useInfiniteQuery', () => {
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    let state!: UseInfiniteQueryResult<InfiniteData<number>>
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery(() => ({
+      state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: start,
-        notifyOnChangeProps: 'all',
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push(snapshot(state) as any)
-        },
-      )
-
-      setActTimeout(() => {
-        state.fetchNextPage()
-      }, 10)
-
-      return null
+      return <div>data: {state.data.pages.join(',')}</div>
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(60)
+    await vi.advanceTimersByTimeAsync(10)
+    // fetchNextPage while the first load is still in flight keeps fetching
+    // the first page — no extra page is appended.
+    void state.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({
-      hasNextPage: false,
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    await vi.advanceTimersByTimeAsync(30)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(state.data).toEqual({ pages: [10], pageParams: [10] })
+    expect(state.hasNextPage).toBe(true)
   })
 
   it('should stop fetching additional pages when the component is unmounted and AbortSignal is consumed', async () => {
@@ -1409,186 +927,104 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to set new pages with the query client', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    let state!: UseInfiniteQueryResult<InfiniteData<number>>
 
     function Page() {
       const [firstPage, setFirstPage] = createSignal(0)
 
-      const state = useInfiniteQuery(() => ({
+      state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
-        notifyOnChangeProps: 'all',
         initialPageParam: firstPage(),
       }))
-
-      createRenderEffect(
-        () => ({
-          hasNextPage: state.hasNextPage,
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
-        }),
-        () => {
-          states.push({
-            hasNextPage: state.hasNextPage,
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
-            isFetching: state.isFetching,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isSuccess: state.isSuccess,
-          })
-        },
-      )
 
       setActTimeout(() => {
         queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
         setFirstPage(7)
       }, 20)
 
-      setActTimeout(() => {
-        state.refetch()
-      }, 50)
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(70)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
 
-    expect(states.length).toBe(5)
-    expect(states[0]).toMatchObject({
-      hasNextPage: false,
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    // After first fetch
-    expect(states[1]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [0] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    // Set state
-    expect(states[2]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [7, 8] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    // Refetch
-    expect(states[3]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [7, 8] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    // Refetch done
-    expect(states[4]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [7, 8] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    // setQueryData replaces the pages reactively without a fetch.
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 7,8')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+    // A refetch replays both stored page params and lands the same pages.
+    void state.refetch()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+    expect(rendered.getByText('data: 7,8')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByText('data: 7,8')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
   })
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => pageParam),
+    )
 
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
+        queryFn,
         initialData: { pages: [1], pageParams: [1] },
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
-        notifyOnChangeProps: 'all',
       }))
 
-      createRenderEffect(
-        () => ({
-          hasNextPage: state.hasNextPage,
-          data: state.data,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
-        }),
-        () => {
-          states.push({
-            hasNextPage: state.hasNextPage,
-            data: JSON.parse(JSON.stringify(state.data)),
-            isFetching: state.isFetching,
-            isFetchingNextPage: state.isFetchingNextPage,
-            isSuccess: state.isSuccess,
-          })
-        },
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
       )
-
-      setActTimeout(() => {
-        state.fetchNextPage()
-      }, 20)
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(30)
+    // initialData renders immediately while the mount refetch runs.
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: { pages: [1, 2] },
-      hasNextPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    // The mount refetch replays only the single stored page param.
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -1598,44 +1034,27 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push(snapshot(state) as any)
-        },
+      return (
+        <div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>hasNextPage: {String(state.hasNextPage)}</div>
+        </div>
       )
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      hasNextPage: false,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: false,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(rendered.getByText('hasNextPage: false')).toBeInTheDocument()
   })
 
   it('should compute hasNextPage correctly using initialData', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -1646,44 +1065,35 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => (lastPage === 10 ? 11 : undefined),
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push(snapshot(state) as any)
-        },
+      return (
+        <div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>hasNextPage: {String(state.hasNextPage)}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
       )
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(10)
+    // hasNextPage is computable from initialData before the mount refetch
+    // settles.
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('hasNextPage: true')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: true,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('hasNextPage: true')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
   })
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value using initialData', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -1694,39 +1104,26 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      createRenderEffect(
-        () => ({ ...state }),
-        () => {
-          states.push(snapshot(state) as any)
-        },
+      return (
+        <div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>hasNextPage: {String(state.hasNextPage)}</div>
+        </div>
       )
-
-      return null
     }
 
-    renderWithClient(queryClient, () => (
-      <Loading>
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
 
-    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('hasNextPage: false')).toBeInTheDocument()
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: false,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      hasNextPage: false,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(rendered.getByText('hasNextPage: false')).toBeInTheDocument()
   })
 
   it('should not use selected data when computing hasNextPage', async () => {
@@ -1746,14 +1143,14 @@ describe('useInfiniteQuery', () => {
 
       return (
         <div>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>hasNextPage: {state.hasNextPage ? 'true' : 'false'}</div>
+          <div>data: {state.data.pages.join(',')}</div>
+          <div>hasNextPage: {String(state.hasNextPage)}</div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>loading</span>}>
         <Page />
       </Loading>
     ))
@@ -1792,68 +1189,50 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          <Switch
-            fallback={
-              <>
-                <div>Data:</div>
-                <For each={state.data?.pages ?? []}>
-                  {(page, i) => (
-                    <div>
-                      <div>
-                        Page {i()}: {page.ts}
-                      </div>
-                      <div>
-                        <For each={page.items}>
-                          {(item) => <p>Item: {item}</p>}
-                        </For>
-                      </div>
-                    </div>
-                  )}
-                </For>
+          <div>Data:</div>
+          <For each={state.data.pages}>
+            {(page, i) => (
+              <div>
                 <div>
-                  <button
-                    onClick={() => state.fetchNextPage()}
-                    disabled={
-                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
-                    }
-                  >
-                    <Switch fallback={<>Nothing more to load</>}>
-                      <Match when={state.isFetchingNextPage}>
-                        Loading more...
-                      </Match>
-                      <Match when={state.hasNextPage}>Load More</Match>
-                    </Switch>
-                  </button>
-                  <button onClick={() => state.refetch()}>Refetch</button>
-                  <button
-                    onClick={() => {
-                      // Imagine that this mutation happens somewhere else
-                      // makes an actual network request
-                      // and calls invalidateQueries in an onSuccess
-                      items.splice(4, 1)
-                      queryClient.invalidateQueries({ queryKey: key })
-                    }}
-                  >
-                    Remove item
-                  </button>
+                  Page {i()}: {page.ts}
                 </div>
                 <div>
-                  {!state.isFetchingNextPage ? 'Background Updating...' : null}
+                  <For each={page.items}>{(item) => <p>Item: {item}</p>}</For>
                 </div>
-              </>
-            }
-          >
-            <Match when={state.status === 'pending'}>Loading...</Match>
-            <Match when={state.status === 'error'}>
-              <span>Error: {state.error?.message}</span>
-            </Match>
-          </Switch>
+              </div>
+            )}
+          </For>
+          <div>
+            <button
+              onClick={() => state.fetchNextPage()}
+              disabled={!state.hasNextPage || state.isFetchingNextPage}
+            >
+              {state.isFetchingNextPage
+                ? 'Loading more...'
+                : state.hasNextPage
+                  ? 'Load More'
+                  : 'Nothing more to load'}
+            </button>
+            <button onClick={() => state.refetch()}>Refetch</button>
+            <button
+              onClick={() => {
+                // Imagine that this mutation happens somewhere else
+                // makes an actual network request
+                // and calls invalidateQueries in an onSuccess
+                items.splice(4, 1)
+                queryClient.invalidateQueries({ queryKey: key })
+              }}
+            >
+              Remove item
+            </button>
+          </div>
+          <div>{state.isRefetching ? 'Background Updating...' : null}</div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>Loading...</span>}>
         <Page />
       </Loading>
     ))
@@ -1873,7 +1252,7 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByText('Load More'))
     await vi.advanceTimersByTimeAsync(0)
-    rendered.getByText('Loading more...')
+    expect(rendered.getByText('Loading more...')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Item: 8')).toBeInTheDocument()
     expect(rendered.getByText('Page 0: 0')).toBeInTheDocument()
@@ -1937,61 +1316,42 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          <Switch
-            fallback={
-              <>
-                <div>Data:</div>
-                <For each={state.data!.pages}>
-                  {(page, i) => (
-                    <div>
-                      <div>
-                        Page {i()}: {page.ts}
-                      </div>
-                      <div>
-                        <For each={page.items}>
-                          {(item) => <p>Item: {item}</p>}
-                        </For>
-                      </div>
-                    </div>
-                  )}
-                </For>
+          <div>Data:</div>
+          <For each={state.data.pages}>
+            {(page, i) => (
+              <div>
                 <div>
-                  <button
-                    onClick={() => state.fetchNextPage()}
-                    disabled={
-                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
-                    }
-                  >
-                    {state.isFetchingNextPage
-                      ? 'Loading more...'
-                      : state.hasNextPage
-                        ? 'Load More'
-                        : 'Nothing more to load'}
-                  </button>
-                  <button onClick={() => state.refetch()}>Refetch</button>
-                  <button onClick={() => setIsRemovedLastPage(true)}>
-                    Remove Last Page
-                  </button>
+                  Page {i()}: {page.ts}
                 </div>
                 <div>
-                  {state.isFetching && !state.isFetchingNextPage
-                    ? 'Background Updating...'
-                    : null}
+                  <For each={page.items}>{(item) => <p>Item: {item}</p>}</For>
                 </div>
-              </>
-            }
-          >
-            <Match when={state.status === 'pending'}>Loading...</Match>
-            <Match when={state.status === 'error'}>
-              <span>Error: {state.error?.message}</span>
-            </Match>
-          </Switch>
+              </div>
+            )}
+          </For>
+          <div>
+            <button
+              onClick={() => state.fetchNextPage()}
+              disabled={!state.hasNextPage || state.isFetchingNextPage}
+            >
+              {state.isFetchingNextPage
+                ? 'Loading more...'
+                : state.hasNextPage
+                  ? 'Load More'
+                  : 'Nothing more to load'}
+            </button>
+            <button onClick={() => state.refetch()}>Refetch</button>
+            <button onClick={() => setIsRemovedLastPage(true)}>
+              Remove Last Page
+            </button>
+          </div>
+          <div>{state.isRefetching ? 'Background Updating...' : null}</div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Loading>
+      <Loading fallback={<span>Loading...</span>}>
         <Page />
       </Loading>
     ))
@@ -2020,6 +1380,10 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Nothing more to load')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Remove Last Page'))
+    // Commit the signal write before the refetch dispatches: otherwise the
+    // write joins the refetch's transition hold and the queryFn reads the
+    // stale value for the whole refetch.
+    await vi.advanceTimersByTimeAsync(0)
     fireEvent.click(rendered.getByText('Refetch'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Background Updating...')).toBeInTheDocument()
@@ -2088,7 +1452,7 @@ describe('useInfiniteQuery', () => {
       )
       return (
         <div>
-          <h1>Status: {state.data?.pages[0]}</h1>
+          <h1>Status: {state.data.pages[0]}</h1>
         </div>
       )
     }
@@ -2120,7 +1484,7 @@ describe('useInfiniteQuery', () => {
       )
       return (
         <div>
-          <h1>Status: {state.data?.pages[0]}</h1>
+          <h1>Status: {state.data.pages[0]}</h1>
         </div>
       )
     }

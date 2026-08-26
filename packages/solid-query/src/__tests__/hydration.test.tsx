@@ -36,7 +36,10 @@ afterAll(() => {
 describe('SSR hydration', () => {
   it('server render produces data and the dehydration channel payload', () => {
     const { string } = harness.report
-    expect(string.counts).toEqual({ fresh: 1, stale: 1 })
+    // The placeholder query must NOT fetch during SSR: the data compute
+    // serves the placeholder before the fetch-pull branch, so the
+    // placeholder itself is the render output.
+    expect(string.counts).toEqual({ fresh: 1, stale: 1, placeholder: 0 })
     expect(string.html).toContain('fresh-server')
     expect(string.html).toContain('stale-server')
     // The provider's dehydration channel serializes cumulative snapshots of
@@ -45,6 +48,35 @@ describe('SSR hydration', () => {
     expect(string.html).toContain('"[\\"fresh\\"]"')
     // ...and the per-observer-result hydrationData copy is gone.
     expect(string.html).not.toContain('hydrationData')
+
+    // Meta guards serialize SETTLED state only (status|isFetching|isSuccess|
+    // isFetchedAfterMount from the fixture's #meta span). Boundaries hold
+    // until async settles; meta must honor the same contract — a transient
+    // 'pending'/'fetching'/isFetchedAfterMount-true here would contradict
+    // what the hydrating client computes from the primed cache.
+    const meta = /<span id="meta"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
+    expect(meta.replace(/<!--[^>]*-->/g, '')).toBe('success|false|true|false')
+
+    // Cross-cache aggregates (useIsFetching) serialize the hydration-time
+    // truth: the hydrating client's own fetches are held inside the window
+    // and primed entries land settled, so it can only ever compute 0 at
+    // claim time — any other serialized value is a structural mismatch in
+    // waiting (a server-side in-flight count does not transfer).
+    const global = /<span id="global"[^>]*>(.*?)<\/span>/.exec(
+      string.html,
+    )![1]!
+    expect(global.replace(/<!--[^>]*-->/g, '')).toBe('0')
+
+    // Placeholder serializes AS the placeholder (data|isPlaceholderData|
+    // status): no boundary hold, the status face masks to 'success' on
+    // both sides, and the hydrating client computes the identical
+    // placeholder from its unprimed cache — no mismatch, no undermining
+    // of the streamed payload (the entry is simply absent from the
+    // channel and the client fetches after its window closes).
+    const ph = /<span id="ph"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
+    expect(ph.replace(/<!--[^>]*-->/g, '')).toBe(
+      'placeholder-value|true|success',
+    )
   })
 
   it('hydration primes the query cache and refetches only per staleness rules', async () => {
@@ -102,6 +134,16 @@ describe('SSR hydration', () => {
       expect(container.querySelector('#fresh')?.textContent).toBe(
         'fresh-server',
       )
+
+      // The placeholder query hydrated showing its placeholder (identical
+      // to the server HTML), then fetched for real once its window closed
+      // (channel completed without an entry for it) and swapped in data.
+      await vi.waitFor(() => {
+        expect(app.counts.placeholder).toBe(1)
+        expect(container.querySelector('#ph')?.textContent).toContain(
+          'placeholder-resolved-client',
+        )
+      })
 
       // The serialized observer results no longer carry a hydrationData
       // copy at all — the channel is the only transport.

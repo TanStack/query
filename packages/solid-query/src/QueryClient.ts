@@ -9,63 +9,42 @@ import type {
   QueryKey,
 } from '@tanstack/query-core'
 
-export interface QueryObserverOptions<
+/**
+ * Core observer options pass through unchanged. The old adapter omitted
+ * `structuralSharing` and replaced it with a store-level `reconcile`
+ * option; with reads derived directly from cache state, core's
+ * cache-level structural sharing is exactly what keeps the data memo
+ * referentially stable, so it is exposed again and `reconcile` is gone.
+ */
+export type QueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> extends OmitKeyof<
-  QueryCoreObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey,
-    TPageParam
-  >,
-  'structuralSharing'
-> {
-  /**
-   * Set this to a reconciliation key to enable reconciliation between query results.
-   * Set this to `false` to disable reconciliation between query results.
-   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom reconciliation logic.
-   * Defaults reconciliation to false.
-   */
-  reconcile?:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
-}
+> = QueryCoreObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey,
+  TPageParam
+>
 
-export interface InfiniteQueryObserverOptions<
+export type InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
-  QueryCoreInfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-  'structuralSharing'
-> {
-  /**
-   * Set this to a reconciliation key to enable reconciliation between query results.
-   * Set this to `false` to disable reconciliation between query results.
-   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom reconciliation logic.
-   * Defaults reconciliation to false.
-   */
-  reconcile?:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData)
-}
+> = QueryCoreInfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+>
 
 export interface DefaultOptions<
   TError = DefaultError,

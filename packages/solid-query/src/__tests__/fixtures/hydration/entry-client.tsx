@@ -13,7 +13,7 @@ import type { StreamCounts } from './StreamApp'
 
 export function createApp() {
   const queryClient = new QueryClient()
-  const counts: FetchCounts = { fresh: 0, stale: 0 }
+  const counts: FetchCounts = { fresh: 0, stale: 0, placeholder: 0 }
   return {
     queryClient,
     counts,

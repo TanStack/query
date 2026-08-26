@@ -1,4 +1,5 @@
-import { createMemo, createSignal, onCleanup, untrack } from 'solid-js'
+import { createMemo } from 'solid-js'
+import { createCacheAggregate } from './cacheAggregate'
 import { useQueryClient } from './QueryClientProvider'
 import type { QueryFilters } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -9,20 +10,9 @@ export function useIsFetching(
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
-  const queryCache = createMemo(() => client().getQueryCache())
-
-  const [fetches, setFetches] = createSignal(
-    untrack(() => client().isFetching(filters?.())),
-    { ownedWrite: true },
+  return createCacheAggregate(
+    (onEvent) => client().getQueryCache().subscribe(onEvent),
+    () => client().isFetching(filters?.()),
+    0,
   )
-
-  const unsubscribe = untrack(() =>
-    queryCache().subscribe(() => {
-      setFetches(client().isFetching(filters?.()))
-    }),
-  )
-
-  onCleanup(unsubscribe)
-
-  return fetches
 }

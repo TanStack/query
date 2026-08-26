@@ -51,8 +51,9 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 0,
     })
 
+    // Non-optional even without initialData: `data` is a suspending read.
     expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
-      () => InfiniteData<{ wow: boolean }, unknown> | undefined
+      () => InfiniteData<{ wow: boolean }, unknown>
     >()
 
     expectTypeOf(options).toExtend<

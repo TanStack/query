@@ -66,7 +66,7 @@ describe('useInfiniteQuery', () => {
       expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
+    it('data is non-optional (suspending read) even when initialData is NOT provided', () => {
       const { data } = useInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -76,9 +76,9 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      // `data` is a suspending async read: it never observes the pre-fetch
+      // gap (that gap suspends into <Loading>), so no `| undefined` face.
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
   })
 
@@ -95,7 +95,7 @@ describe('useInfiniteQuery', () => {
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
+        InfiniteData<number, unknown>
       >()
     })
 
@@ -113,7 +113,7 @@ describe('useInfiniteQuery', () => {
         },
       }))
 
-      expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
+      expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected'>()
     })
   })
 
@@ -153,7 +153,7 @@ describe('useInfiniteQuery', () => {
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<string, unknown> | undefined
+        InfiniteData<string, unknown>
       >()
     })
   })
@@ -199,7 +199,7 @@ describe('useInfiniteQuery', () => {
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
+        InfiniteData<number, unknown>
       >()
     })
   })

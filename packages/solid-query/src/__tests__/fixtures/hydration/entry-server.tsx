@@ -10,7 +10,7 @@ import { App } from './App'
 import type { FetchCounts } from './App'
 
 const client = new QueryClient()
-const counts: FetchCounts = { fresh: 0, stale: 0 }
+const counts: FetchCounts = { fresh: 0, stale: 0, placeholder: 0 }
 
 // Fully-settled single-string render. Collected through pipe() rather than
 // the thenable form so the fixture builds against any solid-js 2 beta
