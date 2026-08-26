@@ -136,7 +136,7 @@ import { useSyncExternalStore } from './utils'
  *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
  *   })
  *
- *   const handleAddAll = async (todos: Array<string>) => {
+ *   async function handleAddAll(todos: Array<string>) {
  *     try {
  *       await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
  *     } catch (error) {
@@ -167,7 +167,7 @@ import { useSyncExternalStore } from './utils'
  *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
  *   })
  *
- *   const handleAddAll = async (todos: Array<string>) => {
+ *   async function handleAddAll(todos: Array<string>) {
  *     const results = await Promise.allSettled(
  *       todos.map((todo) => addMutation.mutateAsync(todo)),
  *     )

@@ -143,15 +143,17 @@ export interface QueryErrorResetBoundaryProps {
  *   return children
  * }
  *
- * const App = () => (
- *   <QueryErrorResetBoundary>
- *     {({ reset }) => (
- *       <ErrorBoundary reset={reset}>
- *         <Page />
- *       </ErrorBoundary>
- *     )}
- *   </QueryErrorResetBoundary>
- * )
+ * function App() {
+ *   return (
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary reset={reset}>
+ *           <Page />
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
+ *   )
+ * }
  * ```
  */
 export const QueryErrorResetBoundary = ({
