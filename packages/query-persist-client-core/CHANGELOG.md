@@ -1,5 +1,12 @@
 # @tanstack/query-persist-client-core
 
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.6
+
 ## 5.102.5
 
 ### Patch Changes
