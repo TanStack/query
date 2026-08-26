@@ -39,7 +39,7 @@ Will be the `number` of the mutations that your application is currently fetchin
 import { useIsMutating } from '@tanstack/preact-query'
 
 function PostsMutatingIndicator() {
-  // How many mutations matching the posts prefix are fetching?
+  // How many mutations matching the posts prefix are in progress?
   const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
 
   return isMutatingPosts ? <span>Saving posts...</span> : null

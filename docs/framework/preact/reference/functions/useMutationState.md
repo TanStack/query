@@ -76,7 +76,7 @@ function Posts() {
 
   const data = useMutationState({
     // this mutation key needs to match the mutation key of the given mutation (see above)
-    filters: { mutationKey },
+    filters: { mutationKey, status: 'success' },
     select: (mutation) => mutation.state.data,
   })
 
@@ -96,7 +96,7 @@ import { useMutationState } from '@tanstack/preact-query'
 
 function LatestPost() {
   const data = useMutationState({
-    filters: { mutationKey: ['posts'] },
+    filters: { mutationKey: ['posts'], status: 'success' },
     select: (mutation) => mutation.state.data,
   })
 
