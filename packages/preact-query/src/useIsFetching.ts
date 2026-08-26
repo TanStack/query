@@ -24,6 +24,20 @@ import { useSyncExternalStore } from './utils'
  * // How many queries matching the posts prefix are fetching?
  * const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
  * ```
+ *
+ * @example
+ * A global loading indicator for any query fetching in the background, not just the ones on screen:
+ * ```tsx
+ * import { useIsFetching } from '@tanstack/preact-query'
+ *
+ * function GlobalLoadingIndicator() {
+ *   const isFetching = useIsFetching()
+ *
+ *   return isFetching ? (
+ *     <div>Queries are fetching in the background...</div>
+ *   ) : null
+ * }
+ * ```
  */
 export function useIsFetching(
   filters?: QueryFilters,
