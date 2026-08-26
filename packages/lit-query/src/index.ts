@@ -71,4 +71,5 @@ export type {
   QueryControllerResult,
 } from './types.js'
 
+export type { ResultRenderers, RendererResult } from './render.js'
 export { renderResult } from './render.js'
