@@ -95,7 +95,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L117)
+Defined in: [preact-query/src/useInfiniteQuery.ts:115](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L115)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -158,18 +158,16 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 ### Example
 
 ```tsx
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
-
-const projectsOptions = infiniteQueryOptions({
-  queryKey: ['projects'],
-  queryFn: ({ pageParam }) => fetchProjects(pageParam),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage) => lastPage.nextId,
-})
+import { useInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery(projectsOptions)
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
 
   return (
     <button
@@ -192,7 +190,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:179](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L179)
+Defined in: [preact-query/src/useInfiniteQuery.ts:175](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L175)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -255,18 +253,16 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 ### Example
 
 ```tsx
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
-
-const projectsOptions = infiniteQueryOptions({
-  queryKey: ['projects'],
-  queryFn: ({ pageParam }) => fetchProjects(pageParam),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage) => lastPage.nextId,
-})
+import { useInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery(projectsOptions)
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
 
   return (
     <button
