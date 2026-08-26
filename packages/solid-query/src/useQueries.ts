@@ -209,9 +209,7 @@ export function useQueries<
   const combined = createMemo(() => {
     const combine = queriesOptions().combine
     const list = results() as unknown as QueriesResults<T>
-    return combine
-      ? combine(list)
-      : (list as unknown as TCombinedResult)
+    return combine ? combine(list) : (list as unknown as TCombinedResult)
   })
 
   // A stable facade over the combined result. Property reads pull through

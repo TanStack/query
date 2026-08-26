@@ -65,7 +65,8 @@ describe('useMutation 2.0 semantics', () => {
       return (
         <div>
           <span>
-            status: {mutation.status}, error: {mutation.error?.message ?? 'none'}
+            status: {mutation.status}, error:{' '}
+            {mutation.error?.message ?? 'none'}
           </span>
           <button onClick={() => mutation.mutate()}>go</button>
         </div>
@@ -75,16 +76,15 @@ describe('useMutation 2.0 semantics', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
     rendered.getByRole('button').click()
     await vi.advanceTimersByTimeAsync(10)
-    expect(
-      rendered.getByText('status: error, error: nope'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('status: error, error: nope')).toBeInTheDocument()
   })
 
   it('awaiting mutate rejects with the mutation error', async () => {
     let caught: unknown
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: () => sleep(5).then(() => Promise.reject(new Error('boom'))),
+        mutationFn: () =>
+          sleep(5).then(() => Promise.reject(new Error('boom'))),
       }))
       return (
         <button

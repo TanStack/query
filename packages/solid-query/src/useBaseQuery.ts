@@ -58,14 +58,18 @@ function metaFrom(state: QueryState<any, any>): MetaState {
 
 /** Internal seam: everything the read layer builds, for hooks that extend
  * the base result (`useInfiniteQuery` pagers ride the same entry). */
-export interface BaseQueryLayer<TQueryFnData, TError, TData, TQueryData, TQueryKey extends QueryKey> {
+export interface BaseQueryLayer<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> {
   result: QueryObserverResult<TData, TError>
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   /** Version-tracked: reading it subscribes to this query's cache events. */
   query: () => Query<TQueryFnData, TError, TQueryData, TQueryKey>
-  defaultedOptions: Accessor<
-    ReturnType<QueryClient['defaultQueryOptions']>
-  >
+  defaultedOptions: Accessor<ReturnType<QueryClient['defaultQueryOptions']>>
   isFetching: () => boolean
   status: () => 'pending' | 'error' | 'success'
 }
@@ -504,9 +508,9 @@ export function useBaseQueryLayer<
     untrack(() => metaFrom(query().state)),
   )
   const meta = isServer
-    ? (new Proxy({} as MetaState, {
+    ? new Proxy({} as MetaState, {
         get: (_, key) => serverMeta()[key as keyof MetaState],
-      }))
+      })
     : metaProjection
 
   /**
@@ -659,5 +663,11 @@ export function useBaseQueryLayer<
     defaultedOptions,
     isFetching,
     status,
-  } as unknown as BaseQueryLayer<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  } as unknown as BaseQueryLayer<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >
 }

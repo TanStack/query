@@ -184,7 +184,13 @@ export function useMutation<
       }
       try {
         if (opts.onSettled)
-          yield opts.onSettled(undefined, error, variables, undefined, callbackContext)
+          yield opts.onSettled(
+            undefined,
+            error,
+            variables,
+            undefined,
+            callbackContext,
+          )
       } catch (callbackError) {
         void Promise.reject(callbackError)
       }
@@ -214,9 +220,20 @@ export function useMutation<
     yield // re-enter the transaction before writing
     try {
       if (opts.onSuccess)
-        yield opts.onSuccess(result, variables, undefined as TOnMutateResult, callbackContext)
+        yield opts.onSuccess(
+          result,
+          variables,
+          undefined as TOnMutateResult,
+          callbackContext,
+        )
       if (opts.onSettled)
-        yield opts.onSettled(result, null, variables, undefined, callbackContext)
+        yield opts.onSettled(
+          result,
+          null,
+          variables,
+          undefined,
+          callbackContext,
+        )
     } catch (callbackError) {
       // Mirror core: a success-path callback failure fails the mutation —
       // even though the cache entry committed success, the hook settles
@@ -267,9 +284,7 @@ export function useMutation<
       const state = settled()
       if (
         state.status === 'error' &&
-        shouldThrowError(untrack(options).throwOnError, [
-          state.error as TError,
-        ])
+        shouldThrowError(untrack(options).throwOnError, [state.error as TError])
       ) {
         throw state.error
       }
@@ -305,7 +320,7 @@ export function useMutation<
     },
     get submittedAt() {
       return flight() !== null
-        ? (flightVersion(), (activeMutation?.state.submittedAt ?? 0))
+        ? (flightVersion(), activeMutation?.state.submittedAt ?? 0)
         : settled().submittedAt
     },
     get failureCount() {

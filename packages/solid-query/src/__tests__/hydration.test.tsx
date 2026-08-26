@@ -62,9 +62,7 @@ describe('SSR hydration', () => {
     // and primed entries land settled, so it can only ever compute 0 at
     // claim time — any other serialized value is a structural mismatch in
     // waiting (a server-side in-flight count does not transfer).
-    const global = /<span id="global"[^>]*>(.*?)<\/span>/.exec(
-      string.html,
-    )![1]!
+    const global = /<span id="global"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
     expect(global.replace(/<!--[^>]*-->/g, '')).toBe('0')
 
     // Placeholder serializes AS the placeholder (data|isPlaceholderData|

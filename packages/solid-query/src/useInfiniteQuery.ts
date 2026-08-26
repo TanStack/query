@@ -154,7 +154,8 @@ export function useInfiniteQuery<
   const direction = () =>
     (layer.query().state.fetchMeta as any)?.fetchMore?.direction
 
-  const pageOptions = () => layer.defaultedOptions() as unknown as PageParamsOptions
+  const pageOptions = () =>
+    layer.defaultedOptions() as unknown as PageParamsOptions
   const infiniteData = () =>
     layer.query().state.data as InfiniteData<unknown> | undefined
 

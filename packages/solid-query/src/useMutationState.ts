@@ -37,7 +37,8 @@ export function useMutationState<TResult = MutationState>(
     (onEvent) => client().getMutationCache().subscribe(onEvent),
     // Structural sharing against the previous committed value keeps
     // unchanged mutation states referentially stable across syncs.
-    (prev) => replaceEqualDeep(prev, getResult(client().getMutationCache(), options())),
+    (prev) =>
+      replaceEqualDeep(prev, getResult(client().getMutationCache(), options())),
     [],
   )
 }

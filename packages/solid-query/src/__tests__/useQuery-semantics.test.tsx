@@ -116,7 +116,9 @@ describe('useQuery 2.0 read semantics', () => {
     }
 
     const rendered = renderWithClient(queryClient, () => (
-      <Errored fallback={(err) => <span>error: {(err() as Error).message}</span>}>
+      <Errored
+        fallback={(err) => <span>error: {(err() as Error).message}</span>}
+      >
         <Loading fallback={<span>loading</span>}>
           <Page />
         </Loading>

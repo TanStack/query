@@ -53,9 +53,10 @@ export function createCacheAggregate<T>(
   // Cast: createSignal's value overload excludes functions (a function
   // argument means a compute); aggregate values are counts and arrays.
   const [durable, setDurable] = createSignal<T>(
-    (hydratedMount || isServer
-      ? empty
-      : untrack(() => read(empty))) as Exclude<T, Function>,
+    (hydratedMount || isServer ? empty : untrack(() => read(empty))) as Exclude<
+      T,
+      Function
+    >,
     { ownedWrite: true },
   )
   const [value, setValue] = createOptimistic(() => durable(), {

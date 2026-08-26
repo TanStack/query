@@ -65,7 +65,7 @@ describe('useQueries 2.0 read semantics', () => {
           { queryKey: key2, queryFn: () => sleep(10).then(() => 2) },
         ],
         combine: (results) => ({
-          total: results.reduce((sum, r) => sum + (r.data), 0),
+          total: results.reduce((sum, r) => sum + r.data, 0),
         }),
       }))
       return <span>total: {summary.total}</span>

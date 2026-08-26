@@ -370,7 +370,9 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
-    expect(rendered.getByText('hasNext: true, hasPrev: true')).toBeInTheDocument()
+    expect(
+      rendered.getByText('hasNext: true, hasPrev: true'),
+    ).toBeInTheDocument()
 
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
