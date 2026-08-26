@@ -95,7 +95,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:115](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L115)
+Defined in: [preact-query/src/useInfiniteQuery.ts:131](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L131)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -161,25 +161,41 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 import { useInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['projects'],
-      queryFn: ({ pageParam }) => fetchProjects(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => lastPage.nextId,
-    })
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
 
   return (
-    <button
-      onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetching}
-    >
-      {isFetchingNextPage
-        ? 'Loading more...'
-        : hasNextPage
-          ? 'Load More'
-          : 'Nothing more to load'}
-    </button>
+    <>
+      {data.pages.map((page) =>
+        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+      )}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    </>
   )
 }
 ```
@@ -190,7 +206,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:175](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L175)
+Defined in: [preact-query/src/useInfiniteQuery.ts:207](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L207)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -256,25 +272,41 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 import { useInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['projects'],
-      queryFn: ({ pageParam }) => fetchProjects(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => lastPage.nextId,
-    })
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
 
   return (
-    <button
-      onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetching}
-    >
-      {isFetchingNextPage
-        ? 'Loading more...'
-        : hasNextPage
-          ? 'Load More'
-          : 'Nothing more to load'}
-    </button>
+    <>
+      {data.pages.map((page) =>
+        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+      )}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    </>
   )
 }
 ```

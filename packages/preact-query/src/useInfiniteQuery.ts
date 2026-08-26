@@ -89,25 +89,41 @@ export function useInfiniteQuery<
  * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
- *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
- *     useInfiniteQuery({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *     })
+ *   const {
+ *     data,
+ *     isPending,
+ *     isError,
+ *     error,
+ *     fetchNextPage,
+ *     hasNextPage,
+ *     isFetching,
+ *     isFetchingNextPage,
+ *   } = useInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
- *     <button
- *       onClick={() => fetchNextPage()}
- *       disabled={!hasNextPage || isFetching}
- *     >
- *       {isFetchingNextPage
- *         ? 'Loading more...'
- *         : hasNextPage
- *           ? 'Load More'
- *           : 'Nothing more to load'}
- *     </button>
+ *     <>
+ *       {data.pages.map((page) =>
+ *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+ *       )}
+ *       <button
+ *         onClick={() => fetchNextPage()}
+ *         disabled={!hasNextPage || isFetching}
+ *       >
+ *         {isFetchingNextPage
+ *           ? 'Loading more...'
+ *           : hasNextPage
+ *             ? 'Load More'
+ *             : 'Nothing more to load'}
+ *       </button>
+ *     </>
  *   )
  * }
  * ```
@@ -149,25 +165,41 @@ export function useInfiniteQuery<
  * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
- *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
- *     useInfiniteQuery({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *     })
+ *   const {
+ *     data,
+ *     isPending,
+ *     isError,
+ *     error,
+ *     fetchNextPage,
+ *     hasNextPage,
+ *     isFetching,
+ *     isFetchingNextPage,
+ *   } = useInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
- *     <button
- *       onClick={() => fetchNextPage()}
- *       disabled={!hasNextPage || isFetching}
- *     >
- *       {isFetchingNextPage
- *         ? 'Loading more...'
- *         : hasNextPage
- *           ? 'Load More'
- *           : 'Nothing more to load'}
- *     </button>
+ *     <>
+ *       {data.pages.map((page) =>
+ *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
+ *       )}
+ *       <button
+ *         onClick={() => fetchNextPage()}
+ *         disabled={!hasNextPage || isFetching}
+ *       >
+ *         {isFetchingNextPage
+ *           ? 'Loading more...'
+ *           : hasNextPage
+ *             ? 'Load More'
+ *             : 'Nothing more to load'}
+ *       </button>
+ *     </>
  *   )
  * }
  * ```
