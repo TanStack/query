@@ -442,7 +442,7 @@ export function createInfiniteQueryController<
         >,
       >(
         renderers: TRenderers,
-      ) => renderResult(controller.current, renderers),
+      ) => renderResult(controller.readCurrent(), renderers),
     },
   )
 }
