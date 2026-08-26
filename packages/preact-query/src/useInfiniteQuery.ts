@@ -86,18 +86,16 @@ export function useInfiniteQuery<
  *
  * @example
  * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
- *
- * const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * })
+ * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
  *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
- *     useInfiniteQuery(projectsOptions)
+ *     useInfiniteQuery({
+ *       queryKey: ['projects'],
+ *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *       initialPageParam: 0,
+ *       getNextPageParam: (lastPage) => lastPage.nextId,
+ *     })
  *
  *   return (
  *     <button
@@ -148,18 +146,16 @@ export function useInfiniteQuery<
  *
  * @example
  * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
- *
- * const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * })
+ * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
  *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
- *     useInfiniteQuery(projectsOptions)
+ *     useInfiniteQuery({
+ *       queryKey: ['projects'],
+ *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *       initialPageParam: 0,
+ *       getNextPageParam: (lastPage) => lastPage.nextId,
+ *     })
  *
  *   return (
  *     <button
