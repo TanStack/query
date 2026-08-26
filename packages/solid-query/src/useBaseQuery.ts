@@ -181,6 +181,17 @@ export function useBaseQueryLayer<
    * signals.
    */
   const [version, setVersion] = createSignal(0, { ownedWrite: true })
+  /**
+   * Whether this query's dehydrated entry has been applied to the cache
+   * (or the channel finished without one). Non-hydrated mounts are born
+   * primed. Gates the pull-model fetch: hydration's takeover recompute can
+   * run against a cache the channel hasn't primed yet, and fetching there
+   * would race data the stream is about to deliver. Created on both sides
+   * (unread on the server) for hydration id parity.
+   */
+  const [primed, setPrimed] = createSignal(!hydratedMount, {
+    ownedWrite: true,
+  })
   const onCacheEvent = (event: { query: { queryHash: string } }) => {
     // Match the committed options hash OR the latest computed one (they
     // diverge during a hold — see `latestHash`).
@@ -249,7 +260,10 @@ export function useBaseQueryLayer<
        */
       useContext(HydrationCoordinatorContext)!.whenQueryPrimed(
         untrack(defaultedOptions).queryHash,
-        attach,
+        () => {
+          setPrimed(true)
+          attach()
+        },
       )
     } else {
       createRenderEffect(
@@ -299,8 +313,8 @@ export function useBaseQueryLayer<
   }
 
   /**
-   * The data compute. It returns either a settled value or the live fetch
-   * promise — the engine does the rest: pending reads suspend into
+   * The data compute. It returns either the settled `{ value }` root or a
+   * promise of it — the engine does the rest: pending reads suspend into
    * `<Loading>` (holding the previous committed value on refetch),
    * rejections surface to `<Errored>`, transitions hold commits until
    * in-flight answers land, and on the server the settled value serializes
@@ -315,36 +329,35 @@ export function useBaseQueryLayer<
   let chained: {
     base: Promise<unknown>
     select: unknown
-    value: TData
+    value: Promise<{ value: TData }>
   } | null = null
   const chainOnce = (
     base: Promise<any>,
     select: unknown,
-    applySelect: (d: any) => TData,
-  ): TData => {
+    wrap: (d: any) => { value: TData },
+  ): Promise<{ value: TData }> => {
     if (chained?.base !== base || chained.select !== select) {
-      chained = {
-        base,
-        select,
-        value: base.then(applySelect) as unknown as TData,
-      }
+      chained = { base, select, value: base.then(wrap) }
     }
     return chained.value
   }
 
-  const computeData = (prev?: TData): TData => {
+  const computeData = (
+    prev?: TData,
+  ): { value: TData } | Promise<{ value: TData }> => {
     const opts = defaultedOptions()
     const q = query()
     const state = q.state
     const select = opts.select as ((d: TQueryData) => TData) | undefined
-    const applySelect = (d: any): TData =>
-      select ? select(d as TQueryData) : (d as TData)
+    const wrap = (d: any): { value: TData } => ({
+      value: select ? select(d as TQueryData) : (d as TData),
+    })
 
     // Placeholder: show immediately instead of suspending while the first
     // fetch runs. When the fetch lands the version bump swaps in real data.
     if (state.data === undefined && state.status === 'pending') {
       const placeholder = resolvePlaceholder(opts)
-      if (placeholder !== undefined) return applySelect(placeholder)
+      if (placeholder !== undefined) return wrap(placeholder)
     }
 
     // A fetch in flight (including paused-offline with a retryer attached):
@@ -361,7 +374,7 @@ export function useBaseQueryLayer<
     if (state.fetchStatus !== 'idle') {
       if (state.data === undefined || prev !== undefined) {
         const promise = q.promise
-        if (promise) return chainOnce(promise, select, applySelect)
+        if (promise) return chainOnce(promise, select, wrap)
       }
     }
 
@@ -380,7 +393,7 @@ export function useBaseQueryLayer<
       }
     }
 
-    if (state.data !== undefined) return applySelect(state.data)
+    if (state.data !== undefined) return wrap(state.data)
 
     // Pending-idle: nothing in flight, nothing cached. If the query is
     // enabled, the tracked read itself starts the fetch (the router
@@ -404,7 +417,19 @@ export function useBaseQueryLayer<
        * outside the window.
        */
       if (!isServer && (sharedConfig as { hydrating?: boolean }).hydrating) {
-        return NEVER as unknown as TData
+        return NEVER
+      }
+      /**
+       * Same discipline until the hydration channel has primed (or
+       * declined) this query: the takeover recompute at hydration end can
+       * land before the channel entry does, and fetching against the
+       * still-empty cache would race the stream. The read is tracked —
+       * priming resolves through `setPrimed`, re-running this compute, and
+       * an SSR-errored query (channel done, no entry) falls through to a
+       * normal fetch here.
+       */
+      if (!primed()) {
+        return NEVER
       }
       /**
        * Same discipline while a persister is restoring: the restored value
@@ -414,7 +439,7 @@ export function useBaseQueryLayer<
        * policy), so the fetch fires then if the restore left a gap.
        */
       if (isRestoring()) {
-        return NEVER as unknown as TData
+        return NEVER
       }
       /**
        * Sync observer policy before pulling. Under a suspended boundary
@@ -427,87 +452,46 @@ export function useBaseQueryLayer<
        * sees the identical options object — a no-op diff.
        */
       if (!isServer) observer.setOptions(opts as any)
-      return chainOnce(q.fetch(opts as any), select, applySelect)
+      return chainOnce(q.fetch(opts as any), select, wrap)
     }
-    return NEVER as unknown as TData
+    return NEVER
   }
 
   /**
-   * The serialized face of the data node. On the server this is the async
-   * node whose settled value rides Solid's hydration payload; on a
-   * hydrating client it adopts that value and stays LATCHED to it until
-   * hydration completes — solid's orphaning protection re-serves the
-   * serialized value on every recompute while the stream is open, so this
-   * node cannot double as the live read once the cache starts changing.
+   * THE data node: one projection, identical on both sides — the router
+   * "feed `query()` into `createProjection`" shape. The derive asks the
+   * cache for the answer (`computeData`) and the engine owns everything
+   * else: the server runs the derive, waits, and serializes the settled
+   * store under this node's id (`deferStream` holds the flush); pending
+   * reads suspend into `<Loading>`; a hydrating client adopts the
+   * serialized value and re-derives once hydration hands over; and every
+   * landing — refetch, invalidation, placeholder upgrade — auto-reconciles
+   * into the existing proxy graph (keyed by `reconcile`, default `'id'`),
+   * so deep reads are fine-grained and item identity survives fetches.
    *
-   * `deferStream` passes straight through to the engine: the server holds
-   * the stream flush for this node's first resolution instead of letting
-   * the surrounding boundary render its fallback (ignored on the client).
-   */
-  const adopted = createMemo<TData>(computeData, {
-    deferStream: untrack(() => options().deferStream),
-  })
-
-  /**
-   * The live face. On a hydrated mount it is a separate `transparent` memo
-   * (shares the parent's id — consumes no hydration id slot on either side,
-   * so server/client node alignment is preserved, and it is never latched):
-   * while this query's entry has not been primed yet the cache is empty, so
-   * it defers to the adopted server value — critically this also covers the
-   * pending-idle branch, so the compute never starts a client fetch for
-   * data the channel is about to deliver. From the first cache event on
-   * (priming, `setQueryData`, refetches — each a version bump) it computes
-   * from the cache like any fresh mount, which is what keeps hydrated
-   * components live while other boundaries still stream.
-   */
-  const data = !hydratedMount
-    ? adopted
-    : createMemo<TData>(
-        (prev) => {
-          const state = query().state
-          if (
-            state.data === undefined &&
-            state.status === 'pending' &&
-            state.fetchStatus === 'idle'
-          ) {
-            return adopted()
-          }
-          return computeData(prev)
-        },
-        { transparent: true },
-      )
-
-  /**
-   * The consumer face of `data`: an auto-reconciling store projection over
-   * the async node. Store proxies give deep fine-grained reads (a component
-   * reading `data[0].name` re-runs only when that leaf changes), and every
-   * landing — refetch, invalidation, placeholder-to-real upgrade —
-   * reconciles into the existing proxy graph (keyed by the `reconcile`
-   * option, default `'id'`) instead of replacing it, so item identity
-   * survives across fetches. The root wrapper exists because store roots
-   * must be objects; primitive data rides the `value` leaf as a plain
-   * signal read.
+   * The `{ value }` root wrapper exists because store roots must be
+   * objects — primitive data rides the leaf as a plain signal read. The
+   * draft's committed `value` doubles as the previous-data signal for the
+   * first-paint exception in `computeData`.
    *
-   * Async semantics are inherited from the node it derives from: a pending
-   * first load suspends reads of the projection, a refetch serves the held
-   * committed value, and errors propagate through the derive.
-   *
-   * Created on BOTH sides for hydration id parity, but the server derive is
-   * INERT — server projections run their derive eagerly at creation, so a
-   * live derive would start the fetch at hook creation (the pull model
-   * fetches on read, not on creation) and, being async, serialize a second
-   * copy of the payload under this node's id. A sync no-op derive does
-   * neither — and with nothing serialized here, the hydrating client's
-   * projection takes the compute path on every re-run instead of latching
-   * to an adopted value, staying live to cache events while the stream is
-   * still open. The server's `data` face is the async memo itself; the
-   * serialized payload rides that node alone.
+   * `ssrSource: 'hybrid'` because the derive mixes server-serialized
+   * output with a client-local source (the query cache): the serialized
+   * value is adopted for the whole stream window — server truth owns the
+   * document while it is still streaming — and the derive re-runs when
+   * hydration completes, picking up any cache writes that landed
+   * mid-stream. The default ('server') mode never re-runs, which would
+   * strand those writes on the adopted value forever.
    */
   const dataStore = createProjection<{ value: TData }>(
-    isServer ? () => undefined : () => ({ value: data() }),
+    (draft) => computeData(draft.value as TData | undefined),
     {} as { value: TData },
-    { key: untrack(() => options().reconcile) },
+    {
+      key: untrack(() => options().reconcile),
+      deferStream: untrack(() => options().deferStream),
+      ssrSource: 'hybrid',
+    },
   )
+  const data = () => dataStore.value
 
   /**
    * Scalar result metadata.
@@ -604,7 +588,7 @@ export function useBaseQueryLayer<
 
   const result = {
     get data() {
-      return isServer ? data() : dataStore.value
+      return data()
     },
     get error() {
       return meta.error as TError | null
