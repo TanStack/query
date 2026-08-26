@@ -1,27 +1,14 @@
 [
   {
-    "name": "react full (brotli)",
+    "name": "react full",
     "path": "packages/react-query/build/modern/index.js",
     "limit": "13.00 kB",
     "ignore": ["react", "react-dom"]
   },
   {
-    "name": "react full (gzip)",
-    "path": "packages/react-query/build/modern/index.js",
-    "gzip": true,
-    "ignore": ["react", "react-dom"]
-  },
-  {
-    "name": "react minimal (brotli)",
+    "name": "react minimal",
     "path": "packages/react-query/build/modern/index.js",
     "limit": "9.99 kB",
-    "import": "{ useQuery, QueryClient, QueryClientProvider }",
-    "ignore": ["react", "react-dom"]
-  },
-  {
-    "name": "react minimal (gzip)",
-    "path": "packages/react-query/build/modern/index.js",
-    "gzip": true,
     "import": "{ useQuery, QueryClient, QueryClientProvider }",
     "ignore": ["react", "react-dom"]
   }
