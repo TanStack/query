@@ -388,7 +388,7 @@ export function createQueryController<
         TRenderers extends ResultRenderers<QueryObserverResult<TData, TError>>,
       >(
         renderers: TRenderers,
-      ) => renderResult(controller.current, renderers),
+      ) => renderResult(controller.readCurrent(), renderers),
     },
   )
 }
