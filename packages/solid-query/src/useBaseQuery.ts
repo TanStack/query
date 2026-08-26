@@ -478,6 +478,38 @@ export function useBaseQueryLayer<
       )
 
   /**
+   * The consumer face of `data`: an auto-reconciling store projection over
+   * the async node. Store proxies give deep fine-grained reads (a component
+   * reading `data[0].name` re-runs only when that leaf changes), and every
+   * landing — refetch, invalidation, placeholder-to-real upgrade —
+   * reconciles into the existing proxy graph (keyed by the `reconcile`
+   * option, default `'id'`) instead of replacing it, so item identity
+   * survives across fetches. The root wrapper exists because store roots
+   * must be objects; primitive data rides the `value` leaf as a plain
+   * signal read.
+   *
+   * Async semantics are inherited from the node it derives from: a pending
+   * first load suspends reads of the projection, a refetch serves the held
+   * committed value, and errors propagate through the derive.
+   *
+   * Created on BOTH sides for hydration id parity, but the server derive is
+   * INERT — server projections run their derive eagerly at creation, so a
+   * live derive would start the fetch at hook creation (the pull model
+   * fetches on read, not on creation) and, being async, serialize a second
+   * copy of the payload under this node's id. A sync no-op derive does
+   * neither — and with nothing serialized here, the hydrating client's
+   * projection takes the compute path on every re-run instead of latching
+   * to an adopted value, staying live to cache events while the stream is
+   * still open. The server's `data` face is the async memo itself; the
+   * serialized payload rides that node alone.
+   */
+  const dataStore = createProjection<{ value: TData }>(
+    isServer ? () => undefined : () => ({ value: data() }),
+    {} as { value: TData },
+    { key: untrack(() => options().reconcile) },
+  )
+
+  /**
    * Scalar result metadata.
    *
    * Client: a projection reconciled per-field from query state on every
@@ -572,7 +604,7 @@ export function useBaseQueryLayer<
 
   const result = {
     get data() {
-      return data()
+      return isServer ? data() : dataStore.value
     },
     get error() {
       return meta.error as TError | null

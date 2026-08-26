@@ -35,6 +35,16 @@ export interface UseBaseQueryOptions<
    * `deferStream` option; server-only, ignored on the client.
    */
   deferStream?: boolean
+  /**
+   * Reconciliation key for the data store. `data` is served as a Solid
+   * store projection: every landing (refetch, invalidation, placeholder
+   * upgrade) reconciles into the existing proxy graph instead of replacing
+   * it, so deep reads are fine-grained and item identity survives across
+   * fetches. This sets the identity key for that reconciliation — a
+   * property name, a key-extraction function, or `null` to merge
+   * positionally. Defaults to `'id'`. Read once at creation.
+   */
+  reconcile?: string | ((item: NonNullable<any>) => any) | null
 }
 
 export interface QueryOptions<
@@ -110,6 +120,12 @@ export interface InfiniteQueryOptions<
    * see {@link UseBaseQueryOptions.deferStream}.
    */
   deferStream?: boolean
+  /**
+   * Reconciliation key for the data store — see
+   * {@link UseBaseQueryOptions.reconcile}. For infinite queries this keys
+   * items within pages; pages themselves merge positionally.
+   */
+  reconcile?: string | ((item: NonNullable<any>) => any) | null
 }
 
 export type UseInfiniteQueryOptions<

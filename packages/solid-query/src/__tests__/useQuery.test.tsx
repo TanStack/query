@@ -3196,7 +3196,15 @@ describe('useQuery', () => {
     expect(rendered.getByText('Data: selected 3')).toBeInTheDocument()
   })
 
-  it('should share equal data structures between query results', async () => {
+  // Rewritten from `should share equal data structures between query
+  // results`: `data` is a store projection now, which is a strictly
+  // stronger guarantee than structural sharing. Refetch landings reconcile
+  // into the existing proxy graph keyed by `id`, so EVERY surviving item
+  // keeps its identity — including the one whose contents changed (its
+  // leaves update in place). The original test's observer-model framing
+  // (a new result array per notification, unchanged items ref-shared)
+  // no longer describes the data face.
+  it('should keep item identity across refetches (store reconciliation)', async () => {
     const key = queryKey()
     const result1 = [
       { id: '1', done: false },
@@ -3207,8 +3215,6 @@ describe('useQuery', () => {
       { id: '1', done: false },
       { id: '2', done: true },
     ]
-
-    const itemRefs: Array<{ item0: unknown; item1: unknown }> = []
 
     let count = 0
     let state!: UseQueryResult<typeof result1>
@@ -3223,13 +3229,6 @@ describe('useQuery', () => {
           }),
       }))
 
-      createEffect(
-        () => state.data,
-        (data) => {
-          itemRefs.push({ item0: data[0], item1: data[1] })
-        },
-      )
-
       return (
         <Loading fallback={<div>loading</div>}>
           <div>data: {String(state.data[1]?.done)}</div>
@@ -3242,19 +3241,20 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: false')).toBeInTheDocument()
 
+    const rootBefore = state.data
+    const item0Before = state.data[0]
+    const item1Before = state.data[1]
+
     void state.refetch()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: true')).toBeInTheDocument()
 
-    expect(itemRefs).toHaveLength(2)
-    const [beforeRefetch, afterRefetch] = itemRefs as [
-      (typeof itemRefs)[0],
-      (typeof itemRefs)[0],
-    ]
-    // Structural sharing keeps the identity of unchanged items across
-    // refetches; only the changed item gets a new reference.
-    expect(afterRefetch.item0).toBe(beforeRefetch.item0)
-    expect(afterRefetch.item1).not.toBe(beforeRefetch.item1)
+    // The root array and both items keep their store identity; the
+    // changed item's leaf updated in place.
+    expect(state.data).toBe(rootBefore)
+    expect(state.data[0]).toBe(item0Before)
+    expect(state.data[1]).toBe(item1Before)
+    expect(state.data[1]!.done).toBe(true)
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {

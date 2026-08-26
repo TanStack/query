@@ -378,4 +378,136 @@ describe('useQuery 2.0 read semantics', () => {
     expect(rendered.getByText('data: v2')).toBeInTheDocument()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
   })
+
+  // `data` is a store projection: landings reconcile into the existing
+  // proxy graph (keyed, default 'id') instead of replacing it — deep reads
+  // are fine-grained and item identity survives across fetches.
+  describe('data store face', () => {
+    it('tracks deep reads at the leaf — unrelated changes do not re-run them', async () => {
+      const key = queryKey()
+      let count = 0
+      const nameRenders: Array<string> = []
+      const doneRenders: Array<string> = []
+
+      function Page() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return [
+                { id: '1', name: 'first', done: false },
+                // Only this item's `done` flips on refetch.
+                { id: '2', name: 'second', done: count > 1 },
+              ]
+            }),
+        }))
+        return (
+          <div>
+            <span>
+              {(() => {
+                nameRenders.push(state.data[0]!.name)
+                return state.data[0]!.name
+              })()}
+            </span>
+            <span>
+              done:{' '}
+              {(() => {
+                const v = String(state.data[1]!.done)
+                doneRenders.push(v)
+                return v
+              })()}
+            </span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('first')).toBeInTheDocument()
+      expect(rendered.getByText('done: false')).toBeInTheDocument()
+
+      void queryClient.refetchQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('done: true')).toBeInTheDocument()
+
+      // The leaf that changed re-ran; the untouched leaf did not.
+      expect(doneRenders).toEqual(['false', 'true'])
+      expect(nameRenders).toEqual(['first'])
+    })
+
+    it('reconciles by a custom key', async () => {
+      const key = queryKey()
+      let count = 0
+      let state!: { data: Array<{ uuid: string; v: number }> }
+
+      function Page() {
+        state = useQuery(() => ({
+          queryKey: key,
+          reconcile: 'uuid',
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return count === 1
+                ? [
+                    { uuid: 'a', v: 1 },
+                    { uuid: 'b', v: 2 },
+                  ]
+                : // Reordered: keyed reconciliation must move the proxies,
+                  // not rebuild them positionally.
+                  [
+                    { uuid: 'b', v: 2 },
+                    { uuid: 'a', v: 3 },
+                  ]
+            }),
+        }))
+        return <span>v: {state.data[0]?.v}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('v: 1')).toBeInTheDocument()
+      const a = state.data[0]
+      const b = state.data[1]
+
+      void queryClient.refetchQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('v: 2')).toBeInTheDocument()
+
+      expect(state.data[0]).toBe(b)
+      expect(state.data[1]).toBe(a)
+      expect(state.data[1]!.v).toBe(3)
+    })
+
+    it('serves primitive data through the store face', async () => {
+      const key = queryKey()
+
+      function Page() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 42),
+        }))
+        return <span>n: {state.data}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('n: 42')).toBeInTheDocument()
+    })
+  })
 })
