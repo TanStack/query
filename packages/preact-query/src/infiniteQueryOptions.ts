@@ -186,7 +186,7 @@ export function infiniteQueryOptions<
  *
  * @example
  * ```tsx
- * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const projectsOptions = infiniteQueryOptions({
  *   queryKey: ['projects'],
@@ -194,6 +194,11 @@ export function infiniteQueryOptions<
  *   initialPageParam: 0,
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })
+ *
+ * function Projects() {
+ *   const { data } = useInfiniteQuery(projectsOptions)
+ *   return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ * }
  * ```
  *
  * @example
@@ -262,7 +267,7 @@ export function infiniteQueryOptions<
  *
  * @example
  * ```tsx
- * import { infiniteQueryOptions } from '@tanstack/preact-query'
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const projectsOptions = infiniteQueryOptions({
  *   queryKey: ['projects'],
@@ -270,6 +275,11 @@ export function infiniteQueryOptions<
  *   initialPageParam: 0,
  *   getNextPageParam: (lastPage) => lastPage.nextId,
  * })
+ *
+ * function Projects() {
+ *   const { data } = useInfiniteQuery(projectsOptions)
+ *   return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ * }
  * ```
  *
  * @example

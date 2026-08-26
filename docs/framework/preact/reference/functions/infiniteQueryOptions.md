@@ -80,7 +80,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:233](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L233)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:238](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L238)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -123,7 +123,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### Examples
 
 ```tsx
-import { infiniteQueryOptions } from '@tanstack/preact-query'
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
 
 export const projectsOptions = infiniteQueryOptions({
   queryKey: ['projects'],
@@ -131,6 +131,11 @@ export const projectsOptions = infiniteQueryOptions({
   initialPageParam: 0,
   getNextPageParam: (lastPage) => lastPage.nextId,
 })
+
+function Projects() {
+  const { data } = useInfiniteQuery(projectsOptions)
+  return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+}
 ```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -173,7 +178,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:309](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L309)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:319](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L319)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -216,7 +221,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### Examples
 
 ```tsx
-import { infiniteQueryOptions } from '@tanstack/preact-query'
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
 
 export const projectsOptions = infiniteQueryOptions({
   queryKey: ['projects'],
@@ -224,6 +229,11 @@ export const projectsOptions = infiniteQueryOptions({
   initialPageParam: 0,
   getNextPageParam: (lastPage) => lastPage.nextId,
 })
+
+function Projects() {
+  const { data } = useInfiniteQuery(projectsOptions)
+  return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+}
 ```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
