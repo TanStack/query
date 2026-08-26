@@ -148,9 +148,9 @@ function getResult<
  *     select: (mutation) => mutation.state.data,
  *   })
  *
- *   const latest = savedPosts[savedPosts.length - 1]
+ *   const latestSavedPost = savedPosts[savedPosts.length - 1]
  *
- *   return <>{latest ? 'Saved' : 'Nothing saved yet'}</>
+ *   return <>{latestSavedPost ? 'Saved' : 'Nothing saved yet'}</>
  * }
  * ```
  */
