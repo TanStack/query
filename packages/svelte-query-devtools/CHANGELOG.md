@@ -1,5 +1,13 @@
 # @tanstack/svelte-query-devtools
 
+## 6.1.45
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/svelte-query@6.1.45
+
 ## 6.1.44
 
 ### Patch Changes
