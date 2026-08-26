@@ -95,7 +95,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:113](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L113)
+Defined in: [preact-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L117)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -168,15 +168,19 @@ const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery(projectsOptions)
 
   return (
     <button
       onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
+      disabled={!hasNextPage || isFetching}
     >
-      Load More
+      {isFetchingNextPage
+        ? 'Loading more...'
+        : hasNextPage
+          ? 'Load More'
+          : 'Nothing more to load'}
     </button>
   )
 }
@@ -188,7 +192,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:171](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L171)
+Defined in: [preact-query/src/useInfiniteQuery.ts:179](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L179)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -261,15 +265,19 @@ const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery(projectsOptions)
 
   return (
     <button
       onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
+      disabled={!hasNextPage || isFetching}
     >
-      Load More
+      {isFetchingNextPage
+        ? 'Loading more...'
+        : hasNextPage
+          ? 'Load More'
+          : 'Nothing more to load'}
     </button>
   )
 }
