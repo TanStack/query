@@ -1,7 +1,10 @@
 cleanupUnusedCatalogs: true
 minimumReleaseAge: 1440
 linkWorkspacePackages: true
+dedupeInjectedDeps: false
 preferWorkspacePackages: true
+syncInjectedDepsAfterScripts:
+  - build
 blockExoticSubdeps: true
 trustPolicy: 'no-downgrade'
 trustPolicyExclude:
