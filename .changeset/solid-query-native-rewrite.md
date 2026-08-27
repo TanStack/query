@@ -12,6 +12,11 @@ identity survives across fetches (keyed by the `reconcile` option, default
 settle, optimistic overlays, callbacks inside the transaction). The
 observer notification/store layer is deleted —
 `QueryObserver`/`MutationObserver` remain as lifecycle/policy engines only.
+Hydration is single-channel: the data node's own serialized payload
+(`{ value, t, raw? }`) carries everything, each hydrated hook primes the
+query cache from its own node entry through query-core `hydrate()`, and
+the provider-owned dehydration channel is deleted. Requires solid-js >
+2.0.0-rc.3 (hydration-end divergence takeover + `peekNextChildId`).
 
 Breaking: `data` is non-optional on query results (reads suspend instead of
 returning `undefined`) and is a readonly store view; `mutateAsync` removed
