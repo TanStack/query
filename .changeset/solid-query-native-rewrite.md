@@ -28,6 +28,7 @@ the data store (`string | (item => any) | null`, default `'id'` — the v5
 function form is gone, core auto-reconciles); `suspense` option removed
 (suspension is the model, boundaries are the control point); the `create*`
 runtime and `Create*` type aliases are removed, completing the deprecation
-from #8950 — `use*` is the only naming. `deferStream` is now implemented
+from #8950 — `use*` is the only naming; `isInitialLoading` (deprecated
+alias of `isLoading`) is removed from query results. `deferStream` is now implemented
 (it was declared but unwired on the v6 line): it passes through to Solid's
 per-computation `deferStream` memo option.

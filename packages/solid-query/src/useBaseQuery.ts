@@ -13,7 +13,7 @@ import {
 } from 'solid-js'
 import { HYDRATION_KEY_PREFIX, useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { UseBaseQueryOptions } from './types'
+import type { UseBaseQueryOptions, UseBaseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -73,7 +73,7 @@ interface BaseQueryLayer<
   TQueryData,
   TQueryKey extends QueryKey,
 > {
-  result: QueryObserverResult<TData, TError>
+  result: UseBaseQueryResult<TData, TError>
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   /** Version-tracked: reading it subscribes to this query's cache events. */
   query: () => Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -95,7 +95,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
-): QueryObserverResult<TData, TError> {
+): UseBaseQueryResult<TData, TError> {
   return useBaseQueryLayer(options, Observer, queryClient).result
 }
 
@@ -687,9 +687,6 @@ export function useBaseQueryLayer<
     get isLoading() {
       return isPending() && isFetching()
     },
-    get isInitialLoading() {
-      return isPending() && isFetching()
-    },
     get isFetching() {
       return isFetching()
     },
@@ -755,7 +752,7 @@ export function useBaseQueryLayer<
   }
 
   return {
-    result: result as unknown as QueryObserverResult<TData, TError>,
+    result: result as unknown as UseBaseQueryResult<TData, TError>,
     observer,
     query,
     defaultedOptions,

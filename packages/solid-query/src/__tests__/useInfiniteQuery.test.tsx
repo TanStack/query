@@ -75,7 +75,6 @@ describe('useInfiniteQuery', () => {
     expect(state.fetchStatus).toBe('fetching')
     expect(state.isPending).toBe(true)
     expect(state.isLoading).toBe(true)
-    expect(state.isInitialLoading).toBe(true)
     expect(state.isFetching).toBe(true)
     expect(state.isSuccess).toBe(false)
     expect(state.isError).toBe(false)

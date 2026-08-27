@@ -80,17 +80,28 @@ export type UseQueryOptions<
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Override<QueryObserverResult<TData, TError>, { data: TData }>
+> = Override<
+  OmitKeyof<QueryObserverResult<TData, TError>, 'isInitialLoading'>,
+  { data: TData }
+>
 
 export type UseQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
+/**
+ * Distributes an `isInitialLoading` omit over result unions so status
+ * discriminants survive (a plain Omit over a union collapses it).
+ */
+type OmitIsInitialLoading<T> = T extends unknown
+  ? OmitKeyof<T, 'isInitialLoading' & keyof T>
+  : never
+
 export type DefinedUseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedQueryObserverResult<TData, TError>
+> = OmitIsInitialLoading<DefinedQueryObserverResult<TData, TError>>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -142,12 +153,15 @@ export type UseInfiniteQueryOptions<
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Override<InfiniteQueryObserverResult<TData, TError>, { data: TData }>
+> = Override<
+  OmitKeyof<InfiniteQueryObserverResult<TData, TError>, 'isInitialLoading'>,
+  { data: TData }
+>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>
+> = OmitIsInitialLoading<DefinedInfiniteQueryObserverResult<TData, TError>>
 
 /* --- Create Mutation Types --- */
 export interface MutationOptions<
