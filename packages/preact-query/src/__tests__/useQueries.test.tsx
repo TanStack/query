@@ -246,6 +246,43 @@ describe('useQueries', () => {
     consoleMock.mockRestore()
   })
 
+  it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key,
+            // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+            // literal `undefined` error crashes the framework. `0` is just an arbitrary
+            // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+            // crash) — any falsy primitive other than `null`/`undefined` would do.
+            queryFn: () => Promise.reject(0),
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
   it('should use provided custom queryClient', async () => {
     const key = queryKey()
     const queryFn = async () => {
