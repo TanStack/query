@@ -52,8 +52,12 @@ describe('SSR hydration', () => {
     // the hydrating client reconstruct the entry with staleness intact,
     // and hash addressing means coverage is the cache's, not the rendered
     // tree's. There is no separate dehydration channel...
-    expect(string.html).toMatch(/sq:\[\\"fresh\\"\]"\]=[^<]*data:"fresh-server"/)
-    expect(string.html).toMatch(/sq:\[\\"stale\\"\]"\]=[^<]*data:"stale-server"/)
+    expect(string.html).toMatch(
+      /sq:\[\\"fresh\\"\]"\]=[^<]*data:"fresh-server"/,
+    )
+    expect(string.html).toMatch(
+      /sq:\[\\"stale\\"\]"\]=[^<]*data:"stale-server"/,
+    )
     expect(string.html).toMatch(/\{data:"fresh-server",t:\d+\}/)
     // Content addressing covers the whole cache: this query was prefetched
     // during SSR and never rendered by any component, yet it transfers.
