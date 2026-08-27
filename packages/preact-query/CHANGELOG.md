@@ -1,5 +1,14 @@
 # @tanstack/preact-query
 
+## 5.102.8
+
+### Patch Changes
+
+- [#11315](https://github.com/TanStack/query/pull/11315) [`6c27607`](https://github.com/TanStack/query/commit/6c27607d7ffc87612a8f1222a95f28bf5f9a045e) - fix(preact-query/useQueries): keep unsubscribed idle
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
 ## 5.102.7
 
 ### Patch Changes

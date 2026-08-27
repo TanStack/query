@@ -1,5 +1,12 @@
 # @tanstack/vue-query
 
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
 ## 5.102.7
 
 ### Patch Changes
