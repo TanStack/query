@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { environmentManager, hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
@@ -95,7 +95,17 @@ export const HydrationBoundary = ({
           hydrate(client, { queries: newQueries }, optionsRef.current)
         }
         if (existingQueries.length > 0) {
-          return existingQueries
+          // The deferral above only pays off on the client, where a transition
+          // can still be aborted. On the server there is no commit phase, so an
+          // effect never runs and the queue would simply be dropped: children
+          // then render against a cache that is missing the data we just
+          // dehydrated, and fetch it a second time during SSR.
+          if (environmentManager.isServer()) {
+            // eslint-disable-next-line react-hooks/refs
+            hydrate(client, { queries: existingQueries }, optionsRef.current)
+          } else {
+            return existingQueries
+          }
         }
       }
       return undefined

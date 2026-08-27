@@ -3,9 +3,11 @@ import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
+  HydrationBoundary,
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  dehydrate,
   useInfiniteQuery,
   useIsFetching,
   useMutation,
@@ -30,6 +32,44 @@ describe('Server Side Rendering', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  it('should hydrate a query that an observer above the boundary already built', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    const prefetchClient = new QueryClient()
+    prefetchClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(prefetchClient)
+
+    // Rendering this before the boundary puts an empty query for the same key
+    // into the cache, which used to make the boundary defer hydration to an
+    // effect that never runs on the server.
+    function Header() {
+      useQuery({ queryKey: key, queryFn })
+      return null
+    }
+
+    function Content() {
+      const query = useQuery({ queryKey: key, queryFn })
+      return <div>{`status ${query.status} data ${query.data}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Header />
+        <HydrationBoundary state={dehydratedState}>
+          <Content />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status success data prefetched')
+    expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
   it('should not trigger fetch', () => {
