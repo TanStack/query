@@ -86,6 +86,21 @@ export function createBaseQuery<
     TError
   > | null>(null)
 
+  let pendingTaskRef: PendingTaskRef | null = null
+  // A fetch can start synchronously (on subscribe, or when setOptions enables a dependent query),
+  // but the first 'fetching' notification reaches the subscriber a notifyManager schedule turn
+  // later (setTimeout(0) by default). Registering the pending task only in the subscriber leaves
+  // that turn uncovered: with zoneless change detection, `ApplicationRef.whenStable()` can resolve
+  // inside it and Angular SSR serializes before the query's state is applied. Register eagerly at
+  // every point a fetch may have started instead.
+  const trackFetch = (
+    observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  ) => {
+    if (observer.getCurrentResult().fetchStatus === 'fetching') {
+      pendingTaskRef ??= pendingTasks.add()
+    }
+  }
+
   effect(
     (onCleanup) => {
       const observer = observerSignal()
@@ -93,6 +108,7 @@ export function createBaseQuery<
 
       untracked(() => {
         observer.setOptions(defaultedOptions)
+        trackFetch(observer)
       })
       onCleanup(() => {
         ngZone.run(() => resultFromSubscriberSignal.set(null))
@@ -108,7 +124,6 @@ export function createBaseQuery<
   effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-    let pendingTaskRef: PendingTaskRef | null = null
 
     const unsubscribe = isRestoring()
       ? () => undefined
@@ -121,28 +136,39 @@ export function createBaseQuery<
                     pendingTaskRef = pendingTasks.add()
                   }
 
-                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
-                    pendingTaskRef()
-                    pendingTaskRef = null
+                  try {
+                    if (
+                      state.isError &&
+                      !state.isFetching &&
+                      shouldThrowError(observer.options.throwOnError, [
+                        state.error,
+                        observer.getCurrentQuery(),
+                      ])
+                    ) {
+                      ngZone.onError.emit(state.error)
+                      throw state.error
+                    }
+                    resultFromSubscriberSignal.set(state)
+                  } finally {
+                    // Released only after the state is written to the signal (or the error is
+                    // rethrown): releasing first exposes one synchronous statement in which the
+                    // pending-task ledger is empty while the rendered view is still stale — with
+                    // zoneless change detection, `whenStable()` latches in that statement and SSR
+                    // serializes the stale view.
+                    if (state.fetchStatus === 'idle' && pendingTaskRef) {
+                      pendingTaskRef()
+                      pendingTaskRef = null
+                    }
                   }
-
-                  if (
-                    state.isError &&
-                    !state.isFetching &&
-                    shouldThrowError(observer.options.throwOnError, [
-                      state.error,
-                      observer.getCurrentQuery(),
-                    ])
-                  ) {
-                    ngZone.onError.emit(state.error)
-                    throw state.error
-                  }
-                  resultFromSubscriberSignal.set(state)
                 })
               }),
             )
           }),
         )
+
+    if (!isRestoring()) {
+      untracked(() => trackFetch(observer))
+    }
 
     onCleanup(() => {
       if (pendingTaskRef) {
