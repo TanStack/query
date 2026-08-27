@@ -62,6 +62,8 @@ export function createMutation<
   )
 
   $effect.pre(() => {
+    Object.assign(result, observer.getCurrentResult())
+
     const unsubscribe = observer.subscribe((val) => {
       notifyManager.batchCalls(() => {
         Object.assign(result, val)
