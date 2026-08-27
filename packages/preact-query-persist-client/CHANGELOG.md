@@ -1,5 +1,37 @@
 # @tanstack/preact-query-persist-client
 
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies [[`67fddee`](https://github.com/TanStack/query/commit/67fddee6310ca0dd87749ed7a1b4a7178c6e6aae)]:
+  - @tanstack/preact-query@5.102.7
+  - @tanstack/query-persist-client-core@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.6
+  - @tanstack/query-persist-client-core@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.5
+  - @tanstack/query-persist-client-core@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.4
+  - @tanstack/query-persist-client-core@5.102.4
+
 ## 5.102.3
 
 ### Patch Changes

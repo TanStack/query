@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:230](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L230)
+Defined in: [preact-query/src/useSuspenseQueries.ts:264](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L264)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -48,7 +48,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ### Returns
@@ -63,7 +63,7 @@ Caveat: the component will only re-mount after all queries have finished loading
 stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
 this, make sure to set a high enough `staleTime`. Cancellation does not work.
 
-### Example
+### Examples
 
 ```tsx
 import { Suspense } from 'preact/compat'
@@ -71,7 +71,7 @@ import { useSuspenseQueries } from '@tanstack/preact-query'
 
 function Posts({ ids }: { ids: Array<number> }) {
   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
-  const results = useSuspenseQueries({
+  const postQueries = useSuspenseQueries({
     queries: ids.map((id) => ({
       queryKey: ['post', id],
       queryFn: () => fetchPost(id),
@@ -80,8 +80,8 @@ function Posts({ ids }: { ids: Array<number> }) {
 
   return (
     <ul>
-      {results.map((result) => (
-        <li key={result.data.id}>{result.data.title}</li>
+      {postQueries.map((query) => (
+        <li key={query.data.id}>{query.data.title}</li>
       ))}
     </ul>
   )
@@ -96,13 +96,46 @@ function App() {
 }
 ```
 
+Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+they fetch in parallel rather than suspending one after another:
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseQueries } from '@tanstack/preact-query'
+
+function Dashboard() {
+  const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+    queries: [
+      { queryKey: ['users'], queryFn: fetchUsers },
+      { queryKey: ['teams'], queryFn: fetchTeams },
+      { queryKey: ['projects'], queryFn: fetchProjects },
+    ],
+  })
+
+  return (
+    <div>
+      <UserList users={usersQuery.data} />
+      <TeamList teams={teamsQuery.data} />
+      <ProjectList projects={projectsQuery.data} />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading dashboard...</h1>}>
+      <Dashboard />
+    </Suspense>
+  )
+}
+```
+
 ## Call Signature
 
 ```ts
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:297](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L297)
+Defined in: [preact-query/src/useSuspenseQueries.ts:365](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L365)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -140,7 +173,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ### Returns
@@ -155,7 +188,7 @@ Caveat: the component will only re-mount after all queries have finished loading
 stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
 this, make sure to set a high enough `staleTime`. Cancellation does not work.
 
-### Example
+### Examples
 
 ```tsx
 import { Suspense } from 'preact/compat'
@@ -163,7 +196,7 @@ import { useSuspenseQueries } from '@tanstack/preact-query'
 
 function Posts({ ids }: { ids: Array<number> }) {
   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
-  const results = useSuspenseQueries({
+  const postQueries = useSuspenseQueries({
     queries: ids.map((id) => ({
       queryKey: ['post', id],
       queryFn: () => fetchPost(id),
@@ -172,8 +205,8 @@ function Posts({ ids }: { ids: Array<number> }) {
 
   return (
     <ul>
-      {results.map((result) => (
-        <li key={result.data.id}>{result.data.title}</li>
+      {postQueries.map((query) => (
+        <li key={query.data.id}>{query.data.title}</li>
       ))}
     </ul>
   )
@@ -183,6 +216,39 @@ function App() {
   return (
     <Suspense fallback={<h1>Loading posts...</h1>}>
       <Posts ids={[1, 2, 3]} />
+    </Suspense>
+  )
+}
+```
+
+Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+they fetch in parallel rather than suspending one after another:
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseQueries } from '@tanstack/preact-query'
+
+function Dashboard() {
+  const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+    queries: [
+      { queryKey: ['users'], queryFn: fetchUsers },
+      { queryKey: ['teams'], queryFn: fetchTeams },
+      { queryKey: ['projects'], queryFn: fetchProjects },
+    ],
+  })
+
+  return (
+    <div>
+      <UserList users={usersQuery.data} />
+      <TeamList teams={teamsQuery.data} />
+      <ProjectList projects={projectsQuery.data} />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading dashboard...</h1>}>
+      <Dashboard />
     </Suspense>
   )
 }

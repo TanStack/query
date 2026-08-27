@@ -7,6 +7,7 @@ import type { UseMutationOptions } from './types'
  * `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
  * `useMutationState`.
  *
+ * @see {@link useMutation} to run the mutation these options describe.
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, with a
  * required `mutationKey`.
  * @returns The same options object, unchanged.
@@ -64,6 +65,7 @@ export function mutationOptions<
  * `mutationKey` is required on this overload — use this when you don't need to look the mutation up later
  * (e.g. with `useMutationState`).
  *
+ * @see {@link useMutation} to run the mutation these options describe.
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
  * `mutationKey`.
  * @returns The same options object, unchanged.

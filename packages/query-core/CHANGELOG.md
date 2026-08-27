@@ -1,5 +1,22 @@
 # @tanstack/query-core
 
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- [#11302](https://github.com/TanStack/query/pull/11302) [`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d) - Reduce the Query Core bundle size by removing unused symbol descriptions and
+  simplifying internal helpers.
+
+## 5.102.4
+
+### Patch Changes
+
+- [#11293](https://github.com/TanStack/query/pull/11293) [`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec) - Avoid scheduling stale timeouts for disabled query observers.
+
 ## 5.102.3
 
 ## 5.102.2

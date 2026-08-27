@@ -185,7 +185,7 @@ export type SuspenseQueriesResults<
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
- * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
@@ -202,7 +202,7 @@ export type SuspenseQueriesResults<
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
- *   const results = useSuspenseQueries({
+ *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -211,8 +211,8 @@ export type SuspenseQueriesResults<
  *
  *   return (
  *     <ul>
- *       {results.map((result) => (
- *         <li key={result.data.id}>{result.data.title}</li>
+ *       {postQueries.map((query) => (
+ *         <li key={query.data.id}>{query.data.title}</li>
  *       ))}
  *     </ul>
  *   )
@@ -222,6 +222,40 @@ export type SuspenseQueriesResults<
  *   return (
  *     <Suspense fallback={<h1>Loading posts...</h1>}>
  *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *       <Dashboard />
  *     </Suspense>
  *   )
  * }
@@ -252,7 +286,7 @@ export function useSuspenseQueries<
  * `throwOnError`, `enabled`, or `placeholderData`.
  *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
- * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
@@ -269,7 +303,7 @@ export function useSuspenseQueries<
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
- *   const results = useSuspenseQueries({
+ *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -278,8 +312,8 @@ export function useSuspenseQueries<
  *
  *   return (
  *     <ul>
- *       {results.map((result) => (
- *         <li key={result.data.id}>{result.data.title}</li>
+ *       {postQueries.map((query) => (
+ *         <li key={query.data.id}>{query.data.title}</li>
  *       ))}
  *     </ul>
  *   )
@@ -289,6 +323,40 @@ export function useSuspenseQueries<
  *   return (
  *     <Suspense fallback={<h1>Loading posts...</h1>}>
  *       <Posts ids={[1, 2, 3]} />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *       <Dashboard />
  *     </Suspense>
  *   )
  * }

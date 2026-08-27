@@ -1,5 +1,35 @@
 # @tanstack/preact-query
 
+## 5.102.7
+
+### Patch Changes
+
+- [#11309](https://github.com/TanStack/query/pull/11309) [`67fddee`](https://github.com/TanStack/query/commit/67fddee6310ca0dd87749ed7a1b4a7178c6e6aae) - fix(preact-query): propagate falsy errors to the error boundary
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies [[`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d)]:
+  - @tanstack/query-core@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies [[`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec)]:
+  - @tanstack/query-core@5.102.4
+
 ## 5.102.3
 
 ### Patch Changes

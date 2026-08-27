@@ -36,7 +36,7 @@ export interface HydrationBoundaryProps {
    */
   children?: ComponentChildren
   /**
-   * Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+   * Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used.
    */
   queryClient?: QueryClient
 }

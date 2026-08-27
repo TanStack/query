@@ -8,7 +8,8 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver, focusManager } from '..'
+import { QueryClient, QueryObserver, focusManager, timeoutManager } from '..'
+import { setIsServer } from './utils'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -1403,6 +1404,52 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.isStale).toBe(false)
+  })
+
+  it('should not schedule a stale timeout for disabled observers', () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data', {
+      updatedAt: Date.now() - 20,
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      staleTime: 10,
+    })
+    const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
+  it('should not schedule timers on the server', () => {
+    const resetIsServer = setIsServer(true)
+
+    try {
+      const key = queryKey()
+      queryClient.setQueryData(key, 'data')
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        staleTime: 10,
+        refetchInterval: 10,
+      })
+      const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
+      const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
+
+      const unsubscribe = observer.subscribe(vi.fn())
+
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
+      expect(setIntervalSpy).not.toHaveBeenCalled()
+
+      unsubscribe()
+    } finally {
+      resetIsServer()
+    }
   })
 
   it('should allow staleTime as a function', async () => {

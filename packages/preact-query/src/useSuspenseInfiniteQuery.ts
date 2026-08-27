@@ -22,7 +22,7 @@ import { useBaseQuery } from './useBaseQuery'
  * Caveat: cancellation does not work.
  *
  * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
  * `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
@@ -35,20 +35,28 @@ import { useBaseQuery } from './useBaseQuery'
  *
  * function Projects() {
  *   // `data` is guaranteed to be defined here — no `isPending` check needed.
- *   const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
- *     queryKey: ['projects'],
- *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *   })
+ *   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+ *     useSuspenseInfiniteQuery({
+ *       queryKey: ['projects'],
+ *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *       initialPageParam: 0,
+ *       getNextPageParam: (lastPage) => lastPage.nextId,
+ *     })
  *
  *   return (
  *     <div>
  *       {data.pages.map((page) =>
  *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
  *       )}
- *       <button onClick={() => fetchNextPage()} disabled={!hasNextPage}>
- *         Load More
+ *       <button
+ *         onClick={() => fetchNextPage()}
+ *         disabled={!hasNextPage || isFetching}
+ *       >
+ *         {isFetchingNextPage
+ *           ? 'Loading more...'
+ *           : hasNextPage
+ *             ? 'Load More'
+ *             : 'Nothing more to load'}
  *       </button>
  *     </div>
  *   )

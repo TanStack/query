@@ -235,7 +235,7 @@ export type QueriesResults<
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
  *
- * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
  * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
@@ -295,7 +295,9 @@ export function useQueries<
      */
     combine?: (result: QueriesResults<T>) => TCombinedResult
     /**
-     * Set this to `false` to unsubscribe this observer from updates to the query cache. Defaults to `true`.
+     * Set this to `false` to unsubscribe this observer from updates to the query cache.
+     *
+     * @defaultValue true
      */
     subscribed?: boolean
   },
@@ -304,6 +306,7 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const subscribed = options.subscribed !== false
 
   const defaultedQueries = useMemo(
     () =>
@@ -315,11 +318,13 @@ export function useQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
           ? 'isRestoring'
-          : 'optimistic'
+          : subscribed
+            ? 'optimistic'
+            : undefined
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, isRestoring, subscribed],
   )
 
   defaultedQueries.forEach((queryOptions) => {
@@ -346,7 +351,7 @@ export function useQueries<
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
       (onStoreChange) =>
@@ -400,7 +405,7 @@ export function useQueries<
     },
   )
 
-  if (firstSingleResultWhichShouldThrow?.error) {
+  if (firstSingleResultWhichShouldThrow) {
     throw firstSingleResultWhichShouldThrow.error
   }
 

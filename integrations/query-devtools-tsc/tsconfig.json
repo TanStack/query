@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noUncheckedSideEffectImports": true,
+    "preserveSymlinks": true,
+    "skipLibCheck": false,
+    "strict": true
+  },
+  "include": ["./src"]
+}

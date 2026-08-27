@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:66](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L66)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L74)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -48,7 +48,7 @@ The [UseSuspenseInfiniteQueryOptions](../interfaces/UseSuspenseInfiniteQueryOpti
 
 `QueryClient`
 
-Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
 
 ## Returns
@@ -67,20 +67,28 @@ import { useSuspenseInfiniteQuery } from '@tanstack/preact-query'
 
 function Projects() {
   // `data` is guaranteed to be defined here — no `isPending` check needed.
-  const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: ({ pageParam }) => fetchProjects(pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextId,
-  })
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useSuspenseInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
 
   return (
     <div>
       {data.pages.map((page) =>
         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
       )}
-      <button onClick={() => fetchNextPage()} disabled={!hasNextPage}>
-        Load More
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
       </button>
     </div>
   )

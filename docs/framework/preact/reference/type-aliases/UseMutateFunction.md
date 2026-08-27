@@ -7,7 +7,7 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```
 
-Defined in: [preact-query/src/types.ts:430](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L430)
+Defined in: [preact-query/src/types.ts:432](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L432)
 
 The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced

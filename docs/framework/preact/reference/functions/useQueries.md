@@ -56,13 +56,19 @@ and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder fun
 
 `boolean`
 
-Set this to `false` to unsubscribe this observer from updates to the query cache. Defaults to `true`.
+Set this to `false` to unsubscribe this observer from updates to the query cache.
+
+**Default Value**
+
+```ts
+true
+```
 
 ### queryClient?
 
 `QueryClient`
 
-Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
 
 ## Returns

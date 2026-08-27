@@ -7,7 +7,7 @@ title: UsePrefetchInfiniteQueryOptions
 type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:116](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L116)
+Defined in: [preact-query/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L117)
 
 The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
 except `queryFn` is required unless a default query function has been defined.

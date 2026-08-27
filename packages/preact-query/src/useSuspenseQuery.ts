@@ -11,8 +11,12 @@ import { useBaseQuery } from './useBaseQuery'
  *
  * Caveat: cancellation does not work.
  *
+ * @remarks Multiple `useSuspenseQuery` calls in the same component suspend serially, causing a request
+ * waterfall — each one blocks rendering until it resolves, so the next doesn't even start fetching until then.
+ * Use {@link useSuspenseQueries} instead when you have more than one suspenseful query in a component, so they
+ * fetch in parallel.
  * @param options - The {@link UseSuspenseQueryOptions} to use — the same options as `useQuery`, minus the ones listed above.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The same object as `useQuery`, except that `data` is guaranteed to be defined, `isPlaceholderData`
  * is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
