@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { environmentManager, hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
@@ -50,6 +50,12 @@ export const HydrationBoundary = ({
   // If the transition is aborted, we will have hydrated any _new_ queries, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
+  //
+  // On the server there is no effect phase to hold back until, so holding back
+  // would mean never hydrating those queries at all. Neither reason for holding
+  // back applies there either: there are no transitions to abort, and no
+  // observer can have subscribed yet because subscriptions happen in effects,
+  // so hydrating in render cannot be an observed side effect.
   const hydrationQueue: DehydratedState['queries'] | undefined =
     React.useMemo(() => {
       if (state) {
@@ -83,7 +89,11 @@ export const HydrationBoundary = ({
                   existingQuery.state.dataUpdatedAt)
 
             if (hydrationIsNewer) {
-              existingQueries.push(dehydratedQuery)
+              if (environmentManager.isServer()) {
+                newQueries.push(dehydratedQuery)
+              } else {
+                existingQueries.push(dehydratedQuery)
+              }
             }
           }
         }

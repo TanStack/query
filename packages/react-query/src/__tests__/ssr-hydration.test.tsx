@@ -1,15 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
-import { act } from 'react'
+import { Suspense, act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
+  HydrationBoundary,
   QueryCache,
   QueryClient,
   QueryClientProvider,
   dehydrate,
   hydrate,
   useQuery,
+  useSuspenseQuery,
 } from '..'
 import { setIsServer } from './utils'
 
@@ -269,5 +271,53 @@ describe('Server side rendering with de/rehydration', () => {
     unmount()
     queryClient.clear()
     consoleMock.mockRestore()
+  })
+
+  // https://github.com/TanStack/query/issues/10145
+  it('should hydrate a query that a useQuery above the boundary put in the cache', async () => {
+    const key = queryKey()
+    const renderQueryFn = vi.fn(() => fetchData('rendered'))
+
+    function Header() {
+      const result = useQuery({ queryKey: key, queryFn: renderQueryFn })
+      return <PrintStateComponent componentName="Header" result={result} />
+    }
+
+    function Detail() {
+      const result = useSuspenseQuery({ queryKey: key, queryFn: renderQueryFn })
+      return <PrintStateComponent componentName="Detail" result={result} />
+    }
+
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient()
+    await prefetchClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => fetchData('prefetched'),
+    })
+    const dehydratedState = dehydrate(prefetchClient)
+
+    // `Header` renders before the boundary and puts a pending query for the
+    // same key in the cache, even though it never fetches on the server.
+    const renderClient = new QueryClient()
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <Header />
+        <HydrationBoundary state={dehydratedState}>
+          <Suspense fallback="loading">
+            <Detail />
+          </Suspense>
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    prefetchClient.clear()
+    renderClient.clear()
+    setIsServer(false)
+
+    expect(markup).toContain(
+      'Detail - status:success fetching:false data:prefetched',
+    )
+    expect(renderQueryFn).not.toHaveBeenCalled()
   })
 })
