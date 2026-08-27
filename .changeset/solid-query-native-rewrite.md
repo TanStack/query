@@ -26,6 +26,8 @@ returning `undefined`) and is a readonly store view; `mutateAsync` removed
 (`mutate` returns a promise); `reconcile` is now the reconciliation key for
 the data store (`string | (item => any) | null`, default `'id'` — the v5
 function form is gone, core auto-reconciles); `suspense` option removed
-(suspension is the model, boundaries are the control point). `deferStream`
-is now implemented (it was declared but unwired on the v6 line): it passes
-through to Solid's per-computation `deferStream` memo option.
+(suspension is the model, boundaries are the control point); the `create*`
+runtime and `Create*` type aliases are removed, completing the deprecation
+from #8950 — `use*` is the only naming. `deferStream` is now implemented
+(it was declared but unwired on the v6 line): it passes through to Solid's
+per-computation `deferStream` memo option.

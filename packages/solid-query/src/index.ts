@@ -1,10 +1,5 @@
 /* istanbul ignore file */
 
-import { useQuery } from './useQuery'
-import { useInfiniteQuery } from './useInfiniteQuery'
-import { useMutation } from './useMutation'
-import { useQueries } from './useQueries'
-
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -28,20 +23,6 @@ export type {
   UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
-  // Aliases (create* and use* are both supported)
-  UseBaseQueryOptions as CreateBaseQueryOptions,
-  UseBaseQueryResult as CreateBaseQueryResult,
-  UseInfiniteQueryOptions as CreateInfiniteQueryOptions,
-  UseInfiniteQueryResult as CreateInfiniteQueryResult,
-  UseMutateFunction as CreateMutateFunction,
-  UseMutationOptions as CreateMutationOptions,
-  UseMutationResult as CreateMutationResult,
-  UseBaseMutationResult as CreateBaseMutationResult,
-  UseQueryOptions as CreateQueryOptions,
-  UseQueryResult as CreateQueryResult,
-  DefinedUseBaseQueryResult as DefinedCreateBaseQueryResult,
-  DefinedUseInfiniteQueryResult as DefinedCreateInfiniteQueryResult,
-  DefinedUseQueryResult as DefinedCreateQueryResult,
 } from './types'
 
 export { QueryClient } from './QueryClient'
@@ -52,7 +33,6 @@ export type {
   InfiniteQueryObserverOptions,
 } from './QueryClient'
 export { useQuery } from './useQuery'
-export const createQuery = useQuery
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
@@ -65,9 +45,7 @@ export {
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { useIsFetching as createIsFetching } from './useIsFetching'
-export { useInfiniteQuery }
-export const createInfiniteQuery = useInfiniteQuery
+export { useInfiniteQuery } from './useInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
@@ -75,11 +53,7 @@ export type {
 } from './infiniteQueryOptions'
 export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
-export const createMutation = useMutation
 export { useIsMutating } from './useIsMutating'
-export { useIsMutating as createIsMutating } from './useIsMutating'
 export { useMutationState } from './useMutationState'
-export { useMutationState as createMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
-export const createQueries = useQueries
 export { useIsRestoring, IsRestoringContext } from './isRestoring'
