@@ -1402,7 +1402,7 @@
             },
             {
               "label": "Functions / renderResult",
-                "to": "framework/lit/reference/functions/renderResult"
+              "to": "framework/lit/reference/functions/renderResult"
             },
             {
               "label": "Functions / useIsFetching",
