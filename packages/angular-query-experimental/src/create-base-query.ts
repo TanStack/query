@@ -193,7 +193,9 @@ export function createBaseQuery<
         ...result,
         refetch: ((...args: Parameters<typeof originalRefetch>) => {
           observer.setOptions(defaultedOptionsSignal())
-          return originalRefetch(...args)
+          const refetchResult = originalRefetch(...args)
+          trackFetch(observer)
+          return refetchResult
         }) as typeof originalRefetch,
       }
     }),

@@ -82,6 +82,29 @@ describe('pending tasks integration', () => {
     expect(events).toEqual(['add', 'release:ok'])
   })
 
+  it('registers the task when refetch() starts a fetch', async () => {
+    const key = queryKey()
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'ok'),
+      })),
+    )
+    readData = () => query.data()
+    TestBed.tick()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(events).toEqual(['add', 'release:ok'])
+    events.length = 0
+
+    void query.refetch()
+
+    // Registered synchronously with the refetch, not one notifyManager schedule turn later
+    expect(events).toEqual(['add'])
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(events).toEqual(['add', 'release:ok'])
+  })
+
   it('releases the task when the query errors', async () => {
     const key = queryKey()
     const query = TestBed.runInInjectionContext(() =>
