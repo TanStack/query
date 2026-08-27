@@ -31,7 +31,12 @@ interface QuerySnapshot {
 export interface ServerReport {
   string: {
     html: string
-    counts: { fresh: number; stale: number; placeholder: number }
+    counts: {
+      fresh: number
+      stale: number
+      placeholder: number
+      prefetched: number
+    }
     queries: Array<QuerySnapshot>
   }
   stream: {
@@ -44,7 +49,13 @@ export interface ServerReport {
 export interface ClientBundle {
   createApp: () => {
     queryClient: QueryClient
-    counts: { fresh: number; stale: number; placeholder: number }
+    counts: {
+      fresh: number
+      stale: number
+      placeholder: number
+      prefetched: number
+    }
+    showLate: () => void
     mount: (container: HTMLElement) => () => void
   }
   createStreamApp: () => {

@@ -4,16 +4,14 @@ import {
   createProjection,
   createRenderEffect,
   createSignal,
-  getOwner,
   isPending as isValuePending,
   onCleanup,
-  peekNextChildId,
   resolve,
   runWithOwner,
   sharedConfig,
   untrack,
 } from 'solid-js'
-import { useQueryClient } from './QueryClientProvider'
+import { HYDRATION_KEY_PREFIX, useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
@@ -43,16 +41,12 @@ const NEVER: Promise<never> = new Promise(noop)
 type MetaState = Omit<QueryState<unknown, unknown>, 'data' | 'fetchMeta'>
 
 /**
- * The data projection's root. `value` is the consumer face; `t`
- * (dataUpdatedAt) and `raw` (pre-select cache data, present only when a
- * `select` is configured) exist so the serialized node entry carries
- * everything a hydrating client needs to prime the query cache — the node
- * payload IS the hydration transport, there is no second channel.
+ * A cache entry in Solid's hydration registry, serialized by the
+ * provider under `sq:<queryHash>` — see `serializeCacheOnServer`.
  */
-interface DataRoot<TData> {
-  value: TData
+interface HydratedEntry {
+  data: unknown
   t: number
-  raw?: unknown
 }
 
 function metaFrom(state: QueryState<any, any>): MetaState {
@@ -252,11 +246,105 @@ export function useBaseQueryLayer<
     }
   }
 
+  /**
+   * Hydration priming — content-addressed, the Solid Router `query()`
+   * pattern. The provider serialized every query this request touched
+   * into Solid's hydration registry under `sq:<queryHash>` (raw pre-select
+   * data plus `dataUpdatedAt`); here the hook looks its hash up directly
+   * and reconstructs the cache entry through query-core `hydrate()`, so
+   * staleness policy stays honest. Content addressing means coverage is
+   * the CACHE's, not the rendered tree's: prefetched-never-rendered
+   * queries transfer, shared keys prime from whichever hook consumes the
+   * entry first, and — like the router — the registry can still be
+   * consulted past hydration end, so a component mounted long after (lazy route,
+   * post-hydration navigation) still adopts the server's payload instead
+   * of refetching. Entries are consumed one-shot (deleted on load): once
+   * the cache owns the data, a stale registry payload must never shadow
+   * it.
+   *
+   * Ordering matters twice over. The observer attaches only after priming
+   * resolves (on hydrated mounts via `primeAndAttach`; on later mounts by
+   * priming HERE, before the attach render effect below even exists —
+   * its effect half runs synchronously inside an active flush, and mount
+   * policy against a still-cold cache would refetch data the registry
+   * already holds). Settled entries prime synchronously at setup;
+   * streamed entries prime when their chunk lands, per query, so early
+   * components go live while later boundaries still stream. No entry
+   * (placeholder queries serialize nothing; SSR errors adopt at their
+   * boundary) attaches immediately and lets mount policy decide.
+   */
+  const prime = (entry?: Partial<HydratedEntry> | null) => {
+    if (entry != null && typeof entry === 'object' && (entry.t ?? 0) > 0) {
+      const c = untrack(client)
+      const opts = untrack(defaultedOptions)
+      // Escape the setup/owned scope: hydrate() synchronously notifies
+      // cache subscribers, which may write into other hooks' stores.
+      runWithOwner(null, () =>
+        hydrate(c, {
+          mutations: [],
+          queries: [
+            {
+              queryKey: opts.queryKey,
+              queryHash: opts.queryHash,
+              dehydratedAt: entry.t,
+              ...(opts.meta && { meta: opts.meta }),
+              ...((opts as { _type?: string })._type && {
+                queryType: (opts as { _type?: string })._type,
+              }),
+              state: {
+                data: entry.data,
+                dataUpdatedAt: entry.t,
+                dataUpdateCount: 1,
+                error: null,
+                errorUpdateCount: 0,
+                errorUpdatedAt: 0,
+                fetchFailureCount: 0,
+                fetchFailureReason: null,
+                fetchMeta: null,
+                isInvalidated: false,
+                status: 'success',
+                fetchStatus: 'idle',
+              },
+            },
+          ],
+        } as Parameters<typeof hydrate>[1]),
+      )
+    }
+  }
+
   if (!isServer) {
     cacheSub = activeClient.getQueryCache().subscribe(onCacheEvent)
+    const sc = sharedConfig as unknown as {
+      has?: (id: string) => boolean
+      load?: (id: string) => any
+    }
+    const registryKey =
+      HYDRATION_KEY_PREFIX + untrack(defaultedOptions).queryHash
+    const primeAndAttach = (entry?: Partial<HydratedEntry> | null) => {
+      prime(entry)
+      setPrimed(true)
+      attach()
+    }
+    const settle = hydratedMount ? primeAndAttach : prime
+    if (sc.has?.(registryKey)) {
+      const entry = sc.load!(registryKey)
+      delete (globalThis as unknown as { _$HY: { r: Record<string, unknown> } })
+        ._$HY.r[registryKey]
+      if (entry != null && typeof entry === 'object') {
+        // Settled serialization refs are stamped `s`/`v`; still-streaming
+        // ones are plain thenable refs that land with their chunk.
+        if (entry.s === 1) settle(entry.v)
+        else if (entry.s === 2) settle()
+        else if (typeof entry.then === 'function')
+          entry.then(settle, () => settle())
+        else settle(entry)
+      } else {
+        settle(entry)
+      }
+    } else if (hydratedMount) {
+      primeAndAttach()
+    }
     if (!hydratedMount) {
-      // Hydrated mounts prime + attach from their own serialized data
-      // entry — see the priming block above the data projection.
       createRenderEffect(
         () => isRestoring(),
         (restoring) => {
@@ -320,13 +408,13 @@ export function useBaseQueryLayer<
   let chained: {
     base: Promise<unknown>
     select: unknown
-    value: Promise<DataRoot<TData>>
+    value: Promise<{ value: TData }>
   } | null = null
   const chainOnce = (
     base: Promise<any>,
     select: unknown,
-    wrap: (d: any) => DataRoot<TData>,
-  ): Promise<DataRoot<TData>> => {
+    wrap: (d: any) => { value: TData },
+  ): Promise<{ value: TData }> => {
     if (chained?.base !== base || chained.select !== select) {
       chained = { base, select, value: base.then(wrap) }
     }
@@ -335,24 +423,13 @@ export function useBaseQueryLayer<
 
   const computeData = (
     prev?: TData,
-  ): DataRoot<TData> | Promise<DataRoot<TData>> => {
+  ): { value: TData } | Promise<{ value: TData }> => {
     const opts = defaultedOptions()
     const q = query()
     const state = q.state
     const select = opts.select as ((d: TQueryData) => TData) | undefined
-    /**
-     * The store root carries the value plus the cache facts hydration
-     * priming needs: `t` is dataUpdatedAt (read live off the query — for
-     * the fetch path this runs post-settle, after the state advanced) and
-     * `raw` is the pre-select cache data when a `select` is in play (the
-     * cache must be primed with unselected data). Consumers only ever see
-     * `.value`; the siblings ride along for the serialized payload —
-     * seroval deduplicates `raw`/`value` shared structure by reference.
-     */
-    const wrap = (d: any): DataRoot<TData> => ({
+    const wrap = (d: any): { value: TData } => ({
       value: select ? select(d as TQueryData) : (d as TData),
-      t: q.state.dataUpdatedAt,
-      ...(select ? { raw: d } : null),
     })
 
     // Placeholder: show immediately instead of suspending while the first
@@ -458,82 +535,6 @@ export function useBaseQueryLayer<
   }
 
   /**
-   * Hydration priming — the node payload is the transport. The data
-   * projection below serializes its settled root (`{ value, t, raw? }`)
-   * under its own hydration id; here, on a hydrated mount, the hook loads
-   * that entry itself (peeking the id the projection is about to claim)
-   * and reconstructs the cache entry through query-core `hydrate()` —
-   * `dataUpdatedAt` from `t` keeps staleness policy honest, `raw` restores
-   * pre-select data. Only then does the observer attach: mount policy
-   * against an unprimed cache would refetch data the stream already
-   * delivered. Settled entries prime synchronously at setup (before the
-   * meta projection snapshots state below); streamed entries prime when
-   * their chunk lands, per query, so early components go live while later
-   * boundaries still stream. No entry at all (SSR placeholder or a
-   * sync-settled derive that had nothing to serialize, error adopted at a
-   * boundary) attaches immediately and lets mount policy decide.
-   */
-  if (hydratedMount) {
-    const primeAndAttach = (root?: Partial<DataRoot<TData>>) => {
-      if (root != null && typeof root === 'object' && (root.t ?? 0) > 0) {
-        const c = untrack(client)
-        const opts = untrack(defaultedOptions)
-        // Escape the setup/owned scope: hydrate() synchronously notifies
-        // cache subscribers, which may write into other hooks' stores.
-        runWithOwner(null, () =>
-          hydrate(c, {
-            mutations: [],
-            queries: [
-              {
-                queryKey: opts.queryKey,
-                queryHash: opts.queryHash,
-                dehydratedAt: root.t,
-                ...(opts.meta && { meta: opts.meta }),
-                ...((opts as { _type?: string })._type && {
-                  queryType: (opts as { _type?: string })._type,
-                }),
-                state: {
-                  data: 'raw' in root ? root.raw : root.value,
-                  dataUpdatedAt: root.t,
-                  dataUpdateCount: 1,
-                  error: null,
-                  errorUpdateCount: 0,
-                  errorUpdatedAt: 0,
-                  fetchFailureCount: 0,
-                  fetchFailureReason: null,
-                  fetchMeta: null,
-                  isInvalidated: false,
-                  status: 'success',
-                  fetchStatus: 'idle',
-                },
-              },
-            ],
-          } as Parameters<typeof hydrate>[1]),
-        )
-      }
-      setPrimed(true)
-      attach()
-    }
-    const sc = sharedConfig as {
-      has?: (id: string) => boolean
-      load?: (id: string) => any
-    }
-    const dataNodeId = peekNextChildId(getOwner()!)
-    const entry = sc.has?.(dataNodeId) ? sc.load!(dataNodeId) : undefined
-    if (entry != null && typeof entry === 'object') {
-      // Settled serialization refs are stamped `s`/`v`; still-streaming
-      // ones are plain thenable refs that land with their chunk.
-      if (entry.s === 1) primeAndAttach(entry.v)
-      else if (entry.s === 2) primeAndAttach()
-      else if (typeof entry.then === 'function')
-        entry.then(primeAndAttach, () => primeAndAttach())
-      else primeAndAttach(entry)
-    } else {
-      primeAndAttach(entry)
-    }
-  }
-
-  /**
    * THE data node: one projection, identical on both sides — the router
    * "feed `query()` into `createProjection`" shape. The derive asks the
    * cache for the answer (`computeData`) and the engine owns everything
@@ -558,9 +559,9 @@ export function useBaseQueryLayer<
    * Requires solid-js > 2.0.0-rc.3 (before the takeover fix, a mid-stream
    * divergence was lost rather than deferred).
    */
-  const dataStore = createProjection<DataRoot<TData>>(
+  const dataStore = createProjection<{ value: TData }>(
     (draft) => computeData(draft.value as TData | undefined),
-    {} as DataRoot<TData>,
+    {} as { value: TData },
     {
       key: untrack(() => options().reconcile),
       deferStream: untrack(() => options().deferStream),

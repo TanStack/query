@@ -6,7 +6,7 @@
  * (consumed by `entry-server.tsx`) and once with the hydratable DOM
  * transform (consumed by `entry-client.tsx`).
  */
-import { Loading } from 'solid-js'
+import { Loading, Show } from 'solid-js'
 import {
   QueryClientProvider,
   useIsFetching,
@@ -14,10 +14,13 @@ import {
 } from '@tanstack/solid-query'
 import type { QueryClient } from '@tanstack/solid-query'
 
+const isServer = typeof window === 'undefined'
+
 export interface FetchCounts {
   fresh: number
   stale: number
   placeholder: number
+  prefetched: number
 }
 
 export interface AppProps {
@@ -25,6 +28,10 @@ export interface AppProps {
   /** Marker baked into the query data so tests can tell where it was fetched. */
   source: 'server' | 'client'
   counts: FetchCounts
+  /** Toggled by tests after hydration to mount a subtree that was never
+   * rendered on the server — its query must adopt the server's prefetched
+   * payload from the registry instead of refetching. */
+  lateMount?: () => boolean
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -93,11 +100,44 @@ function Queries(props: AppProps) {
   )
 }
 
+/** Never rendered on the server — mounted by tests after hydration. Its
+ * query was prefetched (and only prefetched) during SSR; the hash-keyed
+ * registry entry must satisfy it with zero client fetches. */
+function LateConsumer(props: AppProps) {
+  const late = useQuery(() => ({
+    queryKey: ['prefetched'],
+    queryFn: async () => {
+      props.counts.prefetched++
+      await sleep(5)
+      return `prefetched-${props.source}`
+    },
+    staleTime: 60_000,
+  }))
+  return <span id="late">{late.data}</span>
+}
+
 export function App(props: AppProps) {
+  // Cache coverage beyond the rendered tree: prefetch a query no component
+  // reads during this render. Fired synchronously during setup, so the
+  // provider's serializer catches the fetch dispatch while the request's
+  // serialization context is live.
+  if (isServer) {
+    void props.client.prefetchQuery({
+      queryKey: ['prefetched'],
+      queryFn: async () => {
+        props.counts.prefetched++
+        await sleep(5)
+        return `prefetched-${props.source}`
+      },
+    })
+  }
   return (
     <QueryClientProvider client={props.client}>
       <Loading fallback={<div>loading</div>}>
         <Queries {...props} />
+        <Show when={props.lateMount?.()}>
+          <LateConsumer {...props} />
+        </Show>
       </Loading>
     </QueryClientProvider>
   )

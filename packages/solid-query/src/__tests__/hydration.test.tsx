@@ -34,21 +34,34 @@ afterAll(() => {
 })
 
 describe('SSR hydration', () => {
-  it('server render produces data and per-node hydration payloads', () => {
+  it('server render produces data and content-addressed cache payloads', () => {
     const { string } = harness.report
     // The placeholder query must NOT fetch during SSR: the data compute
     // serves the placeholder before the fetch-pull branch, so the
     // placeholder itself is the render output.
-    expect(string.counts).toEqual({ fresh: 1, stale: 1, placeholder: 0 })
+    expect(string.counts).toEqual({
+      fresh: 1,
+      stale: 1,
+      placeholder: 0,
+      prefetched: 1,
+    })
     expect(string.html).toContain('fresh-server')
     expect(string.html).toContain('stale-server')
-    // The node payload is the transport: each data projection serializes
-    // its settled root ({ value, t }) under its own hydration id — `t`
-    // (dataUpdatedAt) is what lets the hydrating client reconstruct the
-    // cache entry with staleness intact. There is no second, cache-level
-    // dehydration channel...
-    expect(string.html).toMatch(/\{value:"fresh-server",t:\d+\}/)
-    expect(string.html).toMatch(/\{value:"stale-server",t:\d+\}/)
+    // Cache entries ride Solid's hydration registry content-addressed by
+    // query hash (`sq:<hash>` → { data, t }) — `t` (dataUpdatedAt) lets
+    // the hydrating client reconstruct the entry with staleness intact,
+    // and hash addressing means coverage is the cache's, not the rendered
+    // tree's. There is no separate dehydration channel...
+    expect(string.html).toMatch(/sq:\[\\"fresh\\"\]"\]=[^<]*data:"fresh-server"/)
+    expect(string.html).toMatch(/sq:\[\\"stale\\"\]"\]=[^<]*data:"stale-server"/)
+    expect(string.html).toMatch(/\{data:"fresh-server",t:\d+\}/)
+    // Content addressing covers the whole cache: this query was prefetched
+    // during SSR and never rendered by any component, yet it transfers.
+    // (It serializes at fetch-dispatch time as a promise ref — the key
+    // registers up front and the payload streams in a later fulfillment
+    // script, so the two are asserted separately.)
+    expect(string.html).toMatch(/sq:\[\\"prefetched\\"\]/)
+    expect(string.html).toMatch(/\{data:"prefetched-server",t:\d+\}/)
     expect(string.html).not.toContain('dehydratedAt')
     // ...and the per-observer-result hydrationData copy is gone.
     expect(string.html).not.toContain('hydrationData')
@@ -158,6 +171,52 @@ describe('SSR hydration', () => {
         )
       })
       expect(lingering).toEqual([])
+    } finally {
+      dispose()
+      container.remove()
+    }
+  })
+
+  it('a component mounted after hydration adopts a prefetched-never-rendered payload', async () => {
+    // The server prefetched ['prefetched'] in a loader-style call and no
+    // component rendered it. Content-addressed registry entries outlive
+    // the hydration window (the Solid Router pattern), so a subtree
+    // mounted later — lazy route, user interaction — adopts the server's
+    // payload instead of refetching.
+    const { string } = harness.report
+    const app = bundle.createApp()
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    bootstrapHydrationGlobals()
+    container.innerHTML = string.html
+    for (const script of Array.from(container.querySelectorAll('script'))) {
+      if (script.textContent) window.eval(script.textContent)
+      script.remove()
+    }
+
+    const dispose = app.mount(container)
+    try {
+      // Nothing consumed the prefetched entry during hydration: the cache
+      // has no such query and the registry still holds the payload.
+      await tick(30)
+      expect(app.queryClient.getQueryState(['prefetched'])).toBeUndefined()
+
+      // Mount the consumer long after hydration completed.
+      app.showLate()
+      await vi.waitFor(() => {
+        expect(container.querySelector('#late')?.textContent).toBe(
+          'prefetched-server',
+        )
+      })
+      // Adopted with zero client fetches — and staleness metadata came
+      // across with it.
+      expect(app.counts.prefetched).toBe(0)
+      const serverPrefetched = string.queries.find(
+        (q) => q.queryHash === '["prefetched"]',
+      )!
+      expect(app.queryClient.getQueryState(['prefetched'])?.dataUpdatedAt).toBe(
+        serverPrefetched.state.dataUpdatedAt,
+      )
     } finally {
       dispose()
       container.remove()
