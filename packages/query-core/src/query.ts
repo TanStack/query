@@ -2,8 +2,7 @@ import {
   ensureQueryFn,
   noop,
   replaceData,
-  resolveQueryBoolean,
-  resolveStaleTime,
+  resolveQueryValue,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -273,8 +272,7 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) =>
-        resolveQueryBoolean(observer.options.enabled, this) !== false,
+      (observer) => resolveQueryValue(observer.options.enabled, this) !== false,
     )
   }
 
@@ -294,7 +292,7 @@ export class Query<
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
-          resolveStaleTime(observer.options.staleTime, this) === 'static',
+          resolveQueryValue(observer.options.staleTime, this) === 'static',
       )
     }
 
@@ -368,7 +366,11 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
-          if (this.#abortSignalConsumed || this.#isInitialPausedFetch()) {
+          if (
+            this.#abortSignalConsumed ||
+            (this.state.fetchStatus === 'paused' &&
+              this.state.status === 'pending')
+          ) {
             this.#retryer.cancel({ revert: true })
           } else {
             this.#retryer.cancelRetry()
@@ -384,12 +386,6 @@ export class Query<
 
   getObserversCount(): number {
     return this.observers.length
-  }
-
-  #isInitialPausedFetch(): boolean {
-    return (
-      this.state.fetchStatus === 'paused' && this.state.status === 'pending'
-    )
   }
 
   invalidate(): void {

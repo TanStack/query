@@ -1,5 +1,18 @@
 # @tanstack/query-core
 
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- [#11302](https://github.com/TanStack/query/pull/11302) [`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d) - Reduce the Query Core bundle size by removing unused symbol descriptions and
+  simplifying internal helpers.
+
 ## 5.102.4
 
 ### Patch Changes
