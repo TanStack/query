@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
+import ErrorBoundary from './ErrorBoundary.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -151,5 +153,33 @@ describe('createInfiniteQuery', () => {
     expect(
       rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
     ).toBeInTheDocument()
+  })
+
+  it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Error test')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Error test',
+    )
+
+    consoleMock.mockRestore()
   })
 })
