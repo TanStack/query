@@ -16,7 +16,7 @@ describe('useQuery', () => {
     queryKey: key,
     queryFn: () => 'test',
   }))
-  expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
+  expectTypeOf(fromQueryFn.data).toEqualTypeOf<string>()
   expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
 
   // it should be possible to specify the result type
@@ -24,7 +24,7 @@ describe('useQuery', () => {
     queryKey: key,
     queryFn: () => 'test',
   }))
-  expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
+  expectTypeOf(withResult.data).toEqualTypeOf<string>()
   expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
 
   // it should be possible to specify the error type
@@ -32,7 +32,7 @@ describe('useQuery', () => {
     queryKey: key,
     queryFn: () => 'test',
   }))
-  expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
+  expectTypeOf(withError.data).toEqualTypeOf<string>()
   expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
 
   // it should provide the result type in the configuration
@@ -46,12 +46,12 @@ describe('useQuery', () => {
     queryKey: key,
     queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
   }))
-  expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
+  expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b'>()
   const unionTypeAsync = useQuery<'a' | 'b'>(() => ({
     queryKey: key,
     queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
   }))
-  expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
+  expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b'>()
 
   // should error when the query function result does not match with the specified type
   // @ts-expect-error
@@ -66,16 +66,14 @@ describe('useQuery', () => {
     queryKey: key,
     queryFn: () => queryFn(),
   }))
-  expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
+  expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string>()
   expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
   const fromGenericOptionsQueryFn = useQuery(() => ({
     queryKey: key,
     queryFn: () => queryFn(),
   }))
-  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-    string | undefined
-  >()
+  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<string>()
   expectTypeOf(fromGenericOptionsQueryFn.error).toEqualTypeOf<Error | null>()
 
   type MyData = number
@@ -133,7 +131,7 @@ describe('useQuery', () => {
       ...options,
     }))
   const test = useWrappedQuery([''], () => Promise.resolve('1'))
-  expectTypeOf(test.data).toEqualTypeOf<string | undefined>()
+  expectTypeOf(test.data).toEqualTypeOf<string>()
 
   // handles wrapped queries with custom fetcher passed directly to useQuery
   const useWrappedFuncStyleQuery = <
@@ -153,7 +151,7 @@ describe('useQuery', () => {
   const testFuncStyle = useWrappedFuncStyleQuery([''], () =>
     Promise.resolve(true),
   )
-  expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
+  expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean>()
 
   describe('initialData', () => {
     describe('Config object overload', () => {
@@ -188,13 +186,13 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('TData should be non-optional on the result even when initialData is NOT provided: data is a suspending read', () => {
         const { data } = useQuery(() => ({
           queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
@@ -219,13 +217,13 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('TData should be non-optional on the result even when initialData is NOT provided: data is a suspending read', () => {
         const { data } = useQuery(() => ({
           queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
     })
 
@@ -240,13 +238,13 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('TData should be non-optional on the result even when initialData is NOT provided: data is a suspending read', () => {
         const { data } = useQuery(() => ({
           queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
         }))
 
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
     })
   })
@@ -292,7 +290,8 @@ describe('useQuery', () => {
         // Regression guard: this call must compile. With the previous
         // hand-rolled NoInfer, `data` failed to flow back into the generic
         // indexed-access parameter `DataTypeToEntity[TDataType]`.
-        return data ? getLabel(props.dataType, data) : null
+        // (`data` is now a non-optional suspending read, so no guard needed.)
+        return getLabel(props.dataType, data)
       }
 
       expectTypeOf(Test).toBeFunction()

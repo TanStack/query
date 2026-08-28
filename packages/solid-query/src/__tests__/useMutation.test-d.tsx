@@ -62,13 +62,17 @@ describe('useMutation', () => {
     >()
   })
 
-  it('should type mutateAsync with correct return type', () => {
+  it('should type mutate with a Promise return type and no mutateAsync', () => {
     const mutation = useMutation(() => ({
       mutationFn: (id: string) => Promise.resolve(id.length),
     }))
 
-    expectTypeOf(mutation.mutateAsync).toBeCallableWith('test')
-    expectTypeOf(mutation.mutateAsync('test')).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(mutation.mutate).toBeCallableWith('test')
+    expectTypeOf(mutation.mutate('test')).toEqualTypeOf<Promise<number>>()
+    // mutateAsync is removed; the single mutate returns the promise.
+    expectTypeOf(mutation).not.toHaveProperty('mutateAsync')
+    // context is removed from the result: no onMutate context threading.
+    expectTypeOf(mutation).not.toHaveProperty('context')
   })
 
   it('should default TVariables to void when mutationFn has no parameters', () => {

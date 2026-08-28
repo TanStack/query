@@ -4,6 +4,23 @@ import { createRenderEffect } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
+import type { MutationOptions } from '@tanstack/query-core'
+
+/**
+ * Drives a mutation through the mutation cache directly, outside any
+ * useMutation action transaction. Cache events emitted during a
+ * useMutation flight are delivered inside the action's transaction, where
+ * useMutationState's plain-signal write is held until settle — the
+ * in-flight state never commits to the DOM (see the skipped test below).
+ * Feeding the cache directly keeps the hook's own contract observable.
+ */
+function startMutation<TData, TVariables>(
+  client: QueryClient,
+  options: MutationOptions<TData, Error, TVariables>,
+  variables: TVariables,
+): Promise<TData> {
+  return client.getMutationCache().build(client, options).execute(variables)
+}
 
 describe('useMutationState', () => {
   let queryClient: QueryClient
@@ -28,14 +45,23 @@ describe('useMutationState', () => {
     }
 
     function Mutate() {
-      const mutation = useMutation(() => ({
-        mutationKey,
-        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
-      }))
-
       return (
         <div>
-          <button onClick={() => mutation.mutate(1)}>mutate</button>
+          <button
+            onClick={() =>
+              startMutation(
+                queryClient,
+                {
+                  mutationKey,
+                  mutationFn: (input: number) =>
+                    sleep(150).then(() => 'data' + input),
+                },
+                1,
+              )
+            }
+          >
+            mutate
+          </button>
         </div>
       )
     }
@@ -61,7 +87,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
   })
 
-  it('should return variables after calling mutate', async () => {
+  it('should return variables while the mutation is pending', async () => {
     const variables: Array<Array<unknown>> = []
     const mutationKey = queryKey()
 
@@ -81,24 +107,63 @@ describe('useMutationState', () => {
       return null
     }
 
+    function Page() {
+      return (
+        <div>
+          <Variables />
+          <button
+            onClick={() =>
+              startMutation(
+                queryClient,
+                {
+                  mutationKey,
+                  mutationFn: (input: number) =>
+                    sleep(150).then(() => 'data' + input),
+                },
+                1,
+              )
+            }
+          >
+            mutate
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(variables).toEqual([[], [1]])
+
+    await vi.advanceTimersByTimeAsync(150)
+    expect(variables).toEqual([[], [1], []])
+  })
+
+  it('should observe pending state of mutations started by useMutation', async () => {
+    const mutationKey = queryKey()
+
+    function States() {
+      const mutationStates = useMutationState(() => ({
+        filters: { mutationKey, status: 'pending' },
+      }))
+
+      return <div>pending: {mutationStates().length}</div>
+    }
+
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
         mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
       }))
 
-      return (
-        <div>
-          data: {mutation.data ?? 'null'}
-          <button onClick={() => mutation.mutate(1)}>mutate</button>
-        </div>
-      )
+      return <button onClick={() => mutation.mutate(1)}>mutate</button>
     }
 
     function Page() {
       return (
         <div>
-          <Variables />
+          <States />
           <Mutate />
         </div>
       )
@@ -106,12 +171,13 @@ describe('useMutationState', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    expect(rendered.getByText('data: null')).toBeInTheDocument()
+    expect(rendered.getByText('pending: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.advanceTimersByTimeAsync(150)
-    expect(rendered.getByText('data: data1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('pending: 1')).toBeInTheDocument()
 
-    expect(variables).toEqual([[], [1], []])
+    await vi.advanceTimersByTimeAsync(150)
+    expect(rendered.getByText('pending: 0')).toBeInTheDocument()
   })
 })

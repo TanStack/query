@@ -1,17 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
-import * as QueryCore from '@tanstack/query-core'
-import { createSignal, createTrackedEffect, deep } from 'solid-js'
+import { render } from '@solidjs/testing-library'
+import { Loading } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  IsRestoringContext,
-  QueriesObserver,
-  QueryCache,
-  QueryClient,
-  useQueries,
-} from '..'
+import { IsRestoringContext, QueryCache, QueryClient, useQueries } from '..'
 import { renderWithClient } from './utils'
-import type { UseQueryResult } from '..'
 
 describe('useQueries', () => {
   let queryCache: QueryCache
@@ -28,13 +20,12 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
-  it('should return the correct states', async () => {
+  it('should render each result as it settles', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
-      const result = useQueries(() => ({
+      const results = useQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -47,92 +38,43 @@ describe('useQueries', () => {
         ],
       }))
 
-      createTrackedEffect(() => {
-        deep(result)
-        results.push([{ ...result[0] }, { ...result[1] }])
-      })
-
       return (
         <div>
           <div>
-            data1: {String(result[0].data ?? 'null')}, data2:{' '}
-            {String(result[1].data ?? 'null')}
+            status1: {results[0].status}, status2: {results[1].status}
           </div>
+          <Loading fallback={<span>loading1</span>}>
+            <span>data1: {String(results[0].data)}</span>
+          </Loading>
+          <Loading fallback={<span>loading2</span>}>
+            <span>data2: {String(results[1].data)}</span>
+          </Loading>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    await vi.advanceTimersByTimeAsync(100)
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
+    // Metadata reads never suspend; data reads park their own boundary.
+    expect(
+      rendered.getByText('status1: pending, status2: pending'),
+    ).toBeInTheDocument()
+    expect(rendered.getByText('loading1')).toBeInTheDocument()
+    expect(rendered.getByText('loading2')).toBeInTheDocument()
 
-    expect(results.length).toBe(3)
-    expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
-    expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
-    expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
-  })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data1: 1')).toBeInTheDocument()
+    expect(rendered.getByText('loading2')).toBeInTheDocument()
+    expect(
+      rendered.getByText('status1: success, status2: pending'),
+    ).toBeInTheDocument()
 
-  // eslint-disable-next-line vitest/expect-expect
-  it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
-
-    // We have to mock the QueriesObserver to not unsubscribe
-    // the listener when the component is unmounted
-    class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
-        super.subscribe(listener)
-        return () => void 0
-      }
-    }
-
-    const QueriesObserverSpy = vi
-      .spyOn(QueryCore, 'QueriesObserver')
-      .mockImplementation(function (
-        client: InstanceType<typeof QueryCore.QueryClient>,
-        queries: Array<QueryCore.QueryObserverOptions>,
-      ) {
-        return new QueriesObserverMock(client, queries)
-      })
-
-    function Queries() {
-      useQueries(() => ({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => sleep(10).then(() => 1),
-          },
-        ],
-      }))
-
-      return (
-        <div>
-          <span>queries</span>
-        </div>
-      )
-    }
-
-    function Page() {
-      const [mounted, setMounted] = createSignal(true)
-
-      return (
-        <div>
-          <button onClick={() => setMounted(false)}>unmount</button>
-          {mounted() && <Queries />}
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, () => <Page />)
-
-    fireEvent.click(rendered.getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
-    await vi.advanceTimersByTimeAsync(20)
-    QueriesObserverSpy.mockRestore()
+    await vi.advanceTimersByTimeAsync(90)
+    expect(rendered.getByText('data1: 1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: 2')).toBeInTheDocument()
+    expect(
+      rendered.getByText('status1: success, status2: success'),
+    ).toBeInTheDocument()
   })
 
   it('should use provided custom queryClient', async () => {
@@ -155,8 +97,13 @@ describe('useQueries', () => {
       return <div>data: {queries[0].data}</div>
     }
 
-    const rendered = render(() => <Page />)
+    const rendered = render(() => (
+      <Loading fallback={<span>loading</span>}>
+        <Page />
+      </Loading>
+    ))
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
@@ -181,8 +128,6 @@ describe('useQueries', () => {
           <div data-testid="status2">{results[1].status}</div>
           <div data-testid="fetchStatus1">{results[0].fetchStatus}</div>
           <div data-testid="fetchStatus2">{results[1].fetchStatus}</div>
-          <div data-testid="data1">{results[0].data ?? 'undefined'}</div>
-          <div data-testid="data2">{results[1].data ?? 'undefined'}</div>
         </div>
       )
     }
@@ -199,8 +144,6 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
     expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
-    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
-    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
 
@@ -210,8 +153,6 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
     expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
-    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
-    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })

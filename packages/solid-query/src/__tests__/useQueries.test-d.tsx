@@ -14,7 +14,7 @@ import type {
 import type { QueryOptions } from '../types'
 
 describe('useQueries', () => {
-  it('TData should have undefined in the union even when initialData is provided as an object', () => {
+  it('TData is non-optional on the result: data is a suspending read', () => {
     const query1 = {
       queryKey: queryKey(),
       queryFn: () => {
@@ -46,12 +46,12 @@ describe('useQueries', () => {
     const query2Data = queryResults[1].data
     const query3Data = queryResults[2].data
 
-    expectTypeOf(query1Data).toEqualTypeOf<{ wow: boolean } | undefined>()
-    expectTypeOf(query2Data).toEqualTypeOf<string | undefined>()
-    expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(query1Data).toEqualTypeOf<{ wow: boolean }>()
+    expectTypeOf(query2Data).toEqualTypeOf<string>()
+    expectTypeOf(query3Data).toEqualTypeOf<string>()
   })
 
-  it('TData should have undefined in the union when passed through queryOptions', () => {
+  it('TData is non-optional on the result when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: queryKey(),
       queryFn: () => {
@@ -67,10 +67,10 @@ describe('useQueries', () => {
 
     const data = queryResults[0].data
 
-    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('TData is non-optional on the result even when initialData is a function which can return undefined', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {
@@ -87,7 +87,7 @@ describe('useQueries', () => {
 
     const data = queryResults[0].data
 
-    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
   it('should infer types from explicit object type parameter', () => {
@@ -115,10 +115,10 @@ describe('useQueries', () => {
       ],
     }))
 
-    expectTypeOf(queryResults[0].data).toEqualTypeOf<number | undefined>()
-    expectTypeOf(queryResults[1].data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(queryResults[0].data).toEqualTypeOf<number>()
+    expectTypeOf(queryResults[1].data).toEqualTypeOf<string>()
     expectTypeOf(queryResults[1].error).toEqualTypeOf<Error | null>()
-    expectTypeOf(queryResults[2].data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(queryResults[2].data).toEqualTypeOf<string>()
   })
 
   it('should infer types from explicit tuple type parameter', () => {
@@ -142,10 +142,10 @@ describe('useQueries', () => {
       ],
     }))
 
-    expectTypeOf(queryResults[0].data).toEqualTypeOf<number | undefined>()
-    expectTypeOf(queryResults[1].data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(queryResults[0].data).toEqualTypeOf<number>()
+    expectTypeOf(queryResults[1].data).toEqualTypeOf<string>()
     expectTypeOf(queryResults[1].error).toEqualTypeOf<Error | null>()
-    expectTypeOf(queryResults[2].data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(queryResults[2].data).toEqualTypeOf<string>()
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
@@ -165,8 +165,8 @@ describe('useQueries', () => {
     const query1Data = queryResults[0].data
     const query2Data = queryResults[1].data
 
-    expectTypeOf(query1Data).toEqualTypeOf<boolean | undefined>()
-    expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
+    expectTypeOf(query1Data).toEqualTypeOf<boolean>()
+    expectTypeOf(query2Data).toEqualTypeOf<boolean>()
   })
 
   describe('custom hook', () => {
@@ -190,7 +190,7 @@ describe('useQueries', () => {
       const queryResults = useCustomQueries()
       const data = queryResults[0].data
 
-      expectTypeOf(data).toEqualTypeOf<Data | undefined>()
+      expectTypeOf(data).toEqualTypeOf<Data>()
     })
   })
 
@@ -229,7 +229,7 @@ describe('useQueries', () => {
     const firstResult = queryResults[0]
 
     expectTypeOf(firstResult).toEqualTypeOf<UseQueryResult<number, Error>>()
-    expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number>()
   })
 
   it('should return correct data for dynamic queries with mixed result types', () => {
@@ -273,7 +273,7 @@ describe('useQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
+    expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
   })
 
   it('should infer correct types for combine callback parameter', () => {
@@ -327,9 +327,9 @@ describe('useQueries', () => {
         expectTypeOf(result1[2]).toEqualTypeOf<
           UseQueryResult<Array<string>, boolean>
         >()
-        expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
+        expectTypeOf(result1[0].data).toEqualTypeOf<number>()
+        expectTypeOf(result1[1].data).toEqualTypeOf<string>()
+        expectTypeOf(result1[2].data).toEqualTypeOf<Array<string>>()
         expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
 
         // TData (3rd element) takes precedence over TQueryFnData (1st element)
@@ -361,8 +361,8 @@ describe('useQueries', () => {
         expectTypeOf(result2[1]).toEqualTypeOf<
           UseQueryResult<number, unknown>
         >()
-        expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(result2[0].data).toEqualTypeOf<string>()
+        expectTypeOf(result2[1].data).toEqualTypeOf<number>()
 
         // types should be enforced
         useQueries<[[string, unknown, string], [string, boolean, number]]>(
@@ -444,9 +444,9 @@ describe('useQueries', () => {
         expectTypeOf(result1[2]).toEqualTypeOf<
           UseQueryResult<Array<string>, boolean>
         >()
-        expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
+        expectTypeOf(result1[0].data).toEqualTypeOf<number>()
+        expectTypeOf(result1[1].data).toEqualTypeOf<string>()
+        expectTypeOf(result1[2].data).toEqualTypeOf<Array<string>>()
         expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
 
         // TData (data prop) takes precedence over TQueryFnData (queryFnData prop)
@@ -481,8 +481,8 @@ describe('useQueries', () => {
         expectTypeOf(result2[1]).toEqualTypeOf<
           UseQueryResult<number, unknown>
         >()
-        expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(result2[0].data).toEqualTypeOf<string>()
+        expectTypeOf(result2[1].data).toEqualTypeOf<number>()
 
         // can pass only TData (data prop) although TQueryFnData will be left unknown
         const result3 = useQueries<[{ data: string }, { data: number }]>(
@@ -513,8 +513,8 @@ describe('useQueries', () => {
         expectTypeOf(result3[1]).toEqualTypeOf<
           UseQueryResult<number, unknown>
         >()
-        expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(result3[0].data).toEqualTypeOf<string>()
+        expectTypeOf(result3[1].data).toEqualTypeOf<number>()
 
         // types should be enforced
         useQueries<
@@ -580,7 +580,7 @@ describe('useQueries', () => {
           Array<UseQueryResult<number, Error>>
         >()
         if (result1[0]) {
-          expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
+          expectTypeOf(result1[0].data).toEqualTypeOf<number>()
         }
 
         // Array.map preserves TData
@@ -615,10 +615,10 @@ describe('useQueries', () => {
         expectTypeOf(result3[0]).toEqualTypeOf<UseQueryResult<number, Error>>()
         expectTypeOf(result3[1]).toEqualTypeOf<UseQueryResult<string, Error>>()
         expectTypeOf(result3[2]).toEqualTypeOf<UseQueryResult<number, Error>>()
-        expectTypeOf(result3[0].data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(result3[1].data).toEqualTypeOf<string | undefined>()
+        expectTypeOf(result3[0].data).toEqualTypeOf<number>()
+        expectTypeOf(result3[1].data).toEqualTypeOf<string>()
         // select takes precedence over queryFn
-        expectTypeOf(result3[2].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(result3[2].data).toEqualTypeOf<number>()
 
         // initialData/placeholderData are enforced
         useQueries(() => ({

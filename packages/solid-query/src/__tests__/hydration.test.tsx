@@ -34,17 +34,69 @@ afterAll(() => {
 })
 
 describe('SSR hydration', () => {
-  it('server render produces data and the dehydration channel payload', () => {
+  it('server render produces data and content-addressed cache payloads', () => {
     const { string } = harness.report
-    expect(string.counts).toEqual({ fresh: 1, stale: 1 })
+    // The placeholder query must NOT fetch during SSR: the data compute
+    // serves the placeholder before the fetch-pull branch, so the
+    // placeholder itself is the render output.
+    expect(string.counts).toEqual({
+      fresh: 1,
+      stale: 1,
+      placeholder: 0,
+      prefetched: 1,
+    })
     expect(string.html).toContain('fresh-server')
     expect(string.html).toContain('stale-server')
-    // The provider's dehydration channel serializes cumulative snapshots of
-    // dehydrated cache entries (query-core dehydrate shapes)...
-    expect(string.html).toContain('dehydratedAt')
-    expect(string.html).toContain('"[\\"fresh\\"]"')
+    // Cache entries ride Solid's hydration registry content-addressed by
+    // query hash (`sq:<hash>` → { data, t }) — `t` (dataUpdatedAt) lets
+    // the hydrating client reconstruct the entry with staleness intact,
+    // and hash addressing means coverage is the cache's, not the rendered
+    // tree's. There is no separate dehydration channel...
+    expect(string.html).toMatch(
+      /sq:\[\\"fresh\\"\]"\]=[^<]*data:"fresh-server"/,
+    )
+    expect(string.html).toMatch(
+      /sq:\[\\"stale\\"\]"\]=[^<]*data:"stale-server"/,
+    )
+    expect(string.html).toMatch(/\{data:"fresh-server",t:\d+\}/)
+    // Content addressing covers the whole cache: this query was prefetched
+    // during SSR and never rendered by any component, yet it transfers.
+    // (It serializes at fetch-dispatch time as a promise ref — the key
+    // registers up front and the payload streams in a later fulfillment
+    // script, so the two are asserted separately.)
+    expect(string.html).toMatch(/sq:\[\\"prefetched\\"\]/)
+    expect(string.html).toMatch(/\{data:"prefetched-server",t:\d+\}/)
+    expect(string.html).not.toContain('dehydratedAt')
     // ...and the per-observer-result hydrationData copy is gone.
     expect(string.html).not.toContain('hydrationData')
+
+    // Meta guards serialize SETTLED state only (status|isFetching|isSuccess|
+    // isFetchedAfterMount from the fixture's #meta span). Boundaries hold
+    // until async settles; meta must honor the same contract — a transient
+    // 'pending'/'fetching'/isFetchedAfterMount-true here would contradict
+    // what the hydrating client computes from the primed cache.
+    const meta = /<span id="meta"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
+    expect(meta.replace(/<!--[^>]*-->/g, '')).toBe('success|false|true|false')
+
+    // Cross-cache aggregates (useIsFetching) serialize the hydration-time
+    // truth: the hydrating client's own fetches are held inside the window
+    // and primed entries land settled, so it can only ever compute 0 at
+    // claim time — any other serialized value is a structural mismatch in
+    // waiting (a server-side in-flight count does not transfer).
+    const global = /<span id="global"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
+    expect(global.replace(/<!--[^>]*-->/g, '')).toBe('0')
+
+    // Placeholder serializes AS the placeholder (data|isPlaceholderData|
+    // status): no boundary hold, the status face masks to 'success' on
+    // both sides, and the hydrating client computes the identical
+    // placeholder from its unprimed cache — no mismatch, no undermining
+    // of the streamed payload (a placeholder derive settles synchronously,
+    // so its node serializes nothing and the client fetches after its
+    // window closes).
+    const ph = /<span id="ph"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
+    expect(ph.replace(/<!--[^>]*-->/g, '')).toBe(
+      'placeholder-value|true|success',
+    )
   })
 
   it('hydration primes the query cache and refetches only per staleness rules', async () => {
@@ -67,11 +119,11 @@ describe('SSR hydration', () => {
     const dispose = app.mount(container)
 
     try {
-      // Cache must be warm within microtasks of hydration (the provider
-      // consumes the deserialized channel; entries apply before the mount
-      // task's microtask queue drains, i.e. before a browser would paint):
-      // same data and the server's dataUpdatedAt (hydrate() newer-wins
-      // semantics).
+      // Cache must be warm within microtasks of hydration (each hook
+      // primes from its own node entry at setup, before a browser would
+      // paint): same data and the server's dataUpdatedAt — `t` rides the
+      // serialized root, and priming goes through hydrate() newer-wins
+      // semantics.
       await microtasks()
       const serverFresh = string.queries.find(
         (q) => q.queryHash === '["fresh"]',
@@ -103,8 +155,18 @@ describe('SSR hydration', () => {
         'fresh-server',
       )
 
+      // The placeholder query hydrated showing its placeholder (identical
+      // to the server HTML), then fetched for real once its window closed
+      // (its node had no serialized entry) and swapped in data.
+      await vi.waitFor(() => {
+        expect(app.counts.placeholder).toBe(1)
+        expect(container.querySelector('#ph')?.textContent).toContain(
+          'placeholder-resolved-client',
+        )
+      })
+
       // The serialized observer results no longer carry a hydrationData
-      // copy at all — the channel is the only transport.
+      // copy at all — the node payload is the only transport.
       const registry = (globalThis as any)._$HY.r as Record<string, any>
       const lingering = Object.values(registry).filter((entry) => {
         const value = entry != null && entry.s === 1 ? entry.v : entry
@@ -113,6 +175,52 @@ describe('SSR hydration', () => {
         )
       })
       expect(lingering).toEqual([])
+    } finally {
+      dispose()
+      container.remove()
+    }
+  })
+
+  it('a component mounted after hydration adopts a prefetched-never-rendered payload', async () => {
+    // The server prefetched ['prefetched'] in a loader-style call and no
+    // component rendered it. Content-addressed registry entries outlive
+    // the hydration window (the Solid Router pattern), so a subtree
+    // mounted later — lazy route, user interaction — adopts the server's
+    // payload instead of refetching.
+    const { string } = harness.report
+    const app = bundle.createApp()
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    bootstrapHydrationGlobals()
+    container.innerHTML = string.html
+    for (const script of Array.from(container.querySelectorAll('script'))) {
+      if (script.textContent) window.eval(script.textContent)
+      script.remove()
+    }
+
+    const dispose = app.mount(container)
+    try {
+      // Nothing consumed the prefetched entry during hydration: the cache
+      // has no such query and the registry still holds the payload.
+      await tick(30)
+      expect(app.queryClient.getQueryState(['prefetched'])).toBeUndefined()
+
+      // Mount the consumer long after hydration completed.
+      app.showLate()
+      await vi.waitFor(() => {
+        expect(container.querySelector('#late')?.textContent).toBe(
+          'prefetched-server',
+        )
+      })
+      // Adopted with zero client fetches — and staleness metadata came
+      // across with it.
+      expect(app.counts.prefetched).toBe(0)
+      const serverPrefetched = string.queries.find(
+        (q) => q.queryHash === '["prefetched"]',
+      )!
+      expect(app.queryClient.getQueryState(['prefetched'])?.dataUpdatedAt).toBe(
+        serverPrefetched.state.dataUpdatedAt,
+      )
     } finally {
       dispose()
       container.remove()
@@ -153,13 +261,12 @@ describe('SSR hydration', () => {
   })
 
   it('coexists with a host that primes the cache through its own hydrate() channel', async () => {
-    // TanStack Start does not use the provider channel: its router
-    // integration applies a dehydrated QueryClient via query-core hydrate()
-    // before Solid's DOM hydrate() runs. Under Start both channels are live
-    // and prime the same entries; pin that the second application is silent
-    // (hydrate() only writes strictly-newer data, so equal dataUpdatedAt is
-    // a no-op with no observer notification) and that the provider's attach
-    // coordination still resolves.
+    // TanStack Start-style hosts apply a dehydrated QueryClient via
+    // query-core hydrate() before Solid's DOM hydrate() runs. The hooks'
+    // own node priming then re-applies the same entries; pin that the
+    // second application is silent (hydrate() only writes strictly-newer
+    // data, so equal dataUpdatedAt is a no-op with no observer
+    // notification) and that attach coordination still resolves.
     const { string } = harness.report
     const app = bundle.createApp()
     const container = document.createElement('div')
@@ -254,11 +361,10 @@ describe('streaming SSR hydration', () => {
     const dispose = app.mount(container)
 
     try {
-      // The header entry settled before the first flush, so its channel
-      // yield rides the same chunks — it must be primed within microtasks
-      // of shell hydration, with the server's dataUpdatedAt intact. This
-      // also proves the mocked-Promise hydration replay does not wedge the
-      // provider's stream consumption.
+      // The header query settled before the first flush, so its node
+      // entry rides the same chunks — the hook primes from it within
+      // microtasks of shell hydration, with the server's dataUpdatedAt
+      // intact (`t` on the serialized root).
       await microtasks()
       const serverHeader = harness.report.stream.queries.find(
         (q) => q.queryHash === '["header"]',
@@ -298,16 +404,13 @@ describe('streaming SSR hydration', () => {
     }
   })
 
-  it('applies the latest cumulative snapshot when hydration starts after the whole stream arrived (buffered-replay conflation)', async () => {
-    // Hydration long after the stream completed (slow client / late script):
-    // every channel yield — one per settle plus the terminal done snapshot —
-    // is already buffered in the deserialized stream when the provider's
-    // signal replays. Solid's signal-path replay conflates that backlog to
-    // the LATEST yield (`normalizeIterator`), which is lossless precisely
-    // because yields are cumulative. All entries must be primed and all
-    // observers attached from that one snapshot; on solid builds without
-    // the conflation fix (<= 2.0.0-beta.32) the replay pins at the first
-    // yield and everything after it (including `done`) is dropped.
+  it('primes everything when hydration starts after the whole stream arrived (buffered replay)', async () => {
+    // Hydration long after the stream completed (slow client / late
+    // script): every node entry is already settled in the registry when
+    // the components mount, so each hook primes synchronously at setup
+    // from its own entry. All entries primed, all observers attached, no
+    // refetches — and the takeover recompute at hydration end must not
+    // race ahead of a not-yet-primed hook (the `primed` gate).
     const { chunks } = harness.report.stream
     const app = bundle.createStreamApp()
     const container = document.createElement('div')
@@ -364,7 +467,14 @@ describe('streaming SSR hydration', () => {
     }
   })
 
-  it('hydrated components are live while the stream is still open', async () => {
+  // The data node has default ('server') hydration semantics: the
+  // serialized server value owns the DOM for the whole hydration window,
+  // and a latched node that recomputes mid-stream (a cache write landed)
+  // arms the engine's hydration-end takeover — the change commits when the
+  // stream closes, deferred rather than lost. Network activity is NOT
+  // deferred: observers attach per-query as the channel primes, so
+  // mid-stream invalidations refetch immediately.
+  it('cache writes during the open stream commit when hydration completes', async () => {
     const { phase1, phase2 } = splitStream()
     const app = bundle.createStreamApp()
     const container = document.createElement('div')
@@ -383,34 +493,48 @@ describe('streaming SSR hydration', () => {
       // The slow section still shows its fallback.
       expect(container.querySelector('#feed')).toBeNull()
 
-      // Newer data written while the stream is open must reach the
-      // already-hydrated component without waiting for the stream to end.
+      // A write while the stream is open reaches the CACHE immediately but
+      // not the DOM — the serialized server value holds the document.
       app.queryClient.setQueryData(['header'], 'updated-client')
-      await vi.waitFor(() => {
-        expect(container.querySelector('#header')?.textContent).toBe(
-          'updated-client',
-        )
-      })
+      await tick(30)
+      expect(app.queryClient.getQueryData(['header'])).toBe('updated-client')
+      expect(container.querySelector('#header')?.textContent).toBe(
+        'header-server',
+      )
 
-      // An invalidation while the stream is open refetches the hydrated
-      // query immediately (it is active — its observer is subscribed).
+      // An invalidation while the stream is open refetches immediately
+      // (the observer is subscribed — network is not deferred), but the
+      // result is held with the rest.
       void app.queryClient.invalidateQueries({ queryKey: ['header'] })
       await vi.waitFor(() => {
         expect(app.counts.header).toBe(1)
-        expect(container.querySelector('#header')?.textContent).toBe(
-          'header-client',
-        )
       })
+      expect(container.querySelector('#header')?.textContent).toBe(
+        'header-server',
+      )
 
-      // The late boundary still hydrates correctly afterwards.
+      // The late boundary hydrates, closing the stream — the divergence
+      // takeover re-runs the latched node and the held state commits.
       applyChunks(container, phase2)
       await vi.waitFor(() => {
         expect(container.querySelector('#feed')?.textContent).toBe(
           'feed-server',
         )
       })
+      await vi.waitFor(() => {
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'header-client',
+        )
+      })
       expect(app.counts.feed).toBe(0)
-      await tick(30)
+
+      // And fully live from then on.
+      app.queryClient.setQueryData(['header'], 'updated-live')
+      await vi.waitFor(() => {
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'updated-live',
+        )
+      })
     } finally {
       dispose()
       container.remove()

@@ -1,4 +1,5 @@
-import { createMemo, createSignal, onCleanup, untrack } from 'solid-js'
+import { createMemo } from 'solid-js'
+import { createCacheAggregate } from './cacheAggregate'
 import { useQueryClient } from './QueryClientProvider'
 import type { MutationFilters } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -9,20 +10,9 @@ export function useIsMutating(
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
-  const mutationCache = createMemo(() => client().getMutationCache())
-
-  const [mutations, setMutations] = createSignal(
-    untrack(() => client().isMutating(filters?.())),
-    { ownedWrite: true },
+  return createCacheAggregate(
+    (onEvent) => client().getMutationCache().subscribe(onEvent),
+    () => client().isMutating(filters?.()),
+    0,
   )
-
-  const unsubscribe = untrack(() =>
-    mutationCache().subscribe((_result) => {
-      setMutations(client().isMutating(filters?.()))
-    }),
-  )
-
-  onCleanup(unsubscribe)
-
-  return mutations
 }

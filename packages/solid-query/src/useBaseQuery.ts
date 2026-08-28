@@ -1,138 +1,85 @@
-// Had to disable the lint rule because isServer type is defined as false
-// in solid-js/web package. I'll create a GitHub issue with them to see
-// why that happens.
-import { notifyManager, shouldThrowError } from '@tanstack/query-core'
+import { hydrate, noop, shouldThrowError } from '@tanstack/query-core'
 import {
+  createMemo,
+  createProjection,
   createRenderEffect,
   createSignal,
-  createStore,
-  isPending,
+  isPending as isValuePending,
   onCleanup,
-  reconcile,
-  refresh,
+  resolve,
   runWithOwner,
-  snapshot,
+  sharedConfig,
   untrack,
-  useContext,
 } from 'solid-js'
-import { useQueryClient } from './QueryClientProvider'
-import { HydrationCoordinatorContext } from './hydrationChannel'
+import { HYDRATION_KEY_PREFIX, useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { UseBaseQueryOptions } from './types'
+import type { UseBaseQueryOptions, UseBaseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
+  DefaultedQueryObserverOptions,
   Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
+  QueryState,
 } from '@tanstack/query-core'
 
 const isServer = typeof window === 'undefined'
 
 /**
- * During SSR, Solid's store is serialized by seroval which cannot handle
- * functions.  Strip `refetch`, `fetchNextPage`, and `fetchPreviousPage`
- * from the observer result before it enters the store so serialization
- * succeeds.  On the client this is a no-op (returns the object as-is).
+ * A read of a pending-idle query (disabled, or reset with nothing in flight)
+ * has no value and nothing to wait on. Parking the reader on a promise that
+ * never resolves suspends it into the nearest `<Loading>` boundary until the
+ * query actually starts fetching (enabling it, a refetch, a cache write) —
+ * at which point the version bump re-runs the compute and the superseded
+ * in-flight is ignored by the engine.
  */
-function _stripFnsForSSR<TData, TError>(
-  obj: QueryObserverResult<TData, TError>,
-): QueryObserverResult<TData, TError> {
-  if (!isServer) return obj
-  const out: Record<string, unknown> = {}
-  for (const k of Object.keys(obj)) {
-    if (k === 'refetch' || k === 'fetchNextPage' || k === 'fetchPreviousPage') {
-      out[k] = undefined
-    } else {
-      out[k] = (obj as any)[k]
-    }
-  }
-  return out as unknown as QueryObserverResult<TData, TError>
-}
+const NEVER: Promise<never> = new Promise(noop)
 
-function reconcileFn<TData, TError>(
-  store: QueryObserverResult<TData, TError>,
-  result: QueryObserverResult<TData, TError>,
-  reconcileOption:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData),
-  queryHash?: string,
-): QueryObserverResult<TData, TError> {
-  if (typeof reconcileOption === 'function') {
-    const newData = reconcileOption(store.data, result.data as TData)
-    return { ...result, data: newData } as typeof result
-  }
-
-  if (reconcileOption === false) return result
-
-  const key = reconcileOption
-
-  let data = result.data
-  if (store.data === undefined) {
-    try {
-      data = structuredClone(data)
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (error instanceof Error) {
-          console.warn(
-            `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-              `Possibly because the query data contains data structures that aren't supported ` +
-              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
-          )
-        }
-      }
-    }
-  }
-  // reconcile() in Solid 2.0 mutates in place and returns void.
-  // We apply it to store.data so the store's nested signals update.
-  // On first load (store.data is undefined), there's nothing to reconcile against,
-  // so we just return the data as-is.
-  if (store.data !== undefined && data !== undefined) {
-    reconcile(data, key)(store.data)
-    // Return result with the existing store.data reference (now reconciled in place)
-    return { ...result, data: store.data } as typeof result
-  }
-  return { ...result, data } as typeof result
-}
+/** The scalar half of QueryState — `data` flows through the async node, not here. */
+type MetaState = Omit<QueryState<unknown, unknown>, 'data' | 'fetchMeta'>
 
 /**
- * Prepare an observer result for SSR serialization: the resolved resource
- * value is serialized by seroval, which cannot handle functions, so strip
- * `refetch` (and the infinite-query pagers). They come back when the
- * observer attaches on the client.
- *
- * The query's dehydrated cache state does not ride the observer result —
- * it travels through the provider-owned dehydration channel (see
- * `hydrationChannel.ts`).
+ * A cache entry in Solid's hydration registry, serialized by the
+ * provider under `sq:<queryHash>` — see `serializeCacheOnServer`.
  */
-const hydratableObserverResult = <
+interface HydratedEntry {
+  data: unknown
+  t: number
+}
+
+function metaFrom(state: QueryState<any, any>): MetaState {
+  return {
+    dataUpdateCount: state.dataUpdateCount,
+    dataUpdatedAt: state.dataUpdatedAt,
+    error: state.error,
+    errorUpdateCount: state.errorUpdateCount,
+    errorUpdatedAt: state.errorUpdatedAt,
+    fetchFailureCount: state.fetchFailureCount,
+    fetchFailureReason: state.fetchFailureReason,
+    fetchStatus: state.fetchStatus,
+    isInvalidated: state.isInvalidated,
+    status: state.status,
+  }
+}
+
+/** Internal seam: everything the read layer builds, for hooks that extend
+ * the base result (`useInfiniteQuery` pagers ride the same entry). */
+interface BaseQueryLayer<
   TQueryFnData,
   TError,
   TData,
+  TQueryData,
   TQueryKey extends QueryKey,
-  TDataHydratable,
->(
-  _query: Query<TQueryFnData, TError, TData, TQueryKey>,
-  result: QueryObserverResult<TDataHydratable, TError>,
-) => {
-  if (!isServer) return result
-  const obj: any = {
-    ...snapshot(result),
-    // During SSR, functions cannot be serialized, so we need to remove them
-    // This is safe because we will add these functions back when the query is hydrated
-    refetch: undefined,
-  }
-
-  // If the query is an infinite query, we need to remove additional properties
-  if ('fetchNextPage' in result) {
-    obj.fetchNextPage = undefined
-    obj.fetchPreviousPage = undefined
-  }
-
-  return obj
+> {
+  result: UseBaseQueryResult<TData, TError>
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  /** Version-tracked: reading it subscribes to this query's cache events. */
+  query: () => Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  defaultedOptions: Accessor<ReturnType<QueryClient['defaultQueryOptions']>>
+  isFetching: () => boolean
+  status: () => 'pending' | 'error' | 'success'
 }
 
 // Base Query Function that is used to create the query.
@@ -148,359 +95,674 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
-) {
-  type ResourceData = QueryObserverResult<TData, TError>
+): UseBaseQueryResult<TData, TError> {
+  return useBaseQueryLayer(options, Observer, queryClient).result
+}
 
-  // Use createSignal(fn) instead of createMemo so these derived memos have
-  // _preventAutoDisposal set. Without it, a createMemo that no one reads
-  // reactively gets auto-disposed in Solid v2, which cascades and disposes
-  // the component's onCleanup, unsubscribing the observer before the fetch
-  // completes.
-  const [client] = createSignal(() => useQueryClient(queryClient?.()))
+export function useBaseQueryLayer<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  options: Accessor<
+    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  >,
+  Observer: typeof QueryObserver,
+  queryClient?: Accessor<QueryClient>,
+): BaseQueryLayer<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
+  const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
-  // There are times when we run a query on the server but the resource is never read
-  // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
-  // Causing a time out error. To prevent this we will queue the unsubscribe if the cleanup is called
-  // before the resource has loaded
-  let unsubscribeQueued = false
 
-  const [defaultedOptions] = createSignal(() => {
-    const defaultOptions = client().defaultQueryOptions(options())
-    defaultOptions._optimisticResults = isRestoring()
-      ? 'isRestoring'
-      : 'optimistic'
-    defaultOptions.structuralSharing = false
+  /**
+   * The most recently computed hash, updated on every options compute —
+   * including holds, where the memo's committed face still serves the old
+   * options. The cache-event filter below must match both: on a key switch
+   * the new key's fetch settles *before* the hold commits, so filtering by
+   * the committed hash alone drops that settle event and nothing downstream
+   * (data recompute, meta projection) ever learns the fetch finished.
+   */
+  let latestHash: string | undefined
+  let latestOptions:
+    | DefaultedQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
+    | undefined
+  const defaultedOptions = createMemo(() => {
+    const defaulted = client().defaultQueryOptions(options())
+    defaulted._optimisticResults = isRestoring() ? 'isRestoring' : 'optimistic'
     if (isServer) {
-      defaultOptions.retry = false
-      defaultOptions.throwOnError = true
-      // Enable prefetch during render for SSR - required for createResource to work
-      // Without this, queries wait for effects which never run on the server
-      defaultOptions.experimental_prefetchInRender = true
+      defaulted.retry = false
+      defaulted.throwOnError = true
     }
-    return defaultOptions
+    latestHash = defaulted.queryHash
+    latestOptions = defaulted
+    return defaulted
   })
 
-  const observer = untrack(() => new Observer(client(), defaultedOptions()))
+  /**
+   * The observer is a lifecycle/policy engine only. Registering it pins the
+   * query against garbage collection, engages mount-fetch policy
+   * (`shouldFetchOnMount`), schedules `refetchInterval`, and gates
+   * focus/reconnect refetches — all of which live behind observer
+   * registration in query-core. Reactivity never touches its notifications
+   * or result objects: the listener is a noop, and the reactive layer below
+   * derives everything from cache events and fetch promises.
+   *
+   * `let`, not `const`: a reactive `queryClient` accessor can swap clients
+   * mid-life, and the observer must be rebuilt against the new client (see
+   * `syncClient` below).
+   */
+  let observer = untrack(() => new Observer(client(), defaultedOptions()))
 
-  // Track options reactively so the queryResource memo re-runs on change.
-  const [trackedDefaultedOptions] = createSignal(() => defaultedOptions())
-
-  // Apply options in an effect to avoid store writes inside the memo.
-  // setOptions triggers updateResult → notify → subscription → setState,
-  // which must run in an effect context in Solid v2.
   createRenderEffect(
-    () => trackedDefaultedOptions(),
-    (opts) => {
-      // observer.setOptions synchronously invokes subscribers which write to
-      // the store. In Solid v2, signal/store writes inside an owned scope
-      // (like this render effect) throw. Escape the owner so subscriber
-      // writes don't trip the guard.
-      runWithOwner(null, () => observer.setOptions(opts))
-    },
+    () => defaultedOptions(),
+    (opts) => observer.setOptions(opts),
   )
 
-  let observerResult = untrack(() =>
-    observer.getOptimisticResult(defaultedOptions()),
-  )
+  /**
+   * `sharedConfig.hydrating` is Solid's own "this component is being
+   * hydrated" flag, captured at setup. (The server build's sharedConfig
+   * has no such field — undefined there, and unused.)
+   */
+  const hydratedMount =
+    !isServer && (sharedConfig as { hydrating?: boolean }).hydrating === true
 
-  const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    _stripFnsForSSR(observerResult),
-  )
-
-  const createServerSubscriber = (
-    resolve: (
-      data: ResourceData | PromiseLike<ResourceData | undefined> | undefined,
-    ) => void,
-    reject: (reason?: any) => void,
-  ) => {
-    return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        const query = observer.getCurrentQuery()
-        const unwrappedResult = hydratableObserverResult(query, result)
-
-        if (result.data !== undefined && unwrappedResult.isError) {
-          reject(unwrappedResult.error)
-          unsubscribeIfQueued()
-        } else {
-          resolve(unwrappedResult)
-          unsubscribeIfQueued()
-        }
-      })()
-    })
-  }
-
-  const unsubscribeIfQueued = () => {
-    if (unsubscribeQueued) {
-      unsubscribe?.()
-      unsubscribeQueued = false
+  /**
+   * One version signal per hook, bumped by cache events for this query hash.
+   * This is the entire subscription model: any state transition on the query
+   * (fetch dispatch, settle, invalidation, `setQueryData`, removal) re-runs
+   * the derived reads below, which pull fresh state/promises from the cache.
+   *
+   * `ownedWrite`: a compute that reads through `query()` can itself create
+   * the cache entry (`cache.build` → synchronous 'added' event → this
+   * write), so the first bump can land inside whatever computation pulled
+   * the entry into existence. This is channel-owned state, not that
+   * computation's own — the same pattern as the router's per-key version
+   * signals.
+   */
+  const [version, setVersion] = createSignal(0, { ownedWrite: true })
+  /**
+   * Whether this hook's serialized data entry has been applied to the
+   * cache (or was determined not to exist). Non-hydrated mounts are born
+   * primed. Gates the pull-model fetch: hydration's takeover recompute can
+   * run against a cache the priming hasn't reached yet, and fetching there
+   * would race data the stream already delivered. Created on both sides
+   * (unread on the server) for hydration id parity.
+   */
+  const [primed, setPrimed] = createSignal(!hydratedMount, {
+    ownedWrite: true,
+  })
+  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+    // Match the committed options hash OR the latest computed one (they
+    // diverge during a hold — see `latestHash`).
+    if (
+      event.query.queryHash === untrack(defaultedOptions).queryHash ||
+      event.query.queryHash === latestHash
+    ) {
+      setVersion((v) => v + 1)
     }
   }
 
-  const createClientSubscriber = () => {
-    return observer.subscribe((result) => {
-      const previousResult = observerResult
-      observerResult = result
-      runWithOwner(null, () => {
-        setStateWithReconciliation(result)
-        if (
-          unsubscribe &&
-          !disposed &&
-          (previousResult.isLoading !== result.isLoading ||
-            previousResult.isError !== result.isError)
-        ) {
-          try {
-            refresh(queryResource)
-          } catch {
-            // NotReadyError is expected when refreshing a memo that returns
-            // a Promise. The Loading boundary handles this during rendering.
-          }
-        }
-      })
-    })
-  }
-
-  function setStateWithReconciliation(res: typeof observerResult) {
-    const opts = observer.options
-    const reconcileOptions = (opts as any).reconcile
-    const sanitized = _stripFnsForSSR(res)
-
-    setState((store) => {
-      return reconcileFn(
-        store,
-        sanitized,
-        reconcileOptions === undefined ? false : reconcileOptions,
-        opts.queryHash,
-      )
-    })
-  }
-
-  /**
-   * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
-   */
-  let unsubscribe: (() => void) | null = null
+  let observerSub: (() => void) | null = null
+  let cacheSub: (() => void) | null = null
   let disposed = false
+  /** Set once the mount flow decides the observer should be live — a client
+   * swap re-attaches the rebuilt observer iff its predecessor was attached. */
+  let shouldAttach = false
+  let activeClient = untrack(client)
+
+  const attach = () => {
+    if (!disposed && !observerSub && !untrack(isRestoring)) {
+      shouldAttach = true
+      observerSub = observer.subscribe(noop)
+    }
+  }
 
   /**
-   * Attach the client subscriber for a component that hydrated from SSR
-   * output.
-   *
-   * During hydration Solid replays the `queryResource` memo below from the
-   * serialized SSR value with `Promise` mocked, so the promise executor
-   * that normally creates the client subscriber never runs (nor could it:
-   * a mount refetch started from inside the replay would never settle).
-   * The replay is detected without touching any internals: a real
-   * `Promise` runs its executor synchronously, the hydration mock does
-   * not, so `executorRan` stays false exactly when this compute was
-   * replayed.
-   *
-   * The subscription is coordinated with the provider's dehydration
-   * channel: it attaches once this query's entry has been primed into the
-   * cache (or once the channel completes without one), so mount semantics
-   * see the hydrated cache state — a still-fresh query does not refetch, a
-   * stale one does, and cache writes that landed earlier are reconciled at
-   * attach. The wait is per-query, not global-hydration-end: a component
-   * hydrated from an early flush goes live while later boundaries are
-   * still streaming, so it is not deaf to cache writes, is seen by
-   * invalidateQueries' active-query refetch, and cannot be gc'ed while
-   * visible. Without a provider (manual `queryClient` option) it falls
-   * back to a plain microtask.
+   * Idempotent client re-pointing, called from the tracked `query()` read
+   * (which every derived compute goes through) rather than a dedicated
+   * watcher node — hydration id assignment is positional, so a client-only
+   * effect here would shift every downstream id. On a swap the version
+   * subscription moves to the new cache and the observer is rebuilt against
+   * the new client, so policy fetches and cache events both follow the
+   * client the hook is actually reading.
    */
-  const coordinator = useContext(HydrationCoordinatorContext)
-  const attachHydratedSubscriber = () => {
-    if (!unsubscribe && !disposed && !isRestoring()) {
-      unsubscribe = createClientSubscriber()
+  const syncClient = (c: QueryClient) => {
+    if (isServer || c === activeClient) return
+    activeClient = c
+    cacheSub?.()
+    cacheSub = c.getQueryCache().subscribe(onCacheEvent)
+    observerSub?.()
+    observerSub = null
+    observer = new Observer(c, untrack(defaultedOptions))
+    if (shouldAttach && !disposed && !untrack(isRestoring)) {
+      observerSub = observer.subscribe(noop)
     }
   }
-  const scheduleHydratedAttach = () => {
-    const queryHash = untrack(() => observer.getCurrentQuery().queryHash)
-    if (coordinator) {
-      coordinator.whenQueryPrimed(queryHash, attachHydratedSubscriber)
-    } else {
-      queueMicrotask(attachHydratedSubscriber)
+
+  /**
+   * Hydration priming — content-addressed, the Solid Router `query()`
+   * pattern. The provider serialized every query this request touched
+   * into Solid's hydration registry under `sq:<queryHash>` (raw pre-select
+   * data plus `dataUpdatedAt`); here the hook looks its hash up directly
+   * and reconstructs the cache entry through query-core `hydrate()`, so
+   * staleness policy stays honest. Content addressing means coverage is
+   * the CACHE's, not the rendered tree's: prefetched-never-rendered
+   * queries transfer, shared keys prime from whichever hook consumes the
+   * entry first, and — like the router — the registry can still be
+   * consulted past hydration end, so a component mounted long after (lazy route,
+   * post-hydration navigation) still adopts the server's payload instead
+   * of refetching. Entries are consumed one-shot (deleted on load): once
+   * the cache owns the data, a stale registry payload must never shadow
+   * it.
+   *
+   * Ordering matters twice over. The observer attaches only after priming
+   * resolves (on hydrated mounts via `primeAndAttach`; on later mounts by
+   * priming HERE, before the attach render effect below even exists —
+   * its effect half runs synchronously inside an active flush, and mount
+   * policy against a still-cold cache would refetch data the registry
+   * already holds). Settled entries prime synchronously at setup;
+   * streamed entries prime when their chunk lands, per query, so early
+   * components go live while later boundaries still stream. No entry
+   * (placeholder queries serialize nothing; SSR errors adopt at their
+   * boundary) attaches immediately and lets mount policy decide.
+   */
+  const prime = (entry?: Partial<HydratedEntry> | null) => {
+    if (entry != null && typeof entry === 'object' && (entry.t ?? 0) > 0) {
+      const c = untrack(client)
+      const opts = untrack(defaultedOptions)
+      // Escape the setup/owned scope: hydrate() synchronously notifies
+      // cache subscribers, which may write into other hooks' stores.
+      runWithOwner(null, () =>
+        hydrate(c, {
+          mutations: [],
+          queries: [
+            {
+              queryKey: opts.queryKey,
+              queryHash: opts.queryHash,
+              dehydratedAt: entry.t,
+              ...(opts.meta && { meta: opts.meta }),
+              ...((opts as { _type?: string })._type && {
+                queryType: (opts as { _type?: string })._type,
+              }),
+              state: {
+                data: entry.data,
+                dataUpdatedAt: entry.t,
+                dataUpdateCount: 1,
+                error: null,
+                errorUpdateCount: 0,
+                errorUpdatedAt: 0,
+                fetchFailureCount: 0,
+                fetchFailureReason: null,
+                fetchMeta: null,
+                isInvalidated: false,
+                status: 'success',
+                fetchStatus: 'idle',
+              },
+            },
+          ],
+        } as Parameters<typeof hydrate>[1]),
+      )
     }
   }
 
-  /*
-    Fixes #7275
-    In a few cases, the observer could unmount before the resource is loaded.
-    This leads to Suspense boundaries to be suspended indefinitely.
-    This resolver will be called when the observer is unmounting
-    but the resource is still in a loading state
-  */
-  let resolver: ((value: ResourceData) => void) | null = null
-  // Use createSignal(fn) instead of createMemo so the derived memo has
-  // _preventAutoDisposal set. Without it, a createMemo that no one reads
-  // reactively gets auto-disposed in Solid v2, which would cascade-dispose
-  // the component's onCleanup and unsubscribe the observer before fetch
-  // completion.
-  const [queryResource] = createSignal<ResourceData>(() => {
-    // Read trackedDefaultedOptions to ensure this memo re-runs when options change
-    const opts = trackedDefaultedOptions()
-    // Read isRestoring unconditionally so the memo re-runs when it changes
-    const restoring = isRestoring()
-
-    if (isServer) {
-      // On retry passes (after the streaming Loading boundary awaits a
-      // pending Promise), the QueryClient cache already has the data, so
-      // `getOptimisticResult` returns a non-loading result synchronously.
-      // Returning the value directly (instead of a fresh Promise that
-      // resolves synchronously) lets Solid's `processResult` set
-      // `comp.value` directly without queueing another async settle. If we
-      // returned a new Promise on every retry, Solid's streaming Loading
-      // boundary `while (ret.p.length)` loop in `createLoadingBoundary`
-      // would never terminate, because each retry adds a new pending
-      // Promise to the boundary's tracked set even when it resolves
-      // synchronously.
-      const cached = observer.getOptimisticResult(opts)
-      if (!cached.isLoading) {
-        observerResult = cached
-        runWithOwner(null, () => {
-          setStateWithReconciliation(cached)
-        })
-        return hydratableObserverResult(
-          observer.getCurrentQuery(),
-          cached,
-        ) as ResourceData
-      }
+  if (!isServer) {
+    cacheSub = activeClient.getQueryCache().subscribe(onCacheEvent)
+    const sc = sharedConfig as unknown as {
+      has?: (id: string) => boolean
+      load?: (id: string) => any
     }
-
-    const replayProbe = { executorRan: false }
-    const resource = new Promise<ResourceData>((resolve, reject) => {
-      replayProbe.executorRan = true
-      resolver = resolve
-      if (isServer) {
-        unsubscribe = createServerSubscriber((data) => {
-          resolve(data as ResourceData)
-        }, reject)
-      } else if (!unsubscribe && !restoring) {
-        unsubscribe = createClientSubscriber()
+    const registryKey =
+      HYDRATION_KEY_PREFIX + untrack(defaultedOptions).queryHash
+    const primeAndAttach = (entry?: Partial<HydratedEntry> | null) => {
+      prime(entry)
+      setPrimed(true)
+      attach()
+    }
+    const settle = hydratedMount ? primeAndAttach : prime
+    if (sc.has?.(registryKey)) {
+      const entry = sc.load!(registryKey)
+      delete (globalThis as unknown as { _$HY: { r: Record<string, unknown> } })
+        ._$HY.r[registryKey]
+      if (entry != null && typeof entry === 'object') {
+        // Settled serialization refs are stamped `s`/`v`; still-streaming
+        // ones are plain thenable refs that land with their chunk.
+        if (entry.s === 1) settle(entry.v)
+        else if (entry.s === 2) settle()
+        else if (typeof entry.then === 'function')
+          entry.then(settle, () => settle())
+        else settle(entry)
+      } else {
+        settle(entry)
       }
-      // Use getOptimisticResult instead of updateResult to keep the memo
-      // free of store writes (updateResult triggers notify → setState).
-      const currentResult = observer.getOptimisticResult(opts)
-      observerResult = currentResult
+    } else if (hydratedMount) {
+      primeAndAttach()
+    }
+    if (!hydratedMount) {
+      createRenderEffect(
+        () => isRestoring(),
+        (restoring) => {
+          if (!restoring) attach()
+        },
+      )
+    }
+    onCleanup(() => {
+      disposed = true
+      observerSub?.()
+      observerSub = null
+      cacheSub?.()
+      cacheSub = null
+    })
+  }
 
-      // Store writes inside a memo's owned scope throw in Solid v2.
-      // Escape the owner so setState calls are allowed.
-      runWithOwner(null, () => {
-        if (
-          currentResult.isError &&
-          !currentResult.isFetching &&
-          !restoring &&
-          shouldThrowError(opts.throwOnError, [
-            currentResult.error,
-            observer.getCurrentQuery(),
-          ])
-        ) {
-          setStateWithReconciliation(currentResult)
-          reject(currentResult.error)
-          return
-        }
-        setStateWithReconciliation(currentResult)
-      })
+  const query = (): Query<TQueryFnData, TError, TQueryData, TQueryKey> => {
+    version()
+    const c = client()
+    syncClient(c)
+    return c.getQueryCache().build(c, defaultedOptions() as any) as any
+  }
 
-      if (
-        currentResult.isError &&
-        !currentResult.isFetching &&
-        !restoring &&
-        shouldThrowError(opts.throwOnError, [
-          currentResult.error,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        return
-      }
-      if (!currentResult.isLoading) {
-        resolver = null
-        return resolve(
-          hydratableObserverResult(observer.getCurrentQuery(), currentResult),
-        )
-      }
+  const isEnabled = () => {
+    const opts = defaultedOptions()
+    const enabled =
+      typeof opts.enabled === 'function'
+        ? (opts.enabled as (q: any) => boolean)(untrack(query))
+        : opts.enabled
+    return enabled !== false
+  }
+
+  const resolvePlaceholder = (
+    opts: ReturnType<typeof defaultedOptions>,
+  ): TQueryData | undefined => {
+    const placeholder = opts.placeholderData
+    if (placeholder === undefined) return undefined
+    // The function form receives previous data/query in React Query as a
+    // `keepPreviousData` vehicle. Solid 2 holds the previous committed value
+    // natively while a new promise is pending, so previous-data plumbing is
+    // unnecessary here; a function placeholder computes from nothing.
+    return typeof placeholder === 'function'
+      ? (placeholder as () => TQueryData | undefined)()
+      : placeholder
+  }
+
+  /**
+   * The data compute. It returns either the settled `{ value }` root or a
+   * promise of it — the engine does the rest: pending reads suspend into
+   * `<Loading>` (holding the previous committed value on refetch),
+   * rejections surface to `<Errored>`, transitions hold commits until
+   * in-flight answers land, and on the server the settled value serializes
+   * for hydration adoption on the client.
+   */
+  // Stable promise identity across recomputes: mid-flight version bumps
+  // (fetch dispatch, observer updates) re-run the data compute while the
+  // same underlying fetch is pending. Chaining a fresh `.then` each time
+  // would hand the engine a new pending promise per recompute — the node
+  // keeps restarting its pending tracking and the settle can be missed
+  // (observed as `isPending` probes stuck true after the fetch lands).
+  let chained: {
+    base: Promise<unknown>
+    select: unknown
+    value: Promise<{ value: TData }>
+  } | null = null
+  const chainOnce = (
+    base: Promise<any>,
+    select: unknown,
+    wrap: (d: any) => { value: TData },
+  ): Promise<{ value: TData }> => {
+    if (chained?.base !== base || chained.select !== select) {
+      chained = { base, select, value: base.then(wrap) }
+    }
+    return chained.value
+  }
+
+  const computeData = (
+    prev?: TData,
+  ): { value: TData } | Promise<{ value: TData }> => {
+    const opts = defaultedOptions()
+    const q = query()
+    const state = q.state
+    const select = opts.select as ((d: TQueryData) => TData) | undefined
+    const wrap = (d: any): { value: TData } => ({
+      value: select ? select(d as TQueryData) : (d as TData),
     })
 
-    if (!isServer && !replayProbe.executorRan) {
-      // Hydration replay: `Promise` was mocked and the executor above never
-      // ran, so no subscriber was created. Schedule the attach through the
-      // provider's hydration coordinator (see scheduleHydratedAttach).
-      scheduleHydratedAttach()
+    // Placeholder: show immediately instead of suspending while the first
+    // fetch runs. When the fetch lands the version bump swaps in real data.
+    if (state.data === undefined && state.status === 'pending') {
+      const placeholder = resolvePlaceholder(opts)
+      if (placeholder !== undefined) return wrap(placeholder)
     }
 
-    return resource
-  })
-
-  onCleanup(() => {
-    disposed = true
-    if (isServer && isPending(queryResource)) {
-      unsubscribeQueued = true
-      return
-    }
-    if (unsubscribe) {
-      unsubscribe()
-      unsubscribe = null
-    }
-    if (resolver && !isServer) {
-      resolver(observerResult)
-      resolver = null
-    }
-  })
-
-  // Properties that should never throw — these let users access error info
-  // even outside an ErrorBoundary.
-  const errorPassthroughProps = new Set([
-    'error',
-    'isError',
-    'failureCount',
-    'failureReason',
-    'errorUpdateCount',
-    'errorUpdatedAt',
-  ])
-
-  // Return a proxy that throws on property access when throwOnError is enabled
-  return new Proxy(state, {
-    get(target, prop, receiver) {
-      // Always pass through symbols (needed for store internals, iteration, etc.)
-      if (typeof prop === 'symbol') {
-        return Reflect.get(target, prop, receiver)
+    // A fetch in flight (including paused-offline with a retryer attached):
+    // hand the engine the promise. First load suspends; refetch holds the
+    // previous committed value and marks the node pending — which is what
+    // lets a mutation's invalidations hold its settle transition until
+    // fresh data lands.
+    //
+    // Exception: a FIRST compute that already has a value to show
+    // (initialData, hydrated or shared cache data with a mount refetch in
+    // flight) returns the value — suspending would have nothing committed
+    // to hold, blanking the UI on mount. The refetch stays observable via
+    // fetchStatus; the settle lands through the next version bump.
+    if (state.fetchStatus !== 'idle') {
+      if (state.data === undefined || prev !== undefined) {
+        const promise = q.promise
+        if (promise) return chainOnce(promise, select, wrap)
       }
+    }
 
-      // On the server, force a Suspense dependency on the query resource so
-      // the per-route Loading boundary catches NotReadyError, awaits the
-      // pending Promise, and re-renders with the resolved state. Without
-      // this, JSX reads through the Proxy never subscribe to queryResource
-      // and SSR HTML reflects the initial loading state.
-      //
-      // Read the value from the *resolved resource* rather than `state`. When
-      // the boundary suspends and re-renders after the query settles, the
-      // `state` store is not synced (the server subscriber resolves the
-      // resource Promise but does not write the store), so reading `state`
-      // would render stale loading values. Reading the resolved resource keeps
-      // the streamed SSR HTML consistent with the serialized resource, which
-      // is what the client hydrates against.
-      if (isServer) {
-        const resolved = queryResource()
-        if (prop in resolved) {
-          return Reflect.get(resolved, prop)
-        }
-      }
-
-      // Always pass through error-related props without throwing
-      if (errorPassthroughProps.has(prop)) {
-        return Reflect.get(target, prop, receiver)
-      }
-
-      // Check throwOnError condition before returning the value
+    if (state.status === 'error') {
+      // No stale value to serve means the read cannot produce TData — the
+      // rejection surfaces through the graph to the nearest <Errored>.
+      // With stale data present, throw only if throwOnError opts in.
       if (
-        state.isError &&
-        !state.isFetching &&
-        shouldThrowError(observer.options.throwOnError, [
-          state.error,
-          observer.getCurrentQuery(),
+        state.data === undefined ||
+        shouldThrowError(opts.throwOnError as any, [
+          state.error as any,
+          q as any,
         ])
       ) {
         throw state.error
       }
+    }
 
-      return Reflect.get(target, prop, receiver)
+    if (state.data !== undefined) return wrap(state.data)
+
+    // Pending-idle: nothing in flight, nothing cached. If the query is
+    // enabled, the tracked read itself starts the fetch (the router
+    // `query()` model — reads pull the async). This is not just the server
+    // path: on the client it is what revives a query whose enabling change
+    // arrives while the subtree is parked under a suspended boundary —
+    // parked boundaries hold effects, so the observer's option-driven fetch
+    // can never fire there, but computes still re-run. `q.fetch` dedupes
+    // against any fetch the observer already started.
+    if (isEnabled()) {
+      /**
+       * Never start a fetch inside the hydration window. Adoption
+       * trace-runs this compute even on a hit (solid mocks `fetch` there,
+       * but a TanStack fetch is invisible to that mock) — a query fetching
+       * here would wedge on hydration's Promise mock inside its queryFn
+       * and then swallow every later legitimate refetch through retryer
+       * dedupe. During hydration the value comes from adoption or node
+       * priming; if a fetch is genuinely needed, the post-priming observer
+       * attach issues it outside the window.
+       */
+      if (!isServer && (sharedConfig as { hydrating?: boolean }).hydrating) {
+        return NEVER
+      }
+      /**
+       * Same discipline until this hook's serialized node entry has primed
+       * the cache (or was found absent): the takeover recompute at
+       * hydration end can land before a streamed entry does, and fetching
+       * against the still-empty cache would race data the stream already
+       * carries. The read is tracked — priming resolves through
+       * `setPrimed`, re-running this compute, and an entry-less query
+       * falls through to a normal fetch here.
+       */
+      if (!primed()) {
+        return NEVER
+      }
+      /**
+       * Same discipline while a persister is restoring: the restored value
+       * is about to land in the cache, so pulling a fetch now would race
+       * it. The read is tracked — `isRestoring` flipping false re-runs
+       * this compute (and the deferred observer attach engages mount
+       * policy), so the fetch fires then if the restore left a gap.
+       */
+      if (isRestoring()) {
+        return NEVER
+      }
+      /**
+       * Sync observer policy before pulling. Under a suspended boundary
+       * the options render effect is deferred, so on an enabled flip or
+       * key change this compute runs first and the effect only lands
+       * after the revival fetch settles — at which point a "changed"
+       * options diff against now-stale data would issue a redundant
+       * policy refetch. Syncing here means any policy fetch starts now
+       * (and `q.fetch` dedupes into it), and the deferred effect later
+       * sees the identical options object — a no-op diff.
+       */
+      if (!isServer) observer.setOptions(opts as any)
+      return chainOnce(q.fetch(opts as any), select, wrap)
+    }
+    return NEVER
+  }
+
+  /**
+   * THE data node: one projection, identical on both sides — the router
+   * "feed `query()` into `createProjection`" shape. The derive asks the
+   * cache for the answer (`computeData`) and the engine owns everything
+   * else: the server runs the derive, waits, and serializes the settled
+   * store under this node's id (`deferStream` holds the flush); pending
+   * reads suspend into `<Loading>`; a hydrating client adopts the
+   * serialized value and re-derives once hydration hands over; and every
+   * landing — refetch, invalidation, placeholder upgrade — auto-reconciles
+   * into the existing proxy graph (keyed by `reconcile`, default `'id'`),
+   * so deep reads are fine-grained and item identity survives fetches.
+   *
+   * The root wrapper exists because store roots must be objects —
+   * primitive data rides the `value` leaf as a plain signal read. The
+   * draft's committed `value` doubles as the previous-data signal for the
+   * first-paint exception in `computeData`.
+   *
+   * Default ('server') hydration semantics: the serialized value owns the
+   * node for the whole hydration window — server truth holds the document
+   * while the stream is open — and any cache write that lands mid-stream
+   * arms the engine's hydration-end takeover (a latched node that
+   * recomputes has diverged), committing when hydration completes.
+   * Requires solid-js > 2.0.0-rc.3 (before the takeover fix, a mid-stream
+   * divergence was lost rather than deferred).
+   */
+  const dataStore = createProjection<{ value: TData }>(
+    (draft) => computeData(draft.value as TData | undefined),
+    {} as { value: TData },
+    {
+      key: untrack(() => options().reconcile),
+      deferStream: untrack(() => options().deferStream),
     },
-  })
+  )
+  const data = () => dataStore.value
+
+  /**
+   * Scalar result metadata.
+   *
+   * Client: a projection reconciled per-field from query state on every
+   * cache event, so each field is its own fine-grained signal — a component
+   * reading only `isFetching` re-runs on fetchStatus flips, not on every
+   * state transition.
+   *
+   * Server: boundaries guarantee that only settled state serializes, and
+   * meta must honor the same contract (solid's own `isPending` suspends
+   * rather than ever serialize `true`). A projection cannot: its compute
+   * runs once at setup and never re-pulls, freezing an in-flight snapshot
+   * ('pending'/'fetching') into HTML that the hydrating client — reading
+   * the primed, settled cache — contradicts. So on the server every meta
+   * read pulls live query state, and while the entry is unsettled (pending
+   * with a fetch in flight, or one it can start) the read ties itself to the data
+   * node, which throws the pending read and holds the boundary until
+   * settle. A disabled pending query is served as-is: 'pending' IS its
+   * settled SSR truth, and the client hydrates the identical state.
+   */
+  const serverMeta = (): MetaState => {
+    if (query().state.status === 'pending' && isEnabled()) data()
+    return metaFrom(query().state)
+  }
+  /**
+   * Created on BOTH sides even though the server never reads it: hydration
+   * id assignment is positional, so every reactive node a hook creates on
+   * the client must have a server counterpart (and vice versa) or every id
+   * downstream shifts and hydration key-misses the whole subtree.
+   */
+  const metaProjection = createProjection<MetaState>(
+    (draft) => {
+      Object.assign(draft, metaFrom(query().state))
+    },
+    untrack(() => metaFrom(query().state)),
+  )
+  const meta = isServer
+    ? new Proxy({} as MetaState, {
+        get: (_, key) => serverMeta()[key as keyof MetaState],
+      })
+    : metaProjection
+
+  /**
+   * Server: read live counts instead of a setup snapshot — "mount" resolves
+   * post-settle there, so `isFetchedAfterMount` serializes `false`, which is
+   * exactly what the hydrating client computes (its mount snapshot equals
+   * the hydrated counts).
+   */
+  const mountedAt = isServer
+    ? {
+        get dataUpdateCount() {
+          return untrack(query).state.dataUpdateCount
+        },
+        get errorUpdateCount() {
+          return untrack(query).state.errorUpdateCount
+        },
+      }
+    : untrack(() => {
+        const state = query().state
+        return {
+          dataUpdateCount: state.dataUpdateCount,
+          errorUpdateCount: state.errorUpdateCount,
+        }
+      })
+
+  const hasPlaceholder = () =>
+    meta.status === 'pending' &&
+    untrack(() => resolvePlaceholder(defaultedOptions())) !== undefined
+  const status = () => (hasPlaceholder() ? 'success' : meta.status)
+  const isPending = () => status() === 'pending'
+  /**
+   * A refetch of settled data is a transition: the state write that flips
+   * `fetchStatus` to 'fetching' is held in the same batch as the pending
+   * data node, so the committed meta channel cannot show it mid-hold — by
+   * design, held updates commit atomically. The observable channel for
+   * "a new answer is in flight" during a hold is core's pending probe.
+   * The committed `fetchStatus` covers the first load (where the probe
+   * would see an uninitialized node) and untracked/imperative reads.
+   */
+  const isFetching = () =>
+    meta.fetchStatus === 'fetching' || isValuePending(() => data())
+  const isError = () => status() === 'error'
+  const isStale = () => {
+    const opts = defaultedOptions()
+    const q = untrack(query)
+    const staleTime =
+      typeof opts.staleTime === 'function'
+        ? (opts.staleTime as (q: any) => number | 'static')(q)
+        : opts.staleTime
+    version()
+    return q.isStaleByTime(staleTime)
+  }
+
+  const result = {
+    get data() {
+      return data()
+    },
+    get error() {
+      return meta.error as TError | null
+    },
+    get status() {
+      return status()
+    },
+    get fetchStatus() {
+      return meta.fetchStatus
+    },
+    get isPending() {
+      return isPending()
+    },
+    get isSuccess() {
+      return status() === 'success'
+    },
+    get isError() {
+      return isError()
+    },
+    get isLoading() {
+      return isPending() && isFetching()
+    },
+    get isFetching() {
+      return isFetching()
+    },
+    get isRefetching() {
+      return isFetching() && !isPending()
+    },
+    get isPaused() {
+      return meta.fetchStatus === 'paused'
+    },
+    get isEnabled() {
+      return isEnabled()
+    },
+    get isLoadingError() {
+      return isError() && meta.dataUpdatedAt === 0
+    },
+    get isRefetchError() {
+      return isError() && meta.dataUpdatedAt !== 0
+    },
+    get isPlaceholderData() {
+      return hasPlaceholder()
+    },
+    get isStale() {
+      return isStale()
+    },
+    get isFetched() {
+      return meta.dataUpdateCount > 0 || meta.errorUpdateCount > 0
+    },
+    get isFetchedAfterMount() {
+      return (
+        meta.dataUpdateCount > mountedAt.dataUpdateCount ||
+        meta.errorUpdateCount > mountedAt.errorUpdateCount
+      )
+    },
+    get dataUpdatedAt() {
+      return meta.dataUpdatedAt
+    },
+    get errorUpdatedAt() {
+      return meta.errorUpdatedAt
+    },
+    get failureCount() {
+      return meta.fetchFailureCount
+    },
+    get failureReason() {
+      return meta.fetchFailureReason as TError | null
+    },
+    get errorUpdateCount() {
+      return meta.errorUpdateCount
+    },
+    get promise() {
+      return resolve(() => data())
+    },
+    refetch: ((refetchOptions) => {
+      // A held transition defers the setOptions render effect, so after a
+      // key switch the observer can still carry the previous key's options.
+      // Sync to the latest computed options first: an imperative refetch
+      // targets what the UI is currently asking for, not what last
+      // committed.
+      if (!isServer && latestOptions) {
+        observer.setOptions(latestOptions as any)
+      }
+      return observer.refetch(refetchOptions)
+    }) as QueryObserverResult<TData, TError>['refetch'],
+  }
+
+  return {
+    result: result as unknown as UseBaseQueryResult<TData, TError>,
+    observer,
+    query,
+    defaultedOptions,
+    isFetching,
+    status,
+  } as unknown as BaseQueryLayer<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >
 }
