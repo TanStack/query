@@ -18,8 +18,8 @@ touches into Solid's hydration registry under `sq:<queryHash>` at
 fetch-dispatch time, each client hook primes the query cache from its own
 hash entry through query-core `hydrate()`, prefetched-never-rendered
 queries transfer, late mounts adopt past hydration end, and the
-provider-owned dehydration channel is deleted. Requires solid-js >
-2.0.0-rc.3 (hydration-end divergence takeover).
+provider-owned dehydration channel is deleted. Requires solid-js >=
+2.0.0-rc.4 (hydration-end divergence takeover).
 
 Breaking: `data` is non-optional on query results (reads suspend instead of
 returning `undefined`) and is a readonly store view; `mutateAsync` removed

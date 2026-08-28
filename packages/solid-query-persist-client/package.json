@@ -75,7 +75,7 @@
     "@tanstack/solid-query": "workspace:*",
     "babel-preset-solid": "^2.0.0-rc.2",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^2.0.0-rc.3",
+    "solid-js": "^2.0.0-rc.4",
     "tsup-preset-solid": "^2.2.0"
   },
   "peerDependencies": {
