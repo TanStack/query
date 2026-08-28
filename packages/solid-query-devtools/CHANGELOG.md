@@ -1,5 +1,12 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-rc.1
+
+### Patch Changes
+
+- Updated dependencies [[`c809e09`](https://github.com/TanStack/query/commit/c809e09e89ef00f7e9ffef9390012dfcc379222b)]:
+  - @tanstack/solid-query@6.0.0-rc.1
+
 ## 6.0.0-rc.0
 
 ### Patch Changes
