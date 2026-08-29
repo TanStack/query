@@ -110,9 +110,11 @@ export function useInfiniteQuery<
  *
  *   return (
  *     <>
- *       {data.pages.map((page) =>
- *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
- *       )}
+ *       <ul>
+ *         {data.pages.map((page) =>
+ *           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+ *         )}
+ *       </ul>
  *       <button
  *         onClick={() => fetchNextPage()}
  *         disabled={!hasNextPage || isFetching}
@@ -186,9 +188,11 @@ export function useInfiniteQuery<
  *
  *   return (
  *     <>
- *       {data.pages.map((page) =>
- *         page.projects.map((project) => <p key={project.id}>{project.name}</p>),
- *       )}
+ *       <ul>
+ *         {data.pages.map((page) =>
+ *           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+ *         )}
+ *       </ul>
  *       <button
  *         onClick={() => fetchNextPage()}
  *         disabled={!hasNextPage || isFetching}

@@ -95,7 +95,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:131](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L131)
+Defined in: [preact-query/src/useInfiniteQuery.ts:133](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L133)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -182,9 +182,11 @@ function Projects() {
 
   return (
     <>
-      {data.pages.map((page) =>
-        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
-      )}
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
       <button
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetching}
@@ -206,7 +208,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:207](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L207)
+Defined in: [preact-query/src/useInfiniteQuery.ts:211](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L211)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -293,9 +295,11 @@ function Projects() {
 
   return (
     <>
-      {data.pages.map((page) =>
-        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
-      )}
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
       <button
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetching}

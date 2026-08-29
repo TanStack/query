@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L157)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:161](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L161)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -70,7 +70,11 @@ export const projectsOptions = infiniteQueryOptions({
 
 function Projects() {
   const { data } = useInfiniteQuery(projectsOptions)
-  return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+  return (
+    <ul>
+      {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+    </ul>
+  )
 }
 ```
 
@@ -80,7 +84,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:239](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L239)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:247](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L247)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -134,7 +138,11 @@ export const projectsOptions = infiniteQueryOptions({
 
 function Projects() {
   const { data } = useInfiniteQuery(projectsOptions)
-  return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+  return (
+    <ul>
+      {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+    </ul>
+  )
 }
 ```
 
@@ -159,9 +167,9 @@ function Comments({ postId }: { postId: string }) {
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
   return (
-    <>
-      {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
-    </>
+    <ul>
+      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+    </ul>
   )
 }
 
@@ -179,7 +187,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:321](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L321)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:333](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L333)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -233,7 +241,11 @@ export const projectsOptions = infiniteQueryOptions({
 
 function Projects() {
   const { data } = useInfiniteQuery(projectsOptions)
-  return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+  return (
+    <ul>
+      {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+    </ul>
+  )
 }
 ```
 
@@ -258,9 +270,9 @@ function Comments({ postId }: { postId: string }) {
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
   return (
-    <>
-      {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
-    </>
+    <ul>
+      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+    </ul>
   )
 }
 

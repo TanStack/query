@@ -150,7 +150,11 @@ export type DefinedInitialDataInfiniteOptions<
  *
  * function Projects() {
  *   const { data } = useInfiniteQuery(projectsOptions)
- *   return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *     </ul>
+ *   )
  * }
  * ```
  */
@@ -197,7 +201,11 @@ export function infiniteQueryOptions<
  *
  * function Projects() {
  *   const { data } = useInfiniteQuery(projectsOptions)
- *   return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ *   return (
+ *     <ul>
+ *       {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *     </ul>
+ *   )
  * }
  * ```
  *
@@ -223,9 +231,9 @@ export function infiniteQueryOptions<
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *   return (
- *     <>
- *       {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
- *     </>
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
  *   )
  * }
  *
@@ -279,7 +287,11 @@ export function infiniteQueryOptions<
  *
  * function Projects() {
  *   const { data } = useInfiniteQuery(projectsOptions)
- *   return <>{data?.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ *   return (
+ *     <ul>
+ *       {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *     </ul>
+ *   )
  * }
  * ```
  *
@@ -305,9 +317,9 @@ export function infiniteQueryOptions<
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *   return (
- *     <>
- *       {data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
- *     </>
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
  *   )
  * }
  *
