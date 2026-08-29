@@ -255,6 +255,35 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn`
+ * instead of setting `enabled: false`:
+ * ```tsx
+ * import { skipToken, useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * function Comments({ postId }: { postId: string | undefined }) {
+ *   const { data, isPending, isError, error } = useInfiniteQuery({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn:
+ *       postId != null
+ *         ? ({ pageParam }) => fetchComments(postId, pageParam)
+ *         : skipToken,
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
+ *   )
+ * }
+ * ```
  */
 export function useInfiniteQuery<
   TQueryFnData,

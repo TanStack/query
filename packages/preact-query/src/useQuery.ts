@@ -181,6 +181,28 @@ export function useQuery<
  * ```
  *
  * @example
+ * The same dependent query, type safe: `skipToken` disables the query without needing the
+ * non-null assertion above, since `queryFn` is only ever called when `postId` is defined.
+ * `refetch` doesn't work while `queryFn` is `skipToken` — use `enabled: false` instead if you
+ * need to trigger the query manually:
+ * ```tsx
+ * import { skipToken, useQuery } from '@tanstack/preact-query'
+ *
+ * function Post({ postId }: { postId: number | undefined }) {
+ *   const { data, isLoading, isError, error } = useQuery({
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   })
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isLoading) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
+ * ```
+ *
+ * @example
  * Seeding a detail query from an already-cached list, to skip the loading state:
  * ```tsx
  * import { useQuery, useQueryClient } from '@tanstack/preact-query'

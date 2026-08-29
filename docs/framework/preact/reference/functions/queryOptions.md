@@ -189,7 +189,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:303](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L303)
+Defined in: [preact-query/src/queryOptions.ts:324](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L324)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -291,4 +291,24 @@ function Todos() {
 // The same options object works with the imperative APIs too:
 queryClient.query(todosOptions).catch(noop)
 queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+```
+
+A factory that disables the query, type safe, until `postId` is set:
+```tsx
+import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
+
+export const postOptions = (postId: number | undefined) =>
+  queryOptions({
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+  })
+
+function Post({ postId }: { postId: number | undefined }) {
+  const { data, isLoading } = useQuery(postOptions(postId))
+
+  if (postId == null) return 'Select a post'
+  if (isLoading) return 'Loading...'
+
+  return <h1>{data?.title}</h1>
+}
 ```

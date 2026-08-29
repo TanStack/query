@@ -299,6 +299,27 @@ export function queryOptions<
  * queryClient.query(todosOptions).catch(noop)
  * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
+ *
+ * @example
+ * A factory that disables the query, type safe, until `postId` is set:
+ * ```tsx
+ * import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
+ *
+ * export const postOptions = (postId: number | undefined) =>
+ *   queryOptions({
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   })
+ *
+ * function Post({ postId }: { postId: number | undefined }) {
+ *   const { data, isLoading } = useQuery(postOptions(postId))
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isLoading) return 'Loading...'
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,

@@ -331,6 +331,41 @@ export function infiniteQueryOptions<
  * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
+ * @example
+ * A factory that disables the query, type safe, until `postId` is set:
+ * ```tsx
+ * import {
+ *   infiniteQueryOptions,
+ *   skipToken,
+ *   useInfiniteQuery,
+ * } from '@tanstack/preact-query'
+ *
+ * export const commentsOptions = (postId: string | undefined) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn:
+ *       postId != null
+ *         ? ({ pageParam }) => fetchComments(postId, pageParam)
+ *         : skipToken,
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string | undefined }) {
+ *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
+ *   )
+ * }
+ * ```
+ *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */

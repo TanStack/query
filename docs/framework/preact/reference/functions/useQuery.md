@@ -188,7 +188,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:266](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L266)
+Defined in: [preact-query/src/useQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L288)
 
 ### Type Parameters
 
@@ -274,6 +274,27 @@ function Post({ postId }: { postId: number | undefined }) {
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId!),
     enabled: postId != null,
+  })
+
+  if (postId == null) return 'Select a post'
+  if (isLoading) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <h1>{data?.title}</h1>
+}
+```
+
+The same dependent query, type safe: `skipToken` disables the query without needing the
+non-null assertion above, since `queryFn` is only ever called when `postId` is defined.
+`refetch` doesn't work while `queryFn` is `skipToken` — use `enabled: false` instead if you
+need to trigger the query manually:
+```tsx
+import { skipToken, useQuery } from '@tanstack/preact-query'
+
+function Post({ postId }: { postId: number | undefined }) {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
   })
 
   if (postId == null) return 'Select a post'

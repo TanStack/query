@@ -189,7 +189,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:337](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L337)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:372](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L372)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -282,6 +282,40 @@ function Comments({ postId }: { postId: string }) {
 // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
 const postId = '1'
 queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+```
+
+A factory that disables the query, type safe, until `postId` is set:
+```tsx
+import {
+  infiniteQueryOptions,
+  skipToken,
+  useInfiniteQuery,
+} from '@tanstack/preact-query'
+
+export const commentsOptions = (postId: string | undefined) =>
+  infiniteQueryOptions({
+    queryKey: ['post', postId, 'comments'],
+    queryFn:
+      postId != null
+        ? ({ pageParam }) => fetchComments(postId, pageParam)
+        : skipToken,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
+
+function Comments({ postId }: { postId: string | undefined }) {
+  const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+
+  if (postId == null) return 'Select a post'
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return (
+    <ul>
+      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+    </ul>
+  )
+}
 ```
 
 ### See
