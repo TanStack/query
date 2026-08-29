@@ -99,6 +99,31 @@ describe('SSR hydration', () => {
     )
   })
 
+  it('clears the per-request cache when the render disposes', () => {
+    // The provider's dispose-time teardown (cancel + clear) must leave
+    // nothing behind: user-configured finite gcTime schedules timers on
+    // fetched queries, and without the clear those timers pin the
+    // per-request client (and everything its queries closed over) alive
+    // until they fire.
+    expect(harness.report.string.cacheEmptyAfterDispose).toBe(true)
+    expect(harness.report.stream.cacheEmptyAfterDispose).toBe(true)
+  })
+
+  it('keeps filtered queries out of the payload via shouldDehydrateQuery', () => {
+    const { filteredHtml } = harness.report.string
+    // The filtered client renders the data into the HTML as usual...
+    expect(filteredHtml).toContain('stale-server')
+    // ...but the standard dehydrate filter gates the registry, so the
+    // stale query's cache entry never ships,
+    expect(filteredHtml).not.toMatch(/sq:\[\\"stale\\"\]/)
+    // while unfiltered queries transfer exactly as before — including the
+    // never-rendered prefetch.
+    expect(filteredHtml).toMatch(
+      /sq:\[\\"fresh\\"\]"\]=[^<]*data:"fresh-server"/,
+    )
+    expect(filteredHtml).toMatch(/sq:\[\\"prefetched\\"\]/)
+  })
+
   it('hydration primes the query cache and refetches only per staleness rules', async () => {
     const { string } = harness.report
     const app = bundle.createApp()

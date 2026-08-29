@@ -38,11 +38,17 @@ export interface ServerReport {
       prefetched: number
     }
     queries: Array<QuerySnapshot>
+    /** Whether the provider's dispose-time teardown emptied the cache. */
+    cacheEmptyAfterDispose: boolean
+    /** Same app rendered on a client whose `defaultOptions.dehydrate.
+     * shouldDehydrateQuery` excludes the stale query. */
+    filteredHtml: string
   }
   stream: {
     chunks: Array<{ t: number; payload: string }>
     counts: { header: number; feed: number }
     queries: Array<QuerySnapshot>
+    cacheEmptyAfterDispose: boolean
   }
 }
 

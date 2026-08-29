@@ -45,6 +45,7 @@ export {
   useQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
+export { dehydrateSettled } from './dehydrateSettled'
 export { useIsFetching } from './useIsFetching'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'

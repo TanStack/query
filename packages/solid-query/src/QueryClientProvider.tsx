@@ -100,9 +100,18 @@ function serializeCacheOnServer(client: QueryClient): void {
   if (!ctx || !ctx.async || ctx.noHydrate) return
 
   const cache = client.getQueryCache()
+  // The standard dehydrate filter gates the wire here too, so apps keep
+  // sensitive or oversized queries out of the HTML with the same option
+  // they'd pass any other transport.
+  const shouldDehydrateQuery =
+    client.getDefaultOptions().dehydrate?.shouldDehydrateQuery
   const seen = new Set<string>()
   const serializeQuery = (query: Query<any, any, any, any>) => {
     if (seen.has(query.queryHash)) return
+    // Consulted per cache event until it passes, so a filter that rejects
+    // pending queries (e.g. the core default) still admits the settled
+    // value if it lands while the request's serialization context is live.
+    if (shouldDehydrateQuery && !shouldDehydrateQuery(query)) return
     const state = query.state
     if (state.status === 'success') {
       seen.add(query.queryHash)
@@ -149,6 +158,15 @@ export const QueryClientProvider = (
   onCleanup(() => props.client.unmount())
   if (isServer) {
     serializeCacheOnServer(props.client)
+    // Render disposal ends the request: abort what's still in flight and
+    // drop the cache so user-configured finite gcTime timers can't pin
+    // the per-request client (and whatever its queries closed over) until
+    // they fire. Serialized promises are already in seroval's hands, so
+    // clearing here can't affect the streamed payload.
+    onCleanup(() => {
+      props.client.cancelQueries().catch(() => undefined)
+      props.client.clear()
+    })
   } else {
     // Client-only: the server's consumer registry is module state shared
     // across requests — registering there would leak between them.
