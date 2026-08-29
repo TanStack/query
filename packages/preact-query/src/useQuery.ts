@@ -210,7 +210,7 @@ export function useQuery<
  * function Post({ postId }: { postId: number }) {
  *   const queryClient = useQueryClient()
  *
- *   const { data } = useQuery({
+ *   const { data, isError, error } = useQuery({
  *     queryKey: ['post', postId],
  *     queryFn: () => fetchPost(postId),
  *     initialData: () =>
@@ -218,6 +218,8 @@ export function useQuery<
  *         .getQueryData<Array<Post>>(['posts'])
  *         ?.find((post) => post.id === postId),
  *   })
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return <h1>{data?.title}</h1>
  * }
@@ -232,11 +234,13 @@ export function useQuery<
  * function Posts() {
  *   const [page, setPage] = useState(0)
  *
- *   const { data, isPlaceholderData } = useQuery({
+ *   const { data, isPlaceholderData, isError, error } = useQuery({
  *     queryKey: ['posts', page],
  *     queryFn: () => fetchPosts(page),
  *     placeholderData: keepPreviousData,
  *   })
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
  *     <div>
@@ -267,7 +271,8 @@ export function useQuery<
  *   })
  *
  * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
+ *   const { data, isError, error } = useQuery(postOptions(id))
+ *   if (isError) return <span>Error: {error.message}</span>
  *   return <h1>{data?.title}</h1>
  * }
  *

@@ -149,7 +149,10 @@ export type DefinedInitialDataInfiniteOptions<
  * })
  *
  * function Projects() {
- *   const { data } = useInfiniteQuery(projectsOptions)
+ *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
  *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
@@ -200,10 +203,14 @@ export function infiniteQueryOptions<
  * })
  *
  * function Projects() {
- *   const { data } = useInfiniteQuery(projectsOptions)
+ *   const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
  *     </ul>
  *   )
  * }
@@ -288,10 +295,14 @@ export function infiniteQueryOptions<
  * })
  *
  * function Projects() {
- *   const { data } = useInfiniteQuery(projectsOptions)
+ *   const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
  *     </ul>
  *   )
  * }

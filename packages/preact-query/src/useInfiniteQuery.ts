@@ -40,13 +40,15 @@ import { useBaseQuery } from './useBaseQuery'
  * import { useInfiniteQuery } from '@tanstack/preact-query'
  *
  * function Projects() {
- *   const { data } = useInfiniteQuery({
+ *   const { data, isError, error } = useInfiniteQuery({
  *     queryKey: ['projects'],
  *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
  *     initialPageParam: 0,
  *     getNextPageParam: (lastPage) => lastPage.nextId,
  *     initialData: { pages: [], pageParams: [] },
  *   })
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
  *     <ul>

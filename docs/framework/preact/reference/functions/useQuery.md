@@ -188,7 +188,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L288)
+Defined in: [preact-query/src/useQuery.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L293)
 
 ### Type Parameters
 
@@ -312,7 +312,7 @@ import { useQuery, useQueryClient } from '@tanstack/preact-query'
 function Post({ postId }: { postId: number }) {
   const queryClient = useQueryClient()
 
-  const { data } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId),
     initialData: () =>
@@ -320,6 +320,8 @@ function Post({ postId }: { postId: number }) {
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === postId),
   })
+
+  if (isError) return <span>Error: {error.message}</span>
 
   return <h1>{data?.title}</h1>
 }
@@ -333,11 +335,13 @@ import { useState } from 'preact/hooks'
 function Posts() {
   const [page, setPage] = useState(0)
 
-  const { data, isPlaceholderData } = useQuery({
+  const { data, isPlaceholderData, isError, error } = useQuery({
     queryKey: ['posts', page],
     queryFn: () => fetchPosts(page),
     placeholderData: keepPreviousData,
   })
+
+  if (isError) return <span>Error: {error.message}</span>
 
   return (
     <div>
@@ -367,7 +371,8 @@ const postOptions = (id: string) =>
   })
 
 function Post({ id }: { id: string }) {
-  const { data } = useQuery(postOptions(id))
+  const { data, isError, error } = useQuery(postOptions(id))
+  if (isError) return <span>Error: {error.message}</span>
   return <h1>{data?.title}</h1>
 }
 

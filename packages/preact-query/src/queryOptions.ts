@@ -123,7 +123,10 @@ export type DefinedInitialDataOptions<
  *
  * function Posts() {
  *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
- *   const { data } = useQuery(postsOptions)
+ *   const { data, isError, error } = useQuery(postsOptions)
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
  *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
@@ -161,10 +164,14 @@ export function queryOptions<
  * })
  *
  * function Posts() {
- *   const { data } = useQuery(postsOptions)
+ *   const { data, isPending, isError, error } = useQuery(postsOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
  *     </ul>
  *   )
  * }
@@ -182,8 +189,10 @@ export function queryOptions<
  *   })
  *
  * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
- *   return <h1>{data?.title}</h1>
+ *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *   return <h1>{data.title}</h1>
  * }
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
@@ -203,10 +212,14 @@ export function queryOptions<
  * })
  *
  * function Todos() {
- *   const { data } = useQuery(todosOptions)
+ *   const { data, isPending, isError, error } = useQuery(todosOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}
+ *       {data.map((todo) => <li key={todo.id}>{todo.title}</li>)}
  *     </ul>
  *   )
  * }
@@ -245,10 +258,14 @@ export function queryOptions<
  * })
  *
  * function Posts() {
- *   const { data } = useQuery(postsOptions)
+ *   const { data, isPending, isError, error } = useQuery(postsOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
  *     </ul>
  *   )
  * }
@@ -266,8 +283,10 @@ export function queryOptions<
  *   })
  *
  * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
- *   return <h1>{data?.title}</h1>
+ *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *   return <h1>{data.title}</h1>
  * }
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
@@ -287,10 +306,14 @@ export function queryOptions<
  * })
  *
  * function Todos() {
- *   const { data } = useQuery(todosOptions)
+ *   const { data, isPending, isError, error } = useQuery(todosOptions)
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
- *       {data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}
+ *       {data.map((todo) => <li key={todo.id}>{todo.title}</li>)}
  *     </ul>
  *   )
  * }
@@ -312,10 +335,11 @@ export function queryOptions<
  *   })
  *
  * function Post({ postId }: { postId: number | undefined }) {
- *   const { data, isLoading } = useQuery(postOptions(postId))
+ *   const { data, isLoading, isError, error } = useQuery(postOptions(postId))
  *
  *   if (postId == null) return 'Select a post'
  *   if (isLoading) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return <h1>{data?.title}</h1>
  * }

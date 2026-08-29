@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:161](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L161)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L164)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -69,7 +69,10 @@ export const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data } = useInfiniteQuery(projectsOptions)
+  const { data, isError, error } = useInfiniteQuery(projectsOptions)
+
+  if (isError) return <span>Error: {error.message}</span>
+
   return (
     <ul>
       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
@@ -84,7 +87,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:249](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L249)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L256)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -137,10 +140,14 @@ export const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data } = useInfiniteQuery(projectsOptions)
+  const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
   return (
     <ul>
-      {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+      {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
     </ul>
   )
 }
@@ -189,7 +196,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:373](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L373)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:384](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L384)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -242,10 +249,14 @@ export const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data } = useInfiniteQuery(projectsOptions)
+  const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
   return (
     <ul>
-      {data?.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+      {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
     </ul>
   )
 }
