@@ -237,8 +237,17 @@ export function infiniteQueryOptions<
  *   )
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
- * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+ * function PostLink({ postId, title }: { postId: string; title: string }) {
+ *   return (
+ *     <a
+ *       href={`/posts/${postId}`}
+ *       // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -323,8 +332,17 @@ export function infiniteQueryOptions<
  *   )
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
- * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+ * function PostLink({ postId, title }: { postId: string; title: string }) {
+ *   return (
+ *     <a
+ *       href={`/posts/${postId}`}
+ *       // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.

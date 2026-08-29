@@ -75,7 +75,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:205](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L205)
+Defined in: [preact-query/src/queryOptions.ts:222](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L222)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -146,8 +146,17 @@ function Post({ id }: { id: string }) {
   return <h1>{data?.title}</h1>
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Post>`:
-queryClient.query(postOptions(id)).catch(noop)
+function PostLink({ id, title }: { id: string; title: string }) {
+  return (
+    <a
+      href={`/posts/${id}`}
+      // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+    >
+      {title}
+    </a>
+  )
+}
 ```
 
 The same options object works with every API that accepts query options:
@@ -164,9 +173,17 @@ function Todos() {
   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
-queryClient.query(todosOptions).catch(noop)
-queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+function TodosLink() {
+  return (
+    <a
+      href="/todos"
+      // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
+    >
+      Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
+    </a>
+  )
+}
 ```
 
 ## Call Signature
@@ -175,7 +192,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:279](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L279)
+Defined in: [preact-query/src/queryOptions.ts:313](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L313)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -246,8 +263,17 @@ function Post({ id }: { id: string }) {
   return <h1>{data?.title}</h1>
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Post>`:
-queryClient.query(postOptions(id)).catch(noop)
+function PostLink({ id, title }: { id: string; title: string }) {
+  return (
+    <a
+      href={`/posts/${id}`}
+      // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+    >
+      {title}
+    </a>
+  )
+}
 ```
 
 The same options object works with every API that accepts query options:
@@ -264,7 +290,15 @@ function Todos() {
   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
-queryClient.query(todosOptions).catch(noop)
-queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+function TodosLink() {
+  return (
+    <a
+      href="/todos"
+      // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
+    >
+      Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
+    </a>
+  )
+}
 ```

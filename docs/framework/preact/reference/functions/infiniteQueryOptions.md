@@ -84,7 +84,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:247](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L247)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:256](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L256)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -173,8 +173,17 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+function PostLink({ postId, title }: { postId: string; title: string }) {
+  return (
+    <a
+      href={`/posts/${postId}`}
+      // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
+    >
+      {title}
+    </a>
+  )
+}
 ```
 
 ### See
@@ -187,7 +196,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:333](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L333)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:351](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L351)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -276,8 +285,17 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+function PostLink({ postId, title }: { postId: string; title: string }) {
+  return (
+    <a
+      href={`/posts/${postId}`}
+      // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
+      onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
+    >
+      {title}
+    </a>
+  )
+}
 ```
 
 ### See

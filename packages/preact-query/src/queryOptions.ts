@@ -178,8 +178,17 @@ export function queryOptions<
  *   return <h1>{data?.title}</h1>
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.query(postOptions(id)).catch(noop)
+ * function PostLink({ id, title }: { id: string; title: string }) {
+ *   return (
+ *     <a
+ *       href={`/posts/${id}`}
+ *       // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
  * ```
  *
  * @example
@@ -197,9 +206,17 @@ export function queryOptions<
  *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+ * function TodosLink() {
+ *   return (
+ *     <a
+ *       href="/todos"
+ *       // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
+ *     >
+ *       Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
+ *     </a>
+ *   )
+ * }
  * ```
  */
 export function queryOptions<
@@ -252,8 +269,17 @@ export function queryOptions<
  *   return <h1>{data?.title}</h1>
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.query(postOptions(id)).catch(noop)
+ * function PostLink({ id, title }: { id: string; title: string }) {
+ *   return (
+ *     <a
+ *       href={`/posts/${id}`}
+ *       // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
  * ```
  *
  * @example
@@ -271,9 +297,17 @@ export function queryOptions<
  *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
  * }
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Todos>`:
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+ * function TodosLink() {
+ *   return (
+ *     <a
+ *       href="/todos"
+ *       // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
+ *       onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
+ *     >
+ *       Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
+ *     </a>
+ *   )
+ * }
  * ```
  */
 export function queryOptions<
