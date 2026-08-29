@@ -114,20 +114,20 @@ export function useMutation<
    * Flight metadata (retry failures, offline pause) lives on the Mutation
    * instance and changes during the await gap; a version bump per cache
    * event for the active mutation keeps reads current without cloning
-   * observer results.
+   * observer results. The subscription is per-flight, created in `run`
+   * against the same client the mutation is built on: nothing reactive is
+   * read at setup (no client read to untrack), the listener and the
+   * mutation can never sit on different clients, and an idle hook holds no
+   * cache subscription at all.
    */
   let activeMutation: Mutation<TData, TError, TVariables> | null = null
+  let unsubscribeFlight: (() => void) | null = null
   const [flightVersion, setFlightVersion] = createSignal(0)
-  if (!isServer) {
-    const unsubscribe = client()
-      .getMutationCache()
-      .subscribe((event) => {
-        if ('mutation' in event && event.mutation === activeMutation) {
-          setFlightVersion((v) => v + 1)
-        }
-      })
-    onCleanup(unsubscribe)
-  }
+  if (!isServer)
+    onCleanup(() => {
+      unsubscribeFlight?.()
+      unsubscribeFlight = null
+    })
 
   async function* run(
     variables: TVariables,
@@ -144,19 +144,33 @@ export function useMutation<
     if (!isServer) setFlight({ variables })
     opts.onMutate?.(variables, callbackContext)
 
-    const mutation = client()
-      .getMutationCache()
-      .build(client(), {
-        ...opts,
-        // Options-level callbacks re-run below, inside the transaction —
-        // executing them here (inside the await gap) would let their
-        // cache writes and invalidations escape the atomic settle.
-        onMutate: undefined,
-        onSuccess: undefined,
-        onError: undefined,
-        onSettled: undefined,
-      }) as unknown as Mutation<TData, TError, TVariables>
+    const c = untrack(client)
+    const mutation = c.getMutationCache().build(c, {
+      ...opts,
+      // Options-level callbacks re-run below, inside the transaction —
+      // executing them here (inside the await gap) would let their
+      // cache writes and invalidations escape the atomic settle.
+      onMutate: undefined,
+      onSuccess: undefined,
+      onError: undefined,
+      onSettled: undefined,
+    }) as unknown as Mutation<TData, TError, TVariables>
     activeMutation = mutation
+    if (!isServer) {
+      // A rapid re-mutate replaces the previous flight's listener.
+      unsubscribeFlight?.()
+      unsubscribeFlight = c.getMutationCache().subscribe((event) => {
+        if ('mutation' in event && event.mutation === activeMutation) {
+          setFlightVersion((v) => v + 1)
+        }
+      })
+    }
+    const settleFlight = () => {
+      if (activeMutation !== mutation) return
+      activeMutation = null
+      unsubscribeFlight?.()
+      unsubscribeFlight = null
+    }
 
     /**
      * Failure settle, shared by both paths. Callback routing mirrors
@@ -202,7 +216,7 @@ export function useMutation<
           variables,
           submittedAt: mutation.state.submittedAt,
         })
-      activeMutation = null
+      settleFlight()
       throw error
     }
 
@@ -250,7 +264,7 @@ export function useMutation<
         variables,
         submittedAt: mutation.state.submittedAt,
       })
-    activeMutation = null
+    settleFlight()
     return result
   }
 
