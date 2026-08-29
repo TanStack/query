@@ -207,6 +207,50 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * Warming the cache on hover, so `<Comments>` has data as soon as it's clicked. Requires an
+ * {@link infiniteQueryOptions} factory, so the hook and the imperative call share the same cache entry:
+ * ```tsx
+ * import {
+ *   infiniteQueryOptions,
+ *   noop,
+ *   useInfiniteQuery,
+ *   useQueryClient,
+ * } from '@tanstack/preact-query'
+ *
+ * const commentsOptions = (postId: string) =>
+ *   infiniteQueryOptions({
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
+ *
+ * function Comments({ postId }: { postId: string }) {
+ *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+ *     </ul>
+ *   )
+ * }
+ *
+ * function PostLink({ postId, title }: { postId: string; title: string }) {
+ *   const queryClient = useQueryClient()
+ *
+ *   return (
+ *     <a
+ *       href={`/posts/${postId}`}
+ *       onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
+ * ```
  */
 export function useInfiniteQuery<
   TQueryFnData,

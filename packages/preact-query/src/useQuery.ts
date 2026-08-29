@@ -217,6 +217,37 @@ export function useQuery<
  *   )
  * }
  * ```
+ *
+ * @example
+ * Warming the cache on hover, so `<Post>` has data as soon as it's clicked. Requires a
+ * {@link queryOptions} factory, so the hook and the imperative call share the same cache entry:
+ * ```tsx
+ * import { noop, queryOptions, useQuery, useQueryClient } from '@tanstack/preact-query'
+ *
+ * const postOptions = (id: string) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function Post({ id }: { id: string }) {
+ *   const { data } = useQuery(postOptions(id))
+ *   return <h1>{data?.title}</h1>
+ * }
+ *
+ * function PostLink({ id, title }: { id: string; title: string }) {
+ *   const queryClient = useQueryClient()
+ *
+ *   return (
+ *     <a
+ *       href={`/posts/${id}`}
+ *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
+ *   )
+ * }
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

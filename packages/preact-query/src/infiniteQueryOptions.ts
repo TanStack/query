@@ -237,17 +237,9 @@ export function infiniteQueryOptions<
  *   )
  * }
  *
- * function PostLink({ postId, title }: { postId: string; title: string }) {
- *   return (
- *     <a
- *       href={`/posts/${postId}`}
- *       // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
- *     >
- *       {title}
- *     </a>
- *   )
- * }
+ * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
+ * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -332,17 +324,9 @@ export function infiniteQueryOptions<
  *   )
  * }
  *
- * function PostLink({ postId, title }: { postId: string; title: string }) {
- *   return (
- *     <a
- *       href={`/posts/${postId}`}
- *       // Warm the cache on hover, so `<Comments>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)}
- *     >
- *       {title}
- *     </a>
- *   )
- * }
+ * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
+ * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.

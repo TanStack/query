@@ -178,17 +178,9 @@ export function queryOptions<
  *   return <h1>{data?.title}</h1>
  * }
  *
- * function PostLink({ id, title }: { id: string; title: string }) {
- *   return (
- *     <a
- *       href={`/posts/${id}`}
- *       // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
- *     >
- *       {title}
- *     </a>
- *   )
- * }
+ * // `postOptions` also works with imperative APIs like `queryClient.query` —
+ * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
+ * queryClient.query(postOptions(id)).catch(noop)
  * ```
  *
  * @example
@@ -206,17 +198,9 @@ export function queryOptions<
  *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
  * }
  *
- * function TodosLink() {
- *   return (
- *     <a
- *       href="/todos"
- *       // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
- *     >
- *       Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
- *     </a>
- *   )
- * }
+ * // The same options object works with the imperative APIs too:
+ * queryClient.query(todosOptions).catch(noop)
+ * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<
@@ -269,17 +253,9 @@ export function queryOptions<
  *   return <h1>{data?.title}</h1>
  * }
  *
- * function PostLink({ id, title }: { id: string; title: string }) {
- *   return (
- *     <a
- *       href={`/posts/${id}`}
- *       // Warm the cache on hover, so `<Post>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
- *     >
- *       {title}
- *     </a>
- *   )
- * }
+ * // `postOptions` also works with imperative APIs like `queryClient.query` —
+ * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
+ * queryClient.query(postOptions(id)).catch(noop)
  * ```
  *
  * @example
@@ -297,17 +273,9 @@ export function queryOptions<
  *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
  * }
  *
- * function TodosLink() {
- *   return (
- *     <a
- *       href="/todos"
- *       // Warm the cache on hover, so `<Todos>` has data as soon as it's clicked.
- *       onMouseEnter={() => queryClient.query(todosOptions).catch(noop)}
- *     >
- *       Todos ({queryClient.getQueryData(todosOptions.queryKey)?.length ?? '...'})
- *     </a>
- *   )
- * }
+ * // The same options object works with the imperative APIs too:
+ * queryClient.query(todosOptions).catch(noop)
+ * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<
