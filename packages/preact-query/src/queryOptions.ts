@@ -188,7 +188,8 @@ export function queryOptions<
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
  * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * queryClient.query(postOptions('123')).catch(noop)
+ * const postId = '1'
+ * queryClient.query(postOptions(postId)).catch(noop)
  * ```
  *
  * @example
@@ -271,7 +272,8 @@ export function queryOptions<
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
  * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * queryClient.query(postOptions('123')).catch(noop)
+ * const postId = '1'
+ * queryClient.query(postOptions(postId)).catch(noop)
  * ```
  *
  * @example

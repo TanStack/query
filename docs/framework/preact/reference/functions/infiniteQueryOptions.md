@@ -84,7 +84,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:248](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L248)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:249](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L249)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -175,7 +175,8 @@ function Comments({ postId }: { postId: string }) {
 
 // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
 // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
+const postId = '1'
+queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 
 ### See
@@ -188,7 +189,7 @@ queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:335](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L335)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:337](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L337)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -279,7 +280,8 @@ function Comments({ postId }: { postId: string }) {
 
 // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
 // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
+const postId = '1'
+queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 
 ### See

@@ -239,7 +239,8 @@ export function infiniteQueryOptions<
  *
  * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
  * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
- * queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
+ * const postId = '1'
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -326,7 +327,8 @@ export function infiniteQueryOptions<
  *
  * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
  * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
- * queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
+ * const postId = '1'
+ * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.

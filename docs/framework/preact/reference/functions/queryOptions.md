@@ -79,7 +79,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:218](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L218)
+Defined in: [preact-query/src/queryOptions.ts:219](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L219)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -156,7 +156,8 @@ function Post({ id }: { id: string }) {
 
 // `postOptions` also works with imperative APIs like `queryClient.query` —
 // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
-queryClient.query(postOptions('123')).catch(noop)
+const postId = '1'
+queryClient.query(postOptions(postId)).catch(noop)
 ```
 
 The same options object works with every API that accepts query options:
@@ -188,7 +189,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:301](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L301)
+Defined in: [preact-query/src/queryOptions.ts:303](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L303)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -265,7 +266,8 @@ function Post({ id }: { id: string }) {
 
 // `postOptions` also works with imperative APIs like `queryClient.query` —
 // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
-queryClient.query(postOptions('123')).catch(noop)
+const postId = '1'
+queryClient.query(postOptions(postId)).catch(noop)
 ```
 
 The same options object works with every API that accepts query options:
