@@ -39,6 +39,7 @@ export type {
   UndefinedInitialDataOptions,
 } from './queryOptions'
 export {
+  FLIGHT_DATA_SOURCE,
   QueryClientContext,
   QueryClientProvider,
   useQueryClient,

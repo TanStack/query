@@ -1,5 +1,7 @@
 import { createContext, onCleanup, sharedConfig, useContext } from 'solid-js'
-import type { Query } from '@tanstack/query-core'
+import { hydrate } from '@tanstack/query-core'
+import { subscribeFlightData } from '@solidjs/web/server-functions'
+import type { DehydratedState, Query } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type { JSX } from '@solidjs/web'
 
@@ -12,6 +14,40 @@ const isServer = typeof window === 'undefined'
  * hashes get their own prefix.
  */
 export const HYDRATION_KEY_PREFIX = 'sq:'
+
+/**
+ * The query cache's single-flight source id. Mutation responses can fold
+ * fresh data for multiple caches at once (Solid's multi-source
+ * single-flight protocol); this is the slice the query cache claims — the
+ * provider subscribes its consumer under it, and server collectors
+ * register under it to produce the data:
+ *
+ * ```ts
+ * import { registerFlightDataSource } from '@solidjs/web/server-functions/server'
+ * import { FLIGHT_DATA_SOURCE, dehydrate } from '@tanstack/solid-query'
+ *
+ * registerFlightDataSource(FLIGHT_DATA_SOURCE, async (event, outcome) => {
+ *   // rebuild the data for outcome.targetUrl into a QueryClient, then
+ *   return dehydrate(queryClient)
+ * })
+ * ```
+ *
+ * The slice's payload is a `DehydratedState`; the provider consumes it
+ * with `hydrate()`, so every mounted query on those keys updates before
+ * the mutation's promise resolves — no follow-up refetches.
+ */
+export const FLIGHT_DATA_SOURCE = 'sq'
+
+// The named-source overload of subscribeFlightData ships in the
+// @solidjs/web release after 2.0.0-rc.4 (solidjs/solid#653dd41e); this
+// cast bridges the installed types until the peer range bumps.
+const subscribeFlightSource = subscribeFlightData as unknown as (
+  source: string,
+  consumer: (
+    data: DehydratedState,
+    context: { response: Response },
+  ) => void | Promise<void>,
+) => () => void
 
 export const QueryClientContext = createContext<(() => QueryClient) | null>(
   null,
@@ -97,15 +133,31 @@ function serializeCacheOnServer(client: QueryClient): void {
 /**
  * Provides the QueryClient and manages its mount lifecycle. On the server
  * it also registers the cache serializer above; on the client, hooks prime
- * the cache from their hash-keyed registry entries themselves — see
- * `useBaseQuery`.
+ * the cache from their hash-keyed registry entries themselves (see
+ * `useBaseQuery`) and the provider subscribes the cache's single-flight
+ * consumer: mutation responses carrying a `FLIGHT_DATA_SOURCE` slice (a
+ * `DehydratedState` produced by a server collector registered under the
+ * same id) hydrate this client before the mutation's promise resolves.
+ * Subscribing is inert when no server collector exists — the server just
+ * folds nothing — so it is unconditional. One consumer per source: with
+ * nested providers, the innermost mounted one owns the slice.
  */
 export const QueryClientProvider = (
   props: QueryClientProviderProps,
 ): JSX.Element => {
   props.client.mount()
   onCleanup(() => props.client.unmount())
-  if (isServer) serializeCacheOnServer(props.client)
+  if (isServer) {
+    serializeCacheOnServer(props.client)
+  } else {
+    // Client-only: the server's consumer registry is module state shared
+    // across requests — registering there would leak between them.
+    onCleanup(
+      subscribeFlightSource(FLIGHT_DATA_SOURCE, (data) => {
+        hydrate(props.client, data)
+      }),
+    )
+  }
 
   return (
     <QueryClientContext value={() => props.client}>
