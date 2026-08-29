@@ -155,7 +155,17 @@ export function createBaseQuery<
                     // pending-task ledger is empty while the rendered view is still stale — with
                     // zoneless change detection, `whenStable()` latches in that statement and SSR
                     // serializes the stale view.
-                    if (state.fetchStatus === 'idle' && pendingTaskRef) {
+                    //
+                    // Guarded on the observer's CURRENT fetch status, not only the delivered
+                    // snapshot: state updates synchronously at fetch resolution while notifications
+                    // are delivered a schedule turn later, so a refetch started in that window
+                    // already owns this task (`trackFetch` is idempotent) — an older queued 'idle'
+                    // snapshot must not release coverage for the newer in-flight fetch.
+                    if (
+                      state.fetchStatus === 'idle' &&
+                      pendingTaskRef &&
+                      observer.getCurrentResult().fetchStatus === 'idle'
+                    ) {
                       pendingTaskRef()
                       pendingTaskRef = null
                     }

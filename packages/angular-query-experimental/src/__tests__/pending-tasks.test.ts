@@ -105,6 +105,42 @@ describe('pending tasks integration', () => {
     expect(events).toEqual(['add', 'release:ok'])
   })
 
+  it('keeps coverage when a refetch starts before the previous idle notification is delivered', async () => {
+    const key = queryKey()
+    let resolveFetch!: (value: string) => void
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          new Promise<string>((resolve) => {
+            resolveFetch = resolve
+          }),
+      })),
+    )
+    readData = () => query.data()
+    TestBed.tick()
+    expect(events).toEqual(['add'])
+
+    // First fetch resolves; query state updates synchronously, but the 'idle' notification is
+    // queued for the next notifyManager schedule turn.
+    resolveFetch('one')
+    await Promise.resolve()
+    await Promise.resolve()
+
+    // A second fetch starts inside that window. trackFetch is idempotent, so the still-held task
+    // must now cover THIS fetch — the queued idle snapshot from the first fetch must not release it.
+    void query.refetch()
+    expect(events).toEqual(['add'])
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(events).toEqual(['add']) // older idle snapshot delivered; coverage kept
+
+    resolveFetch('two')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(events).toEqual(['add', 'release:two'])
+    expect(query.data()).toBe('two')
+  })
+
   it('releases the task when the query errors', async () => {
     const key = queryKey()
     const query = TestBed.runInInjectionContext(() =>
