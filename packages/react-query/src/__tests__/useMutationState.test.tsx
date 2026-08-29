@@ -241,4 +241,267 @@ describe('useMutationState', () => {
 
     expect(variables).toEqual([[], [1], []])
   })
+
+  it('should update the result when the filters change without a cache update', async () => {
+    const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Variables({ mutationKey }: { mutationKey: Array<string> }) {
+      const variables = useMutationState({
+        filters: { mutationKey },
+        select: (mutation) => mutation.state.variables,
+      })
+
+      return <div>variables: {variables.join(',')}</div>
+    }
+
+    function Page() {
+      const [mutationKey, setMutationKey] = React.useState(key1)
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: key1,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: key2,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Variables mutationKey={mutationKey} />
+          <button
+            onClick={() => {
+              mutate1(1)
+              mutate2(2)
+            }}
+          >
+            mutate
+          </button>
+          <button onClick={() => setMutationKey(key2)}>switch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('variables: 1')).toBeInTheDocument()
+
+    // only the filters change - nothing touches the mutation cache
+    fireEvent.click(rendered.getByRole('button', { name: /switch/i }))
+    expect(rendered.getByText('variables: 2')).toBeInTheDocument()
+  })
+
+  it('should update the result when the select changes', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+
+    function Selected({ pick }: { pick: (m: any) => unknown }) {
+      const values = useMutationState({
+        filters: { mutationKey: key },
+        select: pick,
+      })
+
+      return <div>value: {String(values[0])}</div>
+    }
+
+    function Page() {
+      const [pick, setPick] = React.useState(
+        () => (m: any) => m.state.variables as unknown,
+      )
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Selected pick={pick} />
+          <button onClick={() => mutate(7)}>mutate</button>
+          <button onClick={() => setPick(() => (m: any) => m.state.status)}>
+            switch
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('value: 7')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /switch/i }))
+    expect(rendered.getByText('value: success')).toBeInTheDocument()
+  })
+
+  it('should empty the result when the filters stop matching', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const other = queryKey()
+
+    function Variables({ mutationKey }: { mutationKey: Array<string> }) {
+      const variables = useMutationState({
+        filters: { mutationKey },
+        select: (mutation) => mutation.state.variables,
+      })
+
+      return <div>count: {variables.length}</div>
+    }
+
+    function Page() {
+      const [mutationKey, setMutationKey] = React.useState(key)
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Variables mutationKey={mutationKey} />
+          <button onClick={() => mutate(1)}>mutate</button>
+          <button onClick={() => setMutationKey(other)}>switch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /switch/i }))
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
+  })
+
+  it('should keep the same result reference across an unrelated render', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    const seen: Array<unknown> = []
+
+    function Variables() {
+      const variables = useMutationState({
+        filters: { mutationKey: key },
+        select: (mutation) => ({ ...mutation.state }),
+      })
+      seen.push(variables)
+
+      return null
+    }
+
+    function Page() {
+      const [, rerender] = React.useState(0)
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Variables />
+          <button onClick={() => mutate(1)}>mutate</button>
+          <button onClick={() => rerender((n) => n + 1)}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    const before = seen.length
+    expect((seen[before - 1] as Array<unknown>).length).toBe(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    // the snapshot must stay referentially stable, or useSyncExternalStore loops
+    expect(seen.length).toBeGreaterThan(before)
+    expect(seen[seen.length - 1]).toBe(seen[before - 1])
+  })
+
+  it('should not re-run a stable select on an unrelated render', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+    let selectCalls = 0
+    const select = (mutation: any) => {
+      selectCalls++
+
+      return mutation.state.variables
+    }
+
+    function Variables() {
+      const [, rerender] = React.useState(0)
+      useMutationState({ filters: { mutationKey: key }, select })
+
+      return <button onClick={() => rerender((n) => n + 1)}>rerender</button>
+    }
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationKey: key,
+        mutationFn: (input: number) => sleep(10).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Variables />
+          <button onClick={() => mutate(1)}>mutate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    const before = selectCalls
+
+    // the re-render starts inside the subtree, so nothing notifies the cache
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    expect(selectCalls).toBe(before)
+  })
+
+  it('should update useIsMutating when the filters change', async () => {
+    const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Count({ mutationKey }: { mutationKey: Array<string> }) {
+      const count = useIsMutating({ mutationKey })
+
+      return <div>count: {count}</div>
+    }
+
+    function Page() {
+      const [mutationKey, setMutationKey] = React.useState(key1)
+      const { mutate } = useMutation({
+        mutationKey: key1,
+        mutationFn: (input: number) => sleep(50).then(() => 'data' + input),
+      })
+
+      return (
+        <div>
+          <Count mutationKey={mutationKey} />
+          <button onClick={() => mutate(1)}>mutate</button>
+          <button onClick={() => setMutationKey(key2)}>switch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /switch/i }))
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(41)
+  })
 })
