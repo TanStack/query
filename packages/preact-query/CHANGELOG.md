@@ -1,5 +1,23 @@
 # @tanstack/preact-query
 
+## 5.102.8
+
+### Patch Changes
+
+- [#11315](https://github.com/TanStack/query/pull/11315) [`6c27607`](https://github.com/TanStack/query/commit/6c27607d7ffc87612a8f1222a95f28bf5f9a045e) - fix(preact-query/useQueries): keep unsubscribed idle
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- [#11309](https://github.com/TanStack/query/pull/11309) [`67fddee`](https://github.com/TanStack/query/commit/67fddee6310ca0dd87749ed7a1b4a7178c6e6aae) - fix(preact-query): propagate falsy errors to the error boundary
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.7
+
 ## 5.102.6
 
 ### Patch Changes
