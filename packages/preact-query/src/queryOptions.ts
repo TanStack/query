@@ -124,7 +124,11 @@ export type DefinedInitialDataOptions<
  * function Posts() {
  *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
  *   const { data } = useQuery(postsOptions)
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  */
@@ -158,7 +162,11 @@ export function queryOptions<
  *
  * function Posts() {
  *   const { data } = useQuery(postsOptions)
- *   return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  *
@@ -180,7 +188,7 @@ export function queryOptions<
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
  * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * queryClient.query(postOptions(id)).catch(noop)
+ * queryClient.query(postOptions('123')).catch(noop)
  * ```
  *
  * @example
@@ -195,7 +203,11 @@ export function queryOptions<
  *
  * function Todos() {
  *   const { data } = useQuery(todosOptions)
- *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}
+ *     </ul>
+ *   )
  * }
  *
  * // The same options object works with the imperative APIs too:
@@ -233,7 +245,11 @@ export function queryOptions<
  *
  * function Posts() {
  *   const { data } = useQuery(postsOptions)
- *   return <>{data?.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  *
@@ -255,7 +271,7 @@ export function queryOptions<
  *
  * // `postOptions` also works with imperative APIs like `queryClient.query` —
  * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * queryClient.query(postOptions(id)).catch(noop)
+ * queryClient.query(postOptions('123')).catch(noop)
  * ```
  *
  * @example
@@ -270,7 +286,11 @@ export function queryOptions<
  *
  * function Todos() {
  *   const { data } = useQuery(todosOptions)
- *   return <>{data?.map((todo) => <p key={todo.id}>{todo.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}
+ *     </ul>
+ *   )
  * }
  *
  * // The same options object works with the imperative APIs too:

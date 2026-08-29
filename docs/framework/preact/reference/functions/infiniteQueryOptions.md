@@ -175,7 +175,7 @@ function Comments({ postId }: { postId: string }) {
 
 // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
 // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
 ```
 
 ### See
@@ -279,7 +279,7 @@ function Comments({ postId }: { postId: string }) {
 
 // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
 // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
+queryClient.infiniteQuery(commentsOptions('123')).catch(noop)
 ```
 
 ### See

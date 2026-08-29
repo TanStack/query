@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L74)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:76](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L76)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -77,9 +77,11 @@ function Projects() {
 
   return (
     <div>
-      {data.pages.map((page) =>
-        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
-      )}
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
       <button
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetching}

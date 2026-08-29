@@ -7,7 +7,7 @@ title: useSuspenseQuery
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L55)
+Defined in: [preact-query/src/useSuspenseQuery.ts:57](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L57)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.
@@ -76,10 +76,12 @@ function Posts() {
 
   return (
     <div>
-      <h1>Posts {isFetching ? <Spinner /> : null}</h1>
-      {data.map((post) => (
-        <p key={post.id}>{post.title}</p>
-      ))}
+      <h1>Posts {isFetching ? '(refreshing...)' : null}</h1>
+      <ul>
+        {data.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
     </div>
   )
 }

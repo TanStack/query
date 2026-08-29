@@ -35,10 +35,12 @@ import { useBaseQuery } from './useBaseQuery'
  *
  *   return (
  *     <div>
- *       <h1>Posts {isFetching ? <Spinner /> : null}</h1>
- *       {data.map((post) => (
- *         <p key={post.id}>{post.title}</p>
- *       ))}
+ *       <h1>Posts {isFetching ? '(refreshing...)' : null}</h1>
+ *       <ul>
+ *         {data.map((post) => (
+ *           <li key={post.id}>{post.title}</li>
+ *         ))}
+ *       </ul>
  *     </div>
  *   )
  * }

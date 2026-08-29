@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:42](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L42)
+Defined in: [preact-query/src/useQuery.ts:46](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L46)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -71,7 +71,11 @@ function Posts() {
     initialData: [],
   })
 
-  return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+  return (
+    <ul>
+      {data.map((post) => <li key={post.id}>{post.title}</li>)}
+    </ul>
+  )
 }
 ```
 
@@ -81,7 +85,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:105](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L105)
+Defined in: [preact-query/src/useQuery.ts:115](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L115)
 
 ### Type Parameters
 
@@ -146,9 +150,11 @@ function Posts() {
 
   return (
     <div>
-      {data.map((post) => (
-        <p key={post.id}>{post.title}</p>
-      ))}
+      <ul>
+        {data.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
       <div>{isFetching ? 'Background Updating...' : ' '}</div>
     </div>
   )
@@ -168,7 +174,11 @@ function Posts() {
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
 
-  return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+  return (
+    <ul>
+      {data.map((post) => <li key={post.id}>{post.title}</li>)}
+    </ul>
+  )
 }
 ```
 
@@ -178,7 +188,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:252](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L252)
+Defined in: [preact-query/src/useQuery.ts:266](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L266)
 
 ### Type Parameters
 
@@ -243,9 +253,11 @@ function Posts() {
 
   return (
     <div>
-      {data.map((post) => (
-        <p key={post.id}>{post.title}</p>
-      ))}
+      <ul>
+        {data.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
       <div>{isFetching ? 'Background Updating...' : ' '}</div>
     </div>
   )
@@ -308,7 +320,9 @@ function Posts() {
 
   return (
     <div>
-      {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+      <ul>
+        {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+      </ul>
       <button
         disabled={isPlaceholderData}
         onClick={() => setPage((old) => old + 1)}

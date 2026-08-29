@@ -48,7 +48,11 @@ import { useBaseQuery } from './useBaseQuery'
  *     initialData: { pages: [], pageParams: [] },
  *   })
  *
- *   return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+ *   return (
+ *     <ul>
+ *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *     </ul>
+ *   )
  * }
  * ```
  */

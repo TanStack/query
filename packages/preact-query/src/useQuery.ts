@@ -35,7 +35,11 @@ import { useBaseQuery } from './useBaseQuery'
  *     initialData: [],
  *   })
  *
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  */
@@ -75,9 +79,11 @@ export function useQuery<
  *
  *   return (
  *     <div>
- *       {data.map((post) => (
- *         <p key={post.id}>{post.title}</p>
- *       ))}
+ *       <ul>
+ *         {data.map((post) => (
+ *           <li key={post.id}>{post.title}</li>
+ *         ))}
+ *       </ul>
  *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
  *     </div>
  *   )
@@ -98,7 +104,11 @@ export function useQuery<
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  */
@@ -138,9 +148,11 @@ export function useQuery<
  *
  *   return (
  *     <div>
- *       {data.map((post) => (
- *         <p key={post.id}>{post.title}</p>
- *       ))}
+ *       <ul>
+ *         {data.map((post) => (
+ *           <li key={post.id}>{post.title}</li>
+ *         ))}
+ *       </ul>
  *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
  *     </div>
  *   )
@@ -206,7 +218,9 @@ export function useQuery<
  *
  *   return (
  *     <div>
- *       {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+ *       <ul>
+ *         {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
  *       <button
  *         disabled={isPlaceholderData}
  *         onClick={() => setPage((old) => old + 1)}
