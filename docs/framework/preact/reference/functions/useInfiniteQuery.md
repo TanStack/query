@@ -212,7 +212,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L288)
+Defined in: [preact-query/src/useInfiniteQuery.ts:289](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L289)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -368,7 +368,8 @@ instead of setting `enabled: false`:
 import { skipToken, useInfiniteQuery } from '@tanstack/preact-query'
 
 function Comments({ postId }: { postId: string | undefined }) {
-  const { data, isPending, isError, error } = useInfiniteQuery({
+  // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
+  const { data, isLoading, isError, error } = useInfiniteQuery({
     queryKey: ['post', postId, 'comments'],
     queryFn:
       postId != null
@@ -379,12 +380,12 @@ function Comments({ postId }: { postId: string | undefined }) {
   })
 
   if (postId == null) return 'Select a post'
-  if (isPending) return 'Loading...'
+  if (isLoading) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
 
   return (
     <ul>
-      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+      {data?.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
     </ul>
   )
 }

@@ -189,7 +189,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:372](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L372)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:373](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L373)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -304,15 +304,16 @@ export const commentsOptions = (postId: string | undefined) =>
   })
 
 function Comments({ postId }: { postId: string | undefined }) {
-  const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+  // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
+  const { data, isLoading, isError, error } = useInfiniteQuery(commentsOptions(postId))
 
   if (postId == null) return 'Select a post'
-  if (isPending) return 'Loading...'
+  if (isLoading) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
 
   return (
     <ul>
-      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+      {data?.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
     </ul>
   )
 }
