@@ -28,17 +28,21 @@ import { useBaseQuery } from './useBaseQuery'
  * import { useQuery } from '@tanstack/preact-query'
  *
  * function Posts() {
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
- *   const { data } = useQuery({
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const { data, isError, error } = useQuery({
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
  *     initialData: [],
  *   })
  *
  *   return (
- *     <ul>
- *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
- *     </ul>
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
+ *     </div>
  *   )
  * }
  * ```

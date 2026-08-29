@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:46](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L46)
+Defined in: [preact-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L50)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -64,17 +64,21 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 import { useQuery } from '@tanstack/preact-query'
 
 function Posts() {
-  // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
-  const { data } = useQuery({
+  // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+  // so the list stays visible alongside the error.
+  const { data, isError, error } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
     initialData: [],
   })
 
   return (
-    <ul>
-      {data.map((post) => <li key={post.id}>{post.title}</li>)}
-    </ul>
+    <div>
+      {isError ? <span>Error: {error.message}</span> : null}
+      <ul>
+        {data.map((post) => <li key={post.id}>{post.title}</li>)}
+      </ul>
+    </div>
   )
 }
 ```
@@ -85,7 +89,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:115](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L115)
+Defined in: [preact-query/src/useQuery.ts:119](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L119)
 
 ### Type Parameters
 
@@ -188,7 +192,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L293)
+Defined in: [preact-query/src/useQuery.ts:297](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L297)
 
 ### Type Parameters
 

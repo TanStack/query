@@ -149,14 +149,17 @@ export type DefinedInitialDataInfiniteOptions<
  * })
  *
  * function Projects() {
+ *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+ *   // list stays visible alongside the error.
  *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
  *
- *   if (isError) return <span>Error: {error.message}</span>
- *
  *   return (
- *     <ul>
- *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *     </ul>
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       </ul>
+ *     </div>
  *   )
  * }
  * ```

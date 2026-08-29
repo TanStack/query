@@ -122,15 +122,17 @@ export type DefinedInitialDataOptions<
  * })
  *
  * function Posts() {
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
  *   const { data, isError, error } = useQuery(postsOptions)
  *
- *   if (isError) return <span>Error: {error.message}</span>
- *
  *   return (
- *     <ul>
- *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
- *     </ul>
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
+ *     </div>
  *   )
  * }
  * ```
