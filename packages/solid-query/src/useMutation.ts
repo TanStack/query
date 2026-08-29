@@ -119,7 +119,7 @@ export function useMutation<
   let activeMutation: Mutation<TData, TError, TVariables> | null = null
   const [flightVersion, setFlightVersion] = createSignal(0)
   if (!isServer) {
-    const unsubscribe = client()
+    const unsubscribe = untrack(client)
       .getMutationCache()
       .subscribe((event) => {
         if ('mutation' in event && event.mutation === activeMutation) {

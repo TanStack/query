@@ -105,6 +105,30 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not emit a strict-read diagnostic on mount', () => {
+    const consoleMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: () => Promise.resolve('mutation'),
+      }))
+
+      return <button disabled={mutation.isPending}>mutate</button>
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    expect(
+      consoleMock.mock.calls.filter((args) =>
+        args.some((arg) => String(arg).includes('STRICT_READ_UNTRACKED')),
+      ),
+    ).toEqual([])
+
+    consoleMock.mockRestore()
+  })
+
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     let countRef = 0
     const [count, setCount] = createSignal(0)
