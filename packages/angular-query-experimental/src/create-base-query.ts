@@ -87,12 +87,9 @@ export function createBaseQuery<
   > | null>(null)
 
   let pendingTaskRef: PendingTaskRef | null = null
-  // A fetch can start synchronously (on subscribe, or when setOptions enables a dependent query),
-  // but the first 'fetching' notification reaches the subscriber a notifyManager schedule turn
-  // later (setTimeout(0) by default). Registering the pending task only in the subscriber leaves
-  // that turn uncovered: with zoneless change detection, `ApplicationRef.whenStable()` can resolve
-  // inside it and Angular SSR serializes before the query's state is applied. Register eagerly at
-  // every point a fetch may have started instead.
+  // Fetches start synchronously but notifyManager delivers 'fetching' a schedule turn later;
+  // registering only in the subscriber leaves that turn uncovered and zoneless SSR can serialize
+  // mid-fetch. Register eagerly wherever a fetch may have started.
   const trackFetch = (
     observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   ) => {
@@ -150,17 +147,9 @@ export function createBaseQuery<
                     }
                     resultFromSubscriberSignal.set(state)
                   } finally {
-                    // Released only after the state is written to the signal (or the error is
-                    // rethrown): releasing first exposes one synchronous statement in which the
-                    // pending-task ledger is empty while the rendered view is still stale — with
-                    // zoneless change detection, `whenStable()` latches in that statement and SSR
-                    // serializes the stale view.
-                    //
-                    // Guarded on the observer's CURRENT fetch status, not only the delivered
-                    // snapshot: state updates synchronously at fetch resolution while notifications
-                    // are delivered a schedule turn later, so a refetch started in that window
-                    // already owns this task (`trackFetch` is idempotent) — an older queued 'idle'
-                    // snapshot must not release coverage for the newer in-flight fetch.
+                    // Release only after the signal write (`whenStable()` latches on a momentary
+                    // empty ledger), and only when the observer is CURRENTLY idle — an older queued
+                    // 'idle' snapshot must not release coverage for a newer in-flight refetch.
                     if (
                       state.fetchStatus === 'idle' &&
                       pendingTaskRef &&
