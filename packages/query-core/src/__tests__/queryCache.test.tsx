@@ -336,6 +336,22 @@ describe('queryCache', () => {
       })
       expect(queryCache.findAll().length).toBe(2)
     })
+
+    it('should return all the queries when key contains object with an undefined property (#3741)', async () => {
+      const baseKey = queryKey()
+
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          equalityFn: (a, b) => b === undefined || Object.is(a, b),
+        }),
+      })
+
+      const createKey = (id?: number) => [{ ...baseKey, a: id }]
+
+      await client.query({ queryKey: createKey(1), queryFn: () => 'data1' })
+      await client.query({ queryKey: createKey(), queryFn: () => 'data-nothing' })
+      expect(client.getQueryCache().findAll({ queryKey: createKey(), exact: true })).toHaveLength(1)
+    })
   })
 
   describe('QueryCacheConfig error callbacks', () => {
