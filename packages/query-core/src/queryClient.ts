@@ -560,10 +560,7 @@ export class QueryClient {
     >,
   ): void {
     this.#queryDefaults.set(
-      hashKeyByOptions(
-        queryKey,
-        this.#queryCache.config.queryKey,
-      ),
+      hashKeyByOptions(queryKey, this.#queryCache.config.queryKey),
       {
         queryKey,
         defaultOptions: options,
@@ -608,10 +605,7 @@ export class QueryClient {
     >,
   ): void {
     this.#mutationDefaults.set(
-      hashKeyByOptions(
-        mutationKey,
-        this.#mutationCache.config.mutationKey,
-      ),
+      hashKeyByOptions(mutationKey, this.#mutationCache.config.mutationKey),
       {
         mutationKey,
         defaultOptions: options,

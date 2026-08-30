@@ -150,8 +150,7 @@ export function matchQuery(
   if (queryKey) {
     if (exact) {
       if (
-        query.queryHash !==
-        hashKeyByOptions(queryKey, keyConfig, query.options)
+        query.queryHash !== hashKeyByOptions(queryKey, keyConfig, query.options)
       ) {
         return false
       }
