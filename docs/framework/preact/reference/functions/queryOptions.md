@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L142)
+Defined in: [preact-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L140)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -51,11 +51,6 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useQuery](useQuery.md) to run a query with these options.
 
-### Remarks
-
-See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
-overload you use.
-
 ### Example
 
 ```tsx
@@ -89,7 +84,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:215](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L215)
+Defined in: [preact-query/src/queryOptions.ts:211](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L211)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -128,11 +123,6 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ### See
 
 [useQuery](useQuery.md) to run a query with these options.
-
-### Remarks
-
-See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
-overload you use.
 
 ### Examples
 
@@ -192,7 +182,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:310](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L310)
+Defined in: [preact-query/src/queryOptions.ts:305](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L305)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -234,8 +224,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 ### Remarks
 
-See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
-overload you use. This is the only overload that accepts `queryFn: skipToken`, shown below.
+This is the only overload that accepts `queryFn: skipToken`, shown below.
 
 ### Examples
 
