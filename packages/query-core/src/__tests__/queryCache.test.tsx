@@ -336,7 +336,7 @@ describe('queryCache', () => {
       hashFn.mockClear()
 
       expect(testCache.find({ queryKey: ['number', date] })).toBe(numberQuery)
-      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(valueSerializer).toHaveBeenCalledTimes(6)
       expect(hashFn).toHaveBeenCalledTimes(2)
 
       valueSerializer.mockClear()
@@ -345,7 +345,7 @@ describe('queryCache', () => {
       expect(
         testCache.findAll({ queryKey: ['number', date], exact: true }),
       ).toEqual([numberQuery])
-      expect(valueSerializer).toHaveBeenCalledTimes(2)
+      expect(valueSerializer).toHaveBeenCalledTimes(8)
       expect(hashFn).toHaveBeenCalledTimes(3)
 
       stringClient.clear()

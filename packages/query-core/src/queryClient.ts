@@ -4,6 +4,7 @@ import {
   noop,
   partialMatchKey,
   resolveQueryValue,
+  serializeCacheKey,
   skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
@@ -64,9 +65,16 @@ function mergeCacheKeyDefaults<TOptions extends object>(
   valueSerializer: CacheKeyValueSerializer | undefined,
 ): TOptions {
   const result = {} as TOptions
+  let serializedKey: CacheKey | undefined
 
   for (const keyDefault of defaults) {
-    if (partialMatchKey(key, keyDefault.key, valueSerializer)) {
+    serializedKey ??= serializeCacheKey(key, valueSerializer)
+    if (
+      partialMatchKey(
+        serializedKey,
+        serializeCacheKey(keyDefault.key, valueSerializer),
+      )
+    ) {
       Object.assign(result, keyDefault.defaultOptions)
     }
   }

@@ -158,9 +158,7 @@ export function matchQuery(
       ) {
         return false
       }
-    } else if (
-      !partialMatchKey(query.queryKey, queryKey, config.valueSerializer)
-    ) {
+    } else if (!partialMatchKey(query.serializedQueryKey, queryKey)) {
       return false
     }
   }
@@ -211,9 +209,8 @@ export function matchMutation(
       }
     } else if (
       !partialMatchKey(
-        mutation.options.mutationKey,
+        serializeCacheKey(mutation.options.mutationKey, config.valueSerializer),
         mutationKey,
-        config.valueSerializer,
       )
     ) {
       return false
@@ -256,19 +253,24 @@ export function hashCacheKey(
   config: CacheKeyConfig,
   legacyHashFn?: CacheKeyHashFunction<any>,
 ): string {
-  const serializedKey = serializeCacheKey(key, config.valueSerializer)
+  return hashSerializedCacheKey(
+    serializeCacheKey(key, config.valueSerializer),
+    config,
+    legacyHashFn,
+  )
+}
 
+export function hashSerializedCacheKey(
+  serializedKey: CacheKey,
+  config: CacheKeyConfig,
+  legacyHashFn?: CacheKeyHashFunction<any>,
+): string {
   return (
     config.hashFn?.(serializedKey) ??
     legacyHashFn?.(serializedKey) ??
     hashKey(serializedKey)
   )
 }
-
-const cacheKeySerializationCache = new WeakMap<
-  CacheKeyValueSerializer,
-  WeakMap<CacheKey, CacheKey>
->()
 
 function serializeCacheKeyValue(
   value: unknown,
@@ -307,42 +309,15 @@ export function serializeCacheKey(
     return key
   }
 
-  let serializerCache = cacheKeySerializationCache.get(serializer)
-  if (!serializerCache) {
-    serializerCache = new WeakMap<CacheKey, CacheKey>()
-    cacheKeySerializationCache.set(serializer, serializerCache)
-  }
-
-  const cachedKey = serializerCache.get(key)
-  if (cachedKey) {
-    return cachedKey
-  }
-
-  const serializedKey = serializeCacheKeyValue(key, serializer) as CacheKey
-  serializerCache.set(key, serializedKey)
-  return serializedKey
+  return serializeCacheKeyValue(key, serializer) as CacheKey
 }
 
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(
-  a: CacheKey,
-  b: CacheKey,
-  valueSerializer?: CacheKeyValueSerializer,
-): boolean
-export function partialMatchKey(
-  a: any,
-  b: any,
-  valueSerializer?: CacheKeyValueSerializer,
-): boolean {
-  a = serializeCacheKey(a, valueSerializer)
-  b = serializeCacheKey(b, valueSerializer)
-
-  return partialMatchKeyImpl(a, b)
-}
-
-function partialMatchKeyImpl(a: any, b: any): boolean {
+export function partialMatchKey(a: CacheKey, b: CacheKey): boolean
+export function partialMatchKey(a: any, b: any): boolean
+export function partialMatchKey(a: any, b: any): boolean {
   if (a === b) {
     return true
   }
@@ -354,7 +329,7 @@ function partialMatchKeyImpl(a: any, b: any): boolean {
   if (a && b && typeof a === 'object' && typeof b === 'object') {
     if (Array.isArray(a) && Array.isArray(b)) {
       for (let i = 0; i < b.length; i++) {
-        if (!partialMatchKeyImpl(a[i], b[i])) {
+        if (!partialMatchKey(a[i], b[i])) {
           return false
         }
       }
@@ -367,7 +342,7 @@ function partialMatchKeyImpl(a: any, b: any): boolean {
 
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
-      if (!partialMatchKeyImpl(a[key], b[key])) {
+      if (!partialMatchKey(a[key], b[key])) {
         return false
       }
     }

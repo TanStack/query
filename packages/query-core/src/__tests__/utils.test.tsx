@@ -21,11 +21,11 @@ import {
   skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
-import type { QueryFunctionContext } from '..'
+import type { QueryFunctionContext, QueryKey } from '..'
 
 describe('core/utils', () => {
   describe('serializeCacheKey', () => {
-    it('memoizes by serializer and key reference', () => {
+    it('does not memoize serialized keys globally', () => {
       const serializer = vi.fn((value: unknown) =>
         value instanceof Date ? value.toISOString() : value,
       )
@@ -35,8 +35,9 @@ describe('core/utils', () => {
       const first = serializeCacheKey(key, serializer)
       const second = serializeCacheKey(key, serializer)
 
-      expect(second).toBe(first)
-      expect(serializer).toHaveBeenCalledTimes(2)
+      expect(second).toEqual(first)
+      expect(second).not.toBe(first)
+      expect(serializer).toHaveBeenCalledTimes(4)
 
       const otherSerializer = vi.fn(serializer.getMockImplementation())
       expect(serializeCacheKey(key, otherSerializer)).not.toBe(first)
@@ -44,7 +45,7 @@ describe('core/utils', () => {
 
       const otherKey = ['dates', date]
       expect(serializeCacheKey(otherKey, serializer)).not.toBe(first)
-      expect(serializer).toHaveBeenCalledTimes(4)
+      expect(serializer).toHaveBeenCalledTimes(6)
     })
 
     it('returns the original key without a serializer', () => {
@@ -53,7 +54,7 @@ describe('core/utils', () => {
       expect(serializeCacheKey(key, undefined)).toBe(key)
     })
 
-    it('caches recursive serializer results', () => {
+    it('recursively serializes serializer results', () => {
       const serializer = vi.fn((value: unknown) =>
         value instanceof Map
           ? [...value.entries()]
@@ -66,7 +67,6 @@ describe('core/utils', () => {
       const serialized = serializeCacheKey(key, serializer)
 
       expect(serialized).toEqual(['counts', [['total', '1']]])
-      expect(serializeCacheKey(key, serializer)).toBe(serialized)
       expect(serializer).toHaveBeenCalledTimes(4)
     })
 
@@ -264,19 +264,19 @@ describe('core/utils', () => {
           : value instanceof Map
             ? [...value.entries()]
             : value
+      const serialize = (key: QueryKey) =>
+        serializeCacheKey(key, valueSerializer)
 
       expect(
         partialMatchKey(
-          [new Date(0), new Map([['a', 1]])],
-          [new Date(0), new Map([['a', 1]])],
-          valueSerializer,
+          serialize([new Date(0), new Map([['a', 1]])]),
+          serialize([new Date(0), new Map([['a', 1]])]),
         ),
       ).toBe(true)
       expect(
         partialMatchKey(
-          [new Date(0), new Map([['a', 1]])],
-          [new Date(0), new Map([['a', 2]])],
-          valueSerializer,
+          serialize([new Date(0), new Map([['a', 1]])]),
+          serialize([new Date(0), new Map([['a', 2]])]),
         ),
       ).toBe(false)
     })
@@ -288,10 +288,12 @@ describe('core/utils', () => {
           : value instanceof Map
             ? [...value.entries()]
             : value
+      const serialize = (key: QueryKey) =>
+        serializeCacheKey(key, valueSerializer)
 
       expect(
         partialMatchKey(
-          [
+          serialize([
             'todos',
             {
               filters: {
@@ -300,25 +302,23 @@ describe('core/utils', () => {
                 status: 'open',
               },
             },
-          ],
-          [
+          ]),
+          serialize([
             'todos',
             { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
-          ],
-          valueSerializer,
+          ]),
         ),
       ).toBe(true)
       expect(
         partialMatchKey(
-          [
+          serialize([
             'todos',
             { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
-          ],
-          [
+          ]),
+          serialize([
             'todos',
             { filters: { date: new Date(0), map: new Map([['a', 2]]) } },
-          ],
-          valueSerializer,
+          ]),
         ),
       ).toBe(false)
     })

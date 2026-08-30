@@ -375,25 +375,22 @@ describe('mutationCache', () => {
       valueSerializer.mockClear()
       hashFn.mockClear()
 
-      // `find` defaults to `exact`, so it hashes the filter key and the key of
-      // each mutation until it finds a match. Serialized keys are memoized per
-      // key reference, thus the filter key is serialized only once.
+      // `find` defaults to `exact`, so it serializes the filter before matching
+      // and hashes each mutation key until it finds a match.
       expect(testCache.find({ mutationKey: ['number', date] })).toBe(
         numberMutation,
       )
-      expect(valueSerializer).toHaveBeenCalledTimes(6)
+      expect(valueSerializer).toHaveBeenCalledTimes(10)
       expect(hashFn).toHaveBeenCalledTimes(4)
 
       valueSerializer.mockClear()
       hashFn.mockClear()
 
-      // `findAll` examines all three mutations. The first two keys are memoized
-      // from the `find` above, so only the third key and the new filter key are
-      // serialized.
+      // `findAll` serializes the filter before matching all three mutation keys.
       expect(
         testCache.findAll({ mutationKey: ['number', date], exact: true }),
       ).toEqual([numberMutation])
-      expect(valueSerializer).toHaveBeenCalledTimes(4)
+      expect(valueSerializer).toHaveBeenCalledTimes(14)
       expect(hashFn).toHaveBeenCalledTimes(6)
 
       stringClient.clear()

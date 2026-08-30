@@ -1,4 +1,4 @@
-import { matchQuery } from './utils'
+import { matchQuery, serializeCacheKey } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
@@ -185,6 +185,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
+    defaultedFilters.queryKey = serializeCacheKey(
+      defaultedFilters.queryKey,
+      this.config.valueSerializer,
+    )
 
     return this.getAll().find((query) =>
       matchQuery(defaultedFilters, query),
@@ -193,11 +197,20 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
     const queries = this.getAll()
+
     if (!Object.keys(filters).length) {
       return queries
     }
 
-    return queries.filter((query) => matchQuery(filters, query))
+    const defaultedFilters = filters.queryKey ? {
+      ...filters,
+      queryKey: serializeCacheKey(
+        filters.queryKey,
+        this.config.valueSerializer,
+      )
+    } : filters
+
+    return queries.filter((query) => matchQuery(defaultedFilters, query))
   }
 
   notify(event: QueryCacheNotifyEvent): void {

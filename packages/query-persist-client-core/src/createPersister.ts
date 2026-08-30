@@ -2,6 +2,7 @@ import {
   matchQuery,
   notifyManager,
   partialMatchKey,
+  serializeCacheKey,
 } from '@tanstack/query-core'
 import type {
   Query,
@@ -286,6 +287,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const { exact, queryKey } = queryFilters
     const queryHash = getFilterQueryHash(queryClient, queryKey)
     const valueSerializer = queryClient.getQueryCache().config.valueSerializer
+    const serializedQueryKey = queryKey
+      ? serializeCacheKey(queryKey, valueSerializer)
+      : undefined
 
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -311,9 +315,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
               }
             } else if (
               !partialMatchKey(
-                persistedQuery.queryKey,
-                queryKey,
-                valueSerializer,
+                serializeCacheKey(persistedQuery.queryKey, valueSerializer),
+                serializedQueryKey!,
               )
             ) {
               continue
@@ -343,6 +346,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const { exact, queryKey } = queryFilters
     const queryHash = getFilterQueryHash(queryClient, queryKey)
     const valueSerializer = queryClient.getQueryCache().config.valueSerializer
+    const serializedQueryKey = queryKey
+      ? serializeCacheKey(queryKey, valueSerializer)
+      : undefined
 
     if (storage?.entries) {
       const entries = await storage.entries()
@@ -367,7 +373,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
               continue
             }
           } else if (
-            !partialMatchKey(persistedQuery.queryKey, queryKey, valueSerializer)
+            !partialMatchKey(
+              serializeCacheKey(persistedQuery.queryKey, valueSerializer),
+              serializedQueryKey!,
+            )
           ) {
             continue
           }

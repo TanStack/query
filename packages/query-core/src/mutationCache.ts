@@ -1,6 +1,6 @@
 import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
-import { matchMutation, noop } from './utils'
+import { matchMutation, noop, serializeCacheKey } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
@@ -212,6 +212,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     filters: MutationFilters,
   ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
+    if (defaultedFilters.mutationKey) {
+      defaultedFilters.mutationKey = serializeCacheKey(
+        defaultedFilters.mutationKey,
+        this.config.valueSerializer,
+      )
+    }
 
     return this.getAll().find((mutation) =>
       matchMutation(defaultedFilters, mutation),
@@ -220,11 +226,24 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
     const mutations = this.getAll()
+
     if (!Object.keys(filters).length) {
       return mutations
     }
 
-    return mutations.filter((mutation) => matchMutation(filters, mutation))
+    const defaultedFilters = filters.mutationKey
+      ? {
+          ...filters,
+          mutationKey: serializeCacheKey(
+            filters.mutationKey,
+            this.config.valueSerializer,
+          ),
+        }
+      : filters
+
+    return mutations.filter((mutation) =>
+      matchMutation(defaultedFilters, mutation),
+    )
   }
 
   notify(event: MutationCacheNotifyEvent) {

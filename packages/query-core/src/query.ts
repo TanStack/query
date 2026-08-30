@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveQueryValue,
+  serializeCacheKey,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -159,6 +160,7 @@ export class Query<
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
   queryKey: TQueryKey
+  readonly serializedQueryKey: QueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
@@ -183,6 +185,10 @@ export class Query<
     this.setOptions(config.options)
     this.observers = []
     this.queryKey = config.queryKey
+    this.serializedQueryKey = serializeCacheKey(
+      config.queryKey,
+      this.#cache.config.valueSerializer,
+    )
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
