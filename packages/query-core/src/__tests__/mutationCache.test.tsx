@@ -309,7 +309,7 @@ describe('mutationCache', () => {
         typeof a === 'string' && typeof b === 'string'
           ? a.toLowerCase() === b.toLowerCase()
           : a === b
-      const testCache = new MutationCache({ equalityFn })
+      const testCache = new MutationCache({ mutationKey: { equalityFn } })
       const testClient = new QueryClient({ mutationCache: testCache })
       const mutation = testCache.build(testClient, {
         mutationKey: ['todos', { status: 'done' }],
@@ -327,6 +327,22 @@ describe('mutationCache', () => {
           mutationKey: ['TODOS', { status: 'DONE' }],
         }),
       ).toEqual([mutation])
+
+      testClient.clear()
+    })
+
+    it('should use the MutationCache mutation key hash function for exact matching', () => {
+      const key = ['todos', { status: 'done' }]
+      const hashFn = vi.fn(() => 'custom-hash')
+      const testCache = new MutationCache({ mutationKey: { hashFn } })
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const mutation = testCache.build(testClient, {
+        mutationKey: key,
+        mutationFn: () => Promise.resolve(),
+      })
+
+      expect(testCache.find({ mutationKey: [...key] })).toBe(mutation)
+      expect(hashFn).toHaveBeenCalledWith(key)
 
       testClient.clear()
     })

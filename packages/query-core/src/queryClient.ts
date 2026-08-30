@@ -1,6 +1,5 @@
 import {
   functionalUpdate,
-  hashKey,
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
@@ -560,10 +559,17 @@ export class QueryClient {
       >
     >,
   ): void {
-    this.#queryDefaults.set(hashKey(queryKey), {
-      queryKey,
-      defaultOptions: options,
-    })
+    this.#queryDefaults.set(
+      hashQueryKeyByOptions(
+        queryKey,
+        undefined,
+        this.#queryCache.config.queryKey?.hashFn,
+      ),
+      {
+        queryKey,
+        defaultOptions: options,
+      },
+    )
   }
 
   getQueryDefaults(
@@ -581,7 +587,7 @@ export class QueryClient {
         partialMatchKey(
           queryKey,
           queryDefault.queryKey,
-          this.#queryCache.config.equalityFn,
+          this.#queryCache.config.queryKey?.equalityFn,
         )
       ) {
         Object.assign(result, queryDefault.defaultOptions)
@@ -602,10 +608,17 @@ export class QueryClient {
       'mutationKey'
     >,
   ): void {
-    this.#mutationDefaults.set(hashKey(mutationKey), {
-      mutationKey,
-      defaultOptions: options,
-    })
+    this.#mutationDefaults.set(
+      hashQueryKeyByOptions(
+        mutationKey,
+        undefined,
+        this.#mutationCache.config.mutationKey?.hashFn,
+      ),
+      {
+        mutationKey,
+        defaultOptions: options,
+      },
+    )
   }
 
   getMutationDefaults(
@@ -623,7 +636,7 @@ export class QueryClient {
         partialMatchKey(
           mutationKey,
           queryDefault.mutationKey,
-          this.#mutationCache.config.equalityFn,
+          this.#mutationCache.config.mutationKey?.equalityFn,
         )
       ) {
         Object.assign(result, queryDefault.defaultOptions)
@@ -685,6 +698,7 @@ export class QueryClient {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
         defaultedOptions.queryKey,
         defaultedOptions,
+        this.#queryCache.config.queryKey?.hashFn,
       )
     }
 

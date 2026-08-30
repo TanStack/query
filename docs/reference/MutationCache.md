@@ -28,9 +28,10 @@ Its available methods are:
 
 **Options**
 
-- `equalityFn?: (a: unknown, b: unknown) => boolean`
+- `mutationKey?: { equalityFn?: (a: unknown, b: unknown) => boolean; hashFn?: (mutationKey: MutationKey) => string }`
   - Optional
-  - This function compares individual mutation key values during partial matching. It defaults to strict equality.
+  - `equalityFn` compares individual mutation key values during partial matching. It defaults to strict equality.
+  - `hashFn` is used to hash mutation keys globally for exact matching and mutation defaults.
 - `onError?: (error: unknown, variables: unknown, onMutateResult: unknown, mutation: Mutation, mutationFnContext: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation encounters an error.

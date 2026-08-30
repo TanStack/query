@@ -108,7 +108,7 @@ describe('queryClient', () => {
           ? a.toLowerCase() === b.toLowerCase()
           : a === b
       const testClient = new QueryClient({
-        queryCache: new QueryCache({ equalityFn }),
+        queryCache: new QueryCache({ queryKey: { equalityFn } }),
       })
 
       testClient.setQueryDefaults(['todos', { status: 'done' }], {
@@ -3141,7 +3141,7 @@ describe('queryClient', () => {
           ? a.toLowerCase() === b.toLowerCase()
           : a === b
       const testClient = new QueryClient({
-        mutationCache: new MutationCache({ equalityFn }),
+        mutationCache: new MutationCache({ mutationKey: { equalityFn } }),
       })
 
       testClient.setMutationDefaults(['todos', { status: 'done' }], {

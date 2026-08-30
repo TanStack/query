@@ -1,7 +1,7 @@
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
-import { hashKey, shallowEqualObjects } from './utils'
+import { hashQueryKeyByOptions, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
@@ -85,7 +85,16 @@ export class MutationObserver<
     if (
       prevOptions?.mutationKey &&
       this.options.mutationKey &&
-      hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
+      hashQueryKeyByOptions(
+        prevOptions.mutationKey,
+        undefined,
+        this.#client.getMutationCache().config.mutationKey?.hashFn,
+      ) !==
+        hashQueryKeyByOptions(
+          this.options.mutationKey,
+          undefined,
+          this.#client.getMutationCache().config.mutationKey?.hashFn,
+        )
     ) {
       this.reset()
     } else if (this.#currentMutation?.state.status === 'pending') {

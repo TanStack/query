@@ -1,5 +1,7 @@
 import { timeoutManager } from './timeoutManager'
 import type {
+  CacheKeyConfig,
+  CacheKeyHashFunction,
   DefaultError,
   EqualityFn,
   FetchStatus,
@@ -135,7 +137,7 @@ export function resolveQueryValue<
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
-  equalityFn?: EqualityFn,
+  keyConfig?: CacheKeyConfig<QueryKey>,
 ): boolean {
   const {
     type = 'all',
@@ -148,10 +150,15 @@ export function matchQuery(
 
   if (queryKey) {
     if (exact) {
-      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+      if (
+        query.queryHash !==
+        hashQueryKeyByOptions(queryKey, query.options, keyConfig?.hashFn)
+      ) {
         return false
       }
-    } else if (!partialMatchKey(query.queryKey, queryKey, equalityFn)) {
+    } else if (
+      !partialMatchKey(query.queryKey, queryKey, keyConfig?.equalityFn)
+    ) {
       return false
     }
   }
@@ -184,7 +191,7 @@ export function matchQuery(
 export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
-  equalityFn?: EqualityFn,
+  keyConfig?: CacheKeyConfig<MutationKey>,
 ): boolean {
   const { exact, status, predicate, mutationKey } = filters
   if (mutationKey) {
@@ -192,11 +199,21 @@ export function matchMutation(
       return false
     }
     if (exact) {
-      if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
+      if (
+        hashQueryKeyByOptions(
+          mutation.options.mutationKey,
+          undefined,
+          keyConfig?.hashFn,
+        ) !== hashQueryKeyByOptions(mutationKey, undefined, keyConfig?.hashFn)
+      ) {
         return false
       }
     } else if (
-      !partialMatchKey(mutation.options.mutationKey, mutationKey, equalityFn)
+      !partialMatchKey(
+        mutation.options.mutationKey,
+        mutationKey,
+        keyConfig?.equalityFn,
+      )
     ) {
       return false
     }
@@ -213,12 +230,15 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
+export function hashQueryKeyByOptions<
+  TQueryKey extends ReadonlyArray<unknown> = QueryKey,
+>(
   queryKey: TQueryKey,
   options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
+  hashFn?: CacheKeyHashFunction<TQueryKey>,
 ): string {
-  const hashFn = options?.queryKeyHashFn || hashKey
-  return hashFn(queryKey)
+  const queryKeyHashFn = hashFn ?? options?.queryKeyHashFn ?? hashKey
+  return queryKeyHashFn(queryKey)
 }
 
 /**

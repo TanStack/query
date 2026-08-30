@@ -181,7 +181,7 @@ describe('queryCache', () => {
         typeof a === 'string' && typeof b === 'string'
           ? a.toLowerCase() === b.toLowerCase()
           : a === b
-      const testCache = new QueryCache({ equalityFn })
+      const testCache = new QueryCache({ queryKey: { equalityFn } })
       const testClient = new QueryClient({ queryCache: testCache })
       const query = testClient.getQueryCache().build(testClient, {
         queryKey: ['todos', { status: 'done' }],
@@ -342,7 +342,9 @@ describe('queryCache', () => {
 
       const client = new QueryClient({
         queryCache: new QueryCache({
-          equalityFn: (a, b) => b === undefined || Object.is(a, b),
+          queryKey: {
+            equalityFn: (a, b) => b === undefined || Object.is(a, b),
+          },
         }),
       })
 
@@ -361,11 +363,13 @@ describe('queryCache', () => {
     it('should invalidate matching dates (#10982)', async () => {
       const client = new QueryClient({
         queryCache: new QueryCache({
-          equalityFn: (a, b) => {
-            if (a instanceof Date && b instanceof Date) {
-              return a.toISOString() === b.toISOString()
-            }
-            return a === b
+          queryKey: {
+            equalityFn: (a, b) => {
+              if (a instanceof Date && b instanceof Date) {
+                return a.toISOString() === b.toISOString()
+              }
+              return a === b
+            },
           },
         }),
       })
@@ -440,6 +444,38 @@ describe('queryCache', () => {
       })
 
       expect(query.queryHash).toBe(hashKey(key))
+    })
+
+    it('should use the QueryCache query key hash function', () => {
+      const key = queryKey()
+      const hashFn = vi.fn(() => 'custom-hash')
+      const testCache = new QueryCache({ queryKey: { hashFn } })
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      const query = testCache.build(testClient, { queryKey: key })
+
+      expect(query.queryHash).toBe('custom-hash')
+      expect(testCache.find({ queryKey: key })).toBe(query)
+      expect(hashFn).toHaveBeenCalledWith(key)
+    })
+
+    it('should prefer the QueryCache query key hash function over the query option', () => {
+      const key = queryKey()
+      const cacheHashFn = vi.fn(() => 'cache-hash')
+      const queryHashFn = vi.fn(() => 'query-hash')
+      const testCache = new QueryCache({
+        queryKey: { hashFn: cacheHashFn },
+      })
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      const query = testCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn: queryHashFn,
+      })
+
+      expect(query.queryHash).toBe('cache-hash')
+      expect(cacheHashFn).toHaveBeenCalledWith(key)
+      expect(queryHashFn).not.toHaveBeenCalled()
     })
 
     it('should use provided queryHash instead of computing it', () => {

@@ -245,6 +245,7 @@ function App() {
   - ##### `queryKeyHashFn: (queryKey: QueryKey) => string`
     - Optional
     - If specified, this function is used to hash the `queryKey` to a string.
+    - Deprecated: configure `hashFn` on the `queryKey` option of `QueryCache` instead.
   - ##### `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
     - Optional
     - If set to a number, all queries will continuously refetch at this frequency in milliseconds

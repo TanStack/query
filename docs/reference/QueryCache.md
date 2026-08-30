@@ -35,9 +35,10 @@ Its available methods are:
 
 **Options**
 
-- `equalityFn?: (a: unknown, b: unknown) => boolean`
+- `queryKey?: { equalityFn?: (a: unknown, b: unknown) => boolean; hashFn?: (queryKey: QueryKey) => string }`
   - Optional
-  - This function compares individual query key values during partial matching. It defaults to strict equality.
+  - `equalityFn` compares individual query key values during partial matching. It defaults to strict equality.
+  - `hashFn` is used to hash query keys globally. It takes precedence over a query's deprecated `queryKeyHashFn` option.
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.

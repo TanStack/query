@@ -5,8 +5,8 @@ import { Subscribable } from './subscribable'
 import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
 import type {
+  CacheKeyConfig,
   DefaultError,
-  EqualityFn,
   NotifyEvent,
   QueryKey,
   QueryOptions,
@@ -18,11 +18,7 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 export interface QueryCacheConfig {
-  /**
-   * Function used to compare values while partially matching query keys.
-   * Defaults to strict equality.
-   */
-  equalityFn?: EqualityFn
+  queryKey?: CacheKeyConfig<QueryKey>
   onError?: (
     error: DefaultError,
     query: Query<unknown, unknown, unknown>,
@@ -118,7 +114,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
     const queryKey = options.queryKey
     const queryHash =
-      options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
+      options.queryHash ??
+      hashQueryKeyByOptions(queryKey, options, this.config.queryKey?.hashFn)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {
@@ -192,7 +189,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((query) =>
-      matchQuery(defaultedFilters, query, this.config.equalityFn),
+      matchQuery(defaultedFilters, query, this.config.queryKey),
     ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
@@ -200,7 +197,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const queries = this.getAll()
     return Object.keys(filters).length > 0
       ? queries.filter((query) =>
-          matchQuery(filters, query, this.config.equalityFn),
+          matchQuery(filters, query, this.config.queryKey),
         )
       : queries
   }
