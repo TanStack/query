@@ -138,6 +138,26 @@ describe('core/utils', () => {
       expect(partialMatchKey(a, b, equalityFn)).toBe(true)
     })
 
+    it('should not structurally match different non-plain objects', () => {
+      const equalityFn = (a: unknown, b: unknown) => {
+        if (a instanceof Date && b instanceof Date) {
+          return a.toISOString() === b.toISOString()
+        }
+        return a === b
+      }
+      const a = ['report', { from: new Date('2021-06-25') }]
+      const b = ['report', { from: new Date('2020-01-01') }]
+
+      expect(partialMatchKey(a, b, equalityFn)).toBe(false)
+      expect(
+        partialMatchKey(
+          a,
+          ['report', { from: new Date('2021-06-25') }],
+          equalityFn,
+        ),
+      ).toBe(true)
+    })
+
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]

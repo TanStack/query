@@ -349,8 +349,41 @@ describe('queryCache', () => {
       const createKey = (id?: number) => [{ ...baseKey, a: id }]
 
       await client.query({ queryKey: createKey(1), queryFn: () => 'data1' })
-      await client.query({ queryKey: createKey(), queryFn: () => 'data-nothing' })
-      expect(client.getQueryCache().findAll({ queryKey: createKey(), exact: true })).toHaveLength(1)
+      await client.query({
+        queryKey: createKey(),
+        queryFn: () => 'data-nothing',
+      })
+      expect(
+        client.getQueryCache().findAll({ queryKey: createKey() }),
+      ).toHaveLength(2)
+    })
+
+    it('should invalidate matching dates (#10982)', async () => {
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          equalityFn: (a, b) => {
+            if (a instanceof Date && b instanceof Date) {
+              return a.toISOString() === b.toISOString()
+            }
+            return a === b
+          },
+        }),
+      })
+
+      await client.query({
+        queryKey: ['report', { from: new Date('2020-01-01') }],
+        queryFn: () => 'data1',
+      })
+      await client.query({
+        queryKey: ['report', { from: new Date('2021-06-25') }],
+        queryFn: () => 'data2',
+      })
+
+      expect(
+        client.getQueryCache().findAll({
+          queryKey: ['report', { from: new Date('2020-01-01') }],
+        }),
+      ).toHaveLength(1)
     })
   })
 

@@ -249,6 +249,11 @@ export function partialMatchKey(
   equalityFn?: EqualityFn,
 ): boolean
 export function partialMatchKey(
+  a: unknown,
+  b: unknown,
+  equalityFn?: EqualityFn,
+): boolean
+export function partialMatchKey(
   a: any,
   b: any,
   equalityFn: EqualityFn = defaultEqualityFn,
@@ -261,16 +266,16 @@ export function partialMatchKey(
     return false
   }
 
-  if (a && b && typeof a === 'object' && typeof b === 'object') {
-    if (Array.isArray(a) && Array.isArray(b)) {
-      for (let i = 0; i < b.length; i++) {
-        if (!partialMatchKey(a[i], b[i], equalityFn)) {
-          return false
-        }
+  if (isPlainArray(a) && isPlainArray(b)) {
+    for (let i = 0; i < b.length; i++) {
+      if (!partialMatchKey(a[i], b[i], equalityFn)) {
+        return false
       }
-      return true
     }
+    return true
+  }
 
+  if (isPlainObject(a) && isPlainObject(b)) {
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
       if (!partialMatchKey(a[key], b[key], equalityFn)) {
