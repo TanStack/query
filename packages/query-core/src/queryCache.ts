@@ -1,4 +1,4 @@
-import { hashQueryKeyByOptions, matchQuery } from './utils'
+import { hashKeyByOptions, matchQuery } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
@@ -115,7 +115,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const queryKey = options.queryKey
     const queryHash =
       options.queryHash ??
-      hashQueryKeyByOptions(queryKey, options, this.config.queryKey?.hashFn)
+      hashKeyByOptions(queryKey, this.config.queryKey, options)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {

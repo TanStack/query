@@ -1,7 +1,6 @@
 import { timeoutManager } from './timeoutManager'
 import type {
   CacheKeyConfig,
-  CacheKeyHashFunction,
   DefaultError,
   EqualityFn,
   FetchStatus,
@@ -152,7 +151,7 @@ export function matchQuery(
     if (exact) {
       if (
         query.queryHash !==
-        hashQueryKeyByOptions(queryKey, query.options, keyConfig?.hashFn)
+        hashKeyByOptions(queryKey, keyConfig, query.options)
       ) {
         return false
       }
@@ -200,11 +199,8 @@ export function matchMutation(
     }
     if (exact) {
       if (
-        hashQueryKeyByOptions(
-          mutation.options.mutationKey,
-          undefined,
-          keyConfig?.hashFn,
-        ) !== hashQueryKeyByOptions(mutationKey, undefined, keyConfig?.hashFn)
+        hashKeyByOptions(mutation.options.mutationKey, keyConfig) !==
+        hashKeyByOptions(mutationKey, keyConfig)
       ) {
         return false
       }
@@ -230,15 +226,15 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions<
-  TQueryKey extends ReadonlyArray<unknown> = QueryKey,
+export function hashKeyByOptions<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
 >(
-  queryKey: TQueryKey,
+  cacheKey: TCacheKey,
+  keyConfig: CacheKeyConfig<TCacheKey> | undefined,
   options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
-  hashFn?: CacheKeyHashFunction<TQueryKey>,
 ): string {
-  const queryKeyHashFn = hashFn ?? options?.queryKeyHashFn ?? hashKey
-  return queryKeyHashFn(queryKey)
+  const queryKeyHashFn = keyConfig?.hashFn ?? options?.queryKeyHashFn ?? hashKey
+  return queryKeyHashFn(cacheKey)
 }
 
 /**
