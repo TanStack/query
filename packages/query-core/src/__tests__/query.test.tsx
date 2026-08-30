@@ -1222,7 +1222,7 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashKeyByOptions(key),
+      queryHash: hashKeyByOptions(key, queryClient.getQueryCache().config.queryKey),
     })
 
     query.addObserver(observer)
@@ -1256,7 +1256,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashKeyByOptions(key),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
       options: {
         queryFn: () => 'data',
         initialData: initialDataFn,
@@ -1339,7 +1342,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashKeyByOptions(key),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
       options: { queryFn },
     })
 
