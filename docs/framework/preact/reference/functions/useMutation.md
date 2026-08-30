@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:190](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L190)
+Defined in: [preact-query/src/useMutation.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L191)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -56,7 +56,8 @@ made.
 
 ## See
 
-[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites.
+[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look
+the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
 
 ## Examples
 
@@ -193,13 +194,13 @@ function AddTodos() {
   })
 
   async function handleAddAll(todos: Array<string>) {
-    const results = await Promise.allSettled(
+    const addResults = await Promise.allSettled(
       todos.map((todo) => addMutation.mutateAsync(todo)),
     )
 
-    results.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        console.error(`Failed to add "${todos[index]}":`, result.reason)
+    addResults.forEach((addResult, index) => {
+      if (addResult.status === 'rejected') {
+        console.error(`Failed to add "${todos[index]}":`, addResult.reason)
       }
     })
   }

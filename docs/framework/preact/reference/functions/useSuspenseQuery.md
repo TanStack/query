@@ -7,7 +7,7 @@ title: useSuspenseQuery
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L55)
+Defined in: [preact-query/src/useSuspenseQuery.ts:95](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L95)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.
@@ -63,9 +63,14 @@ fetch in parallel.
 
 ## Example
 
+The query error is thrown if the fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'
-import { useSuspenseQuery } from '@tanstack/preact-query'
+import { useErrorBoundary } from 'preact/hooks'
+import { QueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/preact-query'
+import type { ComponentChildren } from 'preact'
 
 function Posts() {
   // `data` is guaranteed to be defined here — no `isPending` check needed.
@@ -76,19 +81,54 @@ function Posts() {
 
   return (
     <div>
-      <h1>Posts {isFetching ? <Spinner /> : null}</h1>
-      {data.map((post) => (
-        <p key={post.id}>{post.title}</p>
-      ))}
+      <h1>Posts {isFetching ? '(refreshing...)' : null}</h1>
+      <ul>
+        {data.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
     </div>
   )
 }
 
 function App() {
   return (
-    <Suspense fallback={<h1>Loading posts...</h1>}>
-      <Posts />
-    </Suspense>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              There was an error!
+              <button onClick={() => resetErrorBoundary()}>Try again</button>
+            </div>
+          )}
+        >
+          <Suspense fallback={<h1>Loading posts...</h1>}>
+            <Posts />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   )
+}
+
+function ErrorBoundary({
+  children,
+  onReset,
+  fallbackRender,
+}: {
+  children: ComponentChildren
+  onReset: () => void
+  fallbackRender: (props: {
+    error: Error
+    resetErrorBoundary: () => void
+  }) => ComponentChildren
+}) {
+  const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+
+  if (error) return fallbackRender({ error, resetErrorBoundary })
+
+  return children
 }
 ```

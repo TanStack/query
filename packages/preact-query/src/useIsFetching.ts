@@ -19,10 +19,12 @@ import { useSyncExternalStore } from './utils'
  * ```tsx
  * import { useIsFetching } from '@tanstack/preact-query'
  *
- * // How many queries are fetching?
- * const isFetching = useIsFetching()
- * // How many queries matching the posts prefix are fetching?
- * const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+ * function PostsFetchingIndicator() {
+ *   // How many queries matching the posts prefix are fetching?
+ *   const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+ *
+ *   return isFetchingPosts ? <span>Refreshing posts...</span> : null
+ * }
  * ```
  *
  * @example

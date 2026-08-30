@@ -196,9 +196,17 @@ export type SuspenseQueriesResults<
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
  *
  * @example
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+ * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
@@ -220,10 +228,43 @@ export type SuspenseQueriesResults<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading posts...</h1>}>
- *       <Posts ids={[1, 2, 3]} />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading posts...</h1>}>
+ *             <Posts ids={[1, 2, 3]} />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  *
@@ -232,7 +273,12 @@ export type SuspenseQueriesResults<
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Dashboard() {
  *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
@@ -254,10 +300,109 @@ export type SuspenseQueriesResults<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
- *       <Dashboard />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Dashboard />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
+ * }
+ * ```
+ *
+ * @example
+ * `combine`s the results into a single boolean, so `Refresh` only re-renders when that boolean changes,
+ * not on every individual query update. This overload is the only one that accepts `combine`:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
+ *
+ * function Refresh() {
+ *   const anyFetching = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *     ],
+ *     combine: (results) => results.some((result) => result.isFetching),
+ *   })
+ *
+ *   return anyFetching ? <span>Refreshing…</span> : null
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Refresh />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
+ *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  */
@@ -297,9 +442,17 @@ export function useSuspenseQueries<
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
  *
  * @example
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+ * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
@@ -321,10 +474,43 @@ export function useSuspenseQueries<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading posts...</h1>}>
- *       <Posts ids={[1, 2, 3]} />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading posts...</h1>}>
+ *             <Posts ids={[1, 2, 3]} />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  *
@@ -333,7 +519,12 @@ export function useSuspenseQueries<
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Dashboard() {
  *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
@@ -355,10 +546,43 @@ export function useSuspenseQueries<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
- *       <Dashboard />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Dashboard />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  */
