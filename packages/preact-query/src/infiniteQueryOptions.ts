@@ -217,8 +217,10 @@ export function infiniteQueryOptions<
  *
  * function Comments({ postId }: { postId: string }) {
  *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
  *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
@@ -286,8 +288,10 @@ export function infiniteQueryOptions<
  *
  * function Comments({ postId }: { postId: string }) {
  *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+ *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <ul>
  *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}

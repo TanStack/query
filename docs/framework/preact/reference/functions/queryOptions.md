@@ -84,7 +84,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:211](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L211)
+Defined in: [preact-query/src/queryOptions.ts:213](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L213)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -138,8 +138,10 @@ export const postOptions = (id: string) =>
 
 function Post({ id }: { id: string }) {
   const { data, isPending, isError, error } = useQuery(postOptions(id))
+
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
+
   return <h1>{data.title}</h1>
 }
 
@@ -182,7 +184,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:305](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L305)
+Defined in: [preact-query/src/queryOptions.ts:309](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L309)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -240,8 +242,10 @@ export const postOptions = (id: string) =>
 
 function Post({ id }: { id: string }) {
   const { data, isPending, isError, error } = useQuery(postOptions(id))
+
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
+
   return <h1>{data.title}</h1>
 }
 

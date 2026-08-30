@@ -263,7 +263,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:388](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L388)
+Defined in: [preact-query/src/useInfiniteQuery.ts:390](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L390)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -436,8 +436,10 @@ const commentsOptions = (postId: string) =>
 
 function Comments({ postId }: { postId: string }) {
   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
+
   return (
     <ul>
       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}

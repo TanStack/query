@@ -169,8 +169,10 @@ export function queryOptions<
  *
  * function Post({ id }: { id: string }) {
  *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+ *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return <h1>{data.title}</h1>
  * }
  *
@@ -241,8 +243,10 @@ export function queryOptions<
  *
  * function Post({ id }: { id: string }) {
  *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+ *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return <h1>{data.title}</h1>
  * }
  *
