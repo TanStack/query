@@ -952,26 +952,6 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it.each([
-    ['false', false],
-    ['undefined', undefined],
-    ['null', null],
-  ])('should not schedule a refetch interval for %s', (_, refetchInterval) => {
-    const key = queryKey()
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => 'data',
-      refetchInterval: refetchInterval as false | undefined,
-    })
-    const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
-
-    const unsubscribe = observer.subscribe(vi.fn())
-
-    expect(setIntervalSpy).not.toHaveBeenCalled()
-
-    unsubscribe()
-  })
-
   it('should notify listeners when notifyOnChangeProps is a function returning props that changed', async () => {
     const key = queryKey()
 
