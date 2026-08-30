@@ -199,13 +199,9 @@ export function infiniteQueryOptions<
  * automatically as the user scrolls.
  *
  * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * A parameterized factory, so the same options object can be reused per `postId`:
  * ```tsx
- * import {
- *   infiniteQueryOptions,
- *   noop,
- *   useInfiniteQuery,
- * } from '@tanstack/preact-query'
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
  *   infiniteQueryOptions({
@@ -227,11 +223,6 @@ export function infiniteQueryOptions<
  *     </ul>
  *   )
  * }
- *
- * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
- * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
- * const postId = '1'
- * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -270,13 +261,9 @@ export function infiniteQueryOptions<
  * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
  *
  * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * A parameterized factory, so the same options object can be reused per `postId`:
  * ```tsx
- * import {
- *   infiniteQueryOptions,
- *   noop,
- *   useInfiniteQuery,
- * } from '@tanstack/preact-query'
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
  *
  * export const commentsOptions = (postId: string) =>
  *   infiniteQueryOptions({
@@ -298,11 +285,6 @@ export function infiniteQueryOptions<
  *     </ul>
  *   )
  * }
- *
- * // `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
- * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
- * const postId = '1'
- * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
