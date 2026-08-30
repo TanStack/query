@@ -21,13 +21,12 @@ import { useBaseQuery } from './useBaseQuery'
  *
  * Caveat: cancellation does not work.
  *
- * @remarks Multiple suspenseful query calls (`useSuspenseInfiniteQuery`, `useSuspenseQuery`, etc.) in the
- * same component suspend serially, causing a request waterfall — each one blocks rendering until it
- * resolves, so the next doesn't even start fetching until then. There's no `useSuspenseInfiniteQueries` to
- * parallelize multiple infinite queries the way {@link useSuspenseQueries} does for regular ones. Also keep
- * in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch
- * behavior, resulting in outdated data. Make sure to call these functions only in response to user actions,
- * or add conditions like `hasNextPage && !isFetching`.
+ * @remarks Multiple suspenseful query calls in the same component suspend serially, causing a request
+ * waterfall — each one blocks rendering until it resolves, so the next doesn't even start fetching until
+ * then. There's no way to parallelize multiple infinite queries under Suspense. Also keep in mind that
+ * imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behavior,
+ * resulting in outdated data. Make sure to call these functions only in response to user actions, or add
+ * conditions like `hasNextPage && !isFetching`.
  * @see {@link useInfiniteQuery} for the non-Suspense version of this hook.
  * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
