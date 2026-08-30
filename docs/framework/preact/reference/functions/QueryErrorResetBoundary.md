@@ -33,6 +33,18 @@ import { useErrorBoundary } from 'preact/hooks'
 import type { ComponentChildren } from 'preact'
 import { QueryErrorResetBoundary } from '@tanstack/preact-query'
 
+function App() {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary reset={reset}>
+          <Page />
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  )
+}
+
 function ErrorBoundary({
   children,
   reset,
@@ -52,17 +64,5 @@ function ErrorBoundary({
   }
 
   return children
-}
-
-function App() {
-  return (
-    <QueryErrorResetBoundary>
-      {({ reset }) => (
-        <ErrorBoundary reset={reset}>
-          <Page />
-        </ErrorBoundary>
-      )}
-    </QueryErrorResetBoundary>
-  )
 }
 ```
