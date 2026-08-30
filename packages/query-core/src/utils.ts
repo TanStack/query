@@ -289,10 +289,28 @@ const hasOwn = Object.prototype.hasOwnProperty
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
+ * An optional equality function can be used for custom value types.
  */
-export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
-export function replaceEqualDeep(a: any, b: any, depth = 0): any {
-  if (a === b) {
+export function replaceEqualDeep<T>(
+  a: unknown,
+  b: T,
+  equalityFn?: EqualityFn,
+): T
+export function replaceEqualDeep(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn = defaultEqualityFn,
+): any {
+  return replaceEqualDeepInternal(a, b, equalityFn, 0)
+}
+
+function replaceEqualDeepInternal(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn,
+  depth: number,
+): any {
+  if (equalityFn(a, b)) {
     return a
   }
 
@@ -315,7 +333,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
     const aItem = a[key]
     const bItem = b[key]
 
-    if (aItem === bItem) {
+    if (equalityFn(aItem, bItem)) {
       copy[key] = aItem
       if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue
@@ -331,7 +349,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
       continue
     }
 
-    const v = replaceEqualDeep(aItem, bItem, depth + 1)
+    const v = replaceEqualDeepInternal(aItem, bItem, equalityFn, depth + 1)
     copy[key] = v
     if (v === aItem) equalItems++
   }

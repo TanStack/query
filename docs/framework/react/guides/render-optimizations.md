@@ -11,6 +11,25 @@ React Query uses a technique called "structural sharing" to ensure that as many 
 
 > Note: This optimization only works if the `queryFn` returns JSON compatible data. You can turn it off by setting `structuralSharing: false` globally or on a per-query basis, or you can implement your own structural sharing by passing a function to it.
 
+If your data contains custom value types, you can pass an equality function to `replaceEqualDeep` from your `structuralSharing` function. The previous value is kept when the function returns `true`:
+
+```tsx
+import { replaceEqualDeep, useQuery } from '@tanstack/react-query'
+
+const equalityFn = (a: unknown, b: unknown) =>
+  a === b ||
+  (typeof a === 'bigint' &&
+    typeof b === 'bigint' &&
+    a.toString() === b.toString())
+
+useQuery({
+  queryKey: ['events'],
+  queryFn: fetchEvents,
+  structuralSharing: (oldData, newData) =>
+    replaceEqualDeep(oldData, newData, equalityFn),
+})
+```
+
 ### referential identity
 
 The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.

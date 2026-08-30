@@ -213,6 +213,17 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(date1, date2)).toBe(date2)
     })
 
+    it('should use a custom equality function for value objects', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        a === b ||
+        (a instanceof Date && b instanceof Date && a.getTime() === b.getTime())
+      const prev = { date: new Date(0) }
+      const next = { date: new Date(0) }
+
+      expect(replaceEqualDeep(prev, next)).not.toBe(prev)
+      expect(replaceEqualDeep(prev, next, equalityFn)).toBe(prev)
+    })
+
     it('should return the next value when the previous value is a different type', () => {
       const array = [1]
       const object = { a: 'a' }
