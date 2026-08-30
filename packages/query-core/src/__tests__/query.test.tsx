@@ -1222,7 +1222,10 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: hashKeyByOptions(key, queryClient.getQueryCache().config.queryKey),
+      queryHash: hashKeyByOptions(
+        key,
+        queryClient.getQueryCache().config.queryKey,
+      ),
     })
 
     query.addObserver(observer)
