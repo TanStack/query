@@ -402,9 +402,8 @@ export class QueryObserver<
 
   #computeRefetchInterval() {
     return (
-      (typeof this.options.refetchInterval === 'function'
-        ? this.options.refetchInterval(this.#currentQuery)
-        : this.options.refetchInterval) ?? false
+      resolveQueryValue(this.options.refetchInterval, this.#currentQuery) ??
+      false
     )
   }
 
@@ -757,7 +756,7 @@ function shouldFetchOn(
     resolveQueryValue(options.enabled, query) !== false &&
     resolveQueryValue(options.staleTime, query) !== 'static'
   ) {
-    const value = typeof field === 'function' ? field(query) : field
+    const value = resolveQueryValue(field, query)
 
     return value === 'always' || (value !== false && isStale(query, options))
   }
