@@ -18,9 +18,7 @@ import { replaceEqualDeep, useQuery } from '@tanstack/react-query'
 
 const equalityFn = (a: unknown, b: unknown) =>
   a === b ||
-  (typeof a === 'bigint' &&
-    typeof b === 'bigint' &&
-    a.toString() === b.toString())
+  (a instanceof Date && b instanceof Date && a.getTime() === b.getTime())
 
 useQuery({
   queryKey: ['events'],
