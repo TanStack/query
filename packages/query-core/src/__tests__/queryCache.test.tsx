@@ -175,6 +175,30 @@ describe('queryCache', () => {
       const query = queryCache.find({ queryKey: key, exact: false })!
       expect(query.state.data).toBe('data1')
     })
+
+    it('should use the QueryCache equality function for partial query key matching', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const testCache = new QueryCache({ equalityFn })
+      const testClient = new QueryClient({ queryCache: testCache })
+      const query = testClient.getQueryCache().build(testClient, {
+        queryKey: ['todos', { status: 'done' }],
+      })
+
+      expect(
+        testCache.find({
+          queryKey: ['TODOS', { status: 'DONE' }],
+          exact: false,
+        }),
+      ).toBe(query)
+      expect(
+        testCache.findAll({ queryKey: ['TODOS', { status: 'DONE' }] }),
+      ).toEqual([query])
+
+      testClient.clear()
+    })
   })
 
   describe('findAll', () => {

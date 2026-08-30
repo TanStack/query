@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   CancelledError,
+  MutationCache,
   MutationObserver,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -16,7 +18,6 @@ import { mockOnlineManagerIsOnline } from './utils'
 import type {
   InfiniteData,
   Query,
-  QueryCache,
   QueryFunction,
   QueryObserverOptions,
 } from '..'
@@ -99,6 +100,26 @@ describe('queryClient', () => {
       })
       const { data } = await observer.refetch()
       expect(data).toBe('data')
+    })
+
+    it('should use the QueryCache equality function when matching defaults', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ equalityFn }),
+      })
+
+      testClient.setQueryDefaults(['todos', { status: 'done' }], {
+        staleTime: 1000,
+      })
+
+      expect(
+        testClient.getQueryDefaults(['TODOS', { status: 'DONE' }]),
+      ).toMatchObject({ staleTime: 1000 })
+
+      testClient.clear()
     })
 
     it('should not match if the query key is a subset', async () => {
@@ -3112,6 +3133,26 @@ describe('queryClient', () => {
       expect(queryClient.getMutationDefaults(key2)).toMatchObject(
         mutationOptions2,
       )
+    })
+
+    it('should use the MutationCache equality function when matching defaults', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const testClient = new QueryClient({
+        mutationCache: new MutationCache({ equalityFn }),
+      })
+
+      testClient.setMutationDefaults(['todos', { status: 'done' }], {
+        retry: false,
+      })
+
+      expect(
+        testClient.getMutationDefaults(['TODOS', { status: 'DONE' }]),
+      ).toMatchObject({ retry: false })
+
+      testClient.clear()
     })
   })
 })

@@ -193,6 +193,8 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
 ) => string
 
+export type EqualityFn = (a: unknown, b: unknown) => boolean
+
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: Array<TQueryFnData>,

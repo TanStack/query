@@ -35,6 +35,9 @@ Its available methods are:
 
 **Options**
 
+- `equalityFn?: (a: unknown, b: unknown) => boolean`
+  - Optional
+  - This function compares individual query key values during partial matching. It defaults to strict equality.
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.

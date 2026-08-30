@@ -5,6 +5,7 @@ import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
   DefaultError,
+  EqualityFn,
   MutationFunctionContext,
   MutationOptions,
   NotifyEvent,
@@ -16,6 +17,11 @@ import type { MutationFilters } from './utils'
 // TYPES
 
 export interface MutationCacheConfig {
+  /**
+   * Function used to compare values while partially matching mutation keys.
+   * Defaults to strict equality.
+   */
+  equalityFn?: EqualityFn
   onError?: (
     error: DefaultError,
     variables: unknown,
@@ -212,12 +218,14 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((mutation) =>
-      matchMutation(defaultedFilters, mutation),
+      matchMutation(defaultedFilters, mutation, this.config.equalityFn),
     ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
+    return this.getAll().filter((mutation) =>
+      matchMutation(filters, mutation, this.config.equalityFn),
+    )
   }
 
   notify(event: MutationCacheNotifyEvent) {

@@ -6,6 +6,7 @@ import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
 import type {
   DefaultError,
+  EqualityFn,
   NotifyEvent,
   QueryKey,
   QueryOptions,
@@ -17,6 +18,11 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 export interface QueryCacheConfig {
+  /**
+   * Function used to compare values while partially matching query keys.
+   * Defaults to strict equality.
+   */
+  equalityFn?: EqualityFn
   onError?: (
     error: DefaultError,
     query: Query<unknown, unknown, unknown>,
@@ -186,14 +192,16 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((query) =>
-      matchQuery(defaultedFilters, query),
+      matchQuery(defaultedFilters, query, this.config.equalityFn),
     ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
     const queries = this.getAll()
     return Object.keys(filters).length > 0
-      ? queries.filter((query) => matchQuery(filters, query))
+      ? queries.filter((query) =>
+          matchQuery(filters, query, this.config.equalityFn),
+        )
       : queries
   }
 

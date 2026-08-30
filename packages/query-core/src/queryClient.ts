@@ -577,7 +577,13 @@ export class QueryClient {
     > = {}
 
     defaults.forEach((queryDefault) => {
-      if (partialMatchKey(queryKey, queryDefault.queryKey)) {
+      if (
+        partialMatchKey(
+          queryKey,
+          queryDefault.queryKey,
+          this.#queryCache.config.equalityFn,
+        )
+      ) {
         Object.assign(result, queryDefault.defaultOptions)
       }
     })
@@ -613,7 +619,13 @@ export class QueryClient {
     > = {}
 
     defaults.forEach((queryDefault) => {
-      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
+      if (
+        partialMatchKey(
+          mutationKey,
+          queryDefault.mutationKey,
+          this.#mutationCache.config.equalityFn,
+        )
+      ) {
         Object.assign(result, queryDefault.defaultOptions)
       }
     })

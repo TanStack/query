@@ -126,6 +126,18 @@ describe('core/utils', () => {
   })
 
   describe('partialMatchKey', () => {
+    it('should use a custom equality function', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const a = ['todos', { status: 'done' }]
+      const b = ['TODOS', { status: 'DONE' }]
+
+      expect(partialMatchKey(a, b)).toBe(false)
+      expect(partialMatchKey(a, b, equalityFn)).toBe(true)
+    })
+
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]

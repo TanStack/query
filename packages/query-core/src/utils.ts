@@ -1,6 +1,7 @@
 import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
+  EqualityFn,
   FetchStatus,
   MutationKey,
   MutationStatus,
@@ -134,6 +135,7 @@ export function resolveQueryValue<
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
+  equalityFn?: EqualityFn,
 ): boolean {
   const {
     type = 'all',
@@ -149,7 +151,7 @@ export function matchQuery(
       if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
-    } else if (!partialMatchKey(query.queryKey, queryKey)) {
+    } else if (!partialMatchKey(query.queryKey, queryKey, equalityFn)) {
       return false
     }
   }
@@ -182,6 +184,7 @@ export function matchQuery(
 export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
+  equalityFn?: EqualityFn,
 ): boolean {
   const { exact, status, predicate, mutationKey } = filters
   if (mutationKey) {
@@ -192,7 +195,9 @@ export function matchMutation(
       if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
         return false
       }
-    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+    } else if (
+      !partialMatchKey(mutation.options.mutationKey, mutationKey, equalityFn)
+    ) {
       return false
     }
   }
@@ -233,12 +238,22 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
   )
 }
 
+const defaultEqualityFn: EqualityFn = (a, b) => a === b
+
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
-export function partialMatchKey(a: any, b: any): boolean {
-  if (a === b) {
+export function partialMatchKey(
+  a: QueryKey,
+  b: QueryKey,
+  equalityFn?: EqualityFn,
+): boolean
+export function partialMatchKey(
+  a: any,
+  b: any,
+  equalityFn: EqualityFn = defaultEqualityFn,
+): boolean {
+  if (equalityFn(a, b)) {
     return true
   }
 
@@ -249,7 +264,7 @@ export function partialMatchKey(a: any, b: any): boolean {
   if (a && b && typeof a === 'object' && typeof b === 'object') {
     if (Array.isArray(a) && Array.isArray(b)) {
       for (let i = 0; i < b.length; i++) {
-        if (!partialMatchKey(a[i], b[i])) {
+        if (!partialMatchKey(a[i], b[i], equalityFn)) {
           return false
         }
       }
@@ -258,7 +273,7 @@ export function partialMatchKey(a: any, b: any): boolean {
 
     const bKeys = Object.keys(b)
     for (const key of bKeys) {
-      if (!partialMatchKey(a[key], b[key])) {
+      if (!partialMatchKey(a[key], b[key], equalityFn)) {
         return false
       }
     }
