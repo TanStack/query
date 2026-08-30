@@ -135,6 +135,8 @@ export type DefinedInitialDataInfiniteOptions<
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks The example below fetches the next page from a button click. See {@link useInfiniteQuery} for a
+ * version that fetches automatically as the user scrolls.
  *
  * @example
  * ```tsx
@@ -167,9 +169,6 @@ export type DefinedInitialDataInfiniteOptions<
  *   )
  * }
  * ```
- *
- * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
- * user scrolls, instead of on a button click.
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -200,6 +199,8 @@ export function infiniteQueryOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks The first example below fetches the next page from a button click. See {@link useInfiniteQuery}
+ * for a version that fetches automatically as the user scrolls.
  *
  * @example
  * ```tsx
@@ -231,9 +232,6 @@ export function infiniteQueryOptions<
  *   )
  * }
  * ```
- *
- * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
- * user scrolls, instead of on a button click.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -301,6 +299,8 @@ export function infiniteQueryOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks The first example below fetches the next page from a button click. See {@link useInfiniteQuery}
+ * for a version that fetches automatically as the user scrolls.
  *
  * @example
  * ```tsx
@@ -332,9 +332,6 @@ export function infiniteQueryOptions<
  *   )
  * }
  * ```
- *
- * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
- * user scrolls, instead of on a button click.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:

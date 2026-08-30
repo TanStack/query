@@ -101,27 +101,35 @@ export function useInfiniteQuery<
  * import { useEffect, useRef } from 'preact/hooks'
  *
  * function Projects() {
- *   const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
- *     useInfiniteQuery({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *     })
+ *   const {
+ *     data,
+ *     isPending,
+ *     isError,
+ *     error,
+ *     fetchNextPage,
+ *     hasNextPage,
+ *     isFetching,
+ *     isFetchingNextPage,
+ *   } = useInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
  *
  *   const sentinelRef = useRef<HTMLDivElement>(null)
  *
  *   useEffect(() => {
  *     const sentinel = sentinelRef.current
- *     if (sentinel == null || !hasNextPage) return
+ *     if (sentinel == null || !hasNextPage || isFetching) return
  *
  *     const observer = new IntersectionObserver(([entry]) => {
- *       if (entry.isIntersecting) fetchNextPage()
+ *       if (entry?.isIntersecting) fetchNextPage()
  *     })
  *     observer.observe(sentinel)
  *
  *     return () => observer.disconnect()
- *   }, [hasNextPage, fetchNextPage])
+ *   }, [hasNextPage, isFetching, fetchNextPage])
  *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
@@ -179,27 +187,35 @@ export function useInfiniteQuery<
  * import { useEffect, useRef } from 'preact/hooks'
  *
  * function Projects() {
- *   const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
- *     useInfiniteQuery({
- *       queryKey: ['projects'],
- *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *       initialPageParam: 0,
- *       getNextPageParam: (lastPage) => lastPage.nextId,
- *     })
+ *   const {
+ *     data,
+ *     isPending,
+ *     isError,
+ *     error,
+ *     fetchNextPage,
+ *     hasNextPage,
+ *     isFetching,
+ *     isFetchingNextPage,
+ *   } = useInfiniteQuery({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   })
  *
  *   const sentinelRef = useRef<HTMLDivElement>(null)
  *
  *   useEffect(() => {
  *     const sentinel = sentinelRef.current
- *     if (sentinel == null || !hasNextPage) return
+ *     if (sentinel == null || !hasNextPage || isFetching) return
  *
  *     const observer = new IntersectionObserver(([entry]) => {
- *       if (entry.isIntersecting) fetchNextPage()
+ *       if (entry?.isIntersecting) fetchNextPage()
  *     })
  *     observer.observe(sentinel)
  *
  *     return () => observer.disconnect()
- *   }, [hasNextPage, fetchNextPage])
+ *   }, [hasNextPage, isFetching, fetchNextPage])
  *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>

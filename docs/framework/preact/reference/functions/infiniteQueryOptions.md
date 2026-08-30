@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:174](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L174)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:173](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L173)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -55,6 +55,11 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
+### Remarks
+
+The example below fetches the next page from a button click. See [useInfiniteQuery](useInfiniteQuery.md) for a
+version that fetches automatically as the user scrolls.
+
 ### Example
 
 ```tsx
@@ -88,16 +93,13 @@ function Projects() {
 }
 ```
 
-See [useInfiniteQuery](useInfiniteQuery.md) for an example that fetches the next page automatically as the
-user scrolls, instead of on a button click.
-
 ## Call Signature
 
 ```ts
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:275](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L275)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:273](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L273)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -137,6 +139,11 @@ The [UnusedSkipTokenInfiniteOptions](../type-aliases/UnusedSkipTokenInfiniteOpti
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
+### Remarks
+
+The first example below fetches the next page from a button click. See [useInfiniteQuery](useInfiniteQuery.md)
+for a version that fetches automatically as the user scrolls.
+
 ### Examples
 
 ```tsx
@@ -168,9 +175,6 @@ function Projects() {
   )
 }
 ```
-
-See [useInfiniteQuery](useInfiniteQuery.md) for an example that fetches the next page automatically as the
-user scrolls, instead of on a button click.
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
@@ -215,7 +219,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:412](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L412)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L409)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -255,6 +259,11 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
+### Remarks
+
+The first example below fetches the next page from a button click. See [useInfiniteQuery](useInfiniteQuery.md)
+for a version that fetches automatically as the user scrolls.
+
 ### Examples
 
 ```tsx
@@ -286,9 +295,6 @@ function Projects() {
   )
 }
 ```
-
-See [useInfiniteQuery](useInfiniteQuery.md) for an example that fetches the next page automatically as the
-user scrolls, instead of on a button click.
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx

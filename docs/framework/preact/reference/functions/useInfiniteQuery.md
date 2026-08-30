@@ -104,7 +104,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:142](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L142)
+Defined in: [preact-query/src/useInfiniteQuery.ts:150](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L150)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -173,27 +173,35 @@ import { useInfiniteQuery } from '@tanstack/preact-query'
 import { useEffect, useRef } from 'preact/hooks'
 
 function Projects() {
-  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['projects'],
-      queryFn: ({ pageParam }) => fetchProjects(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => lastPage.nextId,
-    })
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
 
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const sentinel = sentinelRef.current
-    if (sentinel == null || !hasNextPage) return
+    if (sentinel == null || !hasNextPage || isFetching) return
 
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) fetchNextPage()
+      if (entry?.isIntersecting) fetchNextPage()
     })
     observer.observe(sentinel)
 
     return () => observer.disconnect()
-  }, [hasNextPage, fetchNextPage])
+  }, [hasNextPage, isFetching, fetchNextPage])
 
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
@@ -217,7 +225,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:294](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L294)
+Defined in: [preact-query/src/useInfiniteQuery.ts:310](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L310)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -286,27 +294,35 @@ import { useInfiniteQuery } from '@tanstack/preact-query'
 import { useEffect, useRef } from 'preact/hooks'
 
 function Projects() {
-  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['projects'],
-      queryFn: ({ pageParam }) => fetchProjects(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => lastPage.nextId,
-    })
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+  })
 
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const sentinel = sentinelRef.current
-    if (sentinel == null || !hasNextPage) return
+    if (sentinel == null || !hasNextPage || isFetching) return
 
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) fetchNextPage()
+      if (entry?.isIntersecting) fetchNextPage()
     })
     observer.observe(sentinel)
 
     return () => observer.disconnect()
-  }, [hasNextPage, fetchNextPage])
+  }, [hasNextPage, isFetching, fetchNextPage])
 
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
