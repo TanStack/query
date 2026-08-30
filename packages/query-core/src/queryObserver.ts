@@ -756,7 +756,7 @@ function shouldFetchOn(
     resolveQueryValue(options.enabled, query) !== false &&
     resolveQueryValue(options.staleTime, query) !== 'static'
   ) {
-    const value = typeof field === 'function' ? field(query) : field
+    const value = resolveQueryValue(field, query)
 
     return value === 'always' || (value !== false && isStale(query, options))
   }
