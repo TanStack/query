@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L83)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:124](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L124)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -74,9 +74,17 @@ conditions like `hasNextPage && !isFetching`.
 
 ## Example
 
+The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'
-import { useSuspenseInfiniteQuery } from '@tanstack/preact-query'
+import { useErrorBoundary } from 'preact/hooks'
+import {
+  QueryErrorResetBoundary,
+  useSuspenseInfiniteQuery,
+} from '@tanstack/preact-query'
+import type { ComponentChildren } from 'preact'
 
 function Projects() {
   // `data` is guaranteed to be defined here — no `isPending` check needed.
@@ -111,9 +119,42 @@ function Projects() {
 
 function App() {
   return (
-    <Suspense fallback={<h1>Loading projects...</h1>}>
-      <Projects />
-    </Suspense>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              There was an error!
+              <button onClick={() => resetErrorBoundary()}>Try again</button>
+            </div>
+          )}
+        >
+          <Suspense fallback={<h1>Loading projects...</h1>}>
+            <Projects />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   )
+}
+
+function ErrorBoundary({
+  children,
+  onReset,
+  fallbackRender,
+}: {
+  children: ComponentChildren
+  onReset: () => void
+  fallbackRender: (props: {
+    error: Error
+    resetErrorBoundary: () => void
+  }) => ComponentChildren
+}) {
+  const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+
+  if (error) return fallbackRender({ error, resetErrorBoundary })
+
+  return children
 }
 ```
