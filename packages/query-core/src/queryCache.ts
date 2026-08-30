@@ -202,13 +202,15 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       return queries
     }
 
-    const defaultedFilters = filters.queryKey ? {
-      ...filters,
-      queryKey: serializeCacheKey(
-        filters.queryKey,
-        this.config.valueSerializer,
-      )
-    } : filters
+    const defaultedFilters = filters.queryKey
+      ? {
+          ...filters,
+          queryKey: serializeCacheKey(
+            filters.queryKey,
+            this.config.valueSerializer,
+          ),
+        }
+      : filters
 
     return queries.filter((query) => matchQuery(defaultedFilters, query))
   }
