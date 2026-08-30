@@ -29,7 +29,7 @@ describe('core/utils', () => {
       const customHashFn = vi.fn(() => 'custom-hash')
 
       const result = hashKeyByOptions(key, {
-        queryKeyHashFn: customHashFn,
+        hashFn: customHashFn,
       })
 
       expect(customHashFn).toHaveBeenCalledWith(key)
@@ -39,7 +39,7 @@ describe('core/utils', () => {
     it('should use default hash function when no options provided', () => {
       const key = ['test', { a: 1, b: 2 }]
       const defaultResult = hashKey(key)
-      const result = hashKeyByOptions(key)
+      const result = hashKeyByOptions(key, undefined)
 
       expect(result).toEqual(defaultResult)
     })
