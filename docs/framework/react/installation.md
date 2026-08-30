@@ -1,4 +1,4 @@
----
+https://stackblitz.com/github/TanStack/query/tree/main/examples/react/simple---
 id: installation
 title: Installation
 ---
