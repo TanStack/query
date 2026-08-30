@@ -7,7 +7,7 @@ import {
   addToStart,
   ensureQueryFn,
   hashKey,
-  hashQueryKeyByOptions,
+  hashKeyByOptions,
   isPlainArray,
   isPlainObject,
   isValidTimeout,
@@ -23,12 +23,12 @@ import { Mutation } from '../mutation'
 import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
-  describe('hashQueryKeyByOptions', () => {
+  describe('hashKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
       const key = ['test', { a: 1, b: 2 }]
       const customHashFn = vi.fn(() => 'custom-hash')
 
-      const result = hashQueryKeyByOptions(key, {
+      const result = hashKeyByOptions(key, {
         queryKeyHashFn: customHashFn,
       })
 
@@ -39,7 +39,7 @@ describe('core/utils', () => {
     it('should use default hash function when no options provided', () => {
       const key = ['test', { a: 1, b: 2 }]
       const defaultResult = hashKey(key)
-      const result = hashQueryKeyByOptions(key)
+      const result = hashKeyByOptions(key)
 
       expect(result).toEqual(defaultResult)
     })
