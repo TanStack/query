@@ -95,7 +95,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:240](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L240)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:231](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L231)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -142,13 +142,9 @@ automatically as the user scrolls.
 
 ### Example
 
-A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+A parameterized factory, so the same options object can be reused per `postId`:
 ```tsx
-import {
-  infiniteQueryOptions,
-  noop,
-  useInfiniteQuery,
-} from '@tanstack/preact-query'
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
 
 export const commentsOptions = (postId: string) =>
   infiniteQueryOptions({
@@ -170,11 +166,6 @@ function Comments({ postId }: { postId: string }) {
     </ul>
   )
 }
-
-// `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
-// see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-const postId = '1'
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 
 ### See
@@ -187,7 +178,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:311](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L311)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L293)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -234,13 +225,9 @@ automatically as the user scrolls) and that use `skipToken` to disable the query
 
 ### Example
 
-A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+A parameterized factory, so the same options object can be reused per `postId`:
 ```tsx
-import {
-  infiniteQueryOptions,
-  noop,
-  useInfiniteQuery,
-} from '@tanstack/preact-query'
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
 
 export const commentsOptions = (postId: string) =>
   infiniteQueryOptions({
@@ -262,11 +249,6 @@ function Comments({ postId }: { postId: string }) {
     </ul>
   )
 }
-
-// `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
-// see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
-const postId = '1'
-queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 
 ### See

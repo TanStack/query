@@ -157,9 +157,9 @@ export function queryOptions<
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * A parameterized factory, so the same options object can be reused per `id`:
  * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -175,39 +175,6 @@ export function queryOptions<
  *
  *   return <h1>{data.title}</h1>
  * }
- *
- * // `postOptions` also works with imperative APIs like `queryClient.query` —
- * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * const postId = '1'
- * queryClient.query(postOptions(postId)).catch(noop)
- * ```
- *
- * @example
- * The same options object works with every API that accepts query options:
- * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- * })
- *
- * function Todos() {
- *   const { data, isPending, isError, error } = useQuery(todosOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.map((todo) => <li key={todo.id}>{todo.title}</li>)}
- *     </ul>
- *   )
- * }
- *
- * // The same options object works with the imperative APIs too:
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<
@@ -231,9 +198,9 @@ export function queryOptions<
  * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.
  *
  * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
+ * A parameterized factory, so the same options object can be reused per `id`:
  * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -249,39 +216,6 @@ export function queryOptions<
  *
  *   return <h1>{data.title}</h1>
  * }
- *
- * // `postOptions` also works with imperative APIs like `queryClient.query` —
- * // see `useQuery` for an example that warms the cache this way before rendering `<Post>`.
- * const postId = '1'
- * queryClient.query(postOptions(postId)).catch(noop)
- * ```
- *
- * @example
- * The same options object works with every API that accepts query options:
- * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- * })
- *
- * function Todos() {
- *   const { data, isPending, isError, error } = useQuery(todosOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.map((todo) => <li key={todo.id}>{todo.title}</li>)}
- *     </ul>
- *   )
- * }
- *
- * // The same options object works with the imperative APIs too:
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  *
  * @example
