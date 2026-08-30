@@ -86,8 +86,12 @@ export function injectMutation<
     CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(() => {
     const observer = observerSignal()
-    return (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
+    return (
+      ...args: Parameters<
+        CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      >
+    ) => {
+      observer.mutate(args[0] as TVariables, args[1]).catch(noop)
     }
   })
 

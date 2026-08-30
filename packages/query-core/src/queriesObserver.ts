@@ -14,12 +14,6 @@ function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   return array1.filter((x) => !excludeSet.has(x))
 }
 
-function replaceAt<T>(array: Array<T>, index: number, value: T): Array<T> {
-  const copy = array.slice(0)
-  copy[index] = value
-  return copy
-}
-
 type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 
 type CombineFn<TCombinedResult> = (
@@ -302,7 +296,8 @@ export class QueriesObserver<
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      this.#result = replaceAt(this.#result, index, result)
+      this.#result = this.#result.slice()
+      this.#result[index] = result
       this.#notify()
     }
   }

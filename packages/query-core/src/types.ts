@@ -58,11 +58,11 @@ export type QueryKey = Register extends {
       : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
-export const dataTagSymbol = Symbol('dataTagSymbol')
+export const dataTagSymbol = Symbol()
 export type dataTagSymbol = typeof dataTagSymbol
-export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
+export const dataTagErrorSymbol = Symbol()
 export type dataTagErrorSymbol = typeof dataTagErrorSymbol
-export const unsetMarker = Symbol('unsetMarker')
+export const unsetMarker = Symbol()
 export type UnsetMarker = typeof unsetMarker
 export type AnyDataTag = {
   [dataTagSymbol]: any
@@ -1216,14 +1216,28 @@ export interface MutateOptions<
   ) => void
 }
 
+export type MutateFunctionRest<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> = undefined extends TVariables
+  ? [
+      variables?: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+  : [
+      variables: TVariables,
+      options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+    ]
+
 export type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
 > = (
-  variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
+  ...rest: MutateFunctionRest<TData, TError, TVariables, TOnMutateResult>
 ) => Promise<TData>
 
 export interface MutationObserverBaseResult<

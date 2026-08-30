@@ -7,7 +7,11 @@ title: DefinedUseQueryResult
 type DefinedUseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:167](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L167)
+Defined in: [preact-query/src/types.ts:352](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L352)
+
+The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
+omission — `data` is never `undefined`. Re-exports DefinedQueryObserverResult from
+`@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -15,6 +19,10 @@ Defined in: [preact-query/src/types.ts:167](https://github.com/TanStack/query/bl
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.

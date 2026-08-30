@@ -4,10 +4,13 @@ title: UseSuspenseInfiniteQueryResult
 ---
 
 ```ts
-type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
+type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [preact-query/src/types.ts:182](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L182)
+Defined in: [preact-query/src/types.ts:388](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L388)
+
+The result of `useSuspenseInfiniteQuery`. Same as [DefinedUseInfiniteQueryResult](DefinedUseInfiniteQueryResult.md), minus
+`isPlaceholderData` — Suspense hooks never render placeholder data.
 
 ## Type Parameters
 
@@ -15,6 +18,10 @@ Defined in: [preact-query/src/types.ts:182](https://github.com/TanStack/query/bl
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.

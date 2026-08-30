@@ -323,7 +323,7 @@ export function useQueries<
     },
   )
 
-  if (firstSingleResultWhichShouldThrow?.error) {
+  if (firstSingleResultWhichShouldThrow) {
     throw firstSingleResultWhichShouldThrow.error
   }
 

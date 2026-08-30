@@ -23,7 +23,7 @@ Never share one server `QueryClient` between users or requests.
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
 import { html } from 'lit'
-import { QueryClient, dehydrate } from '@tanstack/lit-query'
+import { QueryClient, dehydrate, noop } from '@tanstack/lit-query'
 import { createDataQueryOptions } from './api.js'
 import './app.js'
 
@@ -37,7 +37,7 @@ async function renderPage() {
     },
   })
 
-  await queryClient.prefetchQuery(createDataQueryOptions(apiBaseUrl))
+  await queryClient.query(createDataQueryOptions(apiBaseUrl)).catch(noop)
 
   const appHtml = await collectResult(
     render(
