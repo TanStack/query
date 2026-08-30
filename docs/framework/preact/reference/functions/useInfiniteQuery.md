@@ -166,25 +166,34 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 
 ### Example
 
+Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
+sentinel element after the list:
 ```tsx
 import { useInfiniteQuery } from '@tanstack/preact-query'
+import { useEffect, useRef } from 'preact/hooks'
 
 function Projects() {
-  const {
-    data,
-    isPending,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: ({ pageParam }) => fetchProjects(pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextId,
-  })
+  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
+
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (sentinel == null || !hasNextPage) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) fetchNextPage()
+    })
+    observer.observe(sentinel)
+
+    return () => observer.disconnect()
+  }, [hasNextPage, fetchNextPage])
 
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
@@ -196,16 +205,7 @@ function Projects() {
           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
         )}
       </ul>
-      <button
-        onClick={() => fetchNextPage()}
-        disabled={!hasNextPage || isFetching}
-      >
-        {isFetchingNextPage
-          ? 'Loading more...'
-          : hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
-      </button>
+      <div ref={sentinelRef}>{isFetchingNextPage ? 'Loading more...' : null}</div>
     </>
   )
 }
@@ -279,25 +279,34 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 
 ### Examples
 
+Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
+sentinel element after the list:
 ```tsx
 import { useInfiniteQuery } from '@tanstack/preact-query'
+import { useEffect, useRef } from 'preact/hooks'
 
 function Projects() {
-  const {
-    data,
-    isPending,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: ({ pageParam }) => fetchProjects(pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextId,
-  })
+  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
+
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (sentinel == null || !hasNextPage) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) fetchNextPage()
+    })
+    observer.observe(sentinel)
+
+    return () => observer.disconnect()
+  }, [hasNextPage, fetchNextPage])
 
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
@@ -309,16 +318,7 @@ function Projects() {
           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
         )}
       </ul>
-      <button
-        onClick={() => fetchNextPage()}
-        disabled={!hasNextPage || isFetching}
-      >
-        {isFetchingNextPage
-          ? 'Loading more...'
-          : hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
-      </button>
+      <div ref={sentinelRef}>{isFetchingNextPage ? 'Loading more...' : null}</div>
     </>
   )
 }

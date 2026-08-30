@@ -151,7 +151,8 @@ export type DefinedInitialDataInfiniteOptions<
  * function Projects() {
  *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
  *   // list stays visible alongside the error.
- *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
+ *   const { data, isError, error, fetchNextPage, hasNextPage } =
+ *     useInfiniteQuery(projectsOptions)
  *
  *   return (
  *     <div>
@@ -159,10 +160,16 @@ export type DefinedInitialDataInfiniteOptions<
  *       <ul>
  *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
  *       </ul>
+ *       {hasNextPage ? (
+ *         <button onClick={() => fetchNextPage()}>Load More</button>
+ *       ) : null}
  *     </div>
  *   )
  * }
  * ```
+ *
+ * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
+ * user scrolls, instead of on a button click.
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -206,18 +213,27 @@ export function infiniteQueryOptions<
  * })
  *
  * function Projects() {
- *   const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+ *   const { data, isPending, isError, error, fetchNextPage, hasNextPage } =
+ *     useInfiniteQuery(projectsOptions)
  *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
- *     <ul>
- *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *     </ul>
+ *     <div>
+ *       <ul>
+ *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       </ul>
+ *       {hasNextPage ? (
+ *         <button onClick={() => fetchNextPage()}>Load More</button>
+ *       ) : null}
+ *     </div>
  *   )
  * }
  * ```
+ *
+ * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
+ * user scrolls, instead of on a button click.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -298,18 +314,27 @@ export function infiniteQueryOptions<
  * })
  *
  * function Projects() {
- *   const { data, isPending, isError, error } = useInfiniteQuery(projectsOptions)
+ *   const { data, isPending, isError, error, fetchNextPage, hasNextPage } =
+ *     useInfiniteQuery(projectsOptions)
  *
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return (
- *     <ul>
- *       {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *     </ul>
+ *     <div>
+ *       <ul>
+ *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+ *       </ul>
+ *       {hasNextPage ? (
+ *         <button onClick={() => fetchNextPage()}>Load More</button>
+ *       ) : null}
+ *     </div>
  *   )
  * }
  * ```
+ *
+ * See {@link useInfiniteQuery} for an example that fetches the next page automatically as the
+ * user scrolls, instead of on a button click.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
