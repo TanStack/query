@@ -22,7 +22,8 @@ import { useBaseQuery } from './useBaseQuery'
  * is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
  *
  * @example
- * `data` is thrown as an error if the fetch fails, so an error boundary is required around `<Suspense>`.
+ * The query error is thrown if the fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
  * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'

@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:123](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L123)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:124](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L124)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -74,7 +74,8 @@ conditions like `hasNextPage && !isFetching`.
 
 ## Example
 
-`data` is thrown as an error if a fetch fails, so an error boundary is required around `<Suspense>`.
+The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
 Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'

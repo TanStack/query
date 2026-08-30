@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:408](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L408)
+Defined in: [preact-query/src/useSuspenseQueries.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L409)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -65,7 +65,8 @@ this, make sure to set a high enough `staleTime`. Cancellation does not work.
 
 ### Examples
 
-`data` is thrown as an error if a fetch fails, so an error boundary is required around `<Suspense>`.
+The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
 Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'
@@ -278,7 +279,7 @@ function ErrorBoundary({
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:587](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L587)
+Defined in: [preact-query/src/useSuspenseQueries.ts:589](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L589)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -333,7 +334,8 @@ this, make sure to set a high enough `staleTime`. Cancellation does not work.
 
 ### Examples
 
-`data` is thrown as an error if a fetch fails, so an error boundary is required around `<Suspense>`.
+The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
 Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'

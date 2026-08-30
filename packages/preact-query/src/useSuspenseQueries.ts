@@ -196,7 +196,8 @@ export type SuspenseQueriesResults<
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
  *
  * @example
- * `data` is thrown as an error if a fetch fails, so an error boundary is required around `<Suspense>`.
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
  * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'
@@ -441,7 +442,8 @@ export function useSuspenseQueries<
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
  *
  * @example
- * `data` is thrown as an error if a fetch fails, so an error boundary is required around `<Suspense>`.
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
  * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'

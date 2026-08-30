@@ -7,7 +7,7 @@ title: useSuspenseQuery
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseQuery.ts:94](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L94)
+Defined in: [preact-query/src/useSuspenseQuery.ts:95](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L95)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.
@@ -63,7 +63,8 @@ fetch in parallel.
 
 ## Example
 
-`data` is thrown as an error if the fetch fails, so an error boundary is required around `<Suspense>`.
+The query error is thrown if the fetch fails and no cached data exists yet, so an error boundary is
+required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
 Use [QueryErrorResetBoundary](QueryErrorResetBoundary.md) to let the user retry after such an error:
 ```tsx
 import { Suspense } from 'preact/compat'
