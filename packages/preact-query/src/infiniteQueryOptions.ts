@@ -135,8 +135,8 @@ export type DefinedInitialDataInfiniteOptions<
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks The example below fetches the next page from a button click. See {@link useInfiniteQuery} for a
- * version that fetches automatically as the user scrolls.
+ * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
+ * automatically as the user scrolls.
  *
  * @example
  * ```tsx
@@ -153,8 +153,7 @@ export type DefinedInitialDataInfiniteOptions<
  * function Projects() {
  *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
  *   // list stays visible alongside the error.
- *   const { data, isError, error, fetchNextPage, hasNextPage } =
- *     useInfiniteQuery(projectsOptions)
+ *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
  *
  *   return (
  *     <div>
@@ -162,9 +161,6 @@ export type DefinedInitialDataInfiniteOptions<
  *       <ul>
  *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
  *       </ul>
- *       {hasNextPage ? (
- *         <button onClick={() => fetchNextPage()}>Load More</button>
- *       ) : null}
  *     </div>
  *   )
  * }
@@ -199,39 +195,8 @@ export function infiniteQueryOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks The first example below fetches the next page from a button click. See {@link useInfiniteQuery}
- * for a version that fetches automatically as the user scrolls.
- *
- * @example
- * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
- *
- * export const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * })
- *
- * function Projects() {
- *   const { data, isPending, isError, error, fetchNextPage, hasNextPage } =
- *     useInfiniteQuery(projectsOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <div>
- *       <ul>
- *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *       </ul>
- *       {hasNextPage ? (
- *         <button onClick={() => fetchNextPage()}>Load More</button>
- *       ) : null}
- *     </div>
- *   )
- * }
- * ```
+ * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
+ * automatically as the user scrolls.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -299,39 +264,8 @@ export function infiniteQueryOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks The first example below fetches the next page from a button click. See {@link useInfiniteQuery}
- * for a version that fetches automatically as the user scrolls.
- *
- * @example
- * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/preact-query'
- *
- * export const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * })
- *
- * function Projects() {
- *   const { data, isPending, isError, error, fetchNextPage, hasNextPage } =
- *     useInfiniteQuery(projectsOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <div>
- *       <ul>
- *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *       </ul>
- *       {hasNextPage ? (
- *         <button onClick={() => fetchNextPage()}>Load More</button>
- *       ) : null}
- *     </div>
- *   )
- * }
- * ```
+ * @remarks See {@link useInfiniteQuery} for examples that fetch further pages (from a button click or
+ * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -365,42 +299,6 @@ export function infiniteQueryOptions<
  * // see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
  * const postId = '1'
  * queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
- * ```
- *
- * @example
- * A factory that disables the query, type safe, until `postId` is set:
- * ```tsx
- * import {
- *   infiniteQueryOptions,
- *   skipToken,
- *   useInfiniteQuery,
- * } from '@tanstack/preact-query'
- *
- * export const commentsOptions = (postId: string | undefined) =>
- *   infiniteQueryOptions({
- *     queryKey: ['post', postId, 'comments'],
- *     queryFn:
- *       postId != null
- *         ? ({ pageParam }) => fetchComments(postId, pageParam)
- *         : skipToken,
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *   })
- *
- * function Comments({ postId }: { postId: string | undefined }) {
- *   // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
- *   const { data, isLoading, isError, error } = useInfiniteQuery(commentsOptions(postId))
- *
- *   if (postId == null) return 'Select a post'
- *   if (isLoading) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data?.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
- *     </ul>
- *   )
- * }
  * ```
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.

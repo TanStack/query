@@ -104,7 +104,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:150](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L150)
+Defined in: [preact-query/src/useInfiniteQuery.ts:189](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L189)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -164,7 +164,45 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 
 [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
 
-### Example
+### Examples
+
+Fetching the next page from a "Load More" button click:
+```tsx
+import { useInfiniteQuery } from '@tanstack/preact-query'
+
+function Projects() {
+  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return (
+    <>
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    </>
+  )
+}
+```
 
 Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
 sentinel element after the list:
@@ -225,7 +263,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:310](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L310)
+Defined in: [preact-query/src/useInfiniteQuery.ts:388](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L388)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -286,6 +324,44 @@ actions, or add conditions like `hasNextPage && !isFetching`.
 [infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `useInfiniteQuery` and imperative APIs like `queryClient.infiniteQuery`.
 
 ### Examples
+
+Fetching the next page from a "Load More" button click:
+```tsx
+import { useInfiniteQuery } from '@tanstack/preact-query'
+
+function Projects() {
+  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['projects'],
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+    })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return (
+    <>
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    </>
+  )
+}
+```
 
 Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
 sentinel element after the list:

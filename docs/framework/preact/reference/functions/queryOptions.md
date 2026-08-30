@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L140)
+Defined in: [preact-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L142)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -51,6 +51,11 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useQuery](useQuery.md) to run a query with these options.
 
+### Remarks
+
+See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
+overload you use.
+
 ### Example
 
 ```tsx
@@ -84,7 +89,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:234](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L234)
+Defined in: [preact-query/src/queryOptions.ts:215](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L215)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -124,29 +129,12 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useQuery](useQuery.md) to run a query with these options.
 
+### Remarks
+
+See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
+overload you use.
+
 ### Examples
-
-```tsx
-import { queryOptions, useQuery } from '@tanstack/preact-query'
-
-export const postsOptions = queryOptions({
-  queryKey: ['posts'],
-  queryFn: fetchPosts,
-})
-
-function Posts() {
-  const { data, isPending, isError, error } = useQuery(postsOptions)
-
-  if (isPending) return 'Loading...'
-  if (isError) return <span>Error: {error.message}</span>
-
-  return (
-    <ul>
-      {data.map((post) => <li key={post.id}>{post.title}</li>)}
-    </ul>
-  )
-}
-```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
@@ -204,7 +192,7 @@ queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefi
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:350](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L350)
+Defined in: [preact-query/src/queryOptions.ts:310](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L310)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -244,29 +232,12 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useQuery](useQuery.md) to run a query with these options.
 
+### Remarks
+
+See [useQuery](useQuery.md) for more usage patterns — this factory works the same regardless of which
+overload you use. This is the only overload that accepts `queryFn: skipToken`, shown below.
+
 ### Examples
-
-```tsx
-import { queryOptions, useQuery } from '@tanstack/preact-query'
-
-export const postsOptions = queryOptions({
-  queryKey: ['posts'],
-  queryFn: fetchPosts,
-})
-
-function Posts() {
-  const { data, isPending, isError, error } = useQuery(postsOptions)
-
-  if (isPending) return 'Loading...'
-  if (isError) return <span>Error: {error.message}</span>
-
-  return (
-    <ul>
-      {data.map((post) => <li key={post.id}>{post.title}</li>)}
-    </ul>
-  )
-}
-```
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx

@@ -110,6 +110,8 @@ export type DefinedInitialDataOptions<
  * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks See {@link useQuery} for more usage patterns — this factory works the same regardless of which
+ * overload you use.
  *
  * @example
  * ```tsx
@@ -155,29 +157,8 @@ export function queryOptions<
  * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
- * @example
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
- *
- * function Posts() {
- *   const { data, isPending, isError, error } = useQuery(postsOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
- *     </ul>
- *   )
- * }
- * ```
+ * @remarks See {@link useQuery} for more usage patterns — this factory works the same regardless of which
+ * overload you use.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
@@ -249,29 +230,8 @@ export function queryOptions<
  * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
- * @example
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
- *
- * function Posts() {
- *   const { data, isPending, isError, error } = useQuery(postsOptions)
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
- *     </ul>
- *   )
- * }
- * ```
+ * @remarks See {@link useQuery} for more usage patterns — this factory works the same regardless of which
+ * overload you use. This is the only overload that accepts `queryFn: skipToken`, shown below.
  *
  * @example
  * A parameterized factory, reused across a hook and an imperative call with the same cache entry:

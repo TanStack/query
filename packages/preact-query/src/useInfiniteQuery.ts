@@ -94,6 +94,45 @@ export function useInfiniteQuery<
  * `isFetchingPreviousPage`.
  *
  * @example
+ * Fetching the next page from a "Load More" button click:
+ * ```tsx
+ * import { useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * function Projects() {
+ *   const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+ *     useInfiniteQuery({
+ *       queryKey: ['projects'],
+ *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *       initialPageParam: 0,
+ *       getNextPageParam: (lastPage) => lastPage.nextId,
+ *     })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <>
+ *       <ul>
+ *         {data.pages.map((page) =>
+ *           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+ *         )}
+ *       </ul>
+ *       <button
+ *         onClick={() => fetchNextPage()}
+ *         disabled={!hasNextPage || isFetching}
+ *       >
+ *         {isFetchingNextPage
+ *           ? 'Loading more...'
+ *           : hasNextPage
+ *             ? 'Load More'
+ *             : 'Nothing more to load'}
+ *       </button>
+ *     </>
+ *   )
+ * }
+ * ```
+ *
+ * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
  * sentinel element after the list:
  * ```tsx
@@ -178,6 +217,45 @@ export function useInfiniteQuery<
  * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
  * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
  * `isFetchingPreviousPage`.
+ *
+ * @example
+ * Fetching the next page from a "Load More" button click:
+ * ```tsx
+ * import { useInfiniteQuery } from '@tanstack/preact-query'
+ *
+ * function Projects() {
+ *   const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+ *     useInfiniteQuery({
+ *       queryKey: ['projects'],
+ *       queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *       initialPageParam: 0,
+ *       getNextPageParam: (lastPage) => lastPage.nextId,
+ *     })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return (
+ *     <>
+ *       <ul>
+ *         {data.pages.map((page) =>
+ *           page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+ *         )}
+ *       </ul>
+ *       <button
+ *         onClick={() => fetchNextPage()}
+ *         disabled={!hasNextPage || isFetching}
+ *       >
+ *         {isFetchingNextPage
+ *           ? 'Loading more...'
+ *           : hasNextPage
+ *             ? 'Load More'
+ *             : 'Nothing more to load'}
+ *       </button>
+ *     </>
+ *   )
+ * }
+ * ```
  *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
