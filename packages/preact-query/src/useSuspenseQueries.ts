@@ -260,6 +260,34 @@ export type SuspenseQueriesResults<
  *   )
  * }
  * ```
+ *
+ * @example
+ * `combine`s the results into a single boolean, so `Refresh` only re-renders when that boolean changes,
+ * not on every individual query update. This overload is the only one that accepts `combine`:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useSuspenseQueries } from '@tanstack/preact-query'
+ *
+ * function Refresh() {
+ *   const anyFetching = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *     ],
+ *     combine: (results) => results.some((result) => result.isFetching),
+ *   })
+ *
+ *   return anyFetching ? <span>Refreshing…</span> : null
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *       <Refresh />
+ *     </Suspense>
+ *   )
+ * }
+ * ```
  */
 export function useSuspenseQueries<
   T extends Array<any>,

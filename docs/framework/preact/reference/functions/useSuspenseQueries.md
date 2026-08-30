@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:264](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L264)
+Defined in: [preact-query/src/useSuspenseQueries.ts:292](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L292)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.
@@ -129,13 +129,40 @@ function App() {
 }
 ```
 
+`combine`s the results into a single boolean, so `Refresh` only re-renders when that boolean changes,
+not on every individual query update. This overload is the only one that accepts `combine`:
+```tsx
+import { Suspense } from 'preact/compat'
+import { useSuspenseQueries } from '@tanstack/preact-query'
+
+function Refresh() {
+  const anyFetching = useSuspenseQueries({
+    queries: [
+      { queryKey: ['users'], queryFn: fetchUsers },
+      { queryKey: ['teams'], queryFn: fetchTeams },
+    ],
+    combine: (results) => results.some((result) => result.isFetching),
+  })
+
+  return anyFetching ? <span>Refreshing…</span> : null
+}
+
+function App() {
+  return (
+    <Suspense fallback={<h1>Loading dashboard...</h1>}>
+      <Refresh />
+    </Suspense>
+  )
+}
+```
+
 ## Call Signature
 
 ```ts
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:365](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L365)
+Defined in: [preact-query/src/useSuspenseQueries.ts:393](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L393)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
 `throwOnError`, `enabled`, or `placeholderData`.

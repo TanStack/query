@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:76](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L76)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:84](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L84)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -58,6 +58,20 @@ be used.
 The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
 `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
 accordingly).
+
+## Remarks
+
+Multiple suspenseful query calls (`useSuspenseInfiniteQuery`, `useSuspenseQuery`, etc.) in the
+same component suspend serially, causing a request waterfall — each one blocks rendering until it
+resolves, so the next doesn't even start fetching until then. There's no `useSuspenseInfiniteQueries` to
+parallelize multiple infinite queries the way [useSuspenseQueries](useSuspenseQueries.md) does for regular ones. Also keep
+in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch
+behavior, resulting in outdated data. Make sure to call these functions only in response to user actions,
+or add conditions like `hasNextPage && !isFetching`.
+
+## See
+
+[useInfiniteQuery](useInfiniteQuery.md) for the non-Suspense version of this hook.
 
 ## Example
 
