@@ -89,7 +89,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:119](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L119)
+Defined in: [preact-query/src/useQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L117)
 
 ### Type Parameters
 
@@ -139,15 +139,13 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 ### Examples
 
 ```tsx
-import { queryOptions, useQuery } from '@tanstack/preact-query'
-
-const postsOptions = queryOptions({
-  queryKey: ['posts'],
-  queryFn: fetchPosts,
-})
+import { useQuery } from '@tanstack/preact-query'
 
 function Posts() {
-  const { status, data, error, isFetching } = useQuery(postsOptions)
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
 
   if (status === 'pending') return 'Loading...'
   if (status === 'error') return <span>Error: {error.message}</span>
@@ -192,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:297](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L297)
+Defined in: [preact-query/src/useQuery.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L293)
 
 ### Type Parameters
 
@@ -242,15 +240,13 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 ### Examples
 
 ```tsx
-import { queryOptions, useQuery } from '@tanstack/preact-query'
-
-const postsOptions = queryOptions({
-  queryKey: ['posts'],
-  queryFn: fetchPosts,
-})
+import { useQuery } from '@tanstack/preact-query'
 
 function Posts() {
-  const { status, data, error, isFetching } = useQuery(postsOptions)
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
 
   if (status === 'pending') return 'Loading...'
   if (status === 'error') return <span>Error: {error.message}</span>
