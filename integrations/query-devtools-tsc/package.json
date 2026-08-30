@@ -1,0 +1,29 @@
+{
+  "name": "query-devtools-tsc",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-devtools": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@tanstack/query-devtools": {
+      "injected": true
+    }
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  }
+}

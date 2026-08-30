@@ -968,6 +968,21 @@ describe('query', () => {
     resetIsServer()
   })
 
+  it('should use an infinite garbage collection time on the server', () => {
+    const resetIsServer = setIsServer(true)
+
+    try {
+      const query = queryCache.build(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => 'data',
+      })
+
+      expect(query.gcTime).toBe(Infinity)
+    } finally {
+      resetIsServer()
+    }
+  })
+
   it('constructor should call initialDataUpdatedAt if defined as a function', async () => {
     const key = queryKey()
 
