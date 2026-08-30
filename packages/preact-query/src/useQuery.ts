@@ -68,15 +68,13 @@ export function useQuery<
  *
  * @example
  * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
+ * import { useQuery } from '@tanstack/preact-query'
  *
  * function Posts() {
- *   const { status, data, error, isFetching } = useQuery(postsOptions)
+ *   const { status, data, error, isFetching } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *   })
  *
  *   if (status === 'pending') return 'Loading...'
  *   if (status === 'error') return <span>Error: {error.message}</span>
@@ -137,15 +135,13 @@ export function useQuery<
  *
  * @example
  * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
+ * import { useQuery } from '@tanstack/preact-query'
  *
  * function Posts() {
- *   const { status, data, error, isFetching } = useQuery(postsOptions)
+ *   const { status, data, error, isFetching } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *   })
  *
  *   if (status === 'pending') return 'Loading...'
  *   if (status === 'error') return <span>Error: {error.message}</span>
