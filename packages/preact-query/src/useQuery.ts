@@ -28,14 +28,22 @@ import { useBaseQuery } from './useBaseQuery'
  * import { useQuery } from '@tanstack/preact-query'
  *
  * function Posts() {
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
- *   const { data } = useQuery({
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const { data, isError, error } = useQuery({
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
  *     initialData: [],
  *   })
  *
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
+ *     </div>
+ *   )
  * }
  * ```
  */
@@ -75,9 +83,11 @@ export function useQuery<
  *
  *   return (
  *     <div>
- *       {data.map((post) => (
- *         <p key={post.id}>{post.title}</p>
- *       ))}
+ *       <ul>
+ *         {data.map((post) => (
+ *           <li key={post.id}>{post.title}</li>
+ *         ))}
+ *       </ul>
  *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
  *     </div>
  *   )
@@ -98,7 +108,11 @@ export function useQuery<
  *   if (isPending) return 'Loading...'
  *   if (isError) return <span>Error: {error.message}</span>
  *
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   return (
+ *     <ul>
+ *       {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *     </ul>
+ *   )
  * }
  * ```
  */
@@ -138,9 +152,11 @@ export function useQuery<
  *
  *   return (
  *     <div>
- *       {data.map((post) => (
- *         <p key={post.id}>{post.title}</p>
- *       ))}
+ *       <ul>
+ *         {data.map((post) => (
+ *           <li key={post.id}>{post.title}</li>
+ *         ))}
+ *       </ul>
  *       <div>{isFetching ? 'Background Updating...' : ' '}</div>
  *     </div>
  *   )
@@ -169,6 +185,28 @@ export function useQuery<
  * ```
  *
  * @example
+ * The same dependent query, type safe: `skipToken` disables the query without needing the
+ * non-null assertion above, since `queryFn` is only ever called when `postId` is defined.
+ * `refetch` doesn't work while `queryFn` is `skipToken` — use `enabled: false` instead if you
+ * need to trigger the query manually:
+ * ```tsx
+ * import { skipToken, useQuery } from '@tanstack/preact-query'
+ *
+ * function Post({ postId }: { postId: number | undefined }) {
+ *   const { data, isLoading, isError, error } = useQuery({
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   })
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isLoading) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
+ * ```
+ *
+ * @example
  * Seeding a detail query from an already-cached list, to skip the loading state:
  * ```tsx
  * import { useQuery, useQueryClient } from '@tanstack/preact-query'
@@ -176,7 +214,7 @@ export function useQuery<
  * function Post({ postId }: { postId: number }) {
  *   const queryClient = useQueryClient()
  *
- *   const { data } = useQuery({
+ *   const { data, isError, error } = useQuery({
  *     queryKey: ['post', postId],
  *     queryFn: () => fetchPost(postId),
  *     initialData: () =>
@@ -184,6 +222,8 @@ export function useQuery<
  *         .getQueryData<Array<Post>>(['posts'])
  *         ?.find((post) => post.id === postId),
  *   })
+ *
+ *   if (isError) return <span>Error: {error.message}</span>
  *
  *   return <h1>{data?.title}</h1>
  * }
@@ -198,15 +238,19 @@ export function useQuery<
  * function Posts() {
  *   const [page, setPage] = useState(0)
  *
- *   const { data, isPlaceholderData } = useQuery({
+ *   const { data, isPlaceholderData, isError, error } = useQuery({
  *     queryKey: ['posts', page],
  *     queryFn: () => fetchPosts(page),
  *     placeholderData: keepPreviousData,
  *   })
  *
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
  *   return (
  *     <div>
- *       {data?.map((post) => <p key={post.id}>{post.title}</p>)}
+ *       <ul>
+ *         {data?.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
  *       <button
  *         disabled={isPlaceholderData}
  *         onClick={() => setPage((old) => old + 1)}
@@ -214,6 +258,38 @@ export function useQuery<
  *         Next Page
  *       </button>
  *     </div>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Warming the cache on hover, so `<Post>` has data as soon as it's clicked. Requires a
+ * {@link queryOptions} factory, so the hook and the imperative call share the same cache entry:
+ * ```tsx
+ * import { noop, queryOptions, useQuery, useQueryClient } from '@tanstack/preact-query'
+ *
+ * const postOptions = (id: string) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function Post({ id }: { id: string }) {
+ *   const { data, isError, error } = useQuery(postOptions(id))
+ *   if (isError) return <span>Error: {error.message}</span>
+ *   return <h1>{data?.title}</h1>
+ * }
+ *
+ * function PostLink({ id, title }: { id: string; title: string }) {
+ *   const queryClient = useQueryClient()
+ *
+ *   return (
+ *     <a
+ *       href={`/posts/${id}`}
+ *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
+ *     >
+ *       {title}
+ *     </a>
  *   )
  * }
  * ```

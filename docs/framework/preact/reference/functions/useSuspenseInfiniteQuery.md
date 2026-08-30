@@ -7,7 +7,7 @@ title: useSuspenseInfiniteQuery
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L74)
+Defined in: [preact-query/src/useSuspenseInfiniteQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseInfiniteQuery.ts#L83)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -59,6 +59,19 @@ The same object as `useInfiniteQuery`, except that `data` is guaranteed to be de
 `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
 accordingly).
 
+## Remarks
+
+Multiple suspenseful query calls in the same component suspend serially, causing a request
+waterfall — each one blocks rendering until it resolves, so the next doesn't even start fetching until
+then. There's no way to parallelize multiple infinite queries under Suspense. Also keep in mind that
+imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behavior,
+resulting in outdated data. Make sure to call these functions only in response to user actions, or add
+conditions like `hasNextPage && !isFetching`.
+
+## See
+
+[useInfiniteQuery](useInfiniteQuery.md) for the non-Suspense version of this hook.
+
 ## Example
 
 ```tsx
@@ -77,9 +90,11 @@ function Projects() {
 
   return (
     <div>
-      {data.pages.map((page) =>
-        page.projects.map((project) => <p key={project.id}>{project.name}</p>),
-      )}
+      <ul>
+        {data.pages.map((page) =>
+          page.projects.map((project) => <li key={project.id}>{project.name}</li>),
+        )}
+      </ul>
       <button
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetching}

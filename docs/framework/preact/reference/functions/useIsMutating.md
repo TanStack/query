@@ -7,7 +7,7 @@ title: useIsMutating
 function useIsMutating(filters?, queryClient?): number;
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:33](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L33)
+Defined in: [preact-query/src/useMutationState.ts:35](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L35)
 
 `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching
 (useful for app-wide loading indicators).
@@ -38,8 +38,10 @@ Will be the `number` of the mutations that your application is currently fetchin
 ```tsx
 import { useIsMutating } from '@tanstack/preact-query'
 
-// How many mutations are fetching?
-const isMutating = useIsMutating()
-// How many mutations matching the posts prefix are fetching?
-const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
+function PostsMutatingIndicator() {
+  // How many mutations matching the posts prefix are in progress?
+  const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
+
+  return isMutatingPosts ? <span>Saving posts...</span> : null
+}
 ```

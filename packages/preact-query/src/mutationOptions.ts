@@ -13,21 +13,6 @@ import type { UseMutationOptions } from './types'
  * @returns The same options object, unchanged.
  *
  * @example
- * ```tsx
- * import { mutationOptions, useMutation } from '@tanstack/preact-query'
- *
- * export const createPostOptions = mutationOptions({
- *   mutationKey: ['posts', 'create'],
- *   mutationFn: createPost,
- * })
- *
- * function CreatePost() {
- *   const mutation = useMutation(createPostOptions)
- *   return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
- * }
- * ```
- *
- * @example
  * Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
  * ```tsx
  * import { mutationOptions, useMutationState } from '@tanstack/preact-query'
@@ -69,6 +54,8 @@ export function mutationOptions<
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
  * `mutationKey`.
  * @returns The same options object, unchanged.
+ * @remarks Without a `mutationKey`, the mutation can't be looked up elsewhere via `useMutationState` — see
+ * the other overload's example for that.
  *
  * @example
  * ```tsx

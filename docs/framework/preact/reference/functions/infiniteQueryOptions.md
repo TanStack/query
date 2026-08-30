@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L157)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L169)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -55,6 +55,11 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 [useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
+### Remarks
+
+See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
+automatically as the user scrolls.
+
 ### Example
 
 ```tsx
@@ -69,8 +74,18 @@ export const projectsOptions = infiniteQueryOptions({
 })
 
 function Projects() {
-  const { data } = useInfiniteQuery(projectsOptions)
-  return <>{data.pages.map((page) => page.projects.map((p) => <p key={p.id}>{p.name}</p>))}</>
+  // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+  // list stays visible alongside the error.
+  const { data, isError, error } = useInfiniteQuery(projectsOptions)
+
+  return (
+    <div>
+      {isError ? <span>Error: {error.message}</span> : null}
+      <ul>
+        {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+      </ul>
+    </div>
+  )
 }
 ```
 
@@ -80,7 +95,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:233](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L233)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:240](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L240)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -120,18 +135,12 @@ The [UnusedSkipTokenInfiniteOptions](../type-aliases/UnusedSkipTokenInfiniteOpti
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
-### Examples
+### Remarks
 
-```tsx
-import { infiniteQueryOptions } from '@tanstack/preact-query'
+See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
+automatically as the user scrolls.
 
-export const projectsOptions = infiniteQueryOptions({
-  queryKey: ['projects'],
-  queryFn: ({ pageParam }) => fetchProjects(pageParam),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage) => lastPage.nextId,
-})
-```
+### Example
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
@@ -150,16 +159,21 @@ export const commentsOptions = (postId: string) =>
   })
 
 function Comments({ postId }: { postId: string }) {
-  const result = useInfiniteQuery(commentsOptions(postId))
-  if (!result.isSuccess) return 'Loading...'
+  const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
   return (
-    <>
-      {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
-    </>
+    <ul>
+      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+    </ul>
   )
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+// `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
+// see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
+const postId = '1'
 queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 
@@ -173,7 +187,7 @@ queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:309](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L309)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:311](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L311)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -213,18 +227,12 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
-### Examples
+### Remarks
 
-```tsx
-import { infiniteQueryOptions } from '@tanstack/preact-query'
+See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages (from a button click or
+automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
 
-export const projectsOptions = infiniteQueryOptions({
-  queryKey: ['projects'],
-  queryFn: ({ pageParam }) => fetchProjects(pageParam),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage) => lastPage.nextId,
-})
-```
+### Example
 
 A parameterized factory, reused across a hook and an imperative call with the same cache entry:
 ```tsx
@@ -243,16 +251,21 @@ export const commentsOptions = (postId: string) =>
   })
 
 function Comments({ postId }: { postId: string }) {
-  const result = useInfiniteQuery(commentsOptions(postId))
-  if (!result.isSuccess) return 'Loading...'
+  const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
   return (
-    <>
-      {result.data.pages.map((page) => page.comments.map((c) => <p key={c.id}>{c.text}</p>))}
-    </>
+    <ul>
+      {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+    </ul>
   )
 }
 
-// Elsewhere, e.g. to warm the cache before rendering `<Comments>`:
+// `commentsOptions` also works with imperative APIs like `queryClient.infiniteQuery` —
+// see `useInfiniteQuery` for an example that warms the cache this way before rendering `<Comments>`.
+const postId = '1'
 queryClient.infiniteQuery(commentsOptions(postId)).catch(noop)
 ```
 

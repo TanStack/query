@@ -7,7 +7,7 @@ title: useIsFetching
 function useIsFetching(filters?, queryClient?): number;
 ```
 
-Defined in: [preact-query/src/useIsFetching.ts:42](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L42)
+Defined in: [preact-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L44)
 
 `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or
 fetching in the background (useful for app-wide loading indicators).
@@ -39,10 +39,12 @@ background.
 ```tsx
 import { useIsFetching } from '@tanstack/preact-query'
 
-// How many queries are fetching?
-const isFetching = useIsFetching()
-// How many queries matching the posts prefix are fetching?
-const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+function PostsFetchingIndicator() {
+  // How many queries matching the posts prefix are fetching?
+  const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+
+  return isFetchingPosts ? <span>Refreshing posts...</span> : null
+}
 ```
 
 A global loading indicator for any query fetching in the background, not just the ones on screen:
