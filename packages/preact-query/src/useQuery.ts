@@ -160,6 +160,26 @@ export function useQuery<
  * ```
  *
  * @example
+ * `select` derives whatever `data` a component needs from the cached value, without changing what's
+ * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function PostCount() {
+ *   const { data, isPending, isError, error } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *     select: (posts) => posts.length,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <span>{data} posts</span>
+ * }
+ * ```
+ *
+ * @example
  * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
  * loading state doesn't show while the query is disabled:
  * ```tsx
