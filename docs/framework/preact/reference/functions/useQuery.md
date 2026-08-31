@@ -264,6 +264,29 @@ function Posts() {
 }
 ```
 
+`select` shapes the returned `data` without changing what's stored in the cache — the cache still
+holds the full `Post[]`:
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function PostTitles() {
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    select: (posts) => posts.map((post) => post.title),
+  })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return (
+    <ul>
+      {data.map((title) => <li key={title}>{title}</li>)}
+    </ul>
+  )
+}
+```
+
 A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
 loading state doesn't show while the query is disabled:
 ```tsx
@@ -355,29 +378,6 @@ function Posts() {
         Next Page
       </button>
     </div>
-  )
-}
-```
-
-`select` shapes the returned `data` without changing what's stored in the cache — the cache still
-holds the full `Post[]`:
-```tsx
-import { useQuery } from '@tanstack/preact-query'
-
-function PostTitles() {
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
-    select: (posts) => posts.map((post) => post.title),
-  })
-
-  if (isPending) return 'Loading...'
-  if (isError) return <span>Error: {error.message}</span>
-
-  return (
-    <ul>
-      {data.map((title) => <li key={title}>{title}</li>)}
-    </ul>
   )
 }
 ```
