@@ -160,6 +160,26 @@ export function useQuery<
  * ```
  *
  * @example
+ * `select` derives whatever `data` a component needs from the cached value, without changing what's
+ * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
+ * ```tsx
+ * import { useQuery } from '@tanstack/preact-query'
+ *
+ * function PostCount() {
+ *   const { data, isPending, isError, error } = useQuery({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *     select: (posts) => posts.length,
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <span>{data} posts</span>
+ * }
+ * ```
+ *
+ * @example
  * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
  * loading state doesn't show while the query is disabled:
  * ```tsx
@@ -254,38 +274,6 @@ export function useQuery<
  *         Next Page
  *       </button>
  *     </div>
- *   )
- * }
- * ```
- *
- * @example
- * Warming the cache on hover, so `<Post>` has data as soon as it's clicked. Requires a
- * {@link queryOptions} factory, so the hook and the imperative call share the same cache entry:
- * ```tsx
- * import { noop, queryOptions, useQuery, useQueryClient } from '@tanstack/preact-query'
- *
- * const postOptions = (id: string) =>
- *   queryOptions({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *   })
- *
- * function Post({ id }: { id: string }) {
- *   const { data, isError, error } = useQuery(postOptions(id))
- *   if (isError) return <span>Error: {error.message}</span>
- *   return <h1>{data?.title}</h1>
- * }
- *
- * function PostLink({ id, title }: { id: string; title: string }) {
- *   const queryClient = useQueryClient()
- *
- *   return (
- *     <a
- *       href={`/posts/${id}`}
- *       onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
- *     >
- *       {title}
- *     </a>
  *   )
  * }
  * ```

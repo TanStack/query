@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  noop,
   useInfiniteQuery,
   useMutationState,
   useQuery,
@@ -59,7 +60,7 @@ describe('Server Side Rendering', () => {
   it('should add prefetched data to cache', async () => {
     const key = queryKey()
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
     })
@@ -87,7 +88,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
