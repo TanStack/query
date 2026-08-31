@@ -190,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:285](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L285)
+Defined in: [preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
 
 ### Type Parameters
 
@@ -264,26 +264,22 @@ function Posts() {
 }
 ```
 
-`select` shapes the returned `data` without changing what's stored in the cache — the cache still
-holds the full `Post[]`:
+`select` derives whatever `data` a component needs from the cached value, without changing what's
+actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
 ```tsx
 import { useQuery } from '@tanstack/preact-query'
 
-function PostTitles() {
+function PostCount() {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
-    select: (posts) => posts.map((post) => post.title),
+    select: (posts) => posts.length,
   })
 
   if (isPending) return 'Loading...'
   if (isError) return <span>Error: {error.message}</span>
 
-  return (
-    <ul>
-      {data.map((title) => <li key={title}>{title}</li>)}
-    </ul>
-  )
+  return <span>{data} posts</span>
 }
 ```
 
