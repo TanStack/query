@@ -97,6 +97,8 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
+    // grandfathered deprecated wrapper implementation
+    // eslint-disable-next-line no-restricted-syntax
     return super.ensureQueryData(cloneDeepUnref(options))
   }
 
@@ -344,6 +346,8 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
+    // grandfathered deprecated wrapper implementation
+    // eslint-disable-next-line no-restricted-syntax
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
@@ -378,6 +382,8 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
+    // grandfathered deprecated wrapper implementation
+    // eslint-disable-next-line no-restricted-syntax
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
@@ -499,6 +505,8 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
+    // grandfathered deprecated wrapper implementation
+    // eslint-disable-next-line no-restricted-syntax
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
@@ -554,6 +562,8 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void> {
+    // grandfathered deprecated wrapper implementation
+    // eslint-disable-next-line no-restricted-syntax
     return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 

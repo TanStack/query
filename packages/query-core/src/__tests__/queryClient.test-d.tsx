@@ -192,6 +192,8 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should allow passing pages', async () => {
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: queryKey(),
       queryFn: () => Promise.resolve('string'),
@@ -400,6 +402,8 @@ describe('fully typed usage', () => {
     const queryData1 = queryClient.getQueryData(filterKey)
     expectTypeOf(queryData1).toEqualTypeOf<TData | undefined>()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const queryData2 = await queryClient.ensureQueryData(queryOptions)
     expectTypeOf(queryData2).toEqualTypeOf<TData>()
 
@@ -438,15 +442,21 @@ describe('fully typed usage', () => {
       QueryState<TData, TError> | undefined
     >()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const fetchedQuery = await queryClient.fetchQuery(queryOptions)
     expectTypeOf(fetchedQuery).toEqualTypeOf<TData>()
 
     const queriedData = await queryClient.query(queryOptions)
     expectTypeOf(queriedData).toEqualTypeOf<TData>()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     queryClient.prefetchQuery(queryOptions)
 
     const fetchInfiniteQueryResult =
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       await queryClient.fetchInfiniteQuery(infiniteQueryOptions)
     expectTypeOf(fetchInfiniteQueryResult).toEqualTypeOf<
       InfiniteData<TData, unknown>
@@ -456,6 +466,8 @@ describe('fully typed usage', () => {
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 
     const infiniteQueryData =
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       await queryClient.ensureInfiniteQueryData(infiniteQueryOptions)
     expectTypeOf(infiniteQueryData).toEqualTypeOf<
       InfiniteData<TData, unknown>
@@ -494,6 +506,8 @@ describe('fully typed usage', () => {
     queryClient.cancelQueries(queryFilters)
     queryClient.invalidateQueries(queryFilters)
     queryClient.refetchQueries(queryFilters)
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     queryClient.prefetchInfiniteQuery(infiniteQueryOptions)
     queryClient.setQueryDefaults(filterKey, {} as any)
     queryClient.getMutationDefaults(mutationKey)
@@ -552,6 +566,8 @@ describe('fully typed usage', () => {
     const queryData1 = queryClient.getQueryData(filterKey)
     expectTypeOf(queryData1).toEqualTypeOf<unknown>()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const queryData2 = await queryClient.ensureQueryData(queryOptions)
     expectTypeOf(queryData2).toEqualTypeOf<unknown>()
 
@@ -583,14 +599,20 @@ describe('fully typed usage', () => {
       QueryState<unknown, DefaultError> | undefined
     >()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const fetchedQuery = await queryClient.fetchQuery(queryOptions)
     expectTypeOf(fetchedQuery).toEqualTypeOf<unknown>()
 
     const queriedData = await queryClient.query(queryOptions)
     expectTypeOf(queriedData).toEqualTypeOf<unknown>()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     queryClient.prefetchQuery(queryOptions)
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const fetchInfiniteQueryResult = await queryClient.fetchInfiniteQuery(
       fetchInfiniteQueryOptions,
     )
@@ -603,6 +625,8 @@ describe('fully typed usage', () => {
     )
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<unknown, unknown>>()
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const infiniteQueryData = await queryClient.ensureInfiniteQueryData(
       fetchInfiniteQueryOptions,
     )
@@ -649,6 +673,8 @@ describe('fully typed usage', () => {
     queryClient.cancelQueries(queryFilters)
     queryClient.invalidateQueries(queryFilters)
     queryClient.refetchQueries(queryFilters)
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     queryClient.prefetchInfiniteQuery(fetchInfiniteQueryOptions)
     queryClient.setQueryDefaults(filterKey, {} as any)
     queryClient.getMutationDefaults(mutationKey)

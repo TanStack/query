@@ -80,6 +80,8 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -119,6 +121,8 @@ describe('queryOptions', () => {
       select: (data) => data.toString(),
     })
 
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
