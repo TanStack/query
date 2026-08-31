@@ -4,7 +4,7 @@ import solid from 'vite-plugin-solid'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [solid({ hot: false })],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
