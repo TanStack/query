@@ -167,11 +167,13 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn,
-      initialPageParam: 0,
-    })
+    void queryClient
+      .infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(

@@ -5,6 +5,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
@@ -104,7 +105,7 @@ describe('usePrefetchInfiniteQuery', () => {
         allPages.length < data.length ? allPages.length : undefined,
     }
 
-    queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
+    void queryClient.infiniteQuery({ ...queryOpts, pages: 3 }).catch(noop)
     await vi.advanceTimersByTimeAsync(30)
     queryOpts.queryFn.mockClear()
 
