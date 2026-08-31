@@ -21,6 +21,7 @@ export interface FetchCounts {
   stale: number
   placeholder: number
   prefetched: number
+  disabled: number
 }
 
 export interface AppProps {
@@ -100,6 +101,29 @@ function Queries(props: AppProps) {
   )
 }
 
+/** Reads the data of a query that is disabled with nothing cached. On the
+ * server that read has nothing to wait on and no later in which to get one —
+ * the render has to finish, so the idle read is its settled SSR truth and the
+ * document is emitted. (On the client the same read parks the reader in this
+ * boundary until something starts the query, which is why it lives in a
+ * boundary of its own here: the rest of the app hydrates around it.) */
+function DisabledConsumer(props: AppProps) {
+  const disabled = useQuery(() => ({
+    queryKey: ['disabled'],
+    queryFn: async () => {
+      props.counts.disabled++
+      await sleep(5)
+      return `disabled-${props.source}`
+    },
+    enabled: false,
+  }))
+  return (
+    <span id="disabled">
+      {String(disabled.data)}|{disabled.status}|{String(disabled.isEnabled)}
+    </span>
+  )
+}
+
 /** Never rendered on the server — mounted by tests after hydration. Its
  * query was prefetched (and only prefetched) during SSR; the hash-keyed
  * registry entry must satisfy it with zero client fetches. */
@@ -138,6 +162,9 @@ export function App(props: AppProps) {
         <Show when={props.lateMount?.()}>
           <LateConsumer {...props} />
         </Show>
+      </Loading>
+      <Loading fallback={<div>loading</div>}>
+        <DisabledConsumer {...props} />
       </Loading>
     </QueryClientProvider>
   )

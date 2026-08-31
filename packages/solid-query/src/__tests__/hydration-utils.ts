@@ -36,6 +36,7 @@ export interface ServerReport {
       stale: number
       placeholder: number
       prefetched: number
+      disabled: number
     }
     queries: Array<QuerySnapshot>
   }
@@ -54,6 +55,7 @@ export interface ClientBundle {
       stale: number
       placeholder: number
       prefetched: number
+      disabled: number
     }
     showLate: () => void
     mount: (container: HTMLElement) => () => void

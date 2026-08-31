@@ -44,6 +44,7 @@ describe('SSR hydration', () => {
       stale: 1,
       placeholder: 0,
       prefetched: 1,
+      disabled: 0,
     })
     expect(string.html).toContain('fresh-server')
     expect(string.html).toContain('stale-server')
@@ -96,6 +97,18 @@ describe('SSR hydration', () => {
     const ph = /<span id="ph"[^>]*>(.*?)<\/span>/.exec(string.html)![1]!
     expect(ph.replace(/<!--[^>]*-->/g, '')).toBe(
       'placeholder-value|true|success',
+    )
+
+    // A disabled query with nothing cached has no fetch to wait for, so its
+    // read settles as the idle state (data|status|isEnabled) and the render
+    // completes. Parking it on a never-settling promise instead deadlocks
+    // the whole render — the server has no later in which the query could
+    // become enabled, so this render would emit nothing at all.
+    const disabled = /<span[^>]*id="disabled"[^>]*>(.*?)<\/span>/.exec(
+      string.html,
+    )![1]!
+    expect(disabled.replace(/<!--[^>]*-->/g, '')).toBe(
+      'undefined|pending|false',
     )
   })
 
@@ -164,6 +177,14 @@ describe('SSR hydration', () => {
           'placeholder-resolved-client',
         )
       })
+
+      // The disabled query hydrates to the identical idle face the server
+      // serialized, and stays disabled: no priming (it has no data to
+      // transfer) and no fetch, on mount or after the window closes.
+      expect(container.querySelector('#disabled')?.textContent).toBe(
+        'undefined|pending|false',
+      )
+      expect(app.counts.disabled).toBe(0)
 
       // The serialized observer results no longer carry a hydrationData
       // copy at all — the node payload is the only transport.

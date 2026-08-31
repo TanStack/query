@@ -15,6 +15,7 @@ const counts: FetchCounts = {
   stale: 0,
   placeholder: 0,
   prefetched: 0,
+  disabled: 0,
 }
 
 // Fully-settled single-string render. Collected through pipe() rather than
