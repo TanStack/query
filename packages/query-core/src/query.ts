@@ -592,9 +592,13 @@ export class Query<
           }
           // no replacement fetch was started (e.g. the query was removed or
           // reset while fetching), so fall back to existing data instead of
-          // leaking this internal cancellation to the caller
-          if (this.state.data !== undefined) {
-            return this.state.data
+          // leaking this internal cancellation to the caller. `reset()` may
+          // have already overwritten `this.state` with the initial state by
+          // the time we get here, so also fall back to the state captured
+          // just before this fetch started.
+          const data = this.state.data ?? this.#revertState.data
+          if (data !== undefined) {
+            return data
           }
           throw error
         } else if (error.revert) {

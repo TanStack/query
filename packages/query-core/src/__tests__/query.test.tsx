@@ -1177,6 +1177,30 @@ describe('query', () => {
     await expect(promise).rejects.toBeInstanceOf(CancelledError)
   })
 
+  it('should not reject a promise when resetQueries silently cancels an in-flight fetch and cached data exists (no initialData)', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'initial')
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(100).then(() => 'new data'))
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // resetQueries destroys the query (silent cancel) and then immediately
+    // overwrites state with the query's initial state, so `this.state.data`
+    // alone is no longer enough to recover the last known data here.
+    queryClient.resetQueries({ queryKey: key })
+
+    await expect(promise).resolves.toBe('initial')
+  })
+
   it('should have an error log when queryFn data is not serializable', async () => {
     const consoleMock = vi.spyOn(console, 'error')
 
