@@ -190,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L293)
+Defined in: [preact-query/src/useQuery.ts:261](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L261)
 
 ### Type Parameters
 
@@ -355,37 +355,6 @@ function Posts() {
         Next Page
       </button>
     </div>
-  )
-}
-```
-
-Warming the cache on hover, so `<Post>` has data as soon as it's clicked. Requires a
-[queryOptions](queryOptions.md) factory, so the hook and the imperative call share the same cache entry:
-```tsx
-import { noop, queryOptions, useQuery, useQueryClient } from '@tanstack/preact-query'
-
-const postOptions = (id: string) =>
-  queryOptions({
-    queryKey: ['post', id],
-    queryFn: () => fetchPost(id),
-  })
-
-function Post({ id }: { id: string }) {
-  const { data, isError, error } = useQuery(postOptions(id))
-  if (isError) return <span>Error: {error.message}</span>
-  return <h1>{data?.title}</h1>
-}
-
-function PostLink({ id, title }: { id: string; title: string }) {
-  const queryClient = useQueryClient()
-
-  return (
-    <a
-      href={`/posts/${id}`}
-      onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
-    >
-      {title}
-    </a>
   )
 }
 ```
