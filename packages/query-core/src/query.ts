@@ -585,9 +585,18 @@ export class Query<
     } catch (error) {
       if (error instanceof CancelledError) {
         if (error.silent) {
-          // silent cancellation implies a new fetch is going to be started,
-          // so we piggyback onto that promise
-          return this.#retryer.promise
+          // silent cancellation usually implies a new fetch is going to be
+          // started, so we piggyback onto that promise
+          if (this.#retryer !== retryer) {
+            return this.#retryer.promise
+          }
+          // no replacement fetch was started (e.g. the query was removed or
+          // reset while fetching), so fall back to existing data instead of
+          // leaking this internal cancellation to the caller
+          if (this.state.data !== undefined) {
+            return this.state.data
+          }
+          throw error
         } else if (error.revert) {
           // transform error into reverted state data
           // if the initial fetch was cancelled, we have no data, so we have
