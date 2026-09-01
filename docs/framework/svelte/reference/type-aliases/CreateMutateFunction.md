@@ -7,7 +7,7 @@ title: CreateMutateFunction
 type CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:103](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L103)
+Defined in: [packages/svelte-query/src/types.ts:96](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L96)
 
 ## Type Parameters
 

@@ -7,7 +7,7 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:167](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L167)
+Defined in: [packages/svelte-query/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L160)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: [packages/svelte-query/src/types.ts:167](https://github.com/TanStack
 children: Snippet;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:169](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L169)
+Defined in: [packages/svelte-query/src/types.ts:162](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L162)
 
 ***
 
@@ -27,4 +27,4 @@ Defined in: [packages/svelte-query/src/types.ts:169](https://github.com/TanStack
 client: QueryClient;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:168](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L168)
+Defined in: [packages/svelte-query/src/types.ts:161](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L161)
