@@ -7,7 +7,10 @@ title: UseInfiniteQueryResult
 type UseInfiniteQueryResult<TData, TError> = InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:209](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L209)
+Defined in: [preact-query/src/types.ts:364](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L364)
+
+The result of `useInfiniteQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
+`pending`. Re-exports InfiniteQueryObserverResult from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -15,6 +18,10 @@ Defined in: [preact-query/src/types.ts:209](https://github.com/TanStack/query/bl
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
 `TError` = `DefaultError`
+
+The type of errors your `queryFn` may throw.

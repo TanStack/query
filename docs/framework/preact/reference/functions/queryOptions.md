@@ -9,7 +9,13 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L53)
+Defined in: [preact-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L140)
+
+You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
+be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+is the query key to generate options for.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
 ### Type Parameters
 
@@ -35,9 +41,42 @@ Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/qu
 
 [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
+
 ### Returns
 
-`Omit`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+[useQuery](useQuery.md) to run a query with these options.
+
+### Example
+
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+export const postsOptions = queryOptions({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+  initialData: [],
+})
+
+function Posts() {
+  // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+  // so the list stays visible alongside the error.
+  const { data, isError, error } = useQuery(postsOptions)
+
+  return (
+    <div>
+      {isError ? <span>Error: {error.message}</span> : null}
+      <ul>
+        {data.map((post) => <li key={post.id}>{post.title}</li>)}
+      </ul>
+    </div>
+  )
+}
+```
 
 ## Call Signature
 
@@ -45,7 +84,11 @@ Defined in: [preact-query/src/queryOptions.ts:53](https://github.com/TanStack/qu
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L63)
+Defined in: [preact-query/src/queryOptions.ts:180](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L180)
+
+You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
+be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+is the query key to generate options for.
 
 ### Type Parameters
 
@@ -71,9 +114,37 @@ Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/TanStack/qu
 
 [`UnusedSkipTokenOptions`](../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UnusedSkipTokenOptions](../type-aliases/UnusedSkipTokenOptions.md) to use — everything you can pass to `useQuery`.
+
 ### Returns
 
-`OmitKeyof`\<[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+[useQuery](useQuery.md) to run a query with these options.
+
+### Example
+
+A parameterized factory, so the same options object can be reused per `id`:
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+export const postOptions = (id: string) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+function Post({ id }: { id: string }) {
+  const { data, isPending, isError, error } = useQuery(postOptions(id))
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <h1>{data.title}</h1>
+}
+```
 
 ## Call Signature
 
@@ -81,7 +152,11 @@ Defined in: [preact-query/src/queryOptions.ts:63](https://github.com/TanStack/qu
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L73)
+Defined in: [preact-query/src/queryOptions.ts:243](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L243)
+
+You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
+be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+is the query key to generate options for.
 
 ### Type Parameters
 
@@ -107,6 +182,59 @@ Defined in: [preact-query/src/queryOptions.ts:73](https://github.com/TanStack/qu
 
 [`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
 ### Returns
 
-[`UseQueryOptions`](../interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+[useQuery](useQuery.md) to run a query with these options.
+
+### Remarks
+
+This is the only overload that accepts `queryFn: skipToken`, shown below.
+
+### Examples
+
+A parameterized factory, so the same options object can be reused per `id`:
+```tsx
+import { queryOptions, useQuery } from '@tanstack/preact-query'
+
+export const postOptions = (id: string) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+function Post({ id }: { id: string }) {
+  const { data, isPending, isError, error } = useQuery(postOptions(id))
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <h1>{data.title}</h1>
+}
+```
+
+A factory that disables the query, type safe, until `postId` is set:
+```tsx
+import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
+
+export const postOptions = (postId: number | undefined) =>
+  queryOptions({
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+  })
+
+function Post({ postId }: { postId: number | undefined }) {
+  const { data, isLoading, isError, error } = useQuery(postOptions(postId))
+
+  if (postId == null) return 'Select a post'
+  if (isLoading) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <h1>{data?.title}</h1>
+}
+```

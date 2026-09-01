@@ -265,7 +265,7 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page />)
 
-    const firstQuery = queryClient1.fetchQuery({
+    const firstQuery = queryClient1.query({
       queryKey: key1,
       queryFn: () => sleep(20).then(() => 'test1'),
     })
@@ -277,7 +277,7 @@ describe('useIsFetching', () => {
     expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
-    const secondQuery = queryClient2.fetchQuery({
+    const secondQuery = queryClient2.query({
       queryKey: key2,
       queryFn: () => sleep(20).then(() => 'test2'),
     })
