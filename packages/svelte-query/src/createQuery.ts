@@ -45,6 +45,31 @@ import type {
  *   </ul>
  * {/if}
  * ```
+ *
+ * @example
+ * The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
+ * ```svelte
+ * <script lang="ts">
+ *   import { createQuery } from '@tanstack/svelte-query'
+ *
+ *   const query = createQuery(() => ({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *   }))
+ * </script>
+ *
+ * {#if query.isPending}
+ *   Loading...
+ * {:else if query.isError}
+ *   <span>Error: {query.error.message}</span>
+ * {:else}
+ *   <ul>
+ *     {#each query.data as post (post.id)}
+ *       <li>{post.title}</li>
+ *     {/each}
+ *   </ul>
+ * {/if}
+ * ```
  */
 export function createQuery<
   TQueryFnData = unknown,

@@ -106,6 +106,67 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *
  * <button onclick={() => addMutation.mutate('Item')}>Add</button>
  * ```
+ *
+ * @example
+ * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
+ * promise per call instead, so you can wait for all of them:
+ * ```svelte
+ * <script lang="ts">
+ *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = createMutation(() => ({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   }))
+ *
+ *   async function handleAddAll(todos: Array<string>) {
+ *     try {
+ *       await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
+ *     } catch (error) {
+ *       console.error('Failed to add todos:', error)
+ *     }
+ *   }
+ * </script>
+ *
+ * <button onclick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+ *   Add all
+ * </button>
+ * ```
+ *
+ * @example
+ * If some of the mutations above can fail independently of the others, and you want to know which ones
+ * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
+ * `Promise.allSettled`:
+ * ```svelte
+ * <script lang="ts">
+ *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *
+ *   const queryClient = useQueryClient()
+ *
+ *   const addMutation = createMutation(() => ({
+ *     mutationFn: addTodo,
+ *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   }))
+ *
+ *   async function handleAddAll(todos: Array<string>) {
+ *     const addResults = await Promise.allSettled(
+ *       todos.map((todo) => addMutation.mutateAsync(todo)),
+ *     )
+ *
+ *     addResults.forEach((addResult, index) => {
+ *       if (addResult.status === 'rejected') {
+ *         console.error(`Failed to add "${todos[index]}":`, addResult.reason)
+ *       }
+ *     })
+ *   }
+ * </script>
+ *
+ * <button onclick={() => handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])}>
+ *   Add all
+ * </button>
+ * ```
  */
 export function createMutation<
   TData = unknown,

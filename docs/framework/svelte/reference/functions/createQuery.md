@@ -9,7 +9,7 @@ title: createQuery
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:49](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L49)
+Defined in: [packages/svelte-query/src/createQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L74)
 
 ### Type Parameters
 
@@ -57,7 +57,7 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 
 [queryOptions](queryOptions.md) to share these options between `createQuery` and imperative APIs like `queryClient.query`.
 
-### Example
+### Examples
 
 ```svelte
 <script lang="ts">
@@ -82,13 +82,37 @@ display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
 {/if}
 ```
 
+The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
+```svelte
+<script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
+
+  const query = createQuery(() => ({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  }))
+</script>
+
+{#if query.isPending}
+  Loading...
+{:else if query.isError}
+  <span>Error: {query.error.message}</span>
+{:else}
+  <ul>
+    {#each query.data as post (post.id)}
+      <li>{post.title}</li>
+    {/each}
+  </ul>
+{/if}
+```
+
 ## Call Signature
 
 ```ts
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:97](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L97)
+Defined in: [packages/svelte-query/src/createQuery.ts:122](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L122)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -169,7 +193,7 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:223](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L223)
+Defined in: [packages/svelte-query/src/createQuery.ts:248](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L248)
 
 ### Type Parameters
 
