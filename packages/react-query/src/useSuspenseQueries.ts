@@ -5,10 +5,26 @@ import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 import type {
   DefaultError,
+  OmitKeyof,
+  QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
+  QueryKey,
   ThrowOnError,
 } from '@tanstack/query-core'
+
+// `placeholderData` functions in useQueries never receive previous query data.
+type UseSuspenseQueryOptionsForUseSuspenseQueries<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = OmitKeyof<
+  UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -23,18 +39,22 @@ type GetUseSuspenseQueryOptions<T> =
     error?: infer TError
     data: infer TData
   }
-    ? UseSuspenseQueryOptions<TQueryFnData, TError, TData>
+    ? UseSuspenseQueryOptionsForUseSuspenseQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? UseSuspenseQueryOptions<TQueryFnData, TError>
+      ? UseSuspenseQueryOptionsForUseSuspenseQueries<TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? UseSuspenseQueryOptions<unknown, TError, TData>
+        ? UseSuspenseQueryOptionsForUseSuspenseQueries<unknown, TError, TData>
         : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
           T extends [infer TQueryFnData, infer TError, infer TData]
-          ? UseSuspenseQueryOptions<TQueryFnData, TError, TData>
+          ? UseSuspenseQueryOptionsForUseSuspenseQueries<
+              TQueryFnData,
+              TError,
+              TData
+            >
           : T extends [infer TQueryFnData, infer TError]
-            ? UseSuspenseQueryOptions<TQueryFnData, TError>
+            ? UseSuspenseQueryOptionsForUseSuspenseQueries<TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? UseSuspenseQueryOptions<TQueryFnData>
+              ? UseSuspenseQueryOptionsForUseSuspenseQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?:
@@ -43,7 +63,7 @@ type GetUseSuspenseQueryOptions<T> =
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? UseSuspenseQueryOptions<
+                ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                     TQueryFnData,
                     TError,
                     TData,
@@ -55,14 +75,14 @@ type GetUseSuspenseQueryOptions<T> =
                         | SkipTokenForUseQueries
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
-                  ? UseSuspenseQueryOptions<
+                  ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                       TQueryFnData,
                       TError,
                       TQueryFnData,
                       TQueryKey
                     >
                   : // Fallback
-                    UseSuspenseQueryOptions
+                    UseSuspenseQueryOptionsForUseSuspenseQueries
 
 type GetUseSuspenseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -112,7 +132,7 @@ export type SuspenseQueriesOptions<
   TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
-  ? Array<UseSuspenseQueryOptions>
+  ? Array<UseSuspenseQueryOptionsForUseSuspenseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
@@ -128,7 +148,7 @@ export type SuspenseQueriesOptions<
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogeneous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
-                UseSuspenseQueryOptions<
+                UseSuspenseQueryOptionsForUseSuspenseQueries<
                   infer TQueryFnData,
                   infer TError,
                   infer TData,
@@ -136,10 +156,15 @@ export type SuspenseQueriesOptions<
                 >
               >
             ? Array<
-                UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+                UseSuspenseQueryOptionsForUseSuspenseQueries<
+                  TQueryFnData,
+                  TError,
+                  TData,
+                  TQueryKey
+                >
               >
             : // Fallback
-              Array<UseSuspenseQueryOptions>
+              Array<UseSuspenseQueryOptionsForUseSuspenseQueries>
 
 /**
  * SuspenseQueriesResults reducer recursively maps type param to results
@@ -202,7 +227,6 @@ export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
           suspense: true,
           throwOnError: defaultThrowOnError,
           enabled: true,
-          placeholderData: undefined,
         }
       }),
     },

@@ -25,7 +25,9 @@ This works nicely in TypeScript, because `data` is guaranteed to be defined (as 
 
 On the flip side, you therefore can't conditionally enable / disable the Query. This generally shouldn't be necessary for dependent Queries because with suspense, all your Queries inside one component are fetched in serial.
 
-`placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
+`placeholderData` is supported. When it returns defined data, the Query renders that data in `success` state and fetches the full data in the background without showing the Suspense fallback. This is useful when a detail Query can show preview data from a cached list Query.
+
+You can also use `placeholderData: keepPreviousData` to keep data from the previous QueryKey. If keeping the currently rendered screen is your only goal, prefer wrapping updates that change the QueryKey in [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks) or using `useDeferredValue`. These React APIs keep the complete current screen in place and do not require placeholder data.
 
 ### throwOnError default
 

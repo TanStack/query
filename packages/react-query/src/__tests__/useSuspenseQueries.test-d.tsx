@@ -4,6 +4,7 @@ import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
+import type { SuspenseQueriesOptions } from '../useSuspenseQueries'
 
 describe('UseSuspenseQueries config object overload', () => {
   it('TData should always be defined', () => {
@@ -31,6 +32,36 @@ describe('UseSuspenseQueries config object overload', () => {
 
     expectTypeOf(query1Data).toEqualTypeOf<{ wow: boolean }>()
     expectTypeOf(query2Data).toEqualTypeOf<string>()
+  })
+
+  it('should allow placeholderData without previous query information', () => {
+    const queries: SuspenseQueriesOptions<[{ queryFnData: number }]> = [
+      {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve(5),
+        placeholderData: (previousData, previousQuery) => {
+          expectTypeOf(previousData).toEqualTypeOf<undefined>()
+          expectTypeOf(previousQuery).toEqualTypeOf<undefined>()
+          return 0
+        },
+      },
+    ]
+    const [query] = useSuspenseQueries({ queries })
+
+    expectTypeOf(query.data).toEqualTypeOf<number>()
+    expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
+
+    const selectedOptions = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(5),
+      placeholderData: 0,
+      select: (data) => data.toString(),
+    })
+    const [selectedQuery] = useSuspenseQueries({
+      queries: [selectedOptions],
+    })
+
+    expectTypeOf(selectedQuery.data).toEqualTypeOf<string>()
   })
 
   it('TData should be defined when passed through queryOptions', () => {

@@ -8,6 +8,7 @@ import type {
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
+  InfiniteQueryObserverPlaceholderResult,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -17,6 +18,7 @@ import type {
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
+  QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
 } from '@tanstack/query-core'
@@ -122,7 +124,7 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
@@ -170,7 +172,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   TPageParam = unknown,
 > extends OmitKeyof<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
@@ -194,13 +196,9 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-export type UseSuspenseQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DistributiveOmit<
-  DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+export type UseSuspenseQueryResult<TData = unknown, TError = DefaultError> =
+  | DefinedQueryObserverResult<TData, TError>
+  | QueryObserverPlaceholderResult<TData, TError>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -220,10 +218,9 @@ export type DefinedUseInfiniteQueryResult<
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<
-  DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+> =
+  | DefinedInfiniteQueryObserverResult<TData, TError>
+  | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
 export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>
 export interface UseMutationOptions<

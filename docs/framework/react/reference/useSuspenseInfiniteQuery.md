@@ -13,16 +13,16 @@ The same as for [useInfiniteQuery](./useInfiniteQuery.md), except for:
 
 - `throwOnError`
 - `enabled`
-- `placeholderData`
 
 **Returns**
 
 Same object as [useInfiniteQuery](./useInfiniteQuery.md), except that:
 
 - `data` is guaranteed to be defined
-- `isPlaceholderData` is missing
 - `status` is either `success` or `error`
   - the derived flags are set accordingly.
+
+When `placeholderData` is defined, the result has `isPlaceholderData: true` until the Query returns its data.
 
 **Caveat**
 
