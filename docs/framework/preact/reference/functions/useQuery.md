@@ -128,9 +128,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data and no query attempt
-has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
-display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived booleans for convenience.
 
 ### See
 
@@ -229,9 +229,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data and no query attempt
-has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
-display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived booleans for convenience.
 
 ### See
 
