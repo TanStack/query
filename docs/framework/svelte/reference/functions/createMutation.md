@@ -126,11 +126,11 @@ Optimistic update via `onMutate`, rolling back on `onError`:
         newTodo,
       ])
 
-      // Passed to `onError` as `context` if the mutation fails.
+      // Passed to `onError` as `onMutateResult` if the mutation fails.
       return { previousTodos }
     },
-    onError: (_err, _newTodo, context) => {
-      queryClient.setQueryData(['todos'], context?.previousTodos)
+    onError: (_err, _newTodo, onMutateResult) => {
+      queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })

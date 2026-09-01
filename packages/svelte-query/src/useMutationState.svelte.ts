@@ -80,7 +80,7 @@ function getResult<
  * @example
  * Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
  * mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
- * latest invocation:
+ * latest successful mutation (the `status: 'success'` filter above excludes pending/errored ones):
  * ```svelte
  * <script lang="ts">
  *   import { useMutationState } from '@tanstack/svelte-query'

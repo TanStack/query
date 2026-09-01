@@ -16,7 +16,7 @@ Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider` (or
 
 `QueryClient`
 
-The `QueryClient` from the nearest `QueryClientProvider`.
+The `QueryClient` set on context, whether by `QueryClientProvider` or [setQueryClientContext](setQueryClientContext.md).
 
 ## Throws
 

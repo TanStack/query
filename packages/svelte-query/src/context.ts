@@ -9,7 +9,7 @@ const _contextKey = Symbol('QueryClient')
  * {@link setQueryClientContext} directly). This is what {@link useQueryClient} calls internally.
  *
  * @throws If no `QueryClient` was found in context.
- * @returns The `QueryClient` from the nearest `QueryClientProvider`.
+ * @returns The `QueryClient` set on context, whether by `QueryClientProvider` or {@link setQueryClientContext}.
  */
 export const getQueryClientContext = (): QueryClient => {
   const client = getContext<QueryClient | undefined>(_contextKey)
@@ -38,7 +38,7 @@ export const getQueryClientContext = (): QueryClient => {
  * </script>
  *
  * <QueryClientProvider client={queryClient}>
- *   <App />
+ *   ...
  * </QueryClientProvider>
  * ```
  */

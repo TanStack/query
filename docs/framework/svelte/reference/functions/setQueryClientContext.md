@@ -35,6 +35,6 @@ The `QueryClient` to make available to descendant components.
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <App />
+  ...
 </QueryClientProvider>
 ```
