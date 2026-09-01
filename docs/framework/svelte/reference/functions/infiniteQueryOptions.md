@@ -7,7 +7,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:48](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L48)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:78](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L78)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
@@ -54,7 +54,36 @@ The same options object.
 
 [createInfiniteQuery](createInfiniteQuery.md) to run an infinite query with these options.
 
-## Example
+## Examples
+
+`initialData` skips the loading state on first render — even if a refetch fails, the list stays
+visible alongside the error:
+```svelte
+<script lang="ts">
+  import { infiniteQueryOptions, createInfiniteQuery } from '@tanstack/svelte-query'
+
+  const projectsOptions = infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+    initialData: { pages: [], pageParams: [] },
+  })
+
+  const query = createInfiniteQuery(() => projectsOptions)
+</script>
+
+{#if query.isError}
+  <span>Error: {query.error.message}</span>
+{/if}
+<ul>
+  {#each query.data?.pages ?? [] as page}
+    {#each page.projects as project (project.id)}
+      <li>{project.name}</li>
+    {/each}
+  {/each}
+</ul>
+```
 
 A parameterized factory, so the same options object can be reused per `postId`:
 ```svelte

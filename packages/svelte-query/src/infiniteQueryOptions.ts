@@ -12,6 +12,36 @@ import type { CreateInfiniteQueryOptions } from './types.js'
  * @returns The same options object.
  *
  * @example
+ * `initialData` skips the loading state on first render — even if a refetch fails, the list stays
+ * visible alongside the error:
+ * ```svelte
+ * <script lang="ts">
+ *   import { infiniteQueryOptions, createInfiniteQuery } from '@tanstack/svelte-query'
+ *
+ *   const projectsOptions = infiniteQueryOptions({
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *     initialData: { pages: [], pageParams: [] },
+ *   })
+ *
+ *   const query = createInfiniteQuery(() => projectsOptions)
+ * </script>
+ *
+ * {#if query.isError}
+ *   <span>Error: {query.error.message}</span>
+ * {/if}
+ * <ul>
+ *   {#each query.data?.pages ?? [] as page}
+ *     {#each page.projects as project (project.id)}
+ *       <li>{project.name}</li>
+ *     {/each}
+ *   {/each}
+ * </ul>
+ * ```
+ *
+ * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```svelte
  * <script lang="ts">
