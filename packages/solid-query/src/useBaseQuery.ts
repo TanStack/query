@@ -19,6 +19,7 @@ import type { QueryClient } from './QueryClient'
 import type {
   DefaultedQueryObserverOptions,
   Query,
+  QueryCacheNotifyEvent,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -198,13 +199,33 @@ export function useBaseQueryLayer<
   const [primed, setPrimed] = createSignal(!hydratedMount, {
     ownedWrite: true,
   })
-  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+  /**
+   * Keep the last explicitly removed entry as a read-only tombstone. A
+   * removal still invalidates the projections, but their pull must not call
+   * `cache.build()` for the same hash: doing so would undo removeQueries()
+   * synchronously and let the observer mount-fetch the replacement. A later
+   * cache write, explicit refetch or key change clears/bypasses the tombstone.
+   */
+  let removedQuery:
+    | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+    | undefined
+  const onCacheEvent = (event: QueryCacheNotifyEvent) => {
     // Match the committed options hash OR the latest computed one (they
     // diverge during a hold — see `latestHash`).
     if (
       event.query.queryHash === untrack(defaultedOptions).queryHash ||
       event.query.queryHash === latestHash
     ) {
+      if (event.type === 'removed') {
+        removedQuery = event.query as Query<
+          TQueryFnData,
+          TError,
+          TQueryData,
+          TQueryKey
+        >
+      } else if (event.type === 'added') {
+        removedQuery = undefined
+      }
       setVersion((v) => v + 1)
     }
   }
@@ -236,6 +257,7 @@ export function useBaseQueryLayer<
   const syncClient = (c: QueryClient) => {
     if (isServer || c === activeClient) return
     activeClient = c
+    removedQuery = undefined
     cacheSub?.()
     cacheSub = c.getQueryCache().subscribe(onCacheEvent)
     observerSub?.()
@@ -365,7 +387,17 @@ export function useBaseQueryLayer<
     version()
     const c = client()
     syncClient(c)
-    return c.getQueryCache().build(c, defaultedOptions() as any) as any
+    const opts = defaultedOptions()
+    if (
+      removedQuery?.queryHash === opts.queryHash &&
+      !c.getQueryCache().get(opts.queryHash)
+    ) {
+      return removedQuery
+    }
+    if (removedQuery?.queryHash !== opts.queryHash) {
+      removedQuery = undefined
+    }
+    return c.getQueryCache().build(c, opts as any) as any
   }
 
   const isEnabled = () => {
