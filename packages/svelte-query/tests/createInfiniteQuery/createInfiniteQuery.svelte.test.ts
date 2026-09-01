@@ -123,9 +123,7 @@ describe('createInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(states.value.every((state) => state.status === 'success')).toBe(
-      true,
-    )
+    expect(states.value.every((state) => state.status === 'success')).toBe(true)
     expect(states.value[0]?.data).toEqual({ pages: [0], pageParams: [0] })
   })
 
