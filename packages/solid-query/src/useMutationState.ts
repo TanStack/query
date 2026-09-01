@@ -1,4 +1,10 @@
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  untrack,
+} from 'solid-js'
 import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type {
@@ -66,11 +72,15 @@ export function useMutationState<
 
   createEffect(() => {
     const unsubscribe = mutationCache().subscribe(() => {
+      // `subscribe` invokes this synchronously, so reading `result` while the
+      // enclosing effect is still tracking would make the effect depend on the
+      // signal it sets, re-running and re-subscribing on every mutation.
+      const previousResult = untrack(result)
       const nextResult = replaceEqualDeep(
-        result(),
+        previousResult,
         getResult(mutationCache(), options()),
       )
-      if (result() !== nextResult) {
+      if (previousResult !== nextResult) {
         setResult(nextResult)
       }
     })
