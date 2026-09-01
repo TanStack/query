@@ -1,15 +1,63 @@
-import type { DefaultError, InfiniteData, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  InfiniteData,
+  InitialDataFunction,
+  NonUndefinedGuard,
+  QueryKey,
+  QueryKeyWithDataTag,
+} from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from './types.js'
+
+export type UndefinedInitialDataInfiniteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  initialData?:
+    | undefined
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | InitialDataFunction<
+        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      >
+}
+
+export type DefinedInitialDataInfiniteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  initialData:
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+}
 
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
  * These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
  * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
  *
+ * This overload is selected when `initialData` is set.
+ *
  * @see {@link createInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link CreateInfiniteQueryOptions} to use — everything you can pass to
- * `createInfiniteQuery`.
- * @returns The same options object.
+ * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `createInfiniteQuery`, with `initialData` set.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
  * `initialData` skips the loading state on first render — even if a refetch fails, the list stays
@@ -33,13 +81,46 @@ import type { CreateInfiniteQueryOptions } from './types.js'
  *   <span>Error: {query.error.message}</span>
  * {/if}
  * <ul>
- *   {#each query.data?.pages ?? [] as page}
+ *   {#each query.data.pages as page}
  *     {#each page.projects as project (project.id)}
  *       <li>{project.name}</li>
  *     {/each}
  *   {/each}
  * </ul>
  * ```
+ */
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: DefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
+ * These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
+ * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @see {@link createInfiniteQuery} to run an infinite query with these options.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `createInfiniteQuery`.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
@@ -82,19 +163,22 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: CreateInfiniteQueryOptions<
+  options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
   >,
-): CreateInfiniteQueryOptions<
+): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
   TPageParam
-> {
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+export function infiniteQueryOptions(options: unknown) {
   return options
 }

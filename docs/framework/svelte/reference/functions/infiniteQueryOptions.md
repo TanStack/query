@@ -3,58 +3,62 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
+## Call Signature
+
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:78](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L78)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L92)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
 `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
 
-## Type Parameters
+This overload is selected when `initialData` is set.
 
-### TQueryFnData
+### Type Parameters
+
+#### TQueryFnData
 
 `TQueryFnData`
 
-### TError
+#### TError
 
 `TError` = `Error`
 
-### TData
+#### TData
 
 `TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-### TQueryKey
+#### TQueryKey
 
 `TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
 
-### TPageParam
+#### TPageParam
 
 `TPageParam` = `unknown`
 
-## Parameters
+### Parameters
 
-### options
+#### options
 
-[`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
-The [CreateInfiniteQueryOptions](../type-aliases/CreateInfiniteQueryOptions.md) to use — everything you can pass to
-`createInfiniteQuery`.
+The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`createInfiniteQuery`, with `initialData` set.
 
-## Returns
+### Returns
 
-[`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `InfiniteData`\<`TQueryFnData`, `unknown`\>, `TError`\>
 
-The same options object.
+The same options object, typed so that `queryKey` carries the inferred data type.
 
-## See
+### See
 
 [createInfiniteQuery](createInfiniteQuery.md) to run an infinite query with these options.
 
-## Examples
+### Example
 
 `initialData` skips the loading state on first render — even if a refetch fails, the list stays
 visible alongside the error:
@@ -77,13 +81,68 @@ visible alongside the error:
   <span>Error: {query.error.message}</span>
 {/if}
 <ul>
-  {#each query.data?.pages ?? [] as page}
+  {#each query.data.pages as page}
     {#each page.projects as project (project.id)}
       <li>{project.name}</li>
     {/each}
   {/each}
 </ul>
 ```
+
+## Call Signature
+
+```ts
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+```
+
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:159](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L159)
+
+You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
+These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
+`queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### TPageParam
+
+`TPageParam` = `unknown`
+
+### Parameters
+
+#### options
+
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`createInfiniteQuery`.
+
+### Returns
+
+[`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `InfiniteData`\<`TQueryFnData`, `unknown`\>, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+### See
+
+[createInfiniteQuery](createInfiniteQuery.md) to run an infinite query with these options.
+
+### Example
 
 A parameterized factory, so the same options object can be reused per `postId`:
 ```svelte
