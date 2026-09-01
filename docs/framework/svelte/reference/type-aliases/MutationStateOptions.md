@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:151](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L151)
+Defined in: [packages/svelte-query/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L158)
 
 Options for useMutationState
 
@@ -29,7 +29,7 @@ Options for useMutationState
 optional filters: MutationFilters;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:156](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L156)
+Defined in: [packages/svelte-query/src/types.ts:163](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L163)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [packages/svelte-query/src/types.ts:156](https://github.com/TanStack
 optional select: (mutation) => TResult;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:157](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L157)
+Defined in: [packages/svelte-query/src/types.ts:164](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L164)
 
 #### Parameters
 
