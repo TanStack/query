@@ -193,6 +193,26 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
 ) => string
 
+export type EqualityFn = (a: unknown, b: unknown) => boolean
+
+export type CacheKeyHashFunction<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
+> = (cacheKey: TCacheKey) => string
+
+export interface CacheKeyConfig<
+  TCacheKey extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
+> {
+  /**
+   * Function used to compare values while partially matching keys.
+   * Defaults to strict equality.
+   */
+  equalityFn?: EqualityFn
+  /**
+   * Function used to hash keys globally.
+   */
+  hashFn?: CacheKeyHashFunction<TCacheKey>
+}
+
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: Array<TQueryFnData>,
@@ -255,6 +275,9 @@ export interface QueryOptions<
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
+  /**
+   * @deprecated Use `hashFn` in the `queryKey` configuration of `QueryCache` instead.
+   */
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)

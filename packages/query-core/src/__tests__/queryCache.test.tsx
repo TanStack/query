@@ -191,6 +191,30 @@ describe('queryCache', () => {
       const query = queryCache.find({ queryKey: key, exact: false })!
       expect(query.state.data).toBe('data1')
     })
+
+    it('should use the QueryCache equality function for partial query key matching', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const testCache = new QueryCache({ queryKey: { equalityFn } })
+      const testClient = new QueryClient({ queryCache: testCache })
+      const query = testClient.getQueryCache().build(testClient, {
+        queryKey: ['todos', { status: 'done' }],
+      })
+
+      expect(
+        testCache.find({
+          queryKey: ['TODOS', { status: 'DONE' }],
+          exact: false,
+        }),
+      ).toBe(query)
+      expect(
+        testCache.findAll({ queryKey: ['TODOS', { status: 'DONE' }] }),
+      ).toEqual([query])
+
+      testClient.clear()
+    })
   })
 
   describe('findAll', () => {
@@ -342,6 +366,59 @@ describe('queryCache', () => {
         .catch(noop)
       expect(queryCache.findAll().length).toBe(2)
     })
+
+    it('should return all the queries when key contains object with an undefined property (#3741)', async () => {
+      const baseKey = queryKey()
+
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          queryKey: {
+            equalityFn: (a, b) => b === undefined || Object.is(a, b),
+          },
+        }),
+      })
+
+      const createKey = (id?: number) => [{ ...baseKey, a: id }]
+
+      await client.query({ queryKey: createKey(1), queryFn: () => 'data1' })
+      await client.query({
+        queryKey: createKey(),
+        queryFn: () => 'data-nothing',
+      })
+      expect(
+        client.getQueryCache().findAll({ queryKey: createKey() }),
+      ).toHaveLength(2)
+    })
+
+    it('should invalidate matching dates (#10982)', async () => {
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          queryKey: {
+            equalityFn: (a, b) => {
+              if (a instanceof Date && b instanceof Date) {
+                return a.toISOString() === b.toISOString()
+              }
+              return a === b
+            },
+          },
+        }),
+      })
+
+      await client.query({
+        queryKey: ['report', { from: new Date('2020-01-01') }],
+        queryFn: () => 'data1',
+      })
+      await client.query({
+        queryKey: ['report', { from: new Date('2021-06-25') }],
+        queryFn: () => 'data2',
+      })
+
+      expect(
+        client.getQueryCache().findAll({
+          queryKey: ['report', { from: new Date('2020-01-01') }],
+        }),
+      ).toHaveLength(1)
+    })
   })
 
   describe('QueryCacheConfig error callbacks', () => {
@@ -402,6 +479,38 @@ describe('queryCache', () => {
       })
 
       expect(query.queryHash).toBe(hashKey(key))
+    })
+
+    it('should use the QueryCache query key hash function', () => {
+      const key = queryKey()
+      const hashFn = vi.fn(() => 'custom-hash')
+      const testCache = new QueryCache({ queryKey: { hashFn } })
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      const query = testCache.build(testClient, { queryKey: key })
+
+      expect(query.queryHash).toBe('custom-hash')
+      expect(testCache.find({ queryKey: key })).toBe(query)
+      expect(hashFn).toHaveBeenCalledWith(key)
+    })
+
+    it('should prefer the QueryCache query key hash function over the query option', () => {
+      const key = queryKey()
+      const cacheHashFn = vi.fn(() => 'cache-hash')
+      const queryHashFn = vi.fn(() => 'query-hash')
+      const testCache = new QueryCache({
+        queryKey: { hashFn: cacheHashFn },
+      })
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      const query = testCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn: queryHashFn,
+      })
+
+      expect(query.queryHash).toBe('cache-hash')
+      expect(cacheHashFn).toHaveBeenCalledWith(key)
+      expect(queryHashFn).not.toHaveBeenCalled()
     })
 
     it('should use provided queryHash instead of computing it', () => {

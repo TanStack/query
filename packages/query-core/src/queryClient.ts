@@ -1,7 +1,6 @@
 import {
   functionalUpdate,
-  hashKey,
-  hashQueryKeyByOptions,
+  hashKeyByOptions,
   noop,
   partialMatchKey,
   resolveQueryValue,
@@ -560,10 +559,13 @@ export class QueryClient {
       >
     >,
   ): void {
-    this.#queryDefaults.set(hashKey(queryKey), {
-      queryKey,
-      defaultOptions: options,
-    })
+    this.#queryDefaults.set(
+      hashKeyByOptions(queryKey, this.#queryCache.config.queryKey),
+      {
+        queryKey,
+        defaultOptions: options,
+      },
+    )
   }
 
   getQueryDefaults(
@@ -577,7 +579,13 @@ export class QueryClient {
     > = {}
 
     defaults.forEach((queryDefault) => {
-      if (partialMatchKey(queryKey, queryDefault.queryKey)) {
+      if (
+        partialMatchKey(
+          queryKey,
+          queryDefault.queryKey,
+          this.#queryCache.config.queryKey?.equalityFn,
+        )
+      ) {
         Object.assign(result, queryDefault.defaultOptions)
       }
     })
@@ -596,10 +604,13 @@ export class QueryClient {
       'mutationKey'
     >,
   ): void {
-    this.#mutationDefaults.set(hashKey(mutationKey), {
-      mutationKey,
-      defaultOptions: options,
-    })
+    this.#mutationDefaults.set(
+      hashKeyByOptions(mutationKey, this.#mutationCache.config.mutationKey),
+      {
+        mutationKey,
+        defaultOptions: options,
+      },
+    )
   }
 
   getMutationDefaults(
@@ -613,7 +624,13 @@ export class QueryClient {
     > = {}
 
     defaults.forEach((queryDefault) => {
-      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
+      if (
+        partialMatchKey(
+          mutationKey,
+          queryDefault.mutationKey,
+          this.#mutationCache.config.mutationKey?.equalityFn,
+        )
+      ) {
         Object.assign(result, queryDefault.defaultOptions)
       }
     })
@@ -670,8 +687,9 @@ export class QueryClient {
     }
 
     if (!defaultedOptions.queryHash) {
-      defaultedOptions.queryHash = hashQueryKeyByOptions(
+      defaultedOptions.queryHash = hashKeyByOptions(
         defaultedOptions.queryKey,
+        this.#queryCache.config.queryKey,
         defaultedOptions,
       )
     }

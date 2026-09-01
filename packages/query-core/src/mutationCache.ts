@@ -4,8 +4,10 @@ import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
+  CacheKeyConfig,
   DefaultError,
   MutationFunctionContext,
+  MutationKey,
   MutationOptions,
   NotifyEvent,
 } from './types'
@@ -16,6 +18,7 @@ import type { MutationFilters } from './utils'
 // TYPES
 
 export interface MutationCacheConfig {
+  mutationKey?: CacheKeyConfig<MutationKey>
   onError?: (
     error: DefaultError,
     variables: unknown,
@@ -212,12 +215,14 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((mutation) =>
-      matchMutation(defaultedFilters, mutation),
+      matchMutation(defaultedFilters, mutation, this.config.mutationKey),
     ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
+    return this.getAll().filter((mutation) =>
+      matchMutation(filters, mutation, this.config.mutationKey),
+    )
   }
 
   notify(event: MutationCacheNotifyEvent) {

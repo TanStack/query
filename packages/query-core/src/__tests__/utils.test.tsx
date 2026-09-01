@@ -7,7 +7,7 @@ import {
   addToStart,
   ensureQueryFn,
   hashKey,
-  hashQueryKeyByOptions,
+  hashKeyByOptions,
   isPlainArray,
   isPlainObject,
   isValidTimeout,
@@ -23,13 +23,13 @@ import { Mutation } from '../mutation'
 import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
-  describe('hashQueryKeyByOptions', () => {
+  describe('hashKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
       const key = ['test', { a: 1, b: 2 }]
       const customHashFn = vi.fn(() => 'custom-hash')
 
-      const result = hashQueryKeyByOptions(key, {
-        queryKeyHashFn: customHashFn,
+      const result = hashKeyByOptions(key, {
+        hashFn: customHashFn,
       })
 
       expect(customHashFn).toHaveBeenCalledWith(key)
@@ -39,7 +39,7 @@ describe('core/utils', () => {
     it('should use default hash function when no options provided', () => {
       const key = ['test', { a: 1, b: 2 }]
       const defaultResult = hashKey(key)
-      const result = hashQueryKeyByOptions(key)
+      const result = hashKeyByOptions(key, undefined)
 
       expect(result).toEqual(defaultResult)
     })
@@ -126,6 +126,38 @@ describe('core/utils', () => {
   })
 
   describe('partialMatchKey', () => {
+    it('should use a custom equality function', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        typeof a === 'string' && typeof b === 'string'
+          ? a.toLowerCase() === b.toLowerCase()
+          : a === b
+      const a = ['todos', { status: 'done' }]
+      const b = ['TODOS', { status: 'DONE' }]
+
+      expect(partialMatchKey(a, b)).toBe(false)
+      expect(partialMatchKey(a, b, equalityFn)).toBe(true)
+    })
+
+    it('should not structurally match different non-plain objects', () => {
+      const equalityFn = (a: unknown, b: unknown) => {
+        if (a instanceof Date && b instanceof Date) {
+          return a.toISOString() === b.toISOString()
+        }
+        return a === b
+      }
+      const a = ['report', { from: new Date('2021-06-25') }]
+      const b = ['report', { from: new Date('2020-01-01') }]
+
+      expect(partialMatchKey(a, b, equalityFn)).toBe(false)
+      expect(
+        partialMatchKey(
+          a,
+          ['report', { from: new Date('2021-06-25') }],
+          equalityFn,
+        ),
+      ).toBe(true)
+    })
+
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
@@ -199,6 +231,17 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(true, false)).toBe(false)
       expect(replaceEqualDeep(false, true)).toBe(true)
       expect(replaceEqualDeep(date1, date2)).toBe(date2)
+    })
+
+    it('should use a custom equality function for value objects', () => {
+      const equalityFn = (a: unknown, b: unknown) =>
+        a === b ||
+        (a instanceof Date && b instanceof Date && a.getTime() === b.getTime())
+      const prev = { date: new Date(0) }
+      const next = { date: new Date(0) }
+
+      expect(replaceEqualDeep(prev, next)).not.toBe(prev)
+      expect(replaceEqualDeep(prev, next, equalityFn)).toBe(prev)
     })
 
     it('should return the next value when the previous value is a different type', () => {

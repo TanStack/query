@@ -1,10 +1,11 @@
-import { hashQueryKeyByOptions, matchQuery } from './utils'
+import { hashKeyByOptions, matchQuery } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
 import type {
+  CacheKeyConfig,
   DefaultError,
   NotifyEvent,
   QueryKey,
@@ -17,6 +18,7 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 export interface QueryCacheConfig {
+  queryKey?: CacheKeyConfig<QueryKey>
   onError?: (
     error: DefaultError,
     query: Query<unknown, unknown, unknown>,
@@ -112,7 +114,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
     const queryKey = options.queryKey
     const queryHash =
-      options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
+      options.queryHash ??
+      hashKeyByOptions(queryKey, this.config.queryKey, options)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
 
     if (!query) {
@@ -186,14 +189,16 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((query) =>
-      matchQuery(defaultedFilters, query),
+      matchQuery(defaultedFilters, query, this.config.queryKey),
     ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
     const queries = this.getAll()
     return Object.keys(filters).length > 0
-      ? queries.filter((query) => matchQuery(filters, query))
+      ? queries.filter((query) =>
+          matchQuery(filters, query, this.config.queryKey),
+        )
       : queries
   }
 
