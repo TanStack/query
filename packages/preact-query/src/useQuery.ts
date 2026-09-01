@@ -62,9 +62,9 @@ export function useQuery<
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
- * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
- * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
+ * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+ * are derived booleans for convenience.
  *
  * @example
  * ```tsx
@@ -129,9 +129,9 @@ export function useQuery<
  * @param options - The {@link UseQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The current query result. `status` is `pending` if there is no cached data and no query attempt
- * has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
- * display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+ * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
+ * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+ * are derived booleans for convenience.
  *
  * @example
  * ```tsx
