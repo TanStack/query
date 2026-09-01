@@ -6,7 +6,13 @@
 // re-pointed separately.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
-import { Errored, Loading, createSignal } from 'solid-js'
+import {
+  Errored,
+  Loading,
+  createEffect,
+  createMemo,
+  createSignal,
+} from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQuery } from '..'
 import { renderWithClient } from './utils'
@@ -508,6 +514,62 @@ describe('useQuery 2.0 read semantics', () => {
 
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('n: 42')).toBeInTheDocument()
+    })
+
+    // Reproduction for #11351. A tracked computation that reaches a leaf
+    // THROUGH a `createMemo(() => state.data)` indirection stops being
+    // notified after a refetch: the memo is an async consumer of the data
+    // node, its committed value is the same store face on every commit, and
+    // the propagation is pruned at the memo — so the effect's own reads of
+    // that same node are never re-evaluated. Its last observation is the
+    // superseded value, permanently.
+    //
+    // This is not a defect in the data node itself: the derive runs the
+    // expected four times, the commit lands, and an untracked read through
+    // the very same memo returns the new value. Every other reader shape
+    // (leaf read in the effect, leaf read inside the memo, leaf read off an
+    // untracked-captured face, a suspended memo over an UNRELATED async
+    // source) is notified correctly, and the behaviour reproduces with no
+    // TanStack code involved: solidjs/solid#3181.
+    //
+    // eslint-disable-next-line vitest/no-disabled-tests -- pending the upstream fix, kept as the reproduction
+    it.skip('notifies a leaf reader that goes through a memo over data', async () => {
+      const key = queryKey()
+      const server = { flag: false }
+      const observed: Array<boolean> = []
+
+      function Page() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ ...server })),
+        }))
+        const data = createMemo(() => state.data)
+        createEffect(
+          () => data().flag,
+          (flag) => {
+            observed.push(flag)
+          },
+        )
+        return <span>flag: {String(state.data.flag)}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(observed).toEqual([false])
+
+      server.flag = true
+      void queryClient.refetchQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(10)
+
+      // The direct read swaps, so the commit itself landed.
+      expect(rendered.getByText('flag: true')).toBeInTheDocument()
+      // ...but the reader behind the memo was never told.
+      expect(observed.at(-1)).toBe(true)
     })
   })
 })
