@@ -51,9 +51,11 @@ Its available methods are:
 - `queryCache?: QueryCache`
   - Optional
   - The query cache this client is connected to.
+  - Custom query key serialization and hashing are configured when this cache is created.
 - `mutationCache?: MutationCache`
   - Optional
   - The mutation cache this client is connected to.
+  - Custom mutation key serialization and hashing are configured when this cache is created.
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.

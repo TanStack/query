@@ -189,9 +189,31 @@ export type QueriesPlaceholderDataFunction<TQueryData> = (
   previousQuery: undefined,
 ) => TQueryData | undefined
 
-export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
+export type QueryKeyHashFunction<TQueryKey extends QueryKey = QueryKey> = (
   queryKey: TQueryKey,
 ) => string
+
+export type CacheKeyHashFunction<TCacheKey extends CacheKey = CacheKey> = (
+  cacheKey: TCacheKey,
+) => string
+
+export type CacheKeyValueSerializer = (value: unknown) => unknown
+
+/**
+ * Serialization and hashing configuration used by a cache.
+ */
+export interface CacheKeyConfig<TCacheKey extends CacheKey = CacheKey> {
+  /**
+   * Hashes the serialized cache key into the cache identity string.
+   */
+  readonly hashFn?: CacheKeyHashFunction<TCacheKey>
+  /**
+   * Serializes cache key values. The serializer must be deterministic and
+   * idempotent because a key can be serialized more than once. Query keys must
+   * not be changed after they are used.
+   */
+  readonly valueSerializer?: CacheKeyValueSerializer
+}
 
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
@@ -254,8 +276,11 @@ export interface QueryOptions<
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   queryHash?: string
-  queryKey?: TQueryKey
+  /**
+   * @deprecated Configure `hashFn` on `QueryCache` instead.
+   */
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
+  queryKey?: TQueryKey
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)
   behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
@@ -452,7 +477,9 @@ export type DefaultedQueryObserverOptions<
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
->
+> & {
+  _defaulted: true
+}
 
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
@@ -487,7 +514,9 @@ export type DefaultedInfiniteQueryObserverOptions<
     TPageParam
   >,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
->
+> & {
+  _defaulted: true
+}
 
 export interface QueryExecuteOptions<
   TQueryFnData = unknown,
@@ -1075,6 +1104,11 @@ export type MutationKey = Register extends {
       : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
+/**
+ * A key used to identify an entry in either cache.
+ */
+export type CacheKey = QueryKey | MutationKey
+
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
 export type MutationScope = {
@@ -1138,6 +1172,12 @@ export interface MutationOptions<
   _defaulted?: boolean
   meta?: MutationMeta
   scope?: MutationScope
+}
+
+export type DefaultedMutationOptions<
+  TOptions extends MutationOptions<any, any, any, any>,
+> = TOptions & {
+  _defaulted: true
 }
 
 export interface MutationObserverOptions<

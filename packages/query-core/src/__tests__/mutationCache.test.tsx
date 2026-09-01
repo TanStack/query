@@ -348,6 +348,53 @@ describe('mutationCache', () => {
       ).toEqual([mutation2])
       expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
     })
+
+    it('should use the shared cache serializer when clients share a cache', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.getTime() : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testCache = new MutationCache({ valueSerializer, hashFn })
+      const stringClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const numberClient = new QueryClient({
+        mutationCache: testCache,
+      })
+      const date = new Date(0)
+
+      testCache.build(stringClient, {
+        mutationKey: ['string', date],
+      })
+      const numberMutation = testCache.build(numberClient, {
+        mutationKey: ['number', date],
+      })
+      testCache.build(numberClient, {
+        mutationKey: ['other', date],
+      })
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      // `find` defaults to `exact`, so it serializes the filter before matching
+      // and hashes each mutation key until it finds a match.
+      expect(testCache.find({ mutationKey: ['number', date] })).toBe(
+        numberMutation,
+      )
+      expect(valueSerializer).toHaveBeenCalledTimes(10)
+      expect(hashFn).toHaveBeenCalledTimes(4)
+
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      // `findAll` serializes the filter before matching all three mutation keys.
+      expect(
+        testCache.findAll({ mutationKey: ['number', date], exact: true }),
+      ).toEqual([numberMutation])
+      expect(valueSerializer).toHaveBeenCalledTimes(14)
+      expect(hashFn).toHaveBeenCalledTimes(6)
+
+      stringClient.clear()
+    })
   })
 
   describe('garbage collection', () => {

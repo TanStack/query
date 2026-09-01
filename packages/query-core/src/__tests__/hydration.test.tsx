@@ -2075,4 +2075,35 @@ describe('dehydration and rehydration', () => {
     clientQueryClient.clear()
     serverQueryClient.clear()
   })
+
+  it('should hydrate a key that needs serialization', () => {
+    const makeClient = () =>
+      new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+
+    const serverQueryClient = makeClient()
+    serverQueryClient.setQueryData(['events', new Date(0)], 'data')
+    const dehydrated = JSON.parse(JSON.stringify(dehydrate(serverQueryClient)))
+
+    const clientQueryClient = makeClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    expect(clientQueryClient.getQueryData(['events', new Date(0)])).toBe('data')
+    expect(clientQueryClient.getQueryCache().getAll()).toHaveLength(1)
+    expect(
+      clientQueryClient.getQueryCache().findAll({ queryKey: ['events'] }),
+    ).toHaveLength(1)
+    expect(
+      clientQueryClient
+        .getQueryCache()
+        .findAll({ queryKey: ['events', new Date(0)], exact: true }),
+    ).toHaveLength(1)
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
 })

@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   CancelledError,
+  MutationCache,
   MutationObserver,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
@@ -10,14 +12,15 @@ import {
   hydrate,
   noop,
   onlineManager,
+  serializeCacheKey,
   skipToken,
 } from '..'
 import { mockOnlineManagerIsOnline } from './utils'
 import type {
   InfiniteData,
   Query,
-  QueryCache,
   QueryFunction,
+  QueryFunctionContext,
   QueryObserverOptions,
 } from '..'
 
@@ -74,6 +77,510 @@ describe('queryClient', () => {
         defaultOptions,
       })
       expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
+    })
+  })
+
+  describe('cache key config', () => {
+    it('should expose the cache key config', () => {
+      const hashFn = () => 'hash'
+      const valueSerializer = (value: unknown) => value
+      const configuredCache = new QueryCache({ hashFn, valueSerializer })
+      const testClient = new QueryClient({
+        queryCache: configuredCache,
+      })
+
+      expect(testClient.getQueryCache().config).toMatchObject({
+        hashFn,
+        valueSerializer,
+      })
+    })
+
+    it('should use separate query and mutation cache serializers', () => {
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+        mutationCache: new MutationCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.getTime() : value,
+        }),
+      })
+      const date = new Date(0)
+
+      testClient.setQueryData(['date', date], 'data')
+      testClient.getMutationCache().build(testClient, {
+        mutationKey: ['date', date],
+      })
+
+      const query = testClient.getQueryCache().getAll()[0]
+      const mutation = testClient.getMutationCache().getAll()[0]
+      expect(query?.queryKey).toEqual(['date', date])
+      expect(query?.serializedQueryKey).toEqual(['date', date.toISOString()])
+      expect(mutation?.options.mutationKey).toEqual(['date', date])
+    })
+
+    it('should not traverse a cache key when no value serializer is configured', () => {
+      const key = ['maps', new Map([['a', 1]])]
+      const hashFn = vi.fn((_key: unknown) => 'custom-hash')
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ hashFn }),
+      })
+
+      testClient.setQueryData(key, 'data')
+
+      expect(hashFn).toHaveBeenCalledWith(key)
+      expect(hashFn.mock.calls[0]?.[0]).toBe(key)
+      expect(testClient.getQueryCache().getAll()[0]?.queryKey).toBe(key)
+      expect(testClient.getQueryCache().getAll()[0]?.serializedQueryKey).toBe(
+        key,
+      )
+    })
+
+    it('should keep the original query key in public APIs', async () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Date ? value.toISOString() : value
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const key = ['dates', new Date(0)] as const
+      const queryFn = vi.fn((context: QueryFunctionContext<typeof key>) =>
+        context.queryKey[1].getTime(),
+      )
+
+      const defaultedOptions = testClient.defaultQueryOptions({ queryKey: key })
+      expect(defaultedOptions.queryKey).toBe(key)
+
+      await testClient.query({ queryKey: key, queryFn })
+
+      expect(queryFn.mock.calls[0]?.[0].queryKey).toBe(key)
+      expect(queryFn).toHaveReturnedWith(0)
+      expect(testClient.getQueryCache().getAll()[0]?.queryKey).toBe(key)
+      expect(
+        testClient.getQueryCache().getAll()[0]?.serializedQueryKey,
+      ).toEqual(['dates', new Date(0).toISOString()])
+    })
+
+    it('should serialize nested arrays and objects recursively', () => {
+      const serializedValues: Array<unknown> = []
+      const valueSerializer = (value: unknown) => {
+        serializedValues.push(value)
+        return typeof value === 'number' ? String(value) : value
+      }
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer, hashFn }),
+      })
+
+      const result = testClient.defaultQueryOptions({
+        queryKey: [
+          'todos',
+          {
+            page: 1,
+            filters: ['active', 2],
+            nullable: null,
+            missing: undefined,
+          },
+        ],
+      })
+
+      expect(hashFn).toHaveBeenCalledWith([
+        'todos',
+        {
+          page: '1',
+          filters: ['active', '2'],
+          nullable: null,
+          missing: undefined,
+        },
+      ])
+      expect(result.queryKey).toEqual([
+        'todos',
+        {
+          page: 1,
+          filters: ['active', 2],
+          nullable: null,
+          missing: undefined,
+        },
+      ])
+      expect(result.queryHash).toBe(
+        JSON.stringify([
+          'todos',
+          {
+            page: '1',
+            filters: ['active', '2'],
+            nullable: null,
+            missing: undefined,
+          },
+        ]),
+      )
+      expect(serializedValues).toEqual([
+        'todos',
+        1,
+        'active',
+        2,
+        null,
+        undefined,
+      ])
+    })
+
+    it('should serialize values inside containers returned by the serializer', () => {
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Map
+              ? [...value.entries()]
+              : typeof value === 'bigint'
+                ? String(value)
+                : value,
+        }),
+      })
+
+      const options = testClient.defaultQueryOptions({
+        queryKey: ['counts', new Map([['total', 1n]])],
+      })
+
+      expect(options.queryHash).toBe('["counts",[["total","1"]]]')
+    })
+
+    it('should not change the original key while serializing', () => {
+      const key = ['todos', { status: 'active' }, new Date(0)]
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+
+      const cacheKey = serializeCacheKey(
+        key,
+        testClient.getQueryCache().config.valueSerializer,
+      )
+
+      expect(cacheKey).toEqual([
+        'todos',
+        { status: 'active' },
+        '1970-01-01T00:00:00.000Z',
+      ])
+      expect(key).toEqual(['todos', { status: 'active' }, new Date(0)])
+    })
+
+    it('should use the cache hash function for query identity', () => {
+      const hashFn = vi.fn((key: unknown) =>
+        JSON.stringify(key, (_, value) =>
+          value instanceof Map ? [...value.entries()] : value,
+        ),
+      )
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ hashFn }),
+      })
+      const keyA = ['maps', new Map([['a', 1]])]
+      const keyB = ['maps', new Map([['a', 1]])]
+
+      testClient.setQueryData(keyA, 'data')
+
+      expect(testClient.getQueryData(keyB)).toBe('data')
+      expect(hashFn).toHaveBeenCalled()
+    })
+
+    it('should pass serialized values to the cache hash function', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer, hashFn }),
+      })
+      const key = ['maps', new Map([['a', 1]])]
+
+      testClient.setQueryData(key, 'data')
+
+      expect(hashFn).toHaveBeenCalledWith(['maps', [['a', 1]]])
+    })
+
+    it('should use the query option hash function with serialized values', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const queryKeyHashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const customQueryCache = new QueryCache({ valueSerializer })
+      const testClient = new QueryClient({ queryCache: customQueryCache })
+      const key = ['maps', new Map([['a', 1]])]
+
+      const query = customQueryCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn,
+      })
+
+      expect(query.queryHash).toBe(JSON.stringify(['maps', [['a', 1]]]))
+      expect(queryKeyHashFn).toHaveBeenCalledWith(['maps', [['a', 1]]])
+      expect(customQueryCache.find({ queryKey: key })).toBe(query)
+    })
+
+    it('should prefer the cache hash function over the query option hash function', () => {
+      const cacheHashFn = vi.fn(() => 'cache-hash')
+      const queryKeyHashFn = vi.fn(() => 'query-hash')
+      const customQueryCache = new QueryCache({ hashFn: cacheHashFn })
+      const testClient = new QueryClient({ queryCache: customQueryCache })
+      const key = ['key']
+
+      const query = customQueryCache.build(testClient, {
+        queryKey: key,
+        queryKeyHashFn,
+      })
+
+      expect(query.queryHash).toBe('cache-hash')
+      expect(cacheHashFn).toHaveBeenCalledWith(key)
+      expect(queryKeyHashFn).not.toHaveBeenCalled()
+      expect(customQueryCache.find({ queryKey: key })).toBe(query)
+      expect(queryKeyHashFn).not.toHaveBeenCalled()
+    })
+
+    it('should use the query cache value serializer for hashing and matching', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? JSON.stringify([...value.entries()]) : value
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+
+      const keyA = ['maps', new Map([['a', 1]])]
+      const keyB = ['maps', new Map([['a', 2]])]
+
+      testClient.setQueryData(keyA, 'a')
+      testClient.setQueryData(keyB, 'b')
+
+      expect(testClient.getQueryCache().getAll()).toHaveLength(2)
+      expect(
+        testClient.getQueriesData({ queryKey: ['maps', new Map([['a', 1]])] }),
+      ).toEqual([[keyA, 'a']])
+    })
+
+    it('should use the mutation cache value serializer for matching', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testClient = new QueryClient({
+        mutationCache: new MutationCache({ valueSerializer, hashFn }),
+      })
+
+      testClient.getMutationCache().build(testClient, {
+        mutationKey: ['maps', new Map([['a', 1]])],
+        mutationFn: () => Promise.resolve(),
+      })
+
+      // building a mutation does not hash its key, only filters need the hash
+      expect(valueSerializer).not.toHaveBeenCalled()
+      expect(hashFn).not.toHaveBeenCalled()
+
+      const mutation = testClient.getMutationCache().getAll()[0]
+      expect(mutation?.options.mutationKey).toEqual([
+        'maps',
+        new Map([['a', 1]]),
+      ])
+
+      expect(
+        testClient.getMutationCache().findAll({
+          mutationKey: ['maps', new Map([['a', 1]])],
+        }).length,
+      ).toBe(1)
+      expect(valueSerializer).toHaveBeenCalled()
+      expect(
+        testClient.getMutationCache().findAll({
+          mutationKey: ['maps', new Map([['a', 2]])],
+        }).length,
+      ).toBe(0)
+    })
+
+    it('should use the value serializer for query cache identity', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const key = ['maps', new Map([['a', 1]])]
+
+      testClient.setQueryData(key, 'data')
+
+      expect(testClient.getQueryData(['maps', new Map([['a', 1]])])).toBe(
+        'data',
+      )
+      expect(testClient.getQueryCache().getAll()).toHaveLength(1)
+    })
+
+    it('should use the value serializer for exact and partial query filters', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const keyA = ['maps', new Map([['a', 1]])]
+      const keyB = ['maps', new Map([['a', 2]])]
+
+      testClient.setQueryData(keyA, 'a')
+      testClient.setQueryData(keyB, 'b')
+
+      expect(
+        testClient.getQueriesData({
+          queryKey: ['maps', new Map([['a', 1]])],
+          exact: true,
+        }),
+      ).toEqual([[keyA, 'a']])
+      expect(testClient.getQueriesData({ queryKey: ['maps'] })).toEqual([
+        [keyA, 'a'],
+        [keyB, 'b'],
+      ])
+    })
+
+    it('should keep original keys in setQueriesData', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        typeof value === 'string' && !value.endsWith('!') ? `${value}!` : value,
+      )
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+
+      testClient.setQueryData(['key'], 'a')
+      valueSerializer.mockClear()
+
+      testClient.setQueriesData({ queryKey: ['key'] }, () => 'b')
+
+      expect(valueSerializer).toHaveBeenCalled()
+      expect(testClient.getQueryCache().getAll()[0]?.queryKey).toEqual(['key'])
+      expect(testClient.getQueryData(['key'])).toBe('b')
+    })
+
+    it('should accept defaulted QueryCache.build options', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value,
+      )
+      const hashFn = vi.fn((key: unknown) => JSON.stringify(key))
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer, hashFn }),
+      })
+
+      const query = testClient.getQueryCache().build(
+        testClient,
+        testClient.defaultQueryOptions({
+          queryKey: ['maps', new Map([['a', 1]])],
+        }),
+      )
+
+      expect(query.queryKey).toEqual(['maps', new Map([['a', 1]])])
+      expect(hashFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not serialize stored query keys when matching existing queries', () => {
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value,
+      )
+      const hashFn = vi.fn((value: unknown) => JSON.stringify(value))
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer, hashFn }),
+      })
+      const key = ['maps', new Map([['a', 1]])]
+      const otherKey = ['maps', new Map([['a', 2]])]
+
+      testClient.setQueryData(key, 'data')
+      testClient.setQueryData(otherKey, 'other data')
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(
+        testClient.getQueriesData({
+          queryKey: ['maps', new Map([['a', 1]])],
+          exact: true,
+        }),
+      ).toEqual([[key, 'data']])
+      expect(valueSerializer).toHaveBeenCalledTimes(10)
+      expect(hashFn).toHaveBeenCalledTimes(2)
+
+      valueSerializer.mockClear()
+      hashFn.mockClear()
+
+      expect(testClient.getQueriesData({ queryKey: ['maps'] })).toEqual([
+        [key, 'data'],
+        [otherKey, 'other data'],
+      ])
+      expect(valueSerializer).toHaveBeenCalledTimes(1)
+      expect(hashFn).not.toHaveBeenCalled()
+    })
+
+    it('should use the value serializer for query defaults', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const testClient = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+
+      testClient.setQueryDefaults(['maps', new Map([['a', 1]])], {
+        staleTime: 123,
+      })
+      testClient.setQueryDefaults(['maps', new Map([['a', 1]])], {
+        staleTime: 456,
+      })
+
+      expect(
+        testClient.getQueryDefaults(['maps', new Map([['a', 1]])]),
+      ).toMatchObject({ staleTime: 456 })
+      expect(
+        testClient.getQueryDefaults(['maps', new Map([['a', 2]])]),
+      ).toEqual({})
+    })
+
+    it('should use the value serializer for mutation defaults and filters', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const testClient = new QueryClient({
+        mutationCache: new MutationCache({ valueSerializer }),
+      })
+      const keyA = ['maps', new Map([['a', 1]])]
+      const keyB = ['maps', new Map([['a', 2]])]
+
+      testClient.setMutationDefaults(keyA, { retry: false })
+      testClient.setMutationDefaults(['maps', new Map([['a', 1]])], {
+        retry: true,
+      })
+
+      expect(
+        testClient.getMutationDefaults(['maps', new Map([['a', 1]])]),
+      ).toMatchObject({ retry: true })
+      expect(
+        testClient.getMutationDefaults(['maps', new Map([['a', 2]])]),
+      ).toEqual({})
+
+      testClient.getMutationCache().build(testClient, {
+        mutationKey: keyA,
+        mutationFn: () => Promise.resolve(),
+      })
+      testClient.getMutationCache().build(testClient, {
+        mutationKey: keyB,
+        mutationFn: () => Promise.resolve(),
+      })
+
+      expect(
+        testClient.getMutationCache().findAll({
+          mutationKey: ['maps', new Map([['a', 1]])],
+          exact: true,
+        }),
+      ).toHaveLength(1)
+      expect(
+        testClient.getMutationCache().findAll({ mutationKey: ['maps'] }),
+      ).toHaveLength(2)
+    })
+
+    it('should use the default hash for exact but not partial matching of dates', () => {
+      const testClient = new QueryClient()
+      const key = ['dates', new Date(0)]
+      testClient.setQueryData(key, 'data')
+
+      expect(testClient.getQueryData(['dates', new Date(0)])).toBe('data')
+      expect(
+        testClient.getQueriesData({
+          queryKey: ['dates', new Date(0)],
+          exact: true,
+        }),
+      ).toEqual([[key, 'data']])
+      expect(
+        testClient.getQueriesData({ queryKey: ['dates', new Date(0)] }),
+      ).toEqual([])
     })
   })
 
@@ -215,7 +722,7 @@ describe('queryClient', () => {
     it('should use default options', () => {
       const key = queryKey()
       const testClient = new QueryClient({
-        defaultOptions: { queries: { queryKeyHashFn: () => 'someKey' } },
+        queryCache: new QueryCache({ hashFn: () => 'someKey' }),
       })
       const testCache = testClient.getQueryCache()
       testClient.setQueryData(key, 'data')

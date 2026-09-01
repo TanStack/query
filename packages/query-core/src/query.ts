@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveQueryValue,
+  serializeCacheKey,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -13,6 +14,7 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
+  CacheKeyConfig,
   CancelOptions,
   DefaultError,
   FetchStatus,
@@ -158,6 +160,7 @@ export class Query<
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
   queryKey: TQueryKey
+  readonly serializedQueryKey: QueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
@@ -177,11 +180,15 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.setOptions(config.options)
-    this.observers = []
     this.#client = config.client
     this.#cache = this.#client.getQueryCache()
+    this.setOptions(config.options)
+    this.observers = []
     this.queryKey = config.queryKey
+    this.serializedQueryKey = serializeCacheKey(
+      config.queryKey,
+      this.#cache.config.valueSerializer,
+    )
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
@@ -189,6 +196,10 @@ export class Query<
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
+  }
+
+  get cacheKeyConfig(): Readonly<CacheKeyConfig<QueryKey>> {
+    return this.#cache.config
   }
 
   get queryType() {

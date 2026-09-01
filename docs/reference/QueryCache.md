@@ -11,6 +11,8 @@ The `QueryCache` is the storage mechanism for TanStack Query. It stores all the 
 import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
+  valueSerializer: (value) =>
+    value instanceof Date ? value.toISOString() : value,
   onError: (error) => {
     console.log(error)
   },
@@ -35,6 +37,13 @@ Its available methods are:
 
 **Options**
 
+- `hashFn?: (queryKey: QueryKey) => string`
+  - Optional
+  - Hashes serialized query keys into cache identity strings.
+- `valueSerializer?: (value: unknown) => unknown`
+  - Optional
+  - Serializes values in query keys before hashing and matching. The serializer must be deterministic and idempotent, and query keys must not be changed after use.
+  - Query APIs continue to expose the original query key. The key configuration must not change while the cache contains entries.
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.

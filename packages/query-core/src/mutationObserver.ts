@@ -1,7 +1,7 @@
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
-import { hashKey, shallowEqualObjects } from './utils'
+import { hashCacheKey, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
@@ -73,7 +73,8 @@ export class MutationObserver<
     const prevOptions = this.options as
       | MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
       | undefined
-    this.options = this.#client.defaultMutationOptions(options)
+    const defaultedOptions = this.#client.defaultMutationOptions(options)
+    this.options = defaultedOptions
     if (!shallowEqualObjects(this.options, prevOptions)) {
       this.#client.getMutationCache().notify({
         type: 'observerOptionsUpdated',
@@ -82,14 +83,17 @@ export class MutationObserver<
       })
     }
 
+    const config = this.#client.getMutationCache().config
+
     if (
       prevOptions?.mutationKey &&
-      this.options.mutationKey &&
-      hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
+      defaultedOptions.mutationKey &&
+      hashCacheKey(prevOptions.mutationKey, config) !==
+        hashCacheKey(defaultedOptions.mutationKey, config)
     ) {
       this.reset()
     } else if (this.#currentMutation?.state.status === 'pending') {
-      this.#currentMutation.setOptions(this.options)
+      this.#currentMutation.setOptions(defaultedOptions)
     }
   }
 

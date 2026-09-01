@@ -1,11 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { Query, QueryClient, hashKey } from '@tanstack/query-core'
+import { Query, QueryCache, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '../createPersister'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { StoragePersisterOptions } from '../createPersister'
+import type {
+  PersistedQuery,
+  StoragePersisterOptions,
+} from '../createPersister'
 
 function getFreshStorage() {
   const storage = new Map()
@@ -456,6 +459,45 @@ describe('createPersister', () => {
           status: 'success',
         },
       })
+      expect(JSON.parse(await storage.getItem(storageKey))).not.toHaveProperty(
+        'serializedQueryKey',
+      )
+    })
+
+    it('should persist and restore the original query key', async () => {
+      const storage = getFreshStorage()
+      const valueSerializer = vi.fn((value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value,
+      )
+      const client = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const persister = experimental_createQueryPersister({
+        storage,
+        serialize: (value) => value,
+        deserialize: (value) => value as PersistedQuery,
+      })
+      const queryKey = ['maps', new Map([['a', 1]])]
+
+      client.setQueryData(queryKey, 'data')
+      const query = client.getQueryCache().getAll()[0]!
+      valueSerializer.mockClear()
+      await persister.persistQuery(query)
+      expect(valueSerializer).not.toHaveBeenCalled()
+
+      const persisted = await storage.getItem(
+        `${PERSISTER_KEY_PREFIX}-${query.queryHash}`,
+      )
+      expect(persisted).toMatchObject({
+        queryKey,
+      })
+      expect(persisted).not.toHaveProperty('serializedQueryKey')
+
+      client.clear()
+      await persister.restoreQueries(client, { queryKey: ['maps'] })
+
+      expect(client.getQueryCache().getAll()[0]?.queryKey).toBe(queryKey)
+      expect(client.getQueryData(queryKey)).toBe('data')
     })
 
     it('should skip persistence if storage is not provided', async () => {
@@ -592,6 +634,98 @@ describe('createPersister', () => {
   })
 
   describe('restoreQueries', () => {
+    it('should use the query cache hash function for exact filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({ hashFn: () => 'custom-hash' }),
+      })
+      const queryKey = ['foo']
+      const persister = experimental_createQueryPersister({ storage })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      client.clear()
+
+      await persister.restoreQueries(client, { queryKey, exact: true })
+
+      expect(client.getQueryData(queryKey)).toBe('foo')
+    })
+
+    it('should use the query cache value serializer for exact filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+      const persister = experimental_createQueryPersister({ storage })
+      const queryKey = ['dates', new Date(0)]
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      client.clear()
+
+      await persister.restoreQueries(client, {
+        queryKey: ['dates', new Date(0)],
+        exact: true,
+      })
+
+      expect(client.getQueryData(queryKey)).toBe('foo')
+    })
+
+    it('should use the query cache value serializer for partial filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+      const persister = experimental_createQueryPersister({ storage })
+      const queryKey = ['dates', new Date(0)]
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      client.clear()
+
+      await persister.restoreQueries(client, {
+        queryKey: ['dates', new Date(0)],
+      })
+
+      expect(client.getQueryData(queryKey)).toBe('foo')
+    })
+
+    it('should support legacy entries with normalized query keys', async () => {
+      const storage = getFreshStorage()
+      const valueSerializer = (value: unknown) =>
+        value instanceof Map ? [...value.entries()] : value
+      const client = new QueryClient({
+        queryCache: new QueryCache({ valueSerializer }),
+      })
+      const queryKey = ['maps', [['a', 1]]]
+      const queryHash = JSON.stringify(queryKey)
+      const persister = experimental_createQueryPersister({
+        storage,
+        serialize: (value) => value,
+        deserialize: (value) => value as PersistedQuery,
+      })
+
+      await storage.setItem(`${PERSISTER_KEY_PREFIX}-${queryHash}`, {
+        buster: '',
+        queryHash,
+        queryKey,
+        state: {
+          data: 'data',
+          dataUpdatedAt: Date.now(),
+        },
+      })
+
+      await persister.restoreQueries(client, { queryKey: ['maps'] })
+
+      expect(client.getQueryData(queryKey)).toBe('data')
+    })
+
     it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {
@@ -737,6 +871,62 @@ describe('createPersister', () => {
   })
 
   describe('removeQueries', () => {
+    it('should use the query cache hash function for exact filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({ hashFn: () => 'custom-hash' }),
+      })
+      const queryKey = ['foo']
+      const persister = experimental_createQueryPersister({ storage })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      await persister.removeQueries(client, { queryKey, exact: true })
+
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    it('should use the query cache value serializer for exact filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+      const persister = experimental_createQueryPersister({ storage })
+      const queryKey = ['dates', new Date(0)]
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      await persister.removeQueries(client, {
+        queryKey: ['dates', new Date(0)],
+        exact: true,
+      })
+
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    it('should use the query cache value serializer for partial filters', async () => {
+      const storage = getFreshStorage()
+      const client = new QueryClient({
+        queryCache: new QueryCache({
+          valueSerializer: (value) =>
+            value instanceof Date ? value.toISOString() : value,
+        }),
+      })
+      const persister = experimental_createQueryPersister({ storage })
+      const queryKey = ['dates', new Date(0)]
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+      await persister.removeQueries(client, {
+        queryKey: ['dates', new Date(0)],
+      })
+
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
     it('should remove restore queries from storage without filters', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo'], {
@@ -747,7 +937,7 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries()
+      await persister.removeQueries(client)
       expect(await storage.entries()).toHaveLength(0)
     })
 
@@ -761,7 +951,7 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries({ queryKey })
+      await persister.removeQueries(client, { queryKey })
       expect(await storage.entries()).toHaveLength(0)
     })
 
@@ -775,7 +965,7 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries({ queryKey: ['bar'] })
+      await persister.removeQueries(client, { queryKey: ['bar'] })
       expect(await storage.entries()).toHaveLength(1)
     })
 
@@ -789,7 +979,7 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries({ queryKey: ['foo'] })
+      await persister.removeQueries(client, { queryKey: ['foo'] })
       expect(await storage.entries()).toHaveLength(0)
     })
 
@@ -803,7 +993,10 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries({ queryKey: ['foo'], exact: true })
+      await persister.removeQueries(client, {
+        queryKey: ['foo'],
+        exact: true,
+      })
       expect(await storage.entries()).toHaveLength(1)
     })
 
@@ -817,7 +1010,7 @@ describe('createPersister', () => {
       await persister.persistQueryByKey(queryKey, client)
 
       expect(await storage.entries()).toHaveLength(1)
-      await persister.removeQueries({
+      await persister.removeQueries(client, {
         queryKey: queryKey,
         exact: true,
       })
@@ -826,12 +1019,12 @@ describe('createPersister', () => {
 
     it('should remove entries that cannot be deserialized', async () => {
       const storage = getFreshStorage()
-      const { persister } = setupPersister(['foo'], { storage })
+      const { persister, client } = setupPersister(['foo'], { storage })
 
       await storage.setItem(`${PERSISTER_KEY_PREFIX}-["foo"]`, 'not-json{')
       expect(await storage.entries()).toHaveLength(1)
 
-      await persister.removeQueries({ queryKey: ['foo'] })
+      await persister.removeQueries(client, { queryKey: ['foo'] })
 
       expect(await storage.entries()).toHaveLength(0)
     })

@@ -1,53 +1,176 @@
 import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient } from '..'
+import { MutationCache, QueryCache, QueryClient } from '..'
 import {
   addConsumeAwareSignal,
   addToEnd,
   addToStart,
   ensureQueryFn,
   hashKey,
-  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   isValidTimeout,
   keepPreviousData,
   matchMutation,
+  matchQuery,
   partialMatchKey,
   replaceEqualDeep,
+  serializeCacheKey,
   shallowEqualObjects,
   shouldThrowError,
   skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
-import type { QueryFunctionContext } from '..'
+import type { QueryFunctionContext, QueryKey } from '..'
 
 describe('core/utils', () => {
-  describe('hashQueryKeyByOptions', () => {
-    it('should use custom hash function when provided in options', () => {
-      const key = ['test', { a: 1, b: 2 }]
-      const customHashFn = vi.fn(() => 'custom-hash')
+  describe('serializeCacheKey', () => {
+    it('does not memoize serialized keys globally', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Date ? value.toISOString() : value,
+      )
+      const date = new Date(0)
+      const key = ['dates', date]
 
-      const result = hashQueryKeyByOptions(key, {
-        queryKeyHashFn: customHashFn,
-      })
+      const first = serializeCacheKey(key, serializer)
+      const second = serializeCacheKey(key, serializer)
 
-      expect(customHashFn).toHaveBeenCalledWith(key)
-      expect(result).toEqual('custom-hash')
+      expect(second).toEqual(first)
+      expect(second).not.toBe(first)
+      expect(serializer).toHaveBeenCalledTimes(4)
+
+      const otherSerializer = vi.fn(serializer.getMockImplementation())
+      expect(serializeCacheKey(key, otherSerializer)).not.toBe(first)
+      expect(otherSerializer).toHaveBeenCalledTimes(2)
+
+      const otherKey = ['dates', date]
+      expect(serializeCacheKey(otherKey, serializer)).not.toBe(first)
+      expect(serializer).toHaveBeenCalledTimes(6)
     })
 
-    it('should use default hash function when no options provided', () => {
-      const key = ['test', { a: 1, b: 2 }]
-      const defaultResult = hashKey(key)
-      const result = hashQueryKeyByOptions(key)
+    it('returns the original key without a serializer', () => {
+      const key = ['maps', new Map([['a', 1]])]
 
-      expect(result).toEqual(defaultResult)
+      expect(serializeCacheKey(key, undefined)).toBe(key)
+    })
+
+    it('recursively serializes serializer results', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Map
+          ? [...value.entries()]
+          : typeof value === 'bigint'
+            ? String(value)
+            : value,
+      )
+      const key = ['counts', new Map([['total', 1n]])]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual(['counts', [['total', '1']]])
+      expect(serializer).toHaveBeenCalledTimes(4)
+    })
+
+    it('serializes nested objects and arrays recursively', () => {
+      const serializer = vi.fn((value: unknown) =>
+        typeof value === 'number' ? String(value) : value,
+      )
+      const untouched = { status: 'active' }
+      const key = [
+        'todos',
+        { page: 1, filters: { limit: 2 }, untouched },
+        [{ offset: 3 }, untouched],
+      ]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual([
+        'todos',
+        {
+          page: '1',
+          filters: { limit: '2' },
+          untouched: { status: 'active' },
+        },
+        [{ offset: '3' }, { status: 'active' }],
+      ])
+      expect(serialized).not.toBe(key)
+      expect(key).toEqual([
+        'todos',
+        { page: 1, filters: { limit: 2 }, untouched: { status: 'active' } },
+        [{ offset: 3 }, { status: 'active' }],
+      ])
+    })
+
+    it('serializes every leaf value of the key', () => {
+      const serializer = vi.fn((value: unknown) => value)
+      const key = ['todos', { status: 'active', tags: ['one', 'two'] }]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual(key)
+      expect(serializer.mock.calls.flat()).toEqual([
+        'todos',
+        'active',
+        'one',
+        'two',
+      ])
+    })
+
+    it('recursively serializes plain objects returned by the serializer', () => {
+      const serializer = vi.fn((value: unknown) =>
+        value instanceof Date ? { timestamp: value.getTime() } : value,
+      )
+      const key = ['dates', new Date(0)]
+
+      const serialized = serializeCacheKey(key, serializer)
+
+      expect(serialized).toEqual(['dates', { timestamp: 0 }])
+      expect(serialized).not.toBe(key)
+    })
+
+    it('stops at a depth limit when the serializer is not idempotent', () => {
+      // this serializer wraps its input on every call, so it would recurse
+      // forever without the depth limit
+      const serializer = vi.fn((value: unknown) => ({ wrapped: value }))
+
+      expect(() => serializeCacheKey(['todos'], serializer)).not.toThrow()
+      expect(serializer.mock.calls.length).toBeLessThan(600)
+    })
+
+    it('does not cache failed serialization', () => {
+      const serializer = vi.fn(() => {
+        throw new Error('serialize failed')
+      })
+      const key = ['broken', new Date(0)]
+
+      expect(() => serializeCacheKey(key, serializer)).toThrow(
+        'serialize failed',
+      )
+      expect(() => serializeCacheKey(key, serializer)).toThrow(
+        'serialize failed',
+      )
+      expect(serializer).toHaveBeenCalledTimes(2)
     })
   })
 
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toBe(true)
+    })
+
+    it('should compare inherited enumerable properties', () => {
+      // the length check uses `Object.keys`, which reads own properties only,
+      // but the comparison loop is a `for...in`, which also reads the prototype
+      const proto = { inherited: 1 }
+
+      expect(
+        shallowEqualObjects(Object.create(proto), Object.create(proto)),
+      ).toBe(true)
+      expect(
+        shallowEqualObjects(
+          Object.create(proto),
+          Object.create({ inherited: 2 }),
+        ),
+      ).toBe(false)
     })
 
     it('should return `false` for non shallow equal objects', () => {
@@ -126,6 +249,88 @@ describe('core/utils', () => {
   })
 
   describe('partialMatchKey', () => {
+    it('should preserve values when no serializer is provided', () => {
+      const date = new Date(0)
+
+      expect(partialMatchKey([date], [date])).toBe(true)
+      expect(partialMatchKey([new Date(0)], [new Date(0)])).toBe(false)
+      expect(partialMatchKey([new Date(0)], [new Date(1000)])).toBe(false)
+    })
+
+    it('should use the value serializer for each value', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Date
+          ? value.toISOString()
+          : value instanceof Map
+            ? [...value.entries()]
+            : value
+      const serialize = (key: QueryKey) =>
+        serializeCacheKey(key, valueSerializer)
+
+      expect(
+        partialMatchKey(
+          serialize([new Date(0), new Map([['a', 1]])]),
+          serialize([new Date(0), new Map([['a', 1]])]),
+        ),
+      ).toBe(true)
+      expect(
+        partialMatchKey(
+          serialize([new Date(0), new Map([['a', 1]])]),
+          serialize([new Date(0), new Map([['a', 2]])]),
+        ),
+      ).toBe(false)
+    })
+
+    it('should serialize nested values before partially matching', () => {
+      const valueSerializer = (value: unknown) =>
+        value instanceof Date
+          ? value.toISOString()
+          : value instanceof Map
+            ? [...value.entries()]
+            : value
+      const serialize = (key: QueryKey) =>
+        serializeCacheKey(key, valueSerializer)
+
+      expect(
+        partialMatchKey(
+          serialize([
+            'todos',
+            {
+              filters: {
+                date: new Date(0),
+                map: new Map([['a', 1]]),
+                status: 'open',
+              },
+            },
+          ]),
+          serialize([
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
+          ]),
+        ),
+      ).toBe(true)
+      expect(
+        partialMatchKey(
+          serialize([
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 1]]) } },
+          ]),
+          serialize([
+            'todos',
+            { filters: { date: new Date(0), map: new Map([['a', 2]]) } },
+          ]),
+        ),
+      ).toBe(false)
+    })
+
+    it('should not partially match distinct non-plain values without a serializer', () => {
+      const mapA = new Map([['a', 1]])
+      const mapB = new Map([['a', 1]])
+
+      expect(partialMatchKey(['maps', mapA], ['maps', mapA])).toBe(true)
+      expect(partialMatchKey(['maps', mapA], ['maps', mapB])).toBe(false)
+    })
+
     it('should return `true` if a includes b', () => {
       const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
       const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
@@ -470,6 +675,43 @@ describe('core/utils', () => {
         options: {},
       })
       expect(matchMutation(filters, mutation)).toBe(false)
+    })
+
+    it('should use the mutation cache serializer', () => {
+      const mutationCache = new MutationCache({
+        hashFn: () => 'custom-hash',
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      })
+      const queryClient = new QueryClient({ mutationCache })
+      const mutation = mutationCache.build(queryClient, {
+        mutationKey: ['date', new Date(0)],
+      })
+
+      expect(
+        matchMutation(
+          { mutationKey: ['date', new Date(0)], exact: true },
+          mutation,
+        ),
+      ).toBe(true)
+    })
+  })
+
+  describe('matchQuery', () => {
+    it('should use the query cache serializer', () => {
+      const queryCache = new QueryCache({
+        hashFn: () => 'custom-hash',
+        valueSerializer: (value) =>
+          value instanceof Date ? value.toISOString() : value,
+      })
+      const queryClient = new QueryClient({ queryCache })
+      const query = queryCache.build(queryClient, {
+        queryKey: ['date', new Date(0)],
+      })
+
+      expect(
+        matchQuery({ queryKey: ['date', new Date(0)], exact: true }, query),
+      ).toBe(true)
     })
   })
 

@@ -4480,24 +4480,28 @@ describe('useQuery', () => {
 
     let hashes = 0
 
-    function queryKeyHashFn(x: any) {
+    function hashFn(x: any) {
       hashes++
       return JSON.stringify(x)
     }
+
+    const customQueryClient = new QueryClient({
+      queryCache: new QueryCache({ hashFn }),
+    })
 
     function Page() {
       useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'test'),
-        queryKeyHashFn,
       }))
 
       return null
     }
 
-    renderWithClient(queryClient, () => <Page />)
+    renderWithClient(customQueryClient, () => <Page />)
 
     expect(hashes).toBe(1)
+    customQueryClient.clear()
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
