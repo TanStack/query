@@ -141,5 +141,3 @@ useQueries(() => ({
   ],
 }))
 ```
-
-The same applies to [`useSuspenseQueries`](./useSuspenseQueries.md).
