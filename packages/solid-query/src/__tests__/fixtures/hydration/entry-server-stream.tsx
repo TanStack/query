@@ -7,10 +7,28 @@
 import { renderToStream } from '@solidjs/web'
 import { QueryClient } from '@tanstack/solid-query'
 import { StreamApp } from './StreamApp'
+import type { Query } from '@tanstack/solid-query'
 import type { StreamCounts } from './StreamApp'
 
 const client = new QueryClient()
 const counts: StreamCounts = { header: 0, feed: 0 }
+
+// The provider clears the cache when the render disposes (the SSR
+// teardown), so query states are recorded live off cache events rather
+// than read back after completion.
+const snapshots = new Map<
+  string,
+  { queryKey: unknown; queryHash: string; state: unknown }
+>()
+client.getQueryCache().subscribe((event) => {
+  if (event.type === 'removed') return
+  const query: Query<any, any, any, any> = event.query
+  snapshots.set(query.queryHash, {
+    queryKey: query.queryKey,
+    queryHash: query.queryHash,
+    state: query.state,
+  })
+})
 
 const start = Date.now()
 const chunks: Array<{ t: number; payload: string }> = []
@@ -28,13 +46,13 @@ await new Promise<void>((resolve) => {
   })
 })
 
-const queries = client
-  .getQueryCache()
-  .getAll()
-  .map((query) => ({
-    queryKey: query.queryKey,
-    queryHash: query.queryHash,
-    state: query.state,
-  }))
+const cacheEmptyAfterDispose = client.getQueryCache().getAll().length === 0
 
-console.log(JSON.stringify({ chunks, counts, queries }))
+console.log(
+  JSON.stringify({
+    chunks,
+    counts,
+    queries: [...snapshots.values()],
+    cacheEmptyAfterDispose,
+  }),
+)

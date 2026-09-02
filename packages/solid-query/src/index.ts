@@ -39,11 +39,13 @@ export type {
   UndefinedInitialDataOptions,
 } from './queryOptions'
 export {
+  FLIGHT_DATA_SOURCE,
   QueryClientContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
+export { dehydrateSettled } from './dehydrateSettled'
 export { useIsFetching } from './useIsFetching'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
