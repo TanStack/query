@@ -57,7 +57,7 @@ Its available methods are:
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
-  - You can also define defaults to be used for [hydration](../framework/react/reference/hydration.md)
+  - You can also define defaults to be used for [hydration](../framework/react/guides/ssr.md)
 
 ## `queryClient.query`
 
@@ -90,7 +90,7 @@ try {
 
 **Options**
 
-The options for `query` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
+The options for `query` are exactly the same as those of [`useQuery`](../framework/react/reference/functions/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
 
 **Returns**
 
@@ -111,7 +111,7 @@ try {
 
 **Options**
 
-The options for `infiniteQuery` are exactly the same as those of [`query`](#queryclient-query), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/useInfiniteQuery.md).
+The options for `infiniteQuery` are exactly the same as those of [`query`](#queryclient-query), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/functions/useInfiniteQuery.md).
 
 **Returns**
 
@@ -377,7 +377,7 @@ if (queryClient.isFetching()) {
 }
 ```
 
-TanStack Query also exports a handy [`useIsFetching`](../framework/react/reference/useIsFetching.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+TanStack Query also exports a handy [`useIsFetching`](../framework/react/reference/functions/useIsFetching.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
@@ -397,7 +397,7 @@ if (queryClient.isMutating()) {
 }
 ```
 
-TanStack Query also exports a handy [`useIsMutating`](../framework/react/reference/useIsMutating.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+TanStack Query also exports a handy [`useIsMutating`](../framework/react/reference/functions/useIsMutating.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
 
 **Options**
 

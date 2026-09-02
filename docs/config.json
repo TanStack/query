@@ -1013,84 +1013,268 @@
           "label": "react",
           "children": [
             {
-              "label": "useQuery",
-              "to": "framework/react/reference/useQuery"
+              "label": "React Reference",
+              "to": "framework/react/reference/index"
             },
             {
-              "label": "useQueries",
-              "to": "framework/react/reference/useQueries"
+              "label": "Functions / useQuery",
+              "to": "framework/react/reference/functions/useQuery"
             },
             {
-              "label": "useInfiniteQuery",
-              "to": "framework/react/reference/useInfiniteQuery"
+              "label": "Functions / useQueries",
+              "to": "framework/react/reference/functions/useQueries"
             },
             {
-              "label": "useMutation",
-              "to": "framework/react/reference/useMutation"
+              "label": "Functions / useInfiniteQuery",
+              "to": "framework/react/reference/functions/useInfiniteQuery"
             },
             {
-              "label": "useIsFetching",
-              "to": "framework/react/reference/useIsFetching"
+              "label": "Functions / useMutation",
+              "to": "framework/react/reference/functions/useMutation"
             },
             {
-              "label": "useIsMutating",
-              "to": "framework/react/reference/useIsMutating"
+              "label": "Functions / useIsFetching",
+              "to": "framework/react/reference/functions/useIsFetching"
             },
             {
-              "label": "useMutationState",
-              "to": "framework/react/reference/useMutationState"
+              "label": "Functions / useIsMutating",
+              "to": "framework/react/reference/functions/useIsMutating"
             },
             {
-              "label": "useSuspenseQuery",
-              "to": "framework/react/reference/useSuspenseQuery"
+              "label": "Functions / useMutationState",
+              "to": "framework/react/reference/functions/useMutationState"
             },
             {
-              "label": "useSuspenseInfiniteQuery",
-              "to": "framework/react/reference/useSuspenseInfiniteQuery"
+              "label": "Functions / useSuspenseQuery",
+              "to": "framework/react/reference/functions/useSuspenseQuery"
             },
             {
-              "label": "useSuspenseQueries",
-              "to": "framework/react/reference/useSuspenseQueries"
+              "label": "Functions / useSuspenseInfiniteQuery",
+              "to": "framework/react/reference/functions/useSuspenseInfiniteQuery"
             },
             {
-              "label": "QueryClientProvider",
-              "to": "framework/react/reference/QueryClientProvider"
+              "label": "Functions / useSuspenseQueries",
+              "to": "framework/react/reference/functions/useSuspenseQueries"
             },
             {
-              "label": "useQueryClient",
-              "to": "framework/react/reference/useQueryClient"
+              "label": "Functions / QueryClientProvider",
+              "to": "framework/react/reference/functions/QueryClientProvider"
             },
             {
-              "label": "queryOptions",
-              "to": "framework/react/reference/queryOptions"
+              "label": "Functions / useQueryClient",
+              "to": "framework/react/reference/functions/useQueryClient"
             },
             {
-              "label": "infiniteQueryOptions",
-              "to": "framework/react/reference/infiniteQueryOptions"
+              "label": "Functions / queryOptions",
+              "to": "framework/react/reference/functions/queryOptions"
             },
             {
-              "label": "mutationOptions",
-              "to": "framework/react/reference/mutationOptions"
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/react/reference/functions/infiniteQueryOptions"
             },
             {
-              "label": "usePrefetchQuery",
-              "to": "framework/react/reference/usePrefetchQuery"
+              "label": "Functions / mutationOptions",
+              "to": "framework/react/reference/functions/mutationOptions"
             },
             {
-              "label": "usePrefetchInfiniteQuery",
-              "to": "framework/react/reference/usePrefetchInfiniteQuery"
+              "label": "Functions / usePrefetchQuery",
+              "to": "framework/react/reference/functions/usePrefetchQuery"
             },
             {
-              "label": "QueryErrorResetBoundary",
-              "to": "framework/react/reference/QueryErrorResetBoundary"
+              "label": "Functions / usePrefetchInfiniteQuery",
+              "to": "framework/react/reference/functions/usePrefetchInfiniteQuery"
             },
             {
-              "label": "useQueryErrorResetBoundary",
-              "to": "framework/react/reference/useQueryErrorResetBoundary"
+              "label": "Functions / QueryErrorResetBoundary",
+              "to": "framework/react/reference/functions/QueryErrorResetBoundary"
             },
             {
-              "label": "hydration",
-              "to": "framework/react/reference/hydration"
+              "label": "Functions / useQueryErrorResetBoundary",
+              "to": "framework/react/reference/functions/useQueryErrorResetBoundary"
+            },
+            {
+              "label": "Functions / HydrationBoundary",
+              "to": "framework/react/reference/functions/HydrationBoundary"
+            },
+            {
+              "label": "Functions / useIsRestoring",
+              "to": "framework/react/reference/functions/useIsRestoring"
+            },
+            {
+              "label": "Interfaces / HydrationBoundaryProps",
+              "to": "framework/react/reference/interfaces/HydrationBoundaryProps"
+            },
+            {
+              "label": "Interfaces / QueryErrorResetBoundaryProps",
+              "to": "framework/react/reference/interfaces/QueryErrorResetBoundaryProps"
+            },
+            {
+              "label": "Interfaces / UseBaseQueryOptions",
+              "to": "framework/react/reference/interfaces/UseBaseQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseInfiniteQueryOptions",
+              "to": "framework/react/reference/interfaces/UseInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseMutationOptions",
+              "to": "framework/react/reference/interfaces/UseMutationOptions"
+            },
+            {
+              "label": "Interfaces / UseQueryOptions",
+              "to": "framework/react/reference/interfaces/UseQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseSuspenseInfiniteQueryOptions",
+              "to": "framework/react/reference/interfaces/UseSuspenseInfiniteQueryOptions"
+            },
+            {
+              "label": "Interfaces / UseSuspenseQueryOptions",
+              "to": "framework/react/reference/interfaces/UseSuspenseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseBaseQueryOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseBaseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseInfiniteQueryOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseMutationOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseMutationOptions"
+            },
+            {
+              "label": "Types / AnyUseQueryOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseSuspenseInfiniteQueryOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseSuspenseInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / AnyUseSuspenseQueryOptions",
+              "to": "framework/react/reference/type-aliases/AnyUseSuspenseQueryOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataInfiniteOptions",
+              "to": "framework/react/reference/type-aliases/DefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / DefinedInitialDataOptions",
+              "to": "framework/react/reference/type-aliases/DefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / DefinedUseInfiniteQueryResult",
+              "to": "framework/react/reference/type-aliases/DefinedUseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / DefinedUseQueryResult",
+              "to": "framework/react/reference/type-aliases/DefinedUseQueryResult"
+            },
+            {
+              "label": "Types / QueriesOptions",
+              "to": "framework/react/reference/type-aliases/QueriesOptions"
+            },
+            {
+              "label": "Types / QueriesResults",
+              "to": "framework/react/reference/type-aliases/QueriesResults"
+            },
+            {
+              "label": "Types / QueryClientProviderProps",
+              "to": "framework/react/reference/type-aliases/QueryClientProviderProps"
+            },
+            {
+              "label": "Types / QueryErrorClearResetFunction",
+              "to": "framework/react/reference/type-aliases/QueryErrorClearResetFunction"
+            },
+            {
+              "label": "Types / QueryErrorIsResetFunction",
+              "to": "framework/react/reference/type-aliases/QueryErrorIsResetFunction"
+            },
+            {
+              "label": "Types / QueryErrorResetBoundaryFunction",
+              "to": "framework/react/reference/type-aliases/QueryErrorResetBoundaryFunction"
+            },
+            {
+              "label": "Types / QueryErrorResetFunction",
+              "to": "framework/react/reference/type-aliases/QueryErrorResetFunction"
+            },
+            {
+              "label": "Types / SuspenseQueriesOptions",
+              "to": "framework/react/reference/type-aliases/SuspenseQueriesOptions"
+            },
+            {
+              "label": "Types / SuspenseQueriesResults",
+              "to": "framework/react/reference/type-aliases/SuspenseQueriesResults"
+            },
+            {
+              "label": "Types / UndefinedInitialDataInfiniteOptions",
+              "to": "framework/react/reference/type-aliases/UndefinedInitialDataInfiniteOptions"
+            },
+            {
+              "label": "Types / UndefinedInitialDataOptions",
+              "to": "framework/react/reference/type-aliases/UndefinedInitialDataOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenInfiniteOptions",
+              "to": "framework/react/reference/type-aliases/UnusedSkipTokenInfiniteOptions"
+            },
+            {
+              "label": "Types / UnusedSkipTokenOptions",
+              "to": "framework/react/reference/type-aliases/UnusedSkipTokenOptions"
+            },
+            {
+              "label": "Types / UseBaseMutationResult",
+              "to": "framework/react/reference/type-aliases/UseBaseMutationResult"
+            },
+            {
+              "label": "Types / UseBaseQueryResult",
+              "to": "framework/react/reference/type-aliases/UseBaseQueryResult"
+            },
+            {
+              "label": "Types / UseInfiniteQueryResult",
+              "to": "framework/react/reference/type-aliases/UseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / UseMutateAsyncFunction",
+              "to": "framework/react/reference/type-aliases/UseMutateAsyncFunction"
+            },
+            {
+              "label": "Types / UseMutateFunction",
+              "to": "framework/react/reference/type-aliases/UseMutateFunction"
+            },
+            {
+              "label": "Types / UseMutationResult",
+              "to": "framework/react/reference/type-aliases/UseMutationResult"
+            },
+            {
+              "label": "Types / UsePrefetchInfiniteQueryOptions",
+              "to": "framework/react/reference/type-aliases/UsePrefetchInfiniteQueryOptions"
+            },
+            {
+              "label": "Types / UsePrefetchQueryOptions",
+              "to": "framework/react/reference/type-aliases/UsePrefetchQueryOptions"
+            },
+            {
+              "label": "Types / UseQueryResult",
+              "to": "framework/react/reference/type-aliases/UseQueryResult"
+            },
+            {
+              "label": "Types / UseSuspenseInfiniteQueryResult",
+              "to": "framework/react/reference/type-aliases/UseSuspenseInfiniteQueryResult"
+            },
+            {
+              "label": "Types / UseSuspenseQueryResult",
+              "to": "framework/react/reference/type-aliases/UseSuspenseQueryResult"
+            },
+            {
+              "label": "Variables / IsRestoringProvider",
+              "to": "framework/react/reference/variables/IsRestoringProvider"
+            },
+            {
+              "label": "Variables / QueryClientContext",
+              "to": "framework/react/reference/variables/QueryClientContext"
             }
           ]
         },
