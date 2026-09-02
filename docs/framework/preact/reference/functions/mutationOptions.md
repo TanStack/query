@@ -78,7 +78,7 @@ function SavingIndicator() {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L74)
+Defined in: [preact-query/src/mutationOptions.ts:75](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L75)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to look the mutation up later
@@ -123,8 +123,9 @@ The same options object, unchanged.
 
 ### Remarks
 
-Without a `mutationKey`, the mutation can't be looked up elsewhere via `useMutationState` — see
-the other overload's example for that.
+Without a `mutationKey`, the mutation can't be targeted via a `mutationKey` filter in
+`useMutationState` — it can still be observed through other filters, such as `status` — see the other
+overload's example for that.
 
 ### Example
 

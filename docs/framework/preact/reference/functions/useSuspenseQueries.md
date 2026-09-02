@@ -11,8 +11,8 @@ function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombine
 
 Defined in: [preact-query/src/useSuspenseQueries.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L409)
 
-The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
-`throwOnError`, `enabled`, or `placeholderData`.
+The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
 
 ### Type Parameters
 
@@ -281,8 +281,8 @@ function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombine
 
 Defined in: [preact-query/src/useSuspenseQueries.ts:589](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L589)
 
-The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
-`throwOnError`, `enabled`, or `placeholderData`.
+The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
 
 ### Type Parameters
 
