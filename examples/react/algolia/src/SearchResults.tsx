@@ -59,9 +59,13 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
           )}
         </div>
         {hasNextPage && (
-          <div className="search-more" onClick={() => fetchNextPage()}>
+          <button
+            type="button"
+            className="search-more"
+            onClick={() => fetchNextPage()}
+          >
             more
-          </div>
+          </button>
         )}
         {isFetchingNextPage && (
           <div className="search-status">Fetching next page...</div>
