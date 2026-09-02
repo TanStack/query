@@ -1,5 +1,26 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.2
+
+### Minor Changes
+
+- [#11326](https://github.com/TanStack/query/pull/11326) [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497) - SSR lifecycle utilities: new `dehydrateSettled` awaits in-flight queries before dehydrating so streamed HTML carries settled data; `QueryClientProvider` tears the client down after server render disposal (`cancelQueries` + `clear`, preventing cross-request leaks) and dehydration now respects `defaultOptions.dehydrate.shouldDehydrateQuery` filtering.
+
+- [#11326](https://github.com/TanStack/query/pull/11326) [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497) - Built-in single-flight consumer: `QueryClientProvider` now subscribes the query cache's slice of Solid's multi-source single-flight channel under the exported `FLIGHT_DATA_SOURCE` id (`"sq"`). Mutation responses carrying that slice — a `DehydratedState` produced by a server collector registered with `registerFlightDataSource(FLIGHT_DATA_SOURCE, hook)` — hydrate the provider's client before the mutation's promise resolves, so every mounted query on those keys updates with no follow-up refetches and no per-app wiring. Subscribing is inert when no server collector exists. Requires the `@solidjs/web` release following 2.0.0-rc.4 (the named-source single-flight protocol).
+
+### Patch Changes
+
+- [#11325](https://github.com/TanStack/query/pull/11325) [`209f9f5`](https://github.com/TanStack/query/commit/209f9f5153cab810337c6b8ad9e0cd90945c5c6f) - fix: scope useMutation's mutation-cache subscription to the flight. The
+  hook subscribed at mount with a bare reactive `client()` read (tripping
+  Solid's STRICT_READ_UNTRACKED dev diagnostic) and held the subscription
+  for its whole life even though the listener only matters while a mutation
+  is in flight. The subscription now starts in `run` against the same
+  client the mutation is built on and ends at settle: nothing reactive is
+  read at setup, the listener and the mutation can never sit on different
+  clients, and idle hooks hold no cache subscription.
+
+- [#11326](https://github.com/TanStack/query/pull/11326) [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497) - Require solid-js and @solidjs/web 2.0.0-rc.6+. rc.6 ships the named flight-data source API the single-flight consumer uses, plus the async settle fix the adapter depends on (rc.5's settle-walk regression breaks query hydration).
+
 ## 6.0.0-rc.1
 
 ### Major Changes
