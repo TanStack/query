@@ -1,0 +1,52 @@
+---
+id: UseBaseMutationResult
+title: UseBaseMutationResult
+---
+
+```ts
+type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
+  mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult>;
+}> & object;
+```
+
+Defined in: [types.ts:303](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L303)
+
+The result of `useMutation`. Same as MutationObserverResult from `@tanstack/query-core`, with
+`mutate` narrowed to the fire-and-forget [UseMutateFunction](UseMutateFunction.md) signature, plus the added `mutateAsync`.
+
+## Type Declaration
+
+### mutateAsync
+
+```ts
+mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult>;
+```
+
+Similar to `mutate`, but returns a promise which can be awaited.
+
+## Type Parameters
+
+### TData
+
+`TData` = `unknown`
+
+The type your `mutationFn` resolves to.
+
+### TError
+
+`TError` = `DefaultError`
+
+The type of errors your `mutationFn` may throw.
+
+### TVariables
+
+`TVariables` = `unknown`
+
+The type of the variable passed to `mutate`/`mutateAsync`.
+
+### TOnMutateResult
+
+`TOnMutateResult` = `unknown`
+
+The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+their `onMutateResult` parameter — useful for optimistic-update rollback data.
