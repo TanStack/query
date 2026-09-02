@@ -63,7 +63,7 @@ const data = useMutationState({
 })
 
 // Latest mutation data
-const latest = data[data.length - 1]
+const latest = data.value[data.value.length - 1]
 ```
 
 **Options**

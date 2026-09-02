@@ -39,11 +39,11 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
 - `getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => TPageParam | undefined | null`
   - **Required**
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages, as well as pageParam information.
-  - It should return a **single variable** that will be passed as the last optional parameter to your query function.
+  - It should return a **single variable** that will be passed as `pageParam` on your query function's context object (e.g. `queryFn: ({ pageParam }) => ...`).
   - Return `undefined` or `null` to indicate there is no next page available.
 - `getPreviousPageParam: (firstPage, allPages, firstPageParam, allPageParams) => TPageParam | undefined | null`
   - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages, as well as pageParam information.
-  - It should return a **single variable** that will be passed as the last optional parameter to your query function.
+  - It should return a **single variable** that will be passed as `pageParam` on your query function's context object (e.g. `queryFn: ({ pageParam }) => ...`).
   - Return `undefined` or `null`to indicate there is no previous page available.
 - `maxPages: number | undefined`
   - The maximum number of pages to store in the infinite query data.

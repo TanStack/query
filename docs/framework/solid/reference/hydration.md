@@ -40,10 +40,11 @@ const dehydratedState = dehydrate(queryClient, {
   - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
   - `shouldRedactErrors?: (error: unknown) => boolean`
     - Optional
-    - Whether to redact errors from the server during dehydration.
-    - The function is called for each error in the cache
-      - Return `true` to redact this error, or `false` otherwise
-    - Defaults to redacting all errors
+    - Only applies to queries that are still `pending` at dehydration time — their promise is dehydrated too, and this function decides whether to redact the error if that promise later rejects.
+    - The function is called with that rejection error
+      - Return `true` to redact it, or `false` otherwise
+    - Defaults to redacting all such errors
+    - Does **not** apply to `query.state.error` on already-settled queries — that error is included in the dehydrated state as-is, so sanitize it yourself via `shouldDehydrateQuery` if it may contain sensitive data
 
 **Returns**
 
