@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L140)
+Defined in: [preact-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L142)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -84,7 +84,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:180](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L180)
+Defined in: [preact-query/src/queryOptions.ts:182](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L182)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -152,7 +152,7 @@ function Post({ id }: { id: string }) {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [preact-query/src/queryOptions.ts:243](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L243)
+Defined in: [preact-query/src/queryOptions.ts:245](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L245)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

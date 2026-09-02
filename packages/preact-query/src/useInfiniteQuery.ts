@@ -19,7 +19,7 @@ import type {
 import { useBaseQuery } from './useBaseQuery'
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * This overload is selected when `initialData` is set.
@@ -79,7 +79,7 @@ export function useInfiniteQuery<
 ): DefinedUseInfiniteQueryResult<TData, TError>
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
@@ -204,7 +204,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 
 /**
- * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+ * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
