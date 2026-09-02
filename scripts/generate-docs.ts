@@ -163,6 +163,12 @@ for (const pkg of [
     exclude: ['./packages/query-core/**/*'],
   },
   {
+    entryPoints: [resolve(__dirname, '../packages/solid-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/solid-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/solid/reference'),
+    exclude: ['./packages/query-core/**/*'],
+  },
+  {
     entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/react-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/react/reference'),
