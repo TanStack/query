@@ -30,9 +30,12 @@
     "@tanstack/lit-query": "0.2.7"
   },
   "changesets": [
+    "dehydrate-settled",
     "fifty-spoons-draw",
+    "flight-data-source",
     "free-cities-hunt",
     "legal-signs-call",
+    "mutation-flight-scoped-subscription",
     "slimy-mice-relate",
     "solid-beta-15-upgrade",
     "solid-beta-21-upgrade",
@@ -40,6 +43,7 @@
     "solid-beta-33-upgrade",
     "solid-hydration-data-consumption",
     "solid-query-native-rewrite",
+    "solid-rc-6-floor",
     "solid-rc-upgrade",
     "sour-balloons-nail",
     "whole-coins-count"

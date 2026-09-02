@@ -1,5 +1,14 @@
 # @tanstack/solid-query-persist-client
 
+## 6.0.0-rc.2
+
+### Patch Changes
+
+- [#11326](https://github.com/TanStack/query/pull/11326) [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497) - Require solid-js and @solidjs/web 2.0.0-rc.6+. rc.6 ships the named flight-data source API the single-flight consumer uses, plus the async settle fix the adapter depends on (rc.5's settle-walk regression breaks query hydration).
+
+- Updated dependencies [[`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497), [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497), [`209f9f5`](https://github.com/TanStack/query/commit/209f9f5153cab810337c6b8ad9e0cd90945c5c6f), [`72f8185`](https://github.com/TanStack/query/commit/72f818550ed6bb87267c6c367761b7175a611497)]:
+  - @tanstack/solid-query@6.0.0-rc.2
+
 ## 6.0.0-rc.1
 
 ### Patch Changes
