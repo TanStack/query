@@ -235,6 +235,21 @@ export type QueriesResults<
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
  *
+ * @remarks The `combine` function only re-runs if it changed referentially, or if any of the query results
+ * changed. An inlined `combine` function, as shown in the example below, therefore runs on every render — wrap
+ * it in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies, to
+ * avoid that.
+ *
+ * Unlike `useQuery`, `useQueries` cannot infer the `data` argument of an _inline_ `select` from its sibling
+ * `queryFn`. Because `useQueries` infers the type of the whole `queries` array at once, the `select` parameter
+ * of a query object written inline cannot be contextually typed from that same object's `queryFn`, so it falls
+ * back to `unknown` — a [known TypeScript limitation](https://github.com/TanStack/query/issues/6556). Annotate
+ * the `select` parameter explicitly, or define the query with {@link queryOptions}, which resolves its types in
+ * a single object _before_ it reaches `useQueries`, to work around this — see the example below. The same
+ * limitation applies to {@link useSuspenseQueries}.
+ *
+ * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
+ * previously rendered queries, because the number of queries can differ between renders.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
@@ -295,6 +310,44 @@ export type QueriesResults<
  *       ))}
  *     </ul>
  *   )
+ * }
+ * ```
+ *
+ * @example
+ * Typing `select` via {@link queryOptions}. Note that spreading a `queryOptions` result and overriding
+ * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
+ * resolved before it reaches `useQueries`:
+ * ```tsx
+ * import { queryOptions, useQueries } from '@tanstack/react-query'
+ *
+ * const postOptions = (id: number) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * function PostTitle({ id }: { id: number }) {
+ *   const [{ data: broken }] = useQueries({
+ *     queries: [
+ *       {
+ *         ...postOptions(id),
+ *         // ❌ `data` is `unknown` here
+ *         select: (data) => data.title,
+ *       },
+ *     ],
+ *   })
+ *
+ *   const [{ data: fixed }] = useQueries({
+ *     queries: [
+ *       queryOptions({
+ *         ...postOptions(id),
+ *         // ✅ `data` is `Post`
+ *         select: (data) => data.title,
+ *       }),
+ *     ],
+ *   })
+ *
+ *   return <h1>{fixed}</h1>
  * }
  * ```
  */
