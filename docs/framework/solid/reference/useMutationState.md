@@ -10,10 +10,10 @@ title: useMutationState
 ```tsx
 import { useMutationState } from '@tanstack/solid-query'
 
-const variables = useMutationState({
+const variables = useMutationState(() => ({
   filters: { status: 'pending' },
   select: (mutation) => mutation.state.variables,
-})
+}))
 ```
 
 **Example 2: Get all data for specific mutations via the `mutationKey`**
@@ -24,18 +24,18 @@ import { useMutation, useMutationState } from '@tanstack/solid-query'
 const mutationKey = ['posts']
 
 // Some mutation that we want to get the state for
-const mutation = useMutation({
+const mutation = useMutation(() => ({
   mutationKey,
   mutationFn: (newPost) => {
     return axios.post('/posts', newPost)
   },
-})
+}))
 
-const data = useMutationState({
+const data = useMutationState(() => ({
   // this mutation key needs to match the mutation key of the given mutation (see above)
   filters: { mutationKey },
   select: (mutation) => mutation.state.data,
-})
+}))
 ```
 
 **Example 3: Access the latest mutation data via the `mutationKey`**.
@@ -49,18 +49,18 @@ import { useMutation, useMutationState } from '@tanstack/solid-query'
 const mutationKey = ['posts']
 
 // Some mutation that we want to get the state for
-const mutation = useMutation({
+const mutation = useMutation(() => ({
   mutationKey,
   mutationFn: (newPost) => {
     return axios.post('/posts', newPost)
   },
-})
+}))
 
-const data = useMutationState({
+const data = useMutationState(() => ({
   // this mutation key needs to match the mutation key of the given mutation (see above)
   filters: { mutationKey },
   select: (mutation) => mutation.state.data,
-})
+}))
 
 // Latest mutation data
 const latest = data[data.length - 1]

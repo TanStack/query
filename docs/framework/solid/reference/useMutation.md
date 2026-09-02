@@ -21,7 +21,7 @@ const {
   submittedAt,
   variables,
 } = useMutation(
-  {
+  () => ({
     mutationFn,
     gcTime,
     meta,
@@ -35,7 +35,7 @@ const {
     retryDelay,
     scope,
     throwOnError,
-  },
+  }),
   queryClient,
 )
 
