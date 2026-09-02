@@ -47,11 +47,6 @@ export const ensureSuspenseTimers = (
   }
 }
 
-export const willFetch = (
-  result: QueryObserverResult<any, any>,
-  isRestoring: boolean,
-) => result.isLoading && result.isFetching && !isRestoring
-
 export const shouldSuspend = (
   defaultedOptions:
     | DefaultedQueryObserverOptions<any, any, any, any, any>

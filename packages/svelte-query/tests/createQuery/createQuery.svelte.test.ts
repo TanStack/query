@@ -10,7 +10,12 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
+import {
+  QueryClient,
+  createQuery,
+  keepPreviousData,
+  noop,
+} from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Counter from './Counter.svelte'
@@ -59,8 +64,6 @@ describe('createQuery', () => {
         expectTypeOf(query.error).toEqualTypeOf<Error | null>()
       }
 
-      const promise1 = query.promise
-
       expect(query).toEqual({
         data: undefined,
         dataUpdatedAt: 0,
@@ -87,7 +90,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
@@ -117,10 +119,7 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'success',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
-
-      expect(promise1).toBe(query.promise)
     }),
   )
 
@@ -175,7 +174,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[1]).toEqual({
@@ -204,7 +202,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[2]).toEqual({
@@ -233,7 +230,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'error',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
     }),
   )
@@ -241,10 +237,12 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('prefetched'),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('prefetched'),
+      })
+      .catch(noop)
 
     const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -1081,10 +1079,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    const prefetchPromise = queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    const prefetchPromise = queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1483,10 +1483,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1516,10 +1518,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {

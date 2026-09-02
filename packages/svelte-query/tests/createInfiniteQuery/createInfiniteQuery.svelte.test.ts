@@ -5,6 +5,7 @@ import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
+import InitialData from './InitialData.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -69,7 +70,6 @@ describe('createInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states.value[1]).toEqual({
@@ -106,8 +106,25 @@ describe('createInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
+  })
+
+  it('should render with initialData and no pending state', async () => {
+    let states = ref<Array<QueryObserverResult>>([])
+
+    const rendered = render(InitialData, {
+      props: {
+        queryClient,
+        states,
+      },
+    })
+
+    expect(rendered.getByText('Status: success')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.value.every((state) => state.status === 'success')).toBe(true)
+    expect(states.value[0]?.data).toEqual({ pages: [0], pageParams: [0] })
   })
 
   it('should be able to select a part of the data', async () => {

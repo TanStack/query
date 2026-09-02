@@ -156,4 +156,40 @@ describe('useMutationState', () => {
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
   })
+
+  it('should remove mutations that no longer match the filter', async () => {
+    const firstKey = queryKey()
+    const secondKey = queryKey()
+    const mutationFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        successMutationOpts: () => ({
+          mutationKey: firstKey,
+          mutationFn,
+        }),
+        errorMutationOpts: () => ({
+          mutationKey: secondKey,
+          mutationFn,
+        }),
+        mutationStateOpts: {
+          filters: { status: 'pending' },
+        },
+      },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(
+      rendered.getByText('Data: ["pending","pending"]'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('Data: []')).toBeInTheDocument()
+  })
 })
