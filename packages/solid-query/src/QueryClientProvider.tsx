@@ -38,17 +38,6 @@ export const HYDRATION_KEY_PREFIX = 'sq:'
  */
 export const FLIGHT_DATA_SOURCE = 'sq'
 
-// The named-source overload of subscribeFlightData ships in the
-// @solidjs/web release after 2.0.0-rc.4 (solidjs/solid#653dd41e); this
-// cast bridges the installed types until the peer range bumps.
-const subscribeFlightSource = subscribeFlightData as unknown as (
-  source: string,
-  consumer: (
-    data: DehydratedState,
-    context: { response: Response },
-  ) => void | Promise<void>,
-) => () => void
-
 export const QueryClientContext = createContext<(() => QueryClient) | null>(
   null,
 )
@@ -171,7 +160,7 @@ export const QueryClientProvider = (
     // Client-only: the server's consumer registry is module state shared
     // across requests — registering there would leak between them.
     onCleanup(
-      subscribeFlightSource(FLIGHT_DATA_SOURCE, (data) => {
+      subscribeFlightData<DehydratedState>(FLIGHT_DATA_SOURCE, (data) => {
         hydrate(props.client, data)
       }),
     )
