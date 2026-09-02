@@ -53,8 +53,9 @@ export function mutationOptions<
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
  * `mutationKey`.
  * @returns The same options object, unchanged.
- * @remarks Without a `mutationKey`, the mutation can't be looked up elsewhere via `useMutationState` — see
- * the other overload's example for that.
+ * @remarks Without a `mutationKey`, the mutation can't be targeted via a `mutationKey` filter in
+ * `useMutationState` — it can still be observed through other filters, such as `status` — see the other
+ * overload's example for that.
  *
  * @example
  * ```tsx

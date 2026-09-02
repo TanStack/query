@@ -109,9 +109,9 @@ export type UsePrefetchQueryOptions<
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
- * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` (a single page)
- * here, since a prefetch never reads `data` back out — this parameter only matters if you reuse these options
- * elsewhere with `select` applied.
+ * @template TData - The type `data` ends up as after `select` runs. Defaults to `InfiniteData<TQueryFnData>`,
+ * the shape of all fetched pages plus their page params — a prefetch never reads `data` back out, so this
+ * parameter only matters if you reuse these options elsewhere with `select` applied.
  * @template TQueryKey - The type of your `queryKey`.
  * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */

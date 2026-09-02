@@ -7,7 +7,7 @@ import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 
 /**
  * The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
- * `placeholderData`.
+ * `placeholderData` — and `queryFn` may not be `skipToken`, since Suspense hooks can't render a "disabled" state.
  *
  * Caveat: cancellation does not work.
  *

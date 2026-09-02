@@ -27,8 +27,8 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * be used.
  * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
- * mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
- * made.
+ * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
+ * fire only for the latest call you've made.
  *
  * @example
  * ```tsx
