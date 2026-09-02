@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [QueryClient.ts:103](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L103)
+Defined in: [QueryClient.ts:105](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L105)
 
 The config accepted by `new QueryClient(config)`, with Solid's extended [DefaultOptions](DefaultOptions.md).
 
@@ -19,7 +19,7 @@ The config accepted by `new QueryClient(config)`, with Solid's extended [Default
 optional defaultOptions: DefaultOptions<Error>;
 ```
 
-Defined in: [QueryClient.ts:104](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L104)
+Defined in: [QueryClient.ts:106](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L106)
 
 #### Overrides
 

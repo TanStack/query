@@ -7,7 +7,7 @@ title: UseQueryResult
 type UseQueryResult<TData, TError> = UseBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [types.ts:118](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L118)
+Defined in: [types.ts:120](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L120)
 
 The object `useQuery` returns — `data`/`error` may still be `undefined`/`null` while the query is
 `pending`.

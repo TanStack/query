@@ -3,7 +3,7 @@ id: QueryClient
 title: QueryClient
 ---
 
-Defined in: [QueryClient.ts:111](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L111)
+Defined in: [QueryClient.ts:113](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L113)
 
 The core `@tanstack/query-core` `QueryClient`, typed so its `defaultOptions.queries` accepts Solid's
 `reconcile` option.
@@ -20,7 +20,7 @@ The core `@tanstack/query-core` `QueryClient`, typed so its `defaultOptions.quer
 new QueryClient(config): QueryClient;
 ```
 
-Defined in: [QueryClient.ts:112](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L112)
+Defined in: [QueryClient.ts:114](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L114)
 
 #### Parameters
 

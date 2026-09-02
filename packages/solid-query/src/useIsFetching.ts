@@ -5,8 +5,8 @@ import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 
 /**
- * `useIsFetching` is an optional hook that returns the `number` of the queries that your application is
- * loading or fetching in the background (useful for app-wide loading indicators).
+ * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching
+ * in the background (useful for app-wide loading indicators).
  *
  * @param filters - An accessor returning the {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context

@@ -9,7 +9,7 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [useInfiniteQuery.ts:69](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L69)
+Defined in: [useInfiniteQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L70)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -58,9 +58,10 @@ will be used.
 
 [`DefinedUseInfiniteQueryResult`](../type-aliases/DefinedUseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 
@@ -108,7 +109,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [useInfiniteQuery.ts:187](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L187)
+Defined in: [useInfiniteQuery.ts:189](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L189)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -155,9 +156,10 @@ will be used.
 
 [`UseInfiniteQueryResult`](../type-aliases/UseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 

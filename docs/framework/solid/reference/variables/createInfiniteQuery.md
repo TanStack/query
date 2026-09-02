@@ -65,9 +65,10 @@ will be used.
 
 [`DefinedUseInfiniteQueryResult`](../type-aliases/DefinedUseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 
@@ -160,9 +161,10 @@ will be used.
 
 [`UseInfiniteQueryResult`](../type-aliases/UseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 

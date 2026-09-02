@@ -8,8 +8,9 @@ import type { Accessor } from 'solid-js'
 
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
- * `undefined` while the query is `pending`. Solid's reactivity applies where these options are consumed (e.g.
- * `useQuery(() => options)`), not to the plain object `queryOptions` itself accepts and returns.
+ * `undefined` while the query is `pending`. `queryOptions` itself accepts and returns a plain object (its
+ * parameter type is `ReturnType<UndefinedInitialDataOptions<...>>`, i.e. this `Accessor` called); Solid's
+ * reactivity applies where the result is consumed instead, e.g. `useQuery(() => options)`.
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -71,7 +72,7 @@ export type DefinedInitialDataOptions<
  * })
  *
  * function Posts() {
- *   // `data()` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // `postsQuery.data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
  *   // so the list stays visible alongside the error.
  *   const postsQuery = useQuery(() => postsOptions)
  *

@@ -9,8 +9,8 @@ function useIsMutating(filters?, queryClient?): Accessor<number>;
 
 Defined in: [useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)
 
-`useIsMutating` is an optional hook that returns the `number` of mutations that your application is
-currently `pending` (useful for app-wide loading indicators).
+The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
+(useful for app-wide loading indicators).
 
 ## Parameters
 

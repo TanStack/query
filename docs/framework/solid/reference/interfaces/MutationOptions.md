@@ -3,7 +3,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [types.ts:239](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L239)
+Defined in: [types.ts:241](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L241)
 
 The options accepted by `useMutation` and `mutationOptions`.
 
@@ -35,4 +35,4 @@ The type of the variables your `mutationFn` accepts.
 
 `TOnMutateResult` = `unknown`
 
-The type returned by `onMutate`, passed on to `onError`/`onSettled`.
+The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.

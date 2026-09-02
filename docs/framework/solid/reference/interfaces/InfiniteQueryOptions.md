@@ -3,7 +3,7 @@ id: InfiniteQueryOptions
 title: InfiniteQueryOptions
 ---
 
-Defined in: [types.ts:155](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L155)
+Defined in: [types.ts:157](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L157)
 
 The options accepted by `useInfiniteQuery`.
 
@@ -51,7 +51,7 @@ The type of the parameter passed to `queryFn` to fetch a given page.
 optional deferStream: boolean;
 ```
 
-Defined in: [types.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L178)
+Defined in: [types.ts:180](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L180)
 
 Only applicable while rendering queries on the server with streaming.
 Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
@@ -66,7 +66,7 @@ Defaults to `false`.
 queryKey: TQueryKey;
 ```
 
-Defined in: [types.ts:171](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L171)
+Defined in: [types.ts:173](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L173)
 
 ***
 
@@ -76,7 +76,7 @@ Defined in: [types.ts:171](https://github.com/TanStack/query/blob/main/packages/
 optional reconcile: string | false | (oldData, newData) => TData;
 ```
 
-Defined in: [QueryClient.ts:82](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L82)
+Defined in: [QueryClient.ts:84](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L84)
 
 Set this to a reconciliation key to enable reconciliation between query results.
 Set this to `false` to disable reconciliation between query results.
@@ -97,7 +97,7 @@ OmitKeyof.reconcile
 optional suspense: boolean;
 ```
 
-Defined in: [types.ts:184](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L184)
+Defined in: [types.ts:186](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L186)
 
 #### Deprecated
 

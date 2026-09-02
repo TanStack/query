@@ -5,8 +5,8 @@ import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 
 /**
- * `useIsMutating` is an optional hook that returns the `number` of mutations that your application is
- * currently `pending` (useful for app-wide loading indicators).
+ * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
+ * (useful for app-wide loading indicators).
  *
  * @param filters - An accessor returning the {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context

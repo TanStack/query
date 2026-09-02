@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [QueryClient.ts:94](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L94)
+Defined in: [QueryClient.ts:96](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L96)
 
 The default options a `QueryClient` applies to every query, with Solid's `reconcile` option added to
 `queries`.
@@ -28,7 +28,7 @@ The default type of errors thrown by queries and mutations using this `QueryClie
 optional queries: OmitKeyof<QueryObserverOptions<unknown, TError, unknown, unknown, readonly unknown[], never>, "queryKey">;
 ```
 
-Defined in: [QueryClient.ts:97](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L97)
+Defined in: [QueryClient.ts:99](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L99)
 
 #### Overrides
 

@@ -20,7 +20,8 @@ import type {
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by `useQuery` and `useInfiniteQuery`'s shared base.
+ * The options accepted by `useQuery`. Extends {@link QueryObserverOptions} from `@tanstack/query-core` with
+ * the `solid-query`-specific `deferStream` and `suspense` options.
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -97,8 +98,9 @@ export type UseQueryOptions<
 /* --- Create Query and Create Base Query  Types --- */
 
 /**
- * The object `useQuery`'s shared base returns — `data`/`error` may still be `undefined`/`null` while the
- * query is `pending`.
+ * The object `useQuery` returns when `initialData` isn't set — `data`/`error` may still be `undefined`/`null`
+ * while the query is `pending`. Re-exports {@link QueryObserverResult} from `@tanstack/query-core`.
+ * `useInfiniteQuery` returns {@link UseInfiniteQueryResult} instead.
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -121,7 +123,7 @@ export type UseQueryResult<
 > = UseBaseQueryResult<TData, TError>
 
 /**
- * The object `useQuery`'s shared base returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -234,7 +236,7 @@ export type DefinedUseInfiniteQueryResult<
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
  * @template TVariables - The type of the variables your `mutationFn` accepts.
- * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onError`/`onSettled`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
  */
 export interface MutationOptions<
   TData = unknown,
@@ -253,7 +255,7 @@ export interface MutationOptions<
  * @template TData - The type your `mutationFn` resolves to.
  * @template TError - The type of errors your `mutationFn` may throw.
  * @template TVariables - The type of the variables your `mutationFn` accepts.
- * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onError`/`onSettled`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
  */
 export type UseMutationOptions<
   TData = unknown,

@@ -17,6 +17,8 @@ import type {
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TQueryData - The type of the data actually held in the query cache.
  * @template TQueryKey - The type of your `queryKey`.
+ * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page, when this type
+ * is shared with an infinite query's observer options. Defaults to `never` for regular queries.
  */
 export interface QueryObserverOptions<
   TQueryFnData = unknown,

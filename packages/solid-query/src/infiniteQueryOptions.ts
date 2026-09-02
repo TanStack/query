@@ -10,9 +10,10 @@ import type { Accessor } from 'solid-js'
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
- * may be `undefined` while the query is `pending`. Solid's reactivity applies where these options are
- * consumed (e.g. `useInfiniteQuery(() => options)`), not to the plain object `infiniteQueryOptions` itself
- * accepts and returns.
+ * may be `undefined` while the query is `pending`. `infiniteQueryOptions` itself accepts and returns a plain
+ * object (its parameter type is `ReturnType<UndefinedInitialDataInfiniteOptions<...>>`, i.e. this `Accessor`
+ * called); Solid's reactivity applies where the result is consumed instead, e.g.
+ * `useInfiniteQuery(() => options)`.
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.

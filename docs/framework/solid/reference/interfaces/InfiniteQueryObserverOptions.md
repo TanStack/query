@@ -3,7 +3,7 @@ id: InfiniteQueryObserverOptions
 title: InfiniteQueryObserverOptions
 ---
 
-Defined in: [QueryClient.ts:60](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L60)
+Defined in: [QueryClient.ts:62](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L62)
 
 The core `InfiniteQueryObserverOptions`, with Solid's `reconcile` option added.
 
@@ -51,7 +51,7 @@ The type of the parameter passed to `queryFn` to fetch a given page.
 optional reconcile: string | false | (oldData, newData) => TData;
 ```
 
-Defined in: [QueryClient.ts:82](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L82)
+Defined in: [QueryClient.ts:84](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L84)
 
 Set this to a reconciliation key to enable reconciliation between query results.
 Set this to `false` to disable reconciliation between query results.

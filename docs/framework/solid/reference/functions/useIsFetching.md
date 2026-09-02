@@ -9,8 +9,8 @@ function useIsFetching(filters?, queryClient?): Accessor<number>;
 
 Defined in: [useIsFetching.ts:29](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L29)
 
-`useIsFetching` is an optional hook that returns the `number` of the queries that your application is
-loading or fetching in the background (useful for app-wide loading indicators).
+The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching
+in the background (useful for app-wide loading indicators).
 
 ## Parameters
 

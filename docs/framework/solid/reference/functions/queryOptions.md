@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [queryOptions.ts:89](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L89)
+Defined in: [queryOptions.ts:90](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L90)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -67,7 +67,7 @@ const postsOptions = queryOptions({
 })
 
 function Posts() {
-  // `data()` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+  // `postsQuery.data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
   // so the list stays visible alongside the error.
   const postsQuery = useQuery(() => postsOptions)
 
@@ -88,7 +88,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L140)
+Defined in: [queryOptions.ts:141](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L141)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

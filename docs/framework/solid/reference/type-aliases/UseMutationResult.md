@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [types.ts:332](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L332)
+Defined in: [types.ts:334](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L334)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 

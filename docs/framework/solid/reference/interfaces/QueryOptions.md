@@ -3,7 +3,7 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: [types.ts:67](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L67)
+Defined in: [types.ts:68](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L68)
 
 The options accepted by `useQuery` and `queryOptions`.
 
@@ -46,7 +46,7 @@ The type of your `queryKey`.
 optional deferStream: boolean;
 ```
 
-Defined in: [types.ts:49](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L49)
+Defined in: [types.ts:50](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L50)
 
 Only applicable while rendering queries on the server with streaming.
 Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
@@ -65,7 +65,7 @@ Defaults to `false`.
 optional reconcile: string | false | (oldData, newData) => TData;
 ```
 
-Defined in: [QueryClient.ts:45](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L45)
+Defined in: [QueryClient.ts:47](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L47)
 
 Set this to a reconciliation key to enable reconciliation between query results.
 Set this to `false` to disable reconciliation between query results.
@@ -84,7 +84,7 @@ Defaults reconciliation to false.
 optional suspense: boolean;
 ```
 
-Defined in: [types.ts:55](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L55)
+Defined in: [types.ts:56](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L56)
 
 #### Deprecated
 

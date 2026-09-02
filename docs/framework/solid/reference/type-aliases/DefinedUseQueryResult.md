@@ -7,7 +7,7 @@ title: DefinedUseQueryResult
 type DefinedUseQueryResult<TData, TError> = DefinedUseBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [types.ts:140](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L140)
+Defined in: [types.ts:142](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L142)
 
 The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
 
