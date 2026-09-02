@@ -14,6 +14,9 @@ const variables = useMutationState(() => ({
   filters: { status: 'pending' },
   select: (mutation) => mutation.state.variables,
 }))
+
+// Access the current variables
+variables()
 ```
 
 **Example 2: Get all data for specific mutations via the `mutationKey`**
@@ -63,7 +66,7 @@ const data = useMutationState(() => ({
 }))
 
 // Latest mutation data
-const latest = data[data.length - 1]
+const latest = data()[data().length - 1]
 ```
 
 **Options**
@@ -72,10 +75,10 @@ const latest = data[data.length - 1]
   - `filters?: MutationFilters`: [Mutation Filters](../guides/filters.md#mutation-filters)
   - `select?: (mutation: Mutation) => TResult`
     - Use this to transform the mutation state.
-- `queryClient?: QueryClient`
+- `queryClient?: Accessor<QueryClient>`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 
-- `Array<TResult>`
-  - Will be an Array of whatever `select` returns for each matching mutation.
+- `Accessor<Array<TResult>>`
+  - Will resolve to an Array of whatever `select` returns for each matching mutation.

@@ -3,13 +3,13 @@ id: useIsMutating
 title: useIsMutating
 ---
 
-`useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching (useful for app-wide loading indicators).
+`useIsMutating` is an optional hook that returns the `number` of mutations that your application is currently in a `pending` state with (useful for app-wide loading indicators).
 
 ```tsx
 import { useIsMutating } from '@tanstack/vue-query'
-// How many mutations are fetching?
+// How many mutations are pending?
 const isMutating = useIsMutating()
-// How many mutations matching the posts prefix are fetching?
+// How many mutations matching the posts prefix are pending?
 const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
 ```
 
@@ -21,5 +21,5 @@ const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
 
 **Returns**
 
-- `isMutating: number`
-  - Will be the `number` of the mutations that your application is currently fetching.
+- `isMutating: Ref<number>`
+  - Will resolve to the `number` of the mutations that your application is currently pending with.

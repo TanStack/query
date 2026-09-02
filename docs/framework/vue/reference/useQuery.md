@@ -68,11 +68,11 @@ const {
   - The query key to use for this query.
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys.md) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
-- `queryFn: (context: QueryFunctionContext) => Promise<TData>`
+- `queryFn: (context: QueryFunctionContext) => TData | Promise<TData>`
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function.md) for more information.
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../guides/query-functions.md#queryfunctioncontext)
-  - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
+  - Must return the data synchronously, or a promise that will either resolve data or throw an error. The data cannot be `undefined`.
 - `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries.md).
@@ -146,7 +146,7 @@ const {
 - `select: (data: TData) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
-  - The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, wrap the function in `useCallback`.
+  - The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. Since a Vue `setup()` function only runs once per component instance, an inline `select` function already has a stable reference across reactive updates.
 - `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
@@ -249,7 +249,7 @@ const {
   - Reset to `null` when the query succeeds.
 - `errorUpdateCount: number`
   - The sum of all errors.
-- `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
+- `refetch: (options?: { throwOnError?: boolean, cancelRefetch?: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
   - `cancelRefetch?: boolean`

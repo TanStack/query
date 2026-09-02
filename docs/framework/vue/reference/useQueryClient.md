@@ -8,10 +8,15 @@ The `useQueryClient` hook returns the current `QueryClient` instance.
 ```tsx
 import { useQueryClient } from '@tanstack/vue-query'
 
-const queryClient = useQueryClient(queryClient?: QueryClient)
+const queryClient = useQueryClient(id?: string)
 ```
 
 **Options**
 
-- `queryClient?: QueryClient`
-  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `id?: string`
+  - Use this if you have set up multiple `VueQueryPlugin` instances with different `queryClientKey`s, to select which injected `QueryClient` to use. Otherwise, the one from the nearest context will be used.
+
+**Returns**
+
+- `QueryClient`
+  - The injected `QueryClient` instance. Throws if none is found in context.

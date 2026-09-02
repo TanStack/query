@@ -14,6 +14,9 @@ const results = useQueries({
     staleTime: Infinity,
   })),
 })
+
+// `results` is a readonly ref — unwrap it to access the array
+results.value
 ```
 
 **Options**
@@ -33,7 +36,7 @@ The `placeholderData` option exists for `useQueries` as well, but it doesn't get
 
 **Returns**
 
-The `useQueries` hook returns an array with all the query results. The order returned is the same as the input order.
+The `useQueries` hook returns a readonly ref whose `.value` is an array with all the query results. The order returned is the same as the input order.
 
 ## Combine
 
@@ -55,7 +58,7 @@ const combinedQueries = useQueries({
 })
 ```
 
-In the above example, `combinedQueries` will be an object with a `data` and a `pending` property. Note that all other properties of the Query results will be lost.
+In the above example, `combinedQueries.value` will be an object with a `data` and a `pending` property. Note that all other properties of the Query results will be lost.
 
 ### Memoization
 
@@ -64,7 +67,7 @@ The `combine` function will only re-run if:
 - the `combine` function itself changed referentially
 - any of the query results changed
 
-This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies.
+Unlike React, a Vue `setup()` function only runs once per component instance, so an inlined `combine` function, as shown above, already has a stable reference across reactive updates — no extra memoization is needed.
 
 ## TypeScript: typing the `select` option
 

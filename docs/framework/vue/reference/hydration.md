@@ -91,8 +91,6 @@ hydrate(queryClient, dehydratedState, options)
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
     - `deserializeData?: (data: any) => any` A function to transform (deserialize) data before it is put into the cache.
-  - `queryClient?: QueryClient`
-    - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 ### Limitations
 

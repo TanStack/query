@@ -9,17 +9,19 @@ title: useIsFetching
 import { useIsFetching } from '@tanstack/solid-query'
 // How many queries are fetching?
 const isFetching = useIsFetching()
+isFetching()
 // How many queries matching the posts prefix are fetching?
-const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
+const isFetchingPosts = useIsFetching(() => ({ queryKey: ['posts'] }))
+isFetchingPosts()
 ```
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters.md#query-filters)
-- `queryClient?: QueryClient`
+- `filters?: Accessor<QueryFilters>`: [Query Filters](../guides/filters.md#query-filters)
+- `queryClient?: Accessor<QueryClient>`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 
-- `isFetching: number`
-  - Will be the `number` of the queries that your application is currently loading or fetching in the background.
+- `isFetching: Accessor<number>`
+  - Will resolve to the `number` of the queries that your application is currently loading or fetching in the background.

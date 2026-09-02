@@ -77,7 +77,7 @@ mutate(variables, {
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: (data: TData, error: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
+- `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
@@ -143,7 +143,7 @@ mutate(variables, {
   - Defaults to `undefined`
   - The last successfully resolved data for the mutation.
 - `error: null | TError`
-  - The error object for the query, if an error was encountered.
+  - The error object for the mutation, if an error was encountered.
 - `reset: () => void`
   - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 - `failureCount: number`
