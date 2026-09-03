@@ -275,15 +275,19 @@ describe('useMutationState', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page mutationKey={key1} />)
+    const MemoPage = React.memo(Page)
+
+    const rendered = renderWithClient(queryClient, <MemoPage mutationKey={key1} />)
     expect(rendered.getByText(/^variables:\s*$/)).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     await vi.advanceTimersByTimeAsync(50)
     expect(rendered.getByText('variables: 1')).toBeInTheDocument()
 
-    // Switch filters to key2 — should update without a cache notification
-    rendered.rerender(<Page mutationKey={key2} />)
+    // Switch filters to key2 — should update without a cache notification.
+    // MemoPage prevents mutation options from being recreated on the filter
+    // rerender, so this test is independent from observer option updates.
+    rendered.rerender(<MemoPage mutationKey={key2} />)
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText(/^variables:\s*$/)).toBeInTheDocument()
 
