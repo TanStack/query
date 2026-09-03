@@ -9,8 +9,8 @@ function useIsFetching(filters?, queryClient?): number;
 
 Defined in: [preact-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L44)
 
-`useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or
-fetching in the background (useful for app-wide loading indicators).
+The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
+the background (useful for app-wide loading indicators).
 
 ## Parameters
 
