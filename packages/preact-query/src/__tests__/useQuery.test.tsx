@@ -6951,4 +6951,33 @@ describe('useQuery', () => {
     expect(fetchCount).toBe(initialFetchCount + 1)
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
+
+  it('should retry on mount when throwOnError returns false for a falsy error', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.reject())
+
+    function Component() {
+      const { status } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => false,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return <div data-testid="status">{status}</div>
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    rendered1.unmount()
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
 })
