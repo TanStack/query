@@ -72,19 +72,10 @@ export function createBaseQuery<
     createResult(),
   )
 
-  // A trigger separate from `query` itself: the throw-effect below needs to
-  // re-run whenever the result updates, but reading `query.isError`/
-  // `query.isFetching` there would mark them as tracked on the `trackResult`
-  // proxy (by default) the first time an error occurs — permanently widening
-  // `notifyOnChangeProps` for every consumer of this query from then on, even
-  // ones that only ever read `data`. Reading the untracked `getCurrentResult()`
-  // instead avoids this, matching how `useBaseQuery` reads the pre-`trackResult`
-  // result for its own error check.
-  //
-  // This still notifies reliably once `throwOnError` is set, because
-  // `QueryObserver` force-adds `'error'` to the notified props whenever
-  // `options.throwOnError` is set (see `queryObserver.ts`), regardless of what
-  // any consumer has read.
+  // Separate trigger so the throw-effect below can react to result updates
+  // without reading `query.isError`/`isFetching` there, which would mark them
+  // as tracked on the `trackResult` proxy and permanently widen
+  // `notifyOnChangeProps` for every consumer of this query.
   let resultVersion = $state(0)
 
   $effect(() => {
@@ -124,16 +115,12 @@ export function createBaseQuery<
   )
 
   $effect(() => {
-    // Depend on `resultVersion`, NOT on `query` itself, so this reaction re-runs
-    // whenever the result updates without marking `isError`/`isFetching`/`error`
-    // as tracked props on `query` (see `resultVersion` above). Reads the actual
-    // values from `observer.getCurrentResult()`, which is untracked.
+    // Must throw from inside this reaction, not from the `subscribe` callback
+    // above (which runs outside any active Svelte reaction) — otherwise
+    // `<svelte:boundary>` never sees the error.
     void resultVersion
     const currentResult = observer.getCurrentResult()
 
-    // Must throw from inside this reaction (not from the `subscribe` callback
-    // above, which runs through notifyManager's batching outside any active
-    // Svelte reaction) — otherwise `<svelte:boundary>` never sees the error.
     if (
       currentResult.isError &&
       !currentResult.isFetching &&
