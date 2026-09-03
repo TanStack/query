@@ -10,7 +10,12 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
+import {
+  QueryClient,
+  createQuery,
+  keepPreviousData,
+  noop,
+} from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import ErrorBoundary from './ErrorBoundary.svelte'
@@ -234,10 +239,12 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('prefetched'),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('prefetched'),
+      })
+      .catch(noop)
 
     const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -1074,10 +1081,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    const prefetchPromise = queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    const prefetchPromise = queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1511,10 +1520,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1544,10 +1555,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {

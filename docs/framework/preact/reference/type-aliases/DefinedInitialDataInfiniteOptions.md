@@ -7,7 +7,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [preact-query/src/infiniteQueryOptions.ts:102](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L102)
+Defined in: [preact-query/src/infiniteQueryOptions.ts:104](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L104)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
 never `undefined`.

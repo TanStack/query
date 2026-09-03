@@ -128,9 +128,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data and no query attempt
-has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
-display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived booleans for convenience.
 
 ### See
 
@@ -190,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:293](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L293)
+Defined in: [preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
 
 ### Type Parameters
 
@@ -229,9 +229,9 @@ be used.
 
 [`UseQueryResult`](../type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
 
-The current query result. `status` is `pending` if there is no cached data and no query attempt
-has finished yet, `error` if the query attempt resulted in an error, or `success` if the query has data to
-display. `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived booleans for convenience.
 
 ### See
 
@@ -261,6 +261,25 @@ function Posts() {
       <div>{isFetching ? 'Background Updating...' : ' '}</div>
     </div>
   )
+}
+```
+
+`select` derives whatever `data` a component needs from the cached value, without changing what's
+actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
+```tsx
+import { useQuery } from '@tanstack/preact-query'
+
+function PostCount() {
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    select: (posts) => posts.length,
+  })
+
+  if (isPending) return 'Loading...'
+  if (isError) return <span>Error: {error.message}</span>
+
+  return <span>{data} posts</span>
 }
 ```
 
@@ -355,37 +374,6 @@ function Posts() {
         Next Page
       </button>
     </div>
-  )
-}
-```
-
-Warming the cache on hover, so `<Post>` has data as soon as it's clicked. Requires a
-[queryOptions](queryOptions.md) factory, so the hook and the imperative call share the same cache entry:
-```tsx
-import { noop, queryOptions, useQuery, useQueryClient } from '@tanstack/preact-query'
-
-const postOptions = (id: string) =>
-  queryOptions({
-    queryKey: ['post', id],
-    queryFn: () => fetchPost(id),
-  })
-
-function Post({ id }: { id: string }) {
-  const { data, isError, error } = useQuery(postOptions(id))
-  if (isError) return <span>Error: {error.message}</span>
-  return <h1>{data?.title}</h1>
-}
-
-function PostLink({ id, title }: { id: string; title: string }) {
-  const queryClient = useQueryClient()
-
-  return (
-    <a
-      href={`/posts/${id}`}
-      onMouseEnter={() => queryClient.query(postOptions(id)).catch(noop)}
-    >
-      {title}
-    </a>
   )
 }
 ```

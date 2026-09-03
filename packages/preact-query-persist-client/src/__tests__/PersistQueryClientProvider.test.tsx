@@ -7,7 +7,7 @@ import type {
   Persister,
 } from '../../../query-persist-client-core/src'
 import { persistQueryClientSave } from '../../../query-persist-client-core/src'
-import { notifyManager } from '../../../query-core/src'
+import { notifyManager, noop } from '../../../query-core/src'
 import { act, cleanup, render } from '@testing-library/preact'
 import type { UseQueryResult } from '../../../preact-query/src'
 import { QueryClient, useQuery } from '../../../preact-query/src'
@@ -53,10 +53,12 @@ describe('PersistQueryClientProvider (preact)', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()

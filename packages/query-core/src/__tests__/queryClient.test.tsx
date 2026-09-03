@@ -47,7 +47,9 @@ describe('queryClient', () => {
         defaultOptions: { queries: { queryFn } },
       })
 
-      expect(() => testClient.prefetchQuery({ queryKey: key })).not.toThrow()
+      expect(() =>
+        testClient.query({ queryKey: key }).catch(noop),
+      ).not.toThrow()
     })
 
     it('should merge defaultOptions when query is added to cache', async () => {
@@ -60,7 +62,7 @@ describe('queryClient', () => {
       })
 
       const fetchData = () => Promise.resolve('data')
-      await testClient.prefetchQuery({ queryKey: key, queryFn: fetchData })
+      await testClient.query({ queryKey: key, queryFn: fetchData }).catch(noop)
       const newQuery = testClient.getQueryCache().find({ queryKey: key })
       expect(newQuery?.options.gcTime).toBe(Infinity)
     })
@@ -334,10 +336,12 @@ describe('queryClient', () => {
 
     it('should not set isFetching to false', async () => {
       const key = queryKey()
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 23),
-      })
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 23),
+        })
+        .catch(noop)
       expect(queryClient.getQueryState(key)).toMatchObject({
         data: undefined,
         fetchStatus: 'fetching',
@@ -402,15 +406,19 @@ describe('queryClient', () => {
   describe('isFetching', () => {
     it('should return length of fetching queries', async () => {
       expect(queryClient.isFetching()).toBe(0)
-      queryClient.prefetchQuery({
-        queryKey: queryKey(),
-        queryFn: () => sleep(10).then(() => 'data'),
-      })
+      void queryClient
+        .query({
+          queryKey: queryKey(),
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
       expect(queryClient.isFetching()).toBe(1)
-      queryClient.prefetchQuery({
-        queryKey: queryKey(),
-        queryFn: () => sleep(5).then(() => 'data'),
-      })
+      void queryClient
+        .query({
+          queryKey: queryKey(),
+          queryFn: () => sleep(5).then(() => 'data'),
+        })
+        .catch(noop)
       expect(queryClient.isFetching()).toBe(2)
       await vi.advanceTimersByTimeAsync(5)
       expect(queryClient.isFetching()).toEqual(1)
@@ -1925,7 +1933,7 @@ describe('queryClient', () => {
       const fetchFn = () => Promise.resolve('data')
 
       // check the query was added to the cache
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: fetchFn })
+      await queryClient.query({ queryKey: key, queryFn: fetchFn }).catch(noop)
       expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
       // check the error doesn't occur
@@ -1943,7 +1951,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       queryClient.setQueryData(key1, 'data')
 
-      const pending = queryClient.fetchQuery({
+      const pending = queryClient.query({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
@@ -1964,14 +1972,16 @@ describe('queryClient', () => {
 
     it('should not revert if revert option is set to false', async () => {
       const key1 = queryKey()
-      await queryClient.fetchQuery({
+      await queryClient.query({
         queryKey: key1,
         queryFn: () => 'data',
       })
-      queryClient.prefetchQuery({
-        queryKey: key1,
-        queryFn: () => sleep(1000).then(() => 'data2'),
-      })
+      void queryClient
+        .query({
+          queryKey: key1,
+          queryFn: () => sleep(1000).then(() => 'data2'),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
       await queryClient.cancelQueries({ queryKey: key1 }, { revert: false })
       const state1 = queryClient.getQueryState(key1)
@@ -1983,7 +1993,7 @@ describe('queryClient', () => {
     it('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
       const key = queryKey()
 
-      const promise = queryClient.fetchQuery({
+      const promise = queryClient.query({
         queryKey: key,
         queryFn: () => sleep(50).then(() => 25),
       })
@@ -2012,7 +2022,7 @@ describe('queryClient', () => {
       const queryFn = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data')
-      await queryClient.fetchQuery({ queryKey: key, queryFn })
+      await queryClient.query({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -2028,7 +2038,7 @@ describe('queryClient', () => {
       const queryFn = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data')
-      await queryClient.fetchQuery({ queryKey: key, queryFn })
+      await queryClient.query({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -2055,8 +2065,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2087,8 +2097,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2110,8 +2120,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2134,8 +2144,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       queryClient.invalidateQueries({ queryKey: key1 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
@@ -2160,8 +2170,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2183,8 +2193,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2206,8 +2216,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2229,8 +2239,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2247,7 +2257,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       const queryFnError = () => Promise.reject<unknown>('error')
       try {
-        await queryClient.fetchQuery({
+        await queryClient.query({
           queryKey: key1,
           queryFn: queryFnError,
           retry: false,
@@ -2270,7 +2280,7 @@ describe('queryClient', () => {
       const queryFn1 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
@@ -2286,7 +2296,7 @@ describe('queryClient', () => {
       const queryFn1 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
@@ -2299,7 +2309,7 @@ describe('queryClient', () => {
     it('should not refetch static queries', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => 'data1')
-      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+      await queryClient.query({ queryKey: key, queryFn: queryFn })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -2326,8 +2336,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2349,8 +2359,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         enabled: false,
@@ -2372,8 +2382,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2398,8 +2408,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2426,8 +2436,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -2532,7 +2542,7 @@ describe('queryClient', () => {
     it('should not refetch static queries after invalidation', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => 'data1')
-      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+      await queryClient.query({ queryKey: key, queryFn: queryFn })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -2555,7 +2565,9 @@ describe('queryClient', () => {
 
       const callback = vi.fn()
 
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+      await queryClient
+        .query({ queryKey: key, queryFn: () => 'data' })
+        .catch(noop)
 
       queryCache.subscribe(callback)
 
@@ -2575,7 +2587,9 @@ describe('queryClient', () => {
     it('should reset query', async () => {
       const key = queryKey()
 
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+      await queryClient
+        .query({ queryKey: key, queryFn: () => 'data' })
+        .catch(noop)
 
       let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
@@ -2593,11 +2607,13 @@ describe('queryClient', () => {
     it('should reset query data to initial data if set', async () => {
       const key = queryKey()
 
-      await queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => 'data',
-        initialData: 'initial',
-      })
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => 'data',
+          initialData: 'initial',
+        })
+        .catch(noop)
 
       let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
@@ -2617,7 +2633,7 @@ describe('queryClient', () => {
         .mockResolvedValue('data')
 
       await expect(
-        queryClient.fetchQuery({
+        queryClient.query({
           queryKey: key,
           queryFn,
           retry: false,

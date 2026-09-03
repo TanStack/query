@@ -88,9 +88,9 @@ function Posts() {
 }
 ```
 
-Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
-mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
-latest invocation:
+Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
+entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the
+last item that `useMutationState` returns to get the latest successful invocation:
 ```tsx
 import { useMutationState } from '@tanstack/preact-query'
 
