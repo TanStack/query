@@ -937,6 +937,10 @@
               "to": "framework/preact/guides/prefetching"
             },
             {
+              "label": "Server Rendering & Hydration",
+              "to": "framework/preact/guides/ssr"
+            },
+            {
               "label": "Caching",
               "to": "framework/preact/guides/caching"
             },
