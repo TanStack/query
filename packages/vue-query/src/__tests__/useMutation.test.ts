@@ -451,8 +451,11 @@ describe('useMutation', () => {
       expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
     })
 
-    it('should evaluate throwOnError for a falsy error', async () => {
-      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+    // These tests let throwOnError return false on purpose: under vitest,
+    // throwing a falsy value from the watcher breaks every watcher created
+    // later in this file, while the throw path is already covered above.
+    it('should evaluate throwOnError when the mutation rejects with undefined', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(false)
       const { mutate } = useMutation<string, undefined>({
         mutationFn: () => sleep(10).then(() => Promise.reject(undefined)),
         throwOnError: throwOnErrorFn,
@@ -460,16 +463,25 @@ describe('useMutation', () => {
 
       mutate()
 
-      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
-      const rejectionHandler = () => {}
-      process.on('unhandledRejection', rejectionHandler)
-
       await vi.advanceTimersByTimeAsync(10)
-
-      process.off('unhandledRejection', rejectionHandler)
 
       expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
       expect(throwOnErrorFn).toHaveBeenCalledWith(undefined)
+    })
+
+    it('should evaluate throwOnError when the mutation rejects with null', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(false)
+      const { mutate } = useMutation<string, null>({
+        mutationFn: () => sleep(10).then(() => Promise.reject(null)),
+        throwOnError: throwOnErrorFn,
+      })
+
+      mutate()
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(null)
     })
   })
 })
