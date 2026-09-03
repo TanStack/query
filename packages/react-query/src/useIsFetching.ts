@@ -6,8 +6,8 @@ import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 /**
- * `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or
- * fetching in the background (useful for app-wide loading indicators).
+ * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
+ * the background (useful for app-wide loading indicators).
  *
  * @param filters - The {@link QueryFilters} to narrow down the matched queries.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will

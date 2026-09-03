@@ -78,11 +78,12 @@ function SavingIndicator() {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [react-query/src/mutationOptions.ts:74](https://github.com/TanStack/query/blob/main/packages/react-query/src/mutationOptions.ts#L74)
+Defined in: [react-query/src/mutationOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/react-query/src/mutationOptions.ts#L73)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
-`mutationKey` is required on this overload — use this when you don't need to look the mutation up later
-(e.g. with `useMutationState`).
+`mutationKey` is required on this overload — use this when you don't need to target the mutation via a
+`mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters,
+such as `status`.
 
 ### Type Parameters
 
@@ -123,9 +124,7 @@ The same options object, unchanged.
 
 ### Remarks
 
-Without a `mutationKey`, the mutation can't be targeted via a `mutationKey` filter in
-`useMutationState` — it can still be observed through other filters, such as `status` — see the other
-overload's example for that.
+See the other overload's example for looking a mutation up via `useMutationState`.
 
 ### Example
 

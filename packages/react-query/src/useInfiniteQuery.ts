@@ -31,9 +31,10 @@ import type {
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  *
  * @example
  * ```tsx
@@ -89,9 +90,10 @@ export function useInfiniteQuery<
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  *
  * @example
  * Fetching the next page from a "Load More" button click:
@@ -214,9 +216,10 @@ export function useInfiniteQuery<
  * @param options - The {@link UseInfiniteQueryOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
- * `fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
- * `isFetchingPreviousPage`.
+ * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+ * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+ * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+ * `InfiniteData<TQueryFnData>` shape.
  *
  * @example
  * Fetching the next page from a "Load More" button click:
