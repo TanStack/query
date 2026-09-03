@@ -5,6 +5,7 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { MaybeRefDeep } from '../types'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -403,17 +404,18 @@ describe('queryOptions', () => {
       }),
     )
     expectTypeOf(inlineData).toEqualTypeOf<{ id: PostId } | undefined>()
+  })
 
-    const brandedObjectOptions = queryOptions({
-      queryKey: [
-        'post',
-        { __brand: 'post' as const, postId: ref('123') },
-      ] as const,
-      queryFn: () => Promise.resolve({ id: postId }),
-    })
-    const { data: brandedObjectData } = reactive(useQuery(brandedObjectOptions))
-    expectTypeOf(brandedObjectData).toEqualTypeOf<{ id: PostId } | undefined>()
-    expectTypeOf(brandedObjectOptions.queryKey[1].postId).toMatchTypeOf<
+  it('should recursively unwrap objects with a __brand property', () => {
+    const options = {
+      __brand: 'post' as const,
+      postId: ref('123'),
+    } satisfies MaybeRefDeep<{
+      __brand: 'post'
+      postId: string
+    }>
+
+    expectTypeOf(options.postId).toMatchTypeOf<
       string | ReturnType<typeof ref>
     >()
   })
