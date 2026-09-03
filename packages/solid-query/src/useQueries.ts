@@ -184,6 +184,92 @@ type QueriesResults<
           >
         : { [K in keyof T]: GetResults<T[K]> }
 
+/**
+ * The `useQueries` hook can be used to fetch a variable number of queries.
+ *
+ * The `queries` key accepts an array with query option objects identical to `useQuery`. A custom `QueryClient`
+ * is supplied once, as `useQueries`' own top-level second argument, rather than per query.
+ *
+ * Having the same query key more than once in the array of query objects may cause some data to be shared
+ * between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+ * structure.
+ *
+ * The `combine` option can be used to combine the results of the queries into a single value. The result will
+ * be structurally shared to be as referentially stable as possible.
+ *
+ * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
+ * previously rendered queries, because the number of queries can differ between renders.
+ * @param queriesOptions - An accessor returning the `queries` array to run, and an optional `combine`
+ * function.
+ * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
+ * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+ *
+ * @example
+ * ```tsx
+ * import { For } from 'solid-js'
+ * import { useQueries } from '@tanstack/solid-query'
+ *
+ * function Posts(props: { ids: Array<number> }) {
+ *   const postQueries = useQueries(() => ({
+ *     queries: props.ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *       staleTime: Infinity,
+ *     })),
+ *   }))
+ *
+ *   return (
+ *     <ul>
+ *       <For each={postQueries}>
+ *         {(postQuery) => {
+ *           if (postQuery.isPending) return <li>Loading...</li>
+ *           if (postQuery.isError) return <li>Error: {postQuery.error.message}</li>
+ *           return <li>{postQuery.data.title}</li>
+ *         }}
+ *       </For>
+ *     </ul>
+ *   )
+ * }
+ * ```
+ *
+ * @example
+ * Combining results into a single value:
+ * ```tsx
+ * import { For, Match, Switch } from 'solid-js'
+ * import { useQueries } from '@tanstack/solid-query'
+ *
+ * function Posts(props: { ids: Array<number> }) {
+ *   const combinedPostsQuery = useQueries(() => ({
+ *     queries: props.ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *     combine: (postQueries) => {
+ *       return {
+ *         data: postQueries.map((postQuery) => postQuery.data),
+ *         isPending: postQueries.some((postQuery) => postQuery.isPending),
+ *         isError: postQueries.some((postQuery) => postQuery.isError),
+ *       }
+ *     },
+ *   }))
+ *
+ *   return (
+ *     <Switch
+ *       fallback={
+ *         <ul>
+ *           <For each={combinedPostsQuery.data}>{(post) => <li>{post?.title}</li>}</For>
+ *         </ul>
+ *       }
+ *     >
+ *       <Match when={combinedPostsQuery.isPending}>Loading...</Match>
+ *       <Match when={combinedPostsQuery.isError}>Error loading posts</Match>
+ *     </Switch>
+ *   )
+ * }
+ * ```
+ */
 export function useQueries<
   T extends Array<any>,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
