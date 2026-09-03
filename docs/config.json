@@ -949,6 +949,14 @@
               "to": "framework/preact/guides/default-query-function"
             },
             {
+              "label": "Suspense",
+              "to": "framework/preact/guides/suspense"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/preact/guides/testing"
+            },
+            {
               "label": "Does this replace [Redux, MobX, etc]?",
               "to": "framework/preact/guides/does-this-replace-client-state"
             }
