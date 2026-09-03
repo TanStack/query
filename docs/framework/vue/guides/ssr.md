@@ -256,4 +256,23 @@ On the server, `gcTime` defaults to `Infinity` which disables manual garbage col
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
+## `dehydrate`/`hydrate` options
+
+`dehydrate` and `hydrate` are re-exported from `@tanstack/query-core`, so they're available directly from `@tanstack/vue-query` — as used throughout this guide.
+
+`dehydrate(client, options?)` accepts a `DehydrateOptions` object:
+
+- `shouldDehydrateMutation: (mutation) => boolean` — whether to dehydrate a given mutation. Called for each mutation in the cache; defaults to only including paused mutations. To extend the default behavior instead of replacing it, import and call `defaultShouldDehydrateMutation` as part of your return statement.
+- `shouldDehydrateQuery: (query) => boolean` — whether to dehydrate a given query. Called for each query in the cache; defaults to only including successful queries (see [above](#only-successful-queries-are-included-in-dehydration)). Extend it the same way, with `defaultShouldDehydrateQuery`.
+- `serializeData?: (data) => any` — transforms (serializes) data during dehydration.
+- `shouldRedactErrors?: (error) => boolean` — only applies to queries still `pending` at dehydration time, whose promise is dehydrated too: decides whether to redact the error if that promise later rejects. Defaults to redacting all such errors. Does **not** apply to `query.state.error` on already-settled queries — that error is included in the dehydrated state as-is, so sanitize it yourself via `shouldDehydrateQuery` if it may contain sensitive data.
+
+`hydrate(client, dehydratedState, options?)` accepts a `HydrateOptions` object:
+
+- `defaultOptions.mutations` — default mutation options for the hydrated mutations.
+- `defaultOptions.queries` — default query options for the hydrated queries.
+- `defaultOptions.deserializeData?: (data) => any` — transforms (deserializes) data before it's put into the cache.
+
+One caveat with `hydrate`: if a query being hydrated already exists in the cache, it's only overwritten when the incoming data is newer than what's already there — otherwise it's silently skipped.
+
 Alternatively, you can set a smaller `gcTime`.
