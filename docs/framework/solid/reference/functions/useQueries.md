@@ -7,12 +7,13 @@ title: useQueries
 function useQueries<T, TCombinedResult>(queriesOptions, queryClient?): TCombinedResult;
 ```
 
-Defined in: [useQueries.ts:273](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L273)
+Defined in: [useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
-The `queries` key accepts an array with query option objects identical to `useQuery`. A custom `QueryClient`
-is supplied once, as `useQueries`' own top-level second argument, rather than per query.
+The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
+`placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'
+own top-level second argument, rather than per query.
 
 Having the same query key more than once in the array of query objects may cause some data to be shared
 between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
