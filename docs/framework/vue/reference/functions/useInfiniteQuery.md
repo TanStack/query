@@ -1,0 +1,267 @@
+---
+id: useInfiniteQuery
+title: useInfiniteQuery
+---
+
+## Call Signature
+
+```ts
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+```
+
+Defined in: [vue-query/src/useInfiniteQuery.ts:116](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L116)
+
+The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+
+`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
+reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### TPageParam
+
+`TPageParam` = `unknown`
+
+### Parameters
+
+#### options
+
+`MaybeRefOrGetter`\<[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+
+The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`useInfiniteQuery`, with `initialData` set.
+
+#### queryClient?
+
+[`QueryClient`](../classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+will be used.
+
+### Returns
+
+[`UseInfiniteQueryReturnType`](../type-aliases/UseInfiniteQueryReturnType.md)\<`TData`, `TError`\>
+
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
+`data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
+
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage && !isFetching`.
+
+### Example
+
+```vue
+<script setup lang="ts">
+import { useInfiniteQuery } from '@tanstack/vue-query'
+
+// `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+// list stays visible alongside the error.
+const { data, isError, error } = useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: ({ pageParam }) => fetchProjects(pageParam),
+  initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextId,
+  initialData: { pages: [], pageParams: [] },
+})
+</script>
+
+<template>
+  <span v-if="isError">Error: {{ error.message }}</span>
+  <ul>
+    <template v-for="page in data.pages" :key="page.nextId">
+      <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+    </template>
+  </ul>
+</template>
+```
+
+## Call Signature
+
+```ts
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+```
+
+Defined in: [vue-query/src/useInfiniteQuery.ts:193](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L193)
+
+The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+
+`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
+reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### TPageParam
+
+`TPageParam` = `unknown`
+
+### Parameters
+
+#### options
+
+`MaybeRefOrGetter`\<[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`useInfiniteQuery`.
+
+#### queryClient?
+
+[`QueryClient`](../classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+will be used.
+
+### Returns
+
+[`UseInfiniteQueryReturnType`](../type-aliases/UseInfiniteQueryReturnType.md)\<`TData`, `TError`\>
+
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
+`data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
+
+### Remarks
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+actions, or add conditions like `hasNextPage && !isFetching`.
+
+### Example
+
+Fetching the next page from a "Load More" button click:
+```vue
+<script setup lang="ts">
+import { useInfiniteQuery } from '@tanstack/vue-query'
+
+const {
+  data,
+  isPending,
+  isError,
+  error,
+  fetchNextPage,
+  hasNextPage,
+  isFetching,
+  isFetchingNextPage,
+} = useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: ({ pageParam }) => fetchProjects(pageParam),
+  initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextId,
+})
+</script>
+
+<template>
+  <span v-if="isPending">Loading...</span>
+  <span v-else-if="isError">Error: {{ error.message }}</span>
+  <template v-else>
+    <ul>
+      <template v-for="page in data.pages" :key="page.nextId">
+        <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+      </template>
+    </ul>
+    <button @click="fetchNextPage()" :disabled="!hasNextPage || isFetching">
+      {{ isFetchingNextPage ? 'Loading more...' : hasNextPage ? 'Load More' : 'Nothing more to load' }}
+    </button>
+  </template>
+</template>
+```
+
+## Call Signature
+
+```ts
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+```
+
+Defined in: [vue-query/src/useInfiniteQuery.ts:227](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L227)
+
+Fallback overload for options whose `initialData` presence isn't statically known — for example, a
+`ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
+overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
+
+`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
+reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### TPageParam
+
+`TPageParam` = `unknown`
+
+### Parameters
+
+#### options
+
+`MaybeRefOrGetter`\<[`UseInfiniteQueryOptions`](../type-aliases/UseInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+
+A `ref`, plain value, or reactive getter resolving to the [UseInfiniteQueryOptions](../type-aliases/UseInfiniteQueryOptions.md) to
+use.
+
+#### queryClient?
+
+[`QueryClient`](../classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+will be used.
+
+### Returns
+
+[`UseInfiniteQueryReturnType`](../type-aliases/UseInfiniteQueryReturnType.md)\<`TData`, `TError`\>
+
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`.
