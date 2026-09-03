@@ -12,13 +12,13 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching
+ * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
  *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns Will be the `number` of the mutations that your application is currently fetching.
+ * @returns Will be the `number` of the mutations that your application currently has `pending`.
  *
  * @example
  * ```tsx
@@ -136,9 +136,9 @@ function getResult<
  * ```
  *
  * @example
- * Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
- * mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
- * latest invocation:
+ * Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
+ * entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the
+ * last item that `useMutationState` returns to get the latest successful invocation:
  * ```tsx
  * import { useMutationState } from '@tanstack/react-query'
  *
