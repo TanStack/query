@@ -1,6 +1,8 @@
 ---
 id: NotifyManager
 title: NotifyManager
+redirect_from:
+  - framework/react/reference/notifyManager
 ---
 
 The `notifyManager` handles scheduling and batching callbacks in TanStack Query.

@@ -1,6 +1,8 @@
 ---
 id: infiniteQueryOptions
 title: infiniteQueryOptions
+redirect_from:
+  - framework/solid/reference/infiniteQueryOptions
 ---
 
 ## Call Signature

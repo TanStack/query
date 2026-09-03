@@ -1,6 +1,8 @@
 ---
 id: QueryObserver
 title: QueryObserver
+redirect_from:
+  - framework/react/reference/QueryObserver
 ---
 
 The `QueryObserver` can be used to observe and switch between queries.

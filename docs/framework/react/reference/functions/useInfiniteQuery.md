@@ -1,6 +1,8 @@
 ---
 id: useInfiniteQuery
 title: useInfiniteQuery
+redirect_from:
+  - framework/react/reference/useInfiniteQuery
 ---
 
 ## Call Signature

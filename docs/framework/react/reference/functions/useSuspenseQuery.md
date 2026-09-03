@@ -1,6 +1,8 @@
 ---
 id: useSuspenseQuery
 title: useSuspenseQuery
+redirect_from:
+  - framework/react/reference/useSuspenseQuery
 ---
 
 ```ts

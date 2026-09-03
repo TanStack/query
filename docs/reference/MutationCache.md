@@ -1,6 +1,8 @@
 ---
 id: MutationCache
 title: MutationCache
+redirect_from:
+  - framework/react/reference/MutationCache
 ---
 
 The `MutationCache` is the storage for mutations.

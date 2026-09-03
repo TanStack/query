@@ -1,6 +1,8 @@
 ---
 id: useMutationState
 title: useMutationState
+redirect_from:
+  - framework/solid/reference/useMutationState
 ---
 
 ```ts

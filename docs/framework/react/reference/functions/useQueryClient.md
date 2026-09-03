@@ -1,6 +1,8 @@
 ---
 id: useQueryClient
 title: useQueryClient
+redirect_from:
+  - framework/react/reference/useQueryClient
 ---
 
 ```ts

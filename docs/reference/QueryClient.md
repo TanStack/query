@@ -1,6 +1,8 @@
 ---
 id: QueryClient
 title: QueryClient
+redirect_from:
+  - framework/react/reference/QueryClient
 ---
 
 The `QueryClient` can be used to interact with a cache:
