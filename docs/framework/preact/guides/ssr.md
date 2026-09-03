@@ -94,7 +94,7 @@ function Posts({ posts }) {
 The setup is minimal and this can be a quick solution for some cases, but there are a **few tradeoffs to consider** when compared to the full approach:
 
 - If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
-- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes since. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that needs it can also be cumbersome.
+- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that need it can also be cumbersome.
 - There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
 - If there is already data in the cache for a query, `initialData` will never overwrite this data, **even if the new data is fresher than the old one**.
 
@@ -128,9 +128,22 @@ import {
   noop,
 } from '@tanstack/preact-query'
 
+function makeQueryClient() {
+  return new QueryClient({
+    queryCache: new QueryCache(),
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
 export async function render(url) {
   // The prefetching client: only used to fetch and dehydrate
-  const prefetchClient = new QueryClient({ queryCache: new QueryCache() })
+  const prefetchClient = makeQueryClient()
 
   await prefetchClient
     .query({
@@ -142,7 +155,7 @@ export async function render(url) {
   const dehydratedState = dehydrate(prefetchClient)
 
   // The render client: hydrated with the same state, used for renderToString
-  const renderClient = new QueryClient({ queryCache: new QueryCache() })
+  const renderClient = makeQueryClient()
   hydrate(renderClient, dehydratedState)
 
   const appHtml = renderToString(
@@ -151,8 +164,10 @@ export async function render(url) {
     </QueryClientProvider>,
   )
 
-  // Embed both the markup and the dehydrated state in the html you send down,
-  // e.g. `<div id="app">${appHtml}</div><script>window.__DEHYDRATED_STATE__ = ${JSON.stringify(dehydratedState)}</script>`
+  // Embed both the markup and the dehydrated state in the html you send down.
+  // Use a safe serializer here (see Serialization below), NOT JSON.stringify,
+  // since raw JSON.stringify output can break out of the <script> tag:
+  // e.g. `<div id="app">${appHtml}</div><script>window.__DEHYDRATED_STATE__ = ${serialize(dehydratedState)}</script>`
   return { appHtml, dehydratedState }
 }
 ```
@@ -168,12 +183,20 @@ import {
   QueryClientProvider,
 } from '@tanstack/preact-query'
 
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
 function App({ dehydratedState }) {
-  // Instead of creating the queryClient at module root level (which would
-  // share the cache between every visitor on the server), create it here.
-  // On the client this only ever runs once per page load, so this is mostly
-  // about keeping the server and client code paths symmetric.
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(() => makeQueryClient())
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -184,7 +207,8 @@ function App({ dehydratedState }) {
   )
 }
 
-// Read back whatever you embedded on the server, e.g. `window.__DEHYDRATED_STATE__`
+// Read back and deserialize whatever you embedded on the server,
+// e.g. `window.__DEHYDRATED_STATE__`
 preactHydrate(
   <App dehydratedState={window.__DEHYDRATED_STATE__} />,
   document.getElementById('app'),
