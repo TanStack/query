@@ -75,7 +75,10 @@ export function createBaseQuery<
   // Separate trigger so the throw-effect below can react to result updates
   // without reading `query.isError`/`isFetching` there, which would mark them
   // as tracked on the `trackResult` proxy and permanently widen
-  // `notifyOnChangeProps` for every consumer of this query.
+  // `notifyOnChangeProps` for every consumer of this query. This still
+  // notifies reliably once `throwOnError` is set, because `QueryObserver`
+  // force-adds `'error'` to the notified props in that case (see
+  // `queryObserver.ts`), regardless of what any consumer has read.
   let resultVersion = $state(0)
 
   $effect(() => {
