@@ -1,5 +1,27 @@
 # @tanstack/query-devtools
 
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- [#11300](https://github.com/TanStack/query/pull/11300) [`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5) - Remove an unintended `solid-js` import from the generated declaration files.
+
+## 5.102.4
+
+## 5.102.3
+
+## 5.102.2
+
+## 5.102.1
+
+## 5.102.0
+
 ## 5.101.4
 
 ## 5.101.3

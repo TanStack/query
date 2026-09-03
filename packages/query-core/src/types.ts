@@ -58,11 +58,11 @@ export type QueryKey = Register extends {
       : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
-export const dataTagSymbol = Symbol('dataTagSymbol')
+export const dataTagSymbol = Symbol()
 export type dataTagSymbol = typeof dataTagSymbol
-export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
+export const dataTagErrorSymbol = Symbol()
 export type dataTagErrorSymbol = typeof dataTagErrorSymbol
-export const unsetMarker = Symbol('unsetMarker')
+export const unsetMarker = Symbol()
 export type UnsetMarker = typeof unsetMarker
 export type AnyDataTag = {
   [dataTagSymbol]: any

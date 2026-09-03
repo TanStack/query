@@ -22,6 +22,7 @@ import {
   dehydrate,
   hydrate,
   keepPreviousData,
+  noop,
   skipToken,
   useQuery,
 } from '..'
@@ -282,10 +283,12 @@ describe('useQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const result = useQuery({ queryKey: key, queryFn: () => 'new data' })
@@ -1845,10 +1848,12 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(20)
 
@@ -2644,10 +2649,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -2681,10 +2688,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -2767,6 +2776,39 @@ describe('useQuery', () => {
           <h2>{error}</h2>
         </div>
       )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const { status } = useQuery({
+        queryKey: key,
+        // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+        // literal `undefined` error crashes the framework. `0` is just an arbitrary
+        // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+        // crash) — any falsy primitive other than `null`/`undefined` would do.
+        queryFn: () => Promise.reject(0),
+        retry: false,
+        throwOnError: true,
+      })
+
+      return <h1>{status}</h1>
     }
 
     const rendered = renderWithClient(
@@ -3002,10 +3044,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -3516,11 +3560,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3549,11 +3595,13 @@ describe('useQuery', () => {
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 1000,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -3629,10 +3677,12 @@ describe('useQuery', () => {
 
       useEffect(() => {
         async function prefetch() {
-          await queryClient.prefetchQuery({
-            queryKey: key,
-            queryFn: () => Promise.resolve('prefetched data'),
-          })
+          await queryClient
+            .query({
+              queryKey: key,
+              queryFn: () => Promise.resolve('prefetched data'),
+            })
+            .catch(noop)
           act(() => setPrefetched(true))
         }
 
@@ -5981,7 +6031,7 @@ describe('useQuery', () => {
       return <></>
     }
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn }).catch(noop)
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
@@ -6565,10 +6615,12 @@ describe('useQuery', () => {
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => Promise.resolve('server')),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.resolve('server')),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 
@@ -6620,11 +6672,13 @@ describe('useQuery', () => {
       },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () =>
-        sleep(10).then(() => Promise.reject(new Error('server error'))),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('server error'))),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 

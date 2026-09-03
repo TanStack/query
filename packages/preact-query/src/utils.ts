@@ -56,7 +56,6 @@ function didSnapshotChange(inst: {
   try {
     const nextValue = latestGetSnapshot()
     return !Object.is(prevValue, nextValue)
-    // eslint-disable-next-line no-unused-vars
   } catch (_error) {
     return true
   }

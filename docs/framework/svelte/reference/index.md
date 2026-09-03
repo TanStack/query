@@ -18,13 +18,17 @@ title: "@tanstack/svelte-query"
 - [CreateQueryOptions](type-aliases/CreateQueryOptions.md)
 - [CreateQueryResult](type-aliases/CreateQueryResult.md)
 - [DefinedCreateBaseQueryResult](type-aliases/DefinedCreateBaseQueryResult.md)
+- [DefinedCreateInfiniteQueryResult](type-aliases/DefinedCreateInfiniteQueryResult.md)
 - [DefinedCreateQueryResult](type-aliases/DefinedCreateQueryResult.md)
+- [DefinedInitialDataInfiniteOptions](type-aliases/DefinedInitialDataInfiniteOptions.md)
 - [DefinedInitialDataOptions](type-aliases/DefinedInitialDataOptions.md)
 - [HydrationBoundary](type-aliases/HydrationBoundary.md)
 - [MutationStateOptions](type-aliases/MutationStateOptions.md)
+- [MutationTypeFromResult](type-aliases/MutationTypeFromResult.md)
 - [QueriesOptions](type-aliases/QueriesOptions.md)
 - [QueriesResults](type-aliases/QueriesResults.md)
 - [QueryClientProviderProps](type-aliases/QueryClientProviderProps.md)
+- [UndefinedInitialDataInfiniteOptions](type-aliases/UndefinedInitialDataInfiniteOptions.md)
 - [UndefinedInitialDataOptions](type-aliases/UndefinedInitialDataOptions.md)
 
 ## Variables

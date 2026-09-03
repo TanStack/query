@@ -5,9 +5,9 @@ title: Suspense
 
 React Query can also be used with React's Suspense for Data Fetching APIs. For this, we have dedicated hooks:
 
-- [useSuspenseQuery](../reference/useSuspenseQuery.md)
-- [useSuspenseInfiniteQuery](../reference/useSuspenseInfiniteQuery.md)
-- [useSuspenseQueries](../reference/useSuspenseQueries.md)
+- [useSuspenseQuery](../reference/functions/useSuspenseQuery.md)
+- [useSuspenseInfiniteQuery](../reference/functions/useSuspenseInfiniteQuery.md)
+- [useSuspenseQueries](../reference/functions/useSuspenseQueries.md)
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](../examples/suspense) for more information on how to set up suspense mode.
 
