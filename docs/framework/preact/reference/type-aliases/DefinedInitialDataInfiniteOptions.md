@@ -19,8 +19,7 @@ never `undefined`.
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | undefined;
+| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been

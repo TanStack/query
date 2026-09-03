@@ -75,7 +75,6 @@ export type DefinedInitialDataInfiniteOptions<
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
-    | undefined
 }
 
 /**
