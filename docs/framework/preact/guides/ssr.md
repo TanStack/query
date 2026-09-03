@@ -301,6 +301,23 @@ Your first instinct might be to use `JSON.stringify(dehydratedState)`, but becau
 
 By default, plain `JSON.stringify`/`JSON.parse` also do not support `undefined`, `Error`, `Date`, `Map`, `Set`, `BigInt`, `Infinity`, `NaN`, `-0`, regular expressions etc. This also means that you can not return any of these things from your queries unless your serializer supports them. If returning these values is something you want, check out [superjson](https://github.com/blitz-js/superjson) or similar packages (note that superjson **does not** escape values by itself, so you still need an extra step for escaping the output).
 
+Instead of serializing the whole `dehydratedState` from the outside, you can also let Preact Query do this per-query by configuring `dehydrate.serializeData`/`hydrate.deserializeData` on the `QueryClient`:
+
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    dehydrate: {
+      serializeData: serialize,
+    },
+    hydrate: {
+      deserializeData: deserialize,
+    },
+  },
+})
+```
+
+This transforms each query's `data` on the way out of `dehydrate` and on the way into `hydrate`, so `serialize`/`deserialize` only ever need to handle the shape of your query data, not the full dehydrated state. As with any custom serializer, make sure it's safe against XSS if you end up embedding its output directly into markup.
+
 ## Tips, Tricks and Caveats
 
 ### Staleness is measured from when the query was fetched on the server
