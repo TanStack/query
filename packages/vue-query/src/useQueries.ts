@@ -231,6 +231,84 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
   ...UseQueriesOptions<T>,
 ]
 
+/**
+ * The `useQueries` composable can be used to fetch a variable number of queries.
+ *
+ * The `queries` option accepts an array of query option objects mostly identical to `useQuery`'s. It may be a
+ * plain array, a `ref`/reactive array (each entry tracked individually), or a getter function — pass a getter
+ * if the array itself (its length, or which queries are in it) depends on other reactive state.
+ *
+ * Having the same query key more than once in the array of query objects may cause some data to be shared
+ * between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+ * structure.
+ *
+ * The `combine` option can be used to combine the results of the queries into a single value. The result will
+ * be structurally shared to be as referentially stable as possible.
+ *
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ * @returns A `ref` to the combined result. Without `combine`, this is an array with all the query results, in
+ * the same order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+ *
+ * @example
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQueries } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ ids: Array<number> }>()
+ *
+ * const postQueries = useQueries({
+ *   queries: () =>
+ *     props.ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *       staleTime: Infinity,
+ *     })),
+ * })
+ * </script>
+ *
+ * <template>
+ *   <ul>
+ *     <li v-for="(query, index) in postQueries" :key="ids[index]">
+ *       <span v-if="query.isPending">Loading...</span>
+ *       <span v-else-if="query.isError">Error: {{ query.error.message }}</span>
+ *       <span v-else>{{ query.data.title }}</span>
+ *     </li>
+ *   </ul>
+ * </template>
+ * ```
+ *
+ * @example
+ * Combining results into a single value:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQueries } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ ids: Array<number> }>()
+ *
+ * const combined = useQueries({
+ *   queries: () =>
+ *     props.ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *   combine: (postQueries) => ({
+ *     data: postQueries.map((query) => query.data),
+ *     isPending: postQueries.some((query) => query.isPending),
+ *     isError: postQueries.some((query) => query.isError),
+ *   }),
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="combined.isPending">Loading...</span>
+ *   <span v-else-if="combined.isError">Error!</span>
+ *   <ul v-else>
+ *     <li v-for="post in combined.data" :key="post.id">{{ post.title }}</li>
+ *   </ul>
+ * </template>
+ * ```
+ */
 export function useQueries<
   T extends Array<any>,
   TCombinedResult = UseQueriesResults<T>,

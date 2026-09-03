@@ -34,6 +34,12 @@ import type {
   Updater,
 } from '@tanstack/query-core'
 
+/**
+ * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Every method that accepts a `queryKey` or
+ * filters also accepts a {@link MaybeRefDeep} version of it, so you can pass `ref`s directly without unwrapping
+ * them yourself — `queryClient.invalidateQueries({ queryKey: myRef })` works the same as passing the plain
+ * value. Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
+ */
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
     const vueQueryConfig = {
@@ -44,6 +50,10 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
+  /**
+   * `true` while a `clientPersister` passed to `VueQueryPlugin` is restoring the cache. Queries don't fetch
+   * while this is `true`. `undefined` if no persister is configured.
+   */
   isRestoring?: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
