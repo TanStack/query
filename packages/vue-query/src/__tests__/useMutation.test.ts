@@ -450,5 +450,26 @@ describe('useMutation', () => {
       expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
       expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
     })
+
+    it('should evaluate throwOnError for a falsy error', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      const { mutate } = useMutation<string, undefined>({
+        mutationFn: () => sleep(10).then(() => Promise.reject(undefined)),
+        throwOnError: throwOnErrorFn,
+      })
+
+      mutate()
+
+      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
+      const rejectionHandler = () => {}
+      process.on('unhandledRejection', rejectionHandler)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(undefined)
+    })
   })
 })

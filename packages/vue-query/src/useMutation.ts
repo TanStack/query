@@ -136,7 +136,7 @@ export function useMutation<
     () => state.error,
     (error) => {
       if (
-        error &&
+        state.isError &&
         shouldThrowError(options.value.throwOnError, [error as TError])
       ) {
         throw error
