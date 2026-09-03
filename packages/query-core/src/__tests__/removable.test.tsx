@@ -83,13 +83,15 @@ describe('Removable', () => {
 
     it('should default to Infinity on the server', () => {
       const resetIsServer = setIsServer(true)
-      const removable = new RemovableTest()
+      try {
+        const removable = new RemovableTest()
 
-      removable.callUpdateGcTime(undefined)
+        removable.callUpdateGcTime(undefined)
 
-      expect(removable.gcTime).toBe(Infinity)
-
-      resetIsServer()
+        expect(removable.gcTime).toBe(Infinity)
+      } finally {
+        resetIsServer()
+      }
     })
   })
 
