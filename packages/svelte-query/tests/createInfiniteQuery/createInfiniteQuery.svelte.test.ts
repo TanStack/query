@@ -201,4 +201,80 @@ describe('createInfiniteQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Local Error')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: (err: Error) => err.message === 'Local Error',
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Local Error',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw to the nearest svelte:boundary when throwOnError function returns false', async () => {
+    const key = queryKey()
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Local Error')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: (err: Error) => err.message !== 'Local Error',
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
+    expect(rendered.getByTestId('status')).toHaveTextContent('error')
+  })
+
+  it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
 })
