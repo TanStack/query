@@ -1,6 +1,8 @@
 ---
 id: useIsFetching
 title: useIsFetching
+redirect_from:
+  - framework/react/reference/useIsFetching
 ---
 
 ```ts

@@ -1,6 +1,8 @@
 ---
 id: ssr
 title: Server Rendering & Hydration
+redirect_from:
+  - framework/react/reference/hydration
 ---
 
 In this guide you'll learn how to use React Query with server rendering.

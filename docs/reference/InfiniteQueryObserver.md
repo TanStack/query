@@ -1,6 +1,8 @@
 ---
 id: InfiniteQueryObserver
 title: InfiniteQueryObserver
+redirect_from:
+  - framework/react/reference/InfiniteQueryObserver
 ---
 
 The `InfiniteQueryObserver` can be used to observe and switch between infinite queries.

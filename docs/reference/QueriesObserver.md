@@ -1,6 +1,8 @@
 ---
 id: QueriesObserver
 title: QueriesObserver
+redirect_from:
+  - framework/react/reference/QueriesObserver
 ---
 
 The `QueriesObserver` can be used to observe multiple queries.

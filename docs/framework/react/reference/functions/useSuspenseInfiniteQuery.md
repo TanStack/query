@@ -1,6 +1,8 @@
 ---
 id: useSuspenseInfiniteQuery
 title: useSuspenseInfiniteQuery
+redirect_from:
+  - framework/react/reference/useSuspenseInfiniteQuery
 ---
 
 ```ts

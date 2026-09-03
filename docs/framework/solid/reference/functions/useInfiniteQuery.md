@@ -1,6 +1,8 @@
 ---
 id: useInfiniteQuery
 title: useInfiniteQuery
+redirect_from:
+  - framework/solid/reference/useInfiniteQuery
 ---
 
 ## Call Signature

@@ -1,6 +1,8 @@
 ---
 id: mutationOptions
 title: mutationOptions
+redirect_from:
+  - framework/solid/reference/mutationOptions
 ---
 
 ## Call Signature

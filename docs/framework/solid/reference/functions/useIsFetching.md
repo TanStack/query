@@ -1,6 +1,8 @@
 ---
 id: useIsFetching
 title: useIsFetching
+redirect_from:
+  - framework/solid/reference/useIsFetching
 ---
 
 ```ts

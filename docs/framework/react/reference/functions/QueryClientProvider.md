@@ -1,6 +1,8 @@
 ---
 id: QueryClientProvider
 title: QueryClientProvider
+redirect_from:
+  - framework/react/reference/QueryClientProvider
 ---
 
 ```ts

@@ -1,6 +1,8 @@
 ---
 id: useQuery
 title: useQuery
+redirect_from:
+  - framework/solid/reference/useQuery
 ---
 
 ## Call Signature
