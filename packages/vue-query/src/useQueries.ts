@@ -245,6 +245,9 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
  *
+ * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
+ * previously rendered queries, because the number of queries can differ between renders.
+ *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the combined result. Without `combine`, this is an array with all the query results, in

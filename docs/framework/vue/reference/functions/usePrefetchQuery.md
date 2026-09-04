@@ -7,7 +7,7 @@ title: usePrefetchQuery
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
 ```
 
-Defined in: [vue-query/src/usePrefetchQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L83)
+Defined in: [vue-query/src/usePrefetchQuery.ts:86](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L86)
 
 `usePrefetchQuery` does not return anything — it fires a prefetch as a reactive side effect, useful for
 kicking off a fetch ahead of the component that will actually render the data with `useQuery`. You can pass
@@ -17,6 +17,9 @@ required, and `queryFn` is required unless a default query function has been def
 The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
 over from a previous attempt — so it won't refetch data that's already there or already in flight. It
 re-runs whenever a reactive dependency in `options` (built with `queryOptions`, for example) changes.
+
+Fire this during render, before a suspense boundary that wraps a component using `useQuery`'s `suspense()`
+— see the [Suspense guide](https://tanstack.com/query/latest/docs/framework/vue/guides/suspense).
 
 ## Type Parameters
 
