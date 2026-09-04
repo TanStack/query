@@ -263,7 +263,7 @@ describe('createRetryer', () => {
       canRun: () => true,
     })
 
-    const promise = retryer.start()
+    void retryer.start()
     await vi.advanceTimersByTimeAsync(5_000)
 
     expect(fn).toHaveBeenCalledTimes(1)
