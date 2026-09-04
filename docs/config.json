@@ -1290,6 +1290,58 @@
               "to": "framework/vue/reference/index"
             },
             {
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/vue/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/vue/reference/functions/mutationOptions"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/vue/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / useInfiniteQuery",
+              "to": "framework/vue/reference/functions/useInfiniteQuery"
+            },
+            {
+              "label": "Functions / useIsFetching",
+              "to": "framework/vue/reference/functions/useIsFetching"
+            },
+            {
+              "label": "Functions / useIsMutating",
+              "to": "framework/vue/reference/functions/useIsMutating"
+            },
+            {
+              "label": "Functions / useMutation",
+              "to": "framework/vue/reference/functions/useMutation"
+            },
+            {
+              "label": "Functions / useMutationState",
+              "to": "framework/vue/reference/functions/useMutationState"
+            },
+            {
+              "label": "Functions / usePrefetchInfiniteQuery",
+              "to": "framework/vue/reference/functions/usePrefetchInfiniteQuery"
+            },
+            {
+              "label": "Functions / usePrefetchQuery",
+              "to": "framework/vue/reference/functions/usePrefetchQuery"
+            },
+            {
+              "label": "Functions / useQueries",
+              "to": "framework/vue/reference/functions/useQueries"
+            },
+            {
+              "label": "Functions / useQuery",
+              "to": "framework/vue/reference/functions/useQuery"
+            },
+            {
+              "label": "Functions / useQueryClient",
+              "to": "framework/vue/reference/functions/useQueryClient"
+            },
+            {
               "label": "Classes / MutationCache",
               "to": "framework/vue/reference/classes/MutationCache"
             },
@@ -1396,58 +1448,6 @@
             {
               "label": "Variables / VueQueryPlugin",
               "to": "framework/vue/reference/variables/VueQueryPlugin"
-            },
-            {
-              "label": "Functions / infiniteQueryOptions",
-              "to": "framework/vue/reference/functions/infiniteQueryOptions"
-            },
-            {
-              "label": "Functions / mutationOptions",
-              "to": "framework/vue/reference/functions/mutationOptions"
-            },
-            {
-              "label": "Functions / queryOptions",
-              "to": "framework/vue/reference/functions/queryOptions"
-            },
-            {
-              "label": "Functions / useInfiniteQuery",
-              "to": "framework/vue/reference/functions/useInfiniteQuery"
-            },
-            {
-              "label": "Functions / useIsFetching",
-              "to": "framework/vue/reference/functions/useIsFetching"
-            },
-            {
-              "label": "Functions / useIsMutating",
-              "to": "framework/vue/reference/functions/useIsMutating"
-            },
-            {
-              "label": "Functions / useMutation",
-              "to": "framework/vue/reference/functions/useMutation"
-            },
-            {
-              "label": "Functions / useMutationState",
-              "to": "framework/vue/reference/functions/useMutationState"
-            },
-            {
-              "label": "Functions / usePrefetchInfiniteQuery",
-              "to": "framework/vue/reference/functions/usePrefetchInfiniteQuery"
-            },
-            {
-              "label": "Functions / usePrefetchQuery",
-              "to": "framework/vue/reference/functions/usePrefetchQuery"
-            },
-            {
-              "label": "Functions / useQueries",
-              "to": "framework/vue/reference/functions/useQueries"
-            },
-            {
-              "label": "Functions / useQuery",
-              "to": "framework/vue/reference/functions/useQuery"
-            },
-            {
-              "label": "Functions / useQueryClient",
-              "to": "framework/vue/reference/functions/useQueryClient"
             }
           ]
         },
