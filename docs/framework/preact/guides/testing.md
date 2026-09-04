@@ -41,3 +41,8 @@ Here we are making use of `waitFor` and waiting until the query status indicates
 [//]: # 'NoteWaitFor1'
 [//]: # 'NoteWaitFor2'
 [//]: # 'NoteWaitFor2'
+[//]: # 'FurtherReading'
+
+For additional tips and an alternative setup using `mock-service-worker`, have a look at [TkDodo's article on testing](https://tkdodo.eu/blog/testing-react%2Dquery). It's written for a different framework adapter, but the same approach applies here.
+
+[//]: # 'FurtherReading'
