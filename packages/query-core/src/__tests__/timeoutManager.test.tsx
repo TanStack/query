@@ -57,6 +57,50 @@ describe('timeoutManager', () => {
       expect(clearIntervalSpy).toHaveBeenCalledWith(400)
     })
 
+    describe('timer behavior', () => {
+      beforeEach(() => {
+        vi.useFakeTimers()
+      })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('should invoke the callback after the given delay', async () => {
+        const callback = vi.fn()
+        manager.setTimeout(callback, 100)
+
+        await vi.advanceTimersByTimeAsync(99)
+        expect(callback).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(1)
+        expect(callback).toHaveBeenCalledTimes(1)
+      })
+
+      it('should not invoke the callback after clearTimeout', async () => {
+        const callback = vi.fn()
+        const timeoutId = manager.setTimeout(callback, 100)
+
+        manager.clearTimeout(timeoutId)
+        await vi.advanceTimersByTimeAsync(1000)
+
+        expect(callback).not.toHaveBeenCalled()
+      })
+
+      it('should invoke interval callbacks repeatedly until clearInterval', async () => {
+        const callback = vi.fn()
+        const intervalId = manager.setInterval(callback, 100)
+
+        await vi.advanceTimersByTimeAsync(350)
+        expect(callback).toHaveBeenCalledTimes(3)
+
+        manager.clearInterval(intervalId)
+        await vi.advanceTimersByTimeAsync(300)
+
+        expect(callback).toHaveBeenCalledTimes(3)
+      })
+    })
+
     describe('setTimeoutProvider', () => {
       it('proxies calls to the configured timeout provider', () => {
         const customProvider = createMockProvider()
@@ -102,6 +146,93 @@ describe('timeoutManager', () => {
         manager.setTimeoutProvider(customProvider3)
         expect(consoleErrorSpy).not.toHaveBeenCalled()
       })
+
+      it('warns when switching providers after an setInterval call', () => {
+        const customProvider = createMockProvider('custom')
+        manager.setTimeoutProvider(customProvider)
+        manager.setInterval(vi.fn(), 100)
+
+        const customProvider2 = createMockProvider('custom2')
+        manager.setTimeoutProvider(customProvider2)
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect.stringMatching(
+            /\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/,
+          ),
+          { previous: customProvider, provider: customProvider2 },
+        )
+      })
+
+      it('does not warn when re-setting the same provider after calls', () => {
+        const customProvider = createMockProvider()
+        manager.setTimeoutProvider(customProvider)
+        manager.setTimeout(vi.fn(), 100)
+
+        manager.setTimeoutProvider(customProvider)
+
+        expect(consoleErrorSpy).not.toHaveBeenCalled()
+      })
+
+      it('does not warn when only clear functions were called before switching', () => {
+        const customProvider = createMockProvider('custom')
+        manager.setTimeoutProvider(customProvider)
+        manager.clearTimeout(1)
+        manager.clearInterval(2)
+
+        const customProvider2 = createMockProvider('custom2')
+        manager.setTimeoutProvider(customProvider2)
+
+        expect(consoleErrorSpy).not.toHaveBeenCalled()
+      })
+
+      it('does not warn when switching providers after calls in production', () => {
+        try {
+          vi.stubEnv('NODE_ENV', 'production')
+
+          const customProvider = createMockProvider('custom')
+          manager.setTimeoutProvider(customProvider)
+          manager.setTimeout(vi.fn(), 100)
+
+          const customProvider2 = createMockProvider('custom2')
+          manager.setTimeoutProvider(customProvider2)
+
+          expect(consoleErrorSpy).not.toHaveBeenCalled()
+        } finally {
+          vi.unstubAllEnvs()
+        }
+      })
+
+      it('passes non-number timer ids through to the provider untouched', () => {
+        const customProvider = createMockProvider()
+        const objectTimerId = { [Symbol.toPrimitive]: () => 123 }
+        customProvider.setTimeout.mockReturnValueOnce(objectTimerId)
+        manager.setTimeoutProvider(customProvider)
+
+        const timeoutId = manager.setTimeout(vi.fn(), 100)
+        expect(timeoutId).toBe(objectTimerId)
+
+        manager.clearTimeout(timeoutId)
+        expect(customProvider.clearTimeout).toHaveBeenCalledWith(objectTimerId)
+      })
+
+      it('forwards undefined timer ids to the clear functions as a no-op', () => {
+        const customProvider = createMockProvider()
+        manager.setTimeoutProvider(customProvider)
+
+        expect(() => manager.clearTimeout(undefined)).not.toThrow()
+        expect(customProvider.clearTimeout).toHaveBeenCalledWith(undefined)
+
+        expect(() => manager.clearInterval(undefined)).not.toThrow()
+        expect(customProvider.clearInterval).toHaveBeenCalledWith(undefined)
+      })
+
+      it('returns the timer ids produced by the provider', () => {
+        const customProvider = createMockProvider()
+        manager.setTimeoutProvider(customProvider)
+
+        expect(manager.setTimeout(vi.fn(), 100)).toBe(123)
+        expect(manager.setInterval(vi.fn(), 100)).toBe(456)
+      })
     })
   })
 
@@ -130,6 +261,31 @@ describe('timeoutManager', () => {
 
         expect(spy).toHaveBeenCalledWith(callback, 0)
         clearTimeout(spy.mock.results[0]?.value)
+      })
+
+      it('should not be mediated by the timeoutManager provider', () => {
+        const spy = vi.spyOn(globalThis, 'setTimeout')
+
+        const callback = vi.fn()
+        systemSetTimeoutZero(callback)
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(provider.setTimeout).not.toHaveBeenCalled()
+        clearTimeout(spy.mock.results[0]?.value)
+      })
+
+      it('should invoke the callback on the next event loop tick', async () => {
+        vi.useFakeTimers()
+        try {
+          const callback = vi.fn()
+          systemSetTimeoutZero(callback)
+          expect(callback).not.toHaveBeenCalled()
+
+          await vi.advanceTimersByTimeAsync(0)
+          expect(callback).toHaveBeenCalledTimes(1)
+        } finally {
+          vi.useRealTimers()
+        }
       })
     })
   })
