@@ -11,7 +11,7 @@ redirect_from:
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [queryOptions.ts:90](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L90)
+Defined in: [queryOptions.ts:89](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L89)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -53,8 +53,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 ### See
 
- - [useQuery](useQuery.md) to run a query with these options.
- - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+[useQuery](useQuery.md) to run a query with these options.
 
 ### Example
 
@@ -90,7 +89,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [queryOptions.ts:141](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L141)
+Defined in: [queryOptions.ts:139](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L139)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -130,8 +129,7 @@ The same options object, typed so that `queryKey` carries the inferred data type
 
 ### See
 
- - [useQuery](useQuery.md) to run a query with these options.
- - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+[useQuery](useQuery.md) to run a query with these options.
 
 ### Example
 
