@@ -1,6 +1,8 @@
 ---
 id: useQueries
 title: useQueries
+redirect_from:
+  - framework/react/reference/useQueries
 ---
 
 ```ts

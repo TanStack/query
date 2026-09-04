@@ -1,6 +1,8 @@
 ---
 id: QueryErrorResetBoundary
 title: QueryErrorResetBoundary
+redirect_from:
+  - framework/react/reference/QueryErrorResetBoundary
 ---
 
 ```ts

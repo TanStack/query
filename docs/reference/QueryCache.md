@@ -1,6 +1,8 @@
 ---
 id: QueryCache
 title: QueryCache
+redirect_from:
+  - framework/react/reference/QueryCache
 ---
 
 The `QueryCache` is the storage mechanism for TanStack Query. It stores all the data, meta information and state of queries it contains.

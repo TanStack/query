@@ -1,6 +1,8 @@
 ---
 id: useQuery
 title: useQuery
+redirect_from:
+  - framework/react/reference/useQuery
 ---
 
 ## Call Signature

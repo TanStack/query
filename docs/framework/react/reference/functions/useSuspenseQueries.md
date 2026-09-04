@@ -1,6 +1,8 @@
 ---
 id: useSuspenseQueries
 title: useSuspenseQueries
+redirect_from:
+  - framework/react/reference/useSuspenseQueries
 ---
 
 ## Call Signature

@@ -1,6 +1,8 @@
 ---
 id: useMutation
 title: useMutation
+redirect_from:
+  - framework/solid/reference/useMutation
 ---
 
 ```ts

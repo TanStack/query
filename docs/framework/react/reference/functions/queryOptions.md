@@ -1,6 +1,8 @@
 ---
 id: queryOptions
 title: queryOptions
+redirect_from:
+  - framework/react/reference/queryOptions
 ---
 
 ## Call Signature

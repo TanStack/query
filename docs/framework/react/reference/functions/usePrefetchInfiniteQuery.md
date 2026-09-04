@@ -1,6 +1,8 @@
 ---
 id: usePrefetchInfiniteQuery
 title: usePrefetchInfiniteQuery
+redirect_from:
+  - framework/react/reference/usePrefetchInfiniteQuery
 ---
 
 ```ts

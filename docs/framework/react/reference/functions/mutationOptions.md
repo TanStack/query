@@ -1,6 +1,8 @@
 ---
 id: mutationOptions
 title: mutationOptions
+redirect_from:
+  - framework/react/reference/mutationOptions
 ---
 
 ## Call Signature

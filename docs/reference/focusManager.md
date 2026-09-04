@@ -1,6 +1,8 @@
 ---
 id: FocusManager
 title: FocusManager
+redirect_from:
+  - framework/react/reference/focusManager
 ---
 
 The `FocusManager` manages the focus state within TanStack Query.
