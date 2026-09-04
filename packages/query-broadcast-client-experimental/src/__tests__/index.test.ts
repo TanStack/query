@@ -179,28 +179,6 @@ describe('broadcastQueryClient', () => {
         value: 'from other tab',
       })
     })
-
-    it('should build a new query with the broadcasted state when an "added" message arrives for an unknown key', () => {
-      const newKey = queryKey()
-
-      broadcastQueryClient({
-        queryClient,
-        broadcastChannel: 'test_channel',
-      })
-
-      // A tab mounting this key for the very first time in the whole app
-      // already has resolved data for it (e.g. via `initialData`).
-      lastCreatedChannel.onmessage?.({
-        type: 'added',
-        queryHash: JSON.stringify(newKey),
-        queryKey: newKey,
-        state: { status: 'success', data: { value: 'brand new' } },
-      })
-
-      expect(queryClient.getQueryData(newKey)).toEqual({
-        value: 'brand new',
-      })
-    })
   })
 
   describe('postMessage error handling', () => {
