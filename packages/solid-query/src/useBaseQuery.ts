@@ -212,6 +212,18 @@ export function useBaseQueryLayer<
   let observerSub: (() => void) | null = null
   let cacheSub: (() => void) | null = null
   let disposed = false
+  let pulledQueryBeforeAttach: Query<
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey
+  > | null = null
+  /**
+   * A cached mount can start a refetch while a conditional subtree is still
+   * creating its effects. Defer only that attach until the subtree is ready,
+   * while exposing the observer's optimistic fetch status synchronously.
+   */
+  let deferredMountFetchStatus: MetaState['fetchStatus'] | null = null
   /** Set once the mount flow decides the observer should be live — a client
    * swap re-attaches the rebuilt observer iff its predecessor was attached. */
   let shouldAttach = false
@@ -370,7 +382,29 @@ export function useBaseQueryLayer<
       createRenderEffect(
         () => isRestoring(),
         (restoring) => {
-          if (!restoring) attach()
+          if (!restoring) {
+            const currentQuery = observer.getCurrentQuery()
+            if (pulledQueryBeforeAttach === currentQuery) {
+              attach()
+              return
+            }
+            const state = currentQuery.state
+            const optimisticFetchStatus = observer.getOptimisticResult(
+              untrack(defaultedOptions),
+            ).fetchStatus
+            if (
+              state.data !== undefined &&
+              optimisticFetchStatus !== state.fetchStatus
+            ) {
+              deferredMountFetchStatus = optimisticFetchStatus
+              queueMicrotask(() => {
+                deferredMountFetchStatus = null
+                attach()
+              })
+            } else {
+              attach()
+            }
+          }
         },
       )
     }
@@ -580,6 +614,7 @@ export function useBaseQueryLayer<
        * sees the identical options object — a no-op diff.
        */
       if (!isServer) observer.setOptions(opts as any)
+      if (!observerSub) pulledQueryBeforeAttach = q
       return chainOnce(q.fetch(opts as any), select, wrap)
     }
     /**
@@ -662,11 +697,20 @@ export function useBaseQueryLayer<
    * the client must have a server counterpart (and vice versa) or every id
    * downstream shifts and hydration key-misses the whole subtree.
    */
+  const projectedMeta = (state: QueryState<TQueryData, TError>) => {
+    if (deferredMountFetchStatus !== null && state.data !== undefined) {
+      return {
+        ...metaFrom(state),
+        fetchStatus: deferredMountFetchStatus,
+      }
+    }
+    return metaFrom(state)
+  }
   const metaProjection = createProjection<MetaState>(
     (draft) => {
-      Object.assign(draft, metaFrom(query().state))
+      Object.assign(draft, projectedMeta(query().state))
     },
-    untrack(() => metaFrom(lookupQuery().state)),
+    untrack(() => projectedMeta(lookupQuery().state)),
   )
   const meta = isServer
     ? new Proxy({} as MetaState, {
