@@ -180,4 +180,8 @@ _Note_: when using React 18, the semantics of `waitFor` have changed as noted ab
 
 ## Further reading
 
+[//]: # 'FurtherReading'
+
 For additional tips and an alternative setup using `mock-service-worker`, have a look at [this article by TkDodo on Testing React Query](https://tkdodo.eu/blog/testing-react-query).
+
+[//]: # 'FurtherReading'
