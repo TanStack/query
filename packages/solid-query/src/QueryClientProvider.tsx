@@ -1,4 +1,5 @@
 import { createContext, onCleanup, sharedConfig, useContext } from 'solid-js'
+import { REVALIDATE_HEADER } from '@solidjs/web'
 import { hydrate } from '@tanstack/query-core'
 import { subscribeFlightData } from '@solidjs/web/server-functions'
 import type { DehydratedState, Query } from '@tanstack/query-core'
@@ -35,8 +36,52 @@ export const HYDRATION_KEY_PREFIX = 'sq:'
  * The slice's payload is a `DehydratedState`; the provider consumes it
  * with `hydrate()`, so every mounted query on those keys updates before
  * the mutation's promise resolves — no follow-up refetches.
+ *
+ * A mutation can additionally declare its invalidation SCOPE with
+ * `X-Revalidate` keys (the `revalidate` option of Solid's `reload`/
+ * `redirect` response helpers). The payload covers the slice of that scope
+ * the server could recompute; whatever a declared key matches beyond it is
+ * swept client-side (see the consumer below). For the sweep to be
+ * delivered, the collector must contribute a slice — return the dehydrated
+ * state even when it holds no queries if `outcome.revalidateKeys` is
+ * present, rather than skipping the source.
  */
 export const FLIGHT_DATA_SOURCE = 'sq'
+
+/**
+ * The client half of key-scoped invalidation. A mutation declares its
+ * invalidation scope with `X-Revalidate` keys; the flight payload covers
+ * the part of that scope the server's collector recomputed (typically the
+ * target page's loader graph). Whatever a declared key matches BEYOND the
+ * payload — parameterized instances only this client holds, queries no
+ * loader owns — is invalidated here: active queries refetch in the
+ * background, inactive ones are marked stale for their next mount. This
+ * mirrors how Solid Router consumes the same header for its own cache.
+ *
+ * A key matches by queryKey prefix — `revalidate: 'users'` sweeps every
+ * query whose key begins with `'users'`. Payload-covered hashes are exempt:
+ * they hydrated with fresh data a moment ago, and refetching them would
+ * spend the round trip single flight just saved.
+ */
+function sweepRevalidatedQueries(
+  client: QueryClient,
+  payload: DehydratedState,
+  response: Response,
+): void {
+  const keys = response.headers.get(REVALIDATE_HEADER)?.split(',')
+  if (!keys) return
+  const covered = new Set(payload.queries.map((query) => query.queryHash))
+  for (const key of keys) {
+    client
+      .invalidateQueries({
+        queryKey: [key],
+        predicate: (query) => !covered.has(query.queryHash),
+      })
+      // Background refetch failures surface through the queries' own error
+      // states; an unhandled rejection here would fail the mutation instead.
+      .catch(() => undefined)
+  }
+}
 
 export const QueryClientContext = createContext<(() => QueryClient) | null>(
   null,
@@ -160,9 +205,16 @@ export const QueryClientProvider = (
     // Client-only: the server's consumer registry is module state shared
     // across requests — registering there would leak between them.
     onCleanup(
-      subscribeFlightData<DehydratedState>(FLIGHT_DATA_SOURCE, (data) => {
-        hydrate(props.client, data)
-      }),
+      subscribeFlightData<DehydratedState>(
+        FLIGHT_DATA_SOURCE,
+        (data, context) => {
+          hydrate(props.client, data)
+          // Fresh data first, then the declared-scope sweep: stale marks
+          // land synchronously, refetches run in the background — the
+          // mutation's promise never waits on them.
+          sweepRevalidatedQueries(props.client, data, context.response)
+        },
+      ),
     )
   }
 
