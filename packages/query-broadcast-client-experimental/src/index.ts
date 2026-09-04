@@ -175,7 +175,9 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
-          query.setState(state)
+          if (query.state.data === undefined) {
+            query.setState(state)
+          }
           return
         }
         queryCache.build(

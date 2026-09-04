@@ -122,6 +122,85 @@ describe('broadcastQueryClient', () => {
 
       expect(mockPostMessage).toHaveBeenCalled()
     })
+
+    it('should not overwrite an existing query with data when an "added" message arrives for it', () => {
+      const existingKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // A query that already resolved in this tab (e.g. it fetched before
+      // another tab mounted the same key).
+      queryClient.setQueryData(existingKey, { value: 'resolved' })
+      const existingQuery = queryCache.find({ queryKey: existingKey })!
+
+      // Another tab just mounted the same key for the first time, so its
+      // `build()` broadcasts an `added` message with a pending state and
+      // no data.
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: { status: 'pending', data: undefined },
+      })
+
+      expect(queryClient.getQueryData(existingKey)).toEqual({
+        value: 'resolved',
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
+    })
+
+    it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
+      const existingKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // This tab has already built the query (e.g. an observer mounted it)
+      // but hasn't fetched it yet.
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+
+      // Another tab already had this key resolved (e.g. via `initialData`)
+      // when it mounted, so its `added` message carries real data.
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: { status: 'success', data: { value: 'from other tab' } },
+      })
+
+      expect(queryClient.getQueryData(existingKey)).toEqual({
+        value: 'from other tab',
+      })
+    })
+
+    it('should build a new query with the broadcasted state when an "added" message arrives for an unknown key', () => {
+      const newKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // A tab mounting this key for the very first time in the whole app
+      // already has resolved data for it (e.g. via `initialData`).
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: JSON.stringify(newKey),
+        queryKey: newKey,
+        state: { status: 'success', data: { value: 'brand new' } },
+      })
+
+      expect(queryClient.getQueryData(newKey)).toEqual({
+        value: 'brand new',
+      })
+    })
   })
 
   describe('postMessage error handling', () => {
