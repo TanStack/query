@@ -77,7 +77,7 @@ const App = () => (
         fallbackRender={({ resetErrorBoundary }) => (
           <div>
             There was an error!
-            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+            <button onClick={() => resetErrorBoundary()}>Try again</button>
           </div>
         )}
       >
@@ -106,7 +106,7 @@ const App = () => {
       fallbackRender={({ resetErrorBoundary }) => (
         <div>
           There was an error!
-          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          <button onClick={() => resetErrorBoundary()}>Try again</button>
         </div>
       )}
     >
