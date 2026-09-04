@@ -110,6 +110,7 @@ export type DefinedInitialDataOptions<
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -155,6 +156,7 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -195,6 +197,7 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.

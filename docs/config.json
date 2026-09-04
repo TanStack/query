@@ -953,6 +953,14 @@
               "to": "framework/preact/guides/default-query-function"
             },
             {
+              "label": "Suspense",
+              "to": "framework/preact/guides/suspense"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/preact/guides/testing"
+            },
+            {
               "label": "Does this replace [Redux, MobX, etc]?",
               "to": "framework/preact/guides/does-this-replace-client-state"
             }
@@ -1355,36 +1363,20 @@
               "to": "framework/solid/reference/functions/useQuery"
             },
             {
-              "label": "Functions / queryOptions",
-              "to": "framework/solid/reference/functions/queryOptions"
-            },
-            {
-              "label": "Functions / QueryClientProvider",
-              "to": "framework/solid/reference/functions/QueryClientProvider"
-            },
-            {
-              "label": "Functions / useQueryClient",
-              "to": "framework/solid/reference/functions/useQueryClient"
-            },
-            {
-              "label": "Functions / useIsFetching",
-              "to": "framework/solid/reference/functions/useIsFetching"
+              "label": "Functions / useQueries",
+              "to": "framework/solid/reference/functions/useQueries"
             },
             {
               "label": "Functions / useInfiniteQuery",
               "to": "framework/solid/reference/functions/useInfiniteQuery"
             },
             {
-              "label": "Functions / infiniteQueryOptions",
-              "to": "framework/solid/reference/functions/infiniteQueryOptions"
-            },
-            {
               "label": "Functions / useMutation",
               "to": "framework/solid/reference/functions/useMutation"
             },
             {
-              "label": "Functions / mutationOptions",
-              "to": "framework/solid/reference/functions/mutationOptions"
+              "label": "Functions / useIsFetching",
+              "to": "framework/solid/reference/functions/useIsFetching"
             },
             {
               "label": "Functions / useIsMutating",
@@ -1395,8 +1387,24 @@
               "to": "framework/solid/reference/functions/useMutationState"
             },
             {
-              "label": "Functions / useQueries",
-              "to": "framework/solid/reference/functions/useQueries"
+              "label": "Functions / QueryClientProvider",
+              "to": "framework/solid/reference/functions/QueryClientProvider"
+            },
+            {
+              "label": "Functions / useQueryClient",
+              "to": "framework/solid/reference/functions/useQueryClient"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/solid/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/solid/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/solid/reference/functions/mutationOptions"
             },
             {
               "label": "Functions / useIsRestoring",
