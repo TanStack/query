@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.3
+
+### Patch Changes
+
+- [#11394](https://github.com/TanStack/query/pull/11394) [`f41ac71`](https://github.com/TanStack/query/commit/f41ac714d0e70d3e68c6ef568cc1728ef6006147) - Sweep `X-Revalidate` keys in the single-flight consumer. A mutation can declare its invalidation scope with Solid's `reload`/`redirect` `revalidate` option; the flight payload covers what the server recomputed, and whatever a declared key matches beyond it (parameterized instances only the client holds, queries no loader owns) is now invalidated client-side — active queries refetch in the background, inactive ones are marked stale. Keys match by queryKey prefix, mirroring Solid Router's consumption of the same header.
+
 ## 6.0.0-rc.2
 
 ### Minor Changes

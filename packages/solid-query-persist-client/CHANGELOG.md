@@ -1,5 +1,12 @@
 # @tanstack/solid-query-persist-client
 
+## 6.0.0-rc.3
+
+### Patch Changes
+
+- Updated dependencies [[`f41ac71`](https://github.com/TanStack/query/commit/f41ac714d0e70d3e68c6ef568cc1728ef6006147)]:
+  - @tanstack/solid-query@6.0.0-rc.3
+
 ## 6.0.0-rc.2
 
 ### Patch Changes

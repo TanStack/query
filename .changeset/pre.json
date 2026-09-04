@@ -33,6 +33,7 @@
     "dehydrate-settled",
     "fifty-spoons-draw",
     "flight-data-source",
+    "flight-revalidate-sweep",
     "free-cities-hunt",
     "legal-signs-call",
     "mutation-flight-scoped-subscription",
