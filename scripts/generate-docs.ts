@@ -235,6 +235,31 @@ const packages: Array<PackageReferenceDocsConfig> = [
     tsconfig: resolve(__dirname, '../packages/vue-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/vue/reference'),
     exclude: ['./packages/query-core/**/*'],
+    redirectFrom: {
+      'functions/infiniteQueryOptions': [
+        'framework/vue/reference/infiniteQueryOptions',
+      ],
+      'functions/mutationOptions': ['framework/vue/reference/mutationOptions'],
+      'functions/queryOptions': ['framework/vue/reference/queryOptions'],
+      'functions/useInfiniteQuery': [
+        'framework/vue/reference/useInfiniteQuery',
+      ],
+      'functions/useIsFetching': ['framework/vue/reference/useIsFetching'],
+      'functions/useIsMutating': ['framework/vue/reference/useIsMutating'],
+      'functions/useMutation': ['framework/vue/reference/useMutation'],
+      'functions/useMutationState': [
+        'framework/vue/reference/useMutationState',
+      ],
+      'functions/usePrefetchInfiniteQuery': [
+        'framework/vue/reference/usePrefetchInfiniteQuery',
+      ],
+      'functions/usePrefetchQuery': [
+        'framework/vue/reference/usePrefetchQuery',
+      ],
+      'functions/useQueries': ['framework/vue/reference/useQueries'],
+      'functions/useQuery': ['framework/vue/reference/useQuery'],
+      'functions/useQueryClient': ['framework/vue/reference/useQueryClient'],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],
