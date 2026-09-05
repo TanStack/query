@@ -11,9 +11,9 @@ import type {
 
 /**
  * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
- * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` tracks
- * a `ref` for the array itself, or a `ref` nested inside one of its entries — its individual entries can't be
- * reactive getters. Other options passed this way are read once and are not reactive.
+ * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
+ * through a `ref` for the array itself, or `ref`s and reactive getters as individual entries — the array
+ * itself can't be a bare getter. Other options passed this way are read once and are not reactive.
  *
  * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
  * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own

@@ -102,8 +102,8 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
- * entries — its individual entries can't be reactive getters. Other options are read once and are not
+ * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
+ * individual entries — the array itself can't be a bare getter. Other options are read once and are not
  * reactive.
  *
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
@@ -147,8 +147,8 @@ export function useQuery<
 
 /**
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
- * entries — its individual entries can't be reactive getters. Other options are read once and are not
+ * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
+ * individual entries — the array itself can't be a bare getter. Other options are read once and are not
  * reactive.
  *
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
@@ -292,8 +292,8 @@ export function useQuery<
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
- * entries — its individual entries can't be reactive getters.
+ * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
+ * individual entries — the array itself can't be a bare getter.
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
