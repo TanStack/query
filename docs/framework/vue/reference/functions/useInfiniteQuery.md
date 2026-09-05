@@ -106,7 +106,7 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:194](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L194)
+Defined in: [vue-query/src/useInfiniteQuery.ts:248](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L248)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -167,7 +167,7 @@ Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere
 refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
 actions, or add conditions like `hasNextPage && !isFetching`.
 
-### Example
+### Examples
 
 Fetching the next page from a "Load More" button click:
 ```vue
@@ -207,13 +207,66 @@ const {
 </template>
 ```
 
+Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
+sentinel element after the list:
+```vue
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useInfiniteQuery } from '@tanstack/vue-query'
+
+const {
+  data,
+  isPending,
+  isError,
+  error,
+  fetchNextPage,
+  hasNextPage,
+  isFetching,
+  isFetchingNextPage,
+} = useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: ({ pageParam }) => fetchProjects(pageParam),
+  initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextId,
+})
+
+const sentinel = ref<HTMLElement>()
+let observer: IntersectionObserver | undefined
+
+watch(sentinel, (el) => {
+  observer?.disconnect()
+  if (el == null) return
+
+  observer = new IntersectionObserver(([entry]) => {
+    if (entry?.isIntersecting && hasNextPage.value && !isFetching.value) {
+      fetchNextPage()
+    }
+  })
+  observer.observe(el)
+})
+</script>
+
+<template>
+  <span v-if="isPending">Loading...</span>
+  <span v-else-if="isError">Error: {{ error.message }}</span>
+  <template v-else>
+    <ul>
+      <template v-for="page in data.pages" :key="page.nextId">
+        <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+      </template>
+    </ul>
+    <div ref="sentinel">{{ isFetchingNextPage ? 'Loading more...' : '' }}</div>
+  </template>
+</template>
+```
+
 ## Call Signature
 
 ```ts
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:252](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L252)
+Defined in: [vue-query/src/useInfiniteQuery.ts:340](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L340)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -267,7 +320,7 @@ will be used.
 The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
 `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`.
 
-### Example
+### Examples
 
 Passing a whole-options getter so `maxPages` reacts to a setting stored elsewhere, not just `queryKey`:
 ```vue
@@ -289,5 +342,38 @@ const { data } = useInfiniteQuery(() => ({
   <template v-for="page in data?.pages" :key="page.nextId">
     <li v-for="issue in page.issues" :key="issue.id">{{ issue.title }}</li>
   </template>
+</template>
+```
+
+A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
+setting `enabled: false`. This requires a whole-options getter: `queryFn` isn't itself reactive, so the
+getter is what re-evaluates it on every change to `props.postId`:
+```vue
+<script setup lang="ts">
+import { skipToken, useInfiniteQuery } from '@tanstack/vue-query'
+
+const props = defineProps<{ postId: string | undefined }>()
+
+// Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
+const { data, isLoading, isError, error } = useInfiniteQuery(() => ({
+  queryKey: ['post', props.postId, 'comments'],
+  queryFn:
+    props.postId != null
+      ? ({ pageParam }) => fetchComments(props.postId!, pageParam)
+      : skipToken,
+  initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextId,
+}))
+</script>
+
+<template>
+  <span v-if="props.postId == null">Select a post</span>
+  <span v-else-if="isLoading">Loading...</span>
+  <span v-else-if="isError">Error: {{ error.message }}</span>
+  <ul v-else>
+    <template v-for="page in data.pages" :key="page.nextId">
+      <li v-for="comment in page.comments" :key="comment.id">{{ comment.text }}</li>
+    </template>
+  </ul>
 </template>
 ```

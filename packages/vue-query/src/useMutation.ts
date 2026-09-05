@@ -130,6 +130,103 @@ export type UseMutationReturnType<
  *   </div>
  * </template>
  * ```
+ *
+ * @example
+ * Optimistic update via `onMutate`, rolling back on `onError`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ *
+ * const queryClient = useQueryClient()
+ *
+ * const addMutation = useMutation({
+ *   mutationFn: addTodo,
+ *   onMutate: async (newTodo: string) => {
+ *     await queryClient.cancelQueries({ queryKey: ['todos'] })
+ *     const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *
+ *     queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       ...(old ?? []),
+ *       newTodo,
+ *     ])
+ *
+ *     // Passed to `onError` as `onMutateResult` if the mutation fails.
+ *     return { previousTodos }
+ *   },
+ *   onError: (_err, _newTodo, onMutateResult) => {
+ *     queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *   },
+ *   onSettled: () => {
+ *     queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *   },
+ * })
+ * </script>
+ *
+ * <template>
+ *   <button @click="addMutation.mutate('Item')">Add</button>
+ * </template>
+ * ```
+ *
+ * @example
+ * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
+ * promise per call instead, so you can wait for all of them:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ *
+ * const queryClient = useQueryClient()
+ *
+ * const addMutation = useMutation({
+ *   mutationFn: addTodo,
+ *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ * })
+ *
+ * async function handleAddAll(todos: Array<string>) {
+ *   try {
+ *     await Promise.all(todos.map((todo) => addMutation.mutateAsync(todo)))
+ *   } catch (error) {
+ *     console.error('Failed to add todos:', error)
+ *   }
+ * }
+ * </script>
+ *
+ * <template>
+ *   <button @click="handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])">Add all</button>
+ * </template>
+ * ```
+ *
+ * @example
+ * If some of the mutations above can fail independently of the others, and you want to know which ones
+ * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
+ * `Promise.allSettled`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ *
+ * const queryClient = useQueryClient()
+ *
+ * const addMutation = useMutation({
+ *   mutationFn: addTodo,
+ *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ * })
+ *
+ * async function handleAddAll(todos: Array<string>) {
+ *   const addResults = await Promise.allSettled(
+ *     todos.map((todo) => addMutation.mutateAsync(todo)),
+ *   )
+ *
+ *   addResults.forEach((addResult, index) => {
+ *     if (addResult.status === 'rejected') {
+ *       console.error(`Failed to add "${todos[index]}":`, addResult.reason)
+ *     }
+ *   })
+ * }
+ * </script>
+ *
+ * <template>
+ *   <button @click="handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])">Add all</button>
+ * </template>
+ * ```
  */
 export function useMutation<
   TData = unknown,

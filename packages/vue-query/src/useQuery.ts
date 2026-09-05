@@ -175,6 +175,104 @@ export function useQuery<
  *   <h1 v-else>{{ data.title }}</h1>
  * </template>
  * ```
+ *
+ * @example
+ * `select` derives whatever `data` a component needs from the cached value, without changing what's
+ * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQuery } from '@tanstack/vue-query'
+ *
+ * const { data, isPending, isError, error } = useQuery({
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   select: (posts) => posts.length,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isPending">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <span v-else>{{ data }} posts</span>
+ * </template>
+ * ```
+ *
+ * @example
+ * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
+ * loading state doesn't show while the query is disabled:
+ * ```vue
+ * <script setup lang="ts">
+ * import { ref } from 'vue'
+ * import { useQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ postId: number | undefined }>()
+ *
+ * const { data, isLoading, isError, error } = useQuery({
+ *   queryKey: ['post', props.postId],
+ *   queryFn: () => fetchPost(props.postId!),
+ *   enabled: () => props.postId != null,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="props.postId == null">Select a post</span>
+ *   <span v-else-if="isLoading">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <h1 v-else>{{ data?.title }}</h1>
+ * </template>
+ * ```
+ *
+ * @example
+ * Seeding a detail query from an already-cached list, to skip the loading state:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQuery, useQueryClient } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ postId: number }>()
+ * const queryClient = useQueryClient()
+ *
+ * const { data, isError, error } = useQuery({
+ *   queryKey: ['post', props.postId],
+ *   queryFn: () => fetchPost(props.postId),
+ *   initialData: () =>
+ *     queryClient
+ *       .getQueryData<Array<Post>>(['posts'])
+ *       ?.find((post) => post.id === props.postId),
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isError">Error: {{ error.message }}</span>
+ *   <h1 v-else>{{ data?.title }}</h1>
+ * </template>
+ * ```
+ *
+ * @example
+ * Paginated data, keeping the previous page's data visible while the next page loads:
+ * ```vue
+ * <script setup lang="ts">
+ * import { ref } from 'vue'
+ * import { keepPreviousData, useQuery } from '@tanstack/vue-query'
+ *
+ * const page = ref(0)
+ *
+ * const { data, isPlaceholderData, isError, error } = useQuery({
+ *   queryKey: ['posts', page],
+ *   queryFn: () => fetchPosts(page.value),
+ *   placeholderData: keepPreviousData,
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isError">Error: {{ error.message }}</span>
+ *   <template v-else>
+ *     <ul>
+ *       <li v-for="post in data" :key="post.id">{{ post.title }}</li>
+ *     </ul>
+ *     <button :disabled="isPlaceholderData" @click="page++">Next Page</button>
+ *   </template>
+ * </template>
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,
@@ -219,6 +317,33 @@ export function useQuery<
  *
  * <template>
  *   <h1 v-if="data">{{ data.title }}</h1>
+ * </template>
+ * ```
+ *
+ * @example
+ * `skipToken` disables the query in a type safe way, without a non-null assertion on `props.postId` —
+ * `queryFn` is only ever called when it's defined. This requires a whole-options getter: `queryFn` is a
+ * single value, not `queryKey`/`enabled`, so it isn't itself reactive — the getter is what re-evaluates it
+ * on every change to `props.postId`. `refetch` doesn't work while `queryFn` is `skipToken` — use
+ * `enabled: false` instead if you need to trigger the query manually:
+ * ```vue
+ * <script setup lang="ts">
+ * import { skipToken, useQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ postId: number | undefined }>()
+ *
+ * const { data, isLoading, isError, error } = useQuery(() => ({
+ *   queryKey: ['post', props.postId],
+ *   queryFn:
+ *     props.postId != null ? () => fetchPost(props.postId!) : skipToken,
+ * }))
+ * </script>
+ *
+ * <template>
+ *   <span v-if="props.postId == null">Select a post</span>
+ *   <span v-else-if="isLoading">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <h1 v-else>{{ data?.title }}</h1>
  * </template>
  * ```
  */

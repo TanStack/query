@@ -190,6 +190,60 @@ export function useInfiniteQuery<
  *   </template>
  * </template>
  * ```
+ *
+ * @example
+ * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
+ * sentinel element after the list:
+ * ```vue
+ * <script setup lang="ts">
+ * import { ref, watch } from 'vue'
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const {
+ *   data,
+ *   isPending,
+ *   isError,
+ *   error,
+ *   fetchNextPage,
+ *   hasNextPage,
+ *   isFetching,
+ *   isFetchingNextPage,
+ * } = useInfiniteQuery({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ *
+ * const sentinel = ref<HTMLElement>()
+ * let observer: IntersectionObserver | undefined
+ *
+ * watch(sentinel, (el) => {
+ *   observer?.disconnect()
+ *   if (el == null) return
+ *
+ *   observer = new IntersectionObserver(([entry]) => {
+ *     if (entry?.isIntersecting && hasNextPage.value && !isFetching.value) {
+ *       fetchNextPage()
+ *     }
+ *   })
+ *   observer.observe(el)
+ * })
+ * </script>
+ *
+ * <template>
+ *   <span v-if="isPending">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <template v-else>
+ *     <ul>
+ *       <template v-for="page in data.pages" :key="page.nextId">
+ *         <li v-for="project in page.projects" :key="project.id">{{ project.name }}</li>
+ *       </template>
+ *     </ul>
+ *     <div ref="sentinel">{{ isFetchingNextPage ? 'Loading more...' : '' }}</div>
+ *   </template>
+ * </template>
+ * ```
  */
 export function useInfiniteQuery<
   TQueryFnData,
@@ -246,6 +300,40 @@ export function useInfiniteQuery<
  *   <template v-for="page in data?.pages" :key="page.nextId">
  *     <li v-for="issue in page.issues" :key="issue.id">{{ issue.title }}</li>
  *   </template>
+ * </template>
+ * ```
+ *
+ * @example
+ * A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
+ * setting `enabled: false`. This requires a whole-options getter: `queryFn` isn't itself reactive, so the
+ * getter is what re-evaluates it on every change to `props.postId`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { skipToken, useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ postId: string | undefined }>()
+ *
+ * // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
+ * const { data, isLoading, isError, error } = useInfiniteQuery(() => ({
+ *   queryKey: ['post', props.postId, 'comments'],
+ *   queryFn:
+ *     props.postId != null
+ *       ? ({ pageParam }) => fetchComments(props.postId!, pageParam)
+ *       : skipToken,
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * }))
+ * </script>
+ *
+ * <template>
+ *   <span v-if="props.postId == null">Select a post</span>
+ *   <span v-else-if="isLoading">Loading...</span>
+ *   <span v-else-if="isError">Error: {{ error.message }}</span>
+ *   <ul v-else>
+ *     <template v-for="page in data.pages" :key="page.nextId">
+ *       <li v-for="comment in page.comments" :key="comment.id">{{ comment.text }}</li>
+ *     </template>
+ *   </ul>
  * </template>
  * ```
  */
