@@ -25,11 +25,6 @@ type MutationStateOptions<TResult = MutationState> = {
   select?: (mutation: Mutation) => TResult
 }
 
-/**
- *
- * @param mutationCache
- * @param options
- */
 function getResult<TResult = MutationState>(
   mutationCache: MutationCache,
   options: MutationStateOptions<TResult>,
@@ -52,10 +47,61 @@ export interface InjectMutationStateOptions {
 }
 
 /**
- * Injects a signal that tracks the state of all mutations.
- * @param injectMutationStateFn - A function that returns mutation state options.
- * @param options - The Angular injector to use.
- * @returns The signal that tracks the state of all mutations.
+ * Injects a signal that gives you access to all mutations in the `MutationCache`. You can pass `filters`
+ * ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation state.
+ *
+ * @param injectMutationStateFn - A function returning the `filters` to narrow down matched mutations, and an
+ * optional `select` to transform the mutation state. Similar to `computed` from Angular, this function runs
+ * in the reactive context, so signals read inside it re-narrow the matched mutations.
+ * @param options - Additional configuration
+ * @returns A `Signal` with an Array of whatever `select` returns for each matching mutation.
+ *
+ * @example
+ * Get all variables of all running mutations:
+ * ```angular-ts
+ * @Component({
+ *   selector: 'pending-posts',
+ *   template: `{{ pendingVariables().length }} posts saving...`,
+ * })
+ * export class PendingPosts {
+ *   pendingVariables = injectMutationState(() => ({
+ *     filters: { status: 'pending' },
+ *     select: (mutation) => mutation.state.variables,
+ *   }))
+ * }
+ * ```
+ *
+ * @example
+ * Get all data for specific mutations via the `mutationKey`:
+ * ```angular-ts
+ * const mutationKey = ['posts']
+ *
+ * @Component({
+ *   selector: 'posts',
+ *   template: `
+ *     <button (click)="createPost()">
+ *       Create post ({{ savedPosts().length }} saved so far)
+ *     </button>
+ *   `,
+ * })
+ * export class Posts {
+ *   // Some mutation that we want to get the state for
+ *   createPostMutation = injectMutation(() => ({
+ *     mutationKey,
+ *     mutationFn: createPosts,
+ *   }))
+ *
+ *   savedPosts = injectMutationState(() => ({
+ *     // this mutation key needs to match the mutation key of the given mutation (see above)
+ *     filters: { mutationKey, status: 'success' },
+ *     select: (mutation) => mutation.state.data,
+ *   }))
+ *
+ *   createPost() {
+ *     this.createPostMutation.mutate(['New Post'])
+ *   }
+ * }
+ * ```
  */
 export function injectMutationState<TResult = MutationState>(
   injectMutationStateFn: () => MutationStateOptions<TResult> = () => ({}),
