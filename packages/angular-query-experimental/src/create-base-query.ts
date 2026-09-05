@@ -86,6 +86,18 @@ export function createBaseQuery<
     TError
   > | null>(null)
 
+  let pendingTaskRef: PendingTaskRef | null = null
+  // Fetches start synchronously but notifyManager delivers 'fetching' a schedule turn later;
+  // registering only in the subscriber leaves that turn uncovered and zoneless SSR can serialize
+  // mid-fetch. Register eagerly wherever a fetch may have started.
+  const trackFetch = (
+    observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  ) => {
+    if (observer.getCurrentResult().fetchStatus === 'fetching') {
+      pendingTaskRef ??= pendingTasks.add()
+    }
+  }
+
   effect(
     (onCleanup) => {
       const observer = observerSignal()
@@ -93,6 +105,7 @@ export function createBaseQuery<
 
       untracked(() => {
         observer.setOptions(defaultedOptions)
+        trackFetch(observer)
       })
       onCleanup(() => {
         ngZone.run(() => resultFromSubscriberSignal.set(null))
@@ -108,7 +121,6 @@ export function createBaseQuery<
   effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-    let pendingTaskRef: PendingTaskRef | null = null
 
     const unsubscribe = isRestoring()
       ? () => undefined
@@ -121,28 +133,41 @@ export function createBaseQuery<
                     pendingTaskRef = pendingTasks.add()
                   }
 
-                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
-                    pendingTaskRef()
-                    pendingTaskRef = null
+                  try {
+                    if (
+                      state.isError &&
+                      !state.isFetching &&
+                      shouldThrowError(observer.options.throwOnError, [
+                        state.error,
+                        observer.getCurrentQuery(),
+                      ])
+                    ) {
+                      ngZone.onError.emit(state.error)
+                      throw state.error
+                    }
+                    resultFromSubscriberSignal.set(state)
+                  } finally {
+                    // Release only after the signal write (`whenStable()` latches on a momentary
+                    // empty ledger), and only when the observer is CURRENTLY idle — an older queued
+                    // 'idle' snapshot must not release coverage for a newer in-flight refetch.
+                    if (
+                      state.fetchStatus === 'idle' &&
+                      pendingTaskRef &&
+                      observer.getCurrentResult().fetchStatus === 'idle'
+                    ) {
+                      pendingTaskRef()
+                      pendingTaskRef = null
+                    }
                   }
-
-                  if (
-                    state.isError &&
-                    !state.isFetching &&
-                    shouldThrowError(observer.options.throwOnError, [
-                      state.error,
-                      observer.getCurrentQuery(),
-                    ])
-                  ) {
-                    ngZone.onError.emit(state.error)
-                    throw state.error
-                  }
-                  resultFromSubscriberSignal.set(state)
                 })
               }),
             )
           }),
         )
+
+    if (!isRestoring()) {
+      untracked(() => trackFetch(observer))
+    }
 
     onCleanup(() => {
       if (pendingTaskRef) {
@@ -167,7 +192,9 @@ export function createBaseQuery<
         ...result,
         refetch: ((...args: Parameters<typeof originalRefetch>) => {
           observer.setOptions(defaultedOptionsSignal())
-          return originalRefetch(...args)
+          const refetchResult = originalRefetch(...args)
+          trackFetch(observer)
+          return refetchResult
         }) as typeof originalRefetch,
       }
     }),

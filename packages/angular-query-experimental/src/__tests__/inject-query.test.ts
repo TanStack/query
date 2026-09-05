@@ -772,6 +772,10 @@ describe('injectQuery', () => {
       // Synchronize pending effects
       TestBed.tick()
 
+      // The in-flight fetch now holds a pending task, so stability requires the
+      // notification turn and the change detection it schedules to run first
+      await vi.advanceTimersByTimeAsync(0)
+      TestBed.tick()
       const stablePromise = app.whenStable()
       await stablePromise
 
@@ -817,6 +821,10 @@ describe('injectQuery', () => {
       enabledSignal.set(true)
       TestBed.tick()
 
+      // The in-flight fetch now holds a pending task, so stability requires the
+      // notification turn and the change detection it schedules to run first
+      await vi.advanceTimersByTimeAsync(0)
+      TestBed.tick()
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
@@ -841,6 +849,10 @@ describe('injectQuery', () => {
       // Synchronize pending effects
       TestBed.tick()
 
+      // The in-flight fetch now holds a pending task, so stability requires the
+      // notification turn and the change detection it schedules to run first
+      await vi.advanceTimersByTimeAsync(0)
+      TestBed.tick()
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
