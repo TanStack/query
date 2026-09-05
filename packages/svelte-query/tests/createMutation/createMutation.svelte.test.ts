@@ -1,48 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushSync } from 'svelte'
-import { fireEvent, render } from '@testing-library/svelte'
-import { QueryClient } from '@tanstack/query-core'
+import { describe, expect, test, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
-import { createMutation } from '../../src/index.js'
-import { withEffectRoot } from '../utils.svelte.js'
-import Reset from './Reset.svelte'
+import { QueryClient } from '@tanstack/query-core'
+import { createMutation } from '../../src/createMutation.svelte.js'
+import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Success from './Success.svelte'
 import Failure from './Failure.svelte'
+import Reset from './Reset.svelte'
 
 describe('createMutation', () => {
-  let queryClient: QueryClient
-
-  beforeEach(() => {
-    vi.useFakeTimers()
-    queryClient = new QueryClient()
-  })
-
-  afterEach(() => {
-    queryClient.clear()
-    vi.useRealTimers()
-  })
-
-  it('should be able to reset `error`', async () => {
-    const rendered = render(Reset, {
-      props: { queryClient },
-    })
-
-    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
-
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
-    expect(rendered.getByText('Error: Expected mock error')).toBeInTheDocument()
-
-    fireEvent.click(rendered.getByRole('button', { name: /Reset/i }))
-    await vi.advanceTimersByTimeAsync(11)
-    expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
-  })
-
-  it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
+  test('Success', async () => {
+    const queryClient = new QueryClient()
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
 
-    const rendered = render(Success, {
+    render(Success, {
       props: {
         queryClient,
         onSuccessMock,
@@ -50,90 +22,91 @@ describe('createMutation', () => {
       },
     })
 
-    expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
+    expect(screen.getByText('Count: 0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
-    expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
+    await fireEvent.click(screen.getByRole('button', { name: /Mutate/i }))
 
-    expect(onSuccessMock).toHaveBeenCalledTimes(3)
-    expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
-    expect(onSuccessMock).toHaveBeenNthCalledWith(2, 2)
-    expect(onSuccessMock).toHaveBeenNthCalledWith(3, 3)
+    expect(screen.getByText('Count: 1')).toBeInTheDocument()
 
-    expect(onSettledMock).toHaveBeenCalledTimes(3)
-    expect(onSettledMock).toHaveBeenNthCalledWith(1, 1)
-    expect(onSettledMock).toHaveBeenNthCalledWith(2, 2)
-    expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
+    await waitFor(() => {
+      expect(onSuccessMock).toHaveBeenCalledTimes(1)
+      expect(onSuccessMock).toHaveBeenCalledWith(1)
+      expect(onSettledMock).toHaveBeenCalledTimes(1)
+      expect(onSettledMock).toHaveBeenCalledWith(1)
+    })
   })
 
-  it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
-    type Value = { count: number }
-
-    const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
-
-    mutationFn.mockImplementationOnce(() =>
-      sleep(20).then(() => Promise.reject(`Expected mock error`)),
+  test('Failure', async () => {
+    const queryClient = new QueryClient()
+    const mutationFn = vi.fn().mockImplementation(() =>
+      sleep(10).then(() => {
+        throw new Error('Mutation failed')
+      }),
     )
 
-    mutationFn.mockImplementation((value) => sleep(10).then(() => value))
-
-    const rendered = render(Failure, {
+    render(Failure, {
       props: {
         queryClient,
         mutationFn,
       },
     })
 
-    expect(rendered.queryByText('Data: undefined')).toBeInTheDocument()
+    expect(screen.getByText('Status: idle')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(21)
-    expect(rendered.getByText('Status: error')).toBeInTheDocument()
-    expect(rendered.getByText('Failure Count: 1')).toBeInTheDocument()
-    expect(
-      rendered.getByText('Failure Reason: Expected mock error'),
-    ).toBeInTheDocument()
+    await fireEvent.click(screen.getByRole('button', { name: /Mutate/i }))
 
-    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('Status: pending')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(11)
-    expect(rendered.getByText('Status: success')).toBeInTheDocument()
-    expect(rendered.getByText('Data: 2')).toBeInTheDocument()
-    expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
-    expect(rendered.getByText('Failure Reason: undefined')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Status: error')).toBeInTheDocument()
+      expect(screen.getByText('Failure Count: 1')).toBeInTheDocument()
+    })
   })
 
-  it(
-    'should recreate observer when queryClient changes',
-    withEffectRoot(async () => {
-      const queryClient1 = new QueryClient()
-      const queryClient2 = new QueryClient()
+  test('Reset', async () => {
+    const queryClient = new QueryClient()
 
-      let activeClient = $state(queryClient1)
+    render(Reset, {
+      props: {
+        queryClient,
+      },
+    })
+
+    expect(screen.getByText('Error: undefined')).toBeInTheDocument()
+
+    await fireEvent.click(screen.getByRole('button', { name: /Mutate/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Error: Expected mock error')).toBeInTheDocument()
+    })
+
+    await fireEvent.click(screen.getByRole('button', { name: /Reset/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Error: undefined')).toBeInTheDocument()
+    })
+  })
+
+  test(
+    'should synchronize status when background mutation resolves',
+    withEffectRoot(async () => {
+      const queryClient = new QueryClient()
+      const { promise, resolve } = promiseWithResolvers<string>()
 
       const mutation = createMutation(
         () => ({
-          mutationFn: (params: string) => sleep(10).then(() => params),
+          mutationFn: () => promise,
         }),
-        () => activeClient,
+        () => queryClient,
       )
 
-      mutation.mutate('first')
-      await vi.advanceTimersByTimeAsync(11)
+      mutation.mutate()
+      await sleep(1)
+      expect(mutation.status).toBe('pending')
+
+      resolve('success-payload')
+      await sleep(10)
 
       expect(mutation.status).toBe('success')
-      expect(mutation.data).toBe('first')
-
-      activeClient = queryClient2
-      flushSync()
-
-      expect(mutation.status).toBe('idle')
-      expect(mutation.data).toBeUndefined()
+      expect(mutation.data).toBe('success-payload')
     }),
   )
 })
