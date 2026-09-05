@@ -321,7 +321,7 @@ export function useQuery<
  * ```
  *
  * @example
- * `skipToken` disables the query in a type safe way, without a non-null assertion on `props.postId` —
+ * `skipToken` disables the query in a type-safe way, without a non-null assertion on `props.postId` —
  * `queryFn` is only ever called when it's defined. This requires a whole-options getter: `queryFn` is a
  * single value, not `queryKey`/`enabled`, so it isn't itself reactive — the getter is what re-evaluates it
  * on every change to `props.postId`. `refetch` doesn't work while `queryFn` is `skipToken` — use
@@ -332,11 +332,13 @@ export function useQuery<
  *
  * const props = defineProps<{ postId: number | undefined }>()
  *
- * const { data, isLoading, isError, error } = useQuery(() => ({
- *   queryKey: ['post', props.postId],
- *   queryFn:
- *     props.postId != null ? () => fetchPost(props.postId!) : skipToken,
- * }))
+ * const { data, isLoading, isError, error } = useQuery(() => {
+ *   const postId = props.postId
+ *   return {
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   }
+ * })
  * </script>
  *
  * <template>

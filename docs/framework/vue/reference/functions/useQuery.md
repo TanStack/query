@@ -255,7 +255,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:350](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L350)
+Defined in: [vue-query/src/useQuery.ts:352](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L352)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -327,7 +327,7 @@ const { data } = useQuery(() => ({
 </template>
 ```
 
-`skipToken` disables the query in a type safe way, without a non-null assertion on `props.postId` —
+`skipToken` disables the query in a type-safe way, without a non-null assertion on `props.postId` —
 `queryFn` is only ever called when it's defined. This requires a whole-options getter: `queryFn` is a
 single value, not `queryKey`/`enabled`, so it isn't itself reactive — the getter is what re-evaluates it
 on every change to `props.postId`. `refetch` doesn't work while `queryFn` is `skipToken` — use
@@ -338,11 +338,13 @@ import { skipToken, useQuery } from '@tanstack/vue-query'
 
 const props = defineProps<{ postId: number | undefined }>()
 
-const { data, isLoading, isError, error } = useQuery(() => ({
-  queryKey: ['post', props.postId],
-  queryFn:
-    props.postId != null ? () => fetchPost(props.postId!) : skipToken,
-}))
+const { data, isLoading, isError, error } = useQuery(() => {
+  const postId = props.postId
+  return {
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+  }
+})
 </script>
 
 <template>

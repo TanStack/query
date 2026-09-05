@@ -196,7 +196,7 @@ export function useInfiniteQuery<
  * sentinel element after the list:
  * ```vue
  * <script setup lang="ts">
- * import { ref, watch } from 'vue'
+ * import { onUnmounted, ref, watch } from 'vue'
  * import { useInfiniteQuery } from '@tanstack/vue-query'
  *
  * const {
@@ -229,6 +229,8 @@ export function useInfiniteQuery<
  *   })
  *   observer.observe(el)
  * })
+ *
+ * onUnmounted(() => observer?.disconnect())
  * </script>
  *
  * <template>
@@ -304,7 +306,7 @@ export function useInfiniteQuery<
  * ```
  *
  * @example
- * A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
+ * A query that's disabled, type-safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
  * setting `enabled: false`. This requires a whole-options getter: `queryFn` isn't itself reactive, so the
  * getter is what re-evaluates it on every change to `props.postId`:
  * ```vue
@@ -314,15 +316,18 @@ export function useInfiniteQuery<
  * const props = defineProps<{ postId: string | undefined }>()
  *
  * // Use `isLoading`, not `isPending`, so the loading state doesn't show while the query is disabled.
- * const { data, isLoading, isError, error } = useInfiniteQuery(() => ({
- *   queryKey: ['post', props.postId, 'comments'],
- *   queryFn:
- *     props.postId != null
- *       ? ({ pageParam }) => fetchComments(props.postId!, pageParam)
- *       : skipToken,
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * }))
+ * const { data, isLoading, isError, error } = useInfiniteQuery(() => {
+ *   const postId = props.postId
+ *   return {
+ *     queryKey: ['post', postId, 'comments'],
+ *     queryFn:
+ *       postId != null
+ *         ? ({ pageParam }) => fetchComments(postId, pageParam)
+ *         : skipToken,
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextId,
+ *   }
+ * })
  * </script>
  *
  * <template>
