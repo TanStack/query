@@ -130,4 +130,98 @@ describe('notifyManager', () => {
 
     expect(callbackSpy).toHaveBeenCalledWith(1, 'test')
   })
+
+  it('should not schedule anything when a batch is empty', () => {
+    const notifyManagerTest = createNotifyManager()
+    const schedulerSpy = vi.fn((cb) => queueMicrotask(cb))
+    notifyManagerTest.setScheduler(schedulerSpy)
+
+    notifyManagerTest.batch(() => {})
+
+    expect(schedulerSpy).not.toHaveBeenCalled()
+  })
+
+  it('should notify scheduled callbacks individually outside of a batch', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const notifySpy = vi.fn()
+    const batchNotifySpy = vi.fn((cb) => cb())
+    notifyManagerTest.setNotifyFunction(notifySpy)
+    notifyManagerTest.setBatchNotifyFunction(batchNotifySpy)
+
+    notifyManagerTest.schedule(vi.fn())
+    notifyManagerTest.schedule(vi.fn())
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(notifySpy).toHaveBeenCalledTimes(2)
+    expect(batchNotifySpy).not.toHaveBeenCalled()
+  })
+
+  it('should only flush after the outermost batch ends', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const schedulerSpy = vi.fn((cb) => queueMicrotask(cb))
+    notifyManagerTest.setScheduler(schedulerSpy)
+    const innerCallback = vi.fn()
+    const outerCallback = vi.fn()
+
+    notifyManagerTest.batch(() => {
+      notifyManagerTest.batch(() => {
+        notifyManagerTest.schedule(innerCallback)
+      })
+
+      // the inner batch ending must not flush the queue yet
+      expect(schedulerSpy).not.toHaveBeenCalled()
+
+      notifyManagerTest.schedule(outerCallback)
+    })
+
+    expect(schedulerSpy).toHaveBeenCalledOnce()
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(innerCallback).toHaveBeenCalledTimes(1)
+    expect(outerCallback).toHaveBeenCalledTimes(1)
+  })
+
+  it('should return the result of the batched callback', () => {
+    const notifyManagerTest = createNotifyManager()
+
+    const result = notifyManagerTest.batch(() => 42)
+
+    expect(result).toBe(42)
+  })
+
+  it('should dispatch schedules immediately after a batch threw', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const schedulerSpy = vi.fn((cb) => queueMicrotask(cb))
+    notifyManagerTest.setScheduler(schedulerSpy)
+    const callbackSpy = vi.fn()
+
+    expect(() =>
+      notifyManagerTest.batch(() => {
+        throw new Error('Foo')
+      }),
+    ).toThrow('Foo')
+
+    // the transaction must be released, otherwise this schedule would be
+    // queued forever instead of being dispatched
+    notifyManagerTest.schedule(callbackSpy)
+    expect(schedulerSpy).toHaveBeenCalledOnce()
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should defer notifications scheduled with the default scheduler to a macrotask', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const callbackSpy = vi.fn()
+
+    notifyManagerTest.schedule(callbackSpy)
+
+    // the default scheduler is based on setTimeout(0), so draining microtasks
+    // alone must not run the notification
+    await Promise.resolve()
+    expect(callbackSpy).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+  })
 })
