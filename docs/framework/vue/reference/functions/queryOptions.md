@@ -218,7 +218,7 @@ const { data, isPending, isError, error } = useQuery(postOptions('1'))
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [vue-query/src/queryOptions.ts:296](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L296)
+Defined in: [vue-query/src/queryOptions.ts:316](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L316)
 
 Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
 function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
@@ -269,7 +269,7 @@ data type.
 
 [useQuery](useQuery.md) to run a query with these options.
 
-### Example
+### Examples
 
 ```vue
 <script setup lang="ts">
@@ -287,5 +287,24 @@ const { data } = useQuery(postOptions)
 const queryClient = useQueryClient()
 // Here, call `postOptions()` so `invalidateQueries` reads the current `queryKey` right away.
 queryClient.invalidateQueries(postOptions())
+</script>
+```
+
+A parameterized factory that disables the query, type safe, until `postId` is set. This requires a
+whole-options getter: `queryFn` is a single value, not `queryKey`/`enabled`, so it isn't itself reactive —
+the getter is what re-evaluates it on every change to `postId`:
+```vue
+<script setup lang="ts">
+import { queryOptions, skipToken, useQuery } from '@tanstack/vue-query'
+
+function postOptions(postId: number | undefined) {
+  return queryOptions(() => ({
+    queryKey: ['post', postId],
+    queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+  }))
+}
+
+const props = defineProps<{ postId: number | undefined }>()
+const { data, isLoading, isError, error } = useQuery(postOptions(props.postId))
 </script>
 ```

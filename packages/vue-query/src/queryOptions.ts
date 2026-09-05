@@ -292,6 +292,26 @@ export function queryOptions<
  * queryClient.invalidateQueries(postOptions())
  * </script>
  * ```
+ *
+ * @example
+ * A parameterized factory that disables the query, type safe, until `postId` is set. This requires a
+ * whole-options getter: `queryFn` is a single value, not `queryKey`/`enabled`, so it isn't itself reactive —
+ * the getter is what re-evaluates it on every change to `postId`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { queryOptions, skipToken, useQuery } from '@tanstack/vue-query'
+ *
+ * function postOptions(postId: number | undefined) {
+ *   return queryOptions(() => ({
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   }))
+ * }
+ *
+ * const props = defineProps<{ postId: number | undefined }>()
+ * const { data, isLoading, isError, error } = useQuery(postOptions(props.postId))
+ * </script>
+ * ```
  */
 export function queryOptions<
   TQueryFnData = unknown,
