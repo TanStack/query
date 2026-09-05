@@ -5,13 +5,14 @@ import {
   systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
+import type { ManagedTimerId } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
 
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
     return {
       __TEST_ONLY__name: name,
-      setTimeout: vi.fn(() => 123),
+      setTimeout: vi.fn((): ManagedTimerId => 123),
       clearTimeout: vi.fn(),
       setInterval: vi.fn(() => 456),
       clearInterval: vi.fn(),
