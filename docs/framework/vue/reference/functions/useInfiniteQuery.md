@@ -1,6 +1,8 @@
 ---
 id: useInfiniteQuery
 title: useInfiniteQuery
+redirect_from:
+  - framework/vue/reference/useInfiniteQuery
 ---
 
 ## Call Signature

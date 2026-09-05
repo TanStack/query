@@ -1,6 +1,8 @@
 ---
 id: usePrefetchQuery
 title: usePrefetchQuery
+redirect_from:
+  - framework/vue/reference/usePrefetchQuery
 ---
 
 ```ts

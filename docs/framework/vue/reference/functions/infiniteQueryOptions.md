@@ -1,6 +1,8 @@
 ---
 id: infiniteQueryOptions
 title: infiniteQueryOptions
+redirect_from:
+  - framework/vue/reference/infiniteQueryOptions
 ---
 
 ## Call Signature
