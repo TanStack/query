@@ -2,6 +2,7 @@ import {
   QueriesObserver,
   QueryClient,
   notifyManager,
+  shouldThrowError,
 } from '@tanstack/query-core'
 import {
   DestroyRef,
@@ -301,7 +302,32 @@ export function injectQueries<
           : ngZone.runOutsideAngular(() =>
               observer.subscribe(
                 notifyManager.batchCalls((state) => {
+                  // Publish first: `throwOnError` means "also throw", so the
+                  // results the caller renders from - the failing query's own
+                  // error state included - must still be updated. Nothing below
+                  // may leave the signal holding a stale notification.
                   resultFromSubscriberSignal.set(getCombinedResult(state))
+
+                  // Each query carries its own `throwOnError`, so the option is
+                  // resolved per query against that query's own error.
+                  const queryObservers = observer.getObservers()
+                  const resultToThrow = state.find((result, index) => {
+                    const queryObserver = queryObservers[index]
+                    return (
+                      result.isError &&
+                      !result.isFetching &&
+                      !!queryObserver &&
+                      shouldThrowError(queryObserver.options.throwOnError, [
+                        result.error,
+                        queryObserver.getCurrentQuery(),
+                      ])
+                    )
+                  })
+
+                  if (resultToThrow) {
+                    ngZone.onError.emit(resultToThrow.error)
+                    throw resultToThrow.error
+                  }
                 }),
               ),
             )
