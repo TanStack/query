@@ -451,4 +451,121 @@ describe('useMutation', () => {
       expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
     })
   })
+
+  describe('optimistic updates', () => {
+    it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+      const key = queryKey()
+      const queryClient = useQueryClient()
+      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+      const mutation = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+        onError: (_err, _newTodo, onMutateResult) => {
+          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+        },
+      })
+
+      mutation.mutate('Todo 2')
+
+      // onMutate runs synchronously up to its first await, so the optimistic
+      // value is visible immediately, before the mutationFn settles.
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(mutation).toMatchObject({ isError: { value: true } })
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+    })
+
+    it('should keep the optimistic update in place when the mutation succeeds', async () => {
+      const key = queryKey()
+      const queryClient = useQueryClient()
+      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+      const mutation = useMutation({
+        mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+        onError: (_err, _newTodo, onMutateResult) => {
+          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+        },
+      })
+
+      mutation.mutate('Todo 2')
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(mutation).toMatchObject({ isSuccess: { value: true } })
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    })
+  })
+
+  describe('concurrent mutate calls', () => {
+    it('should report each call result independently when some fail', async () => {
+      const mutation = useMutation({
+        mutationFn: (todo: string) =>
+          todo === 'bad'
+            ? sleep(10).then(() => Promise.reject(new Error('Some error')))
+            : sleep(10).then(() => todo),
+      })
+
+      const todos = ['Todo 1', 'bad', 'Todo 3']
+
+      const settledPromise = Promise.allSettled(
+        todos.map((todo) => mutation.mutateAsync(todo)),
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      const results = await settledPromise
+
+      expect(results).toEqual([
+        { status: 'fulfilled', value: 'Todo 1' },
+        { status: 'rejected', reason: Error('Some error') },
+        { status: 'fulfilled', value: 'Todo 3' },
+      ])
+    })
+
+    it('should only fire the per-call onSuccess for the last mutate() call', async () => {
+      const onSuccessPerCall = vi.fn()
+      const mutation = useMutation({
+        mutationFn: (todo: string) => sleep(10).then(() => todo),
+      })
+
+      mutation.mutate('Todo 1', { onSuccess: onSuccessPerCall })
+      mutation.mutate('Todo 2', { onSuccess: onSuccessPerCall })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
+      expect(onSuccessPerCall).toHaveBeenCalledWith(
+        'Todo 2',
+        'Todo 2',
+        undefined,
+        expect.anything(),
+      )
+    })
+  })
 })
