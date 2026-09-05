@@ -23,12 +23,11 @@ import type { MutationOptions } from './types'
  *   mutationFn: createPost,
  * })
  *
- * const isCreatingPost = computed(
- *   () =>
- *     useMutationState({
- *       filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
- *     }).value.length > 0,
- * )
+ * // Call `useMutationState` once — it manages its own subscription — then derive from its result.
+ * const creatingPosts = useMutationState({
+ *   filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
+ * })
+ * const isCreatingPost = computed(() => creatingPosts.value.length > 0)
  * </script>
  * ```
  */

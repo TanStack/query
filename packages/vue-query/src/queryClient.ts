@@ -35,10 +35,12 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Every method that accepts a `queryKey` or
- * filters also accepts a {@link MaybeRefDeep} version of it, so you can pass `ref`s directly without unwrapping
- * them yourself — `queryClient.invalidateQueries({ queryKey: myRef })` works the same as passing the plain
- * value. Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
+ * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
+ * `CancelOptions` or `InvalidateOptions`) also accept a {@link MaybeRefDeep} version of it, so you can pass
+ * `ref`s directly without unwrapping them yourself. Methods that accept filters (such as `invalidateQueries`)
+ * accept either a plain filters object or a getter returning one — pass a getter if the filters themselves
+ * depend on other reactive state, e.g. `queryClient.invalidateQueries(() => ({ queryKey: [myRef.value] }))`.
+ * Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
  */
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
@@ -52,7 +54,7 @@ export class QueryClient extends QC {
 
   /**
    * `true` while a `clientPersister` passed to `VueQueryPlugin` is restoring the cache. Queries don't fetch
-   * while this is `true`. `undefined` if no persister is configured.
+   * while this is `true`. Defaults to `false` if no persister is configured.
    */
   isRestoring?: Ref<boolean> = ref(false)
 

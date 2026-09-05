@@ -7,16 +7,22 @@ title: QueryOptions
 type QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = { [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" ? MaybeRefOrGetter<boolean | undefined> | (() => QueryBooleanOption<TQueryFnData, TError, TQueryData, DeepUnwrapRef<TQueryKey>>) : Property extends "queryKey" ? MaybeRefOrGetter<TQueryKey> : QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, DeepUnwrapRef<TQueryKey>>[Property] } & ShallowOption;
 ```
 
-Defined in: [vue-query/src/queryOptions.ts:29](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L29)
+Defined in: [vue-query/src/queryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L35)
 
 The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `queryKey` and `enabled`
-track reactive dependencies — pass a `ref`, a plain value, or a reactive getter (`() => ...`) and the query
-reacts to changes without any extra wiring. Other options are read once and are not reactive.
+track reactive dependencies individually — pass a `ref`, a plain value, or a reactive getter (`() => ...`)
+for either one and the query reacts to changes without any extra wiring. Other options passed this way are
+read once and are not reactive.
+
+If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
+inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
+reactive dependencies change, since the entire object is recomputed.
 
 `select` only re-runs when `data` changes, or when the `select` function's own reference changes. Since a
-Vue `setup()` function runs only once per component instance, an inline `select` function already has a
-stable reference across reactive updates — you don't need `computed` or a stable reference of your own to
-avoid re-running it unnecessarily.
+Vue `setup()` function runs only once per component instance, an inline `select` function passed directly
+to `queryOptions`/`useQuery` already has a stable reference across reactive updates. An inline `select`
+created inside a whole-options getter is recreated — and so can change reference — every time that getter
+re-evaluates.
 
 ## Type Parameters
 
@@ -42,8 +48,8 @@ The type `data` ends up as after `select` runs.
 
 `TQueryData` = `TQueryFnData`
 
-The type of data stored in the cache, before `select` runs — equal to `TQueryFnData`
-unless `select` narrows it.
+The type of data stored in the cache, before `select` runs. Defaults to
+`TQueryFnData` and can be configured independently of it.
 
 ### TQueryKey
 

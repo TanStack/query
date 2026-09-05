@@ -72,8 +72,9 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user

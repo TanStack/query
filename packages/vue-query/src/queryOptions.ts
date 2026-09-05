@@ -11,19 +11,25 @@ import type {
 
 /**
  * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `queryKey` and `enabled`
- * track reactive dependencies — pass a `ref`, a plain value, or a reactive getter (`() => ...`) and the query
- * reacts to changes without any extra wiring. Other options are read once and are not reactive.
+ * track reactive dependencies individually — pass a `ref`, a plain value, or a reactive getter (`() => ...`)
+ * for either one and the query reacts to changes without any extra wiring. Other options passed this way are
+ * read once and are not reactive.
+ *
+ * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
+ * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
+ * reactive dependencies change, since the entire object is recomputed.
  *
  * `select` only re-runs when `data` changes, or when the `select` function's own reference changes. Since a
- * Vue `setup()` function runs only once per component instance, an inline `select` function already has a
- * stable reference across reactive updates — you don't need `computed` or a stable reference of your own to
- * avoid re-running it unnecessarily.
+ * Vue `setup()` function runs only once per component instance, an inline `select` function passed directly
+ * to `queryOptions`/`useQuery` already has a stable reference across reactive updates. An inline `select`
+ * created inside a whole-options getter is recreated — and so can change reference — every time that getter
+ * re-evaluates.
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
- * @template TQueryData - The type of data stored in the cache, before `select` runs — equal to `TQueryFnData`
- * unless `select` narrows it.
+ * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
+ * `TQueryFnData` and can be configured independently of it.
  * @template TQueryKey - The type of your `queryKey`.
  */
 export type QueryOptions<
@@ -191,7 +197,8 @@ export function queryOptions<
  *   initialData: { id: postId.value, title: '' },
  * }))
  *
- * const { data } = useQuery(postOptions())
+ * // Pass the getter itself, not `postOptions()`, so the query keeps reacting to `postId` changes.
+ * const { data } = useQuery(postOptions)
  * </script>
  * ```
  */
@@ -270,7 +277,7 @@ export function queryOptions<
  * ```vue
  * <script setup lang="ts">
  * import { ref } from 'vue'
- * import { queryOptions, useQuery } from '@tanstack/vue-query'
+ * import { queryOptions, useQuery, useQueryClient } from '@tanstack/vue-query'
  *
  * const postId = ref(1)
  * const postOptions = queryOptions(() => ({
@@ -278,9 +285,10 @@ export function queryOptions<
  *   queryFn: () => fetchPost(postId.value),
  * }))
  *
- * // Reacts to changes on postId.value, and reads the current queryKey when invalidating.
- * const { data } = useQuery(postOptions())
+ * // Pass the getter itself, not `postOptions()`, so the query keeps reacting to `postId` changes.
+ * const { data } = useQuery(postOptions)
  * const queryClient = useQueryClient()
+ * // Here, call `postOptions()` so `invalidateQueries` reads the current `queryKey` right away.
  * queryClient.invalidateQueries(postOptions())
  * </script>
  * ```

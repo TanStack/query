@@ -161,15 +161,17 @@ const { status, data, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:203](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L203)
+Defined in: [vue-query/src/useQuery.ts:205](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L205)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
-read once and are not reactive.
+reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+
+When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
+dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
 
 ### Type Parameters
 

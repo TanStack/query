@@ -71,17 +71,17 @@ export type UseMutationReturnType<
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `useMutation` is the composable for that.
  *
- * `mutationOptions` may be a plain object, a `ref`, or a reactive getter (`() => ({ ... })`) — pass a getter
+ * `options` may be a plain object, a `ref`, or a reactive getter (`() => ({ ... })`) — pass a getter
  * if the options themselves depend on other reactive state.
  *
  * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
  * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
- * @param mutationOptions - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
+ * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
- * mutation definition. Hook-level callbacks (passed to `mutationOptions`) fire for every mutation; per-call
+ * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call
  * callbacks fire only for the latest call you've made.
  *
  * @example
@@ -137,12 +137,7 @@ export function useMutation<
   TVariables = void,
   TOnMutateResult = unknown,
 >(
-  mutationOptions: UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >,
+  options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult> {
   if (process.env.NODE_ENV === 'development') {
@@ -154,15 +149,12 @@ export function useMutation<
   }
 
   const client = queryClient || useQueryClient()
-  const options = computed(() => {
-    const resolvedOptions =
-      typeof mutationOptions === 'function'
-        ? mutationOptions()
-        : mutationOptions
+  const defaultedOptions = computed(() => {
+    const resolvedOptions = typeof options === 'function' ? options() : options
     return client.defaultMutationOptions(cloneDeepUnref(resolvedOptions))
   })
-  const observer = new MutationObserver(client, options.value)
-  const state = options.value.shallow
+  const observer = new MutationObserver(client, defaultedOptions.value)
+  const state = defaultedOptions.value.shallow
     ? shallowReactive(observer.getCurrentResult())
     : reactive(observer.getCurrentResult())
 
@@ -180,15 +172,15 @@ export function useMutation<
     })
   }
 
-  watch(options, () => {
-    observer.setOptions(options.value)
+  watch(defaultedOptions, () => {
+    observer.setOptions(defaultedOptions.value)
   })
 
   onScopeDispose(() => {
     unsubscribe()
   })
 
-  const readonlyState = options.value.shallow
+  const readonlyState = defaultedOptions.value.shallow
     ? shallowReadonly(state)
     : readonly(state)
 
@@ -201,7 +193,7 @@ export function useMutation<
     (error) => {
       if (
         error &&
-        shouldThrowError(options.value.throwOnError, [error as TError])
+        shouldThrowError(defaultedOptions.value.throwOnError, [error as TError])
       ) {
         throw error
       }

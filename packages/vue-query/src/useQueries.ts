@@ -272,7 +272,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *
  * <template>
  *   <ul>
- *     <li v-for="(query, index) in postQueries" :key="ids[index]">
+ *     <li v-for="(query, index) in postQueries" :key="props.ids[index]">
  *       <span v-if="query.isPending">Loading...</span>
  *       <span v-else-if="query.isError">Error: {{ query.error.message }}</span>
  *       <span v-else>{{ query.data.title }}</span>

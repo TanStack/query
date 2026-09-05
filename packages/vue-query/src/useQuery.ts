@@ -192,8 +192,10 @@ export function useQuery<
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
  * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
- * read once and are not reactive.
+ * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+ *
+ * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
+ * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
  *
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseQueryOptions} to use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
