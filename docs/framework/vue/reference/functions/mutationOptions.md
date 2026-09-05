@@ -79,7 +79,7 @@ const isCreatingPost = computed(() => creatingPosts.value.length > 0)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [vue-query/src/mutationOptions.ts:59](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L59)
+Defined in: [vue-query/src/mutationOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L80)
 
 Same as the plain-object overload with a required `mutationKey`, but for options that close over reactive
 state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
@@ -128,13 +128,35 @@ A function that returns the same options object, unchanged.
 
 [useMutation](useMutation.md) to run the mutation these options describe.
 
+### Example
+
+```vue
+<script setup lang="ts">
+import { mutationOptions, useMutation } from '@tanstack/vue-query'
+
+const props = defineProps<{ userId: number }>()
+
+const createPostOptions = mutationOptions(() => ({
+  mutationKey: ['posts', 'create'],
+  // Reacts to changes on `props.userId`, unlike the plain-object overload.
+  mutationFn: (title: string) => createPost({ title, userId: props.userId }),
+}))
+
+const mutation = useMutation(createPostOptions)
+</script>
+
+<template>
+  <button @click="mutation.mutate('Hello')">Create</button>
+</template>
+```
+
 ## Call Signature
 
 ```ts
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [vue-query/src/mutationOptions.ts:103](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L103)
+Defined in: [vue-query/src/mutationOptions.ts:124](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L124)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -206,7 +228,7 @@ const mutation = useMutation(createPostOptions)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [vue-query/src/mutationOptions.ts:128](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L128)
+Defined in: [vue-query/src/mutationOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L169)
 
 Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state
 (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
@@ -254,3 +276,24 @@ A function that returns the same options object, unchanged.
 ### See
 
 [useMutation](useMutation.md) to run the mutation these options describe.
+
+### Example
+
+```vue
+<script setup lang="ts">
+import { mutationOptions, useMutation } from '@tanstack/vue-query'
+
+const props = defineProps<{ userId: number }>()
+
+const createPostOptions = mutationOptions(() => ({
+  // Reacts to changes on `props.userId`, unlike the plain-object overload.
+  mutationFn: (title: string) => createPost({ title, userId: props.userId }),
+}))
+
+const mutation = useMutation(createPostOptions)
+</script>
+
+<template>
+  <button @click="mutation.mutate('Hello')">Create</button>
+</template>
+```

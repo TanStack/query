@@ -224,6 +224,30 @@ export function useInfiniteQuery<
  * will be used.
  * @returns The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`.
+ *
+ * @example
+ * Passing a whole-options getter so `maxPages` reacts to a setting stored elsewhere, not just `queryKey`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ projectId: number; maxPages: number }>()
+ *
+ * const { data } = useInfiniteQuery(() => ({
+ *   queryKey: ['project', props.projectId, 'issues'],
+ *   queryFn: ({ pageParam }) => fetchIssues(props.projectId, pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ *   maxPages: props.maxPages,
+ * }))
+ * </script>
+ *
+ * <template>
+ *   <template v-for="page in data?.pages" :key="page.nextId">
+ *     <li v-for="issue in page.issues" :key="issue.id">{{ issue.title }}</li>
+ *   </template>
+ * </template>
+ * ```
  */
 export function useInfiniteQuery<
   TQueryFnData,

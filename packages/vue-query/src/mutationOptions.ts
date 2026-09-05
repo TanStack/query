@@ -55,6 +55,27 @@ export function mutationOptions<
  * @param options - A function returning the mutation options to use, with a required `mutationKey`,
  * re-evaluated on demand.
  * @returns A function that returns the same options object, unchanged.
+ *
+ * @example
+ * ```vue
+ * <script setup lang="ts">
+ * import { mutationOptions, useMutation } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ userId: number }>()
+ *
+ * const createPostOptions = mutationOptions(() => ({
+ *   mutationKey: ['posts', 'create'],
+ *   // Reacts to changes on `props.userId`, unlike the plain-object overload.
+ *   mutationFn: (title: string) => createPost({ title, userId: props.userId }),
+ * }))
+ *
+ * const mutation = useMutation(createPostOptions)
+ * </script>
+ *
+ * <template>
+ *   <button @click="mutation.mutate('Hello')">Create</button>
+ * </template>
+ * ```
  */
 export function mutationOptions<
   TData = unknown,
@@ -124,6 +145,26 @@ export function mutationOptions<
  * @param options - A function returning the mutation options to use, without a `mutationKey`, re-evaluated on
  * demand.
  * @returns A function that returns the same options object, unchanged.
+ *
+ * @example
+ * ```vue
+ * <script setup lang="ts">
+ * import { mutationOptions, useMutation } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ userId: number }>()
+ *
+ * const createPostOptions = mutationOptions(() => ({
+ *   // Reacts to changes on `props.userId`, unlike the plain-object overload.
+ *   mutationFn: (title: string) => createPost({ title, userId: props.userId }),
+ * }))
+ *
+ * const mutation = useMutation(createPostOptions)
+ * </script>
+ *
+ * <template>
+ *   <button @click="mutation.mutate('Hello')">Create</button>
+ * </template>
+ * ```
  */
 export function mutationOptions<
   TData = unknown,
