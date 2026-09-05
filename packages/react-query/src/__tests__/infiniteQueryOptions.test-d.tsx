@@ -267,6 +267,12 @@ describe('infiniteQueryOptions', () => {
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.query(options),
+    )
+
+    // deprecated methods to be removed in v6
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
       queryClient.ensureQueryData(options),
     )
     assertType(
