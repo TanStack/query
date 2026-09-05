@@ -1,5 +1,16 @@
 # @tanstack/svelte-query
 
+## 6.2.0
+
+### Minor Changes
+
+- [#11356](https://github.com/TanStack/query/pull/11356) [`f6ae1cc`](https://github.com/TanStack/query/commit/f6ae1ccdf74a61ea15e845d4643e6d4b0a0b7bdf) - feat(svelte-query): add 'DefinedInitialDataInfiniteOptions' overload for 'createInfiniteQuery'/'infiniteQueryOptions'
+
+### Patch Changes
+
+- Updated dependencies [[`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12)]:
+  - @tanstack/query-core@5.102.9
+
 ## 6.1.48
 
 ### Patch Changes
