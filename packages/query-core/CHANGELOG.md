@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.102.9
+
+### Patch Changes
+
+- [#11332](https://github.com/TanStack/query/pull/11332) [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12) - Reuse the shared query option resolver for refetch intervals to reduce bundle size.
+
 ## 5.102.8
 
 ## 5.102.7
