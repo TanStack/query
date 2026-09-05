@@ -36,10 +36,9 @@ import type {
 
 /**
  * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
- * `CancelOptions` or `InvalidateOptions`) also accept a {@link MaybeRefDeep} version of it, so you can pass
- * `ref`s directly without unwrapping them yourself. Methods that accept filters (such as `invalidateQueries`)
- * accept either a plain filters object or a getter returning one — pass a getter if the filters themselves
- * depend on other reactive state, e.g. `queryClient.invalidateQueries(() => ({ queryKey: [myRef.value] }))`.
+ * `CancelOptions` or `InvalidateOptions`) or filters (such as the `QueryFilters` accepted by
+ * `invalidateQueries`) also accept a {@link MaybeRefDeep} version of it, so you can pass `ref`s directly
+ * without unwrapping them yourself — e.g. `queryClient.invalidateQueries({ queryKey: ['post', myRef] })`.
  * Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
  */
 export class QueryClient extends QC {

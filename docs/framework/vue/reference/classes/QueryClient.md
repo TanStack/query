@@ -3,13 +3,12 @@ id: QueryClient
 title: QueryClient
 ---
 
-Defined in: [vue-query/src/queryClient.ts:45](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L45)
+Defined in: [vue-query/src/queryClient.ts:44](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L44)
 
 Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
-`CancelOptions` or `InvalidateOptions`) also accept a MaybeRefDeep version of it, so you can pass
-`ref`s directly without unwrapping them yourself. Methods that accept filters (such as `invalidateQueries`)
-accept either a plain filters object or a getter returning one — pass a getter if the filters themselves
-depend on other reactive state, e.g. `queryClient.invalidateQueries(() => ({ queryKey: [myRef.value] }))`.
+`CancelOptions` or `InvalidateOptions`) or filters (such as the `QueryFilters` accepted by
+`invalidateQueries`) also accept a MaybeRefDeep version of it, so you can pass `ref`s directly
+without unwrapping them yourself — e.g. `queryClient.invalidateQueries({ queryKey: ['post', myRef] })`.
 Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
 
 ## Extends
@@ -24,7 +23,7 @@ Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClie
 new QueryClient(config): QueryClient;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:46](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L46)
+Defined in: [vue-query/src/queryClient.ts:45](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L45)
 
 #### Parameters
 
@@ -50,7 +49,7 @@ QC.constructor
 optional isRestoring: Ref<boolean, boolean>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:59](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L59)
+Defined in: [vue-query/src/queryClient.ts:58](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L58)
 
 `true` while a `clientPersister` passed to `VueQueryPlugin` is restoring the cache. Queries don't fetch
 while this is `true`. Defaults to `false` if no persister is configured.
@@ -63,7 +62,7 @@ while this is `true`. Defaults to `false` if no persister is configured.
 cancelQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:186](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L186)
+Defined in: [vue-query/src/queryClient.ts:185](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L185)
 
 #### Type Parameters
 
@@ -101,7 +100,7 @@ QC.cancelQueries
 ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:84](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L84)
+Defined in: [vue-query/src/queryClient.ts:83](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L83)
 
 ##### Type Parameters
 
@@ -147,7 +146,7 @@ QC.ensureQueryData
 ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L92)
+Defined in: [vue-query/src/queryClient.ts:91](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L91)
 
 ##### Type Parameters
 
@@ -197,7 +196,7 @@ QC.ensureQueryData
 fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:465](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L465)
+Defined in: [vue-query/src/queryClient.ts:464](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L464)
 
 ##### Type Parameters
 
@@ -247,7 +246,7 @@ QC.fetchInfiniteQuery
 fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:480](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L480)
+Defined in: [vue-query/src/queryClient.ts:479](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L479)
 
 ##### Type Parameters
 
@@ -301,7 +300,7 @@ QC.fetchInfiniteQuery
 fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:314](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L314)
+Defined in: [vue-query/src/queryClient.ts:313](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L313)
 
 ##### Type Parameters
 
@@ -351,7 +350,7 @@ QC.fetchQuery
 fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:329](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L329)
+Defined in: [vue-query/src/queryClient.ts:328](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L328)
 
 ##### Type Parameters
 
@@ -403,7 +402,7 @@ QC.fetchQuery
 getMutationDefaults(mutationKey): MutationObserverOptions<any, any, any, any>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:613](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L613)
+Defined in: [vue-query/src/queryClient.ts:612](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L612)
 
 #### Parameters
 
@@ -429,7 +428,7 @@ QC.getMutationDefaults
 getQueriesData<TData>(filters): [readonly unknown[], TData | undefined][];
 ```
 
-Defined in: [vue-query/src/queryClient.ts:115](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L115)
+Defined in: [vue-query/src/queryClient.ts:114](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L114)
 
 #### Type Parameters
 
@@ -463,7 +462,7 @@ QC.getQueriesData
 getQueryData<TData, TTaggedQueryKey>(queryKey): InferDataFromTag<TData, TTaggedQueryKey> | undefined;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:69](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L69)
+Defined in: [vue-query/src/queryClient.ts:68](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L68)
 
 Imperative (non-reactive) way to retrieve data for a QueryKey.
 Should only be used in callbacks or functions where reading the latest data is necessary, e.g. for optimistic updates.
@@ -503,7 +502,7 @@ QC.getQueryData
 getQueryData<TData>(queryKey): TData | undefined;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:72](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L72)
+Defined in: [vue-query/src/queryClient.ts:71](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L71)
 
 ##### Type Parameters
 
@@ -535,7 +534,7 @@ QC.getQueryData
 getQueryDefaults(queryKey): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, "queryKey">;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:590](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L590)
+Defined in: [vue-query/src/queryClient.ts:589](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L589)
 
 #### Parameters
 
@@ -561,7 +560,7 @@ QC.getQueryDefaults
 getQueryState<TData, TError>(queryKey): QueryState<TData, TError> | undefined;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:162](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L162)
+Defined in: [vue-query/src/queryClient.ts:161](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L161)
 
 #### Type Parameters
 
@@ -599,7 +598,7 @@ QC.getQueryState
 infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:398](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L398)
+Defined in: [vue-query/src/queryClient.ts:397](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L397)
 
 ##### Type Parameters
 
@@ -645,7 +644,7 @@ QC.infiniteQuery
 infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:417](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L417)
+Defined in: [vue-query/src/queryClient.ts:416](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L416)
 
 ##### Type Parameters
 
@@ -693,7 +692,7 @@ QC.infiniteQuery
 invalidateQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:197](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L197)
+Defined in: [vue-query/src/queryClient.ts:196](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L196)
 
 #### Type Parameters
 
@@ -729,7 +728,7 @@ QC.invalidateQueries
 isFetching(filters): number;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:61](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L61)
+Defined in: [vue-query/src/queryClient.ts:60](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L60)
 
 #### Parameters
 
@@ -755,7 +754,7 @@ QC.isFetching
 isMutating(filters): number;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L65)
+Defined in: [vue-query/src/queryClient.ts:64](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L64)
 
 #### Parameters
 
@@ -783,7 +782,7 @@ QC.isMutating
 prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:520](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L520)
+Defined in: [vue-query/src/queryClient.ts:519](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L519)
 
 ##### Type Parameters
 
@@ -833,7 +832,7 @@ QC.prefetchInfiniteQuery
 prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:535](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L535)
+Defined in: [vue-query/src/queryClient.ts:534](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L534)
 
 ##### Type Parameters
 
@@ -887,7 +886,7 @@ QC.prefetchInfiniteQuery
 prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:365](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L365)
+Defined in: [vue-query/src/queryClient.ts:364](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L364)
 
 ##### Type Parameters
 
@@ -933,7 +932,7 @@ QC.prefetchQuery
 prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:373](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L373)
+Defined in: [vue-query/src/queryClient.ts:372](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L372)
 
 ##### Type Parameters
 
@@ -983,7 +982,7 @@ QC.prefetchQuery
 query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:253](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L253)
+Defined in: [vue-query/src/queryClient.ts:252](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L252)
 
 ##### Type Parameters
 
@@ -1033,7 +1032,7 @@ QC.query
 query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options): Promise<TData>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:270](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L270)
+Defined in: [vue-query/src/queryClient.ts:269](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L269)
 
 ##### Type Parameters
 
@@ -1085,7 +1084,7 @@ QC.query
 refetchQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:237](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L237)
+Defined in: [vue-query/src/queryClient.ts:236](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L236)
 
 #### Type Parameters
 
@@ -1121,7 +1120,7 @@ QC.refetchQueries
 removeQueries<TTaggedQueryKey>(filters?): void;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:168](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L168)
+Defined in: [vue-query/src/queryClient.ts:167](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L167)
 
 #### Type Parameters
 
@@ -1153,7 +1152,7 @@ QC.removeQueries
 resetQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:175](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L175)
+Defined in: [vue-query/src/queryClient.ts:174](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L174)
 
 #### Type Parameters
 
@@ -1189,7 +1188,7 @@ QC.resetQueries
 setDefaultOptions(options): void;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:572](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L572)
+Defined in: [vue-query/src/queryClient.ts:571](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L571)
 
 #### Parameters
 
@@ -1215,7 +1214,7 @@ QC.setDefaultOptions
 setMutationDefaults<TData, TError, TVariables, TOnMutateResult>(mutationKey, options): void;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:596](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L596)
+Defined in: [vue-query/src/queryClient.ts:595](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L595)
 
 #### Type Parameters
 
@@ -1266,7 +1265,7 @@ setQueriesData<TData>(
    options): [readonly unknown[], TData | undefined][];
 ```
 
-Defined in: [vue-query/src/queryClient.ts:150](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L150)
+Defined in: [vue-query/src/queryClient.ts:149](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L149)
 
 #### Type Parameters
 
@@ -1311,7 +1310,7 @@ setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
    options?): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:121](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L121)
+Defined in: [vue-query/src/queryClient.ts:120](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L120)
 
 ##### Type Parameters
 
@@ -1360,7 +1359,7 @@ setQueryData<TQueryFnData, TData>(
    options?): NoInfer<TData> | undefined;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:133](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L133)
+Defined in: [vue-query/src/queryClient.ts:132](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L132)
 
 ##### Type Parameters
 
@@ -1404,7 +1403,7 @@ QC.setQueryData
 setQueryDefaults<TQueryFnData, TError, TData, TQueryData>(queryKey, options): void;
 ```
 
-Defined in: [vue-query/src/queryClient.ts:576](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L576)
+Defined in: [vue-query/src/queryClient.ts:575](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L575)
 
 #### Type Parameters
 

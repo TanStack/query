@@ -201,6 +201,26 @@ export function useQuery<
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result, with `data` typed as possibly `undefined`.
+ *
+ * @example
+ * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { useQuery } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ id: number; staleTime: number }>()
+ *
+ * const { data } = useQuery(() => ({
+ *   queryKey: ['post', props.id],
+ *   queryFn: () => fetchPost(props.id),
+ *   staleTime: props.staleTime,
+ * }))
+ * </script>
+ *
+ * <template>
+ *   <h1 v-if="data">{{ data.title }}</h1>
+ * </template>
+ * ```
  */
 export function useQuery<
   TQueryFnData = unknown,

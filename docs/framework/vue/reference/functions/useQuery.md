@@ -161,7 +161,7 @@ const { status, data, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:205](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L205)
+Defined in: [vue-query/src/useQuery.ts:225](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L225)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -211,3 +211,24 @@ will be used.
 [`UseQueryReturnType`](../type-aliases/UseQueryReturnType.md)\<`TData`, `TError`\>
 
 The current query result, with `data` typed as possibly `undefined`.
+
+### Example
+
+Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
+```vue
+<script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+
+const props = defineProps<{ id: number; staleTime: number }>()
+
+const { data } = useQuery(() => ({
+  queryKey: ['post', props.id],
+  queryFn: () => fetchPost(props.id),
+  staleTime: props.staleTime,
+}))
+</script>
+
+<template>
+  <h1 v-if="data">{{ data.title }}</h1>
+</template>
+```
