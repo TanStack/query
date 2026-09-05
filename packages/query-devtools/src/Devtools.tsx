@@ -51,7 +51,12 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
-import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import {
+  useDevtoolsUiContext,
+  usePiPWindow,
+  useQueryDevtoolsContext,
+  useTheme,
+} from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
@@ -98,21 +103,13 @@ interface QueryStatusProps {
   count: number
 }
 
-const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
-  null,
-)
-const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
-  null,
-)
-const [panelWidth, setPanelWidth] = createSignal(0)
-const [offline, setOffline] = createSignal(false)
-
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
+  const { setOffline } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -283,6 +280,7 @@ const PiPPanel: Component<{
 }> = (props) => {
   const pip = usePiPWindow()
   const theme = useTheme()
+  const { panelWidth, setPanelWidth } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -352,6 +350,7 @@ export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
   const theme = useTheme()
+  const { panelWidth, setPanelWidth } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -409,6 +408,8 @@ export const ParentPanel: Component<{
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
+  const { panelWidth, setPanelWidth, setSelectedQueryHash } =
+    useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -676,6 +677,14 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
   const theme = useTheme()
+  const {
+    panelWidth,
+    selectedQueryHash,
+    setSelectedQueryHash,
+    selectedMutationId,
+    setSelectedMutationId,
+    offline,
+  } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -1373,6 +1382,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
 const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -1482,6 +1492,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -1723,6 +1734,7 @@ const MutationStatusCount: Component = () => {
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
+  const { selectedQueryHash, panelWidth } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -1838,6 +1850,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 
 const QueryDetails = () => {
   const theme = useTheme()
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -2383,6 +2396,7 @@ const QueryDetails = () => {
 
 const MutationDetails = () => {
   const theme = useTheme()
+  const { selectedMutationId } = useDevtoolsUiContext()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -2569,15 +2583,8 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<
-  (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
->()
-
 const setupQueryCacheSubscription = () => {
+  const { queryCacheMap } = useDevtoolsUiContext()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2605,6 +2612,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
+  const { queryCacheMap } = useDevtoolsUiContext()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2631,12 +2639,8 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   return value
 }
 
-const mutationCacheMap = new Map<
-  (q: Accessor<MutationCache>) => any,
-  Setter<any>
->()
-
 const setupMutationCacheSubscription = () => {
+  const { mutationCacheMap } = useDevtoolsUiContext()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
@@ -2662,6 +2666,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
 ) => {
+  const { mutationCacheMap } = useDevtoolsUiContext()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
