@@ -162,6 +162,7 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data2 = queryClient.fetchQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
