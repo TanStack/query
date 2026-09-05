@@ -7,7 +7,7 @@ title: DefinedCreateBaseQueryResult
 type DefinedCreateBaseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:74](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L74)
+Defined in: [packages/svelte-query/src/types.ts:81](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L81)
 
 Options for createBaseQuery with initialData
 
