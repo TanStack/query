@@ -10,7 +10,7 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<Cr
 Defined in: [query-options.ts:80](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L80)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined`.
+`undefined` (unless a `select` narrows `TData` to include it).
 
 ## Type Declaration
 

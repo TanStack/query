@@ -9,10 +9,10 @@ title: injectQuery
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:68](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L68)
+Defined in: [inject-query.ts:69](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L69)
 
 This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
-resulting `data` signal is never `undefined`.
+resulting `data` signal is never `undefined` (unless a `select` narrows `TData` to include it).
 
 ### Type Parameters
 
@@ -52,7 +52,8 @@ Additional configuration
 
 [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
-The query result, typed so that `data` is never `undefined`.
+The query result, typed so that `data` is never `undefined` (unless a `select` narrows `TData` to
+include it).
 
 ### See
 
@@ -93,7 +94,7 @@ export class Posts {
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:157](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L157)
+Defined in: [inject-query.ts:158](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L158)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
@@ -211,7 +212,7 @@ export class Posts {
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L184)
+Defined in: [inject-query.ts:185](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L185)
 
 This overload accepts the general [CreateQueryOptions](../interfaces/CreateQueryOptions.md) shape rather than the `initialData`-aware
 overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping

@@ -16,7 +16,7 @@ The options for `injectInfiniteQuery` are identical to `injectQuery`, with the a
 additively "load more" data onto an existing set of data, or "infinite scroll".
 
 This overload is selected when `initialData` is set on the options returned by `injectInfiniteQueryFn`,
-so the resulting `data` signal is never `undefined`.
+so the resulting `data` signal is never `undefined` (unless a `select` narrows `TData` to include it).
 
 ### Type Parameters
 

@@ -140,9 +140,10 @@ type GetCreateQueryResult<T> =
 
 /**
  * The `queries` array accepted by `injectQueries`. Recursively unwraps each tuple element so every entry's
- * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
- * `unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements,
- * falls back to a single homogeneous options type.
+ * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — past that, tuple
+ * recursion falls back to a single homogeneous options type. An opaque array (e.g. `unknown[]`) is returned
+ * as-is; a non-tuple array of a known element type is mapped to that element type instead, with no such
+ * limit.
  *
  * @template T - The type of the `queries` array as written at the call site.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
@@ -191,9 +192,9 @@ export type QueriesOptions<
 
 /**
  * The result type returned by `injectQueries`, when no `combine` is provided. Mirrors {@link QueriesOptions}:
- * each tuple element's result type is inferred individually, up to 20 elements. A non-tuple array is mapped
- * per-element instead, still inferring each entry individually; only past 20 elements does this fall back to
- * a single homogeneous {@link CreateQueryResult} type.
+ * each tuple element's result type is inferred individually, up to 20 elements — past that, tuple recursion
+ * falls back to a single homogeneous {@link CreateQueryResult} type. A non-tuple array is mapped per-element
+ * instead, with no such limit — every entry keeps its individually inferred type regardless of array length.
  *
  * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
