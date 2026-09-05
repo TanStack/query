@@ -7,8 +7,9 @@ import type {
 } from '@tanstack/query-core'
 import { Fragment } from 'preact'
 import type { ComponentChildren } from 'preact'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'preact/hooks'
 
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 
 /**
@@ -91,9 +92,10 @@ export const HydrationBoundary = ({
   queryClient,
 }: HydrationBoundaryProps) => {
   const client = useQueryClient(queryClient)
+  const isRestoring = useIsRestoring()
 
   const optionsRef = useRef(options)
-  useEffect(() => {
+  useLayoutEffect(() => {
     optionsRef.current = options
   })
 
@@ -112,6 +114,9 @@ export const HydrationBoundary = ({
   // If the transition is aborted, we will have hydrated any _new_ queries, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
+  //
+  // Queries with no subscribers are the exception, they are hydrated as soon as
+  // the tree commits, see the layout effect below.
   const hydrationQueue: DehydratedState['queries'] | undefined = useMemo(() => {
     if (state) {
       if (typeof state !== 'object') {
@@ -159,11 +164,57 @@ export const HydrationBoundary = ({
     return undefined
   }, [client, state])
 
-  useEffect(() => {
-    if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+  // What the layout effect below leaves for the passive one, so that a query
+  // isn't hydrated, and its data deserialized, twice for the same commit.
+  const deferredRef = useRef<DehydratedState['queries'] | undefined>(undefined)
+
+  // Waiting for a passive effect is too late for a query with no subscribers.
+  // Children subscribe to the cache from their own passive effects and those
+  // run before the parent's, so a query that remounts under this boundary reads
+  // the old entry, finds it stale and refetches the very data we are holding.
+  // A query nobody subscribed to is also a query nobody gets notified about, so
+  // hydrating it as the tree commits doesn't update anything on the page, which
+  // is the only reason existing queries wait in the first place.
+  //
+  // While restoring, subscriptions are held back on purpose and that reasoning
+  // no longer applies, so everything waits for the passive effect.
+  useLayoutEffect(() => {
+    if (!hydrationQueue || isRestoring) {
+      deferredRef.current = hydrationQueue
+      return
     }
-  }, [client, hydrationQueue])
+
+    const queryCache = client.getQueryCache()
+    const unobserved: DehydratedState['queries'] = []
+    const observed: DehydratedState['queries'] = []
+
+    for (const dehydratedQuery of hydrationQueue) {
+      const query = queryCache.get(dehydratedQuery.queryHash)
+
+      if (!query || query.getObserversCount() === 0) {
+        unobserved.push(dehydratedQuery)
+      } else {
+        observed.push(dehydratedQuery)
+      }
+    }
+
+    deferredRef.current = observed
+
+    if (unobserved.length > 0) {
+      hydrate(client, { queries: unobserved }, optionsRef.current)
+    }
+  }, [client, hydrationQueue, isRestoring])
+
+  // Queries with subscribers keep waiting, so a render that ends up being
+  // thrown away, because something in it suspended, leaves the page the user is
+  // looking at alone.
+  useEffect(() => {
+    const deferred = deferredRef.current
+
+    if (deferred && deferred.length > 0) {
+      hydrate(client, { queries: deferred }, optionsRef.current)
+    }
+  }, [client, hydrationQueue, isRestoring])
 
   return <Fragment>{children}</Fragment>
 }
