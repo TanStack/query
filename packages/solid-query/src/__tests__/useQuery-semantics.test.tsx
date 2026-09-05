@@ -102,6 +102,55 @@ describe('useQuery 2.0 read semantics', () => {
     expect(rendered.getByText('data2')).toBeInTheDocument()
   })
 
+  it('does not recreate a removed query while it is observed', async () => {
+    const key = queryKey()
+    const events: Array<string> = []
+    let fetches = 0
+    let refetch!: () => Promise<unknown>
+    const queryFn = () => Promise.resolve(`data${++fetches}`)
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      staleTime: Infinity,
+    })
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn,
+        staleTime: Infinity,
+      }))
+      refetch = state.refetch
+      return <span>{state.data}</span>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+    expect(rendered.getByText('data1')).toBeInTheDocument()
+
+    const unsubscribe = queryCache.subscribe((event) => {
+      events.push(event.type)
+    })
+
+    queryClient.removeQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
+    expect(queryClient.getQueryData(key)).toBeUndefined()
+    expect(fetches).toBe(1)
+    expect(events).toEqual(['removed'])
+    expect(rendered.getByText('data1')).toBeInTheDocument()
+
+    await refetch()
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryClient.getQueryData(key)).toBe('data2')
+    expect(fetches).toBe(2)
+    expect(rendered.getByText('data2')).toBeInTheDocument()
+
+    unsubscribe()
+  })
+
   it('surfaces a first-load failure to <Errored>', async () => {
     const key = queryKey()
 
