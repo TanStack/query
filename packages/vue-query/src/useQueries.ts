@@ -311,6 +311,48 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *   </ul>
  * </template>
  * ```
+ *
+ * @example
+ * Typing `select` via {@link queryOptions}. Note that spreading a `queryOptions` result and overriding
+ * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
+ * resolved before it reaches `useQueries`:
+ * ```vue
+ * <script setup lang="ts">
+ * import { queryOptions, useQueries } from '@tanstack/vue-query'
+ *
+ * const props = defineProps<{ id: number }>()
+ *
+ * const postOptions = (id: number) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * const [{ data: broken }] = useQueries({
+ *   queries: () => [
+ *     {
+ *       ...postOptions(props.id),
+ *       // ❌ `data` is `unknown` here
+ *       select: (data) => data.title,
+ *     },
+ *   ],
+ * })
+ *
+ * const [{ data: fixed }] = useQueries({
+ *   queries: () => [
+ *     queryOptions({
+ *       ...postOptions(props.id),
+ *       // ✅ `data` is `Post`
+ *       select: (data) => data.title,
+ *     }),
+ *   ],
+ * })
+ * </script>
+ *
+ * <template>
+ *   <h1>{{ fixed }}</h1>
+ * </template>
+ * ```
  */
 export function useQueries<
   T extends Array<any>,
