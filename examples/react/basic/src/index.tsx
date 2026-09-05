@@ -38,7 +38,7 @@ function Posts({
 }: {
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const queryClient = useQueryClient()
+  const postQueryClient = useQueryClient()
   const { status, data, error, isFetching } = usePosts()
 
   return (
@@ -60,7 +60,7 @@ function Posts({
                     style={
                       // We can access the query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      postQueryClient.getQueryData(['post', post.id])
                         ? {
                             fontWeight: 'bold',
                             color: 'green',

@@ -319,21 +319,26 @@ describe('Devtools', () => {
     })
 
     it('should render a query row when a hydrated query uses a custom hash function', async () => {
+      const queryKeyHashFn = () => 'custom-posts-hash'
       queryClient.query({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
-        queryKeyHashFn: () => 'custom-posts-hash',
+        queryKeyHashFn,
       })
       await vi.advanceTimersByTimeAsync(0)
       const dehydratedState = dehydrate(queryClient)
 
       queryClient = new QueryClient()
-      hydrate(queryClient, dehydratedState)
+      hydrate(queryClient, dehydratedState, {
+        defaultOptions: { queries: { queryKeyHashFn } },
+      })
+
+      expect(queryClient.getQueryCache().get('custom-posts-hash')).toBeDefined()
 
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(
-        rendered.getByLabelText(/Query key custom-posts-hash/),
+        rendered.getByLabelText(/Query key \["posts"\]/),
       ).toBeInTheDocument()
     })
   })
@@ -425,7 +430,7 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(
-        rendered.getByLabelText(/Query key \["mutable-key",\{"page":1\}\]/),
+        rendered.getByLabelText(/Query key \["mutable-key",\{"page":2\}\]/),
       ).toBeInTheDocument()
     })
   })

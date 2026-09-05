@@ -6715,11 +6715,9 @@ describe('useQuery', () => {
     rendered.getByText('data: client')
     expect(count).toBe(1)
 
-    const query = clientQueryClient.getQueryCache().find({ queryKey: key })
-
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledWith(
-      `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
+      `A query that was dehydrated as pending ended up rejecting. [${JSON.stringify(key)}]: Error: server error; The error will be redacted in production builds`,
     )
 
     consoleMock.mockRestore()
