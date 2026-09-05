@@ -504,7 +504,21 @@ describe('useQuery', () => {
     })
   })
 
-  it('should seed from initialData and skip the loading state', async () => {
+  it('should seed from initialData and skip the loading state', () => {
+    const key = queryKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'fetched data'),
+      initialData: 'seeded data',
+    })
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'seeded data' },
+    })
+  })
+
+  it('should still fetch in the background and replace initialData with the fetched value', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => sleep(10).then(() => 'fetched data'))
 
@@ -512,11 +526,6 @@ describe('useQuery', () => {
       queryKey: key,
       queryFn: fetchFn,
       initialData: 'seeded data',
-    })
-
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'seeded data' },
     })
 
     await vi.advanceTimersByTimeAsync(10)
