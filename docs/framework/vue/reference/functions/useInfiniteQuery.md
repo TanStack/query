@@ -106,13 +106,14 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:250](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L250)
+Defined in: [vue-query/src/useInfiniteQuery.ts:251](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L251)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+(`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+entries — its individual entries can't be reactive getters.
 
 ### Type Parameters
 
@@ -268,14 +269,15 @@ onUnmounted(() => observer?.disconnect())
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:345](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L345)
+Defined in: [vue-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L347)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
-`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+(`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+entries — its individual entries can't be reactive getters.
 
 ### Type Parameters
 

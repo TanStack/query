@@ -9,13 +9,14 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:137](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L137)
+Defined in: [vue-query/src/useQuery.ts:138](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L138)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
-`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
-read once and are not reactive.
+`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+(`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+entries — its individual entries can't be reactive getters. Other options are read once and are not
+reactive.
 
 ### Type Parameters
 
@@ -87,11 +88,12 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:277](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L277)
+Defined in: [vue-query/src/useQuery.ts:279](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L279)
 
-`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
-read once and are not reactive.
+`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+(`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+entries — its individual entries can't be reactive getters. Other options are read once and are not
+reactive.
 
 ### Type Parameters
 
@@ -255,14 +257,15 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:352](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L352)
+Defined in: [vue-query/src/useQuery.ts:355](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L355)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
-`queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
-reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+`enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+(`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+entries — its individual entries can't be reactive getters.
 
 When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
 dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.

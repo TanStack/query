@@ -101,9 +101,10 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
- * read once and are not reactive.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters. Other options are read once and are not
+ * reactive.
  *
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
  * `initialData` set.
@@ -145,9 +146,10 @@ export function useQuery<
 ): UseQueryDefinedReturnType<TData, TError>
 
 /**
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring. Other options are
- * read once and are not reactive.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters. Other options are read once and are not
+ * reactive.
  *
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -289,8 +291,9 @@ export function useQuery<
  * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters.
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.

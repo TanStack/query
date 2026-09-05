@@ -137,8 +137,9 @@ export function useInfiniteQuery<
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
@@ -271,8 +272,9 @@ export function useInfiniteQuery<
  * `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
- * `queryKey` and `enabled` track reactive dependencies automatically — pass a `ref`, a plain value, or a
- * reactive getter (`() => ...`) and the query reacts to changes without any extra wiring.
+ * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
+ * (`() => ...`). `queryKey` tracks a `ref` for the array itself, or a `ref` nested inside one of its
+ * entries — its individual entries can't be reactive getters.
  *
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseInfiniteQueryOptions} to
  * use.
