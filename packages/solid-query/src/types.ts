@@ -76,6 +76,10 @@ export type UseQueryOptions<
  * (committed, placeholder, initial), or throws (`<Errored>` /
  * `throwOnError`). The v5 `TData | undefined` face existed because reads
  * could observe the pre-fetch gap; here that gap is suspension.
+ *
+ * The server is the one exception: suspending needs a later, and a render
+ * that has to finish has none for a query nothing will ever enable. A
+ * disabled read commits `undefined` there rather than stalling the render.
  */
 export type UseBaseQueryResult<
   TData = unknown,

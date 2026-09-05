@@ -531,6 +531,19 @@ export function useBaseQueryLayer<
       if (!isServer) observer.setOptions(opts as any)
       return chainOnce(q.fetch(opts as any), select, wrap)
     }
+    /**
+     * Disabled, so there is nothing to pull and nothing in flight. Parking
+     * the reader (see `NEVER`) is right on the client — an enabling change,
+     * a refetch or a cache write revives it later. The server has no later:
+     * the render must finish, and nothing will enable the query or write
+     * the cache before it does, so parking there stalls the render forever
+     * and emits nothing at all. The idle read IS the settled SSR truth —
+     * the same contract the meta channel already honors ('pending' serves
+     * as-is for a disabled query) — so commit it and let the client hydrate
+     * the identical state. Committed directly rather than through `wrap`:
+     * `select` must not run on an absent value.
+     */
+    if (isServer) return { value: undefined as TData }
     return NEVER
   }
 

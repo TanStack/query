@@ -19,6 +19,7 @@ export function createApp() {
     stale: 0,
     placeholder: 0,
     prefetched: 0,
+    disabled: 0,
   }
   const [lateMount, setLateMount] = createSignal(false)
   return {
