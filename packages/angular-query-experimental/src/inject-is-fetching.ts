@@ -20,13 +20,45 @@ export interface InjectIsFetchingOptions {
 }
 
 /**
- * Injects a signal that tracks the number of queries that your application is loading or
- * fetching in the background.
+ * Injects a signal that tracks the number of queries that your application is loading or fetching in the
+ * background (useful for app-wide loading indicators).
  *
- * Can be used for app-wide loading indicators
- * @param filters - The filters to apply to the query.
+ * @param filters - The {@link QueryFilters} to narrow down the matched queries.
  * @param options - Additional configuration
- * @returns signal with number of loading or fetching queries.
+ * @returns A `Signal` with the number of queries that your application is currently loading or fetching in
+ * the background.
+ *
+ * @example
+ * ```angular-ts
+ * @Component({
+ *   selector: 'posts-fetching-indicator',
+ *   template: `
+ *     @if (isFetchingPosts()) {
+ *       <span>Refreshing posts...</span>
+ *     }
+ *   `,
+ * })
+ * export class PostsFetchingIndicator {
+ *   // How many queries matching the posts prefix are fetching?
+ *   isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
+ * }
+ * ```
+ *
+ * @example
+ * A global loading indicator for any query fetching in the background, not just the ones on screen:
+ * ```angular-ts
+ * @Component({
+ *   selector: 'global-loading-indicator',
+ *   template: `
+ *     @if (isFetching()) {
+ *       <div>Queries are fetching in the background...</div>
+ *     }
+ *   `,
+ * })
+ * export class GlobalLoadingIndicator {
+ *   isFetching = injectIsFetching()
+ * }
+ * ```
  */
 export function injectIsFetching(
   filters?: QueryFilters,

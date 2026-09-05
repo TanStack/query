@@ -139,7 +139,17 @@ type GetCreateQueryResult<T> =
                   CreateQueryResult
 
 /**
- * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * The `queries` array accepted by `injectQueries`. Recursively unwraps each tuple element so every entry's
+ * `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — past that, tuple
+ * recursion falls back to a single homogeneous options type. An opaque array (e.g. `unknown[]`) is returned
+ * as-is; a non-tuple array of a known element type is mapped to that element type instead, with no such
+ * limit.
+ *
+ * @template T - The type of the `queries` array as written at the call site.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
+ * be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -181,7 +191,16 @@ export type QueriesOptions<
               Array<QueryObserverOptionsForCreateQueries>
 
 /**
- * QueriesResults reducer recursively maps type param to results
+ * The result type returned by `injectQueries`, when no `combine` is provided. Mirrors {@link QueriesOptions}:
+ * each tuple element's result type is inferred individually, up to 20 elements — past that, tuple recursion
+ * falls back to a single homogeneous {@link CreateQueryResult} type. A non-tuple array is mapped per-element
+ * instead, with no such limit — every entry keeps its individually inferred type regardless of array length.
+ *
+ * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
+ * @template TResults - The internal accumulator that this type builds during recursion. It is not meant to
+ * be set explicitly.
+ * @template TDepth - The internal recursion-depth counter, checked against the 20-element limit. It is not
+ * meant to be set explicitly.
  */
 export type QueriesResults<
   T extends Array<any>,
@@ -214,8 +233,138 @@ export interface InjectQueriesOptions<
 }
 
 /**
- * @param optionsFn - A function that returns queries' options.
- * @param injector - The Angular injector to use.
+ * Injects a signal to fetch a variable number of queries.
+ *
+ * The `queries` key accepts an array with query option objects mostly identical to `injectQuery`'s. Having
+ * the same query key more than once in the array of query objects may cause some data to be shared between
+ * queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
+ * structure.
+ *
+ * The `combine` option can be used to combine the results of the queries into a single value. The result
+ * will be structurally shared to be as referentially stable as possible.
+ *
+ * @remarks Unlike `injectQuery`, `injectQueries` cannot infer the `data` argument of an _inline_ `select`
+ * from its sibling `queryFn`. Because `injectQueries` infers the type of the whole `queries` array at once,
+ * the `select` parameter of a query object written inline cannot be contextually typed from that same
+ * object's `queryFn`, so it falls back to `unknown` — a
+ * [known TypeScript limitation](https://github.com/TanStack/query/issues/6556). Annotate the `select`
+ * parameter explicitly, or define the query with {@link queryOptions}, which resolves its types in a single
+ * object _before_ it reaches `injectQueries`, to work around this — see the example below.
+ * @param optionsFn - A function returning the queries' options — an array of query option objects under
+ * `queries`, and an optional `combine`. Similar to `computed` from Angular, this function runs in the
+ * reactive context, so signals read inside it (e.g. to build the `queries` array) drive the queries.
+ * @param injector - The `Injector` in which to create the queries. If this is not provided, the current
+ * injection context will be used instead (via `inject`).
+ * @returns A `Signal` with the combined result. Without `combine`, this is an array with all the query
+ * results, in the same order as the input. When `combine` is provided, this is the value returned by
+ * `combine` instead.
+ *
+ * @example
+ * ```angular-ts
+ * @Component({
+ *   selector: 'posts',
+ *   template: `
+ *     <ul>
+ *       @for (query of postQueries(); track $index) {
+ *         @if (query.isPending()) {
+ *           <li>Loading...</li>
+ *         } @else if (query.isError()) {
+ *           <li>Error: {{ query.error()?.message }}</li>
+ *         } @else {
+ *           <li>{{ query.data().title }}</li>
+ *         }
+ *       }
+ *     </ul>
+ *   `,
+ * })
+ * export class Posts {
+ *   ids = signal([1, 2, 3])
+ *
+ *   postQueries = injectQueries(() => ({
+ *     queries: this.ids().map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *       staleTime: Infinity,
+ *     })),
+ *   }))
+ * }
+ * ```
+ *
+ * @example
+ * Combining results into a single value:
+ * ```angular-ts
+ * @Component({
+ *   selector: 'posts',
+ *   template: `
+ *     @if (combined().isPending) {
+ *       Loading...
+ *     } @else if (combined().isError) {
+ *       Error loading posts
+ *     } @else {
+ *       <ul>
+ *         @for (post of combined().data; track post?.id) {
+ *           <li>{{ post?.title }}</li>
+ *         }
+ *       </ul>
+ *     }
+ *   `,
+ * })
+ * export class Posts {
+ *   ids = signal([1, 2, 3])
+ *
+ *   combined = injectQueries(() => ({
+ *     queries: this.ids().map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *     combine: (postQueries) => ({
+ *       data: postQueries.map((query) => query.data),
+ *       isPending: postQueries.some((query) => query.isPending),
+ *       isError: postQueries.some((query) => query.isError),
+ *     }),
+ *   }))
+ * }
+ * ```
+ *
+ * @example
+ * Typing `select` via {@link queryOptions}. Note that spreading a `queryOptions` result and overriding
+ * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
+ * resolved before it reaches `injectQueries`:
+ * ```angular-ts
+ * const postOptions = (id: number) =>
+ *   queryOptions({
+ *     queryKey: ['post', id],
+ *     queryFn: () => fetchPost(id),
+ *   })
+ *
+ * @Component({
+ *   selector: 'post-title',
+ *   template: `<h1>{{ fixed()[0].data() }}</h1>`,
+ * })
+ * export class PostTitle {
+ *   id = signal(1)
+ *
+ *   broken = injectQueries(() => ({
+ *     queries: [
+ *       {
+ *         ...postOptions(this.id()),
+ *         // ❌ `data` is `unknown` here
+ *         select: (data) => data.title,
+ *       },
+ *     ],
+ *   }))
+ *
+ *   fixed = injectQueries(() => ({
+ *     queries: [
+ *       queryOptions({
+ *         ...postOptions(this.id()),
+ *         // ✅ `data` is `Post`
+ *         select: (data) => data.title,
+ *       }),
+ *     ],
+ *   }))
+ * }
+ * ```
  */
 export function injectQueries<
   T extends Array<any>,

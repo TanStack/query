@@ -9,7 +9,7 @@ type QueryFeatures =
   | PersistQueryClientFeature;
 ```
 
-Defined in: [providers.ts:173](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L173)
+Defined in: [providers.ts:170](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L170)
 
 A type alias that represents all Query features available for use with `provideTanStackQuery`.
 Features can be enabled by adding special functions to the `provideTanStackQuery` call.

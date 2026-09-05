@@ -20,12 +20,28 @@ export interface InjectIsMutatingOptions {
 }
 
 /**
- * Injects a signal that tracks the number of mutations that your application is fetching.
+ * Injects a signal that tracks the number of mutations that your application currently has `pending`
+ * (useful for app-wide loading indicators).
  *
- * Can be used for app-wide loading indicators
- * @param filters - The filters to apply to the query.
+ * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param options - Additional configuration
- * @returns A read-only signal with the number of fetching mutations.
+ * @returns A `Signal` with the number of mutations that your application currently has `pending`.
+ *
+ * @example
+ * ```angular-ts
+ * @Component({
+ *   selector: 'posts-mutating-indicator',
+ *   template: `
+ *     @if (isMutatingPosts()) {
+ *       <span>Saving posts...</span>
+ *     }
+ *   `,
+ * })
+ * export class PostsMutatingIndicator {
+ *   // How many mutations matching the posts prefix are in progress?
+ *   isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
+ * }
+ * ```
  */
 export function injectIsMutating(
   filters?: MutationFilters,

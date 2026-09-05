@@ -7,9 +7,11 @@ title: provideIsRestoring
 function provideIsRestoring(isRestoring): Provider;
 ```
 
-Defined in: [inject-is-restoring.ts:43](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L43)
+Defined in: [inject-is-restoring.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L48)
 
-Used by TanStack Query Angular persist client plugin to provide the signal that tracks the restore state
+Registers a provider for the restore state read by `injectIsRestoring`. Wire this up wherever you drive a
+restore yourself — e.g. a persist-client integration — so `injectQuery` and friends can defer subscribing
+to their observer (avoiding a race with the restore) until the restore signal flips back to `false`.
 
 ## Parameters
 
@@ -17,10 +19,10 @@ Used by TanStack Query Angular persist client plugin to provide the signal that 
 
 `Signal`\<`boolean`\>
 
-a readonly signal that returns a boolean
+A readonly `Signal<boolean>` that tracks the restore state.
 
 ## Returns
 
 `Provider`
 
-Provider for the `isRestoring` signal
+A provider for the `isRestoring` signal.
