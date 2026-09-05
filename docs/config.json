@@ -1849,6 +1849,10 @@
               "to": "framework/lit/reference/functions/createMutationController"
             },
             {
+              "label": "Functions / renderResult",
+              "to": "framework/lit/reference/functions/renderResult"
+            },
+            {
               "label": "Functions / useIsFetching",
               "to": "framework/lit/reference/functions/useIsFetching"
             },

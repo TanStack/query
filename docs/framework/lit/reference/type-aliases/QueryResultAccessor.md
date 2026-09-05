@@ -7,7 +7,7 @@ title: QueryResultAccessor
 type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:42](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L42)
+Defined in: [packages/lit-query/src/createQueryController.ts:47](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L47)
 
 Accessor returned by `createQueryController`.
 
@@ -35,6 +35,30 @@ refetch: QueryObserverResult<TData, TError>["refetch"];
 ```
 
 Refetches the current query.
+
+### render()
+
+```ts
+render: <TRenderers>(renderers) => RendererResult<QueryObserverResult<TData, TError>, TRenderers>;
+```
+
+Renders the query result using the appropriate renderer from the given set, based on the result's `status`.
+
+#### Type Parameters
+
+##### TRenderers
+
+`TRenderers` *extends* [`ResultRenderers`](ResultRenderers.md)\<`QueryObserverResult`\<`TData`, `TError`\>\>
+
+#### Parameters
+
+##### renderers
+
+`TRenderers`
+
+#### Returns
+
+[`RendererResult`](RendererResult.md)\<`QueryObserverResult`\<`TData`, `TError`\>, `TRenderers`\>
 
 ### suspense()
 
