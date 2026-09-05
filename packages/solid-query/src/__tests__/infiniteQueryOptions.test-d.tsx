@@ -136,4 +136,42 @@ describe('infiniteQueryOptions', () => {
       }>
     >()
   })
+
+  it('should infer defined types when initialData is a function that can return undefined', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => ({ wow: true }),
+      initialData: () =>
+        Math.random() > 0.5
+          ? {
+              pageParams: [undefined],
+              pages: [{ wow: true }],
+            }
+          : undefined,
+      getNextPageParam: () => 10,
+      initialPageParam: 0,
+    })
+
+    expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
+      () => InfiniteData<{ wow: boolean }, unknown> | undefined
+    >()
+  })
+
+  it('should infer defined types when initialData is undefined or defined', () => {
+    const initialData:
+      | InfiniteData<{ wow: boolean }, unknown>
+      | undefined = undefined
+
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => ({ wow: true }),
+      initialData,
+      getNextPageParam: () => 10,
+      initialPageParam: 0,
+    })
+
+    expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
+      () => InfiniteData<{ wow: boolean }, unknown> | undefined
+    >()
+  })
 })
