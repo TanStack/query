@@ -359,4 +359,30 @@ describe('useQuery', () => {
       }
     })
   })
+
+  describe('queryKey reactivity rules', () => {
+    it('should reject a bare reactive getter for the whole queryKey array', () => {
+      const id = ref(1)
+      assertType(
+        useQuery({
+          // @ts-expect-error when passed directly to useQuery, queryKey cannot be a bare
+          // reactive getter for the whole array (queryOptions() allows this)
+          queryKey: () => ['post', id.value],
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+    })
+  })
+
+  describe('select', () => {
+    it('should narrow data to the type select returns', () => {
+      const { data } = useQuery({
+        queryKey: queryKey(),
+        queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
+        select: (posts) => posts.length,
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
+    })
+  })
 })
