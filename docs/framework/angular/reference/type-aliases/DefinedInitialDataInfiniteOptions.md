@@ -16,8 +16,7 @@ Defined in: [infinite-query-options.ts:62](https://github.com/TanStack/query/blo
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | undefined;
+| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
 ```
 
 ## Type Parameters
