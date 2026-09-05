@@ -9,10 +9,10 @@ type QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = { [Prope
 
 Defined in: [vue-query/src/queryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L35)
 
-The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `queryKey` and `enabled`
-track reactive dependencies individually — pass a `ref`, a plain value, or a reactive getter (`() => ...`)
-for either one and the query reacts to changes without any extra wiring. Other options passed this way are
-read once and are not reactive.
+The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
+dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` tracks
+a `ref` for the array itself, or a `ref` nested inside one of its entries — its individual entries can't be
+reactive getters. Other options passed this way are read once and are not reactive.
 
 If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
 inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
