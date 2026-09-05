@@ -76,9 +76,10 @@ const hydratableObserverResult = <
   if (!isServer) return result
   const obj: any = {
     ...unwrap(result),
-    // During SSR, functions cannot be serialized, so we need to remove them
-    // This is safe because we will add these functions back when the query is hydrated
+    // During SSR, non-serializable values (functions, promises) must be removed.                   
+    // This is safe because they will be reconstructed when the query is hydrated.
     refetch: undefined,
+    promise: undefined,
   }
 
   // If the query is an infinite query, we need to remove additional properties
