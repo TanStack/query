@@ -16,7 +16,7 @@ can be shared across functions and imperative APIs such as `queryClient.fetchQue
 required and is the query key to generate options for.
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
-a `select` narrows `TData` to include it).
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 

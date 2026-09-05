@@ -70,7 +70,7 @@ export type UnusedSkipTokenOptions<
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined` (unless a `select` narrows `TData` to include it).
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -110,7 +110,7 @@ export type DefinedInitialDataOptions<
  * required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
- * a `select` narrows `TData` to include it).
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link injectQuery} to run a query with these options.
  * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.

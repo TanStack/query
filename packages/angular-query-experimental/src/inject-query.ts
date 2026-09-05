@@ -28,7 +28,7 @@ export interface InjectQueryOptions {
 
 /**
  * This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
- * resulting `data` signal is never `undefined` (unless a `select` narrows `TData` to include it).
+ * resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
@@ -37,8 +37,8 @@ export interface InjectQueryOptions {
  * can pass to `injectQuery`, with `initialData` set. Similar to `computed` from Angular, this function runs
  * in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive the query.
  * @param options - Additional configuration
- * @returns The query result, typed so that `data` is never `undefined` (unless a `select` narrows `TData` to
- * include it).
+ * @returns The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
+ * include `undefined`).
  *
  * @example
  * ```angular-ts

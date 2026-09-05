@@ -12,7 +12,7 @@ function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, opti
 Defined in: [inject-query.ts:69](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L69)
 
 This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
-resulting `data` signal is never `undefined` (unless a `select` narrows `TData` to include it).
+resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -52,8 +52,8 @@ Additional configuration
 
 [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
-The query result, typed so that `data` is never `undefined` (unless a `select` narrows `TData` to
-include it).
+The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
+include `undefined`).
 
 ### See
 
