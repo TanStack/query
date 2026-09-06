@@ -110,6 +110,38 @@ describe('injectInfiniteQuery', () => {
     expect(rendered.getByText('failureCount: 1')).toBeInTheDocument()
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `
+        <div>pages: {{ query.data().pages.join(', ') }}</div>
+        <div>isError: {{ query.isError() }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: { pages: [1], pageParams: [1] },
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+        initialPageParam: 0,
+        retry: false,
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('pages: 1')).toBeInTheDocument()
+    expect(rendered.getByText('isError: false')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('pages: 1')).toBeInTheDocument()
+    expect(rendered.getByText('isError: true')).toBeInTheDocument()
+  })
+
   describe('skipToken', () => {
     it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
       const key = queryKey()
