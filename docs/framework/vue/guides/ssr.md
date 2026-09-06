@@ -1,6 +1,8 @@
 ---
 id: ssr
 title: SSR
+redirect_from:
+  - framework/vue/reference/hydration
 ---
 
 Vue Query supports prefetching multiple queries on the server and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, Vue Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.

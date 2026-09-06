@@ -1,6 +1,8 @@
 ---
 id: useIsMutating
 title: useIsMutating
+redirect_from:
+  - framework/vue/reference/useIsMutating
 ---
 
 ```ts

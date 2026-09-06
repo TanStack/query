@@ -1,6 +1,8 @@
 ---
 id: queryOptions
 title: queryOptions
+redirect_from:
+  - framework/vue/reference/queryOptions
 ---
 
 ## Call Signature
