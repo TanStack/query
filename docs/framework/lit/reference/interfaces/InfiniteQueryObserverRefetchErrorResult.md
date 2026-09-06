@@ -3,7 +3,7 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1075](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1075)
+Defined in: [packages/query-core/src/types.ts:1086](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1086)
 
 ## Extends
 
@@ -27,7 +27,7 @@ Defined in: [packages/query-core/src/types.ts:1075](https://github.com/TanStack/
 data: TData;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1079](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1079)
+Defined in: [packages/query-core/src/types.ts:1090](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1090)
 
 The last successfully resolved data for the query.
 
@@ -43,7 +43,7 @@ The last successfully resolved data for the query.
 dataUpdatedAt: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:754](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L754)
+Defined in: [packages/query-core/src/types.ts:765](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L765)
 
 The timestamp for when the query most recently returned the `status` as `"success"`.
 
@@ -59,7 +59,7 @@ The timestamp for when the query most recently returned the `status` as `"succes
 error: TError;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1080](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1080)
+Defined in: [packages/query-core/src/types.ts:1091](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1091)
 
 The error object for the query, if an error was thrown.
 - Defaults to `null`.
@@ -76,7 +76,7 @@ The error object for the query, if an error was thrown.
 errorUpdateCount: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:778](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L778)
+Defined in: [packages/query-core/src/types.ts:789](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L789)
 
 The sum of all errors.
 
@@ -92,7 +92,7 @@ The sum of all errors.
 errorUpdatedAt: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:763](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L763)
+Defined in: [packages/query-core/src/types.ts:774](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L774)
 
 The timestamp for when the query most recently returned the `status` as `"error"`.
 
@@ -108,7 +108,7 @@ The timestamp for when the query most recently returned the `status` as `"error"
 failureCount: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:769](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L769)
+Defined in: [packages/query-core/src/types.ts:780](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L780)
 
 The failure count for the query.
 - Incremented every time the query fails.
@@ -126,7 +126,7 @@ The failure count for the query.
 failureReason: TError | null;
 ```
 
-Defined in: [packages/query-core/src/types.ts:774](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L774)
+Defined in: [packages/query-core/src/types.ts:785](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L785)
 
 The failure reason for the query retry.
 - Reset to `null` when the query succeeds.
@@ -143,7 +143,7 @@ The failure reason for the query retry.
 fetchNextPage: (options?) => Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:987](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L987)
+Defined in: [packages/query-core/src/types.ts:998](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L998)
 
 This function allows you to fetch the next "page" of results.
 
@@ -169,7 +169,7 @@ This function allows you to fetch the next "page" of results.
 fetchPreviousPage: (options?) => Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:993](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L993)
+Defined in: [packages/query-core/src/types.ts:1004](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1004)
 
 This function allows you to fetch the previous "page" of results.
 
@@ -195,7 +195,7 @@ This function allows you to fetch the previous "page" of results.
 fetchStatus: FetchStatus;
 ```
 
-Defined in: [packages/query-core/src/types.ts:868](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L868)
+Defined in: [packages/query-core/src/types.ts:879](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L879)
 
 The fetch status of the query.
 - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch.
@@ -215,7 +215,7 @@ The fetch status of the query.
 hasNextPage: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:999](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L999)
+Defined in: [packages/query-core/src/types.ts:1010](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1010)
 
 Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).
 
@@ -231,7 +231,7 @@ Will be `true` if there is a next page to be fetched (known via the `getNextPage
 hasPreviousPage: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1003](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1003)
+Defined in: [packages/query-core/src/types.ts:1014](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1014)
 
 Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
 
@@ -247,7 +247,7 @@ Will be `true` if there is a previous page to be fetched (known via the `getPrev
 isEnabled: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:846](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L846)
+Defined in: [packages/query-core/src/types.ts:857](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L857)
 
 `true` if this observer is enabled, `false` otherwise.
 
@@ -263,7 +263,7 @@ Defined in: [packages/query-core/src/types.ts:846](https://github.com/TanStack/q
 isError: true;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1081](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1081)
+Defined in: [packages/query-core/src/types.ts:1092](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1092)
 
 A derived boolean from the `status` variable, provided for convenience.
 - `true` if the query attempt resulted in an error.
@@ -280,7 +280,7 @@ A derived boolean from the `status` variable, provided for convenience.
 isFetched: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:787](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L787)
+Defined in: [packages/query-core/src/types.ts:798](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L798)
 
 Will be `true` if the query has been fetched.
 
@@ -296,7 +296,7 @@ Will be `true` if the query has been fetched.
 isFetchedAfterMount: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:792](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L792)
+Defined in: [packages/query-core/src/types.ts:803](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L803)
 
 Will be `true` if the query has been fetched after the component mounted.
 - This property can be used to not show any previously cached data.
@@ -313,7 +313,7 @@ Will be `true` if the query has been fetched after the component mounted.
 isFetching: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:797](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L797)
+Defined in: [packages/query-core/src/types.ts:808](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L808)
 
 A derived boolean from the `fetchStatus` variable, provided for convenience.
 - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch.
@@ -330,7 +330,7 @@ A derived boolean from the `fetchStatus` variable, provided for convenience.
 isFetchingNextPage: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1011](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1011)
+Defined in: [packages/query-core/src/types.ts:1022](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1022)
 
 Will be `true` while fetching the next page with `fetchNextPage`.
 
@@ -346,7 +346,7 @@ Will be `true` while fetching the next page with `fetchNextPage`.
 isFetchingPreviousPage: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1019](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1019)
+Defined in: [packages/query-core/src/types.ts:1030](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1030)
 
 Will be `true` while fetching the previous page with `fetchPreviousPage`.
 
@@ -362,7 +362,7 @@ Will be `true` while fetching the previous page with `fetchPreviousPage`.
 isFetchNextPageError: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1007](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1007)
+Defined in: [packages/query-core/src/types.ts:1018](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1018)
 
 Will be `true` if the query failed while fetching the next page.
 
@@ -378,7 +378,7 @@ Will be `true` if the query failed while fetching the next page.
 isFetchPreviousPageError: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1015](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1015)
+Defined in: [packages/query-core/src/types.ts:1026](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1026)
 
 Will be `true` if the query failed while fetching the previous page.
 
@@ -394,7 +394,7 @@ Will be `true` if the query failed while fetching the previous page.
 isInitialLoading: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:815](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L815)
+Defined in: [packages/query-core/src/types.ts:826](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L826)
 
 #### Deprecated
 
@@ -413,7 +413,7 @@ and will be removed in the next major version.
 isLoading: false;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1083](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1083)
+Defined in: [packages/query-core/src/types.ts:1094](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1094)
 
 Is `true` whenever the first fetch for a query is in-flight.
 - Is the same as `isFetching && isPending`.
@@ -430,7 +430,7 @@ Is `true` whenever the first fetch for a query is in-flight.
 isLoadingError: false;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1084](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1084)
+Defined in: [packages/query-core/src/types.ts:1095](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1095)
 
 Will be `true` if the query failed while fetching for the first time.
 
@@ -446,7 +446,7 @@ Will be `true` if the query failed while fetching for the first time.
 isPaused: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:820](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L820)
+Defined in: [packages/query-core/src/types.ts:831](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L831)
 
 A derived boolean from the `fetchStatus` variable, provided for convenience.
 - The query wanted to fetch, but has been `paused`.
@@ -463,7 +463,7 @@ A derived boolean from the `fetchStatus` variable, provided for convenience.
 isPending: false;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1082](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1082)
+Defined in: [packages/query-core/src/types.ts:1093](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1093)
 
 Will be `pending` if there's no cached data and no query attempt was finished yet.
 
@@ -479,7 +479,7 @@ Will be `pending` if there's no cached data and no query attempt was finished ye
 isPlaceholderData: false;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1087](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1087)
+Defined in: [packages/query-core/src/types.ts:1098](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1098)
 
 Will be `true` if the data shown is the placeholder data.
 
@@ -495,7 +495,7 @@ Will be `true` if the data shown is the placeholder data.
 isRefetchError: true;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1085](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1085)
+Defined in: [packages/query-core/src/types.ts:1096](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1096)
 
 Will be `true` if the query failed while refetching.
 
@@ -511,7 +511,7 @@ Will be `true` if the query failed while refetching.
 isRefetching: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:833](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L833)
+Defined in: [packages/query-core/src/types.ts:844](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L844)
 
 Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`.
 - Is the same as `isFetching && !isPending`.
@@ -528,7 +528,7 @@ Is `true` whenever a background refetch is in-flight, which _does not_ include i
 isStale: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:837](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L837)
+Defined in: [packages/query-core/src/types.ts:848](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L848)
 
 Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
 
@@ -544,7 +544,7 @@ Will be `true` if the data in the cache is invalidated or if the data is older t
 isSuccess: false;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1086](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1086)
+Defined in: [packages/query-core/src/types.ts:1097](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1097)
 
 A derived boolean from the `status` variable, provided for convenience.
 - `true` if the query has received a response with no errors and is ready to display its data.
@@ -561,7 +561,7 @@ A derived boolean from the `status` variable, provided for convenience.
 refetch: (options?) => Promise<QueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:850](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L850)
+Defined in: [packages/query-core/src/types.ts:861](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L861)
 
 A function to manually refetch the query.
 
@@ -587,7 +587,7 @@ A function to manually refetch the query.
 status: "error";
 ```
 
-Defined in: [packages/query-core/src/types.ts:1088](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1088)
+Defined in: [packages/query-core/src/types.ts:1099](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1099)
 
 The status of the query.
 - Will be:

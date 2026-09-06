@@ -3,7 +3,7 @@ id: MutationFilters
 title: MutationFilters
 ---
 
-Defined in: [packages/query-core/src/utils.ts:62](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L62)
+Defined in: [packages/query-core/src/utils.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L64)
 
 Filters used to select mutations, for example in `mutationCache.findAll` or `queryClient.isMutating`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -34,7 +34,7 @@ All provided filters must match; filters that are left unspecified are ignored.
 optional exact: boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:71](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L71)
+Defined in: [packages/query-core/src/utils.ts:73](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L73)
 
 Match mutation key exactly
 
@@ -46,7 +46,7 @@ Match mutation key exactly
 optional mutationKey: readonly unknown[];
 ```
 
-Defined in: [packages/query-core/src/utils.ts:81](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L81)
+Defined in: [packages/query-core/src/utils.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L83)
 
 Include mutations matching this mutation key
 
@@ -58,7 +58,7 @@ Include mutations matching this mutation key
 optional predicate: (mutation) => boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L75)
+Defined in: [packages/query-core/src/utils.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L77)
 
 Include mutations matching this predicate function
 
@@ -80,6 +80,6 @@ Include mutations matching this predicate function
 optional status: MutationStatus;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:85](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L85)
+Defined in: [packages/query-core/src/utils.ts:87](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L87)
 
 Filter by mutation status

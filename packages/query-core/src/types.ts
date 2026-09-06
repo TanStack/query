@@ -240,6 +240,7 @@ export interface QueryOptions<
    * If `true`, failed queries will retry infinitely.
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
+   *
    * Defaults to `3` on the client and `0` on the server.
    */
   retry?: RetryValue<TError>
@@ -318,6 +319,7 @@ export interface QueryOptions<
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
+   *
    * Defaults to `true`.
    */
   structuralSharing?:
@@ -385,6 +387,7 @@ export interface QueryObserverOptions<
    * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    * Accepts a boolean or function that returns a boolean.
+   *
    * Defaults to `true`.
    */
   enabled?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -393,12 +396,14 @@ export interface QueryObserverOptions<
    * If set to `Infinity`, the data will never be considered stale.
    * If set to `'static'`, the data will never be considered stale.
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
+   *
    * Defaults to `0`.
    */
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
+   *
    * Defaults to `false`.
    */
   refetchInterval?:
@@ -417,6 +422,7 @@ export interface QueryObserverOptions<
    * If set to `false`, the query will not refetch on window focus.
    * If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value.
+   *
    * Defaults to `true`.
    */
   refetchOnWindowFocus?:
@@ -430,6 +436,7 @@ export interface QueryObserverOptions<
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value.
+   *
    * Defaults to `true` unless `networkMode` is `'always'`.
    */
   refetchOnReconnect?:
@@ -443,6 +450,7 @@ export interface QueryObserverOptions<
    * If set to `false`, will disable additional instances of a query to trigger background refetch.
    * If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value
+   *
    * Defaults to `true`.
    */
   refetchOnMount?:
@@ -454,6 +462,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
    * If set to a function, the function will be executed with the query to compute the value.
+   *
    * Defaults to `true`.
    */
   retryOnMount?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -470,6 +479,7 @@ export interface QueryObserverOptions<
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
    * If set to `false` and `suspense` is `false`, errors are returned as state.
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
+   *
    * Defaults to `false`.
    */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -483,6 +493,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
+   *
    * Defaults to `false`.
    */
   suspense?: boolean
@@ -1207,9 +1218,33 @@ export interface MutationOptions<
     onMutateResult: TOnMutateResult | undefined,
     context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
+  /**
+   * If `false`, failed mutations will not retry by default.
+   * If `true`, failed mutations will retry infinitely.
+   * If set to an integer number, e.g. 3, failed mutations will retry until the failed mutation count meets that number.
+   * If set to a function `(failureCount, error) => boolean` failed mutations will retry until the function returns false.
+   *
+   * Defaults to `0`.
+   */
   retry?: RetryValue<TError>
+  /**
+   * This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
+   * next attempt in milliseconds.
+   *
+   * Defaults to a function that applies exponential backoff, capped at 30 seconds.
+   */
   retryDelay?: RetryDelayValue<TError>
+  /**
+   * Defaults to `'online'`.
+   * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
+   */
   networkMode?: NetworkMode
+  /**
+   * The time in milliseconds that an unused/inactive mutation remains in memory before it is
+   * garbage collected.
+   *
+   * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
+   */
   gcTime?: number
   /** @internal */
   _defaulted?: boolean

@@ -28,6 +28,8 @@ export interface QueriesObserverOptions<
    * observed query) into a single value. The combined value is memoized and
    * only recomputed when one of the underlying results, the query hashes, or
    * the `combine` function itself changes.
+   *
+   * Defaults to returning the array of `QueryObserverResult`s unchanged.
    */
   combine?: CombineFn<TCombinedResult>
 }

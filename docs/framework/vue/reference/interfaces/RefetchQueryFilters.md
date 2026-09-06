@@ -3,7 +3,7 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:709](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L709)
+Defined in: [packages/query-core/src/types.ts:720](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L720)
 
 ## Extends
 
@@ -23,7 +23,7 @@ Defined in: [packages/query-core/src/types.ts:709](https://github.com/TanStack/q
 optional exact: boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:39](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L39)
+Defined in: [packages/query-core/src/utils.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L41)
 
 Match query key exactly
 
@@ -41,7 +41,7 @@ QueryFilters.exact
 optional fetchStatus: FetchStatus;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L55)
+Defined in: [packages/query-core/src/utils.ts:57](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L57)
 
 Include queries matching their fetchStatus
 
@@ -59,7 +59,7 @@ QueryFilters.fetchStatus
 optional predicate: (query) => boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L43)
+Defined in: [packages/query-core/src/utils.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L45)
 
 Include queries matching this predicate function
 
@@ -87,7 +87,7 @@ QueryFilters.predicate
 optional queryKey: TQueryKey | TuplePrefixes<TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:47](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L47)
+Defined in: [packages/query-core/src/utils.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L49)
 
 Include queries matching this query key
 
@@ -105,7 +105,7 @@ QueryFilters.queryKey
 optional stale: boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:51](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L51)
+Defined in: [packages/query-core/src/utils.ts:53](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L53)
 
 Include or exclude stale queries
 
@@ -123,9 +123,11 @@ QueryFilters.stale
 optional type: QueryTypeFilter;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:35](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L35)
+Defined in: [packages/query-core/src/utils.ts:37](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L37)
 
 Filter to active queries, inactive queries or all queries
+
+Defaults to `'all'`.
 
 #### Inherited from
 

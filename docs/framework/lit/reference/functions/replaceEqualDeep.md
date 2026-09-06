@@ -10,7 +10,7 @@ function replaceEqualDeep<T>(
    depth?): T;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L337)
+Defined in: [packages/query-core/src/utils.ts:339](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L339)
 
 This function returns `a` if `b` is deeply equal.
 If not, it will replace any deeply equal children of `b` with those of `a`.

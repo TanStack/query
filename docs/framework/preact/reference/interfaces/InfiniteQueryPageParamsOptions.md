@@ -3,7 +3,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:345](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L345)
+Defined in: [packages/query-core/src/types.ts:347](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L347)
 
 ## Extends
 
@@ -31,7 +31,7 @@ Defined in: [packages/query-core/src/types.ts:345](https://github.com/TanStack/q
 getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:358](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L358)
+Defined in: [packages/query-core/src/types.ts:360](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L360)
 
 This function can be set to automatically get the next cursor for infinite queries.
 The result will also be used to determine the value of `hasNextPage`.
@@ -44,7 +44,7 @@ The result will also be used to determine the value of `hasNextPage`.
 optional getPreviousPageParam: GetPreviousPageParamFunction<TPageParam, TQueryFnData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:353](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L353)
+Defined in: [packages/query-core/src/types.ts:355](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L355)
 
 This function can be set to automatically get the previous cursor for infinite queries.
 The result will also be used to determine the value of `hasPreviousPage`.
@@ -57,7 +57,7 @@ The result will also be used to determine the value of `hasPreviousPage`.
 initialPageParam: TPageParam;
 ```
 
-Defined in: [packages/query-core/src/types.ts:342](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L342)
+Defined in: [packages/query-core/src/types.ts:344](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L344)
 
 #### Inherited from
 

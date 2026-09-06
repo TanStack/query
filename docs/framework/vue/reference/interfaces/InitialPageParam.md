@@ -3,7 +3,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: [packages/query-core/src/types.ts:341](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L341)
+Defined in: [packages/query-core/src/types.ts:343](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L343)
 
 ## Extended by
 
@@ -23,4 +23,4 @@ Defined in: [packages/query-core/src/types.ts:341](https://github.com/TanStack/q
 initialPageParam: TPageParam;
 ```
 
-Defined in: [packages/query-core/src/types.ts:342](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L342)
+Defined in: [packages/query-core/src/types.ts:344](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L344)

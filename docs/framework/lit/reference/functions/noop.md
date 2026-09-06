@@ -9,7 +9,7 @@ title: noop
 function noop(): void;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:117](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L117)
+Defined in: [packages/query-core/src/utils.ts:119](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L119)
 
 A function that does nothing.
 
@@ -23,7 +23,7 @@ A function that does nothing.
 function noop(): undefined;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:118](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L118)
+Defined in: [packages/query-core/src/utils.ts:120](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L120)
 
 A function that does nothing.
 
