@@ -537,6 +537,32 @@ describe('useQuery', () => {
     })
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () =>
+        sleep(10).then(() => Promise.reject(new Error('Some error'))),
+      initialData: 'seeded data',
+      retry: false,
+    })
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'seeded data' },
+      isError: { value: false },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      status: { value: 'error' },
+      data: { value: 'seeded data' },
+      isError: { value: true },
+    })
+  })
+
   it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
     const key = queryKey()
     const page = ref(0)
