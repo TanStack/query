@@ -45,6 +45,6 @@ A `Signal` with the number of mutations that your application currently has `pen
 })
 export class PostsMutatingIndicator {
   // How many mutations matching the posts prefix are in progress?
-  isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
+  readonly isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
 }
 ```

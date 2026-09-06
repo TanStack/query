@@ -40,7 +40,7 @@ export interface InjectIsFetchingOptions {
  * })
  * export class PostsFetchingIndicator {
  *   // How many queries matching the posts prefix are fetching?
- *   isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
+ *   readonly isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
  * }
  * ```
  *
@@ -56,7 +56,7 @@ export interface InjectIsFetchingOptions {
  *   `,
  * })
  * export class GlobalLoadingIndicator {
- *   isFetching = injectIsFetching()
+ *   readonly isFetching = injectIsFetching()
  * }
  * ```
  */

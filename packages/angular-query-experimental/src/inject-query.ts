@@ -58,7 +58,7 @@ export interface InjectQueryOptions {
  *   `,
  * })
  * export class Posts {
- *   postsQuery = injectQuery(() => ({
+ *   readonly postsQuery = injectQuery(() => ({
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
  *     initialData: [],
@@ -114,7 +114,7 @@ export function injectQuery<
  *   `,
  * })
  * export class Posts {
- *   postsQuery = injectQuery(() => ({
+ *   readonly postsQuery = injectQuery(() => ({
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
  *   }))
@@ -144,9 +144,9 @@ export function injectQuery<
  *   `,
  * })
  * export class Posts {
- *   filter = signal('')
+ *   readonly filter = signal('')
  *
- *   postsQuery = injectQuery(() => ({
+ *   readonly postsQuery = injectQuery(() => ({
  *     queryKey: ['posts', this.filter()],
  *     queryFn: () => fetchPosts(this.filter()),
  *     // Signals can be combined with expressions

@@ -90,7 +90,7 @@ export const projectsOptions = infiniteQueryOptions({
   `,
 })
 export class Projects {
-  projectsQuery = injectInfiniteQuery(() => projectsOptions)
+  readonly projectsQuery = injectInfiniteQuery(() => projectsOptions)
 }
 ```
 
@@ -180,8 +180,8 @@ export const commentsOptions = (postId: string) =>
   `,
 })
 export class Comments {
-  postId = signal('1')
-  commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+  readonly postId = signal('1')
+  readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
 }
 ```
 
@@ -275,8 +275,8 @@ export const commentsOptions = (postId: string) =>
   `,
 })
 export class Comments {
-  postId = signal('1')
-  commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+  readonly postId = signal('1')
+  readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
 }
 ```
 

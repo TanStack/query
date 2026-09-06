@@ -80,7 +80,7 @@ include `undefined`).
   `,
 })
 export class Posts {
-  postsQuery = injectQuery(() => ({
+  readonly postsQuery = injectQuery(() => ({
     queryKey: ['posts'],
     queryFn: fetchPosts,
     initialData: [],
@@ -166,7 +166,7 @@ the last fetch attempt failed, or `'success'` if the query has data to display. 
   `,
 })
 export class Posts {
-  postsQuery = injectQuery(() => ({
+  readonly postsQuery = injectQuery(() => ({
     queryKey: ['posts'],
     queryFn: fetchPosts,
   }))
@@ -195,9 +195,9 @@ truthy value. When the filter signal changes back to a falsy value, the query is
   `,
 })
 export class Posts {
-  filter = signal('')
+  readonly filter = signal('')
 
-  postsQuery = injectQuery(() => ({
+  readonly postsQuery = injectQuery(() => ({
     queryKey: ['posts', this.filter()],
     queryFn: () => fetchPosts(this.filter()),
     // Signals can be combined with expressions

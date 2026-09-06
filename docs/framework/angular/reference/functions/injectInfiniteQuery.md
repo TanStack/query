@@ -94,7 +94,7 @@ like `queryClient.fetchInfiniteQuery`.
   `,
 })
 export class Projects {
-  projectsQuery = injectInfiniteQuery(() => ({
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => fetchProjects(pageParam),
     initialPageParam: 0,
@@ -198,7 +198,7 @@ Fetching the next page from a button click:
   `,
 })
 export class ProjectsList {
-  projectsQuery = injectInfiniteQuery(() => ({
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => fetchProjects(pageParam),
     initialPageParam: 0,
@@ -224,9 +224,9 @@ element after the list:
   `,
 })
 export class ProjectsList {
-  sentinel = viewChild<ElementRef<HTMLElement>>('sentinel')
+  readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel')
 
-  projectsQuery = injectInfiniteQuery(() => ({
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: ({ pageParam }) => fetchProjects(pageParam),
     initialPageParam: 0,
@@ -279,9 +279,9 @@ setting `enabled: false`:
   `,
 })
 export class Comments {
-  postId = signal<string | undefined>(undefined)
+  readonly postId = signal<string | undefined>(undefined)
 
-  commentsQuery = injectInfiniteQuery(() => ({
+  readonly commentsQuery = injectInfiniteQuery(() => ({
     queryKey: ['post', this.postId(), 'comments'],
     queryFn:
       this.postId() != null

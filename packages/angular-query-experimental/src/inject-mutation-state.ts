@@ -64,7 +64,7 @@ export interface InjectMutationStateOptions {
  *   template: `{{ pendingVariables().length }} posts saving...`,
  * })
  * export class PendingPosts {
- *   pendingVariables = injectMutationState(() => ({
+ *   readonly pendingVariables = injectMutationState(() => ({
  *     filters: { status: 'pending' },
  *     select: (mutation) => mutation.state.variables,
  *   }))
@@ -86,12 +86,12 @@ export interface InjectMutationStateOptions {
  * })
  * export class Posts {
  *   // Some mutation that we want to get the state for
- *   createPostMutation = injectMutation(() => ({
+ *   readonly createPostMutation = injectMutation(() => ({
  *     mutationKey,
  *     mutationFn: createPosts,
  *   }))
  *
- *   savedPosts = injectMutationState(() => ({
+ *   readonly savedPosts = injectMutationState(() => ({
  *     // this mutation key needs to match the mutation key of the given mutation (see above)
  *     filters: { mutationKey, status: 'success' },
  *     select: (mutation) => mutation.state.data,

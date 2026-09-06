@@ -67,9 +67,9 @@ export interface InjectMutationOptions {
  *   `,
  * })
  * export class Todos {
- *   #queryClient = inject(QueryClient)
+ *   readonly #queryClient = inject(QueryClient)
  *
- *   addMutation = injectMutation(() => ({
+ *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
  *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
  *   }))
@@ -84,9 +84,9 @@ export interface InjectMutationOptions {
  *   template: `<button (click)="addMutation.mutate('Item')">Add</button>`,
  * })
  * export class Todos {
- *   #queryClient = inject(QueryClient)
+ *   readonly #queryClient = inject(QueryClient)
  *
- *   addMutation = injectMutation(() => ({
+ *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo) => {
  *       await this.#queryClient.cancelQueries({ queryKey: ['todos'] })
@@ -121,9 +121,9 @@ export interface InjectMutationOptions {
  *   `,
  * })
  * export class Todos {
- *   #queryClient = inject(QueryClient)
+ *   readonly #queryClient = inject(QueryClient)
  *
- *   addMutation = injectMutation(() => ({
+ *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
  *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
  *   }))
@@ -150,9 +150,9 @@ export interface InjectMutationOptions {
  *   `,
  * })
  * export class Todos {
- *   #queryClient = inject(QueryClient)
+ *   readonly #queryClient = inject(QueryClient)
  *
- *   addMutation = injectMutation(() => ({
+ *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
  *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
  *   }))

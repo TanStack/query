@@ -46,7 +46,7 @@ the background.
 })
 export class PostsFetchingIndicator {
   // How many queries matching the posts prefix are fetching?
-  isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
+  readonly isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
 }
 ```
 
@@ -61,6 +61,6 @@ A global loading indicator for any query fetching in the background, not just th
   `,
 })
 export class GlobalLoadingIndicator {
-  isFetching = injectIsFetching()
+  readonly isFetching = injectIsFetching()
 }
 ```

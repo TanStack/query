@@ -39,7 +39,7 @@ export interface InjectIsMutatingOptions {
  * })
  * export class PostsMutatingIndicator {
  *   // How many mutations matching the posts prefix are in progress?
- *   isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
+ *   readonly isMutatingPosts = injectIsMutating({ mutationKey: ['posts'] })
  * }
  * ```
  */

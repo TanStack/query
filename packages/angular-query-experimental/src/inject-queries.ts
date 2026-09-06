@@ -278,9 +278,9 @@ export interface InjectQueriesOptions<
  *   `,
  * })
  * export class Posts {
- *   ids = signal([1, 2, 3])
+ *   readonly ids = signal([1, 2, 3])
  *
- *   postQueries = injectQueries(() => ({
+ *   readonly postQueries = injectQueries(() => ({
  *     queries: this.ids().map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -310,9 +310,9 @@ export interface InjectQueriesOptions<
  *   `,
  * })
  * export class Posts {
- *   ids = signal([1, 2, 3])
+ *   readonly ids = signal([1, 2, 3])
  *
- *   combined = injectQueries(() => ({
+ *   readonly combined = injectQueries(() => ({
  *     queries: this.ids().map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -342,9 +342,9 @@ export interface InjectQueriesOptions<
  *   template: `<h1>{{ fixed()[0].data() }}</h1>`,
  * })
  * export class PostTitle {
- *   id = signal(1)
+ *   readonly id = signal(1)
  *
- *   broken = injectQueries(() => ({
+ *   readonly broken = injectQueries(() => ({
  *     queries: [
  *       {
  *         ...postOptions(this.id()),
@@ -354,7 +354,7 @@ export interface InjectQueriesOptions<
  *     ],
  *   }))
  *
- *   fixed = injectQueries(() => ({
+ *   readonly fixed = injectQueries(() => ({
  *     queries: [
  *       queryOptions({
  *         ...postOptions(this.id()),

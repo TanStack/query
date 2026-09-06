@@ -81,7 +81,7 @@ export const postsOptions = queryOptions({
   `,
 })
 export class Posts {
-  postsQuery = injectQuery(() => postsOptions)
+  readonly postsQuery = injectQuery(() => postsOptions)
 }
 ```
 
@@ -157,8 +157,8 @@ export const postOptions = (id: string) =>
   `,
 })
 export class Post {
-  id = signal('1')
-  postQuery = injectQuery(() => postOptions(this.id()))
+  readonly id = signal('1')
+  readonly postQuery = injectQuery(() => postOptions(this.id()))
 }
 ```
 
@@ -238,8 +238,8 @@ export const postOptions = (id: string) =>
   `,
 })
 export class Post {
-  id = signal('1')
-  postQuery = injectQuery(() => postOptions(this.id()))
+  readonly id = signal('1')
+  readonly postQuery = injectQuery(() => postOptions(this.id()))
 }
 ```
 
@@ -268,7 +268,7 @@ export const postOptions = (postId: number | undefined) =>
   `,
 })
 export class Post {
-  postId = signal<number | undefined>(undefined)
-  postQuery = injectQuery(() => postOptions(this.postId()))
+  readonly postId = signal<number | undefined>(undefined)
+  readonly postQuery = injectQuery(() => postOptions(this.postId()))
 }
 ```

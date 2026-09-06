@@ -30,10 +30,10 @@ import type { CreateMutationOptions } from './types'
  *   `,
  * })
  * export class SavingIndicator {
- *   #pendingCreates = injectMutationState(() => ({
+ *   readonly #pendingCreates = injectMutationState(() => ({
  *     filters: { mutationKey: createPostOptions.mutationKey, status: 'pending' },
  *   }))
- *   isCreatingPost = computed(() => this.#pendingCreates().length > 0)
+ *   readonly isCreatingPost = computed(() => this.#pendingCreates().length > 0)
  * }
  * ```
  */
@@ -70,7 +70,7 @@ export function mutationOptions<
  *
  * @Injectable({ providedIn: 'root' })
  * export class QueriesService {
- *   #queryClient = inject(QueryClient)
+ *   readonly #queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -85,9 +85,9 @@ export function mutationOptions<
  *   template: `<button (click)="save()">Save</button>`,
  * })
  * export class Post {
- *   queries = inject(QueriesService)
- *   id = signal(0)
- *   updatePostMutation = injectMutation(() => this.queries.updatePost(this.id()))
+ *   readonly queries = inject(QueriesService)
+ *   readonly id = signal(0)
+ *   readonly updatePostMutation = injectMutation(() => this.queries.updatePost(this.id()))
  *
  *   save() {
  *     this.updatePostMutation.mutate({ title: 'New Title' })

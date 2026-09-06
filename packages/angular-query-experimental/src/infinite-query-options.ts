@@ -174,7 +174,7 @@ export type DefinedInitialDataInfiniteOptions<
  *   `,
  * })
  * export class Projects {
- *   projectsQuery = injectInfiniteQuery(() => projectsOptions)
+ *   readonly projectsQuery = injectInfiniteQuery(() => projectsOptions)
  * }
  * ```
  */
@@ -243,8 +243,8 @@ export function infiniteQueryOptions<
  *   `,
  * })
  * export class Comments {
- *   postId = signal('1')
- *   commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+ *   readonly postId = signal('1')
+ *   readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
  * }
  * ```
  *
@@ -317,8 +317,8 @@ export function infiniteQueryOptions<
  *   `,
  * })
  * export class Comments {
- *   postId = signal('1')
- *   commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
+ *   readonly postId = signal('1')
+ *   readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
  * }
  * ```
  *
