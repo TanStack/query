@@ -521,6 +521,64 @@ describe('createPersister', () => {
         },
       })
     })
+
+    it('should not resolve until an asynchronous write has finished', async () => {
+      const storage = getFreshStorage()
+      let releaseWrite!: () => void
+      const writeGate = new Promise<void>((resolve) => {
+        releaseWrite = resolve
+      })
+      const { persister, client, queryKey, storageKey } = setupPersister(
+        ['foo'],
+        {
+          storage: {
+            ...storage,
+            setItem: async (key, value) => {
+              await writeGate
+              await storage.setItem(key, value)
+            },
+          },
+        },
+      )
+
+      client.setQueryData(queryKey, 'baz')
+
+      let settled = false
+      const persisted = persister
+        .persistQueryByKey(queryKey, client)
+        .then(() => {
+          settled = true
+        })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(settled).toBe(false)
+      expect(await storage.getItem(storageKey)).toBeUndefined()
+
+      releaseWrite()
+      await persisted
+
+      expect(settled).toBe(true)
+      expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
+        state: { data: 'baz' },
+      })
+    })
+
+    it('should reject when the write fails', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo'], {
+        storage: {
+          ...storage,
+          setItem: () => Promise.reject(new Error('storage is full')),
+        },
+      })
+
+      client.setQueryData(queryKey, 'baz')
+
+      await expect(
+        persister.persistQueryByKey(queryKey, client),
+      ).rejects.toThrow('storage is full')
+    })
   })
 
   describe('retrieveQuery', () => {

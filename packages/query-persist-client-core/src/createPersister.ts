@@ -188,7 +188,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   async function persistQuery(query: Query) {
     if (storage != null) {
       const storageKey = `${prefix}-${query.queryHash}`
-      storage.setItem(
+      await storage.setItem(
         storageKey,
         await serialize({
           state: query.state,
