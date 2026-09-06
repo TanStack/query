@@ -125,7 +125,7 @@ describe('injectInfiniteQuery', () => {
         postId = signal<string | undefined>(undefined)
 
         readonly query = injectInfiniteQuery(() => ({
-          queryKey: [...key, this.postId()],
+          queryKey: key,
           queryFn:
             this.postId() != null
               ? ({ pageParam }: { pageParam: number }) =>
