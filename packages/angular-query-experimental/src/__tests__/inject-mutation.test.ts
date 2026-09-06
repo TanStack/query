@@ -755,4 +755,157 @@ describe('injectMutation', () => {
       expect(mutation.data()).toBe('processed: test')
     })
   })
+
+  describe('optimistic updates', () => {
+    it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+      const key = queryKey()
+      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+      @Component({
+        template: `<div>isError: {{ mutation.isError() }}</div>`,
+      })
+      class Page {
+        readonly mutation = injectMutation(() => ({
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          onMutate: async (newTodo: string) => {
+            await queryClient.cancelQueries({ queryKey: key })
+            const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+            queryClient.setQueryData<Array<string>>(key, (old) => [
+              ...(old ?? []),
+              newTodo,
+            ])
+
+            return { previousTodos }
+          },
+          onError: (_err, _newTodo, onMutateResult) => {
+            queryClient.setQueryData(key, onMutateResult?.previousTodos)
+          },
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      rendered.fixture.componentInstance.mutation.mutate('Todo 2')
+      // onMutate runs synchronously up to its first await, so the optimistic
+      // value is visible immediately, before the mutationFn settles.
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+
+      expect(rendered.getByText('isError: true')).toBeInTheDocument()
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+    })
+
+    it('should keep the optimistic update in place when the mutation succeeds', async () => {
+      const key = queryKey()
+      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+      @Component({
+        template: `<div>isSuccess: {{ mutation.isSuccess() }}</div>`,
+      })
+      class Page {
+        readonly mutation = injectMutation(() => ({
+          mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
+          onMutate: async (newTodo: string) => {
+            await queryClient.cancelQueries({ queryKey: key })
+            const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+            queryClient.setQueryData<Array<string>>(key, (old) => [
+              ...(old ?? []),
+              newTodo,
+            ])
+
+            return { previousTodos }
+          },
+          onError: (_err, _newTodo, onMutateResult) => {
+            queryClient.setQueryData(key, onMutateResult?.previousTodos)
+          },
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      rendered.fixture.componentInstance.mutation.mutate('Todo 2')
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+
+      expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+      expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    })
+  })
+
+  describe('concurrent mutate calls', () => {
+    it('should report each mutateAsync call result independently when some fail', async () => {
+      @Component({
+        template: `<div>isPending: {{ mutation.isPending() }}</div>`,
+      })
+      class Page {
+        readonly mutation = injectMutation(() => ({
+          mutationFn: (todo: string) =>
+            todo === 'bad'
+              ? sleep(10).then(() => Promise.reject(new Error('Some error')))
+              : sleep(10).then(() => todo),
+        }))
+      }
+
+      const rendered = await render(Page)
+      const todos = ['Todo 1', 'bad', 'Todo 3']
+
+      expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+
+      const settledPromise = Promise.allSettled(
+        todos.map((todo) =>
+          rendered.fixture.componentInstance.mutation.mutateAsync(todo),
+        ),
+      )
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+      const results = await settledPromise
+
+      expect(results).toEqual([
+        { status: 'fulfilled', value: 'Todo 1' },
+        { status: 'rejected', reason: Error('Some error') },
+        { status: 'fulfilled', value: 'Todo 3' },
+      ])
+      expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    })
+
+    it('should only fire the per-call onSuccess for the last mutate() call', async () => {
+      const onSuccessPerCall = vi.fn()
+
+      @Component({
+        template: `<div>data: {{ mutation.data() ?? 'none' }}</div>`,
+      })
+      class Page {
+        readonly mutation = injectMutation(() => ({
+          mutationFn: (todo: string) => sleep(10).then(() => todo),
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      rendered.fixture.componentInstance.mutation.mutate('Todo 1', {
+        onSuccess: onSuccessPerCall,
+      })
+      rendered.fixture.componentInstance.mutation.mutate('Todo 2', {
+        onSuccess: onSuccessPerCall,
+      })
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+
+      expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
+      expect(onSuccessPerCall).toHaveBeenCalledWith(
+        'Todo 2',
+        'Todo 2',
+        undefined,
+        expect.anything(),
+      )
+      expect(rendered.getByText('data: Todo 2')).toBeInTheDocument()
+    })
+  })
 })

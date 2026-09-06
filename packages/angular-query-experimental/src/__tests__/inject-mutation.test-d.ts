@@ -73,6 +73,23 @@ describe('injectMutation', () => {
     })
   })
 
+  it('should infer TOnMutateResult from onMutate return type', () => {
+    injectMutation(() => ({
+      mutationFn: () => sleep(0).then(() => 'string'),
+      onMutate: () => {
+        return { token: 'abc' }
+      },
+      onSuccess: (_data, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<{ token: string }>()
+      },
+      onError: (_error, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<
+          { token: string } | undefined
+        >()
+      },
+    }))
+  })
+
   it('should allow calling mutate with no arguments when TVariables is optional undefinable', () => {
     const mutation = injectMutation(() => ({
       mutationFn: (_variables: number | undefined) => sleep(0).then(() => 1),
