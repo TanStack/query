@@ -1,4 +1,10 @@
-import type { DeepUnwrapRef, MaybeRefOrGetter, ShallowOption } from './types'
+import type {
+  DeepUnwrapRef,
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+  ShallowOption,
+} from './types'
 import type {
   DefaultError,
   InitialDataFunction,
@@ -10,20 +16,9 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
- * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
- * through a `ref` for the array itself, or `ref`s and reactive getters as individual entries — the array
- * itself can't be a bare getter. Other options passed this way are read once and are not reactive.
- *
- * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
- * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
- * reactive dependencies change, since the entire object is recomputed.
- *
- * `select` only re-runs when `data` changes, or when the `select` function's own reference changes. Since a
- * Vue `setup()` function runs only once per component instance, an inline `select` function passed directly
- * to `queryOptions`/`useQuery` already has a stable reference across reactive updates. An inline `select`
- * created inside a whole-options getter is recreated — and so can change reference — every time that getter
- * re-evaluates.
+ * The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
+ * `queryClient` methods see once `ref`s have been resolved. To pass options in, use
+ * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -65,6 +60,106 @@ export type QueryOptions<
         >[Property]
 } & ShallowOption
 
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQuery = symbol
+
+/**
+ * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
+ * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
+ * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
+ * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
+ * or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so `queryFn` reacts through a
+ * `computed`: a function there is the query function itself.
+ *
+ * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
+ * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
+ * reactive dependencies change, since the entire object is recomputed.
+ *
+ * `select` only re-runs when `data` changes, or when the `select` function's own reference changes. Since a
+ * Vue `setup()` function runs only once per component instance, an inline `select` function passed directly
+ * to `queryOptions`/`useQuery` already has a stable reference across reactive updates. An inline `select`
+ * created inside a whole-options getter is recreated — and so can change reference — every time that getter
+ * re-evaluates.
+ *
+ * @template TQueryFnData - The type your `queryFn` resolves to.
+ * @template TError - The type of errors your `queryFn` may throw.
+ * @template TData - The type `data` ends up as after `select` runs.
+ * @template TQueryData - The type of data stored in the cache, before `select` runs. Defaults to
+ * `TQueryFnData` and can be configured independently of it.
+ * @template TQueryKey - The type of your `queryKey`.
+ */
+export type UseQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = MaybeRef<
+  {
+    [Property in keyof QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >]: Property extends 'enabled' | 'queryKey'
+      ? QueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      : Property extends 'queryFn'
+        ? MaybeRefDeep<
+            | QueryOptions<
+                TQueryFnData,
+                TError,
+                TData,
+                TQueryData,
+                TQueryKey
+              >[Property]
+            | SkipTokenForUseQuery
+          >
+        : MaybeRefDeep<
+            QueryOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryData,
+              TQueryKey
+            >[Property]
+          >
+  } & ShallowOption
+>
+
+type WithUndefinedInitialData<TQueryFnData> = {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
+   */
+  initialData?:
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
+}
+
+type WithDefinedInitialData<TQueryFnData> = {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
+   */
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
+}
+
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
  * `undefined` while the query is `pending`.
@@ -79,19 +174,8 @@ export type UndefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
-   */
-  initialData?:
-    | undefined
-    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-    | NonUndefinedGuard<TQueryFnData>
-}
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithUndefinedInitialData<TQueryFnData>
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
@@ -107,25 +191,16 @@ export type DefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
-   */
-  initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
-}
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithDefinedInitialData<TQueryFnData>
 
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> &
+> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithUndefinedInitialData<TQueryFnData> &
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export type DefinedInitialQueryOptionsWithDataTag<
@@ -133,7 +208,8 @@ export type DefinedInitialQueryOptionsWithDataTag<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> &
+> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithDefinedInitialData<TQueryFnData> &
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 /**
@@ -294,9 +370,9 @@ export function queryOptions<
  * ```
  *
  * @example
- * A parameterized factory that disables the query, type safe, until `postId` is set. This requires a
- * whole-options getter: `queryFn` is a single value, not `queryKey`/`enabled`, so it isn't itself reactive —
- * the getter is what re-evaluates it on every change to `postId`:
+ * A parameterized factory that disables the query, type safe, until `postId` is set. The whole-options getter
+ * re-evaluates `queryFn` on every change to `postId`. `queryFn` can also be a `computed`, but never a bare
+ * getter, since a function there is the query function itself:
  * ```vue
  * <script setup lang="ts">
  * import { queryOptions, skipToken, useQuery } from '@tanstack/vue-query'
