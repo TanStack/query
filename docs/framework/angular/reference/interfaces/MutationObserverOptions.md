@@ -3,7 +3,7 @@ id: MutationObserverOptions
 title: MutationObserverOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:728
+Defined in: packages/query-core/dist-ts/src/types.d.ts:741
 
 ## Extends
 
@@ -35,7 +35,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:728
 optional gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:722
+Defined in: packages/query-core/dist-ts/src/types.d.ts:735
 
 #### Inherited from
 
@@ -49,7 +49,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:722
 optional meta: Record<string, unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:725
+Defined in: packages/query-core/dist-ts/src/types.d.ts:738
 
 #### Inherited from
 
@@ -63,7 +63,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:725
 optional mutationFn: MutationFunction<TData, TVariables>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:713
+Defined in: packages/query-core/dist-ts/src/types.d.ts:726
 
 #### Inherited from
 
@@ -77,7 +77,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:713
 optional mutationKey: readonly unknown[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:714
+Defined in: packages/query-core/dist-ts/src/types.d.ts:727
 
 #### Inherited from
 
@@ -91,7 +91,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:714
 optional networkMode: NetworkMode;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:721
+Defined in: packages/query-core/dist-ts/src/types.d.ts:734
 
 #### Inherited from
 
@@ -105,7 +105,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:721
 optional onError: (error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:717
+Defined in: packages/query-core/dist-ts/src/types.d.ts:730
 
 #### Parameters
 
@@ -141,7 +141,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:717
 optional onMutate: (variables, context) => TOnMutateResult | Promise<TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:715
+Defined in: packages/query-core/dist-ts/src/types.d.ts:728
 
 #### Parameters
 
@@ -169,7 +169,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:715
 optional onSettled: (data, error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:718
+Defined in: packages/query-core/dist-ts/src/types.d.ts:731
 
 #### Parameters
 
@@ -209,7 +209,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:718
 optional onSuccess: (data, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:716
+Defined in: packages/query-core/dist-ts/src/types.d.ts:729
 
 #### Parameters
 
@@ -245,7 +245,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:716
 optional retry: RetryValue<TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:719
+Defined in: packages/query-core/dist-ts/src/types.d.ts:732
 
 #### Inherited from
 
@@ -259,7 +259,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:719
 optional retryDelay: RetryDelayValue<TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:720
+Defined in: packages/query-core/dist-ts/src/types.d.ts:733
 
 #### Inherited from
 
@@ -273,7 +273,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:720
 optional scope: MutationScope;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:726
+Defined in: packages/query-core/dist-ts/src/types.d.ts:739
 
 #### Inherited from
 
@@ -287,4 +287,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:726
 optional throwOnError: boolean | (error) => boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:729
+Defined in: packages/query-core/dist-ts/src/types.d.ts:742

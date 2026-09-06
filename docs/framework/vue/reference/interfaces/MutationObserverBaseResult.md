@@ -3,7 +3,7 @@ id: MutationObserverBaseResult
 title: MutationObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1267](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1267)
+Defined in: [packages/query-core/src/types.ts:1280](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1280)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -62,7 +62,7 @@ The value returned by `onMutate`, if defined. Passed to `onSuccess`,
 data: TData | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1276](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1276)
+Defined in: [packages/query-core/src/types.ts:1289](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1289)
 
 The last successfully resolved data for the mutation.
 
@@ -78,7 +78,7 @@ The last successfully resolved data for the mutation.
 error: TError | null;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1285](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1285)
+Defined in: [packages/query-core/src/types.ts:1298](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1298)
 
 The error object for the mutation, if an error was encountered.
 - Defaults to `null`.
@@ -127,7 +127,7 @@ The reason the current attempt failed, as reported by the retryer.
 isError: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1290](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1290)
+Defined in: [packages/query-core/src/types.ts:1303](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1303)
 
 A boolean variable derived from `status`.
 - `true` if the last mutation attempt resulted in an error.
@@ -140,7 +140,7 @@ A boolean variable derived from `status`.
 isIdle: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1295](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1295)
+Defined in: [packages/query-core/src/types.ts:1308](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1308)
 
 A boolean variable derived from `status`.
 - `true` if the mutation is in its initial state prior to executing.
@@ -170,7 +170,7 @@ waiting for another mutation with the same `scope` to finish.
 isPending: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1300](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1300)
+Defined in: [packages/query-core/src/types.ts:1313](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1313)
 
 A boolean variable derived from `status`.
 - `true` if the mutation is currently executing.
@@ -183,7 +183,7 @@ A boolean variable derived from `status`.
 isSuccess: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1305](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1305)
+Defined in: [packages/query-core/src/types.ts:1318](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1318)
 
 A boolean variable derived from `status`.
 - `true` if the last mutation attempt was successful.
@@ -196,7 +196,7 @@ A boolean variable derived from `status`.
 mutate: MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1325](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1325)
+Defined in: [packages/query-core/src/types.ts:1338](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1338)
 
 The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
 
@@ -229,7 +229,7 @@ This function will fire when the mutation is either successfully fetched or enco
 reset: () => void;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1329](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1329)
+Defined in: [packages/query-core/src/types.ts:1342](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1342)
 
 A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 
@@ -245,7 +245,7 @@ A function to clean the mutation internal state (i.e., it resets the mutation to
 status: MutationStatus;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1314](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1314)
+Defined in: [packages/query-core/src/types.ts:1327](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1327)
 
 The status of the mutation.
 - Will be:
@@ -282,7 +282,7 @@ The timestamp for when the mutation was submitted.
 variables: TVariables | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1280](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1280)
+Defined in: [packages/query-core/src/types.ts:1293](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1293)
 
 The variables object passed to the `mutationFn`.
 

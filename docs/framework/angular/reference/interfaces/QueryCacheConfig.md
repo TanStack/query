@@ -3,11 +3,12 @@ id: QueryCacheConfig
 title: QueryCacheConfig
 ---
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:13
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:14
 
 Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
 component or observer triggered it. Unlike `QueryClient`'s `defaultOptions`, which a query can
-override, these callbacks are always called.
+override, these callbacks are always called. Unlike `MutationCacheConfig`'s callbacks, these
+are fire-and-forget: their return value is not awaited before the query settles.
 
 ## Properties
 
@@ -17,7 +18,7 @@ override, these callbacks are always called.
 optional onError: (error, query) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:15
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:16
 
 Called when any query in the cache encounters an error.
 
@@ -43,7 +44,7 @@ Called when any query in the cache encounters an error.
 optional onSettled: (data, error, query) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:19
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:20
 
 Called when any query in the cache is settled, either successfully or with an error.
 
@@ -73,7 +74,7 @@ Called when any query in the cache is settled, either successfully or with an er
 optional onSuccess: (data, query) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:17
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:18
 
 Called when any query in the cache is successful.
 

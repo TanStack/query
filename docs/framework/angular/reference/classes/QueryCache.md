@@ -3,14 +3,24 @@ id: QueryCache
 title: QueryCache
 ---
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:75
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:85
 
 The `QueryCache` is the storage mechanism for TanStack Query. It stores all the data, meta
 information, and state of the queries it contains.
 
 Normally, you will not interact with the `QueryCache` directly and instead use a `QueryClient`
 for a specific cache. You can subscribe to it (inherited from `Subscribable`) to be informed of
-safe/known updates to the cache, such as queries being added, removed, or updated.
+safe/known updates to the cache, such as queries being added, removed, or updated — updates made
+outside of the cache's own tracked mechanisms (e.g. mutating a query's state object directly) do
+not notify subscribers.
+
+## Example
+
+```ts
+const unsubscribe = queryCache.subscribe((event) => {
+  console.log(event.type, event.query)
+})
+```
 
 ## Extends
 
@@ -24,7 +34,7 @@ safe/known updates to the cache, such as queries being added, removed, or update
 new QueryCache(config?): QueryCache;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:78
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:88
 
 #### Parameters
 
@@ -50,7 +60,7 @@ Subscribable<QueryCacheListener>.constructor
 config: QueryCacheConfig;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:77
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:87
 
 ***
 
@@ -79,7 +89,7 @@ build<TQueryFnData, TError, TData, TQueryKey>(
 state?): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:95
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:105
 
 Returns the existing `Query` instance for the given options' `queryKey`/`queryHash`, or
 builds and adds a new one to the cache if none exists yet. Used by framework adapters and
@@ -141,7 +151,7 @@ const query = queryCache.build(queryClient, {
 clear(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:125
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:135
 
 Removes all queries from the cache.
 
@@ -167,7 +177,7 @@ find<TQueryFnData, TError, TData>(filters):
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:170
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:180
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -223,7 +233,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 findAll(filters?): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:186
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:196
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -263,7 +273,7 @@ get<TQueryFnData, TError, TData, TQueryKey>(queryHash):
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:140
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:150
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -316,7 +326,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:151
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:161
 
 Returns all queries within the cache.
 
@@ -400,7 +410,7 @@ Subscribable.onUnsubscribe
 remove(query): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:114
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:124
 
 Destroys the given `Query` and removes it from the cache, notifying subscribers with a
 `'removed'` event. A no-op if the query is no longer the one currently stored under its hash

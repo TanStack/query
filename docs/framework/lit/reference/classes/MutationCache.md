@@ -3,13 +3,21 @@ id: MutationCache
 title: MutationCache
 ---
 
-Defined in: [packages/query-core/src/mutationCache.ts:117](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L117)
+Defined in: [packages/query-core/src/mutationCache.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L124)
 
 The `MutationCache` is the storage for mutations.
 
 Normally, you will not interact with the `MutationCache` directly and instead use a
 `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
 safe/known updates to the cache, such as mutations being added, removed, or updated.
+
+## Example
+
+```ts
+const unsubscribe = mutationCache.subscribe((event) => {
+  console.log(event.type, event.mutation)
+})
+```
 
 ## Extends
 
@@ -23,7 +31,7 @@ safe/known updates to the cache, such as mutations being added, removed, or upda
 new MutationCache(config): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L122)
+Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
 
 #### Parameters
 
@@ -49,7 +57,7 @@ Subscribable<MutationCacheListener>.constructor
 config: MutationCacheConfig = {};
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L122)
+Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
 
 ***
 
@@ -75,7 +83,7 @@ Subscribable.listeners
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:229](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L229)
+Defined in: [packages/query-core/src/mutationCache.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L236)
 
 Removes all mutations from the cache.
 
@@ -101,7 +109,7 @@ find<TData, TError, TVariables, TOnMutateResult>(filters):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:271](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L271)
+Defined in: [packages/query-core/src/mutationCache.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L278)
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -158,7 +166,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L301)
+Defined in: [packages/query-core/src/mutationCache.ts:308](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L308)
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -196,7 +204,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:252](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L252)
+Defined in: [packages/query-core/src/mutationCache.ts:259](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L259)
 
 Returns all mutations within the cache.
 

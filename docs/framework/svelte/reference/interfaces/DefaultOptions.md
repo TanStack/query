@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1433](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1433)
+Defined in: [packages/query-core/src/types.ts:1452](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1452)
 
 ## Type Parameters
 
@@ -19,7 +19,9 @@ Defined in: [packages/query-core/src/types.ts:1433](https://github.com/TanStack/
 optional dehydrate: DehydrateOptions;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1440](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1440)
+Defined in: [packages/query-core/src/types.ts:1463](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1463)
+
+Default options used when dehydrating the client's caches; see [DehydrateOptions](DehydrateOptions.md).
 
 ***
 
@@ -29,7 +31,9 @@ Defined in: [packages/query-core/src/types.ts:1440](https://github.com/TanStack/
 optional hydrate: object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1439](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1439)
+Defined in: [packages/query-core/src/types.ts:1461](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1461)
+
+Default options used when hydrating queries; see [HydrateOptions](HydrateOptions.md).
 
 #### deserializeData?
 
@@ -63,7 +67,9 @@ Default options merged into every query restored from the dehydrated state.
 optional mutations: MutationObserverOptions<unknown, TError, unknown, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1438](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1438)
+Defined in: [packages/query-core/src/types.ts:1459](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1459)
+
+Default options applied to every mutation, unless overridden per-mutation.
 
 ***
 
@@ -73,4 +79,6 @@ Defined in: [packages/query-core/src/types.ts:1438](https://github.com/TanStack/
 optional queries: OmitKeyof<QueryObserverOptions<unknown, TError, unknown, unknown, readonly unknown[], never>, "queryKey" | "suspense", "strictly">;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1434](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1434)
+Defined in: [packages/query-core/src/types.ts:1454](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1454)
+
+Default options applied to every query, unless overridden per-query.

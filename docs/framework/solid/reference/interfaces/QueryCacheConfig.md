@@ -3,11 +3,12 @@ id: QueryCacheConfig
 title: QueryCacheConfig
 ---
 
-Defined in: [packages/query-core/src/queryCache.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L24)
+Defined in: [packages/query-core/src/queryCache.ts:25](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L25)
 
 Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
 component or observer triggered it. Unlike `QueryClient`'s `defaultOptions`, which a query can
-override, these callbacks are always called.
+override, these callbacks are always called. Unlike `MutationCacheConfig`'s callbacks, these
+are fire-and-forget: their return value is not awaited before the query settles.
 
 ## Properties
 
@@ -17,7 +18,7 @@ override, these callbacks are always called.
 optional onError: (error, query) => void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:26](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L26)
+Defined in: [packages/query-core/src/queryCache.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L27)
 
 Called when any query in the cache encounters an error.
 
@@ -43,7 +44,7 @@ Called when any query in the cache encounters an error.
 optional onSettled: (data, error, query) => void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L33)
+Defined in: [packages/query-core/src/queryCache.ts:34](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L34)
 
 Called when any query in the cache is settled, either successfully or with an error.
 
@@ -73,7 +74,7 @@ Called when any query in the cache is settled, either successfully or with an er
 optional onSuccess: (data, query) => void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L31)
+Defined in: [packages/query-core/src/queryCache.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L32)
 
 Called when any query in the cache is successful.
 

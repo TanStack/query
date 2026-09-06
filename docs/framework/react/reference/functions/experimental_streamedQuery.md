@@ -4,10 +4,10 @@ title: experimental_streamedQuery
 ---
 
 ```ts
-function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(queryFn): QueryFunction<TData, TQueryKey>;
+function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn): QueryFunction<TData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/streamedQuery.ts:60](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L60)
+Defined in: [packages/query-core/src/streamedQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L75)
 
 This is a helper function to create a query function that streams data from an AsyncIterable.
 Data will be an Array of all the chunks received.
@@ -30,7 +30,7 @@ The query will stay in fetchStatus 'fetching' until the stream ends.
 
 ## Parameters
 
-### queryFn
+### streamFn
 
 `StreamedQueryParams`\<`TQueryFnData`, `TData`, `TQueryKey`\>
 

@@ -111,7 +111,7 @@ QC.cancelQueries
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1073](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1073)
+Defined in: [packages/query-core/src/queryClient.ts:1083](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1083)
 
 Clears both the query cache and the mutation cache this client is connected to.
 
@@ -142,7 +142,7 @@ QC.clear
 defaultMutationOptions<T>(options?): T;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1047](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1047)
+Defined in: [packages/query-core/src/queryClient.ts:1057](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1057)
 
 The mutation counterpart of [QueryClient#defaultQueryOptions](#defaultqueryoptions). Called by framework
 adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
@@ -179,7 +179,7 @@ QC.defaultMutationOptions
 defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options): DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:960](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L960)
+Defined in: [packages/query-core/src/queryClient.ts:970](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L970)
 
 Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
 caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
@@ -236,7 +236,7 @@ QC.defaultQueryOptions
 ensureInfiniteQueryData<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:725](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L725)
+Defined in: [packages/query-core/src/queryClient.ts:735](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L735)
 
 #### Type Parameters
 
@@ -592,7 +592,7 @@ QC.fetchQuery
 getDefaultOptions(): DefaultOptions;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:808](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L808)
+Defined in: [packages/query-core/src/queryClient.ts:818](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L818)
 
 Returns the default options that were set when creating the client, or via
 [QueryClient#setDefaultOptions](#setdefaultoptions).
@@ -624,7 +624,7 @@ QC.getDefaultOptions
 getMutationCache(): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:792](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L792)
+Defined in: [packages/query-core/src/queryClient.ts:802](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L802)
 
 Returns the mutation cache this client is connected to.
 
@@ -698,6 +698,12 @@ Imperative (non-reactive) way to retrieve the cached data of multiple queries at
 Only queries matching the given filters are returned; if none match, an empty array is
 returned.
 
+Because the matched queries can hold data of different shapes (e.g. a broad filter can match
+queries with unrelated data types), the `TQueryFnData` generic defaults to `unknown` rather
+than being inferred. Passing a more specific type is a convenience for call sites that know
+every matched query holds the same shape — it is not checked against the actual cache
+contents.
+
 #### Type Parameters
 
 ##### TData
@@ -738,7 +744,7 @@ QC.getQueriesData
 getQueryCache(): QueryCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:776](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L776)
+Defined in: [packages/query-core/src/queryClient.ts:786](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L786)
 
 Returns the query cache this client is connected to.
 
@@ -1177,7 +1183,7 @@ QC.isMutating
 mount(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:103](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L103)
+Defined in: [packages/query-core/src/queryClient.ts:104](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L104)
 
 Called by a framework adapter's `QueryClientProvider`-equivalent when it mounts, to start
 listening for focus/online events and resume paused mutations. Ref-counted via an internal
@@ -1414,12 +1420,15 @@ If the query already exists in the cache and its data is not stale (per the give
 and the promise resolves once the fetch settles. If a `select` function is provided, it is
 applied to the data in both cases (cached or freshly fetched) before it is returned.
 
-Unlike `useQuery`, retries are disabled by default here (`retry: false`) unless explicitly
-configured, since there is no component to catch a thrown error and retry through re-render.
+Unlike a reactive observer, retries are disabled by default here (`retry: false`) unless
+explicitly configured, since there is no component to catch a thrown error and retry through
+re-render.
 
-The accepted options are a subset of `useQuery`'s options: fields that only make sense for a
-reactive observer (e.g. `enabled`, `refetchInterval`, `refetchOnWindowFocus`, `notifyOnChangeProps`,
-`throwOnError`, `suspense`, `placeholderData`) are not part of this method's options.
+The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
+reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
+`refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
+`notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
+method's options.
 
 This method replaces the deprecated `fetchQuery`, and — combined with
 `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
@@ -1674,7 +1683,7 @@ QC.resetQueries
 resumePausedMutations(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:757](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L757)
+Defined in: [packages/query-core/src/queryClient.ts:767](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L767)
 
 Resumes mutations that were paused because there was no network connection. Does nothing
 (resolving immediately) if the client is currently offline.
@@ -2053,7 +2062,7 @@ QC.setQueryDefaults
 unmount(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L126)
+Defined in: [packages/query-core/src/queryClient.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L127)
 
 The inverse of [QueryClient#mount](#mount) — called by a framework adapter's
 `QueryClientProvider`-equivalent when it unmounts. Only tears down the focus/online

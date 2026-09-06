@@ -3,7 +3,7 @@ id: SetDataOptions
 title: SetDataOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:859
+Defined in: packages/query-core/dist-ts/src/types.d.ts:882
 
 ## Properties
 
@@ -13,4 +13,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:859
 optional updatedAt: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:860
+Defined in: packages/query-core/dist-ts/src/types.d.ts:883

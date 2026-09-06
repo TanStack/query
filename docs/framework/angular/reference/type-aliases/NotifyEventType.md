@@ -14,4 +14,4 @@ type NotifyEventType =
   | "observerOptionsUpdated";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:862
+Defined in: packages/query-core/dist-ts/src/types.d.ts:885

@@ -11,7 +11,7 @@ type MutationObserverResult<TData, TError, TVariables, TOnMutateResult> =
 | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:843
+Defined in: packages/query-core/dist-ts/src/types.d.ts:856
 
 ## Type Parameters
 

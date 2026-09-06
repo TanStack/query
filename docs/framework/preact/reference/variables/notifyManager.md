@@ -7,7 +7,7 @@ title: notifyManager
 const notifyManager: object;
 ```
 
-Defined in: [packages/query-core/src/notifyManager.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L135)
+Defined in: [packages/query-core/src/notifyManager.ts:144](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L144)
 
 Handles scheduling and batching callbacks in TanStack Query.
 
@@ -90,7 +90,8 @@ readonly setBatchNotifyFunction: (fn) => void;
 ```
 
 Use this method to set a custom function to batch notifications together into a single tick.
-By default React Query will use the batch function provided by ReactDOM or React Native.
+Framework adapters use this to plug in their own batching primitive, so that a single query
+update only triggers one re-render instead of one per subscriber.
 
 #### Parameters
 
@@ -101,6 +102,15 @@ By default React Query will use the batch function provided by ReactDOM or React
 #### Returns
 
 `void`
+
+#### Example
+
+```ts
+import { notifyManager } from '@tanstack/query-core'
+import { batch } from 'solid-js'
+
+notifyManager.setBatchNotifyFunction(batch)
+```
 
 ### setNotifyFunction()
 

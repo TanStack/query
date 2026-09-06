@@ -19,4 +19,8 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:338
 optional throwOnError: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:339
+Defined in: packages/query-core/dist-ts/src/types.d.ts:344
+
+If set to `true`, the method throws if any of the underlying query refetch tasks fail.
+Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
+caller.

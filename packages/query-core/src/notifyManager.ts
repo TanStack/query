@@ -98,7 +98,16 @@ export function createNotifyManager() {
     },
     /**
      * Use this method to set a custom function to batch notifications together into a single tick.
-     * By default React Query will use the batch function provided by ReactDOM or React Native.
+     * Framework adapters use this to plug in their own batching primitive, so that a single query
+     * update only triggers one re-render instead of one per subscriber.
+     *
+     * @example
+     * ```ts
+     * import { notifyManager } from '@tanstack/query-core'
+     * import { batch } from 'solid-js'
+     *
+     * notifyManager.setBatchNotifyFunction(batch)
+     * ```
      */
     setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
       batchNotifyFn = fn

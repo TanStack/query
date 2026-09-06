@@ -7,7 +7,7 @@ title: MutationFunction
 type MutationFunction<TData, TVariables> = (variables, context) => Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:711
+Defined in: packages/query-core/dist-ts/src/types.d.ts:724
 
 ## Type Parameters
 

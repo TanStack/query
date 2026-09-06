@@ -7,7 +7,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:706
+Defined in: packages/query-core/dist-ts/src/types.d.ts:719
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:706
 client: QueryClient;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:707
+Defined in: packages/query-core/dist-ts/src/types.d.ts:720
 
 ***
 
@@ -27,7 +27,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:707
 meta: MutationMeta | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:708
+Defined in: packages/query-core/dist-ts/src/types.d.ts:721
 
 ***
 
@@ -37,4 +37,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:708
 optional mutationKey: MutationKey;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:709
+Defined in: packages/query-core/dist-ts/src/types.d.ts:722

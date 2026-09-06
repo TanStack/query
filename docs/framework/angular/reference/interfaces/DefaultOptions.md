@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:849
+Defined in: packages/query-core/dist-ts/src/types.d.ts:868
 
 ## Type Parameters
 
@@ -19,7 +19,9 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:849
 optional dehydrate: DehydrateOptions;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:853
+Defined in: packages/query-core/dist-ts/src/types.d.ts:876
+
+Default options used when dehydrating the client's caches; see [DehydrateOptions](DehydrateOptions.md).
 
 ***
 
@@ -29,7 +31,9 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:853
 optional hydrate: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:852
+Defined in: packages/query-core/dist-ts/src/types.d.ts:874
+
+Default options used when hydrating queries; see [HydrateOptions](HydrateOptions.md).
 
 #### deserializeData?
 
@@ -63,7 +67,9 @@ Default options merged into every query restored from the dehydrated state.
 optional mutations: MutationObserverOptions<unknown, TError, unknown, unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:851
+Defined in: packages/query-core/dist-ts/src/types.d.ts:872
+
+Default options applied to every mutation, unless overridden per-mutation.
 
 ***
 
@@ -73,4 +79,6 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:851
 optional queries: OmitKeyof<QueryObserverOptions<unknown, TError, unknown, unknown, readonly unknown[], never>, "queryKey" | "suspense", "strictly">;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:850
+Defined in: packages/query-core/dist-ts/src/types.d.ts:870
+
+Default options applied to every query, unless overridden per-query.

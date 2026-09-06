@@ -3,7 +3,7 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:863
+Defined in: packages/query-core/dist-ts/src/types.d.ts:886
 
 ## Properties
 
@@ -13,4 +13,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:863
 type: NotifyEventType;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:864
+Defined in: packages/query-core/dist-ts/src/types.d.ts:887

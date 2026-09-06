@@ -219,7 +219,7 @@ Removable.destroy
 execute(variables): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:169
+Defined in: packages/query-core/dist-ts/src/mutation.d.ts:170
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
@@ -254,7 +254,8 @@ the original error is re-thrown.
 #### Example
 
 ```ts
-// typically invoked by MutationObserver.mutate, not called directly
+// Called internally by `MutationObserver.mutate` and `Mutation.continue` —
+// applications normally trigger mutations through those, not this method.
 const data = await mutation.execute(variables)
 ```
 

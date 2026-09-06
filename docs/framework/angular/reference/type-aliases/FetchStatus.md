@@ -7,4 +7,4 @@ title: FetchStatus
 type FetchStatus = "fetching" | "paused" | "idle";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:383
+Defined in: packages/query-core/dist-ts/src/types.d.ts:396

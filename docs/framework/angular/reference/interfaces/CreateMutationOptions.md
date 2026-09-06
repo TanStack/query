@@ -47,7 +47,7 @@ their `onMutateResult` parameter — useful for optimistic-update rollback data.
 optional gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:722
+Defined in: packages/query-core/dist-ts/src/types.d.ts:735
 
 #### Inherited from
 
@@ -61,7 +61,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:722
 optional meta: Record<string, unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:725
+Defined in: packages/query-core/dist-ts/src/types.d.ts:738
 
 #### Inherited from
 
@@ -75,7 +75,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:725
 optional mutationFn: MutationFunction<TData, TVariables>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:713
+Defined in: packages/query-core/dist-ts/src/types.d.ts:726
 
 #### Inherited from
 
@@ -91,7 +91,7 @@ OmitKeyof.mutationFn
 optional mutationKey: readonly unknown[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:714
+Defined in: packages/query-core/dist-ts/src/types.d.ts:727
 
 #### Inherited from
 
@@ -105,7 +105,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:714
 optional networkMode: NetworkMode;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:721
+Defined in: packages/query-core/dist-ts/src/types.d.ts:734
 
 #### Inherited from
 
@@ -119,7 +119,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:721
 optional onError: (error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:717
+Defined in: packages/query-core/dist-ts/src/types.d.ts:730
 
 #### Parameters
 
@@ -157,7 +157,7 @@ OmitKeyof.onError
 optional onMutate: (variables, context) => TOnMutateResult | Promise<TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:715
+Defined in: packages/query-core/dist-ts/src/types.d.ts:728
 
 #### Parameters
 
@@ -187,7 +187,7 @@ OmitKeyof.onMutate
 optional onSettled: (data, error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:718
+Defined in: packages/query-core/dist-ts/src/types.d.ts:731
 
 #### Parameters
 
@@ -229,7 +229,7 @@ OmitKeyof.onSettled
 optional onSuccess: (data, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:716
+Defined in: packages/query-core/dist-ts/src/types.d.ts:729
 
 #### Parameters
 
@@ -267,7 +267,7 @@ OmitKeyof.onSuccess
 optional retry: RetryValue<TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:719
+Defined in: packages/query-core/dist-ts/src/types.d.ts:732
 
 #### Inherited from
 
@@ -283,7 +283,7 @@ OmitKeyof.retry
 optional retryDelay: RetryDelayValue<TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:720
+Defined in: packages/query-core/dist-ts/src/types.d.ts:733
 
 #### Inherited from
 
@@ -299,7 +299,7 @@ OmitKeyof.retryDelay
 optional scope: MutationScope;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:726
+Defined in: packages/query-core/dist-ts/src/types.d.ts:739
 
 #### Inherited from
 
@@ -313,7 +313,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:726
 optional throwOnError: boolean | (error) => boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:729
+Defined in: packages/query-core/dist-ts/src/types.d.ts:742
 
 #### Inherited from
 

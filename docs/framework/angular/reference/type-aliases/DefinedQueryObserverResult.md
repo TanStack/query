@@ -9,7 +9,7 @@ type DefinedQueryObserverResult<TData, TError> =
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:577
+Defined in: packages/query-core/dist-ts/src/types.d.ts:590
 
 ## Type Parameters
 

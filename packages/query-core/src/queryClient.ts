@@ -63,6 +63,7 @@ interface MutationDefaults {
  * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
  * the default options that are applied to queries and mutations created through it.
  *
+ * @example
  * ```ts
  * const queryClient = new QueryClient({
  *   defaultOptions: {
@@ -223,6 +224,12 @@ export class QueryClient {
    * Imperative (non-reactive) way to retrieve the cached data of multiple queries at once.
    * Only queries matching the given filters are returned; if none match, an empty array is
    * returned.
+   *
+   * Because the matched queries can hold data of different shapes (e.g. a broad filter can match
+   * queries with unrelated data types), the `TQueryFnData` generic defaults to `unknown` rather
+   * than being inferred. Passing a more specific type is a convenience for call sites that know
+   * every matched query holds the same shape — it is not checked against the actual cache
+   * contents.
    *
    * @see {@link QueryClient#getQueryData}
    * @example
@@ -522,12 +529,15 @@ export class QueryClient {
    * and the promise resolves once the fetch settles. If a `select` function is provided, it is
    * applied to the data in both cases (cached or freshly fetched) before it is returned.
    *
-   * Unlike `useQuery`, retries are disabled by default here (`retry: false`) unless explicitly
-   * configured, since there is no component to catch a thrown error and retry through re-render.
+   * Unlike a reactive observer, retries are disabled by default here (`retry: false`) unless
+   * explicitly configured, since there is no component to catch a thrown error and retry through
+   * re-render.
    *
-   * The accepted options are a subset of `useQuery`'s options: fields that only make sense for a
-   * reactive observer (e.g. `enabled`, `refetchInterval`, `refetchOnWindowFocus`, `notifyOnChangeProps`,
-   * `throwOnError`, `suspense`, `placeholderData`) are not part of this method's options.
+   * The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
+   * reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
+   * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
+   * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
+   * method's options.
    *
    * This method replaces the deprecated `fetchQuery`, and — combined with
    * `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.

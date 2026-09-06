@@ -3,13 +3,21 @@ id: MutationCache
 title: MutationCache
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:68
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:75
 
 The `MutationCache` is the storage for mutations.
 
 Normally, you will not interact with the `MutationCache` directly and instead use a
 `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
 safe/known updates to the cache, such as mutations being added, removed, or updated.
+
+## Example
+
+```ts
+const unsubscribe = mutationCache.subscribe((event) => {
+  console.log(event.type, event.mutation)
+})
+```
 
 ## Extends
 
@@ -23,7 +31,7 @@ safe/known updates to the cache, such as mutations being added, removed, or upda
 new MutationCache(config?): MutationCache;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:71
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:78
 
 #### Parameters
 
@@ -49,7 +57,7 @@ Subscribable<MutationCacheListener>.constructor
 config: MutationCacheConfig;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:70
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:77
 
 ***
 
@@ -75,7 +83,7 @@ Subscribable.listeners
 clear(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:92
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:99
 
 Removes all mutations from the cache.
 
@@ -101,7 +109,7 @@ find<TData, TError, TVariables, TOnMutateResult>(filters):
   | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:122
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:129
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -158,7 +166,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters?): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:138
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:145
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -196,7 +204,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:106
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:113
 
 Returns all mutations within the cache.
 

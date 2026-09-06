@@ -7,7 +7,7 @@ title: MutateFunction
 type MutateFunction<TData, TError, TVariables, TOnMutateResult> = (...rest) => Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:743
+Defined in: packages/query-core/dist-ts/src/types.d.ts:756
 
 ## Type Parameters
 

@@ -19,7 +19,8 @@ import type { QueryObserver } from './queryObserver'
 /**
  * Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
  * component or observer triggered it. Unlike `QueryClient`'s `defaultOptions`, which a query can
- * override, these callbacks are always called.
+ * override, these callbacks are always called. Unlike `MutationCacheConfig`'s callbacks, these
+ * are fire-and-forget: their return value is not awaited before the query settles.
  */
 export interface QueryCacheConfig {
   /** Called when any query in the cache encounters an error. */
@@ -108,7 +109,16 @@ export interface QueryStore {
  *
  * Normally, you will not interact with the `QueryCache` directly and instead use a `QueryClient`
  * for a specific cache. You can subscribe to it (inherited from `Subscribable`) to be informed of
- * safe/known updates to the cache, such as queries being added, removed, or updated.
+ * safe/known updates to the cache, such as queries being added, removed, or updated — updates made
+ * outside of the cache's own tracked mechanisms (e.g. mutating a query's state object directly) do
+ * not notify subscribers.
+ *
+ * @example
+ * ```ts
+ * const unsubscribe = queryCache.subscribe((event) => {
+ *   console.log(event.type, event.query)
+ * })
+ * ```
  */
 export class QueryCache extends Subscribable<QueryCacheListener> {
   #queries: QueryStore

@@ -3,7 +3,7 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:696](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L696)
+Defined in: [packages/query-core/src/types.ts:709](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L709)
 
 ## Extends
 

@@ -3,7 +3,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1166](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1166)
+Defined in: [packages/query-core/src/types.ts:1179](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1179)
 
 ## Extended by
 
@@ -35,7 +35,7 @@ Defined in: [packages/query-core/src/types.ts:1166](https://github.com/TanStack/
 optional gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1200](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1200)
+Defined in: [packages/query-core/src/types.ts:1213](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1213)
 
 ***
 
@@ -45,7 +45,7 @@ Defined in: [packages/query-core/src/types.ts:1200](https://github.com/TanStack/
 optional meta: Record<string, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1203](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1203)
+Defined in: [packages/query-core/src/types.ts:1216](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1216)
 
 ***
 
@@ -55,7 +55,7 @@ Defined in: [packages/query-core/src/types.ts:1203](https://github.com/TanStack/
 optional mutationFn: MutationFunction<TData, TVariables>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1172](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1172)
+Defined in: [packages/query-core/src/types.ts:1185](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1185)
 
 ***
 
@@ -65,7 +65,7 @@ Defined in: [packages/query-core/src/types.ts:1172](https://github.com/TanStack/
 optional mutationKey: readonly unknown[];
 ```
 
-Defined in: [packages/query-core/src/types.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1173)
+Defined in: [packages/query-core/src/types.ts:1186](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1186)
 
 ***
 
@@ -75,7 +75,7 @@ Defined in: [packages/query-core/src/types.ts:1173](https://github.com/TanStack/
 optional networkMode: NetworkMode;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1199](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1199)
+Defined in: [packages/query-core/src/types.ts:1212](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1212)
 
 ***
 
@@ -85,7 +85,7 @@ Defined in: [packages/query-core/src/types.ts:1199](https://github.com/TanStack/
 optional onError: (error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1184](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1184)
+Defined in: [packages/query-core/src/types.ts:1197](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1197)
 
 #### Parameters
 
@@ -117,7 +117,7 @@ Defined in: [packages/query-core/src/types.ts:1184](https://github.com/TanStack/
 optional onMutate: (variables, context) => TOnMutateResult | Promise<TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1174](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1174)
+Defined in: [packages/query-core/src/types.ts:1187](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1187)
 
 #### Parameters
 
@@ -141,7 +141,7 @@ Defined in: [packages/query-core/src/types.ts:1174](https://github.com/TanStack/
 optional onSettled: (data, error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1190](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1190)
+Defined in: [packages/query-core/src/types.ts:1203](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1203)
 
 #### Parameters
 
@@ -177,7 +177,7 @@ Defined in: [packages/query-core/src/types.ts:1190](https://github.com/TanStack/
 optional onSuccess: (data, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1178](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1178)
+Defined in: [packages/query-core/src/types.ts:1191](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1191)
 
 #### Parameters
 
@@ -209,7 +209,7 @@ Defined in: [packages/query-core/src/types.ts:1178](https://github.com/TanStack/
 optional retry: RetryValue<TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1197](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1197)
+Defined in: [packages/query-core/src/types.ts:1210](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1210)
 
 ***
 
@@ -219,7 +219,7 @@ Defined in: [packages/query-core/src/types.ts:1197](https://github.com/TanStack/
 optional retryDelay: RetryDelayValue<TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1198](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1198)
+Defined in: [packages/query-core/src/types.ts:1211](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1211)
 
 ***
 
@@ -229,4 +229,4 @@ Defined in: [packages/query-core/src/types.ts:1198](https://github.com/TanStack/
 optional scope: MutationScope;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1204](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1204)
+Defined in: [packages/query-core/src/types.ts:1217](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1217)

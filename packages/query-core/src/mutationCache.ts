@@ -113,6 +113,13 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  * Normally, you will not interact with the `MutationCache` directly and instead use a
  * `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
  * safe/known updates to the cache, such as mutations being added, removed, or updated.
+ *
+ * @example
+ * ```ts
+ * const unsubscribe = mutationCache.subscribe((event) => {
+ *   console.log(event.type, event.mutation)
+ * })
+ * ```
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>

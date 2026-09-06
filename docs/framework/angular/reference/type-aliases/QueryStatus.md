@@ -7,4 +7,4 @@ title: QueryStatus
 type QueryStatus = "pending" | "error" | "success";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:382
+Defined in: packages/query-core/dist-ts/src/types.d.ts:395

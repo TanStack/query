@@ -12,7 +12,7 @@ type QueryObserverResult<TData, TError> =
 | QueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:578
+Defined in: packages/query-core/dist-ts/src/types.d.ts:591
 
 ## Type Parameters
 

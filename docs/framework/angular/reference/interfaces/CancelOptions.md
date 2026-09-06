@@ -3,7 +3,7 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:855
+Defined in: packages/query-core/dist-ts/src/types.d.ts:878
 
 ## Properties
 
@@ -13,7 +13,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:855
 optional revert: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:856
+Defined in: packages/query-core/dist-ts/src/types.d.ts:879
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:856
 optional silent: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:857
+Defined in: packages/query-core/dist-ts/src/types.d.ts:880

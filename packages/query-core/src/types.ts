@@ -673,6 +673,11 @@ export type FetchInfiniteQueryOptions<
   InfiniteQueryPages<TQueryFnData, TPageParam>
 
 export interface ResultOptions {
+  /**
+   * If set to `true`, the method throws if any of the underlying query refetch tasks fail.
+   * Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
+   * caller.
+   */
   throwOnError?: boolean
 }
 
@@ -690,6 +695,14 @@ export interface RefetchOptions extends ResultOptions {
 export interface InvalidateQueryFilters<
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryFilters<TQueryKey> {
+  /**
+   * Controls which of the matched (now-invalidated) queries are refetched in the background.
+   * Defaults to `'active'`.
+   * - `'active'`: only queries with at least one active observer are refetched.
+   * - `'inactive'`: only queries with no active observer are refetched.
+   * - `'all'`: every matched query is refetched, active or not.
+   * - `'none'`: no query is refetched; matched queries are only marked as invalidated.
+   */
   refetchType?: QueryTypeFilter | 'none'
 }
 
@@ -1425,18 +1438,28 @@ export type MutationObserverResult<
   | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>
 
 export interface QueryClientConfig {
+  /** The query cache this client is connected to. A new `QueryCache` is created if not provided. */
   queryCache?: QueryCache
+  /**
+   * The mutation cache this client is connected to. A new `MutationCache` is created if not
+   * provided.
+   */
   mutationCache?: MutationCache
+  /** Default options for all queries and mutations created through this client. */
   defaultOptions?: DefaultOptions
 }
 
 export interface DefaultOptions<TError = DefaultError> {
+  /** Default options applied to every query, unless overridden per-query. */
   queries?: OmitKeyof<
     QueryObserverOptions<unknown, TError>,
     'suspense' | 'queryKey'
   >
+  /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+  /** Default options used when hydrating queries; see {@link HydrateOptions}. */
   hydrate?: HydrateOptions['defaultOptions']
+  /** Default options used when dehydrating the client's caches; see {@link DehydrateOptions}. */
   dehydrate?: DehydrateOptions
 }
 

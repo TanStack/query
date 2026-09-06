@@ -18,6 +18,12 @@ export type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
 
 /**
  * Backend for timer functions.
+ *
+ * Timers are performance-sensitive: short-lived timers (delays under a few seconds) tend to be
+ * latency-sensitive, while long-lived ones may benefit more from coalescing — batching timers
+ * with similar deadlines together — which the default provider (backed by the platform's global
+ * `setTimeout`/`setInterval`) does not do. A custom provider can implement coalescing, and can
+ * also support delays longer than the ~24-day maximum of the global `setTimeout`.
  */
 export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
   {

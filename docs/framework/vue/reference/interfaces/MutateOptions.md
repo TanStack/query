@@ -3,7 +3,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1216](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1216)
+Defined in: [packages/query-core/src/types.ts:1229](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1229)
 
 ## Type Parameters
 
@@ -31,7 +31,7 @@ Defined in: [packages/query-core/src/types.ts:1216](https://github.com/TanStack/
 optional onError: (error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1228](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1228)
+Defined in: [packages/query-core/src/types.ts:1241](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1241)
 
 #### Parameters
 
@@ -63,7 +63,7 @@ Defined in: [packages/query-core/src/types.ts:1228](https://github.com/TanStack/
 optional onSettled: (data, error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1234](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1234)
+Defined in: [packages/query-core/src/types.ts:1247](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1247)
 
 #### Parameters
 
@@ -99,7 +99,7 @@ Defined in: [packages/query-core/src/types.ts:1234](https://github.com/TanStack/
 optional onSuccess: (data, variables, onMutateResult, context) => void;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1222](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1222)
+Defined in: [packages/query-core/src/types.ts:1235](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1235)
 
 #### Parameters
 

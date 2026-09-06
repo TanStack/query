@@ -3,7 +3,7 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:351
+Defined in: packages/query-core/dist-ts/src/types.d.ts:356
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -100,7 +100,14 @@ Include queries matching this query key
 optional refetchType: QueryTypeFilter | "none";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:352
+Defined in: packages/query-core/dist-ts/src/types.d.ts:365
+
+Controls which of the matched (now-invalidated) queries are refetched in the background.
+Defaults to `'active'`.
+- `'active'`: only queries with at least one active observer are refetched.
+- `'inactive'`: only queries with no active observer are refetched.
+- `'all'`: every matched query is refetched, active or not.
+- `'none'`: no query is refetched; matched queries are only marked as invalidated.
 
 ***
 

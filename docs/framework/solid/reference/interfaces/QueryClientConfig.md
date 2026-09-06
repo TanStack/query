@@ -21,6 +21,8 @@ optional defaultOptions: DefaultOptions<Error>;
 
 Defined in: [packages/solid-query/src/QueryClient.ts:106](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L106)
 
+Default options for all queries and mutations created through this client.
+
 #### Overrides
 
 ```ts
@@ -35,7 +37,10 @@ QueryCoreClientConfig.defaultOptions
 optional mutationCache: MutationCache;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1429](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1429)
+Defined in: [packages/query-core/src/types.ts:1447](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1447)
+
+The mutation cache this client is connected to. A new `MutationCache` is created if not
+provided.
 
 #### Inherited from
 
@@ -51,7 +56,9 @@ QueryCoreClientConfig.mutationCache
 optional queryCache: QueryCache;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1428](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1428)
+Defined in: [packages/query-core/src/types.ts:1442](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1442)
+
+The query cache this client is connected to. A new `QueryCache` is created if not provided.
 
 #### Inherited from
 

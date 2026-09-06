@@ -3,7 +3,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:731
+Defined in: packages/query-core/dist-ts/src/types.d.ts:744
 
 ## Type Parameters
 
@@ -31,7 +31,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:731
 optional onError: (error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:733
+Defined in: packages/query-core/dist-ts/src/types.d.ts:746
 
 #### Parameters
 
@@ -63,7 +63,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:733
 optional onSettled: (data, error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:734
+Defined in: packages/query-core/dist-ts/src/types.d.ts:747
 
 #### Parameters
 
@@ -99,7 +99,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:734
 optional onSuccess: (data, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:732
+Defined in: packages/query-core/dist-ts/src/types.d.ts:745
 
 #### Parameters
 

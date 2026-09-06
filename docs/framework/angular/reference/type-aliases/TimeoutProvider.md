@@ -7,9 +7,15 @@ title: TimeoutProvider
 type TimeoutProvider<TTimerId> = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:22
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:28
 
 Backend for timer functions.
+
+Timers are performance-sensitive: short-lived timers (delays under a few seconds) tend to be
+latency-sensitive, while long-lived ones may benefit more from coalescing — batching timers
+with similar deadlines together — which the default provider (backed by the platform's global
+`setTimeout`/`setInterval`) does not do. A custom provider can implement coalescing, and can
+also support delays longer than the ~24-day maximum of the global `setTimeout`.
 
 ## Type Parameters
 
@@ -25,7 +31,7 @@ Backend for timer functions.
 readonly clearInterval: (intervalId) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:26
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:32
 
 #### Parameters
 
@@ -45,7 +51,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:26
 readonly clearTimeout: (timeoutId) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:24
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:30
 
 #### Parameters
 
@@ -65,7 +71,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:24
 readonly setInterval: (callback, delay) => TTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:25
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:31
 
 #### Parameters
 
@@ -89,7 +95,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:25
 readonly setTimeout: (callback, delay) => TTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:23
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:29
 
 #### Parameters
 

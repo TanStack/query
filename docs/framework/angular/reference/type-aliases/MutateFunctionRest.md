@@ -7,7 +7,7 @@ title: MutateFunctionRest
 type MutateFunctionRest<TData, TError, TVariables, TOnMutateResult> = undefined extends TVariables ? [TVariables, MutateOptions<TData, TError, TVariables, TOnMutateResult>] : [TVariables, MutateOptions<TData, TError, TVariables, TOnMutateResult>];
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:736
+Defined in: packages/query-core/dist-ts/src/types.d.ts:749
 
 ## Type Parameters
 

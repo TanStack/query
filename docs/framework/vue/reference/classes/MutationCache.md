@@ -21,7 +21,7 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 new MutationCache(config): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L122)
+Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
 
 #### Parameters
 
@@ -47,7 +47,7 @@ MC.constructor
 config: MutationCacheConfig = {};
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L122)
+Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
 
 #### Inherited from
 
@@ -79,7 +79,7 @@ MC.listeners
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:229](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L229)
+Defined in: [packages/query-core/src/mutationCache.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L236)
 
 Removes all mutations from the cache.
 
@@ -218,7 +218,7 @@ MC.findAll
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:252](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L252)
+Defined in: [packages/query-core/src/mutationCache.ts:259](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L259)
 
 Returns all mutations within the cache.
 

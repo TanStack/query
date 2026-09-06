@@ -3,7 +3,7 @@ id: MutationObserverErrorResult
 title: MutationObserverErrorResult
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:823
+Defined in: packages/query-core/dist-ts/src/types.d.ts:836
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -55,7 +55,7 @@ The value returned by `onMutate`, if defined. Passed to `onSuccess`,
 data: undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:824
+Defined in: packages/query-core/dist-ts/src/types.d.ts:837
 
 The last successfully resolved data for the mutation.
 
@@ -71,7 +71,7 @@ The last successfully resolved data for the mutation.
 error: TError;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:825
+Defined in: packages/query-core/dist-ts/src/types.d.ts:838
 
 The error object for the mutation, if an error was encountered.
 - Defaults to `null`.
@@ -120,7 +120,7 @@ The reason the current attempt failed, as reported by the retryer.
 isError: true;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:827
+Defined in: packages/query-core/dist-ts/src/types.d.ts:840
 
 A boolean variable derived from `status`.
 - `true` if the last mutation attempt resulted in an error.
@@ -137,7 +137,7 @@ A boolean variable derived from `status`.
 isIdle: false;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:828
+Defined in: packages/query-core/dist-ts/src/types.d.ts:841
 
 A boolean variable derived from `status`.
 - `true` if the mutation is in its initial state prior to executing.
@@ -171,7 +171,7 @@ waiting for another mutation with the same `scope` to finish.
 isPending: false;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:829
+Defined in: packages/query-core/dist-ts/src/types.d.ts:842
 
 A boolean variable derived from `status`.
 - `true` if the mutation is currently executing.
@@ -188,7 +188,7 @@ A boolean variable derived from `status`.
 isSuccess: false;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:830
+Defined in: packages/query-core/dist-ts/src/types.d.ts:843
 
 A boolean variable derived from `status`.
 - `true` if the last mutation attempt was successful.
@@ -205,7 +205,7 @@ A boolean variable derived from `status`.
 mutate: MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:797
+Defined in: packages/query-core/dist-ts/src/types.d.ts:810
 
 The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
 
@@ -242,7 +242,7 @@ This function will fire when the mutation is either successfully fetched or enco
 reset: () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:801
+Defined in: packages/query-core/dist-ts/src/types.d.ts:814
 
 A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 
@@ -262,7 +262,7 @@ A function to clean the mutation internal state (i.e., it resets the mutation to
 status: "error";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:831
+Defined in: packages/query-core/dist-ts/src/types.d.ts:844
 
 The status of the mutation.
 - Will be:
@@ -299,7 +299,7 @@ The timestamp for when the mutation was submitted.
 variables: TVariables;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:826
+Defined in: packages/query-core/dist-ts/src/types.d.ts:839
 
 The variables object passed to the `mutationFn`.
 

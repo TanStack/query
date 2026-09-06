@@ -7,6 +7,6 @@ title: timeoutManager
 const timeoutManager: TimeoutManager;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:147
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:153
 
 Singleton instance of TimeoutManager, used throughout TanStack Query to schedule and cancel timers.
