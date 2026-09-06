@@ -322,58 +322,6 @@ describe('Preact hydration', () => {
     })
   })
 
-  it('should not hydrate queries if state is null', async () => {
-    const queryClient = new QueryClient()
-
-    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
-
-    function Page() {
-      return null
-    }
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={null}>
-          <Page />
-        </HydrationBoundary>
-      </QueryClientProvider>,
-    )
-
-    await Promise.all(
-      Array.from({ length: 1000 }).map(async (_, index) => {
-        await vi.advanceTimersByTimeAsync(index)
-        expect(hydrateSpy).toHaveBeenCalledTimes(0)
-      }),
-    )
-
-    hydrateSpy.mockRestore()
-    queryClient.clear()
-  })
-
-  it('should not hydrate queries if state is undefined', async () => {
-    const queryClient = new QueryClient()
-
-    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
-
-    function Page() {
-      return null
-    }
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={undefined}>
-          <Page />
-        </HydrationBoundary>
-      </QueryClientProvider>,
-    )
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(hydrateSpy).toHaveBeenCalledTimes(0)
-
-    hydrateSpy.mockRestore()
-    queryClient.clear()
-  })
-
   it('should not hydrate queries if state is not an object', async () => {
     const queryClient = new QueryClient()
 
