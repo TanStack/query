@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [vue-query/src/useMutation.ts:231](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L231)
+Defined in: [packages/vue-query/src/useMutation.ts:231](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L231)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the composable for that.

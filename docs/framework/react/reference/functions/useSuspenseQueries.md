@@ -11,7 +11,7 @@ redirect_from:
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [react-query/src/useSuspenseQueries.ts:349](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L349)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:349](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L349)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -48,7 +48,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
@@ -221,7 +221,7 @@ function App() {
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [react-query/src/useSuspenseQueries.ts:489](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L489)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:489](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L489)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -257,7 +257,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.

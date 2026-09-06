@@ -7,7 +7,7 @@ title: UnusedSkipTokenOptions
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [query-options.ts:50](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L50)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:50](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L50)
 
 The options accepted by the `queryOptions` overload selected when no `initialData` is set and `queryFn` is
 not `skipToken` — same as [UndefinedInitialDataOptions](UndefinedInitialDataOptions.md), but `queryFn` may not be `skipToken`.
@@ -35,7 +35,7 @@ The type your `queryFn` resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
@@ -47,6 +47,6 @@ The type `data` ends up as after `select` runs.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.

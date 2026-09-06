@@ -13,14 +13,14 @@ Defined in: [packages/svelte-query/src/useIsFetching.svelte.ts:40](https://githu
 
 ### filters?
 
-`QueryFilters`\<readonly `unknown`[]\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-QueryFilters to narrow down which queries to count. Omit to count every fetching
+[QueryFilters](../interfaces/QueryFilters.md) to narrow down which queries to count. Omit to count every fetching
 query.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

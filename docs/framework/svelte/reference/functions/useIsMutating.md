@@ -16,13 +16,13 @@ running (useful for app-wide loading indicators).
 
 ### filters?
 
-`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>
+[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
-MutationFilters to narrow down which mutations to count.
+[MutationFilters](../interfaces/MutationFilters.md) to narrow down which mutations to count.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

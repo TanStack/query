@@ -9,21 +9,21 @@ redirect_from:
 function useMutationState<TResult, TMutation>(options, queryClient?): Accessor<TResult[]>;
 ```
 
-Defined in: [useMutationState.ts:124](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutationState.ts#L124)
+Defined in: [packages/solid-query/src/useMutationState.ts:124](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutationState.ts#L124)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
-`filters` (MutationFilters) to narrow down your mutations, and `select` to transform the mutation
+`filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation
 state.
 
 ## Type Parameters
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
 
 ## Parameters
 

@@ -9,7 +9,7 @@ title: queryOptions
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:151](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L151)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:151](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L151)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
@@ -91,7 +91,7 @@ export class Posts {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:200](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L200)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:200](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L200)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is
@@ -168,7 +168,7 @@ export class Post {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [query-options.ts:281](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L281)
+Defined in: [packages/angular-query-experimental/src/query-options.ts:281](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L281)
 
 You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options
 can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is

@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L192)
+Defined in: [packages/preact-query/src/useMutation.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L192)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -40,7 +40,7 @@ The [UseMutationOptions](../interfaces/UseMutationOptions.md) to use — everyth
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:138](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L138)
+Defined in: [packages/vue-query/src/useQuery.ts:138](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L138)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -88,7 +88,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:279](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L279)
+Defined in: [packages/vue-query/src/useQuery.ts:279](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L279)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
@@ -257,7 +257,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:355](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L355)
+Defined in: [packages/vue-query/src/useQuery.ts:355](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L355)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

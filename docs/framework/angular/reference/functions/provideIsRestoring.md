@@ -7,7 +7,7 @@ title: provideIsRestoring
 function provideIsRestoring(isRestoring): Provider;
 ```
 
-Defined in: [inject-is-restoring.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L48)
+Defined in: [packages/angular-query-experimental/src/inject-is-restoring.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L48)
 
 Registers a provider for the restore state read by `injectIsRestoring`. Wire this up wherever you drive a
 restore yourself — e.g. a persist-client integration — so `injectQuery` and friends can defer subscribing

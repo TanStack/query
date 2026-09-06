@@ -9,7 +9,7 @@ redirect_from:
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/useSuspenseInfiniteQuery.ts:104](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseInfiniteQuery.ts#L104)
+Defined in: [packages/react-query/src/useSuspenseInfiniteQuery.ts:104](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseInfiniteQuery.ts#L104)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.
@@ -28,7 +28,7 @@ Caveat: cancellation does not work.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 ### TQueryKey
 
@@ -48,7 +48,7 @@ The [UseSuspenseInfiniteQueryOptions](../interfaces/UseSuspenseInfiniteQueryOpti
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

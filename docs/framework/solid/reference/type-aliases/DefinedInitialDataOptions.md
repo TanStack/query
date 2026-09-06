@@ -7,7 +7,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
 ```
 
-Defined in: [queryOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L40)
+Defined in: [packages/solid-query/src/queryOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L40)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
 `undefined`.
@@ -22,7 +22,7 @@ The type your `queryFn` resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
@@ -34,6 +34,6 @@ The type `data` ends up as after `select` runs.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.

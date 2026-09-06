@@ -7,7 +7,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [vue-query/src/infiniteQueryOptions.ts:48](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L48)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:48](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L48)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
 never `undefined`.
@@ -38,20 +38,20 @@ The type of a single page, as your `queryFn` resolves it.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
 the shape of all fetched pages plus their page params.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.
 

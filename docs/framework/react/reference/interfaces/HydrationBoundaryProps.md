@@ -3,7 +3,7 @@ id: HydrationBoundaryProps
 title: HydrationBoundaryProps
 ---
 
-Defined in: [react-query/src/HydrationBoundary.tsx:16](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L16)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:16](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L16)
 
 The props accepted by `HydrationBoundary`.
 
@@ -15,7 +15,7 @@ The props accepted by `HydrationBoundary`.
 optional children: ReactNode;
 ```
 
-Defined in: [react-query/src/HydrationBoundary.tsx:36](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L36)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:36](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L36)
 
 The components to render — always rendered unconditionally, not gated on hydration. New queries are
 hydrated into the cache during render; for queries that already exist in the cache, only newer dehydrated
@@ -30,7 +30,7 @@ lands.
 optional options: OmitKeyof<HydrateOptions, "defaultOptions"> & object;
 ```
 
-Defined in: [react-query/src/HydrationBoundary.tsx:24](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L24)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:24](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L24)
 
 Optional. Note: unlike `hydrate`, `mutations` cannot be set here.
 
@@ -40,6 +40,9 @@ Optional. Note: unlike `hydrate`, `mutations` cannot be set here.
 
 ```ts
 optional defaultOptions: OmitKeyof<{
+  deserializeData?: TransformerFn;
+  mutations?: MutationOptions<unknown, Error, unknown, unknown>;
+  queries?: QueryOptions<unknown, Error, unknown, readonly unknown[], never>;
 }, "mutations">;
 ```
 
@@ -51,7 +54,7 @@ optional defaultOptions: OmitKeyof<{
 optional queryClient: QueryClient;
 ```
 
-Defined in: [react-query/src/HydrationBoundary.tsx:40](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L40)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:40](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L40)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used.
 
@@ -63,6 +66,6 @@ Use this to use a custom `QueryClient`. Otherwise, the one from the nearest cont
 state: DehydratedState | null | undefined;
 ```
 
-Defined in: [react-query/src/HydrationBoundary.tsx:20](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L20)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:20](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L20)
 
 The state to hydrate.

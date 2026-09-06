@@ -19,15 +19,15 @@ Accessor-wrapped options accepted by `createInfiniteQueryController`.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 ### TPageParam
 

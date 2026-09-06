@@ -10,7 +10,7 @@ const createQuery: {
 } = useQuery;
 ```
 
-Defined in: [index.ts:57](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L57)
+Defined in: [packages/solid-query/src/index.ts:57](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L57)
 
 ## Call Signature
 

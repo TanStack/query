@@ -40,7 +40,7 @@ wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -145,7 +145,7 @@ with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -224,7 +224,7 @@ in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

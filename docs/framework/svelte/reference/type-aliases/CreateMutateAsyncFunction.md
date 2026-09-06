@@ -17,7 +17,7 @@ Defined in: [packages/svelte-query/src/types.ts:114](https://github.com/TanStack
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

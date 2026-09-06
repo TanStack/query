@@ -7,7 +7,7 @@ title: useIsMutating
 function useIsMutating(filters, queryClient?): Ref<number>;
 ```
 
-Defined in: [vue-query/src/useMutationState.ts:49](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L49)
+Defined in: [packages/vue-query/src/useMutationState.ts:49](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L49)
 
 The `useIsMutating` composable returns a `ref` to the `number` of mutations that your application currently
 has `pending` (useful for app-wide loading indicators).

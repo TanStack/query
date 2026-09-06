@@ -7,7 +7,7 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
 ```
 
-Defined in: [types.ts:267](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L267)
+Defined in: [packages/solid-query/src/types.ts:267](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L267)
 
 ## Type Parameters
 
@@ -17,7 +17,7 @@ Defined in: [types.ts:267](https://github.com/TanStack/query/blob/main/packages/
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 
@@ -31,7 +31,7 @@ Defined in: [types.ts:267](https://github.com/TanStack/query/blob/main/packages/
 
 ### args
 
-...`Parameters`\<`MutateFunction`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
+...`Parameters`\<[`MutateFunction`](MutateFunction.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
 
 ## Returns
 

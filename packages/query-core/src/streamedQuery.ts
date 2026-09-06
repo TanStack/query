@@ -47,6 +47,15 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * @param reducer - A function to reduce the streamed chunks into the final data.
  * Defaults to a function that appends chunks to the end of the array.
  * @param initialValue - Initial value to be used while the first chunk is being fetched, and returned if the stream yields no values.
+ * @example
+ * ```ts
+ * await queryClient.query({
+ *   queryKey: ['data'],
+ *   queryFn: streamedQuery({
+ *     streamFn: fetchDataInChunks,
+ *   }),
+ * })
+ * ```
  */
 export function streamedQuery<
   TQueryFnData = unknown,

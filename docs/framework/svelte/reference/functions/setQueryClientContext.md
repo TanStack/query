@@ -17,7 +17,7 @@ only if you need to set the client from your own component instead.
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The `QueryClient` to make available to descendant components.
 

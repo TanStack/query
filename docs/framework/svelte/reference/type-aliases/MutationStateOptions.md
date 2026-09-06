@@ -15,11 +15,11 @@ Options for useMutationState
 
 ### TResult
 
-`TResult` = `MutationState`
+`TResult` = [`MutationState`](../interfaces/MutationState.md)
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](MutationTypeFromResult.md)\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](MutationTypeFromResult.md)\<`TResult`\>
 
 ## Properties
 

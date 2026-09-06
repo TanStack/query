@@ -9,7 +9,7 @@ redirect_from:
 function useIsMutating(filters?, queryClient?): Accessor<number>;
 ```
 
-Defined in: [useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)
+Defined in: [packages/solid-query/src/useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)
 
 The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
@@ -18,9 +18,9 @@ The `useIsMutating` hook returns the `number` of mutations that your application
 
 ### filters?
 
-`Accessor`\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\>
+`Accessor`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\>
 
-An accessor returning the MutationFilters to narrow down the matched mutations.
+An accessor returning the [MutationFilters](../interfaces/MutationFilters.md) to narrow down the matched mutations.
 
 ### queryClient?
 

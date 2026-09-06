@@ -7,10 +7,10 @@ title: DefinedUseInfiniteQueryResult
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/types.ts:377](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L377)
+Defined in: [packages/react-query/src/types.ts:377](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L377)
 
 The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Re-exports
-DefinedInfiniteQueryObserverResult from `@tanstack/query-core`.
+[DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md) from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -22,6 +22,6 @@ The type `data` ends up as after `select` runs.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.

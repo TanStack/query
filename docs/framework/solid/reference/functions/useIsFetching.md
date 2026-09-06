@@ -9,7 +9,7 @@ redirect_from:
 function useIsFetching(filters?, queryClient?): Accessor<number>;
 ```
 
-Defined in: [useIsFetching.ts:29](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L29)
+Defined in: [packages/solid-query/src/useIsFetching.ts:29](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L29)
 
 The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching
 in the background (useful for app-wide loading indicators).
@@ -18,9 +18,9 @@ in the background (useful for app-wide loading indicators).
 
 ### filters?
 
-`Accessor`\<`QueryFilters`\<readonly `unknown`[]\>\>
+`Accessor`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\>
 
-An accessor returning the QueryFilters to narrow down the matched queries.
+An accessor returning the [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
 ### queryClient?
 

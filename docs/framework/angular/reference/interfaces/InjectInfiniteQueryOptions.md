@@ -3,7 +3,7 @@ id: InjectInfiniteQueryOptions
 title: InjectInfiniteQueryOptions
 ---
 
-Defined in: [inject-infinite-query.ts:25](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L25)
+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:25](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L25)
 
 ## Properties
 
@@ -13,7 +13,7 @@ Defined in: [inject-infinite-query.ts:25](https://github.com/TanStack/query/blob
 optional injector: Injector;
 ```
 
-Defined in: [inject-infinite-query.ts:31](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L31)
+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:31](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L31)
 
 The `Injector` in which to create the infinite query.
 

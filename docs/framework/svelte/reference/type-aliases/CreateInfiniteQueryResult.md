@@ -19,4 +19,4 @@ Result from createInfiniteQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

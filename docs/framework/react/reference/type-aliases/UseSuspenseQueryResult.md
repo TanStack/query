@@ -7,7 +7,7 @@ title: UseSuspenseQueryResult
 type UseSuspenseQueryResult<TData, TError> = DistributiveOmit<DefinedQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [react-query/src/types.ts:337](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L337)
+Defined in: [packages/react-query/src/types.ts:337](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L337)
 
 The result of `useSuspenseQuery`. Same as [DefinedUseQueryResult](DefinedUseQueryResult.md), minus `isPlaceholderData` — always
 `false` on that type, so this drops the dead field rather than an active state.
@@ -22,6 +22,6 @@ The type `data` ends up as after `select` runs.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.

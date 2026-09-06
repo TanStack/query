@@ -10,7 +10,7 @@ const createInfiniteQuery: {
 } = useInfiniteQuery;
 ```
 
-Defined in: [index.ts:72](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L72)
+Defined in: [packages/solid-query/src/index.ts:72](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L72)
 
 ## Call Signature
 
@@ -35,7 +35,7 @@ This overload is selected when `initialData` is set.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -131,7 +131,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 

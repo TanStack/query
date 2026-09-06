@@ -11,7 +11,7 @@ redirect_from:
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [react-query/src/infiniteQueryOptions.ts:170](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L170)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:170](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L170)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -31,7 +31,7 @@ This overload is selected when `initialData` is set.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -97,7 +97,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [react-query/src/infiniteQueryOptions.ts:232](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L232)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:232](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L232)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -115,7 +115,7 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -180,7 +180,7 @@ function Comments({ postId }: { postId: string }) {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [react-query/src/infiniteQueryOptions.ts:294](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L294)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:294](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L294)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -198,7 +198,7 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 

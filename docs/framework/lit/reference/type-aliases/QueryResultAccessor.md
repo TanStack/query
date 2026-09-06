@@ -46,7 +46,7 @@ Resolves with an optimistic query result, fetching first when needed.
 
 #### Returns
 
-`Promise`\<`QueryObserverResult`\<`TData`, `TError`\>\>
+`Promise`\<[`QueryObserverResult`](QueryObserverResult.md)\<`TData`, `TError`\>\>
 
 ## Type Parameters
 

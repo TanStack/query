@@ -240,24 +240,80 @@ export interface QueryOptions<
    * If `true`, failed queries will retry infinitely.
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
+   * Defaults to `3` on the client and `0` on the server.
    */
   retry?: RetryValue<TError>
+  /**
+   * This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
+   * next attempt in milliseconds.
+   *
+   * A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential
+   * backoff.
+   *
+   * A function like `attempt => attempt * 1000` applies linear backoff.
+   */
   retryDelay?: RetryDelayValue<TError>
+  /**
+   * Defaults to `'online'`.
+   * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
+   */
   networkMode?: NetworkMode
   /**
    * The time in milliseconds that unused/inactive cache data remains in memory.
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
    * When different garbage collection times are specified, the longest one will be used.
    * Setting it to `Infinity` will disable garbage collection.
+   * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
+   *
+   * Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see
+   * `timeoutManager.setTimeoutProvider` for a workaround.
    */
   gcTime?: number
+  /**
+   * The function that the query will use to request data.
+   * Required, unless a default query function has been set via `queryClient.setQueryDefaults` or
+   * `queryClient.setDefaultOptions`.
+   * Receives a {@link QueryFunctionContext}.
+   * Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
+   */
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
+  /**
+   * This option can be used to persist the result of a query to an external storage, bypassing the need to actually
+   * call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries.
+   */
   persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
+  /**
+   * The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used
+   * as the actual cache key internally.
+   */
   queryHash?: string
+  /**
+   * The query key to use for this query.
+   *
+   * The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys)
+   * for more information.
+   *
+   * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
+   */
   queryKey?: TQueryKey
+  /**
+   * If specified, this function is used to hash the `queryKey` to a string.
+   */
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet).
+   * If set to a function, the function will be called **once** during the shared/root query initialization, and be
+   * expected to synchronously return the initial data.
+   * Initial data is considered stale by default unless a `staleTime` has been set.
+   * `initialData` **is persisted** to the cache.
+   */
   initialData?: TData | InitialDataFunction<TData>
+  /**
+   * If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
+   */
   initialDataUpdatedAt?: number | (() => number | undefined)
+  /** @internal */
   behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
   /**
    * Set this to `false` to disable structural sharing between query results.
@@ -267,7 +323,9 @@ export interface QueryOptions<
   structuralSharing?:
     | boolean
     | ((oldData: unknown | undefined, newData: unknown) => unknown)
+  /** @internal */
   _defaulted?: boolean
+  /** @internal */
   _type?: 'infinite'
   /**
    * Additional payload to be stored on each query.
@@ -333,6 +391,7 @@ export interface QueryObserverOptions<
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
+   * If set to `'static'`, the data will never be considered stale.
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    * Defaults to `0`.
    */
@@ -356,7 +415,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will refetch on window focus if the data is stale.
    * If set to `false`, the query will not refetch on window focus.
-   * If set to `'always'`, the query will always refetch on window focus.
+   * If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to `true`.
    */
@@ -369,7 +428,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
-   * If set to `'always'`, the query will always refetch on reconnect.
+   * If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to `true` unless `networkMode` is `'always'`.
    */
@@ -382,7 +441,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
    * If set to `false`, will disable additional instances of a query to trigger background refetch.
-   * If set to `'always'`, the query will always refetch on mount.
+   * If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value
    * Defaults to `true`.
    */
@@ -415,7 +474,10 @@ export interface QueryObserverOptions<
    */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
-   * This option can be used to transform or select a part of the data returned by the query function.
+   * This option can be used to transform or select a part of the data returned by the query function. It affects
+   * the returned `data` value, but does not affect what gets stored in the query cache.
+   * The `select` function will only run if `data` changed, or if the reference to the `select` function itself
+   * changes. To optimize, memoize the function so its reference stays stable across calls.
    */
   select?: (data: TQueryData) => TData
   /**
@@ -436,6 +498,7 @@ export interface QueryObserverOptions<
         TQueryKey
       >
 
+  /** @internal */
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
@@ -1135,6 +1198,7 @@ export interface MutationOptions<
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
   gcTime?: number
+  /** @internal */
   _defaulted?: boolean
   meta?: MutationMeta
   scope?: MutationScope

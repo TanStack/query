@@ -9,7 +9,7 @@ redirect_from:
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [react-query/src/useMutation.ts:191](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutation.ts#L191)
+Defined in: [packages/react-query/src/useMutation.ts:191](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutation.ts#L191)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -42,7 +42,7 @@ The [UseMutationOptions](../interfaces/UseMutationOptions.md) to use — everyth
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

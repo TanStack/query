@@ -9,7 +9,7 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L117)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L117)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -32,7 +32,7 @@ individual entries — the array itself can't be a bare getter.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -106,7 +106,7 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:251](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L251)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:251](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L251)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -127,7 +127,7 @@ individual entries — the array itself can't be a bare getter.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -269,7 +269,7 @@ onUnmounted(() => observer?.disconnect())
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L347)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L347)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
@@ -291,7 +291,7 @@ individual entries — the array itself can't be a bare getter.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 

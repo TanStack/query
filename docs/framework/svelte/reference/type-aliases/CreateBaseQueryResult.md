@@ -19,4 +19,4 @@ Result from createBaseQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

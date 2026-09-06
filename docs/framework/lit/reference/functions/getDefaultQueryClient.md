@@ -14,7 +14,7 @@ available.
 
 ## Returns
 
-`QueryClient` \| `undefined`
+[`QueryClient`](../classes/QueryClient.md) \| `undefined`
 
 The default query client, or `undefined` when there is no registered
 client or more than one registered client.

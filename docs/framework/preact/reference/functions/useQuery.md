@@ -9,7 +9,7 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L50)
+Defined in: [packages/preact-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L50)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -41,7 +41,7 @@ The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -89,7 +89,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L117)
+Defined in: [packages/preact-query/src/useQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L117)
 
 ### Type Parameters
 
@@ -119,7 +119,7 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -190,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
+Defined in: [packages/preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
 
 ### Type Parameters
 
@@ -220,7 +220,7 @@ The [UseQueryOptions](../interfaces/UseQueryOptions.md) to use — everything yo
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

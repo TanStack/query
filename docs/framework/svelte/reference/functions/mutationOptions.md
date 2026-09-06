@@ -37,13 +37,13 @@ overload requires `mutationKey`, so the resulting options can be looked up elsew
 
 #### options
 
-`WithRequired`\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The options to use — everything you can pass to `createMutation`, with `mutationKey` set.
 
 ### Returns
 
-`WithRequired`\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object.
 

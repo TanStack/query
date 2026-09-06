@@ -7,7 +7,7 @@ title: usePrefetchInfiniteQuery
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
 ```
 
-Defined in: [vue-query/src/usePrefetchInfiniteQuery.ts:94](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L94)
+Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:94](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L94)
 
 `usePrefetchInfiniteQuery` does not return anything — it fires a prefetch as a reactive side effect, useful
 for kicking off a fetch ahead of the component that will actually render the data with `useInfiniteQuery`.
@@ -38,7 +38,7 @@ Fire this during render, before a suspense boundary that wraps a component using
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 ### TQueryKey
 

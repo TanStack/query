@@ -7,7 +7,7 @@ title: createMutation
 const createMutation: <TData, TError, TVariables, TOnMutateResult>(options, queryClient?) => UseMutationResult<TData, TError, TVariables, TOnMutateResult> = useMutation;
 ```
 
-Defined in: [index.ts:80](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L80)
+Defined in: [packages/solid-query/src/index.ts:80](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L80)
 
 ## Type Parameters
 

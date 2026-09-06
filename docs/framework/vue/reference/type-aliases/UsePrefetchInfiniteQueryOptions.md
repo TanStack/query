@@ -7,7 +7,7 @@ title: UsePrefetchInfiniteQueryOptions
 type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [vue-query/src/usePrefetchInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L16)
+Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L16)
 
 ## Type Declaration
 
@@ -33,7 +33,7 @@ optional queryFn: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TDat
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md)
 
 ### TPageParam
 
