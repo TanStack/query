@@ -863,6 +863,11 @@ describe('injectMutation', () => {
           rendered.fixture.componentInstance.mutation.mutateAsync(todo),
         ),
       )
+      await vi.advanceTimersByTimeAsync(0)
+      rendered.fixture.detectChanges()
+
+      expect(rendered.getByText('isPending: true')).toBeInTheDocument()
+
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       const results = await settledPromise
