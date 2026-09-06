@@ -9,6 +9,7 @@ import {
   QueryClient,
   // QueryClientProvider,
   keepPreviousData,
+  skipToken,
   useInfiniteQuery,
 } from '..'
 import type {
@@ -1205,6 +1206,41 @@ describe('useInfiniteQuery', () => {
     ).toBeInTheDocument()
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+
+    function Page() {
+      const state = useInfiniteQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: { pages: [1], pageParams: [1] },
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+        initialPageParam: 0,
+        retry: false,
+      })
+
+      states.push(state)
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1] },
+      isError: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [1] },
+      isError: true,
+    })
+  })
+
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
     const key = queryKey()
     const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
@@ -1690,5 +1726,46 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [postId, setPostId] = useState<string>()
+
+      const { data, isFetching } = useInfiniteQuery({
+        queryKey: key,
+        queryFn:
+          postId != null
+            ? ({ pageParam }: { pageParam: number }) =>
+                sleep(10).then(() => `comments for ${postId} page ${pageParam}`)
+            : skipToken,
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      })
+
+      return (
+        <div>
+          <div>isFetching: {String(isFetching)}</div>
+          <div>pages: {data?.pages.join(', ') ?? 'none'}</div>
+          <button onClick={() => setPostId('1')}>set postId</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('pages: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(
+      rendered.getByText('pages: comments for 1 page 0'),
+    ).toBeInTheDocument()
   })
 })
