@@ -1529,4 +1529,216 @@ describe('useMutation', () => {
       rendered.getByText('data: custom client, status: success'),
     ).toBeInTheDocument()
   })
+
+  it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+        onError: (_err, _newTodo, onMutateResult) => {
+          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+        },
+      }))
+
+      return <button onClick={() => mutation.mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    // The optimistic value lands after onMutate's first await, so flush
+    // microtasks before asserting.
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+  })
+
+  it('should keep the optimistic update in place when the mutation succeeds', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const mutation = useMutation(() => ({
+        mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+      }))
+
+      return <button onClick={() => mutation.mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+  })
+
+  it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
+    function Page() {
+      const [result, setResult] = createSignal<string>('idle')
+
+      const mutation = useMutation(() => ({
+        mutationFn: (file: string) => sleep(10).then(() => `uploaded: ${file}`),
+      }))
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.all([
+                mutation.mutateAsync('file1'),
+                mutation.mutateAsync('file2'),
+                mutation.mutateAsync('file3'),
+              ])
+              setResult(results.join(', '))
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result()}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle Promise.all rejection when one parallel mutateAsync call fails', async () => {
+    function Page() {
+      const [result, setResult] = createSignal<string>('idle')
+
+      const mutation = useMutation(() => ({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      }))
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              try {
+                const results = await Promise.all([
+                  mutation.mutateAsync('file1'),
+                  mutation.mutateAsync('file2'),
+                  mutation.mutateAsync('file3'),
+                ])
+                setResult(results.join(', '))
+              } catch (error) {
+                setResult(`error: ${(error as Error).message}`)
+              }
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result()}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: upload failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle partial failure in parallel mutateAsync calls with Promise.allSettled', async () => {
+    function Page() {
+      const [result, setResult] = createSignal<string>('idle')
+
+      const mutation = useMutation(() => ({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      }))
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.allSettled([
+                mutation.mutateAsync('file1'),
+                mutation.mutateAsync('file2'),
+                mutation.mutateAsync('file3'),
+              ])
+              const summary = results
+                .map((r) =>
+                  r.status === 'fulfilled'
+                    ? r.value
+                    : `error: ${r.reason.message}`,
+                )
+                .join(', ')
+              setResult(summary)
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result()}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
 })
