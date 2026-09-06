@@ -3251,6 +3251,31 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: { count: 1 } })
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
+  })
+
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
