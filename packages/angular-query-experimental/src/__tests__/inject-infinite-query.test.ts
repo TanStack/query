@@ -145,9 +145,8 @@ describe('injectInfiniteQuery', () => {
   describe('skipToken', () => {
     it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(
-        ({ pageParam }: { pageParam: number }, postId: string) =>
-          sleep(10).then(() => `comments for ${postId} page ${pageParam}`),
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
       )
 
       @Component({
@@ -162,11 +161,7 @@ describe('injectInfiniteQuery', () => {
 
         readonly query = injectInfiniteQuery(() => ({
           queryKey: key,
-          queryFn:
-            this.postId() != null
-              ? ({ pageParam }: { pageParam: number }) =>
-                  queryFn({ pageParam }, this.postId()!)
-              : skipToken,
+          queryFn: this.postId() != null ? queryFn : skipToken,
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
