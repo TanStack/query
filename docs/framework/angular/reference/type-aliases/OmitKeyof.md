@@ -7,7 +7,7 @@ title: OmitKeyof
 type OmitKeyof<TObject, TKey, TStrictly> = Omit<TObject, TKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:11
+Defined in: [packages/query-core/src/types.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L19)
 
 ## Type Parameters
 

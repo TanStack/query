@@ -3,7 +3,7 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:338
+Defined in: [packages/query-core/src/types.ts:686](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L686)
 
 ## Extended by
 
@@ -19,7 +19,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:338
 optional throwOnError: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:344
+Defined in: [packages/query-core/src/types.ts:692](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L692)
 
 If set to `true`, the method throws if any of the underlying query refetch tasks fail.
 Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the

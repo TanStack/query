@@ -3,7 +3,7 @@ id: InfiniteData
 title: InfiniteData
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:77
+Defined in: [packages/query-core/src/types.ts:210](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L210)
 
 ## Type Parameters
 
@@ -23,7 +23,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:77
 pageParams: TPageParam[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:79
+Defined in: [packages/query-core/src/types.ts:212](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L212)
 
 ***
 
@@ -33,4 +33,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:79
 pages: TData[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:78
+Defined in: [packages/query-core/src/types.ts:211](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L211)

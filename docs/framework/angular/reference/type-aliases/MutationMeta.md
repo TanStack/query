@@ -7,4 +7,4 @@ title: MutationMeta
 type MutationMeta = Register extends object ? TMutationMeta extends Record<string, unknown> ? TMutationMeta : Record<string, unknown> : Record<string, unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:716
+Defined in: [packages/query-core/src/types.ts:1171](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1171)

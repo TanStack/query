@@ -3,7 +3,7 @@ id: Query
 title: Query
 ---
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:154
+Defined in: [packages/query-core/src/query.ts:225](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L225)
 
 Represents a single cached query. A `Query` holds the query's key, options,
 state (data/error/status), and the observers currently subscribed to it.
@@ -54,7 +54,7 @@ if (query) {
 new Query<TQueryFnData, TError, TData, TQueryKey>(config): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:161
+Defined in: [packages/query-core/src/query.ts:246](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L246)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:3
+Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
 
 #### Inherited from
 
@@ -96,7 +96,7 @@ Removable.gcTime
 observers: QueryObserver<any, any, any, any, any>[];
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:160
+Defined in: [packages/query-core/src/query.ts:242](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L242)
 
 ***
 
@@ -106,7 +106,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:160
 options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:158
+Defined in: [packages/query-core/src/query.ts:233](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L233)
 
 ***
 
@@ -116,7 +116,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:158
 queryHash: string;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:157
+Defined in: [packages/query-core/src/query.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L232)
 
 ***
 
@@ -126,7 +126,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:157
 queryKey: TQueryKey;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:156
+Defined in: [packages/query-core/src/query.ts:231](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L231)
 
 ***
 
@@ -136,7 +136,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:156
 state: QueryState<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:159
+Defined in: [packages/query-core/src/query.ts:234](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L234)
 
 ## Accessors
 
@@ -148,7 +148,7 @@ Defined in: packages/query-core/dist-ts/src/query.d.ts:159
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:165
+Defined in: [packages/query-core/src/query.ts:264](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L264)
 
 The `meta` object passed in the query's options, if any.
 
@@ -166,7 +166,7 @@ The `meta` object passed in the query's options, if any.
 get promise(): Promise<TData> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:172
+Defined in: [packages/query-core/src/query.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L277)
 
 The promise for the currently in-flight fetch, if the query is fetching.
 `undefined` when the query is not fetching.
@@ -183,7 +183,7 @@ The promise for the currently in-flight fetch, if the query is fetching.
 cancel(options?): Promise<void>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:196
+Defined in: [packages/query-core/src/query.ts:348](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L348)
 
 Cancels the query's currently in-flight fetch, if any.
 - Returns a promise that resolves once the cancellation has settled.
@@ -213,7 +213,7 @@ await query.cancel()
 protected clearGcTimeout(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:7
+Defined in: [packages/query-core/src/removable.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L32)
 
 #### Returns
 
@@ -233,7 +233,7 @@ Removable.clearGcTimeout
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:204
+Defined in: [packages/query-core/src/query.ts:361](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L361)
 
 Clears the query's garbage collection timeout and silently cancels any
 in-flight fetch. Called by `QueryCache` when the query is removed from
@@ -261,7 +261,7 @@ Removable.destroy
 fetch(options?, fetchOptions?): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:309
+Defined in: [packages/query-core/src/query.ts:590](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L590)
 
 Fetches the query, i.e. runs its `queryFn` (through any configured
 retryer/behavior) and updates the query's state with the result.
@@ -294,7 +294,7 @@ retryer/behavior) and updates the query's state with the result.
 getObserversCount(): number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:287
+Defined in: [packages/query-core/src/query.ts:560](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L560)
 
 Returns the number of observers currently subscribed to this query.
 
@@ -318,7 +318,7 @@ if (query.getObserversCount() === 0) {
 invalidate(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:298
+Defined in: [packages/query-core/src/query.ts:574](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L574)
 
 Marks the query as invalidated, unless it is already invalidated. This
 updates `state.isInvalidated` and notifies observers, but does not by
@@ -342,7 +342,7 @@ query.invalidate()
 isActive(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:217
+Defined in: [packages/query-core/src/query.ts:386](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L386)
 
 Returns `true` if the query has at least one observer for which `enabled`
 does not resolve to `false`.
@@ -359,7 +359,7 @@ does not resolve to `false`.
 isDisabled(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:226
+Defined in: [packages/query-core/src/query.ts:400](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L400)
 
 Returns `true` if the query is disabled, meaning it will not fetch
 automatically.
@@ -380,7 +380,7 @@ automatically.
 isFetched(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:231
+Defined in: [packages/query-core/src/query.ts:412](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L412)
 
 Returns `true` if the query has been fetched, i.e. it has resolved with
 either data or an error at least once.
@@ -397,7 +397,7 @@ either data or an error at least once.
 isStale(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:253
+Defined in: [packages/query-core/src/query.ts:447](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L447)
 
 Returns `true` if the query is stale.
 - If the query has observers, defers to whether any observer's current
@@ -427,10 +427,10 @@ if (query.isStale()) {
 ### isStaleByTime()
 
 ```ts
-isStaleByTime(staleTime?): boolean;
+isStaleByTime(staleTime): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:268
+Defined in: [packages/query-core/src/query.ts:473](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L473)
 
 Returns `true` if the query's data is stale relative to the given
 `staleTime` (defaults to `0`).
@@ -441,9 +441,9 @@ Returns `true` if the query's data is stale relative to the given
 
 #### Parameters
 
-##### staleTime?
+##### staleTime
 
-[`StaleTime`](../type-aliases/StaleTime.md)
+[`StaleTime`](../type-aliases/StaleTime.md) = `0`
 
 #### Returns
 
@@ -467,7 +467,7 @@ const isStale = query.isStaleByTime(1000 * 60)
 isStatic(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:236
+Defined in: [packages/query-core/src/query.ts:420](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L420)
 
 Returns `true` if the query has at least one observer configured with
 `staleTime: 'static'`, meaning it is treated as never stale.
@@ -484,7 +484,7 @@ Returns `true` if the query has at least one observer configured with
 protected optionalRemove(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:175
+Defined in: [packages/query-core/src/query.ts:305](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L305)
 
 #### Returns
 
@@ -504,7 +504,7 @@ Removable.optionalRemove
 reset(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:212
+Defined in: [packages/query-core/src/query.ts:377](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L377)
 
 Resets the query back to its initial state (the state it had when it was
 first created, e.g. any `initialData`), destroying it first to cancel any
@@ -522,7 +522,7 @@ in-flight fetch.
 protected scheduleGc(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:5
+Defined in: [packages/query-core/src/removable.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L14)
 
 #### Returns
 
@@ -542,7 +542,7 @@ Removable.scheduleGc
 setState(state): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:185
+Defined in: [packages/query-core/src/query.ts:334](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L334)
 
 Merges the given partial state directly into this query's state, notifying observers. Used
 by persistence and broadcast plugins to restore a state snapshot, and by devtools to let a
@@ -566,7 +566,7 @@ user manually trigger a loading/error state or edit the cached data.
 protected updateGcTime(newGcTime): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:6
+Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)
 
 #### Parameters
 

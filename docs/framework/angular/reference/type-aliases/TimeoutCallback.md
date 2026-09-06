@@ -7,7 +7,7 @@ title: TimeoutCallback
 type TimeoutCallback = (_) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:9
+Defined in: [packages/query-core/src/timeoutManager.ts:9](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L9)
 
 [TimeoutManager](../interfaces/TimeoutManager.md) does not support passing arguments to the callback.
 

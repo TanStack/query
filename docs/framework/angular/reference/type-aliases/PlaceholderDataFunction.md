@@ -7,7 +7,7 @@ title: PlaceholderDataFunction
 type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (previousData, previousQuery) => TQueryData | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:72
+Defined in: [packages/query-core/src/types.ts:177](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L177)
 
 ## Type Parameters
 

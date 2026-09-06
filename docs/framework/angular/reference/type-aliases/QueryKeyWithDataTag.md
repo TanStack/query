@@ -7,7 +7,7 @@ title: QueryKeyWithDataTag
 type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:37
+Defined in: [packages/query-core/src/types.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L82)
 
 ## Type Parameters
 
@@ -31,4 +31,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:37
 queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:38
+Defined in: [packages/query-core/src/types.ts:87](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L87)

@@ -3,7 +3,7 @@ id: QueryState
 title: QueryState
 ---
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:17
+Defined in: [packages/query-core/src/query.ts:52](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L52)
 
 The raw state stored on a `Query` instance. This is the underlying state
 that observer results (e.g. `QueryObserverResult`) are derived from.
@@ -26,7 +26,7 @@ that observer results (e.g. `QueryObserverResult`) are derived from.
 data: TData | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:21
+Defined in: [packages/query-core/src/query.ts:56](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L56)
 
 The last successfully resolved data for the query.
 
@@ -38,7 +38,7 @@ The last successfully resolved data for the query.
 dataUpdateCount: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:25
+Defined in: [packages/query-core/src/query.ts:60](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L60)
 
 The number of times the query has successfully resolved.
 
@@ -50,7 +50,7 @@ The number of times the query has successfully resolved.
 dataUpdatedAt: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:29
+Defined in: [packages/query-core/src/query.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L64)
 
 The timestamp for when the query most recently returned the `status` as `"success"`.
 
@@ -62,7 +62,7 @@ The timestamp for when the query most recently returned the `status` as `"succes
 error: TError | null;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:34
+Defined in: [packages/query-core/src/query.ts:69](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L69)
 
 The error object for the query, if the last attempt resulted in an error.
 - Defaults to `null`.
@@ -75,7 +75,7 @@ The error object for the query, if the last attempt resulted in an error.
 errorUpdateCount: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:38
+Defined in: [packages/query-core/src/query.ts:73](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L73)
 
 The sum of all errors, incremented every time the query resolves with an error.
 
@@ -87,7 +87,7 @@ The sum of all errors, incremented every time the query resolves with an error.
 errorUpdatedAt: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:42
+Defined in: [packages/query-core/src/query.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L77)
 
 The timestamp for when the query most recently returned the `status` as `"error"`.
 
@@ -99,7 +99,7 @@ The timestamp for when the query most recently returned the `status` as `"error"
 fetchFailureCount: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:48
+Defined in: [packages/query-core/src/query.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L83)
 
 The failure count for the current fetch.
 - Incremented every time the fetch fails.
@@ -113,7 +113,7 @@ The failure count for the current fetch.
 fetchFailureReason: TError | null;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:53
+Defined in: [packages/query-core/src/query.ts:88](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L88)
 
 The reason the current fetch failed, as reported by the retryer.
 - Reset to `null` when the fetch succeeds.
@@ -126,7 +126,7 @@ The reason the current fetch failed, as reported by the retryer.
 fetchMeta: FetchMeta | null;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:58
+Defined in: [packages/query-core/src/query.ts:93](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L93)
 
 Metadata passed to the currently in-flight (or most recent) fetch, e.g. the
 `fetchMore` direction for infinite queries.
@@ -139,7 +139,7 @@ Metadata passed to the currently in-flight (or most recent) fetch, e.g. the
 fetchStatus: FetchStatus;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:77
+Defined in: [packages/query-core/src/query.ts:112](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L112)
 
 The fetch status of the query.
 - `fetching`: the `queryFn` is currently executing.
@@ -154,7 +154,7 @@ The fetch status of the query.
 isInvalidated: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:63
+Defined in: [packages/query-core/src/query.ts:98](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L98)
 
 Whether the query has been marked as invalidated via `invalidate()`.
 - Reset to `false` whenever the query resolves successfully.
@@ -167,7 +167,7 @@ Whether the query has been marked as invalidated via `invalidate()`.
 status: QueryStatus;
 ```
 
-Defined in: packages/query-core/dist-ts/src/query.d.ts:70
+Defined in: [packages/query-core/src/query.ts:105](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L105)
 
 The status of the query.
 - `pending` if there's no cached data and no attempt was finished yet.

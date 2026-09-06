@@ -3,7 +3,7 @@ id: SetDataOptions
 title: SetDataOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:882
+Defined in: [packages/query-core/src/types.ts:1506](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1506)
 
 ## Properties
 
@@ -13,4 +13,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:882
 optional updatedAt: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:883
+Defined in: [packages/query-core/src/types.ts:1507](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1507)

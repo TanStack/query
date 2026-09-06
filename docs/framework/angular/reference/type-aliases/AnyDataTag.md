@@ -7,7 +7,7 @@ title: AnyDataTag
 type AnyDataTag = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:29
+Defined in: [packages/query-core/src/types.ts:67](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L67)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:29
 [dataTagErrorSymbol]: any;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:31
+Defined in: [packages/query-core/src/types.ts:69](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L69)
 
 ***
 
@@ -27,4 +27,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:31
 [dataTagSymbol]: any;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:30
+Defined in: [packages/query-core/src/types.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L68)

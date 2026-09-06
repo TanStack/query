@@ -3,7 +3,7 @@ id: FetchPreviousPageOptions
 title: FetchPreviousPageOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:384
+Defined in: [packages/query-core/src/types.ts:739](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L739)
 
 ## Extends
 
@@ -17,7 +17,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:384
 optional cancelRefetch: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:393
+Defined in: [packages/query-core/src/types.ts:748](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L748)
 
 If set to `true`, calling `fetchPreviousPage` repeatedly will invoke `queryFn` every time,
 whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored.
@@ -34,7 +34,7 @@ Defaults to `true`.
 optional throwOnError: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:344
+Defined in: [packages/query-core/src/types.ts:692](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L692)
 
 If set to `true`, the method throws if any of the underlying query refetch tasks fail.
 Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the

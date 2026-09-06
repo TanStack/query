@@ -7,7 +7,7 @@ title: matchQuery
 function matchQuery(filters, query): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/utils.d.ts:104
+Defined in: [packages/query-core/src/utils.ts:175](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L175)
 
 Checks whether a query matches the given [QueryFilters](../interfaces/QueryFilters.md).
 Every filter that is specified must match; filters that are left unspecified are ignored.

@@ -3,7 +3,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:744
+Defined in: [packages/query-core/src/types.ts:1264](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1264)
 
 ## Type Parameters
 
@@ -31,7 +31,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:744
 optional onError: (error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:746
+Defined in: [packages/query-core/src/types.ts:1276](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1276)
 
 #### Parameters
 
@@ -63,7 +63,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:746
 optional onSettled: (data, error, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:747
+Defined in: [packages/query-core/src/types.ts:1282](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1282)
 
 #### Parameters
 
@@ -99,7 +99,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:747
 optional onSuccess: (data, variables, onMutateResult, context) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:745
+Defined in: [packages/query-core/src/types.ts:1270](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1270)
 
 #### Parameters
 

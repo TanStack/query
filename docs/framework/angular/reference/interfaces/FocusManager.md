@@ -3,7 +3,7 @@ id: FocusManager
 title: FocusManager
 ---
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:9
+Defined in: [packages/query-core/src/focusManager.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L14)
 
 The `FocusManager` manages the focus state within TanStack Query.
 
@@ -21,7 +21,7 @@ It can be used to change the default event listeners or to manually change the f
 protected listeners: Set<Listener>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
+Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
 
 #### Inherited from
 
@@ -37,7 +37,7 @@ Subscribable.listeners
 hasListeners(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
+Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
 
 #### Returns
 
@@ -57,7 +57,7 @@ Subscribable.hasListeners
 isFocused(): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:66
+Defined in: [packages/query-core/src/focusManager.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L128)
 
 `isFocused` can be used to get the current focus state.
 
@@ -73,7 +73,7 @@ Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:66
 onFocus(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:62
+Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L118)
 
 `onFocus` notifies all subscribed listeners with the current focus state.
 
@@ -89,7 +89,7 @@ Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:62
 protected onSubscribe(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:12
+Defined in: [packages/query-core/src/focusManager.ts:39](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L39)
 
 #### Returns
 
@@ -109,7 +109,7 @@ Subscribable.onSubscribe
 protected onUnsubscribe(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:13
+Defined in: [packages/query-core/src/focusManager.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L45)
 
 #### Returns
 
@@ -129,7 +129,7 @@ Subscribable.onUnsubscribe
 setEventListener(setup): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:39
+Defined in: [packages/query-core/src/focusManager.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L77)
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the focus state. The provided `setup` function
@@ -174,7 +174,7 @@ focusManager.setEventListener((handleFocus) => {
 setFocused(focused?): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/focusManager.d.ts:58
+Defined in: [packages/query-core/src/focusManager.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L107)
 
 `setFocused` can be used to manually set the focus state. Set `undefined`
 to fall back to the default focus check.
@@ -212,7 +212,7 @@ focusManager.setFocused(undefined)
 subscribe(listener): () => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
+Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
 
 #### Parameters
 

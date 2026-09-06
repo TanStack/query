@@ -7,4 +7,4 @@ title: QueryKey
 type QueryKey = Register extends object ? TQueryKey extends ReadonlyArray<unknown> ? TQueryKey : TQueryKey extends unknown[] ? TQueryKey : ReadonlyArray<unknown> : ReadonlyArray<unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:20
+Defined in: [packages/query-core/src/types.ts:51](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L51)

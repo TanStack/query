@@ -7,7 +7,7 @@ title: DefaultedInfiniteQueryObserverOptions
 type DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = WithRequired<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:302
+Defined in: [packages/query-core/src/types.ts:549](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L549)
 
 ## Type Parameters
 

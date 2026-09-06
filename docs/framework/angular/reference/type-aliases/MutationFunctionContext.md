@@ -7,7 +7,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:719
+Defined in: [packages/query-core/src/types.ts:1179](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1179)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:719
 client: QueryClient;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:720
+Defined in: [packages/query-core/src/types.ts:1180](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1180)
 
 ***
 
@@ -27,7 +27,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:720
 meta: MutationMeta | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:721
+Defined in: [packages/query-core/src/types.ts:1181](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1181)
 
 ***
 
@@ -37,4 +37,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:721
 optional mutationKey: MutationKey;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:722
+Defined in: [packages/query-core/src/types.ts:1182](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1182)

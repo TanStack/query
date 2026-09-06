@@ -7,7 +7,7 @@ title: InferErrorFromTag
 type InferErrorFromTag<TError, TTaggedQueryKey> = TTaggedQueryKey extends DataTag<unknown, unknown, infer TaggedError> ? TaggedError extends UnsetMarker ? TError : TaggedError : TError;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:41
+Defined in: [packages/query-core/src/types.ts:95](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L95)
 
 ## Type Parameters
 

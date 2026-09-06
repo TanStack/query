@@ -7,7 +7,7 @@ title: notifyManager
 const notifyManager: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/notifyManager.d.ts:70
+Defined in: [packages/query-core/src/notifyManager.ts:144](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L144)
 
 Handles scheduling and batching callbacks in TanStack Query.
 
@@ -67,7 +67,7 @@ All calls to the wrapped function will be batched.
 ### schedule()
 
 ```ts
-readonly schedule: (callback) => void;
+schedule: (callback) => void;
 ```
 
 Schedules a function to be run on the next batch.

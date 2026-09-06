@@ -11,7 +11,7 @@ type ManagedTimerId =
 };
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:16
+Defined in: [packages/query-core/src/timeoutManager.ts:17](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L17)
 
 Wrapping `setTimeout` is awkward from a typing perspective because platform
 typings may extend the return type of `setTimeout`. For example, NodeJS

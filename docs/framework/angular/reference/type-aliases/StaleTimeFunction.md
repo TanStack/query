@@ -7,7 +7,7 @@ title: StaleTimeFunction
 type StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey> = StaleTime | (query) => StaleTime;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:44
+Defined in: [packages/query-core/src/types.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L110)
 
 ## Type Parameters
 

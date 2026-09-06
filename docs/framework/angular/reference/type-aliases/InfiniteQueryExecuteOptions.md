@@ -7,7 +7,7 @@ title: InfiniteQueryExecuteOptions
 type InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Omit<QueryExecuteOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey, TPageParam>, "initialPageParam"> & InitialPageParam<TPageParam> & InfiniteQueryPages<TQueryFnData, TPageParam>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:335
+Defined in: [packages/query-core/src/types.ts:646](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L646)
 
 ## Type Parameters
 

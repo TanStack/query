@@ -7,7 +7,7 @@ title: TimeoutProvider
 type TimeoutProvider<TTimerId> = object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:28
+Defined in: [packages/query-core/src/timeoutManager.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L28)
 
 Backend for timer functions.
 
@@ -31,7 +31,7 @@ also support delays longer than the ~24-day maximum of the global `setTimeout`.
 readonly clearInterval: (intervalId) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:32
+Defined in: [packages/query-core/src/timeoutManager.ts:34](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L34)
 
 #### Parameters
 
@@ -51,7 +51,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:32
 readonly clearTimeout: (timeoutId) => void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:30
+Defined in: [packages/query-core/src/timeoutManager.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L31)
 
 #### Parameters
 
@@ -71,7 +71,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:30
 readonly setInterval: (callback, delay) => TTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:31
+Defined in: [packages/query-core/src/timeoutManager.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L33)
 
 #### Parameters
 
@@ -95,7 +95,7 @@ Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:31
 readonly setTimeout: (callback, delay) => TTimerId;
 ```
 
-Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:29
+Defined in: [packages/query-core/src/timeoutManager.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L30)
 
 #### Parameters
 

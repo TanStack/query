@@ -7,7 +7,7 @@ title: defaultShouldDehydrateQuery
 function defaultShouldDehydrateQuery(query): boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/hydration.d.ts:82
+Defined in: [packages/query-core/src/hydration.ts:185](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L185)
 
 The default `shouldDehydrateQuery` predicate used by `dehydrate`. Only dehydrates queries whose status is
 `'success'`.

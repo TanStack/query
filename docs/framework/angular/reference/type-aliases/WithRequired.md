@@ -7,7 +7,7 @@ title: WithRequired
 type WithRequired<TTarget, TKey> = TTarget & { [_ in TKey]: {} };
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:296
+Defined in: [packages/query-core/src/types.ts:516](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L516)
 
 ## Type Parameters
 

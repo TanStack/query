@@ -7,4 +7,4 @@ title: NetworkMode
 type NetworkMode = "online" | "always" | "offlineFirst";
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:84
+Defined in: [packages/query-core/src/types.ts:223](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L223)

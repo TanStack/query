@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:868
+Defined in: [packages/query-core/src/types.ts:1487](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1487)
 
 ## Type Parameters
 
@@ -19,7 +19,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:868
 optional dehydrate: DehydrateOptions;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:876
+Defined in: [packages/query-core/src/types.ts:1498](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1498)
 
 Default options used when dehydrating the client's caches; see [DehydrateOptions](DehydrateOptions.md).
 
@@ -31,7 +31,7 @@ Default options used when dehydrating the client's caches; see [DehydrateOptions
 optional hydrate: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:874
+Defined in: [packages/query-core/src/types.ts:1496](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1496)
 
 Default options used when hydrating queries; see [HydrateOptions](HydrateOptions.md).
 
@@ -67,7 +67,7 @@ Default options merged into every query restored from the dehydrated state.
 optional mutations: MutationObserverOptions<unknown, TError, unknown, unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:872
+Defined in: [packages/query-core/src/types.ts:1494](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1494)
 
 Default options applied to every mutation, unless overridden per-mutation.
 
@@ -79,6 +79,6 @@ Default options applied to every mutation, unless overridden per-mutation.
 optional queries: OmitKeyof<QueryObserverOptions<unknown, TError, unknown, unknown, readonly unknown[], never>, "queryKey" | "suspense", "strictly">;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:870
+Defined in: [packages/query-core/src/types.ts:1489](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1489)
 
 Default options applied to every query, unless overridden per-query.

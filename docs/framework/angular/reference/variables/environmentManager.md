@@ -7,7 +7,7 @@ title: environmentManager
 const environmentManager: object;
 ```
 
-Defined in: packages/query-core/dist-ts/src/environmentManager.d.ts:23
+Defined in: [packages/query-core/src/environmentManager.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L29)
 
 Manages how TanStack Query detects whether the current runtime should be treated as
 server-side. By default, this uses the same detection as the exported `isServer` utility.
@@ -17,11 +17,17 @@ extension workers), where the default detection would give the wrong answer.
 
 ## Type Declaration
 
-### isServer
+### isServer()
 
 ```ts
-isServer: typeof isServer;
+isServer: () => boolean;
 ```
+
+Returns whether the current runtime should be treated as a server environment.
+
+#### Returns
+
+`boolean`
 
 ### setIsServer()
 

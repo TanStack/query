@@ -3,7 +3,7 @@ id: Mutation
 title: Mutation
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:101
+Defined in: [packages/query-core/src/mutation.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L135)
 
 Represents a single mutation attempt. A `Mutation` holds the mutation's
 options, state (data/error/status), and the `MutationObserver`s currently
@@ -52,7 +52,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 new Mutation<TData, TError, TVariables, TOnMutateResult>(config): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:106
+Defined in: [packages/query-core/src/mutation.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L152)
 
 #### Parameters
 
@@ -78,7 +78,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:3
+Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
 
 #### Inherited from
 
@@ -94,7 +94,7 @@ Removable.gcTime
 readonly mutationId: number;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:105
+Defined in: [packages/query-core/src/mutation.ts:143](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L143)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:105
 options: MutationOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:104
+Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L142)
 
 ***
 
@@ -114,7 +114,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:104
 state: MutationState<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:103
+Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L141)
 
 ## Accessors
 
@@ -126,7 +126,7 @@ Defined in: packages/query-core/dist-ts/src/mutation.d.ts:103
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:112
+Defined in: [packages/query-core/src/mutation.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L179)
 
 The `meta` object passed in the mutation's options, if any.
 
@@ -142,7 +142,7 @@ The `meta` object passed in the mutation's options, if any.
 protected clearGcTimeout(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:7
+Defined in: [packages/query-core/src/removable.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L32)
 
 #### Returns
 
@@ -162,7 +162,7 @@ Removable.clearGcTimeout
 continue(): Promise<unknown>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:139
+Defined in: [packages/query-core/src/mutation.ts:243](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L243)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -199,7 +199,7 @@ await mutation?.continue()
 destroy(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:4
+Defined in: [packages/query-core/src/removable.ts:10](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L10)
 
 #### Returns
 
@@ -219,7 +219,7 @@ Removable.destroy
 execute(variables): Promise<TData>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:170
+Defined in: [packages/query-core/src/mutation.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L284)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
@@ -271,7 +271,7 @@ const data = await mutation.execute(variables)
 protected optionalRemove(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutation.d.ts:117
+Defined in: [packages/query-core/src/mutation.ts:212](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L212)
 
 #### Returns
 
@@ -291,7 +291,7 @@ Removable.optionalRemove
 protected scheduleGc(): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:5
+Defined in: [packages/query-core/src/removable.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L14)
 
 #### Returns
 
@@ -311,7 +311,7 @@ Removable.scheduleGc
 protected updateGcTime(newGcTime): void;
 ```
 
-Defined in: packages/query-core/dist-ts/src/removable.d.ts:6
+Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)
 
 #### Parameters
 

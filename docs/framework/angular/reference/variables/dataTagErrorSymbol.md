@@ -4,7 +4,7 @@ title: dataTagErrorSymbol
 ---
 
 ```ts
-const dataTagErrorSymbol: unique symbol;
+const dataTagErrorSymbol: typeof dataTagErrorSymbol;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:25
+Defined in: [packages/query-core/src/types.ts:63](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L63)

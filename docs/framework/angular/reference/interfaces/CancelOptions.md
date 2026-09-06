@@ -3,7 +3,7 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:878
+Defined in: [packages/query-core/src/types.ts:1501](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1501)
 
 ## Properties
 
@@ -13,7 +13,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:878
 optional revert: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:879
+Defined in: [packages/query-core/src/types.ts:1502](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1502)
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:879
 optional silent: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:880
+Defined in: [packages/query-core/src/types.ts:1503](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1503)

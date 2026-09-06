@@ -3,7 +3,7 @@ id: MutationCacheConfig
 title: MutationCacheConfig
 ---
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:16
+Defined in: [packages/query-core/src/mutationCache.ts:26](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L26)
 
 Global callbacks that fire for every mutation handled by a `MutationCache`, regardless of which
 component or observer triggered it. They differ from the `defaultOptions` provided to a
@@ -20,7 +20,7 @@ If a callback returns a promise, it will be awaited before the mutation continue
 optional onError: (error, variables, onMutateResult, mutation, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:18
+Defined in: [packages/query-core/src/mutationCache.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L28)
 
 Called when any mutation in the cache encounters an error.
 
@@ -58,7 +58,7 @@ Called when any mutation in the cache encounters an error.
 optional onMutate: (variables, mutation, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:22
+Defined in: [packages/query-core/src/mutationCache.ts:44](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L44)
 
 Called before any mutation in the cache executes.
 
@@ -88,7 +88,7 @@ Called before any mutation in the cache executes.
 optional onSettled: (data, error, variables, onMutateResult, mutation, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:24
+Defined in: [packages/query-core/src/mutationCache.ts:50](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L50)
 
 Called when any mutation in the cache is settled, either successfully or with an error.
 
@@ -130,7 +130,7 @@ Called when any mutation in the cache is settled, either successfully or with an
 optional onSuccess: (data, variables, onMutateResult, mutation, context) => unknown;
 ```
 
-Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:20
+Defined in: [packages/query-core/src/mutationCache.ts:36](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L36)
 
 Called when any mutation in the cache is successful.
 

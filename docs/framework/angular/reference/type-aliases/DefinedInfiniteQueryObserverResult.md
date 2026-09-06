@@ -9,7 +9,7 @@ type DefinedInfiniteQueryObserverResult<TData, TError> =
 | InfiniteQueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:707
+Defined in: [packages/query-core/src/types.ts:1138](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1138)
 
 ## Type Parameters
 

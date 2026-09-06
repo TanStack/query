@@ -3,7 +3,7 @@ id: InvalidateOptions
 title: InvalidateOptions
 ---
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:369
+Defined in: [packages/query-core/src/types.ts:724](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L724)
 
 ## Extends
 
@@ -17,7 +17,7 @@ Defined in: packages/query-core/dist-ts/src/types.d.ts:369
 optional cancelRefetch: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:354
+Defined in: [packages/query-core/src/types.ts:703](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L703)
 
 If set to `true`, a currently running request will be cancelled before a new request is made
 
@@ -37,7 +37,7 @@ Defaults to `true`.
 optional throwOnError: boolean;
 ```
 
-Defined in: packages/query-core/dist-ts/src/types.d.ts:344
+Defined in: [packages/query-core/src/types.ts:692](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L692)
 
 If set to `true`, the method throws if any of the underlying query refetch tasks fail.
 Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
