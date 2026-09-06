@@ -125,7 +125,7 @@ export class Todos {
 ```
 
 Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a promise per
-call instead, so you can wait for all of them:
+call instead, so you can wait for all of them when they succeed:
 ```angular-ts
 @Component({
   selector: 'todos',
