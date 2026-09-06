@@ -401,5 +401,21 @@ describe('useQuery', () => {
 
       expectTypeOf(data.value).toEqualTypeOf<string | undefined>()
     })
+
+    it('known tradeoff: widening SkipToken to a plain symbol also accepts unrelated symbol values', () => {
+      // `queryFn`'s type accepts any `symbol`, not just `SkipToken`, because narrowing to the `unique
+      // symbol` that `SkipToken` actually is breaks type inference for the ternary above — same tradeoff
+      // already accepted in `useQueries.ts`'s `SkipTokenForUseQueries`. This isn't type-safe, but the
+      // runtime only ever compares `options.queryFn === skipToken` by identity, so passing an unrelated
+      // symbol here just behaves like `skipToken` at runtime too.
+      const unrelatedSymbol: unique symbol = Symbol('unrelated')
+
+      const { data } = useQuery({
+        queryKey: ['post'],
+        queryFn: unrelatedSymbol,
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<unknown>()
+    })
   })
 })
