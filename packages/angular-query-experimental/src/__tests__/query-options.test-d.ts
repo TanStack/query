@@ -124,7 +124,12 @@ it('should work when passed to query with skipToken', () => {
 })
 
 it('should not allow skipToken on UnusedSkipTokenOptions', () => {
-  const options: UnusedSkipTokenOptions<number, Error, number, Array<string>> = {
+  const options: UnusedSkipTokenOptions<
+    number,
+    Error,
+    number,
+    Array<string>
+  > = {
     queryKey: ['key'],
     // @ts-expect-error skipToken should not be assignable here
     queryFn: skipToken,

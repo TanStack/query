@@ -199,7 +199,9 @@ describe('injectQuery', () => {
       const query = injectQuery(() => ({
         queryKey: [...key, postId],
         queryFn:
-          postId != null ? () => sleep(0).then(() => `post ${postId}`) : skipToken,
+          postId != null
+            ? () => sleep(0).then(() => `post ${postId}`)
+            : skipToken,
       }))
 
       expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
