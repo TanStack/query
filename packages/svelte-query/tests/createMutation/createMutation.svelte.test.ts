@@ -2,12 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
 import Reset from './Reset.svelte'
 import Success from './Success.svelte'
 import Failure from './Failure.svelte'
+import OptimisticUpdate from './OptimisticUpdate.svelte'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -136,4 +137,38 @@ describe('createMutation', () => {
       expect(mutation.data).toBeUndefined()
     }),
   )
+
+  it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    const rendered = render(OptimisticUpdate, {
+      props: { queryClient, queryKey: key, shouldSucceed: false },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    // The optimistic value lands after onMutate's first await, so flush
+    // microtasks before asserting.
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+  })
+
+  it('should keep the optimistic update in place when the mutation succeeds', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    const rendered = render(OptimisticUpdate, {
+      props: { queryClient, queryKey: key, shouldSucceed: true },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+  })
 })

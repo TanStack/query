@@ -271,6 +271,30 @@ describe('createQuery', () => {
     )
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialData: 'initial',
+          retry: false,
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('error')
+  })
+
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
     const key = queryKey()
     let fetchCount = 0

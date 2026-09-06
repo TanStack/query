@@ -1806,17 +1806,16 @@ describe('useInfiniteQuery', () => {
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    )
 
     function Page() {
       const [postId, setPostId] = React.useState<string>()
 
       const { data, isFetching } = useInfiniteQuery({
         queryKey: key,
-        queryFn:
-          postId != null
-            ? ({ pageParam }: { pageParam: number }) =>
-                sleep(10).then(() => `comments for ${postId} page ${pageParam}`)
-            : skipToken,
+        queryFn: postId != null ? queryFn : skipToken,
         initialPageParam: 0,
         getNextPageParam: () => 12,
       })
@@ -1835,11 +1834,13 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
     await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(
       rendered.getByText('pages: comments for 1 page 0'),
     ).toBeInTheDocument()

@@ -145,6 +145,9 @@ describe('injectInfiniteQuery', () => {
   describe('skipToken', () => {
     it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
       const key = queryKey()
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        sleep(10).then(() => `comments for 1 page ${pageParam}`),
+      )
 
       @Component({
         template: `
@@ -158,13 +161,7 @@ describe('injectInfiniteQuery', () => {
 
         readonly query = injectInfiniteQuery(() => ({
           queryKey: key,
-          queryFn:
-            this.postId() != null
-              ? ({ pageParam }: { pageParam: number }) =>
-                  sleep(10).then(
-                    () => `comments for ${this.postId()} page ${pageParam}`,
-                  )
-              : skipToken,
+          queryFn: this.postId() != null ? queryFn : skipToken,
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
@@ -177,6 +174,7 @@ describe('injectInfiniteQuery', () => {
 
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
+      expect(queryFn).not.toHaveBeenCalled()
       expect(rendered.getByText('status: pending')).toBeInTheDocument()
       expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
@@ -186,6 +184,7 @@ describe('injectInfiniteQuery', () => {
 
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
+      expect(queryFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByText('status: success')).toBeInTheDocument()
       expect(
         rendered.getByText('pages: comments for 1 page 0'),
