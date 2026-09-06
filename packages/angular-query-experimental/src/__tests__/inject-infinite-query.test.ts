@@ -4,10 +4,16 @@ import {
   Component,
   Injector,
   provideZonelessChangeDetection,
+  signal,
 } from '@angular/core'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
+import {
+  QueryClient,
+  injectInfiniteQuery,
+  provideTanStackQuery,
+  skipToken,
+} from '..'
 
 describe('injectInfiniteQuery', () => {
   let queryClient: QueryClient
@@ -102,6 +108,57 @@ describe('injectInfiniteQuery', () => {
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
     expect(rendered.getByText('isError: true')).toBeInTheDocument()
     expect(rendered.getByText('failureCount: 1')).toBeInTheDocument()
+  })
+
+  describe('skipToken', () => {
+    it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+      const key = queryKey()
+
+      @Component({
+        template: `
+          <div>status: {{ query.status() }}</div>
+          <div>isFetching: {{ query.isFetching() }}</div>
+          <div>pages: {{ query.data()?.pages?.join(', ') ?? 'none' }}</div>
+        `,
+      })
+      class Page {
+        postId = signal<string | undefined>(undefined)
+
+        readonly query = injectInfiniteQuery(() => ({
+          queryKey: [...key, this.postId()],
+          queryFn:
+            this.postId() != null
+              ? ({ pageParam }: { pageParam: number }) =>
+                  sleep(10).then(
+                    () => `comments for ${this.postId()} page ${pageParam}`,
+                  )
+              : skipToken,
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      expect(rendered.getByText('status: pending')).toBeInTheDocument()
+      expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('status: pending')).toBeInTheDocument()
+      expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+      rendered.fixture.componentInstance.postId.set('1')
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('status: success')).toBeInTheDocument()
+      expect(
+        rendered.getByText('pages: comments for 1 page 0'),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('injection context', () => {
