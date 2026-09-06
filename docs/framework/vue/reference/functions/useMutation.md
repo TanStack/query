@@ -145,7 +145,7 @@ const addMutation = useMutation({
 ```
 
 Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
-promise per call instead, so you can wait for all of them:
+promise per call instead, so you can wait for all of them when they succeed:
 ```vue
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'

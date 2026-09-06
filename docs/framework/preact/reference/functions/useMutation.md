@@ -152,7 +152,7 @@ function AddTodo() {
 ```
 
 Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
-promise per call instead, so you can wait for all of them:
+promise per call instead, so you can wait for all of them when they succeed:
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/preact-query'
 
