@@ -61,13 +61,10 @@ interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
+  dehydratedAt: number
   promise?: Promise<unknown>
   meta?: QueryMeta
   queryType?: 'infinite'
-  // This is only optional because older versions of Query might have dehydrated
-  // without it which we need to handle for backwards compatibility.
-  // This should be changed to required in the future.
-  dehydratedAt?: number
 }
 
 export interface DehydratedState {
@@ -240,11 +237,7 @@ export function hydrate(
       // Do not hydrate if an existing query exists with newer data
       if (query) {
         const hasNewerSyncData =
-          syncData &&
-          // We only need this undefined check to handle older dehydration
-          // payloads that might not have dehydratedAt
-          dehydratedAt !== undefined &&
-          dehydratedAt > query.state.dataUpdatedAt
+          syncData && dehydratedAt > query.state.dataUpdatedAt
         if (
           state.dataUpdatedAt > query.state.dataUpdatedAt ||
           hasNewerSyncData
@@ -262,7 +255,7 @@ export function hydrate(
             ...(state.status === 'pending' &&
               data !== undefined && {
                 status: 'success' as const,
-                dataUpdatedAt: dehydratedAt ?? Date.now(),
+                dataUpdatedAt: dehydratedAt,
                 // Preserve existing fetchStatus if the existing query is actively fetching.
                 ...(!existingQueryIsFetching && {
                   fetchStatus: 'idle' as const,
@@ -296,7 +289,7 @@ export function hydrate(
                 : state.status,
             ...(state.status === 'pending' &&
               data !== undefined && {
-                dataUpdatedAt: dehydratedAt ?? Date.now(),
+                dataUpdatedAt: dehydratedAt,
               }),
           },
         )
@@ -311,7 +304,7 @@ export function hydrate(
         !existingQueryIsFetching &&
         // Only hydrate if dehydration is newer than any existing data,
         // this is always true for new queries
-        (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
+        dehydratedAt > query.state.dataUpdatedAt
       ) {
         // This doesn't actually fetch - it just creates a retryer
         // which will re-use the passed `initialPromise`
