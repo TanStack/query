@@ -32,6 +32,7 @@ import {
   injectQuery,
   provideIsRestoring,
   provideTanStackQuery,
+  skipToken,
 } from '..'
 import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
@@ -918,6 +919,50 @@ describe('injectQuery', () => {
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')
       expect(callCount).toBe(2)
+    })
+  })
+
+  describe('skipToken', () => {
+    it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
+
+      @Component({
+        template: `
+          <div>status: {{ query.status() }}</div>
+          <div>isFetching: {{ query.isFetching() }}</div>
+          <div>data: {{ query.data() ?? 'none' }}</div>
+        `,
+      })
+      class Page {
+        postId = signal<string | undefined>(undefined)
+
+        readonly query = injectQuery(() => ({
+          queryKey: [...key, this.postId()],
+          queryFn: this.postId() != null ? queryFn : skipToken,
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      expect(rendered.getByText('status: pending')).toBeInTheDocument()
+      expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(rendered.getByText('status: pending')).toBeInTheDocument()
+      expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+      rendered.fixture.componentInstance.postId.set('1')
+      rendered.fixture.detectChanges()
+      expect(rendered.getByText('isFetching: true')).toBeInTheDocument()
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(rendered.getByText('status: success')).toBeInTheDocument()
+      expect(rendered.getByText('data: post 1')).toBeInTheDocument()
     })
   })
 })

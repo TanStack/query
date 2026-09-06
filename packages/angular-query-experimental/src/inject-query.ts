@@ -8,6 +8,7 @@ import {
 import { createBaseQuery } from './create-base-query'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
+  CreateBaseQueryOptions,
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
@@ -203,6 +204,9 @@ export function injectQuery(
 ) {
   !options?.injector && assertInInjectionContext(injectQuery)
   return runInInjectionContext(options?.injector ?? inject(Injector), () =>
-    createBaseQuery(injectQueryFn, QueryObserver),
+    createBaseQuery(
+      injectQueryFn as () => CreateBaseQueryOptions,
+      QueryObserver,
+    ),
   ) as unknown as CreateQueryResult
 }

@@ -8,6 +8,7 @@ import {
   skipToken,
 } from '..'
 import type { Signal } from '@angular/core'
+import type { UnusedSkipTokenOptions } from '..'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -120,6 +121,15 @@ it('should work when passed to query with skipToken', () => {
 
   const data = new QueryClient().query(options)
   assertType<Promise<unknown>>(data)
+})
+
+it('should not allow skipToken on UnusedSkipTokenOptions', () => {
+  const options: UnusedSkipTokenOptions<number, Error, number, Array<string>> = {
+    queryKey: ['key'],
+    // @ts-expect-error skipToken should not be assignable here
+    queryFn: skipToken,
+  }
+  expectTypeOf(options.queryKey).toEqualTypeOf<Array<string>>()
 })
 
 it('should tag the queryKey with the result type of the QueryFn', () => {

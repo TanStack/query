@@ -11,12 +11,16 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForCreateQueryOptions = symbol
 
 /**
  * The options shared across `angular-query-experimental`'s query functions. Extends
@@ -55,15 +59,19 @@ export interface CreateBaseQueryOptions<
  * `select` is used.
  * @template TQueryKey - The type of your `queryKey`.
  */
-export interface CreateQueryOptions<
+export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
+> = OmitKeyof<
   CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'suspense'
-> {}
+  'suspense' | 'queryFn'
+> & {
+  queryFn?:
+    | QueryFunction<TQueryFnData, TQueryKey>
+    | SkipTokenForCreateQueryOptions
+}
 
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
