@@ -1,7 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { queryOptions, useQuery } from '..'
+import { queryOptions, skipToken, useQuery } from '..'
 import type { Ref } from 'vue-demi'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
@@ -383,6 +383,23 @@ describe('useQuery', () => {
       })
 
       expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
+    })
+  })
+
+  describe('skipToken', () => {
+    it('should narrow data to string | undefined for a conditional skipToken inside a whole-options getter', () => {
+      const postId = ref<number>()
+
+      const { data } = useQuery(() => {
+        const id = postId.value
+        return {
+          queryKey: ['post', id],
+          queryFn:
+            id != null ? () => sleep(0).then(() => `post ${id}`) : skipToken,
+        }
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<string | undefined>()
     })
   })
 })

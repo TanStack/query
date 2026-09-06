@@ -6,6 +6,7 @@ import type {
   InitialDataFunction,
   NonUndefinedGuard,
   QueryBooleanOption,
+  QueryFunction,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -18,6 +19,10 @@ import type {
   ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
+
+// Widen `SkipToken`'s `unique symbol` to `symbol` so it survives a `queryFn: cond ? fn : skipToken`
+// ternary inside a whole-options getter — see `SkipTokenForUseQueries` in `useQueries.ts`.
+type SkipTokenForUseQuery = symbol
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
@@ -52,15 +57,21 @@ export type UseQueryOptions<
               TQueryKey
             >[Property]
           >
-        : MaybeRefDeep<
-            QueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              DeepUnwrapRef<TQueryKey>
-            >[Property]
-          >
+        : Property extends 'queryFn'
+          ? MaybeRefDeep<
+              | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
+              | SkipTokenForUseQuery
+              | undefined
+            >
+          : MaybeRefDeep<
+              QueryObserverOptions<
+                TQueryFnData,
+                TError,
+                TData,
+                TQueryData,
+                DeepUnwrapRef<TQueryKey>
+              >[Property]
+            >
   } & ShallowOption
 >
 

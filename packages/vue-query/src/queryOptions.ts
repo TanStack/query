@@ -3,11 +3,17 @@ import type {
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
+  OmitKeyof,
   QueryBooleanOption,
+  QueryFunction,
   QueryKey,
   QueryKeyWithDataTag,
   QueryObserverOptions,
 } from '@tanstack/query-core'
+
+// Widen `SkipToken`'s `unique symbol` to `symbol` so it survives a `queryFn: cond ? fn : skipToken`
+// ternary inside a whole-options getter — see `SkipTokenForUseQueries` in `useQueries.ts`.
+type SkipTokenForQueryOptions = symbol
 
 /**
  * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
@@ -56,13 +62,18 @@ export type QueryOptions<
           >)
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
-      : QueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          DeepUnwrapRef<TQueryKey>
-        >[Property]
+      : Property extends 'queryFn'
+        ?
+            | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
+            | SkipTokenForQueryOptions
+            | undefined
+        : QueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >[Property]
 } & ShallowOption
 
 /**
@@ -120,21 +131,44 @@ export type DefinedInitialQueryOptions<
     | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
+// `UndefinedInitialQueryOptions`/`DefinedInitialQueryOptions` widen `queryFn` to plain `symbol` so a
+// `queryFn: cond ? fn : skipToken` ternary type-checks as a getter's *input*. Narrow it back to `SkipToken`
+// here so the *returned* options object still satisfies `QueryClient` methods that expect `unique symbol`.
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+> = OmitKeyof<
+  UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    DeepUnwrapRef<TQueryKey>
+  >['queryFn']
+} & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export type DefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+> = OmitKeyof<
+  DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    DeepUnwrapRef<TQueryKey>
+  >['queryFn']
+} & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
