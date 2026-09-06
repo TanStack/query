@@ -2264,6 +2264,78 @@ describe('useMutation', () => {
     expect(rendered.getByText('message: rollback')).toBeInTheDocument()
   })
 
+  it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+        onError: (_err, _newTodo, onMutateResult) => {
+          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+        },
+      })
+
+      return <button onClick={() => mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    // The optimistic value lands after onMutate's first await, so flush
+    // microtasks before asserting.
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+  })
+
+  it('should keep the optimistic update in place when the mutation succeeds', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+      })
+
+      return <button onClick={() => mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+  })
+
   it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
     function Page() {
       const [result, setResult] = React.useState<string>('idle')
