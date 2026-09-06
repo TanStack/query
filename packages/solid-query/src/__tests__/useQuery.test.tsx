@@ -5801,16 +5801,14 @@ describe('useQuery', () => {
 
   it('should not fetch when queryFn is skipToken, and fetch once postId is set', async () => {
     const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
 
     function Page() {
       const [postId, setPostId] = createSignal<number>()
 
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn:
-          postId() != null
-            ? () => sleep(10).then(() => `post ${postId()}`)
-            : skipToken,
+        queryFn: postId() != null ? queryFn : skipToken,
       }))
 
       return (
@@ -5826,10 +5824,12 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: none')).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByText('data: none')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('data: post 1')).toBeInTheDocument()
   })
 })
