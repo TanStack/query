@@ -3,7 +3,7 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:706](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L706)
+Defined in: [packages/query-core/src/types.ts:715](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L715)
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -100,9 +100,10 @@ Include queries matching this query key
 optional refetchType: QueryTypeFilter | "none";
 ```
 
-Defined in: [packages/query-core/src/types.ts:717](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L717)
+Defined in: [packages/query-core/src/types.ts:727](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L727)
 
 Controls which of the matched (now-invalidated) queries are refetched in the background.
+
 Defaults to `'active'`.
 - `'active'`: only queries with at least one active observer are refetched.
 - `'inactive'`: only queries with no active observer are refetched.

@@ -55,7 +55,7 @@ The type of your `queryKey`.
 optional enabled: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:393](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L393)
+Defined in: [packages/query-core/src/types.ts:398](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L398)
 
 Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
 To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -75,12 +75,13 @@ Defaults to `true`.
 optional gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:272](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L272)
+Defined in: [packages/query-core/src/types.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L277)
 
 The time in milliseconds that unused/inactive cache data remains in memory.
 When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
 When different garbage collection times are specified, the longest one will be used.
 Setting it to `Infinity` will disable garbage collection.
+
 Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
 
 Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see
@@ -100,7 +101,7 @@ optional initialData:
 | InitialDataFunction<TQueryData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:312](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L312)
+Defined in: [packages/query-core/src/types.ts:317](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L317)
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
 created or cached yet).
@@ -121,7 +122,7 @@ Initial data is considered stale by default unless a `staleTime` has been set.
 optional initialDataUpdatedAt: number | () => number | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:316](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L316)
+Defined in: [packages/query-core/src/types.ts:321](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L321)
 
 If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
 
@@ -137,7 +138,7 @@ If set, this value will be used as the time (in milliseconds) of when the `initi
 optional maxPages: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:340](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L340)
+Defined in: [packages/query-core/src/types.ts:345](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L345)
 
 Maximum number of pages to store in the data of an infinite query.
 
@@ -153,7 +154,7 @@ Maximum number of pages to store in the data of an infinite query.
 optional meta: Record<string, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:336](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L336)
+Defined in: [packages/query-core/src/types.ts:341](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L341)
 
 Additional payload to be stored on each query.
 Use this property to pass information that can be used in other places.
@@ -170,7 +171,9 @@ Use this property to pass information that can be used in other places.
 optional networkMode: NetworkMode;
 ```
 
-Defined in: [packages/query-core/src/types.ts:261](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L261)
+Defined in: [packages/query-core/src/types.ts:265](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L265)
+
+Controls whether a query is allowed to run based on the current network connectivity.
 
 Defaults to `'online'`.
 
@@ -190,13 +193,15 @@ Defaults to `'online'`.
 optional notifyOnChangeProps: NotifyOnChangeProps;
 ```
 
-Defined in: [packages/query-core/src/types.ts:476](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L476)
+Defined in: [packages/query-core/src/types.ts:484](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L484)
 
 If set, the component will only re-render if any of the listed properties change.
 When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
 When set to `'all'`, the component will re-render whenever a query is updated.
 When set to a function, the function will be executed to compute the list of properties.
-By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
+
+Defaults to `undefined`, in which case property access is tracked automatically, and the
+component only re-renders when one of the tracked properties changes.
 
 #### Inherited from
 
@@ -210,7 +215,7 @@ By default, access to properties will be tracked, and the component will only re
 optional persister: (queryFn, context, query) => TQueryFnData | Promise<TQueryFnData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:285](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L285)
+Defined in: [packages/query-core/src/types.ts:290](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L290)
 
 This option can be used to persist the result of a query to an external storage, bypassing the need to actually
 call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries.
@@ -273,7 +278,7 @@ optional placeholderData:
 | PlaceholderDataFunction<NonFunctionGuard<TQueryData>, TError, NonFunctionGuard<TQueryData>, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:503](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L503)
+Defined in: [packages/query-core/src/types.ts:511](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L511)
 
 If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
 
@@ -291,7 +296,7 @@ optional queryFn:
 | QueryFunction<TQueryFnData, TQueryKey, never>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:280](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L280)
+Defined in: [packages/query-core/src/types.ts:285](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L285)
 
 The function that the query will use to request data.
 Required, unless a default query function has been set via `queryClient.setQueryDefaults` or
@@ -311,7 +316,7 @@ Must return a promise that will either resolve data or throw an error. The data 
 optional queryHash: string;
 ```
 
-Defined in: [packages/query-core/src/types.ts:290](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L290)
+Defined in: [packages/query-core/src/types.ts:295](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L295)
 
 The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used
 as the actual cache key internally.
@@ -328,7 +333,7 @@ as the actual cache key internally.
 queryKey: TQueryKey & object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L299)
+Defined in: [packages/query-core/src/types.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L304)
 
 The query key to use for this query.
 
@@ -349,7 +354,7 @@ The query will automatically update when this key changes (as long as `enabled` 
 optional queryKeyHashFn: QueryKeyHashFunction<TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:303](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L303)
+Defined in: [packages/query-core/src/types.ts:308](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L308)
 
 If specified, this function is used to hash the `queryKey` to a string.
 
@@ -365,7 +370,7 @@ If specified, this function is used to hash the `queryKey` to a string.
 optional refetchInterval: number | false | (query) => number | false | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:409](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L409)
+Defined in: [packages/query-core/src/types.ts:414](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L414)
 
 If set to a number, the query will continuously refetch at this frequency in milliseconds.
 If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -384,9 +389,10 @@ Defaults to `false`.
 optional refetchIntervalInBackground: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:419](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L419)
+Defined in: [packages/query-core/src/types.ts:425](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L425)
 
 If set to `true`, the query will continue to refetch while their tab/window is in the background.
+
 Defaults to `false`.
 
 #### Inherited from
@@ -401,7 +407,7 @@ Defaults to `false`.
 optional refetchOnMount: boolean | "always" | (query) => boolean | "always";
 ```
 
-Defined in: [packages/query-core/src/types.ts:456](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L456)
+Defined in: [packages/query-core/src/types.ts:462](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L462)
 
 If set to `true`, the query will refetch on mount if the data is stale.
 If set to `false`, will disable additional instances of a query to trigger background refetch.
@@ -422,7 +428,7 @@ Defaults to `true`.
 optional refetchOnReconnect: boolean | "always" | (query) => boolean | "always";
 ```
 
-Defined in: [packages/query-core/src/types.ts:442](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L442)
+Defined in: [packages/query-core/src/types.ts:448](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L448)
 
 If set to `true`, the query will refetch on reconnect if the data is stale.
 If set to `false`, the query will not refetch on reconnect.
@@ -443,7 +449,7 @@ Defaults to `true` unless `networkMode` is `'always'`.
 optional refetchOnWindowFocus: boolean | "always" | (query) => boolean | "always";
 ```
 
-Defined in: [packages/query-core/src/types.ts:428](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L428)
+Defined in: [packages/query-core/src/types.ts:434](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L434)
 
 If set to `true`, the query will refetch on window focus if the data is stale.
 If set to `false`, the query will not refetch on window focus.
@@ -485,7 +491,7 @@ Defaults to `3` on the client and `0` on the server.
 optional retryDelay: RetryDelayValue<TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:256](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L256)
+Defined in: [packages/query-core/src/types.ts:258](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L258)
 
 This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
 next attempt in milliseconds.
@@ -494,6 +500,8 @@ A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 3
 backoff.
 
 A function like `attempt => attempt * 1000` applies linear backoff.
+
+Defaults to a function that applies exponential backoff, capped at 30 seconds.
 
 #### Inherited from
 
@@ -507,7 +515,7 @@ A function like `attempt => attempt * 1000` applies linear backoff.
 optional retryOnMount: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:468](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L468)
+Defined in: [packages/query-core/src/types.ts:474](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L474)
 
 If set to `false`, the query will not be retried on mount if it contains an error.
 If set to a function, the function will be executed with the query to compute the value.
@@ -526,7 +534,7 @@ Defaults to `true`.
 optional select: (data) => TData;
 ```
 
-Defined in: [packages/query-core/src/types.ts:492](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L492)
+Defined in: [packages/query-core/src/types.ts:500](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L500)
 
 This option can be used to transform or select a part of the data returned by the query function. It affects
 the returned `data` value, but does not affect what gets stored in the query cache.
@@ -555,7 +563,7 @@ changes. To optimize, memoize the function so its reference stays stable across 
 optional staleTime: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:402](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L402)
+Defined in: [packages/query-core/src/types.ts:407](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L407)
 
 The time in milliseconds after data is considered stale.
 If set to `Infinity`, the data will never be considered stale.
@@ -576,7 +584,7 @@ Defaults to `0`.
 optional structuralSharing: boolean | (oldData, newData) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:325](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L325)
+Defined in: [packages/query-core/src/types.ts:330](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L330)
 
 Set this to `false` to disable structural sharing between query results.
 Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
@@ -595,7 +603,7 @@ Defaults to `true`.
 optional suspense: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:499](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L499)
+Defined in: [packages/query-core/src/types.ts:507](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L507)
 
 If set to `true`, the query will suspend when `status === 'pending'`
 and throw errors when `status === 'error'`.
@@ -614,7 +622,7 @@ Defaults to `false`.
 optional throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:485](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L485)
+Defined in: [packages/query-core/src/types.ts:493](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L493)
 
 Whether errors should be thrown instead of setting the `error` property.
 If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.

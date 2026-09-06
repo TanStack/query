@@ -9,7 +9,7 @@ type DefinedQueryObserverResult<TData, TError> =
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:977](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L977)
+Defined in: [packages/query-core/src/types.ts:987](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L987)
 
 ## Type Parameters
 

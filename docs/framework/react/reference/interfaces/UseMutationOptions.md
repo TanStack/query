@@ -47,7 +47,7 @@ their `onMutateResult` parameter — useful for optimistic-update rollback data.
 optional gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1248](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1248)
+Defined in: [packages/query-core/src/types.ts:1260](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1260)
 
 The time in milliseconds that an unused/inactive mutation remains in memory before it is
 garbage collected.
@@ -66,7 +66,7 @@ Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
 optional meta: Record<string, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1251](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1251)
+Defined in: [packages/query-core/src/types.ts:1263](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1263)
 
 #### Inherited from
 
@@ -80,7 +80,7 @@ Defined in: [packages/query-core/src/types.ts:1251](https://github.com/TanStack/
 optional mutationFn: MutationFunction<TData, TVariables>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1196](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1196)
+Defined in: [packages/query-core/src/types.ts:1206](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1206)
 
 #### Inherited from
 
@@ -96,7 +96,7 @@ OmitKeyof.mutationFn
 optional mutationKey: readonly unknown[];
 ```
 
-Defined in: [packages/query-core/src/types.ts:1197](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1197)
+Defined in: [packages/query-core/src/types.ts:1207](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1207)
 
 #### Inherited from
 
@@ -110,7 +110,9 @@ Defined in: [packages/query-core/src/types.ts:1197](https://github.com/TanStack/
 optional networkMode: NetworkMode;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1241](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1241)
+Defined in: [packages/query-core/src/types.ts:1253](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1253)
+
+Controls whether a mutation is allowed to run based on the current network connectivity.
 
 Defaults to `'online'`.
 
@@ -130,7 +132,7 @@ Defaults to `'online'`.
 optional onError: (error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1208](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1208)
+Defined in: [packages/query-core/src/types.ts:1218](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1218)
 
 #### Parameters
 
@@ -168,7 +170,7 @@ OmitKeyof.onError
 optional onMutate: (variables, context) => TOnMutateResult | Promise<TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1198](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1198)
+Defined in: [packages/query-core/src/types.ts:1208](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1208)
 
 #### Parameters
 
@@ -198,7 +200,7 @@ OmitKeyof.onMutate
 optional onSettled: (data, error, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1214](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1214)
+Defined in: [packages/query-core/src/types.ts:1224](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1224)
 
 #### Parameters
 
@@ -240,7 +242,7 @@ OmitKeyof.onSettled
 optional onSuccess: (data, variables, onMutateResult, context) => unknown;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1202](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1202)
+Defined in: [packages/query-core/src/types.ts:1212](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1212)
 
 #### Parameters
 
@@ -278,7 +280,7 @@ OmitKeyof.onSuccess
 optional retry: RetryValue<TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1229](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1229)
+Defined in: [packages/query-core/src/types.ts:1239](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1239)
 
 If `false`, failed mutations will not retry by default.
 If `true`, failed mutations will retry infinitely.
@@ -301,7 +303,7 @@ OmitKeyof.retry
 optional retryDelay: RetryDelayValue<TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1236](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1236)
+Defined in: [packages/query-core/src/types.ts:1246](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1246)
 
 This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the
 next attempt in milliseconds.
@@ -322,7 +324,7 @@ OmitKeyof.retryDelay
 optional scope: MutationScope;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1252](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1252)
+Defined in: [packages/query-core/src/types.ts:1264](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1264)
 
 #### Inherited from
 
@@ -336,7 +338,14 @@ Defined in: [packages/query-core/src/types.ts:1252](https://github.com/TanStack/
 optional throwOnError: boolean | (error) => boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1261](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1261)
+Defined in: [packages/query-core/src/types.ts:1281](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1281)
+
+Whether errors should be thrown instead of setting the `error` property.
+If set to `true`, all errors will be thrown to the nearest error boundary.
+If set to a function, it will be passed the error and should return a boolean indicating whether to throw the
+error (`true`) or return it as state (`false`).
+
+Defaults to `false`.
 
 #### Inherited from
 

@@ -3,7 +3,7 @@ id: RefetchOptions
 title: RefetchOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:695](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L695)
+Defined in: [packages/query-core/src/types.ts:704](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L704)
 
 ## Extends
 
@@ -22,7 +22,7 @@ Defined in: [packages/query-core/src/types.ts:695](https://github.com/TanStack/q
 optional cancelRefetch: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:703](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L703)
+Defined in: [packages/query-core/src/types.ts:712](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L712)
 
 If set to `true`, a currently running request will be cancelled before a new request is made
 
@@ -38,9 +38,10 @@ Defaults to `true`.
 optional throwOnError: boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:692](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L692)
+Defined in: [packages/query-core/src/types.ts:701](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L701)
 
 If set to `true`, the method throws if any of the underlying query refetch tasks fail.
+
 Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
 caller.
 

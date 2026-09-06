@@ -252,9 +252,13 @@ export interface QueryOptions<
    * backoff.
    *
    * A function like `attempt => attempt * 1000` applies linear backoff.
+   *
+   * Defaults to a function that applies exponential backoff, capped at 30 seconds.
    */
   retryDelay?: RetryDelayValue<TError>
   /**
+   * Controls whether a query is allowed to run based on the current network connectivity.
+   *
    * Defaults to `'online'`.
    * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
@@ -264,6 +268,7 @@ export interface QueryOptions<
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
    * When different garbage collection times are specified, the longest one will be used.
    * Setting it to `Infinity` will disable garbage collection.
+   *
    * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
    *
    * Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see
@@ -414,6 +419,7 @@ export interface QueryObserverOptions<
       ) => number | false | undefined)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
+   *
    * Defaults to `false`.
    */
   refetchIntervalInBackground?: boolean
@@ -471,7 +477,9 @@ export interface QueryObserverOptions<
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
    * When set to `'all'`, the component will re-render whenever a query is updated.
    * When set to a function, the function will be executed to compute the list of properties.
-   * By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
+   *
+   * Defaults to `undefined`, in which case property access is tracked automatically, and the
+   * component only re-renders when one of the tracked properties changes.
    */
   notifyOnChangeProps?: NotifyOnChangeProps
   /**
@@ -686,6 +694,7 @@ export type FetchInfiniteQueryOptions<
 export interface ResultOptions {
   /**
    * If set to `true`, the method throws if any of the underlying query refetch tasks fail.
+   *
    * Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
    * caller.
    */
@@ -708,6 +717,7 @@ export interface InvalidateQueryFilters<
 > extends QueryFilters<TQueryKey> {
   /**
    * Controls which of the matched (now-invalidated) queries are refetched in the background.
+   *
    * Defaults to `'active'`.
    * - `'active'`: only queries with at least one active observer are refetched.
    * - `'inactive'`: only queries with no active observer are refetched.
@@ -1235,6 +1245,8 @@ export interface MutationOptions<
    */
   retryDelay?: RetryDelayValue<TError>
   /**
+   * Controls whether a mutation is allowed to run based on the current network connectivity.
+   *
    * Defaults to `'online'`.
    * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
@@ -1258,6 +1270,14 @@ export interface MutationObserverOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends MutationOptions<TData, TError, TVariables, TOnMutateResult> {
+  /**
+   * Whether errors should be thrown instead of setting the `error` property.
+   * If set to `true`, all errors will be thrown to the nearest error boundary.
+   * If set to a function, it will be passed the error and should return a boolean indicating whether to throw the
+   * error (`true`) or return it as state (`false`).
+   *
+   * Defaults to `false`.
+   */
   throwOnError?: boolean | ((error: TError) => boolean)
 }
 

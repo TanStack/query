@@ -37,7 +37,7 @@ QueryCoreClientConfig.defaultOptions
 optional mutationCache: MutationCache;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1482](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1482)
+Defined in: [packages/query-core/src/types.ts:1502](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1502)
 
 The mutation cache this client is connected to. A new `MutationCache` is created if not
 provided.
@@ -56,7 +56,7 @@ QueryCoreClientConfig.mutationCache
 optional queryCache: QueryCache;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1477](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1477)
+Defined in: [packages/query-core/src/types.ts:1497](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1497)
 
 The query cache this client is connected to. A new `QueryCache` is created if not provided.
 

@@ -28,7 +28,7 @@ The default type of errors thrown by queries and mutations using this `QueryClie
 optional dehydrate: DehydrateOptions;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1498](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1498)
+Defined in: [packages/query-core/src/types.ts:1518](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1518)
 
 Default options used when dehydrating the client's caches; see [DehydrateOptions](DehydrateOptions.md).
 
@@ -46,7 +46,7 @@ CoreDefaultOptions.dehydrate
 optional hydrate: object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1496](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1496)
+Defined in: [packages/query-core/src/types.ts:1516](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1516)
 
 Default options used when hydrating queries; see [HydrateOptions](HydrateOptions.md).
 
@@ -88,7 +88,7 @@ CoreDefaultOptions.hydrate
 optional mutations: MutationObserverOptions<unknown, TError, unknown, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1494](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1494)
+Defined in: [packages/query-core/src/types.ts:1514](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1514)
 
 Default options applied to every mutation, unless overridden per-mutation.
 
