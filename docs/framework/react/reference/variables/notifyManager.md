@@ -1,6 +1,9 @@
 ---
 id: notifyManager
 title: notifyManager
+redirect_from:
+  - reference/notifyManager
+  - framework/react/reference/notifyManager
 ---
 
 ```ts

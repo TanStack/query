@@ -9,7 +9,7 @@ type TimeoutCallback = (_) => void;
 
 Defined in: [packages/query-core/src/timeoutManager.ts:9](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L9)
 
-TimeoutManager does not support passing arguments to the callback.
+[TimeoutManager](../interfaces/TimeoutManager.md) does not support passing arguments to the callback.
 
 `(_: void)` is the argument type inferred by TypeScript's default typings for
 `setTimeout(cb, number)`.

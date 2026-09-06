@@ -1,6 +1,9 @@
 ---
 id: InfiniteQueryObserver
 title: InfiniteQueryObserver
+redirect_from:
+  - reference/InfiniteQueryObserver
+  - framework/react/reference/InfiniteQueryObserver
 ---
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L41)

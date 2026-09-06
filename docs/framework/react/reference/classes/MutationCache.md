@@ -1,6 +1,9 @@
 ---
 id: MutationCache
 title: MutationCache
+redirect_from:
+  - reference/MutationCache
+  - framework/react/reference/MutationCache
 ---
 
 Defined in: [packages/query-core/src/mutationCache.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L124)

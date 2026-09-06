@@ -26,6 +26,7 @@ title: "@tanstack/svelte-query"
 - [FetchNextPageOptions](interfaces/FetchNextPageOptions.md)
 - [FetchPreviousPageOptions](interfaces/FetchPreviousPageOptions.md)
 - [~~FetchQueryOptions~~](interfaces/FetchQueryOptions.md)
+- [FocusManager](interfaces/FocusManager.md)
 - [HydrateOptions](interfaces/HydrateOptions.md)
 - [InfiniteData](interfaces/InfiniteData.md)
 - [InfiniteQueryObserverBaseResult](interfaces/InfiniteQueryObserverBaseResult.md)
@@ -52,6 +53,7 @@ title: "@tanstack/svelte-query"
 - [MutationOptions](interfaces/MutationOptions.md)
 - [MutationState](interfaces/MutationState.md)
 - [NotifyEvent](interfaces/NotifyEvent.md)
+- [OnlineManager](interfaces/OnlineManager.md)
 - [QueriesObserverOptions](interfaces/QueriesObserverOptions.md)
 - [QueryCacheConfig](interfaces/QueryCacheConfig.md)
 - [QueryClientConfig](interfaces/QueryClientConfig.md)
@@ -73,6 +75,7 @@ title: "@tanstack/svelte-query"
 - [ResetOptions](interfaces/ResetOptions.md)
 - [ResultOptions](interfaces/ResultOptions.md)
 - [SetDataOptions](interfaces/SetDataOptions.md)
+- [TimeoutManager](interfaces/TimeoutManager.md)
 
 ## Type Aliases
 

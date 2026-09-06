@@ -280,6 +280,50 @@ const packages: Array<PackageReferenceDocsConfig> = [
       'functions/useSuspenseQuery': [
         'framework/react/reference/useSuspenseQuery',
       ],
+      // Redirects from the legacy hand-written docs/reference/*.md pages, removed in favor of
+      // this generated reference.
+      'classes/QueryClient': [
+        'reference/QueryClient',
+        'framework/react/reference/QueryClient',
+      ],
+      'classes/QueryCache': [
+        'reference/QueryCache',
+        'framework/react/reference/QueryCache',
+      ],
+      'classes/MutationCache': [
+        'reference/MutationCache',
+        'framework/react/reference/MutationCache',
+      ],
+      'classes/QueryObserver': [
+        'reference/QueryObserver',
+        'framework/react/reference/QueryObserver',
+      ],
+      'classes/InfiniteQueryObserver': [
+        'reference/InfiniteQueryObserver',
+        'framework/react/reference/InfiniteQueryObserver',
+      ],
+      'classes/QueriesObserver': [
+        'reference/QueriesObserver',
+        'framework/react/reference/QueriesObserver',
+      ],
+      // focusManager/onlineManager/timeoutManager are class instances, not object literals, so
+      // TypeDoc can't inline their methods onto the `variables/*` instance page — the method docs
+      // that the legacy pages covered now live on the `interfaces/*` page for the class itself.
+      'interfaces/FocusManager': [
+        'reference/focusManager',
+        'framework/react/reference/focusManager',
+      ],
+      'interfaces/OnlineManager': [
+        'reference/onlineManager',
+        'framework/react/reference/onlineManager',
+      ],
+      'interfaces/TimeoutManager': ['reference/timeoutManager'],
+      'variables/notifyManager': [
+        'reference/notifyManager',
+        'framework/react/reference/notifyManager',
+      ],
+      'variables/environmentManager': ['reference/environmentManager'],
+      'functions/experimental_streamedQuery': ['reference/streamedQuery'],
     },
   },
   {

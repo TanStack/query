@@ -1,6 +1,9 @@
 ---
 id: QueryClient
 title: QueryClient
+redirect_from:
+  - reference/QueryClient
+  - framework/react/reference/QueryClient
 ---
 
 Defined in: [packages/query-core/src/queryClient.ts:79](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L79)

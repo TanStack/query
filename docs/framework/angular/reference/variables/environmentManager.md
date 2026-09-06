@@ -17,11 +17,15 @@ extension workers), where the default detection would give the wrong answer.
 
 ## Type Declaration
 
-### isServer
+### isServer()
 
 ```ts
-isServer: typeof isServer;
+isServer: () => boolean;
 ```
+
+#### Returns
+
+`boolean`
 
 ### setIsServer()
 

@@ -21,7 +21,7 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
-Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
+Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../reference/interfaces/TimeoutManager.md#settimeoutprovider).
 
 ```tsx
 const queryClient = new QueryClient({
@@ -217,7 +217,7 @@ ReactDOM.createRoot(rootElement).render(
 - `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
-  - can be used to [resumePausedMutations](../../../reference/QueryClient.md#queryclientresumepausedmutations)
+  - can be used to [resumePausedMutations](../reference/classes/QueryClient.md#resumepausedmutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
 - `onError?: () => Promise<unknown> | unknown`
   - optional

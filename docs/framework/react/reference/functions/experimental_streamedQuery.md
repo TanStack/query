@@ -1,6 +1,8 @@
 ---
 id: experimental_streamedQuery
 title: experimental_streamedQuery
+redirect_from:
+  - reference/streamedQuery
 ---
 
 ```ts

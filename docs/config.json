@@ -970,56 +970,7 @@
     },
     {
       "label": "API Reference",
-      "children": [
-        {
-          "label": "QueryClient",
-          "to": "reference/QueryClient"
-        },
-        {
-          "label": "QueryCache",
-          "to": "reference/QueryCache"
-        },
-        {
-          "label": "MutationCache",
-          "to": "reference/MutationCache"
-        },
-        {
-          "label": "QueryObserver",
-          "to": "reference/QueryObserver"
-        },
-        {
-          "label": "InfiniteQueryObserver",
-          "to": "reference/InfiniteQueryObserver"
-        },
-        {
-          "label": "QueriesObserver",
-          "to": "reference/QueriesObserver"
-        },
-        {
-          "label": "streamedQuery",
-          "to": "reference/streamedQuery"
-        },
-        {
-          "label": "focusManager",
-          "to": "reference/focusManager"
-        },
-        {
-          "label": "onlineManager",
-          "to": "reference/onlineManager"
-        },
-        {
-          "label": "environmentManager",
-          "to": "reference/environmentManager"
-        },
-        {
-          "label": "notifyManager",
-          "to": "reference/notifyManager"
-        },
-        {
-          "label": "timeoutManager",
-          "to": "reference/timeoutManager"
-        }
-      ],
+      "children": [],
       "frameworks": [
         {
           "label": "react",
@@ -1245,6 +1196,10 @@
               "to": "framework/react/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/react/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/react/reference/interfaces/HydrateOptions"
             },
@@ -1353,6 +1308,10 @@
               "to": "framework/react/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/react/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/react/reference/interfaces/QueriesObserverOptions"
             },
@@ -1439,6 +1398,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/react/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/react/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Interfaces / UseBaseQueryOptions",
@@ -2082,6 +2045,10 @@
               "to": "framework/vue/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/vue/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/vue/reference/interfaces/HydrateOptions"
             },
@@ -2178,6 +2145,10 @@
               "to": "framework/vue/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/vue/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/vue/reference/interfaces/QueriesObserverOptions"
             },
@@ -2252,6 +2223,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/vue/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/vue/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Types / AnyDataTag",
@@ -2823,6 +2798,10 @@
               "to": "framework/solid/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/solid/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/solid/reference/interfaces/HydrateOptions"
             },
@@ -2931,6 +2910,10 @@
               "to": "framework/solid/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/solid/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/solid/reference/interfaces/QueriesObserverOptions"
             },
@@ -3013,6 +2996,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/solid/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/solid/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Interfaces / UseBaseQueryOptions",
@@ -3604,6 +3591,10 @@
               "to": "framework/svelte/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/svelte/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/svelte/reference/interfaces/HydrateOptions"
             },
@@ -3708,6 +3699,10 @@
               "to": "framework/svelte/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/svelte/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/svelte/reference/interfaces/QueriesObserverOptions"
             },
@@ -3790,6 +3785,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/svelte/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/svelte/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Types / Accessor",
@@ -4373,6 +4372,10 @@
               "to": "framework/lit/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/lit/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/lit/reference/interfaces/HydrateOptions"
             },
@@ -4477,6 +4480,10 @@
               "to": "framework/lit/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/lit/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/lit/reference/interfaces/QueriesObserverOptions"
             },
@@ -4559,6 +4566,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/lit/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/lit/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Types / Accessor",
@@ -5166,6 +5177,10 @@
               "to": "framework/angular/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/angular/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/angular/reference/interfaces/HydrateOptions"
             },
@@ -5294,6 +5309,10 @@
               "to": "framework/angular/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/angular/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/angular/reference/interfaces/QueriesObserverOptions"
             },
@@ -5380,6 +5399,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/angular/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/angular/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Types / AnyDataTag",
@@ -5967,6 +5990,10 @@
               "to": "framework/preact/reference/interfaces/FetchQueryOptions"
             },
             {
+              "label": "Interfaces / FocusManager",
+              "to": "framework/preact/reference/interfaces/FocusManager"
+            },
+            {
               "label": "Interfaces / HydrateOptions",
               "to": "framework/preact/reference/interfaces/HydrateOptions"
             },
@@ -6075,6 +6102,10 @@
               "to": "framework/preact/reference/interfaces/NotifyEvent"
             },
             {
+              "label": "Interfaces / OnlineManager",
+              "to": "framework/preact/reference/interfaces/OnlineManager"
+            },
+            {
               "label": "Interfaces / QueriesObserverOptions",
               "to": "framework/preact/reference/interfaces/QueriesObserverOptions"
             },
@@ -6161,6 +6192,10 @@
             {
               "label": "Interfaces / SetDataOptions",
               "to": "framework/preact/reference/interfaces/SetDataOptions"
+            },
+            {
+              "label": "Interfaces / TimeoutManager",
+              "to": "framework/preact/reference/interfaces/TimeoutManager"
             },
             {
               "label": "Interfaces / UseBaseQueryOptions",

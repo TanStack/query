@@ -1,6 +1,9 @@
 ---
 id: QueriesObserver
 title: QueriesObserver
+redirect_from:
+  - reference/QueriesObserver
+  - framework/react/reference/QueriesObserver
 ---
 
 Defined in: [packages/query-core/src/queriesObserver.ts:54](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L54)

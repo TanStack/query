@@ -1,6 +1,9 @@
 ---
 id: QueryCache
 title: QueryCache
+redirect_from:
+  - reference/QueryCache
+  - framework/react/reference/QueryCache
 ---
 
 Defined in: [packages/query-core/src/queryCache.ts:123](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L123)

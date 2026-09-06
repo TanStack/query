@@ -1,6 +1,8 @@
 ---
 id: environmentManager
 title: environmentManager
+redirect_from:
+  - reference/environmentManager
 ---
 
 ```ts
