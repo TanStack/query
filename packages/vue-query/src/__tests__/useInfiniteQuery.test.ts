@@ -157,16 +157,13 @@ describe('useInfiniteQuery', () => {
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
     const postId = ref<string>()
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for ${postId.value} page ${pageParam}`),
+    )
 
     const { data, isFetching } = useInfiniteQuery(() => ({
       queryKey: key,
-      queryFn:
-        postId.value != null
-          ? ({ pageParam }: { pageParam: number }) =>
-              sleep(10).then(
-                () => `comments for ${postId.value} page ${pageParam}`,
-              )
-          : skipToken,
+      queryFn: postId.value != null ? queryFn : skipToken,
       initialPageParam: 0,
       getNextPageParam: () => 12,
     }))
@@ -174,12 +171,14 @@ describe('useInfiniteQuery', () => {
     expect(isFetching.value).toBe(false)
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
     expect(isFetching.value).toBe(false)
     expect(data.value).toBeUndefined()
 
     postId.value = '1'
     await vi.advanceTimersByTimeAsync(10)
 
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(data.value).toStrictEqual({
       pages: ['comments for 1 page 0'],
       pageParams: [0],
