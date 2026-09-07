@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue-demi'
+import { computed, ref } from 'vue-demi'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -128,5 +129,36 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(hasNextPage.value).toBe(false)
     expect(isFetching.value).toBe(false)
+  })
+
+  it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
+    const key = queryKey()
+    const id = ref<string | null>(null)
+    const fetchFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => 'data on page ' + pageParam),
+    )
+
+    const { data, status } = useInfiniteQuery({
+      queryKey: key,
+      queryFn: computed(() => (id.value ? fetchFn : skipToken)),
+      initialPageParam: 0,
+      getNextPageParam: () => 12,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).not.toHaveBeenCalled()
+    expect(status.value).toStrictEqual('pending')
+
+    id.value = '1'
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(status.value).toStrictEqual('success')
+    expect(data.value).toStrictEqual({
+      pageParams: [0],
+      pages: ['data on page 0'],
+    })
   })
 })

@@ -809,5 +809,54 @@ describe('useQuery', () => {
         data: { value: 'Some data' },
       })
     })
+
+    it('should skip the query while a whole-options getter resolves queryFn to skipToken, and run it once defined', async () => {
+      const key = queryKey()
+      const id = ref<string | null>(null)
+      const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: id.value ? fetchFn : skipToken,
+      }))
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).not.toHaveBeenCalled()
+      expect(query).toMatchObject({ status: { value: 'pending' } })
+
+      id.value = '1'
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+      expect(query).toMatchObject({
+        status: { value: 'success' },
+        data: { value: 'Some data' },
+      })
+    })
+  })
+
+  describe('queryKey reactivity rules', () => {
+    it('should refetch when a bare reactive getter for the whole queryKey array changes', async () => {
+      const key = queryKey()
+      const id = ref(1)
+      const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+      useQuery({
+        queryKey: () => [...key, id.value],
+        queryFn: fetchFn,
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      id.value = 2
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).toHaveBeenCalledTimes(2)
+    })
   })
 })

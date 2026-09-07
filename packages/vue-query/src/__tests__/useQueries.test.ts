@@ -535,4 +535,29 @@ describe('useQueries', () => {
       { status: 'success', data: 'Some data' },
     ])
   })
+
+  it('should refetch when a bare reactive getter for the whole queryKey array changes', async () => {
+    const key = queryKey()
+    const id = ref(1)
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    useQueries({
+      queries: [
+        {
+          queryKey: () => [...key, id.value],
+          queryFn: fetchFn,
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    id.value = 2
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+  })
 })
