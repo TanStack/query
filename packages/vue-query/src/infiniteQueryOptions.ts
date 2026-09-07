@@ -4,7 +4,6 @@ import type {
   InfiniteQueryObserverOptions,
   NonUndefinedGuard,
   OmitKeyof,
-  QueryBooleanOption,
   QueryKey,
   QueryKeyWithDataTag,
 } from '@tanstack/query-core'
@@ -49,14 +48,15 @@ export type InfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >]: Property extends 'enabled'
-    ?
-        | MaybeRefOrGetter<boolean | undefined>
-        | (() => QueryBooleanOption<
-            TQueryFnData,
-            TError,
-            InfiniteData<TQueryFnData, TPageParam>,
-            DeepUnwrapRef<TQueryKey>
-          >)
+    ? MaybeRefOrGetter<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          DeepUnwrapRef<TQueryKey>,
+          TPageParam
+        >['enabled']
+      >
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
       : InfiniteQueryObserverOptions<

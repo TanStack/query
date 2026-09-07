@@ -40,6 +40,66 @@ describe('infiniteQueryOptions', () => {
       }),
     )
   })
+  it('should allow a bare reactive getter for the whole queryKey array', () => {
+    const id = ref(1)
+
+    const options = infiniteQueryOptions({
+      queryKey: () => ['post', id.value] as const,
+      queryFn: () => Promise.resolve('data'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow computed ref as enabled property', () => {
+    const enabled = computed(() => true)
+
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow ref as enabled property', () => {
+    const enabled = ref(true)
+
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow getter function as enabled property', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: () => true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow a plain callback as enabled property', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: (query) => query.state.data === undefined,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
   it('should infer types for callbacks', () => {
     const key = queryKey()
     infiniteQueryOptions({
@@ -216,8 +276,7 @@ describe('infiniteQueryOptions', () => {
   it('should reject the whole options object wrapped in a ref', () => {
     assertType(
       infiniteQueryOptions(
-        // @ts-expect-error infiniteQueryOptions only accepts a plain object or a getter for the whole object,
-        // not a ref
+        // @ts-expect-error infiniteQueryOptions only accepts a plain object, not a ref
         ref({
           queryKey: queryKey(),
           queryFn: ({ pageParam }: { pageParam: number }) =>
