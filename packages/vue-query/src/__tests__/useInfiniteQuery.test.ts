@@ -161,4 +161,29 @@ describe('useInfiniteQuery', () => {
       pages: ['data on page 0'],
     })
   })
+
+  describe('queryKey reactivity rules', () => {
+    it('should refetch when a bare reactive getter for the whole queryKey array changes', async () => {
+      const key = queryKey()
+      const id = ref(1)
+      const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+      useInfiniteQuery({
+        queryKey: () => [...key, id.value],
+        queryFn: fetchFn,
+        initialPageParam: 0,
+        getNextPageParam: () => undefined,
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      id.value = 2
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(fetchFn).toHaveBeenCalledTimes(2)
+    })
+  })
 })
