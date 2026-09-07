@@ -385,6 +385,21 @@ describe('useQuery', () => {
   })
 
   describe('skipToken', () => {
+    it('should narrow data to string | undefined for a computed queryFn resolving to skipToken', () => {
+      const postId = ref<number>()
+
+      const { data } = useQuery({
+        queryKey: ['post', postId],
+        queryFn: computed(() =>
+          postId.value != null
+            ? () => sleep(0).then(() => `post ${postId.value}`)
+            : skipToken,
+        ),
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<string | undefined>()
+    })
+
     it('should narrow data to string | undefined for a conditional skipToken inside a whole-options getter', () => {
       const postId = ref<number>()
 
