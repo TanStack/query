@@ -1,5 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -100,6 +101,28 @@ describe('Discriminated union return type', () => {
 
     if (query.isSuccess) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+    }
+  })
+
+  it('should accept a computed queryFn resolving to skipToken', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+    const query = reactive(
+      useInfiniteQuery({
+        queryKey: key,
+        queryFn: computed(() =>
+          id.value
+            ? ({ pageParam }: { pageParam: number }) =>
+                sleep(0).then(() => 'data on page ' + pageParam)
+            : skipToken,
+        ),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      }),
+    )
+
+    if (query.isSuccess) {
+      expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string>>()
     }
   })
 

@@ -377,4 +377,31 @@ describe('queryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
   })
+
+  it('should reject a ref for an option other than enabled/queryKey/queryFn', () => {
+    // Unlike `useQuery`, `queryOptions` only tracks `enabled`/`queryKey`/`queryFn` reactively — every other
+    // option (`staleTime` here) stays a plain value. This is deliberate: the returned object is shared with
+    // plain APIs like `queryClient.fetchQuery`, so a `ref` slipping into an arbitrary option would make the
+    // declared (plain) type lie about the actual (reactive) value.
+    assertType(
+      queryOptions({
+        // @ts-expect-error staleTime must be a plain value, not a ref
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve(5),
+        staleTime: ref(1000),
+      }),
+    )
+  })
+
+  it('should reject the whole options object wrapped in a ref', () => {
+    assertType(
+      queryOptions(
+        // @ts-expect-error queryOptions only accepts a plain object or a getter for the whole object, not a ref
+        ref({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(5),
+        }),
+      ),
+    )
+  })
 })
