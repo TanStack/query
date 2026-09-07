@@ -7,7 +7,7 @@ title: MutationResultAccessor
 type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L38)
+Defined in: [packages/lit-query/src/createMutationController.ts:43](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L43)
 
 Accessor returned by `createMutationController`.
 
@@ -57,6 +57,30 @@ mutateAsync: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>[
 Starts the mutation and returns the observer promise.
 
 Rejects if no `QueryClient` can be resolved.
+
+### render()
+
+```ts
+render: <TRenderers>(renderers) => RendererResult<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, TRenderers>;
+```
+
+Renders the mutation result using the appropriate renderer from the given set, based on the result's `status`.
+
+#### Type Parameters
+
+##### TRenderers
+
+`TRenderers` *extends* [`ResultRenderers`](ResultRenderers.md)\<`MutationObserverResult`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
+
+#### Parameters
+
+##### renderers
+
+`TRenderers`
+
+#### Returns
+
+[`RendererResult`](RendererResult.md)\<`MutationObserverResult`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `TRenderers`\>
 
 ### reset
 

@@ -10,7 +10,7 @@ function createInfiniteQueryController<TQueryFnData, TError, TData, TQueryKey, T
 queryClient?): InfiniteQueryResultAccessor<TData, TError>;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:402](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L402)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:415](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L415)
 
 Creates a Lit reactive controller that subscribes the host to an infinite
 query.

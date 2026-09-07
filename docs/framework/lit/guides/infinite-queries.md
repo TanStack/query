@@ -85,3 +85,36 @@ if (query.hasNextPage && !query.isFetching) {
 ## Paginated Alternative
 
 If your UI shows one page at a time, a normal query with a page in the key can be a better fit. The [Pagination example](../examples/pagination) uses `createQueryController`, `placeholderData: keepPreviousData`, prefetching, and mutations to demonstrate that pattern.
+
+## Rendering
+
+For convenience, the controller includes a `render` method that accepts a renderer object with handlers, based on the [Task API](https://lit.dev/docs/data/task/#rendering-tasks). It returns the output of the matching handler:
+
+```ts
+render() {
+  return html`
+   ${this.projects.render({
+    pending: ({ fetchStatus }) =>
+      html`<p>${fetchStatus === 'fetching' ? 'Loading...' : 'Idle'}</p>`,
+    error: ({ error }) => html`<p>Error: ${error.message}</p>`,
+    success: ({ data }) => html`
+      ${data.pages.map(
+        (page) => html`
+          ${page.projects.map((project) => html`<p>${project.name}</p>`)}
+        `,
+      )}
+
+      <button
+        ?disabled=${!this.projects.hasNextPage || this.projects.isFetching}
+        @click=${() => this.projects.fetchNextPage()}
+      >
+        ${this.projects.isFetchingNextPage
+          ? 'Loading more...'
+          : this.projects.hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+      </button>
+    `,
+  })}`
+}
+```

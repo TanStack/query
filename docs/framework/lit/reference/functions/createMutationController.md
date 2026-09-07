@@ -10,7 +10,7 @@ function createMutationController<TData, TError, TVariables, TOnMutateResult>(
 queryClient?): MutationResultAccessor<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:340](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L340)
+Defined in: [packages/lit-query/src/createMutationController.ts:356](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L356)
 
 Creates a Lit reactive controller that subscribes the host to a mutation.
 

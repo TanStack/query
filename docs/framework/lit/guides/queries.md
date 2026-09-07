@@ -139,3 +139,25 @@ html`<button @click=${() => this.todos.refetch()}>Refetch</button>`
 ```
 
 For multiple queries that should run at the same time, see [Parallel Queries](./parallel-queries.md).
+
+## Rendering
+
+For convenience, the query accessor includes a `render` method, based on the [Task API](https://lit.dev/docs/data/task/#rendering-tasks). It takes an object of renderers for each status, and returns the output of the matching renderer:
+
+```ts
+render() {
+  return html`
+   ${this.todos.render({
+    pending: ({ fetchStatus }) =>
+      html`<p>${fetchStatus === 'fetching' ? 'Loading...' : 'Idle'}</p>`,
+    error: ({ error }) => html`<p>Oops, something went wrong: ${error.message}</p>`,
+    success: ({ data }) => html`
+      <ul>
+        ${data.map((todo) => html`<li>${todo.title}</li>`)}
+      </ul>
+    `,
+  })}`
+}
+```
+
+The render is provided with the query result, narrowed to the matching state. If no renderer matches, `render` returns [`nothing`](https://lit.dev/docs/templates/conditionals/#conditionally-rendering-nothing).
