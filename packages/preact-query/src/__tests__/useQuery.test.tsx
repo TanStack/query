@@ -22,6 +22,7 @@ import {
   dehydrate,
   hydrate,
   keepPreviousData,
+  noop,
   skipToken,
   useQuery,
 } from '..'
@@ -47,8 +48,8 @@ describe('useQuery', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -132,7 +133,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -161,10 +161,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
@@ -224,7 +221,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -253,7 +249,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -282,20 +277,18 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
-    expect(states[1]!.promise).toEqual(states[2]!.promise)
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const result = useQuery({ queryKey: key, queryFn: () => 'new data' })
@@ -758,11 +751,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return `test${count}`
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return `test${count}`
+          }),
       })
 
       states.push(state)
@@ -877,10 +870,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return ++count
-        },
+        queryFn: () => sleep(10).then(() => ++count),
         notifyOnChangeProps: 'all',
       })
 
@@ -939,11 +929,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count === 1 ? result1 : result2
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count === 1 ? result1 : result2
+          }),
         notifyOnChangeProps: 'all',
       })
 
@@ -1027,11 +1017,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       })
 
@@ -1073,11 +1063,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       })
 
@@ -1113,11 +1103,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       })
 
@@ -1272,12 +1262,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return {
-            count,
-          }
-        },
+        queryFn: () => sleep(10).then(() => ({ count })),
         select(data) {
           return data.count
         },
@@ -1344,12 +1329,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return {
-            count,
-          }
-        },
+        queryFn: () => sleep(10).then(() => ({ count })),
         select(data) {
           return data.count
         },
@@ -1399,12 +1379,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return {
-            count,
-          }
-        },
+        queryFn: () => sleep(10).then(() => ({ count })),
         select(data) {
           return data.count
         },
@@ -1483,13 +1458,13 @@ describe('useQuery', () => {
     function Page({ count }: { count: number }) {
       const state = useQuery<number, Error>({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 2) {
-            throw new Error('Error test')
-          }
-          return Promise.resolve(count)
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 2) {
+              throw new Error('Error test')
+            }
+            return Promise.resolve(count)
+          }),
         retry: false,
         placeholderData: keepPreviousData,
       })
@@ -1873,10 +1848,12 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(20)
 
@@ -2201,11 +2178,10 @@ describe('useQuery', () => {
 
           const state = useQuery({
             queryKey: key,
-            queryFn: async () => {
-              await sleep(5)
-              fetchCounterRef.current++
-              return `fetch counter: ${fetchCounterRef.current}`
-            },
+            queryFn: () =>
+              sleep(5).then(
+                () => `fetch counter: ${++fetchCounterRef.current}`,
+              ),
             notifyOnChangeProps,
           })
 
@@ -2591,10 +2567,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
 
         staleTime: Infinity,
         refetchOnWindowFocus: 'always',
@@ -2630,10 +2603,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
 
         staleTime: 0,
         retry: 0,
@@ -2679,10 +2649,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -2716,10 +2688,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -2802,6 +2776,39 @@ describe('useQuery', () => {
           <h2>{error}</h2>
         </div>
       )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const { status } = useQuery({
+        queryKey: key,
+        // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+        // literal `undefined` error crashes the framework. `0` is just an arbitrary
+        // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+        // crash) — any falsy primitive other than `null`/`undefined` would do.
+        queryFn: () => Promise.reject(0),
+        retry: false,
+        throwOnError: true,
+      })
+
+      return <h1>{status}</h1>
     }
 
     const rendered = renderWithClient(
@@ -3037,10 +3044,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -3252,6 +3261,31 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({ data: { count: 0 } })
     // Set state
     expect(states[1]).toMatchObject({ data: { count: 1 } })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
 
   it('should retry specified number of times', async () => {
@@ -3551,11 +3585,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3584,11 +3620,13 @@ describe('useQuery', () => {
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 1000,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -3664,10 +3702,12 @@ describe('useQuery', () => {
 
       useEffect(() => {
         async function prefetch() {
-          await queryClient.prefetchQuery({
-            queryKey: key,
-            queryFn: () => Promise.resolve('prefetched data'),
-          })
+          await queryClient
+            .query({
+              queryKey: key,
+              queryFn: () => Promise.resolve('prefetched data'),
+            })
+            .catch(noop)
           act(() => setPrefetched(true))
         }
 
@@ -3996,16 +4036,15 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return (
-            queryFn() || {
-              data: {
-                nested: true,
+        queryFn: () =>
+          sleep(10).then(
+            () =>
+              queryFn() || {
+                data: {
+                  nested: true,
+                },
               },
-            }
-          )
-        },
+          ),
       })
 
       useMemo(() => {
@@ -4077,10 +4116,7 @@ describe('useQuery', () => {
     function Page() {
       const queryInfo = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return count++
-        },
+        queryFn: () => sleep(10).then(() => count++),
         refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       })
 
@@ -4715,11 +4751,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       })
 
@@ -4786,11 +4822,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
         enabled: false,
         notifyOnChangeProps: 'all',
@@ -4954,30 +4990,30 @@ describe('useQuery', () => {
     // // render error state component
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // change to enabled to false
     fireEvent.click(rendered.getByLabelText('retry'))
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error')
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
     function Page({ id }: { id: number }) {
       const { error, isPending } = useQuery({
         queryKey: [id],
-        queryFn: async () => {
-          await sleep(10)
-          if (id % 2 === 1) {
-            return Promise.reject(new Error('Error'))
-          }
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (id % 2 === 1) {
+              return Promise.reject(new Error('Error'))
+            }
+            return 'data'
+          }),
         retry: false,
         retryOnMount: () => false,
         refetchOnMount: false,
@@ -5092,14 +5128,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 0) {
-            count++
-            throw error
-          }
-          return 5
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 0) {
+              count++
+              throw error
+            }
+            return 5
+          }),
         retry: false,
       })
 
@@ -6020,7 +6056,7 @@ describe('useQuery', () => {
       return <></>
     }
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn }).catch(noop)
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
@@ -6604,10 +6640,12 @@ describe('useQuery', () => {
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => Promise.resolve('server')),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.resolve('server')),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 
@@ -6659,11 +6697,13 @@ describe('useQuery', () => {
       },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () =>
-        sleep(10).then(() => Promise.reject(new Error('server error'))),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('server error'))),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 
@@ -6768,5 +6808,172 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+  it('should retry on mount when throwOnError returns false', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => false,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not retry on mount when throwOnError function returns true', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => true,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>,
+    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>,
+    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    // Should not retry because throwOnError returns true
+    expect(fetchCount).toBe(initialFetchCount)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should handle throwOnError function based on actual error state', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: (error) => error.message.includes('404'),
+        retryOnMount: true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    // Should retry because throwOnError returns false (500 error doesn't include '404')
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })

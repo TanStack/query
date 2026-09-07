@@ -3,13 +3,14 @@ id: UseSuspenseInfiniteQueryResult
 title: UseSuspenseInfiniteQueryResult
 ---
 
-# Type Alias: UseSuspenseInfiniteQueryResult\<TData, TError\>
-
 ```ts
-type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData" | "promise">;
+type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [preact-query/src/types.ts:183](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L183)
+Defined in: [packages/preact-query/src/types.ts:388](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L388)
+
+The result of `useSuspenseInfiniteQuery`. Same as [DefinedUseInfiniteQueryResult](DefinedUseInfiniteQueryResult.md), minus
+`isPlaceholderData` — Suspense hooks never render placeholder data.
 
 ## Type Parameters
 
@@ -17,6 +18,10 @@ Defined in: [preact-query/src/types.ts:183](https://github.com/theVedanta/query/
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your `queryFn` may throw.

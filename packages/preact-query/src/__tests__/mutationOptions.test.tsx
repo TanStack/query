@@ -532,6 +532,5 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(mutationStateArray.length).toEqual(1)
     expect(mutationStateArray[0]?.data).toEqual('data1')
-    expect(mutationStateArray[1]).toBeFalsy()
   })
 })

@@ -1,8 +1,9 @@
-import type {
-  Mutation,
-  MutationFilters,
-  MutationState,
-  QueryClient,
+import {
+  replaceEqualDeep,
+  type Mutation,
+  type MutationFilters,
+  type MutationState,
+  type QueryClient,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
 import {
@@ -55,12 +56,12 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
 
   protected onConnected(): void {
     if (!this.syncClient()) {
-      this.setResult([])
+      this.setMutationState([])
       return
     }
 
     this.subscribe()
-    this.setResult(this.computeState())
+    this.setMutationState(this.computeState())
   }
 
   protected onDisconnected(): void {
@@ -74,18 +75,18 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
       return
     }
 
-    this.setResult(this.syncClient() ? this.computeState() : [])
+    this.setMutationState(this.syncClient() ? this.computeState() : [])
   }
 
   protected onQueryClientChanged(): void {
     if (!this.syncClient()) {
-      this.setResult([])
+      this.setMutationState([])
       return
     }
 
     if (this.connectedState) {
       this.subscribe()
-      this.setResult(this.computeState())
+      this.setMutationState(this.computeState())
     }
   }
 
@@ -118,8 +119,12 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
     }
 
     this.unsubscribe = this.queryClient.getMutationCache().subscribe(() => {
-      this.setResult(this.computeState())
+      this.setMutationState(this.computeState())
     })
+  }
+
+  private setMutationState(next: TResult[]): void {
+    this.setResult(replaceEqualDeep(this.result, next))
   }
 
   private shouldRefreshOnHostUpdate(): boolean {

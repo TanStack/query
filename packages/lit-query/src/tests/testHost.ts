@@ -1,3 +1,4 @@
+import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 export class TestControllerHost implements ReactiveControllerHost {
@@ -92,7 +93,7 @@ export async function waitFor(
     if (Date.now() - startedAt > timeoutMs) {
       throw new Error(`Timed out waiting for assertion after ${timeoutMs}ms`)
     }
-    await new Promise((resolve) => setTimeout(resolve, 10))
+    await sleep(10)
   }
 }
 

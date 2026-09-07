@@ -92,7 +92,7 @@ function Movies() {
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.fetchQuery({
+              ? queryClient.query({
                   queryKey: movieKeys.detail(movieId),
                   queryFn: () => api.fetchMovie(movieId),
                 })

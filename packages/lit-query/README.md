@@ -1,3 +1,20 @@
+<div align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://tanstack.com/api/readme/query.png?framework=lit&theme=dark"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://tanstack.com/api/readme/query.png?framework=lit"
+    />
+    <img
+      src="https://tanstack.com/api/readme/query.png?framework=lit"
+      alt="TanStack Lit Query"
+      width="900"
+    />
+  </picture>
+</div>
 # @tanstack/lit-query
 
 Lit adapter for `@tanstack/query-core` using Lit reactive controllers.

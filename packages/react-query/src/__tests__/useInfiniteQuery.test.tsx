@@ -1,16 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
-import {
-  createRenderStream,
-  useTrackRenders,
-} from '@testing-library/react-render-stream'
+import { createRenderStream } from '@testing-library/react-render-stream'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  skipToken,
   useInfiniteQuery,
 } from '..'
 import { renderWithClient, setActTimeout } from './utils'
@@ -30,21 +28,6 @@ interface Result {
 
 const pageSize = 10
 
-const fetchItems = async (
-  page: number,
-  ts: number,
-  noNext?: boolean,
-  noPrev?: boolean,
-): Promise<Result> => {
-  await sleep(10)
-  return {
-    items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
-    nextId: noNext ? undefined : page + 1,
-    prevId: noPrev ? undefined : page - 1,
-    ts,
-  }
-}
-
 describe('useInfiniteQuery', () => {
   let queryCache: QueryCache
   let queryClient: QueryClient
@@ -54,17 +37,12 @@ describe('useInfiniteQuery', () => {
     queryCache = new QueryCache()
     queryClient = new QueryClient({
       queryCache,
-      defaultOptions: {
-        queries: {
-          experimental_prefetchInRender: true,
-        },
-      },
     })
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should return the correct states for a successful query', async () => {
@@ -121,7 +99,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
@@ -157,7 +134,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -977,7 +953,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 3
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1052,7 +1028,7 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(160)
 
     const expectedCallCount = 2
-    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
     expect(abortListeners).toHaveLength(expectedCallCount)
 
@@ -1303,6 +1279,41 @@ describe('useInfiniteQuery', () => {
         isSuccess: true,
       })
     }
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+
+    function Page() {
+      const state = useInfiniteQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: { pages: [1], pageParams: [1] },
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+        initialPageParam: 0,
+        retry: false,
+      })
+
+      states.push(state)
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1] },
+      isError: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [1] },
+      isError: true,
+    })
   })
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
@@ -1617,12 +1628,18 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) =>
-          fetchItems(
-            pageParam,
-            fetchCountRef.current++,
-            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
-          ),
+        queryFn: ({ pageParam }): Promise<Result> => {
+          const noNext =
+            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage)
+          return sleep(10).then(() => ({
+            items: [...new Array(10)]
+              .fill(null)
+              .map((_, d) => pageParam * pageSize + d),
+            nextId: noNext ? undefined : pageParam + 1,
+            prevId: pageParam - 1,
+            ts: fetchCountRef.current++,
+          }))
+        },
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
       })
@@ -1787,81 +1804,45 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
-  it('should work with React.use()', async () => {
-    vi.useRealTimers()
-
+  it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
     const key = queryKey()
-
-    const renderStream = createRenderStream({ snapshotDOM: true })
-
-    function Loading() {
-      useTrackRenders()
-      return <>loading...</>
-    }
-
-    function MyComponent() {
-      useTrackRenders()
-      const fetchCountRef = React.useRef(0)
-      const query = useInfiniteQuery({
-        queryFn: ({ pageParam }) =>
-          fetchItems(pageParam, fetchCountRef.current++),
-        getNextPageParam: (lastPage) => lastPage.nextId,
-        initialPageParam: 0,
-        queryKey: key,
-      })
-      const data = React.use(query.promise)
-      return (
-        <>
-          {data.pages.map((page, index) => (
-            <React.Fragment key={page.ts}>
-              <div>
-                <div>Page: {index + 1}</div>
-              </div>
-              {page.items.map((item) => (
-                <p key={item}>Item: {item}</p>
-              ))}
-            </React.Fragment>
-          ))}
-          <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
-        </>
-      )
-    }
-
-    function Page() {
-      useTrackRenders()
-      return (
-        <React.Suspense fallback={<Loading />}>
-          <MyComponent />
-        </React.Suspense>
-      )
-    }
-
-    const rendered = await renderStream.render(
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>,
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for 1 page ${pageParam}`),
     )
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading...')
-      expect(renderedComponents).toEqual([Page, Loading])
+    function Page() {
+      const [postId, setPostId] = React.useState<string>()
+
+      const { data, isFetching } = useInfiniteQuery({
+        queryKey: key,
+        queryFn: postId != null ? queryFn : skipToken,
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      })
+
+      return (
+        <div>
+          <div>isFetching: {String(isFetching)}</div>
+          <div>pages: {data?.pages.join(', ') ?? 'none'}</div>
+          <button onClick={() => setPostId('1')}>set postId</button>
+        </div>
+      )
     }
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      withinDOM().getByText('Item: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    // click button
-    rendered.getByRole('button', { name: 'fetchNextPage' }).click()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('pages: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(
+      rendered.getByText('pages: comments for 1 page 0'),
+    ).toBeInTheDocument()
   })
 })

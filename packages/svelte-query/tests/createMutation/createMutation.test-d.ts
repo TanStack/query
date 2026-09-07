@@ -79,6 +79,15 @@ describe('createMutation', () => {
     expectTypeOf(mutation.mutate).toBeCallableWith()
   })
 
+  it('should allow calling mutate with no arguments when TVariables is optional undefinable', () => {
+    const mutation = createMutation(() => ({
+      mutationFn: (_variables: number | undefined) => Promise.resolve(1),
+    }))
+
+    expectTypeOf(mutation.mutate).toBeCallableWith()
+    expectTypeOf(mutation.mutateAsync).toBeCallableWith()
+  })
+
   it('should infer custom TError type', () => {
     class CustomError extends Error {
       code: number

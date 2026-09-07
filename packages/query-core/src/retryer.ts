@@ -1,9 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { pendingThenable } from './thenable'
-import { environmentManager } from './environmentManager'
-import { sleep } from './utils'
-import type { Thenable } from './thenable'
+import { isServer as isServerEnvironment } from './environmentManager'
+import { noop, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
@@ -32,6 +30,8 @@ export interface Retryer<TData = unknown> {
   status: () => 'pending' | 'resolved' | 'rejected'
 }
 
+type RetryerStatus = 'pending' | 'resolved' | 'rejected'
+
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
 type ShouldRetryFunction<TError = DefaultError> = (
@@ -56,6 +56,24 @@ export function canFetch(networkMode: NetworkMode | undefined): boolean {
     : true
 }
 
+/**
+ * The error thrown by a `Retryer` (and surfaced to `query.promise`/`mutation`) when a fetch is cancelled, e.g. via
+ * `query.cancel()`. `revert`, if `true`, tells the caller to restore the state the query was in before the fetch
+ * started instead of surfacing the error. `silent`, if `true`, tells the caller to suppress this error and instead
+ * resolve with the promise of the fetch that triggered the cancellation.
+ * @example
+ * ```ts
+ * query.cancel()
+ *
+ * try {
+ *   await query.promise
+ * } catch (error) {
+ *   if (error instanceof CancelledError) {
+ *     // the fetch was cancelled, e.g. via `query.cancel()`
+ *   }
+ * }
+ * ```
+ */
 export class CancelledError extends Error {
   revert?: boolean
   silent?: boolean
@@ -79,11 +97,17 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let isRetryCancelled = false
   let failureCount = 0
   let continueFn: ((value?: unknown) => void) | undefined
+  let status: RetryerStatus = 'pending'
+  let promiseResolve: (data: TData) => void
+  let promiseReject: (error: TError) => void
 
-  const thenable = pendingThenable<TData>()
+  const promise = new Promise<TData>((resolve, reject) => {
+    promiseResolve = resolve
+    promiseReject = reject
+  })
+  promise.catch(noop)
 
-  const isResolved = () =>
-    (thenable.status as Thenable<TData>['status']) !== 'pending'
+  const isResolved = () => status !== 'pending'
 
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved()) {
@@ -111,14 +135,16 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const resolve = (value: any) => {
     if (!isResolved()) {
       continueFn?.()
-      thenable.resolve(value)
+      status = 'resolved'
+      promiseResolve(value)
     }
   }
 
   const reject = (value: any) => {
     if (!isResolved()) {
       continueFn?.()
-      thenable.reject(value)
+      status = 'rejected'
+      promiseReject(value)
     }
   }
 
@@ -167,7 +193,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? (environmentManager.isServer() ? 0 : 3)
+        const retry = config.retry ?? (isServerEnvironment() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'
@@ -206,12 +232,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   return {
-    promise: thenable,
-    status: () => thenable.status,
+    promise,
+    status: () => status,
     cancel,
     continue: () => {
       continueFn?.()
-      return thenable
+      return promise
     },
     cancelRetry,
     continueRetry,
@@ -223,7 +249,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       } else {
         pause().then(run)
       }
-      return thenable
+      return promise
     },
   }
 }

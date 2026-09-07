@@ -1,5 +1,125 @@
 # @tanstack/solid-query-devtools
 
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.8
+  - @tanstack/solid-query@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.7
+  - @tanstack/solid-query@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.6
+  - @tanstack/solid-query@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/solid-query@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.4
+  - @tanstack/solid-query@5.102.4
+
+## 5.102.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.3
+  - @tanstack/solid-query@5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.2
+  - @tanstack/solid-query@5.102.2
+
+## 5.102.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.1
+  - @tanstack/solid-query@5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- Updated dependencies [[`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93), [`47d49d3`](https://github.com/TanStack/query/commit/47d49d31aa16684811257da071679d08d8726ddc)]:
+  - @tanstack/solid-query@5.102.0
+  - @tanstack/query-devtools@5.102.0
+
+## 5.101.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.4
+  - @tanstack/solid-query@5.101.4
+
+## 5.101.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.3
+  - @tanstack/solid-query@5.101.3
+
+## 5.101.2
+
+### Patch Changes
+
+- Updated dependencies [[`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07), [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8), [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d), [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29), [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f)]:
+  - @tanstack/query-devtools@5.101.2
+  - @tanstack/solid-query@5.101.2
+
+## 5.101.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/solid-query@5.101.1
+
+## 5.101.0
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/solid-query@5.101.0
+
+## 5.100.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.14
+  - @tanstack/solid-query@5.100.14
+
 ## 5.100.13
 
 ### Patch Changes

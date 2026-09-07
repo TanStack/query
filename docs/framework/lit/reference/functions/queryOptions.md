@@ -3,8 +3,6 @@ id: queryOptions
 title: queryOptions
 ---
 
-# Function: queryOptions()
-
 ## Call Signature
 
 ```ts
@@ -44,7 +42,7 @@ Query options to preserve and brand.
 
 ### Returns
 
-`Omit`\<`QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\>, `"queryFn"`\> & `object` & `object`
+`Omit`\<[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\>, `"queryFn"`\> & `object` & `object`
 
 The same options object with a typed `queryKey`.
 
@@ -99,7 +97,7 @@ Query options to preserve and brand.
 
 ### Returns
 
-`OmitKeyof`\<`QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\>, `"queryFn"`\> & `object` & `object`
+[`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\>, `"queryFn"`\> & `object` & `object`
 
 The same options object with a typed `queryKey`.
 
@@ -142,6 +140,6 @@ Query options to preserve and brand.
 
 ### Returns
 
-`QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\> & `object` & `object`
+[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\> & `object` & `object`
 
 The same options object with a typed `queryKey`.

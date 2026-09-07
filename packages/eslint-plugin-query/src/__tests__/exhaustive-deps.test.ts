@@ -49,6 +49,43 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should not require a component scoped function call target in queryKey',
+      code: normalizeIndent`
+        function Component({ todoId }) {
+          const fetchTodoById = (id) => Promise.resolve(id)
+
+          return useQuery({
+            queryKey: ['todos', todoId],
+            queryFn: () => fetchTodoById(todoId),
+          })
+        }
+      `,
+    },
+    {
+      name: 'should not require a method call receiver in queryKey',
+      code: normalizeIndent`
+        function Component({ todoId }) {
+          const todos = useTodos()
+
+          return useQuery({
+            queryKey: ['todo', todoId],
+            queryFn: () => todos.getTodo(todoId),
+          })
+        }
+      `,
+    },
+    {
+      name: 'should not require a data method receiver in queryKey',
+      code: normalizeIndent`
+        function Component({ items }) {
+          useQuery({
+            queryKey: ['items'],
+            queryFn: () => items?.map((item) => item.id),
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass props.src',
       code: `
         function MyComponent(props) {
@@ -777,6 +814,28 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass when optional chaining method call receiver is omitted',
+      code: normalizeIndent`
+        function useThing(a) {
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: () => a?.foo()
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when non-null assertion method call receiver is omitted',
+      code: normalizeIndent`
+        function useThing(a) {
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: () => a!.foo()
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass when queryKey uses TSAsExpression with array',
       code: normalizeIndent`
         function useThing(dep) {
@@ -881,6 +940,35 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass when sibling member method call receivers are omitted',
+      code: normalizeIndent`
+        function useThing(a) {
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: () => {
+              a.b.foo()
+              a.c.bar()
+              return 1
+            }
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when nested member method call receiver is omitted',
+      code: normalizeIndent`
+        function useThing(a) {
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: () => {
+              a.b.foo()
+              return 1
+            }
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass when queryFn is ternary with both branches having deps in queryKey',
       code: normalizeIndent`
         function useThing(condition, a, b) {
@@ -891,70 +979,8 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
-  ],
-  invalid: [
     {
-      name: 'should fail when optional chaining method call is missing root',
-      code: normalizeIndent`
-        function useThing(a) {
-          return useQuery({
-            queryKey: ['thing'],
-            queryFn: () => a?.foo()
-          })
-        }
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'a' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              output: normalizeIndent`
-                function useThing(a) {
-                  return useQuery({
-                    queryKey: ['thing', a],
-                    queryFn: () => a?.foo()
-                  })
-                }
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'should fail when non-null assertion method call is missing root',
-      code: normalizeIndent`
-        function useThing(a) {
-          return useQuery({
-            queryKey: ['thing'],
-            queryFn: () => a!.foo()
-          })
-        }
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'a' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              output: normalizeIndent`
-                function useThing(a) {
-                  return useQuery({
-                    queryKey: ['thing', a],
-                    queryFn: () => a!.foo()
-                  })
-                }
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'should fail when alias of props used in queryFn is missing in queryKey',
+      name: 'should not require a nested method call receiver in queryKey',
       code: normalizeIndent`
         function Component(props) {
           const entities = props.entities;
@@ -969,26 +995,32 @@ ruleTester.run('exhaustive-deps', rule, {
           });
         }
       `,
+    },
+  ],
+  invalid: [
+    {
+      name: 'should fail when a computed method name is missing in queryKey',
+      code: normalizeIndent`
+        function Component({ client, operation }) {
+          useQuery({
+            queryKey: ['data'],
+            queryFn: () => client[operation](),
+          })
+        }
+      `,
       errors: [
         {
           messageId: 'missingDeps',
-          data: { deps: 'entities' },
+          data: { deps: 'operation' },
           suggestions: [
             {
               messageId: 'fixTo',
-              data: { result: "['get-stuff', entities]" },
               output: normalizeIndent`
-                function Component(props) {
-                  const entities = props.entities;
-
-                  const q = useQuery({
-                    queryKey: ['get-stuff', entities],
-                    queryFn: () => {
-                      return api.fetchStuff({
-                        ids: entities.map((o) => o.id)
-                      });
-                    }
-                  });
+                function Component({ client, operation }) {
+                  useQuery({
+                    queryKey: ['data', operation],
+                    queryFn: () => client[operation](),
+                  })
                 }
               `,
             },
@@ -1632,80 +1664,6 @@ ruleTester.run('exhaustive-deps', rule, {
       ],
     },
     {
-      name: 'should fail when sibling member method calls missing one path',
-      code: normalizeIndent`
-        function useThing(a) {
-          return useQuery({
-            queryKey: ['thing', a.b],
-            queryFn: () => {
-              a.b.foo()
-              a.c.bar()
-              return 1
-            }
-          })
-        }
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'a.c' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              output: normalizeIndent`
-                function useThing(a) {
-                  return useQuery({
-                    queryKey: ['thing', a.b, a.c],
-                    queryFn: () => {
-                      a.b.foo()
-                      a.c.bar()
-                      return 1
-                    }
-                  })
-                }
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'should fail when single member method call missing path and root',
-      code: normalizeIndent`
-        function useThing(a) {
-          return useQuery({
-            queryKey: ['thing'],
-            queryFn: () => {
-              a.b.foo()
-              return 1
-            }
-          })
-        }
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'a.b' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              output: normalizeIndent`
-                function useThing(a) {
-                  return useQuery({
-                    queryKey: ['thing', a.b],
-                    queryFn: () => {
-                      a.b.foo()
-                      return 1
-                    }
-                  })
-                }
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
       name: 'should fail when queryKey has TSAsExpression with missing dep',
       code: normalizeIndent`
         function useThing(dep) {
@@ -1771,27 +1729,27 @@ ruleTester.run('exhaustive-deps', rule, {
       name: 'should fail when type allowlist is empty',
       options: [{ allowlist: { types: [] } }],
       code: normalizeIndent`
-        interface Api { fetch: () => void }
+        interface Api { baseUrl: string }
         function useThing(api: Api) {
           return useQuery({
             queryKey: ['thing'],
-            queryFn: () => api.fetch()
+            queryFn: () => api.baseUrl
           })
         }
       `,
       errors: [
         {
           messageId: 'missingDeps',
-          data: { deps: 'api' },
+          data: { deps: 'api.baseUrl' },
           suggestions: [
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-                interface Api { fetch: () => void }
+                interface Api { baseUrl: string }
                 function useThing(api: Api) {
                   return useQuery({
-                    queryKey: ['thing', api],
-                    queryFn: () => api.fetch()
+                    queryKey: ['thing', api.baseUrl],
+                    queryFn: () => api.baseUrl
                   })
                 }
               `,
@@ -1929,13 +1887,12 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       name: 'should ignore missing member path when root type is in allowlist.types',
       options: [{ allowlist: { types: ['Svc'] } }],
       code: normalizeIndent`
-        interface Svc { part: { load: (id: string) => void } }
+        interface Svc { part: { baseUrl: string } }
         function useThing(svc: Svc, id: string) {
           return useQuery({
             queryKey: ['thing', id],
             queryFn: () => {
-              svc.part.load(id)
-              return id
+              return { baseUrl: svc.part.baseUrl, id }
             }
           })
         }
@@ -2007,13 +1964,12 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       name: 'should report missing member path when root type not in allowlist.types',
       options: [{ allowlist: { types: ['Other'] } }],
       code: normalizeIndent`
-        interface Svc { part: { load: (id: string) => void } }
+        interface Svc { part: { baseUrl: string } }
         function useThing(svc: Svc, id: string) {
           return useQuery({
             queryKey: ['thing', id],
             queryFn: () => {
-              svc.part.load(id)
-              return id
+              return { baseUrl: svc.part.baseUrl, id }
             }
           })
         }
@@ -2021,18 +1977,17 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       errors: [
         {
           messageId: 'missingDeps',
-          data: { deps: 'svc.part' },
+          data: { deps: 'svc.part.baseUrl' },
           suggestions: [
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-                interface Svc { part: { load: (id: string) => void } }
+                interface Svc { part: { baseUrl: string } }
                 function useThing(svc: Svc, id: string) {
                   return useQuery({
-                    queryKey: ['thing', id, svc.part],
+                    queryKey: ['thing', id, svc.part.baseUrl],
                     queryFn: () => {
-                      svc.part.load(id)
-                      return id
+                      return { baseUrl: svc.part.baseUrl, id }
                     }
                   })
                 }
@@ -2046,13 +2001,12 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       name: 'should report missing member path when variable has type annotation but type not allowlisted',
       options: [{ allowlist: { types: ['AllowedService'] } }],
       code: normalizeIndent`
-        interface MyService { method: () => void }
+        interface MyService { baseUrl: string }
         function useData(service: MyService) {
           return useQuery({
             queryKey: ['data'],
             queryFn: () => {
-              service.method()
-              return 'data'
+              return service.baseUrl
             }
           })
         }
@@ -2060,18 +2014,17 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       errors: [
         {
           messageId: 'missingDeps',
-          data: { deps: 'service' },
+          data: { deps: 'service.baseUrl' },
           suggestions: [
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-                interface MyService { method: () => void }
+                interface MyService { baseUrl: string }
                 function useData(service: MyService) {
                   return useQuery({
-                    queryKey: ['data', service],
+                    queryKey: ['data', service.baseUrl],
                     queryFn: () => {
-                      service.method()
-                      return 'data'
+                      return service.baseUrl
                     }
                   })
                 }
@@ -2085,20 +2038,19 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       name: 'should not inherit allowlisted type from outer shadowed binding',
       options: [{ allowlist: { types: ['AllowedService'] } }],
       code: normalizeIndent`
-        interface AllowedService { load: () => void }
-        interface OtherService { load: () => void }
+        interface AllowedService { baseUrl: string }
+        interface OtherService { baseUrl: string }
 
         function useThing() {
-          const svc: AllowedService = { load: () => undefined }
+          const svc: AllowedService = { baseUrl: 'allowed' }
 
           if (true) {
-            const svc: OtherService = { load: () => undefined }
+            const svc: OtherService = { baseUrl: 'other' }
 
             return useQuery({
               queryKey: ['thing'],
               queryFn: () => {
-                svc.load()
-                return 'data'
+                return svc.baseUrl
               }
             })
           }
@@ -2109,25 +2061,24 @@ ruleTester.run('exhaustive-deps allowlist.types', rule, {
       errors: [
         {
           messageId: 'missingDeps',
-          data: { deps: 'svc' },
+          data: { deps: 'svc.baseUrl' },
           suggestions: [
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-                interface AllowedService { load: () => void }
-                interface OtherService { load: () => void }
+                interface AllowedService { baseUrl: string }
+                interface OtherService { baseUrl: string }
 
                 function useThing() {
-                  const svc: AllowedService = { load: () => undefined }
+                  const svc: AllowedService = { baseUrl: 'allowed' }
 
                   if (true) {
-                    const svc: OtherService = { load: () => undefined }
+                    const svc: OtherService = { baseUrl: 'other' }
 
                     return useQuery({
-                      queryKey: ['thing', svc],
+                      queryKey: ['thing', svc.baseUrl],
                       queryFn: () => {
-                        svc.load()
-                        return 'data'
+                        return svc.baseUrl
                       }
                     })
                   }
@@ -2153,8 +2104,7 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
           return useQuery({
             queryKey: ['thing', id],
             queryFn: () => {
-              svc.part.load(id)
-              return id
+              return { part: svc.part, id }
             }
           })
         }
@@ -2184,9 +2134,7 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
           return useQuery({
             queryKey: ['thing'],
             queryFn: () => {
-              svc.part.load()
-              other.x.run()
-              return 1
+              return { svcPart: svc.part, otherX: other.x }
             }
           })
         }
@@ -2203,9 +2151,7 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
                   return useQuery({
                     queryKey: ['thing', other.x],
                     queryFn: () => {
-                      svc.part.load()
-                      other.x.run()
-                      return 1
+                      return { svcPart: svc.part, otherX: other.x }
                     }
                   })
                 }
@@ -2222,8 +2168,7 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
           return useQuery({
             queryKey: ['thing', id],
             queryFn: () => {
-              svc.part.load(id)
-              return id
+              return { part: svc.part, id }
             }
           })
         }
@@ -2240,8 +2185,7 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
                   return useQuery({
                     queryKey: ['thing', id, svc.part],
                     queryFn: () => {
-                      svc.part.load(id)
-                      return id
+                      return { part: svc.part, id }
                     }
                   })
                 }

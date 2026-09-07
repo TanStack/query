@@ -3,8 +3,6 @@ id: unregisterDefaultQueryClient
 title: unregisterDefaultQueryClient
 ---
 
-# Function: unregisterDefaultQueryClient()
-
 ```ts
 function unregisterDefaultQueryClient(client): void;
 ```
@@ -20,7 +18,7 @@ Unregisters a client previously registered with
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The query client registration to release.
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const getCharacters = async (): Promise<{
@@ -53,11 +53,13 @@ export default function Example() {
                   setSelectedChar(char.id)
                 }}
                 onMouseEnter={async () => {
-                  await queryClient.prefetchQuery({
-                    queryKey: ['character', char.id],
-                    queryFn: () => getCharacter(char.id),
-                    staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-                  })
+                  await queryClient
+                    .query({
+                      queryKey: ['character', char.id],
+                      queryFn: () => getCharacter(char.id),
+                      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+                    })
+                    .catch(noop)
 
                   setTimeout(() => {
                     rerender({})

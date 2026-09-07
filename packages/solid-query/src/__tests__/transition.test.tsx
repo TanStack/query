@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
+import { QueryCache, QueryClient, useQuery } from '..'
+import { renderWithClient } from './utils'
 
 describe("useQuery's in Suspense mode with transitions", () => {
   let queryCache: QueryCache
@@ -15,8 +16,8 @@ describe("useQuery's in Suspense mode with transitions", () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it('should render the content when the transition is done', async () => {
@@ -52,11 +53,7 @@ describe("useQuery's in Suspense mode with transitions", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('Show')).toBeInTheDocument()
     fireEvent.click(rendered.getByLabelText('toggle'))

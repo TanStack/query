@@ -17,6 +17,10 @@ export default [
         svelteConfig,
       },
     },
+    rules: {
+      // Svelte runes and proxy state produce false positives for this rule.
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+    },
   },
   {
     rules: {

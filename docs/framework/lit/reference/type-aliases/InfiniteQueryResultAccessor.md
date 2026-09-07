@@ -3,13 +3,11 @@ id: InfiniteQueryResultAccessor
 title: InfiniteQueryResultAccessor
 ---
 
-# Type Alias: InfiniteQueryResultAccessor\<TData, TError\>
-
 ```ts
 type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:48](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L48)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:49](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L49)
 
 Accessor returned by `createInfiniteQueryController`.
 

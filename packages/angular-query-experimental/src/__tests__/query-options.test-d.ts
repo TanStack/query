@@ -1,7 +1,20 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
+import {
+  QueryClient,
+  dataTagSymbol,
+  injectQuery,
+  queryOptions,
+  skipToken,
+} from '..'
 import type { Signal } from '@angular/core'
+
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -65,6 +78,48 @@ it('should work when passed to fetchQuery', () => {
 
   const data = new QueryClient().fetchQuery(options)
   assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query with select', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+    select: (data) => data.toString(),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<string>>(data)
+})
+
+it('should work when passed to query with enabled: false', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+    enabled: false,
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query with skipToken', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: skipToken,
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<unknown>>(data)
 })
 
 it('should tag the queryKey with the result type of the QueryFn', () => {

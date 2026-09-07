@@ -3,13 +3,11 @@ id: CreateQueryResult
 title: CreateQueryResult
 ---
 
-# Type Alias: CreateQueryResult\<TData, TError\>
-
 ```ts
 type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:47](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L47)
+Defined in: [packages/svelte-query/src/types.ts:48](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L48)
 
 Result from createQuery
 
@@ -21,4 +19,4 @@ Result from createQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

@@ -3,6 +3,7 @@ import { skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
@@ -79,6 +80,18 @@ describe('useSuspenseInfiniteQuery', () => {
         throwOnError: true,
       }),
     )
+  })
+
+  it('should default TData of UseSuspenseInfiniteQueryOptions to InfiniteData<TQueryFnData>', () => {
+    const options: UseSuspenseInfiniteQueryOptions<number, Error> = {
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(5),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+    }
+    const { data } = useSuspenseInfiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
   })
 
   it('should not return isPlaceholderData', () => {

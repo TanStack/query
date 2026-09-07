@@ -3,8 +3,6 @@ id: registerDefaultQueryClient
 title: registerDefaultQueryClient
 ---
 
-# Function: registerDefaultQueryClient()
-
 ```ts
 function registerDefaultQueryClient(client): void;
 ```
@@ -21,7 +19,7 @@ passing an explicit client or rendering under a provider when possible.
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The query client to register as the current default.
 

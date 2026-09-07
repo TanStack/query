@@ -3,8 +3,10 @@ id: exhaustive-deps
 title: Exhaustive dependencies for query keys
 ---
 
-Query keys should be seen like a dependency array to your query function: Every variable that is used inside the queryFn should be added to the query key.
-This makes sure that queries are cached independently and that queries are refetched automatically when the variables changes.
+Query keys should contain the serializable values that identify the data returned by your queryFn.
+This makes sure that queries are cached independently and that queries are refetched automatically when those values change.
+
+Function call targets are not query key dependencies. For example, `fetchTodoById(todoId)` needs `todoId` in the query key, but not `fetchTodoById`. Values referenced inside nested callbacks are still dependencies, so `promise.then(() => todoId)` also needs `todoId` in the query key.
 
 ## Rule Details
 
@@ -29,7 +31,7 @@ Examples of **correct** code for this rule:
 const Component = ({ todoId }) => {
   const todos = useTodos()
   useQuery({
-    queryKey: ['todo', todos, todoId],
+    queryKey: ['todo', todoId],
     queryFn: () => todos.getTodo(todoId),
   })
 }
@@ -46,24 +48,12 @@ const todoQueries = {
 ```
 
 ```tsx
-// with { allowlist: { variables: ["todos"] }}
-const Component = ({ todoId }) => {
-  const todos = useTodos()
+// with { allowlist: { types: ["Config"] }}
+class Config { ... }
+const Component = ({ todoId, config }: { todoId: string, config: Config }) => {
   useQuery({
     queryKey: ['todo', todoId],
-    queryFn: () => todos.getTodo(todoId),
-  })
-}
-```
-
-```tsx
-// with { allowlist: { types: ["TodosClient"] }}
-class TodosClient { ... }
-const Component = ({ todoId }) => {
-  const todos: TodosClient = new TodosClient()
-  useQuery({
-    queryKey: ['todo', todoId],
-    queryFn: () => todos.getTodo(todoId),
+    queryFn: () => fetchTodo(todoId, config.baseUrl),
   })
 }
 ```

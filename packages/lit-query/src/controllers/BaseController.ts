@@ -24,6 +24,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
   private updateQueued = false
   private clientChangeQueued = false
   private connectionAttempt = 0
+  private isHostUpdating = false
   private queryClientResolutionState: QueryClientResolutionState
 
   protected constructor(
@@ -92,7 +93,12 @@ export abstract class BaseController<TResult> implements ReactiveController {
       return
     }
 
-    this.onHostUpdate()
+    this.isHostUpdating = true
+    try {
+      this.onHostUpdate()
+    } finally {
+      this.isHostUpdating = false
+    }
   }
 
   destroy(): void {
@@ -133,7 +139,9 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
 
     this.result = next
-    this.queueUpdate()
+    if (!this.isHostUpdating) {
+      this.queueUpdate()
+    }
   }
 
   get current(): TResult {

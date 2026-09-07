@@ -6,7 +6,11 @@ export { VueQueryPlugin } from './vueQueryPlugin'
 export { QueryClient } from './queryClient'
 export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
-export { type QueryOptions } from './queryOptions'
+export type {
+  QueryOptions,
+  UndefinedInitialQueryOptionsWithDataTag,
+  DefinedInitialQueryOptionsWithDataTag,
+} from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,

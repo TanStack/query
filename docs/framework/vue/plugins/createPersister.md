@@ -103,7 +103,7 @@ If `query` is `expired`, `busted` or `malformed` it would be removed from the st
 
 ### `persisterGc(): Promise<void>`
 
-This function can be used to sporadically clean up stoage from `expired`, `busted` or `malformed` entries.
+This function can be used to sporadically clean up storage from `expired`, `busted` or `malformed` entries.
 
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.

@@ -5,6 +5,8 @@ title: Testing
 
 React Query works by means of hooks - either the ones we offer or custom ones that wrap around them.
 
+[//]: # 'Install'
+
 With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library.
 
 Install this by running:
@@ -16,6 +18,7 @@ npm install @testing-library/react-hooks react-test-renderer --save-dev
 (The `react-test-renderer` library is needed as a peer dependency of `@testing-library/react-hooks`, and needs to correspond to the version of React that you are using.)
 
 _Note_: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
+[//]: # 'Install'
 
 ## Our First Test
 
@@ -28,6 +31,8 @@ export function useCustomHook() {
 ```
 
 We can write a test for this as follows:
+
+[//]: # 'ExampleFirstTest'
 
 ```tsx
 import { renderHook, waitFor } from '@testing-library/react'
@@ -43,6 +48,8 @@ await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data).toEqual('Hello')
 ```
+
+[//]: # 'ExampleFirstTest'
 
 Note that we provide a custom wrapper that builds the `QueryClient` and `QueryClientProvider`. This helps to ensure that our test is completely isolated from any other tests.
 
@@ -108,7 +115,10 @@ await waitFor(() => expect(result.current.isSuccess).toBe(true))
 expect(result.current.data).toEqual({ answer: 42 })
 ```
 
+[//]: # 'NoteWaitFor1'
+
 Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. _Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
+[//]: # 'NoteWaitFor1'
 
 ## Testing Load More / Infinite Scroll
 
@@ -163,8 +173,15 @@ await waitFor(() =>
 expectation.done()
 ```
 
+[//]: # 'NoteWaitFor2'
+
 _Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
+[//]: # 'NoteWaitFor2'
 
 ## Further reading
 
+[//]: # 'FurtherReading'
+
 For additional tips and an alternative setup using `mock-service-worker`, have a look at [this article by TkDodo on Testing React Query](https://tkdodo.eu/blog/testing-react-query).
+
+[//]: # 'FurtherReading'

@@ -3,8 +3,6 @@ id: useQueryClient
 title: useQueryClient
 ---
 
-# Function: useQueryClient()
-
 ```ts
 function useQueryClient(queryClient?): QueryClient;
 ```
@@ -15,8 +13,8 @@ Defined in: [packages/svelte-query/src/useQueryClient.ts:4](https://github.com/T
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 ## Returns
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)

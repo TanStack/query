@@ -503,9 +503,7 @@ describe('mutationCache', () => {
 
       expect(testCache.getAll()).toHaveLength(0)
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(callback).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'removed', mutation }),
-      )
+      expect(callback).toHaveBeenCalledWith({ type: 'removed', mutation })
 
       unsubscribe()
     })

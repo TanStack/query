@@ -3,8 +3,6 @@ id: IsMutatingAccessor
 title: IsMutatingAccessor
 ---
 
-# Type Alias: IsMutatingAccessor
-
 ```ts
 type IsMutatingAccessor = ValueAccessor<number> & object;
 ```

@@ -436,7 +436,7 @@ describe('injectQuery', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
-    expect(spy).toBeCalledWith({
+    expect(spy).toHaveBeenNthCalledWith(2, {
       client: queryClient,
       meta: undefined,
       queryKey: key2,
@@ -465,6 +465,35 @@ describe('injectQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(spy).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
+  })
+
+  it('should not fetch while the enabled signal is false, and fetch again once it is truthy', async () => {
+    const key = queryKey()
+    const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
+    const filter = signal('a')
+
+    const query = TestBed.runInInjectionContext(() => {
+      return injectQuery(() => ({
+        queryKey: [...key, filter()],
+        queryFn: spy,
+        enabled: !!filter(),
+      }))
+    })
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(query.status()).toBe('success')
+
+    filter.set('')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(query.isFetching()).toBe(false)
+
+    filter.set('b')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(spy).toHaveBeenCalledTimes(2)
   })
 
   it('should properly execute dependent queries', async () => {
@@ -528,7 +557,8 @@ describe('injectQuery', () => {
 
     void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(1)
-      expect(fetchFn).toHaveBeenCalledWith(
+      expect(fetchFn).toHaveBeenNthCalledWith(
+        1,
         expect.objectContaining({
           queryKey: [...key, 'key11'],
         }),
@@ -541,7 +571,8 @@ describe('injectQuery', () => {
 
     void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
-      expect(fetchFn).toHaveBeenCalledWith(
+      expect(fetchFn).toHaveBeenNthCalledWith(
+        2,
         expect.objectContaining({
           queryKey: [...key, 'key12'],
         }),
@@ -549,6 +580,36 @@ describe('injectQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(11)
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `
+        <div>data: {{ query.data() }}</div>
+        <div>isError: {{ query.isError() }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: initial')).toBeInTheDocument()
+    expect(rendered.getByText('isError: false')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: initial')).toBeInTheDocument()
+    expect(rendered.getByText('isError: true')).toBeInTheDocument()
   })
 
   describe('throwOnError', () => {

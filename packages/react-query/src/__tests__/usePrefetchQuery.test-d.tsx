@@ -57,4 +57,16 @@ describe('usePrefetchQuery', () => {
       }),
     )
   })
+
+  it('should type queryFn and select data independently', () => {
+    usePrefetchQuery<string, Error, number, { value: string }>({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('data'),
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<{ value: string }>()
+
+        return data.value.length
+      },
+    })
+  })
 })

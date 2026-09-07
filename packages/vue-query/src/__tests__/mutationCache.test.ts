@@ -17,7 +17,7 @@ describe('MutationCache', () => {
         mutationKey: ref(['baz']),
       })
 
-      expect(MutationCacheOrigin.prototype.find).toBeCalledWith({
+      expect(MutationCacheOrigin.prototype.find).toHaveBeenCalledWith({
         mutationKey: ['baz'],
       })
     })
@@ -31,7 +31,7 @@ describe('MutationCache', () => {
         mutationKey: ref(['baz']),
       })
 
-      expect(MutationCacheOrigin.prototype.findAll).toBeCalledWith({
+      expect(MutationCacheOrigin.prototype.findAll).toHaveBeenCalledWith({
         mutationKey: ['baz'],
       })
     })

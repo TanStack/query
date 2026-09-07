@@ -3,13 +3,11 @@ id: CreateQueriesInput
 title: CreateQueriesInput
 ---
 
-# Type Alias: CreateQueriesInput\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type CreateQueriesInput<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:30](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L30)
+Defined in: [packages/lit-query/src/createQueriesController.ts:31](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L31)
 
 Options for one query inside `createQueriesController`.
 
@@ -24,7 +22,7 @@ maps each input query to its corresponding result.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -32,4 +30,4 @@ maps each input query to its corresponding result.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

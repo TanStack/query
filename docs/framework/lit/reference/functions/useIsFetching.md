@@ -3,8 +3,6 @@ id: useIsFetching
 title: useIsFetching
 ---
 
-# Function: useIsFetching()
-
 ```ts
 function useIsFetching(
    host,
@@ -32,13 +30,13 @@ subscription.
 
 ### filters
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 Query filters, or a getter that returns query filters.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

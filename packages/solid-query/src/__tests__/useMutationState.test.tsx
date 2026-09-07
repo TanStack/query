@@ -1,25 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useMutationState,
-} from '..'
+import { QueryClient, useMutation, useMutationState } from '..'
+import { renderWithClient } from './utils'
 
 describe('useMutationState', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should return all mutation states when called without options', async () => {
-    const queryClient = new QueryClient()
     const mutationKey = queryKey()
 
     function States() {
@@ -50,11 +49,7 @@ describe('useMutationState', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('count: 0')).toBeInTheDocument()
 
@@ -67,7 +62,6 @@ describe('useMutationState', () => {
   })
 
   it('should return variables after calling mutate', async () => {
-    const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
     const mutationKey = queryKey()
 
@@ -107,11 +101,7 @@ describe('useMutationState', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('data: null')).toBeInTheDocument()
 

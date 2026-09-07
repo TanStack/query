@@ -93,7 +93,7 @@ describe('timeoutManager', () => {
           expect.stringMatching(
             /\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/,
           ),
-          expect.anything(),
+          { previous: customProvider, provider: customProvider2 },
         )
 
         // 3. Switching again with no intermediate calls should not warn

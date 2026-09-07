@@ -3,13 +3,11 @@ id: queryFeature
 title: queryFeature
 ---
 
-# Function: queryFeature()
-
 ```ts
 function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
 ```
 
-Defined in: [providers.ts:146](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L146)
+Defined in: [packages/angular-query-experimental/src/providers.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L143)
 
 Helper function to create an object that represents a Query feature.
 
@@ -25,9 +23,13 @@ Helper function to create an object that represents a Query feature.
 
 `TFeatureKind`
 
+The kind of feature, e.g. `'Devtools'`.
+
 ### providers
 
 `Provider`[]
+
+The Angular providers this feature contributes to `provideTanStackQuery`.
 
 ## Returns
 

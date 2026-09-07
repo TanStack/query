@@ -3,8 +3,6 @@ id: resolveQueryClient
 title: resolveQueryClient
 ---
 
-# Function: resolveQueryClient()
-
 ```ts
 function resolveQueryClient(explicit?): QueryClient;
 ```
@@ -17,13 +15,13 @@ Resolves an explicit `QueryClient` or falls back to `useQueryClient`.
 
 ### explicit?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional client supplied by the caller.
 
 ## Returns
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The explicit client when provided, otherwise the current default
 client.

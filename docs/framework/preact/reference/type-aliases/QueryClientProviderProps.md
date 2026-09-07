@@ -3,13 +3,13 @@ id: QueryClientProviderProps
 title: QueryClientProviderProps
 ---
 
-# Type Alias: QueryClientProviderProps
-
 ```ts
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:23](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L23)
+Defined in: [packages/preact-query/src/QueryClientProvider.tsx:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L38)
+
+The props accepted by `QueryClientProvider`.
 
 ## Properties
 
@@ -19,7 +19,9 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:23](https://github.com/the
 optional children: ComponentChildren;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L25)
+Defined in: [packages/preact-query/src/QueryClientProvider.tsx:48](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L48)
+
+The components that get access to the provided `QueryClient`.
 
 ***
 
@@ -29,4 +31,8 @@ Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/the
 client: QueryClient;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:24](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L24)
+Defined in: [packages/preact-query/src/QueryClientProvider.tsx:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L44)
+
+**Required**
+
+The `QueryClient` instance to provide.

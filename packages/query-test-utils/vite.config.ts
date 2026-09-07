@@ -18,7 +18,11 @@ export default defineConfig({
     name: packageJson.name,
     dir: './src',
     watch: false,
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: !!process.env.CI,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+    },
     typecheck: { enabled: true },
     restoreMocks: true,
   },

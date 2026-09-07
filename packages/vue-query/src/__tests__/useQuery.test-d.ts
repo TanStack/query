@@ -1,8 +1,9 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
-import type { OmitKeyof, UseQueryOptions } from '..'
+import type { Ref } from 'vue-demi'
+import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
 describe('useQuery', () => {
   describe('Config object overload', () => {
@@ -152,6 +153,29 @@ describe('useQuery', () => {
     })
   })
 
+  describe('generic queryKey inference (#8199)', () => {
+    it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
+      const basket = { fruit: 'apple', vegetable: 'broccoli' } as const
+
+      function getBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return basket[type]
+      }
+
+      function useBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return useQuery({
+          queryKey: ['basket', type] as const,
+          queryFn({ queryKey: [, t] }) {
+            return getBasket(t)
+          },
+        })
+      }
+
+      assertType<UseQueryReturnType<'apple' | 'broccoli', Error>>(
+        useBasket('fruit'),
+      )
+    })
+  })
+
   describe('custom composable', () => {
     it('should allow custom composable using UseQueryOptions', () => {
       const key = queryKey()
@@ -266,6 +290,31 @@ describe('useQuery', () => {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
       }
     })
+
+    it('data should be a union of refs without reactive()', () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      expectTypeOf(query.data).toEqualTypeOf<Ref<string> | Ref<undefined>>()
+    })
+
+    it('data.value should narrow on an undefined check without reactive()', () => {
+      const key = queryKey()
+
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      if (data.value !== undefined) {
+        expectTypeOf(data.value).toEqualTypeOf<string>()
+        expectTypeOf(data).toEqualTypeOf<Ref<string>>()
+      }
+    })
   })
 
   describe('accept ref options', () => {
@@ -308,6 +357,32 @@ describe('useQuery', () => {
       if (query.isSuccess) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
+    })
+  })
+
+  describe('queryKey reactivity rules', () => {
+    it('should reject a bare reactive getter for the whole queryKey array', () => {
+      const id = ref(1)
+      assertType(
+        useQuery({
+          // @ts-expect-error when passed directly to useQuery, queryKey cannot be a bare
+          // reactive getter for the whole array (queryOptions() allows this)
+          queryKey: () => ['post', id.value],
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+    })
+  })
+
+  describe('select', () => {
+    it('should narrow data to the type select returns', () => {
+      const { data } = useQuery({
+        queryKey: queryKey(),
+        queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
+        select: (posts) => posts.length,
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
     })
   })
 })

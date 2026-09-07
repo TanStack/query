@@ -3,13 +3,11 @@ id: CreateQueryOptions
 title: CreateQueryOptions
 ---
 
-# Type Alias: CreateQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:39](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L39)
+Defined in: [packages/svelte-query/src/types.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L40)
 
 Options for createQuery
 
@@ -21,7 +19,7 @@ Options for createQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -29,4 +27,4 @@ Options for createQuery
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

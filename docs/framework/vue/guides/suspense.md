@@ -40,7 +40,10 @@ const todoFetcher = async () =>
 export default defineComponent({
   name: 'SuspendableComponent',
   async setup() {
-    const { data, suspense } = useQuery(['todos'], todoFetcher)
+    const { data, suspense } = useQuery({
+      queryKey: ['todos'],
+      queryFn: todoFetcher,
+    })
     await suspense()
 
     return { data }

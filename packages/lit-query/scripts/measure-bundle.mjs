@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(scriptDir, '..')
-const distDir = path.join(repoRoot, 'dist')
+const distDir = path.join(repoRoot, 'build', 'modern')
 const entryFile = path.join(distDir, 'index.js')
 
 async function getDirSizeBytes(dirPath) {

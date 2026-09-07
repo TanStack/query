@@ -8,7 +8,10 @@ ref: docs/framework/react/guides/query-functions.md
 
 ```ts
 injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchAllTodos }))
-injectQuery(() => ({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
+injectQuery(() => ({
+  queryKey: ['todos', todoId],
+  queryFn: () => fetchTodoById(todoId),
+}))
 injectQuery(() => ({
   queryKey: ['todos', todoId],
   queryFn: async () => {

@@ -3,8 +3,6 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-# Type Alias: CreateMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> = MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
@@ -24,7 +22,7 @@ or through an `Accessor` when the options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

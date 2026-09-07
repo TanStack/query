@@ -2,7 +2,7 @@
   "name": "react-next-15",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build"
   },
   "dependencies": {

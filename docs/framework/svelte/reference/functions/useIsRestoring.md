@@ -3,8 +3,6 @@ id: useIsRestoring
 title: useIsRestoring
 ---
 
-# Function: useIsRestoring()
-
 ```ts
 function useIsRestoring(): Box<boolean>;
 ```

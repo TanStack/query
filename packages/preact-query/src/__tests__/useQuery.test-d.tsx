@@ -17,7 +17,7 @@ describe('useQuery', () => {
   const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
   expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-  expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
+  expectTypeOf(fromQueryFn).not.toHaveProperty('promise')
 
   // it should be possible to specify the result type
   const withResult = useQuery<string>({
@@ -278,23 +278,6 @@ describe('useQuery', () => {
         }
       })
 
-      // eslint-disable-next-line vitest/expect-expect
-      it('TData should depend from only arguments, not the result', () => {
-        // @ts-expect-error
-        // eslint-disable-next-line
-        const result: UseQueryResult<{ wow: string }> = useQuery({
-          queryKey: queryKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
-        })
-
-        void result
-      })
-
       it('data should not have undefined when initialData is provided', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
@@ -303,6 +286,23 @@ describe('useQuery', () => {
 
         expectTypeOf(data).toEqualTypeOf<number>()
       })
+    })
+
+    it('should preserve discriminated-union narrowing', () => {
+      type Result =
+        | { type: 'first'; first: string }
+        | { type: 'second'; second: string }
+
+      const query = useQuery({
+        queryKey: queryKey(),
+        queryFn: (): Result => ({ type: 'first', first: 'a' }),
+      })
+
+      const second = query.data?.type === 'first' ? undefined : query.data
+
+      expectTypeOf(second).toEqualTypeOf<
+        { type: 'second'; second: string } | undefined
+      >()
     })
 
     describe('custom hook', () => {

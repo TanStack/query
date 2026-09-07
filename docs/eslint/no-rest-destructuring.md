@@ -34,6 +34,8 @@ const todosQuery = useQuery({
 const { data: todos } = todosQuery
 ```
 
+When [typed linting](https://typescript-eslint.io/getting-started/typed-linting/) is enabled, the rule also flags rest destructuring on custom hooks that return a TanStack Query result.
+
 ## When Not To Use It
 
 If you set the `notifyOnChangeProps` options manually, you can disable this rule.

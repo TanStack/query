@@ -4,6 +4,7 @@ import {
   QueryCache,
   QueryClient,
   dehydrate,
+  noop,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
 import { sleep } from '@tanstack/query-test-utils'
@@ -52,26 +53,36 @@ describe('create persister', () => {
       storage,
     })
 
-    await queryClient.prefetchQuery({
-      queryKey: ['string'],
-      queryFn: () => Promise.resolve('string'),
-    })
-    await queryClient.prefetchQuery({
-      queryKey: ['number'],
-      queryFn: () => Promise.resolve(1),
-    })
-    await queryClient.prefetchQuery({
-      queryKey: ['boolean'],
-      queryFn: () => Promise.resolve(true),
-    })
-    await queryClient.prefetchQuery({
-      queryKey: ['null'],
-      queryFn: () => Promise.resolve(null),
-    })
-    await queryClient.prefetchQuery({
-      queryKey: ['array'],
-      queryFn: () => Promise.resolve(['string', 0]),
-    })
+    await queryClient
+      .query({
+        queryKey: ['string'],
+        queryFn: () => Promise.resolve('string'),
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: ['number'],
+        queryFn: () => Promise.resolve(1),
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: ['boolean'],
+        queryFn: () => Promise.resolve(true),
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: ['null'],
+        queryFn: () => Promise.resolve(null),
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: ['array'],
+        queryFn: () => Promise.resolve(['string', 0]),
+      })
+      .catch(noop)
 
     const persistClient = {
       buster: 'test-buster',
@@ -97,31 +108,41 @@ describe('create persister', () => {
       retry: removeOldestQuery,
     })
 
-    await queryClient.prefetchQuery({
-      queryKey: ['A'],
-      queryFn: () => Promise.resolve('A'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['A'],
+        queryFn: () => Promise.resolve('A'.repeat(N)),
+      })
+      .catch(noop)
     await sleep(1)
-    await queryClient.prefetchQuery({
-      queryKey: ['B'],
-      queryFn: () => Promise.resolve('B'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['B'],
+        queryFn: () => Promise.resolve('B'.repeat(N)),
+      })
+      .catch(noop)
     await sleep(1)
-    await queryClient.prefetchQuery({
-      queryKey: ['C'],
-      queryFn: () => Promise.resolve('C'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['C'],
+        queryFn: () => Promise.resolve('C'.repeat(N)),
+      })
+      .catch(noop)
     await sleep(1)
-    await queryClient.prefetchQuery({
-      queryKey: ['D'],
-      queryFn: () => Promise.resolve('D'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['D'],
+        queryFn: () => Promise.resolve('D'.repeat(N)),
+      })
+      .catch(noop)
 
     await sleep(1)
-    await queryClient.prefetchQuery({
-      queryKey: ['E'],
-      queryFn: () => Promise.resolve('E'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['E'],
+        queryFn: () => Promise.resolve('E'.repeat(N)),
+      })
+      .catch(noop)
 
     const persistClient = {
       buster: 'test-limit',
@@ -140,10 +161,12 @@ describe('create persister', () => {
     ).not.toBeUndefined()
 
     // update query Data
-    await queryClient.prefetchQuery({
-      queryKey: ['A'],
-      queryFn: () => Promise.resolve('a'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['A'],
+        queryFn: () => Promise.resolve('a'.repeat(N)),
+      })
+      .catch(noop)
     const updatedPersistClient = {
       buster: 'test-limit',
       timestamp: Date.now(),
@@ -173,10 +196,12 @@ describe('create persister', () => {
       retry: removeOldestQuery,
     })
 
-    await queryClient.prefetchQuery({
-      queryKey: ['A'],
-      queryFn: () => Promise.resolve('A'.repeat(N)),
-    })
+    await queryClient
+      .query({
+        queryKey: ['A'],
+        queryFn: () => Promise.resolve('A'.repeat(N)),
+      })
+      .catch(noop)
     await sleep(1)
 
     const persistClient = {

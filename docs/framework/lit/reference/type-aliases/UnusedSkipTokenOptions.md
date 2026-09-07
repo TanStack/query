@@ -3,8 +3,6 @@ id: UnusedSkipTokenOptions
 title: UnusedSkipTokenOptions
 ---
 
-# Type Alias: UnusedSkipTokenOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "queryFn"> & object;
 ```
@@ -29,7 +27,7 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -37,4 +35,4 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

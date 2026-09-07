@@ -271,11 +271,11 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      expect(customClient.isRestoring?.value).toBeTruthy()
+      expect(customClient.isRestoring?.value).toBe(true)
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(customClient.isRestoring?.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBe(false)
     })
 
     it('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
@@ -314,14 +314,14 @@ describe('VueQueryPlugin', () => {
         customClient,
       )
 
-      expect(customClient.isRestoring?.value).toBeTruthy()
-      expect(query.isFetching.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBe(true)
+      expect(query.isFetching.value).toBe(false)
       expect(query.data.value).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(customClient.isRestoring?.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
@@ -378,18 +378,18 @@ describe('VueQueryPlugin', () => {
         customClient,
       )
 
-      expect(customClient.isRestoring?.value).toBeTruthy()
+      expect(customClient.isRestoring?.value).toBe(true)
 
-      expect(query.isFetching.value).toBeFalsy()
+      expect(query.isFetching.value).toBe(false)
       expect(query.data.value).toStrictEqual(undefined)
 
-      expect(queries.value[0].isFetching).toBeFalsy()
+      expect(queries.value[0].isFetching).toBe(false)
       expect(queries.value[0].data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(customClient.isRestoring?.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
       expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
       expect(fnSpy).toHaveBeenCalledTimes(0)

@@ -3,13 +3,11 @@ id: CreateMutationResult
 title: CreateMutationResult
 ---
 
-# Type Alias: CreateMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateMutationResult<TData, TError, TVariables, TOnMutateResult> = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:132](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L132)
+Defined in: [packages/svelte-query/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L139)
 
 Result from createMutation
 
@@ -21,7 +19,7 @@ Result from createMutation
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

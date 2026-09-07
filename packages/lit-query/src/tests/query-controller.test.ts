@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { keepPreviousData, QueryClient } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueryController } from '../createQueryController.js'
@@ -161,6 +162,153 @@ describe('createQueryController', () => {
     expect(host.updatesRequested).toBeGreaterThan(0)
   })
 
+  it('does not request another update when stable function options refresh during host update', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const host = new TestControllerHost()
+    let callCount = 0
+
+    const query = createQueryController(
+      host,
+      () => ({
+        queryKey: ['query-controller', 'stable-function-options'],
+        queryFn: async () => {
+          callCount += 1
+          return 'stable-result'
+        },
+        staleTime: Infinity,
+      }),
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      await waitFor(() => query().isSuccess)
+
+      host.updatesRequested = 0
+
+      for (let i = 0; i < 5; i += 1) {
+        host.update()
+        await Promise.resolve()
+      }
+
+      expect(host.updatesRequested).toBe(0)
+      expect(query().data).toBe('stable-result')
+      expect(callCount).toBe(1)
+    } finally {
+      query.destroy()
+    }
+  })
+
+  it('does not request an update for refetch-only state changes when only data was read', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['query-controller', 'tracked-data-only'] as const
+    const host = new TestControllerHost()
+    let resolveRefetch: (() => void) | undefined
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey,
+        initialData: 'stable-data',
+        staleTime: Infinity,
+        queryFn: () =>
+          new Promise<string>((resolve) => {
+            resolveRefetch = () => resolve('stable-data')
+          }),
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(query().data).toBe('stable-data')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      const refetch = query.refetch()
+
+      await waitFor(() => resolveRefetch !== undefined)
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      resolveRefetch!()
+      await refetch
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      query.destroy()
+    }
+  })
+
+  it('refreshes a suppressed result on the next accessor read when a newly read property changed', async () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+
+    const queryKey = ['query-controller', 'late-read-freshness'] as const
+    const host = new TestControllerHost()
+
+    const query = createQueryController(
+      host,
+      {
+        queryKey,
+        initialData: 'initial-data',
+        staleTime: Infinity,
+        queryFn: async () => 'unused',
+      },
+      client,
+    )
+
+    try {
+      host.connect()
+      host.update()
+
+      expect(query().status).toBe('success')
+
+      await Promise.resolve()
+      await Promise.resolve()
+
+      host.updatesRequested = 0
+
+      client.setQueryData(queryKey, 'updated-data')
+      await Promise.resolve()
+
+      expect(host.updatesRequested).toBe(0)
+
+      expect(query().data).toBe('updated-data')
+      expect(host.updatesRequested).toBe(0)
+    } finally {
+      query.destroy()
+    }
+  })
+
   it('M4: transitions from pending to success with expected contract', async () => {
     const client = new QueryClient({
       defaultOptions: {
@@ -176,7 +324,7 @@ describe('createQueryController', () => {
       {
         queryKey: ['query-controller', 'm4'],
         queryFn: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
           return 'ok'
         },
       },
@@ -223,7 +371,7 @@ describe('createQueryController', () => {
     host.connect()
     host.update()
 
-    await new Promise((resolve) => setTimeout(resolve, 25))
+    await sleep(25)
     expect(callCount).toBe(0)
     expect(query().isSuccess).toBe(false)
 
@@ -485,7 +633,7 @@ describe('createQueryController', () => {
     freshHostB.connect()
     freshHostB.update()
     await waitFor(() => freshQueryB().isSuccess)
-    await new Promise((resolve) => setTimeout(resolve, 25))
+    await sleep(25)
     expect(freshCalls).toBe(1)
     expect(freshQueryB().data).toBe('fresh-1')
   })
@@ -659,7 +807,7 @@ describe('createQueryController', () => {
     await waitFor(() => query().data === 'new-value')
 
     resolveOld?.('old-value')
-    await new Promise((resolve) => setTimeout(resolve, 20))
+    await sleep(20)
 
     expect(query().data).toBe('new-value')
     expect(query().isSuccess).toBe(true)
@@ -714,7 +862,7 @@ describe('createQueryController', () => {
 
     expect(oldSignal?.aborted).toBe(true)
     resolveOld?.('old-late')
-    await new Promise((resolve) => setTimeout(resolve, 20))
+    await sleep(20)
     expect(query().data).toBe('new-success')
   })
 
@@ -736,9 +884,7 @@ describe('createQueryController', () => {
         queryKey: ['query-controller', 's6', keyId] as const,
         queryFn: async ({ queryKey }) => {
           const id = queryKey[2] as number
-          await new Promise((resolve) =>
-            setTimeout(resolve, Math.max(1, 20 - id)),
-          )
+          await sleep(Math.max(1, 20 - id))
           return `result-${id}`
         },
       }),
@@ -794,7 +940,7 @@ describe('createQueryController', () => {
     const updatesAfterDisconnect = host.updatesRequested
 
     resolveFetch?.('late-value')
-    await new Promise((resolve) => setTimeout(resolve, 20))
+    await sleep(20)
 
     expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
@@ -829,7 +975,7 @@ describe('createQueryController', () => {
 
     host.disconnect()
     resolveFetch?.('reconnected-value')
-    await new Promise((resolve) => setTimeout(resolve, 20))
+    await sleep(20)
 
     host.connect()
     host.update()
@@ -959,7 +1105,7 @@ describe('createQueryController', () => {
         retryDelay: 30,
         queryFn: async () => {
           attempts += 1
-          await new Promise((resolve) => setTimeout(resolve, 5))
+          await sleep(5)
           if (attempts < 3) {
             throw new Error(`attempt-${attempts}`)
           }
@@ -1007,7 +1153,7 @@ describe('createQueryController', () => {
     await waitFor(() => query().isSuccess)
 
     const cacheQuery = client.getQueryCache().find({ queryKey })
-    expect(cacheQuery).toBeDefined()
+    expect(cacheQuery?.state.data).toEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
     host.disconnect()
@@ -1049,8 +1195,8 @@ describe('createQueryController', () => {
     await consumer.updateComplete
 
     await waitFor(() => consumer.query().isSuccess)
-    expect(consumer.query().data).toBeDefined()
-    expect(consumer.queryCalls).toBeGreaterThan(0)
+    expect(consumer.queryCalls).toBe(1)
+    expect(consumer.query().data).toBe('value-1')
 
     consumer.query.destroy()
     provider.remove()
@@ -1085,7 +1231,7 @@ describe('createQueryController', () => {
     await consumer.updateComplete
     await waitFor(() => consumer.query().isSuccess)
 
-    expect(consumer.query().data).toBeDefined()
+    expect(consumer.query().data).toBe('value-1')
 
     consumer.query.destroy()
     provider.remove()
@@ -1175,7 +1321,7 @@ describe('createQueryController', () => {
           .find({ queryKey: consumer.queryKey })
           ?.getObserversCount() ?? 0) === 0,
     )
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    await sleep(0)
     consumer.connectedCallback()
 
     await expect(consumer.query.refetch()).rejects.toThrow(
@@ -1313,7 +1459,7 @@ describe('createQueryController', () => {
 
     expect(query().data).toBe('hydrated-value')
     expect(query().isSuccess).toBe(true)
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await sleep(50)
     expect(queryFnCalls).toBe(0)
 
     await query.refetch()

@@ -1,5 +1,51 @@
 # @tanstack/eslint-plugin-query
 
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+## 5.102.4
+
+## 5.102.3
+
+## 5.102.2
+
+## 5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- [#11212](https://github.com/TanStack/query/pull/11212) [`279bb55`](https://github.com/TanStack/query/commit/279bb5508b81ce0d88b8f0f72441d96abf7ca03c) - TypeScript 7 compatibility
+
+- [#11188](https://github.com/TanStack/query/pull/11188) [`3bc8edf`](https://github.com/TanStack/query/commit/3bc8edfa0199e6467458084e8802a99bce11b958) - Fix false-positive warnings in `no-unstable-deps` rule caused by `Object.prototype` property lookups (`toString`, `valueOf`, etc.).
+
+- [#11115](https://github.com/TanStack/query/pull/11115) [`8582702`](https://github.com/TanStack/query/commit/858270215247d1dbdbe9d9a00068b4ffa5218da6) - Remove unused helper functions from the internal `ASTUtils` object (`getNestedIdentifiers`, `getNestedReturnStatements`, `getClosestVariableDeclarator`, `mapKeyNodeToText`, and `mapKeyNodeToBaseText`). They were not referenced by any rule and are not part of the public API.
+
+## 5.101.4
+
+### Patch Changes
+
+- [#11067](https://github.com/TanStack/query/pull/11067) [`7ac45ed`](https://github.com/TanStack/query/commit/7ac45ed45cbc28a54ac2fcfb1faccfcd87fb7b75) - Relax `exhaustive-deps` so function call targets are not required in query keys while values referenced in nested callbacks are still checked.
+
+## 5.101.3
+
+## 5.101.2
+
+## 5.101.1
+
+## 5.101.0
+
+### Minor Changes
+
+- [#10775](https://github.com/TanStack/query/pull/10775) [`dc54932`](https://github.com/TanStack/query/commit/dc549328642e3d5b7417c0ad070d9fbf38c195a4) - `no-rest-destructuring` now also flags rest destructuring on custom hooks that return a TanStack Query result. Detection uses the TypeScript type checker and runs only when typed linting is enabled, so untyped projects are unaffected. Closes [#8951](https://github.com/TanStack/query/issues/8951).
+
+## 5.100.14
+
 ## 5.100.13
 
 ## 5.100.12

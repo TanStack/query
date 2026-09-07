@@ -1,5 +1,132 @@
 # @tanstack/svelte-query-devtools
 
+## 6.1.48
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.8
+  - @tanstack/svelte-query@6.1.48
+
+## 6.1.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.7
+  - @tanstack/svelte-query@6.1.47
+
+## 6.1.46
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.6
+  - @tanstack/svelte-query@6.1.46
+
+## 6.1.45
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/svelte-query@6.1.45
+
+## 6.1.44
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.4
+  - @tanstack/svelte-query@6.1.44
+
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.3
+  - @tanstack/svelte-query@6.1.43
+
+## 6.1.42
+
+### Patch Changes
+
+- Updated dependencies [[`cafd540`](https://github.com/TanStack/query/commit/cafd540c02f78be260198c4e84d054390c02c6b8), [`320ed25`](https://github.com/TanStack/query/commit/320ed25caca4e219b53f778c59cbb380543a21f4), [`250050d`](https://github.com/TanStack/query/commit/250050d863d33fbc881c6e342c104d510403a9e1)]:
+  - @tanstack/svelte-query@6.1.42
+
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.2
+  - @tanstack/svelte-query@6.1.41
+
+## 6.1.40
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.1
+  - @tanstack/svelte-query@6.1.40
+
+## 6.1.39
+
+### Patch Changes
+
+- Updated dependencies [[`6e3d521`](https://github.com/TanStack/query/commit/6e3d521fe54f78624e53c1c6f9cadd678504bee8), [`294d4e6`](https://github.com/TanStack/query/commit/294d4e62c4f7d674574a4903eef2a1bc3dd1413b), [`2215bb0`](https://github.com/TanStack/query/commit/2215bb031139cdc8a84751b37a485c38ca9d2b6e), [`1ef4208`](https://github.com/TanStack/query/commit/1ef42087c9a266c2137d2ef645cbcc662f60ac93)]:
+  - @tanstack/svelte-query@6.1.39
+  - @tanstack/query-devtools@5.102.0
+
+## 6.1.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.4
+  - @tanstack/svelte-query@6.1.38
+
+## 6.1.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.3
+  - @tanstack/svelte-query@6.1.37
+
+## 6.1.36
+
+### Patch Changes
+
+- Updated dependencies [[`f5bf180`](https://github.com/TanStack/query/commit/f5bf180d933d8b8d9d9e7b845e55b26a3a413b07), [`25cdd97`](https://github.com/TanStack/query/commit/25cdd975fed4703d2ca5b600ca5ccd2b600b3dd8), [`ecd89c8`](https://github.com/TanStack/query/commit/ecd89c8faf7acc226f00633ea3a761d3ab842c1d), [`01c7634`](https://github.com/TanStack/query/commit/01c763444e3cf3dfa9744f13911aa1533cac3c29), [`49012db`](https://github.com/TanStack/query/commit/49012dbd5192dfe483d3b108b72ffaa7f2849e0f)]:
+  - @tanstack/query-devtools@5.101.2
+  - @tanstack/svelte-query@6.1.36
+
+## 6.1.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.101.1
+  - @tanstack/svelte-query@6.1.35
+
+## 6.1.34
+
+### Patch Changes
+
+- Updated dependencies [[`3042860`](https://github.com/TanStack/query/commit/3042860e3c8731c94ca4dec0e277e415d0484fce), [`e631dc3`](https://github.com/TanStack/query/commit/e631dc3fa17bff71f413246b7a770a730016d346)]:
+  - @tanstack/query-devtools@5.101.0
+  - @tanstack/svelte-query@6.1.34
+
+## 6.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.14
+  - @tanstack/svelte-query@6.1.33
+
 ## 6.1.32
 
 ### Patch Changes
