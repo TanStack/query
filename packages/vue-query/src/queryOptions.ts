@@ -9,6 +9,7 @@ import type {
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
+  OmitKeyof,
   QueryBooleanOption,
   QueryKey,
   QueryKeyWithDataTag,
@@ -23,8 +24,11 @@ type SkipTokenForUseQuery = symbol
 
 /**
  * The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
- * `queryClient` methods see once `ref`s have been resolved. To pass options in, use {@link UseQueryOptions},
- * which accepts the same options as `ref`s and `computed`s too.
+ * `queryClient` methods see once `ref`s have been resolved. `enabled` and `queryKey` track reactive
+ * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). Every other
+ * option — including `queryFn` — is a plain value here; to pass `queryFn` as a `ref`/`computed`, or to close
+ * over reactive state in any other option, use {@link UseQueryOptions} directly, or pass a getter for the
+ * whole options object instead (`useQuery(() => ({ ... }))`).
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -150,7 +154,20 @@ export type UndefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+> = OmitKeyof<
+  QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: MaybeRefDeep<
+    | QueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryFnData,
+        TQueryKey
+      >['queryFn']
+    | SkipTokenForUseQuery
+  >
   /**
    * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
    * created or cached yet). If set to a function, the function will be called **once** during the shared/root
@@ -178,7 +195,20 @@ export type DefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+> = OmitKeyof<
+  QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: MaybeRefDeep<
+    | QueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryFnData,
+        TQueryKey
+      >['queryFn']
+    | SkipTokenForUseQuery
+  >
   /**
    * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
    * created or cached yet). If set to a function, the function will be called **once** during the shared/root
