@@ -16,6 +16,7 @@ export type {
 } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
+  InfiniteQueryOptions,
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
