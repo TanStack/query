@@ -12,10 +12,13 @@ const environmentManager: object;
 Defined in: [packages/query-core/src/environmentManager.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L29)
 
 Manages how TanStack Query detects whether the current runtime should be treated as
-server-side. By default, this uses the same detection as the exported `isServer` utility.
+server-side, which disables scheduling refetch timers and changes the default `retry` count
+and `gcTime`. By default, the detection treats a missing `window` (or the presence of a
+`Deno` global) as server.
 
-Override this for runtimes that are not traditional browser/server environments (e.g.
-extension workers), where the default detection would give the wrong answer.
+Override this for runtimes where that default detection would give the wrong answer — for
+example, a Service Worker, where `window` is undefined even though the environment should
+behave like a client.
 
 ## Type Declaration
 
@@ -52,10 +55,7 @@ Overrides the server check globally.
 ## Example
 
 ```ts
-import { environmentManager, isServer } from '@tanstack/query-core'
+import { environmentManager } from '@tanstack/query-core'
 
-environmentManager.setIsServer(() => typeof window === 'undefined' && !('chrome' in globalThis))
-
-// Restore the default behavior:
-environmentManager.setIsServer(() => isServer)
+environmentManager.setIsServer(() => false)
 ```
