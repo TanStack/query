@@ -361,12 +361,10 @@ describe('useQuery', () => {
   })
 
   describe('queryKey reactivity rules', () => {
-    it('should reject a bare reactive getter for the whole queryKey array', () => {
+    it('should accept a bare reactive getter for the whole queryKey array', () => {
       const id = ref(1)
       assertType(
         useQuery({
-          // @ts-expect-error when passed directly to useQuery, queryKey cannot be a bare
-          // reactive getter for the whole array (queryOptions() allows this)
           queryKey: () => ['post', id.value],
           queryFn: () => sleep(0).then(() => 'Some data'),
         }),

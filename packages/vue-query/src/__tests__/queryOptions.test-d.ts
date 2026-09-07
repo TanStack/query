@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
@@ -361,5 +361,20 @@ describe('queryOptions', () => {
     })
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should narrow data to a defined type for a computed queryFn resolving to skipToken', () => {
+    const id = ref<string | null>('1')
+
+    const options = queryOptions({
+      queryKey: computed(() => ['foo', id.value]),
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve({ id: '1' }) : skipToken,
+      ),
+    })
+
+    const { data } = reactive(useQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
   })
 })

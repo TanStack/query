@@ -1,6 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { dataTagSymbol } from '@tanstack/query-core'
-import { reactive } from 'vue-demi'
+import { dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { computed, reactive, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { QueryClient } from '../queryClient'
@@ -160,6 +160,28 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
+    >()
+  })
+
+  it('should allow a computed queryFn resolving to skipToken', () => {
+    const id = ref<string | null>('1')
+
+    const options = infiniteQueryOptions({
+      queryKey: computed(() => ['foo', id.value]),
+      queryFn: computed(() =>
+        id.value
+          ? ({ pageParam }: { pageParam: number }) =>
+              Promise.resolve({ id: id.value, pageParam })
+          : skipToken,
+      ),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const { data } = reactive(useInfiniteQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<{ id: string | null; pageParam: number }> | undefined
     >()
   })
 })
