@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive, ref } from 'vue'
+import { reactive } from 'vue'
+import { computed, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
