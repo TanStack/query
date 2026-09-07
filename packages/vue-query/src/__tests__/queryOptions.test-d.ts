@@ -404,4 +404,20 @@ describe('queryOptions', () => {
       ),
     )
   })
+
+  it('should narrow data to a defined type for a conditional skipToken inside a whole-options getter', () => {
+    const id = ref<string | null>('1')
+
+    const options = queryOptions(() => {
+      const current = id.value
+      return {
+        queryKey: ['foo', current],
+        queryFn: current ? () => Promise.resolve({ id: current }) : skipToken,
+      }
+    })
+
+    const { data } = reactive(useQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
+  })
 })
