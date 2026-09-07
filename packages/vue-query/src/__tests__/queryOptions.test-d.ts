@@ -385,6 +385,8 @@ describe('queryOptions', () => {
     // declared (plain) type lie about the actual (reactive) value.
     assertType(
       queryOptions({
+        // The directive sits on `queryKey`, not `staleTime`: overload resolution fails on the whole
+        // object literal and TypeScript reports it at the first property.
         // @ts-expect-error staleTime must be a plain value, not a ref
         queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
