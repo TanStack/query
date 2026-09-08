@@ -29,7 +29,7 @@ injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-todos = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todos', todoId()],
   queryFn: async () => {
     if (somethingGoesWrong) {
@@ -48,7 +48,7 @@ todos = injectQuery(() => ({
 [//]: # 'Example3'
 
 ```ts
-todos = injectQuery(() => ({
+todoQuery = injectQuery(() => ({
   queryKey: ['todos', todoId()],
   queryFn: async () => {
     const response = await fetch('/todos/' + todoId)
