@@ -9,6 +9,10 @@ import Reset from './Reset.svelte'
 import Success from './Success.svelte'
 import Failure from './Failure.svelte'
 import OptimisticUpdate from './OptimisticUpdate.svelte'
+import SuccessContext from './SuccessContext.svelte'
+import InvalidateFromContext from './InvalidateFromContext.svelte'
+import PerCallSuccess from './PerCallSuccess.svelte'
+import MutationFnContext from './MutationFnContext.svelte'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -170,5 +174,87 @@ describe('createMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+  })
+
+  it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
+    const onSuccessMock = vi.fn()
+
+    const rendered = render(SuccessContext, {
+      props: { queryClient, onSuccessMock },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccessMock).toHaveBeenCalledTimes(1)
+    const [data, variables, onMutateResult, context] =
+      onSuccessMock.mock.calls[0]!
+    expect(data).toBe('TODO')
+    expect(variables).toBe('todo')
+    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(context.client).toBe(queryClient)
+    expect(context.meta).toBeUndefined()
+    expect(context.mutationKey).toBeUndefined()
+  })
+
+  it('should include mutationKey in the context passed to hook-level callbacks', async () => {
+    const onSuccessMock = vi.fn()
+
+    const rendered = render(SuccessContext, {
+      props: { queryClient, mutationKey: ['todos', 'add'], onSuccessMock },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccessMock).toHaveBeenCalledTimes(1)
+    expect(onSuccessMock.mock.calls[0]?.[3].mutationKey).toEqual([
+      'todos',
+      'add',
+    ])
+  })
+
+  it('should give mutationFn the same QueryClient instance via context', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'tag-from-this-client')
+
+    const rendered = render(MutationFnContext, {
+      props: { queryClient, queryKey: key },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('data: tag-from-this-client')).toBeInTheDocument()
+  })
+
+  it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data')
+
+    const rendered = render(InvalidateFromContext, {
+      props: { queryClient, queryKey: key },
+    })
+
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+
+    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
+  })
+
+  it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
+    const perCallOnSuccess = vi.fn()
+
+    const rendered = render(PerCallSuccess, {
+      props: { queryClient, perCallOnSuccess },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
+    expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
   })
 })
