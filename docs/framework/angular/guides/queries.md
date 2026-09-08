@@ -20,7 +20,10 @@ replace:
 import { injectQuery } from '@tanstack/angular-query-experimental'
 
 export class TodosComponent {
-  info = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+  readonly info = injectQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  }))
 }
 ```
 
@@ -28,7 +31,10 @@ export class TodosComponent {
 [//]: # 'Example2'
 
 ```ts
-result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+todosQuery = injectQuery(() => ({
+  queryKey: ['todos'],
+  queryFn: fetchTodoList,
+}))
 ```
 
 [//]: # 'Example2'
@@ -53,7 +59,7 @@ result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
   `,
 })
 export class PostsComponent {
-  todos = injectQuery(() => ({
+  readonly todos = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
   }))
