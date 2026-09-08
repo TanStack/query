@@ -33,7 +33,11 @@ const alias = {
 
 // Server bundles: everything inlined so module resolution inside the temp
 // output dir is a non-issue.
-for (const entry of ['entry-server', 'entry-server-stream']) {
+for (const entry of [
+  'entry-server',
+  'entry-server-stream',
+  'entry-server-disabled',
+]) {
   await build({
     configFile: false,
     logLevel: 'error',
@@ -82,10 +86,16 @@ const streamReport = execFileSync(
   [path.join(outDir, 'entry-server-stream.mjs')],
   { encoding: 'utf-8' },
 )
+const disabledReport = execFileSync(
+  process.execPath,
+  [path.join(outDir, 'entry-server-disabled.mjs')],
+  { encoding: 'utf-8' },
+)
 
-// Sanity-check both parse before handing them to the test.
+// Sanity-check all three parse before handing them to the test.
 const combined = JSON.stringify({
   string: JSON.parse(report),
   stream: JSON.parse(streamReport),
+  disabled: JSON.parse(disabledReport),
 })
 process.stdout.write(combined)
