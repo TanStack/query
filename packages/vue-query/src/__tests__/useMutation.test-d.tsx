@@ -2,6 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
+import type { MutationFunctionContext, MutationKey } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
@@ -95,5 +96,55 @@ describe('useMutation', () => {
 
     expectTypeOf(mutation.mutate).toBeCallableWith()
     expectTypeOf(mutation.mutateAsync).toBeCallableWith()
+  })
+
+  it('should type context as the last argument for every hook-level callback', () => {
+    // `mutationFn`'s `context` parameter is implicitly `any` here, unlike every other adapter and unlike
+    // this file's other callbacks — so it's excluded from the assertions below.
+    useMutation({
+      mutationFn: () => Promise.resolve('data'),
+      onMutate: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+    })
+  })
+
+  it('should type context as the last argument for every per-call mutate option', () => {
+    const mutation = useMutation({
+      mutationFn: () => Promise.resolve('data'),
+    })
+
+    mutation.mutate(undefined, {
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+    })
+  })
+
+  it('should type context.mutationKey as MutationKey', () => {
+    useMutation({
+      mutationKey: ['todos', 'add'] as const,
+      mutationFn: () => Promise.resolve('data'),
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context.mutationKey).toEqualTypeOf<
+          MutationKey | undefined
+        >()
+      },
+    })
   })
 })

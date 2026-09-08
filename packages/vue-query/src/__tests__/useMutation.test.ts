@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
+import type { MutationFunctionContext } from '@tanstack/query-core'
 
 vi.mock('../useQueryClient')
 
@@ -560,12 +561,88 @@ describe('useMutation', () => {
       await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
-      expect(onSuccessPerCall).toHaveBeenCalledWith(
-        'Todo 2',
-        'Todo 2',
-        undefined,
-        expect.anything(),
-      )
+      const [data, variables, onMutateResult, context] =
+        onSuccessPerCall.mock.calls[0]!
+      expect(data).toBe('Todo 2')
+      expect(variables).toBe('Todo 2')
+      expect(onMutateResult).toBeUndefined()
+      expect(context.client).toBe(useQueryClient())
     })
+  })
+
+  it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
+    const onSuccess = vi.fn()
+    const mutation = useMutation({
+      mutationFn: (text: string) => sleep(10).then(() => text.toUpperCase()),
+      onMutate: (text: string) => ({ startedWith: text }),
+      onSuccess,
+    })
+
+    mutation.mutate('todo')
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    const [data, variables, onMutateResult, context] = onSuccess.mock.calls[0]!
+    expect(data).toBe('TODO')
+    expect(variables).toBe('todo')
+    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(context.client).toBe(useQueryClient())
+    expect(context.meta).toBeUndefined()
+    expect(context.mutationKey).toBeUndefined()
+  })
+
+  it('should give mutationFn the same QueryClient instance via context', async () => {
+    const key = queryKey()
+    const queryClient = useQueryClient()
+    queryClient.setQueryData(key, 'tag-from-this-client')
+
+    const mutation = useMutation({
+      mutationFn: (_text: string, context: MutationFunctionContext) =>
+        sleep(10).then(() => context.client.getQueryData(key)),
+    })
+
+    mutation.mutate('todo')
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(mutation.data.value).toBe('tag-from-this-client')
+  })
+
+  it('should include mutationKey in the context passed to hook-level callbacks', async () => {
+    const onSuccess = vi.fn()
+    const mutation = useMutation({
+      mutationKey: ['todos', 'add'],
+      mutationFn: (text: string) => sleep(10).then(() => text),
+      onSuccess,
+    })
+
+    mutation.mutate('todo')
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
+  })
+
+  it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
+    const key = queryKey()
+    const queryClient = useQueryClient()
+    queryClient.setQueryData(key, 'data')
+
+    const mutation = useMutation({
+      mutationFn: () => sleep(10).then(() => 'mutated'),
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        context.client.invalidateQueries({ queryKey: key })
+      },
+    })
+
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+
+    mutation.mutate()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
   })
 })
