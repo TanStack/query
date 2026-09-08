@@ -2,7 +2,11 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
-import type { MutationFunctionContext, MutationKey } from '@tanstack/query-core'
+import type {
+  MutationFunctionContext,
+  MutationKey,
+  QueryClient,
+} from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
@@ -98,11 +102,13 @@ describe('useMutation', () => {
     expectTypeOf(mutation.mutateAsync).toBeCallableWith()
   })
 
-  it('should type context as the last argument for every hook-level callback', () => {
-    // `mutationFn`'s `context` parameter is implicitly `any` here, unlike every other adapter and unlike
-    // this file's other callbacks — so it's excluded from the assertions below.
+  it('should type context as the last argument for mutationFn and every hook-level callback', () => {
     useMutation({
-      mutationFn: () => Promise.resolve('data'),
+      mutationFn: (_vars: string, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+        expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
+        return Promise.resolve('data')
+      },
       onMutate: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
