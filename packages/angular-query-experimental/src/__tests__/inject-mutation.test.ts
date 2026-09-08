@@ -344,6 +344,114 @@ describe('injectMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
     })
+
+    it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
+      const onSuccess = vi.fn()
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (text: string) =>
+            sleep(10).then(() => text.toUpperCase()),
+          onMutate: (text: string) => ({ startedWith: text }),
+          onSuccess,
+        }))
+      })
+
+      mutation.mutate('todo')
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      const [data, variables, onMutateResult, context] =
+        onSuccess.mock.calls[0]!
+      expect(data).toBe('TODO')
+      expect(variables).toBe('todo')
+      expect(onMutateResult).toEqual({ startedWith: 'todo' })
+      expect(context.client).toBe(queryClient)
+      expect(context.meta).toBeUndefined()
+      expect(context.mutationKey).toBeUndefined()
+    })
+
+    it('should give mutationFn the same QueryClient instance via context', async () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, 'tag-from-this-client')
+
+      @Component({
+        template: `<div>data: {{ mutation.data() ?? 'none' }}</div>`,
+      })
+      class Page {
+        readonly mutation = injectMutation(() => ({
+          mutationFn: (_text: string, context) =>
+            sleep(10).then(() => context.client.getQueryData(key)),
+        }))
+      }
+
+      const rendered = await render(Page)
+
+      rendered.fixture.componentInstance.mutation.mutate('todo')
+
+      await vi.advanceTimersByTimeAsync(11)
+      rendered.fixture.detectChanges()
+
+      expect(
+        rendered.getByText('data: tag-from-this-client'),
+      ).toBeInTheDocument()
+    })
+
+    it('should include mutationKey in the context passed to hook-level callbacks', async () => {
+      const onSuccess = vi.fn()
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationKey: ['todos', 'add'],
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSuccess,
+        }))
+      })
+
+      mutation.mutate('todo')
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
+    })
+
+    it('should let onSuccess invalidate queries via context.client without an injected QueryClient', async () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, 'data')
+
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: () => sleep(10).then(() => 'mutated'),
+          onSuccess: (_data, _variables, _onMutateResult, context) => {
+            context.client.invalidateQueries({ queryKey: key })
+          },
+        }))
+      })
+
+      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+
+      mutation.mutate()
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
+    })
+
+    it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
+      const perCallOnSuccess = vi.fn()
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }))
+      })
+
+      mutation.mutate('todo', { onSuccess: perCallOnSuccess })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
+      expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
+    })
   })
 
   it('should support required signal inputs', async () => {
