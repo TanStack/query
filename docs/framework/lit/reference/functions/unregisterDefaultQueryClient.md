@@ -18,7 +18,7 @@ Unregisters a client previously registered with
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The query client registration to release.
 

@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [react-query/src/types.ts:500](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L500)
+Defined in: [packages/react-query/src/types.ts:500](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L500)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 
@@ -21,7 +21,7 @@ The type your mutation function resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your mutation function may throw.
 

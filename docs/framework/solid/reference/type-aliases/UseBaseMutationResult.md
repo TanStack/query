@@ -9,9 +9,9 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [types.ts:305](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L305)
+Defined in: [packages/solid-query/src/types.ts:305](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L305)
 
-The result of `useMutation`. Same as MutationObserverResult from `@tanstack/query-core`, with
+The result of `useMutation`. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with
 `mutate` narrowed to the fire-and-forget [UseMutateFunction](UseMutateFunction.md) signature, plus the added `mutateAsync`.
 
 ## Type Declaration
@@ -34,7 +34,7 @@ The type your `mutationFn` resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `mutationFn` may throw.
 

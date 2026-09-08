@@ -56,6 +56,24 @@ export function canFetch(networkMode: NetworkMode | undefined): boolean {
     : true
 }
 
+/**
+ * The error thrown by a `Retryer` (and surfaced to `query.promise`/`mutation`) when a fetch is cancelled, e.g. via
+ * `query.cancel()`. `revert`, if `true`, tells the caller to restore the state the query was in before the fetch
+ * started instead of surfacing the error. `silent`, if `true`, tells the caller to suppress this error and instead
+ * resolve with the promise of the fetch that triggered the cancellation.
+ * @example
+ * ```ts
+ * query.cancel()
+ *
+ * try {
+ *   await query.promise
+ * } catch (error) {
+ *   if (error instanceof CancelledError) {
+ *     // the fetch was cancelled, e.g. via `query.cancel()`
+ *   }
+ * }
+ * ```
+ */
 export class CancelledError extends Error {
   revert?: boolean
   silent?: boolean

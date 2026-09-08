@@ -27,7 +27,7 @@ mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResul
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

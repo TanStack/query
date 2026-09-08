@@ -7,7 +7,7 @@ title: useQueries
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): Readonly<Ref<TCombinedResult>>;
 ```
 
-Defined in: [vue-query/src/useQueries.ts:357](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L357)
+Defined in: [packages/vue-query/src/useQueries.ts:357](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L357)
 
 The `useQueries` composable can be used to fetch a variable number of queries.
 

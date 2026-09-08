@@ -7,7 +7,7 @@ title: injectIsRestoring
 function injectIsRestoring(options?): Signal<boolean>;
 ```
 
-Defined in: [inject-is-restoring.ts:35](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L35)
+Defined in: [packages/angular-query-experimental/src/inject-is-restoring.ts:35](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L35)
 
 Injects a signal that tracks whether a restore (e.g. from a persisted client, wired up via
 `provideIsRestoring`) is currently in progress. `injectQuery` and friends also check this internally to

@@ -9,7 +9,7 @@ title: useSuspenseQueries
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L409)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:409](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L409)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -46,7 +46,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.
@@ -279,7 +279,7 @@ function ErrorBoundary({
 function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useSuspenseQueries.ts:589](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L589)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:589](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L589)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -315,7 +315,7 @@ An array with query option objects identical to `useSuspenseQuery`.
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.

@@ -16,11 +16,11 @@ were created by a different component or hook instance, or even ones no longer m
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](../type-aliases/MutationTypeFromResult.md)\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](../type-aliases/MutationTypeFromResult.md)\<`TResult`\>
 
 ## Parameters
 
@@ -33,7 +33,7 @@ mutation state.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

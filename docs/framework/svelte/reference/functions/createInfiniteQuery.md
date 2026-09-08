@@ -23,7 +23,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -41,7 +41,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 ### Returns
 
@@ -67,7 +67,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -85,7 +85,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 ### Returns
 
@@ -111,7 +111,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:152](https://githu
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -132,7 +132,7 @@ The [CreateInfiniteQueryOptions](../type-aliases/CreateInfiniteQueryOptions.md) 
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

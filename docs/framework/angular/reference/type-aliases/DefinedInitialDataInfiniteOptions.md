@@ -7,7 +7,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [infinite-query-options.ts:109](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L109)
+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:109](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L109)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
 never `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -39,20 +39,20 @@ The type of a single page, as your `queryFn` resolves it.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
 the shape of all fetched pages plus their page params.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.
 
