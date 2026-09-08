@@ -64,7 +64,7 @@ todos = injectQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
-result = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos', { status: status(), page: page() }],
   queryFn: fetchTodoList,
 }))
