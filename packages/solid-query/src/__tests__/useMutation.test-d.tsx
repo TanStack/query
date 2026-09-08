@@ -152,7 +152,7 @@ describe('useMutation', () => {
 
   it('should type context as the last argument for mutationFn and every hook-level callback', () => {
     useMutation(() => ({
-      mutationFn: (_vars: string, context) => {
+      mutationFn: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
         expectTypeOf(context.client).toEqualTypeOf<QueryCoreClient>()
         return Promise.resolve('data')
