@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
@@ -373,9 +373,7 @@ describe('createMutation', () => {
         .mutateAsync('todo', {
           onError: () => callbacks.push('mutateAsync.onError'),
         })
-        .catch(() => {
-          // asserted via the onError callbacks above
-        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
 
       expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
