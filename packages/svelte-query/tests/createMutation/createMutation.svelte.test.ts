@@ -415,7 +415,8 @@ describe('createMutation', () => {
           mutationFn: (text: string) => sleep(10).then(() => text),
           onSuccess: () =>
             sleep(10).then(() => callbacks.push('useMutation.onSuccess')),
-          onSettled: () => callbacks.push('useMutation.onSettled'),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
         }),
         () => queryClient,
       )
@@ -426,7 +427,7 @@ describe('createMutation', () => {
           onSettled: () => callbacks.push('mutateAsync.onSettled'),
         })
         .then((result) => callbacks.push(`mutateAsync.result:${result}`))
-      await vi.advanceTimersByTimeAsync(20)
+      await vi.advanceTimersByTimeAsync(30)
 
       expect(callbacks).toEqual([
         'useMutation.onSuccess',
@@ -449,7 +450,8 @@ describe('createMutation', () => {
             sleep(10).then(() => Promise.reject(new Error('oops'))),
           onError: () =>
             sleep(10).then(() => callbacks.push('useMutation.onError')),
-          onSettled: () => callbacks.push('useMutation.onSettled'),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
         }),
         () => queryClient,
       )
@@ -462,7 +464,7 @@ describe('createMutation', () => {
         .catch((error) =>
           callbacks.push(`mutateAsync.error:${(error as Error).message}`),
         )
-      await vi.advanceTimersByTimeAsync(20)
+      await vi.advanceTimersByTimeAsync(30)
 
       expect(callbacks).toEqual([
         'useMutation.onError',
