@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { noop } from '@tanstack/query-core'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, setFixtureSignalInputs } from './test-utils'
 
@@ -244,7 +245,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -260,7 +261,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -276,7 +277,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -292,7 +293,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onError })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -307,7 +308,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSuccess })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -322,9 +323,145 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSettled })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call onSuccess and onSettled when passed as arguments of mutate function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }))
+      })
+
+      mutation.mutate('', {
+        onSuccess: () => callbacks.push('mutate.onSuccess'),
+        onSettled: () => callbacks.push('mutate.onSettled'),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+    })
+
+    it('should call onError and onSettled when passed as arguments of mutate function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (_params: string) =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        }))
+      })
+
+      mutation.mutate('', {
+        onError: () => callbacks.push('mutate.onError'),
+        onSettled: () => callbacks.push('mutate.onSettled'),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+    })
+
+    it('should call onSuccess and onSettled when passed as arguments of mutateAsync function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }))
+      })
+
+      mutation.mutateAsync('', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'mutateAsync.onSuccess',
+        'mutateAsync.onSettled',
+      ])
+    })
+
+    it('should call onError and onSettled when passed as arguments of mutateAsync function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (_params: string) =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        }))
+      })
+
+      mutation
+        .mutateAsync('', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .catch(noop)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'mutateAsync.onError',
+        'mutateAsync.onSettled',
+      ])
+    })
+
+    it('should call onSuccess when passed as an argument of mutateAsync function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }))
+      })
+
+      mutation.mutateAsync('', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+    })
+
+    it('should call onError when passed as an argument of mutateAsync function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (_params: string) =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        }))
+      })
+
+      mutation
+        .mutateAsync('', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+        })
+        .catch(noop)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onError'])
+    })
+
+    it('should call onSettled when passed as an argument of mutateAsync function', async () => {
+      const callbacks: Array<string> = []
+      const mutation = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }))
+      })
+
+      mutation.mutateAsync('', {
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onSettled'])
     })
 
     it('should fire both onSettled functions', async () => {
@@ -339,7 +476,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSettled: onSettledOnFunction })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
@@ -635,7 +772,7 @@ describe('injectMutation', () => {
     })
 
     const promise = mutateAsync('Mock data')
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     await expect(promise).resolves.toBe('Mock data')
   })
