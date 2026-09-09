@@ -240,7 +240,11 @@ export class MutationObserver<
   #notify(action?: Action<TData, TError, TVariables, TOnMutateResult>): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
-      if (this.#mutateOptions && this.hasListeners()) {
+      // Snapshot this settlement's per-call options and result fields. A nested
+      // mutate() from onSuccess/onError overwrites #mutateOptions (and may
+      // update #currentResult) before onSettled runs.
+      const mutateOptions = this.#mutateOptions
+      if (mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
         const onMutateResult = this.#currentResult.context
 
@@ -252,7 +256,7 @@ export class MutationObserver<
 
         if (action?.type === 'success') {
           try {
-            this.#mutateOptions.onSuccess?.(
+            mutateOptions.onSuccess?.(
               action.data,
               variables,
               onMutateResult,
@@ -262,7 +266,7 @@ export class MutationObserver<
             void Promise.reject(e)
           }
           try {
-            this.#mutateOptions.onSettled?.(
+            mutateOptions.onSettled?.(
               action.data,
               null,
               variables,
@@ -274,7 +278,7 @@ export class MutationObserver<
           }
         } else if (action?.type === 'error') {
           try {
-            this.#mutateOptions.onError?.(
+            mutateOptions.onError?.(
               action.error,
               variables,
               onMutateResult,
@@ -284,7 +288,7 @@ export class MutationObserver<
             void Promise.reject(e)
           }
           try {
-            this.#mutateOptions.onSettled?.(
+            mutateOptions.onSettled?.(
               undefined,
               action.error,
               variables,
