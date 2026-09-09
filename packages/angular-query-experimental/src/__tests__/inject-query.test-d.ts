@@ -1,4 +1,3 @@
-import { TestBed } from '@angular/core/testing'
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions } from '..'
@@ -9,76 +8,60 @@ describe('injectQuery', () => {
   it('should return the correct types', () => {
     const key = queryKey()
     // unspecified query function should default to unknown
-    const noQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-      })),
-    )
+    const noQueryFn = injectQuery(() => ({
+      queryKey: key,
+    }))
     expectTypeOf(noQueryFn.data()).toEqualTypeOf<unknown>()
     expectTypeOf(noQueryFn.error()).toEqualTypeOf<Error | null>()
 
     // it should infer the result type from the query function
-    const fromQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      })),
-    )
+    const fromQueryFn = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => 'test',
+    }))
     expectTypeOf(fromQueryFn.data()).toEqualTypeOf<string | undefined>()
     expectTypeOf(fromQueryFn.error()).toEqualTypeOf<Error | null>()
 
     // it should be possible to specify the result type
-    const withResult = TestBed.runInInjectionContext(() =>
-      injectQuery<string>(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      })),
-    )
+    const withResult = injectQuery<string>(() => ({
+      queryKey: key,
+      queryFn: () => 'test',
+    }))
     expectTypeOf(withResult.data()).toEqualTypeOf<string | undefined>()
     expectTypeOf(withResult.error()).toEqualTypeOf<Error | null>()
 
     // it should be possible to specify the error type
     type CustomErrorType = { message: string }
-    const withError = TestBed.runInInjectionContext(() =>
-      injectQuery<string, CustomErrorType>(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      })),
-    )
+    const withError = injectQuery<string, CustomErrorType>(() => ({
+      queryKey: key,
+      queryFn: () => 'test',
+    }))
     expectTypeOf(withError.data()).toEqualTypeOf<string | undefined>()
     expectTypeOf(withError.error()).toEqualTypeOf<CustomErrorType | null>()
 
     // it should infer the result type from the configuration
-    const withResultInfer = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => true,
-      })),
-    )
+    const withResultInfer = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => true,
+    }))
     expectTypeOf(withResultInfer.data()).toEqualTypeOf<boolean | undefined>()
     expectTypeOf(withResultInfer.error()).toEqualTypeOf<Error | null>()
 
     // it should be possible to specify a union type as result type
-    const unionTypeSync = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
-      })),
-    )
+    const unionTypeSync = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
+    }))
     expectTypeOf(unionTypeSync.data()).toEqualTypeOf<'a' | 'b' | undefined>()
-    const unionTypeAsync = TestBed.runInInjectionContext(() =>
-      injectQuery<'a' | 'b'>(() => ({
-        queryKey: key,
-        queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-      })),
-    )
+    const unionTypeAsync = injectQuery<'a' | 'b'>(() => ({
+      queryKey: key,
+      queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
+    }))
     expectTypeOf(unionTypeAsync.data()).toEqualTypeOf<'a' | 'b' | undefined>()
 
     // it should error when the query function result does not match with the specified type
-    TestBed.runInInjectionContext(() =>
-      // @ts-expect-error
-      injectQuery<number>(() => ({ queryKey: key, queryFn: () => 'test' })),
-    )
+    // @ts-expect-error
+    injectQuery<number>(() => ({ queryKey: key, queryFn: () => 'test' }))
 
     // it should infer the result type from a generic query function
     /**
@@ -88,22 +71,18 @@ describe('injectQuery', () => {
       return Promise.resolve({} as T)
     }
 
-    const fromGenericQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      })),
-    )
+    const fromGenericQueryFn = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => queryFn(),
+    }))
     expectTypeOf(fromGenericQueryFn.data()).toEqualTypeOf<string | undefined>()
     expectTypeOf(fromGenericQueryFn.error()).toEqualTypeOf<Error | null>()
 
     // todo use query options?
-    const fromGenericOptionsQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      })),
-    )
+    const fromGenericOptionsQueryFn = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => queryFn(),
+    }))
     expectTypeOf(fromGenericOptionsQueryFn.data()).toEqualTypeOf<
       string | undefined
     >()
@@ -120,23 +99,19 @@ describe('injectQuery', () => {
       return n + 42
     }
 
-    const fromMyDataArrayKeyQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: ['my-data', 100] as const,
-        queryFn: getMyDataArrayKey,
-      })),
-    )
+    const fromMyDataArrayKeyQueryFn = injectQuery(() => ({
+      queryKey: ['my-data', 100] as const,
+      queryFn: getMyDataArrayKey,
+    }))
     expectTypeOf(fromMyDataArrayKeyQueryFn.data()).toEqualTypeOf<
       number | undefined
     >()
 
     // it should handle query-functions that return Promise<any>
-    const fromPromiseAnyQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: key,
-        queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
-      })),
-    )
+    const fromPromiseAnyQueryFn = injectQuery(() => ({
+      queryKey: key,
+      queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
+    }))
     expectTypeOf(fromPromiseAnyQueryFn.data()).toEqualTypeOf<any | undefined>()
 
     const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
@@ -144,12 +119,10 @@ describe('injectQuery', () => {
       return Number(context.queryKey[0]) + 42
     }
 
-    const fromGetMyDataStringKeyQueryFn = TestBed.runInInjectionContext(() =>
-      injectQuery(() => ({
-        queryKey: ['1'] as ['1'],
-        queryFn: getMyDataStringKey,
-      })),
-    )
+    const fromGetMyDataStringKeyQueryFn = injectQuery(() => ({
+      queryKey: ['1'] as ['1'],
+      queryFn: getMyDataStringKey,
+    }))
     expectTypeOf(fromGetMyDataStringKeyQueryFn.data()).toEqualTypeOf<
       number | undefined
     >()
@@ -178,8 +151,8 @@ describe('injectQuery', () => {
         queryFn: () => fetcher(qk[1], 'token'),
         ...options,
       }))
-    const fromWrappedQuery = TestBed.runInInjectionContext(() =>
-      createWrappedQuery([''], () => Promise.resolve('1')),
+    const fromWrappedQuery = createWrappedQuery([''], () =>
+      Promise.resolve('1'),
     )
     expectTypeOf(fromWrappedQuery.data()).toEqualTypeOf<string | undefined>()
 
@@ -198,8 +171,8 @@ describe('injectQuery', () => {
         'safely'
       >,
     ) => injectQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
-    const fromWrappedFuncStyleQuery = TestBed.runInInjectionContext(() =>
-      createWrappedFuncStyleQuery([''], () => Promise.resolve(true)),
+    const fromWrappedFuncStyleQuery = createWrappedFuncStyleQuery([''], () =>
+      Promise.resolve(true),
     )
     expectTypeOf(fromWrappedFuncStyleQuery.data()).toEqualTypeOf<
       boolean | undefined
