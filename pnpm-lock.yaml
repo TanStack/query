@@ -2187,22 +2187,6 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  integrations/query-devtools-tsc:
-    dependencies:
-      '@tanstack/query-core':
-        specifier: workspace:*
-        version: link:../../packages/query-core
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: file:packages/query-devtools
-    dependenciesMeta:
-      '@tanstack/query-devtools':
-        injected: true
-    devDependencies:
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-
   integrations/react-next-14:
     dependencies:
       '@tanstack/react-query':
@@ -7444,9 +7428,6 @@ packages:
   '@tanstack/pacer@0.21.1':
     resolution: {integrity: sha512-hB01dd4rlsYcTCNP7wK186jgAe6K5qimgM1Y5Jtvz+9PUaILvpmeLLjmQNUNSO1l23lIt+CeQR6mO1mjlPvRtQ==}
     engines: {node: '>=18'}
-
-  '@tanstack/query-devtools@file:packages/query-devtools':
-    resolution: {directory: packages/query-devtools, type: directory}
 
   '@tanstack/react-location@3.7.4':
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
@@ -21736,8 +21717,6 @@ snapshots:
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
       '@tanstack/store': 0.11.0
-
-  '@tanstack/query-devtools@file:packages/query-devtools': {}
 
   '@tanstack/react-location@3.7.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:

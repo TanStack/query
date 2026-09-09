@@ -1,6 +1,8 @@
 ---
 id: ssr
 title: Server Rendering & Hydration
+redirect_from:
+  - framework/react/reference/hydration
 ---
 
 In this guide you'll learn how to use React Query with server rendering.
@@ -158,7 +160,7 @@ function Posts() {
 The setup is minimal and this can be a quick solution for some cases, but there are a **few tradeoffs to consider** when compared to the full approach:
 
 - If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
-- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes since. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that needs it can also be cumbersome.
+- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that need it can also be cumbersome.
 - There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
 - If there is already data in the cache for a query, `initialData` will never overwrite this data, **even if the new data is fresher than the old one**.
   - To understand why this is especially bad, consider the `getServerSideProps` example above. If you navigate back and forth to a page several times, `getServerSideProps` would get called each time and fetch new data, but because we are using the `initialData` option, the client cache and data would never be updated.
@@ -552,9 +554,9 @@ In case you are creating the `QueryClient` for every request, React Query create
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/hydration.md#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient.md#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
 

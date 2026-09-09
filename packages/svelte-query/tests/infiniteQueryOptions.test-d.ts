@@ -50,6 +50,22 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
+  it('should work when passed to createInfiniteQuery with initialData', () => {
+    const key = queryKey()
+    const options = infiniteQueryOptions({
+      queryKey: key,
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      initialData: { pages: ['string'], pageParams: [1] },
+    })
+
+    const query = createInfiniteQuery(() => options)
+
+    // known issue: type of pageParams is unknown when returned from createInfiniteQuery
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
   it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],

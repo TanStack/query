@@ -71,13 +71,13 @@ import { lastValueFrom } from 'rxjs'
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
   template: `
-    @if (query.isPending()) {
+    @if (repoDataQuery.isPending()) {
       Loading...
     }
-    @if (query.error()) {
-      An error has occurred: {{ query.error().message }}
+    @if (repoDataQuery.error()) {
+      An error has occurred: {{ repoDataQuery.error().message }}
     }
-    @if (query.data(); as data) {
+    @if (repoDataQuery.data(); as data) {
       <h1>{{ data.name }}</h1>
       <p>{{ data.description }}</p>
       <strong>👀 {{ data.subscribers_count }}</strong>
@@ -87,9 +87,9 @@ import { lastValueFrom } from 'rxjs'
   `,
 })
 export class SimpleExampleComponent {
-  http = inject(HttpClient)
+  readonly http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly repoDataQuery = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(

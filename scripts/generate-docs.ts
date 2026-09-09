@@ -19,6 +19,10 @@ type PackageReferenceDocsConfig = {
   excludeExternals?: boolean
   simplifyLitQueriesControllerTypes?: boolean
   trimGeneratedMarkdown?: boolean
+  // Maps a generated page's path (relative to outputDir, no extension) to the flat
+  // `docs/framework/<framework>/reference/<name>.md` URLs it replaced, so old links/bookmarks redirect
+  // instead of falling through to the framework docs index. See https://github.com/TanStack/query/issues/11371
+  redirectFrom?: Record<string, Array<string>>
 }
 
 type TypeDocReflectionWithSignatures = {
@@ -99,6 +103,40 @@ async function trimTrailingWhitespaceInMarkdown(outputDir: string) {
   )
 }
 
+async function addRedirectFromToFileFrontmatter(
+  filePath: string,
+  fromPaths: Array<string>,
+) {
+  const markdown = await readFile(filePath, 'utf8')
+
+  const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---\n/)
+  if (!frontmatterMatch) {
+    throw new Error(`Expected frontmatter in ${filePath}`)
+  }
+
+  const redirectLines = fromPaths
+    .map((fromPath) => `  - ${fromPath}`)
+    .join('\n')
+  const updatedFrontmatter = `---\n${frontmatterMatch[1]}\nredirect_from:\n${redirectLines}\n---\n`
+
+  await writeFile(
+    filePath,
+    updatedFrontmatter + markdown.slice(frontmatterMatch[0].length),
+  )
+}
+
+async function addRedirectFromToFrontmatter(
+  outputDir: string,
+  redirectFrom: Record<string, Array<string>>,
+) {
+  for (const [pagePath, fromPaths] of Object.entries(redirectFrom)) {
+    await addRedirectFromToFileFrontmatter(
+      resolve(outputDir, `${pagePath}.md`),
+      fromPaths,
+    )
+  }
+}
+
 async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
   const outputDir = pkg.outputDir
   await rm(outputDir, { recursive: true, force: true })
@@ -125,7 +163,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     gitRevision: 'main',
     entryPoints: pkg.entryPoints,
     tsconfig: pkg.tsconfig,
-    exclude: pkg.exclude,
+    ...(pkg.exclude && { exclude: pkg.exclude }),
     out: outputDir,
   })
 
@@ -141,10 +179,14 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     if (pkg.trimGeneratedMarkdown) {
       await trimTrailingWhitespaceInMarkdown(outputDir)
     }
+
+    if (pkg.redirectFrom) {
+      await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
+    }
   }
 }
 
-for (const pkg of [
+const packages: Array<PackageReferenceDocsConfig> = [
   {
     entryPoints: [
       resolve(__dirname, '../packages/angular-query-experimental/src/index.ts'),
@@ -154,30 +196,152 @@ for (const pkg of [
       '../packages/angular-query-experimental/tsconfig.json',
     ),
     outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-    exclude: ['./packages/query-core/**/*'],
+  },
+  {
+    entryPoints: [resolve(__dirname, '../packages/solid-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/solid-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/solid/reference'),
+    redirectFrom: {
+      'functions/infiniteQueryOptions': [
+        'framework/solid/reference/infiniteQueryOptions',
+      ],
+      'functions/mutationOptions': [
+        'framework/solid/reference/mutationOptions',
+      ],
+      'functions/queryOptions': ['framework/solid/reference/queryOptions'],
+      'functions/useInfiniteQuery': [
+        'framework/solid/reference/useInfiniteQuery',
+      ],
+      'functions/useIsFetching': ['framework/solid/reference/useIsFetching'],
+      'functions/useIsMutating': ['framework/solid/reference/useIsMutating'],
+      'functions/useMutation': ['framework/solid/reference/useMutation'],
+      'functions/useMutationState': [
+        'framework/solid/reference/useMutationState',
+      ],
+      'functions/useQueries': ['framework/solid/reference/useQueries'],
+      'functions/useQuery': ['framework/solid/reference/useQuery'],
+    },
+  },
+  {
+    entryPoints: [resolve(__dirname, '../packages/vue-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/vue-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/vue/reference'),
+  },
+  {
+    entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],
+    tsconfig: resolve(__dirname, '../packages/react-query/tsconfig.json'),
+    outputDir: resolve(__dirname, '../docs/framework/react/reference'),
+    redirectFrom: {
+      'functions/infiniteQueryOptions': [
+        'framework/react/reference/infiniteQueryOptions',
+      ],
+      'functions/mutationOptions': [
+        'framework/react/reference/mutationOptions',
+      ],
+      'functions/QueryClientProvider': [
+        'framework/react/reference/QueryClientProvider',
+      ],
+      'functions/QueryErrorResetBoundary': [
+        'framework/react/reference/QueryErrorResetBoundary',
+      ],
+      'functions/queryOptions': ['framework/react/reference/queryOptions'],
+      'functions/useInfiniteQuery': [
+        'framework/react/reference/useInfiniteQuery',
+      ],
+      'functions/useIsFetching': ['framework/react/reference/useIsFetching'],
+      'functions/useIsMutating': ['framework/react/reference/useIsMutating'],
+      'functions/useMutation': ['framework/react/reference/useMutation'],
+      'functions/useMutationState': [
+        'framework/react/reference/useMutationState',
+      ],
+      'functions/usePrefetchInfiniteQuery': [
+        'framework/react/reference/usePrefetchInfiniteQuery',
+      ],
+      'functions/usePrefetchQuery': [
+        'framework/react/reference/usePrefetchQuery',
+      ],
+      'functions/useQueries': ['framework/react/reference/useQueries'],
+      'functions/useQuery': ['framework/react/reference/useQuery'],
+      'functions/useQueryClient': ['framework/react/reference/useQueryClient'],
+      'functions/useQueryErrorResetBoundary': [
+        'framework/react/reference/useQueryErrorResetBoundary',
+      ],
+      'functions/useSuspenseInfiniteQuery': [
+        'framework/react/reference/useSuspenseInfiniteQuery',
+      ],
+      'functions/useSuspenseQueries': [
+        'framework/react/reference/useSuspenseQueries',
+      ],
+      'functions/useSuspenseQuery': [
+        'framework/react/reference/useSuspenseQuery',
+      ],
+      // Redirects from the legacy hand-written docs/reference/*.md pages, removed in favor of
+      // this generated reference.
+      'classes/QueryClient': [
+        'reference/QueryClient',
+        'framework/react/reference/QueryClient',
+      ],
+      'classes/QueryCache': [
+        'reference/QueryCache',
+        'framework/react/reference/QueryCache',
+      ],
+      'classes/MutationCache': [
+        'reference/MutationCache',
+        'framework/react/reference/MutationCache',
+      ],
+      'classes/QueryObserver': [
+        'reference/QueryObserver',
+        'framework/react/reference/QueryObserver',
+      ],
+      'classes/InfiniteQueryObserver': [
+        'reference/InfiniteQueryObserver',
+        'framework/react/reference/InfiniteQueryObserver',
+      ],
+      'classes/QueriesObserver': [
+        'reference/QueriesObserver',
+        'framework/react/reference/QueriesObserver',
+      ],
+      // focusManager/onlineManager/timeoutManager are class instances, not object literals, so
+      // TypeDoc can't inline their methods onto the `variables/*` instance page — the method docs
+      // that the legacy pages covered now live on the `interfaces/*` page for the class itself.
+      'interfaces/FocusManager': [
+        'reference/focusManager',
+        'framework/react/reference/focusManager',
+      ],
+      'interfaces/OnlineManager': [
+        'reference/onlineManager',
+        'framework/react/reference/onlineManager',
+      ],
+      'interfaces/TimeoutManager': ['reference/timeoutManager'],
+      'variables/notifyManager': [
+        'reference/notifyManager',
+        'framework/react/reference/notifyManager',
+      ],
+      'variables/environmentManager': ['reference/environmentManager'],
+      'functions/experimental_streamedQuery': ['reference/streamedQuery'],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/preact-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
-    exclude: ['./packages/query-core/**/*'],
     excludeExternals: true,
     simplifyLitQueriesControllerTypes: true,
     trimGeneratedMarkdown: true,
   },
-] satisfies Array<PackageReferenceDocsConfig>) {
+]
+
+for (const pkg of packages) {
   await generatePackageReferenceDocs(pkg)
 }
 

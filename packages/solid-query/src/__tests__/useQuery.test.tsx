@@ -29,6 +29,8 @@ import {
   QueryCache,
   QueryClient,
   keepPreviousData,
+  noop,
+  skipToken,
   useQuery,
 } from '..'
 import {
@@ -302,10 +304,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -1472,10 +1476,12 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     function FirstComponent() {
@@ -1994,10 +2000,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2034,10 +2042,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2485,10 +2495,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2568,6 +2580,33 @@ describe('useQuery', () => {
       isStale: true,
       isFetching: false,
     })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      }))
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+      return null
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
 
   it('should not fetch if initial data is set with a stale time', async () => {
@@ -3043,11 +3082,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -3078,11 +3119,13 @@ describe('useQuery', () => {
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 1000,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -3167,10 +3210,12 @@ describe('useQuery', () => {
 
       createEffect(() => {
         async function prefetch() {
-          await queryClient.prefetchQuery({
-            queryKey: key,
-            queryFn: () => Promise.resolve('prefetched data'),
-          })
+          await queryClient
+            .query({
+              queryKey: key,
+              queryFn: () => Promise.resolve('prefetched data'),
+            })
+            .catch(noop)
           setPrefetched(true)
         }
         prefetch()
@@ -5563,7 +5608,7 @@ describe('useQuery', () => {
       return <></>
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     renderWithClient(queryClient, () => <Page />)
@@ -5752,5 +5797,39 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once postId is set', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
+
+    function Page() {
+      const [postId, setPostId] = createSignal<number>()
+
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: postId() != null ? queryFn : skipToken,
+      }))
+
+      return (
+        <div>
+          <div>data: {state.data ?? 'none'}</div>
+          <button onClick={() => setPostId(1)}>set postId</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('data: post 1')).toBeInTheDocument()
   })
 })

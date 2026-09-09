@@ -145,7 +145,6 @@ describe('createMutation', () => {
 
       const mutation = createMutation(
         () => {
-          // Access reactive state so this effect dependency triggers teardown/remount
           void isMounted
           return {
             mutationFn: () => promise,
@@ -158,19 +157,15 @@ describe('createMutation', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(mutation.status).toBe('pending')
 
-      // Trigger effect re-run / observer cleanup (simulates unmount/detach)
       isMounted = false
       flushSync()
 
-      // Mutation settles while observer is detached
       resolve('success-payload')
       await vi.advanceTimersByTimeAsync(0)
 
-      // Remount the observer
       isMounted = true
       flushSync()
 
-      // Immediately synchronous verification of Object.assign(result, observer.getCurrentResult())
       expect(mutation.status).toBe('success')
       expect(mutation.data).toBe('success-payload')
     }),

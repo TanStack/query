@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/useMutation.ts:190](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L190)
+Defined in: [packages/preact-query/src/useMutation.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L192)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -40,7 +40,7 @@ The [UseMutationOptions](../interfaces/UseMutationOptions.md) to use — everyth
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -51,12 +51,14 @@ be used.
 
 `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a second
 argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
-mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
-made.
+mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
+fire only for the latest call you've made, and only while the component is still mounted — unmounting before
+the mutation settles removes the subscription and prevents them from firing.
 
 ## See
 
-[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites.
+[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look
+the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
 
 ## Examples
 
@@ -132,11 +134,11 @@ function AddTodo() {
         newTodo,
       ])
 
-      // Passed to `onError` as `context` if the mutation fails.
+      // Passed to `onError` as `onMutateResult` if the mutation fails.
       return { previousTodos }
     },
-    onError: (_err, _newTodo, context) => {
-      queryClient.setQueryData(['todos'], context?.previousTodos)
+    onError: (_err, _newTodo, onMutateResult) => {
+      queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
@@ -150,7 +152,7 @@ function AddTodo() {
 ```
 
 Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
-promise per call instead, so you can wait for all of them:
+promise per call instead, so you can wait for all of them when they succeed:
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/preact-query'
 
@@ -193,13 +195,13 @@ function AddTodos() {
   })
 
   async function handleAddAll(todos: Array<string>) {
-    const results = await Promise.allSettled(
+    const addResults = await Promise.allSettled(
       todos.map((todo) => addMutation.mutateAsync(todo)),
     )
 
-    results.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        console.error(`Failed to add "${todos[index]}":`, result.reason)
+    addResults.forEach((addResult, index) => {
+      if (addResult.status === 'rejected') {
+        console.error(`Failed to add "${todos[index]}":`, addResult.reason)
       }
     })
   }

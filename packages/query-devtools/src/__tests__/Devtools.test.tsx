@@ -4,6 +4,7 @@ import {
   QueryObserver,
   dehydrate,
   hydrate,
+  noop,
   onlineManager,
 } from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
@@ -318,7 +319,7 @@ describe('Devtools', () => {
     })
 
     it('should render a query row when a hydrated query uses a custom hash function', async () => {
-      queryClient.fetchQuery({
+      queryClient.query({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
         queryKeyHashFn: () => 'custom-posts-hash',
@@ -745,10 +746,12 @@ describe('Devtools', () => {
 
     it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
       const queryFn = vi.fn(() => Promise.resolve('original'))
-      queryClient.prefetchQuery({
-        queryKey: ['action-restore-loading'],
-        queryFn,
-      })
+      void queryClient
+        .query({
+          queryKey: ['action-restore-loading'],
+          queryFn,
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(0)
       expect(queryFn).toHaveBeenCalledTimes(1)
 

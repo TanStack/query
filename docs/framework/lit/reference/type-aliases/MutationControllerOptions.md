@@ -19,7 +19,7 @@ Accessor-wrapped options accepted by `createMutationController`.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

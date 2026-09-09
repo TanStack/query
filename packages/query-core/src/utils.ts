@@ -24,9 +24,15 @@ type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
   ? readonly []
   : TuplePrefixes<DropLast<T>> | T
 
+/**
+ * Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
+ * All provided filters must match; filters that are left unspecified are ignored.
+ */
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
+   *
+   * Defaults to `'all'`.
    */
   type?: QueryTypeFilter
   /**
@@ -51,6 +57,10 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   fetchStatus?: FetchStatus
 }
 
+/**
+ * Filters used to select mutations, for example in `mutationCache.findAll` or `queryClient.isMutating`.
+ * All provided filters must match; filters that are left unspecified are ignored.
+ */
 export interface MutationFilters<
   TData = unknown,
   TError = DefaultError,
@@ -77,6 +87,21 @@ export interface MutationFilters<
   status?: MutationStatus
 }
 
+/**
+ * Either a plain value of type `TOutput`, or a function that receives `TInput` and returns `TOutput`.
+ * Used for example by `setQueryData`-style updaters, which accept either the new data directly or a
+ * function that computes it from the previous data. See {@link functionalUpdate}.
+ *
+ * @example
+ * ```ts
+ * queryClient.setQueryData(['posts'], newPosts)
+ *
+ * // Or, using an updater function that receives the current data:
+ * queryClient.setQueryData(['posts'], (oldPosts) =>
+ *   oldPosts ? [...oldPosts, newPost] : oldPosts,
+ * )
+ * ```
+ */
 export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
@@ -88,6 +113,9 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
  */
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
+/**
+ * A function that does nothing.
+ */
 export function noop(): void
 export function noop(): undefined
 export function noop() {}
@@ -131,6 +159,19 @@ export function resolveQueryValue<
     : value
 }
 
+/**
+ * Checks whether a query matches the given {@link QueryFilters}.
+ * Every filter that is specified must match; filters that are left unspecified are ignored.
+ *
+ * @example
+ * ```ts
+ * const queryCache = queryClient.getQueryCache()
+ *
+ * const matchingQueries = queryCache
+ *   .getAll()
+ *   .filter((query) => matchQuery({ queryKey: ['posts'] }, query))
+ * ```
+ */
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
@@ -179,6 +220,20 @@ export function matchQuery(
   return true
 }
 
+/**
+ * Checks whether a mutation matches the given {@link MutationFilters}.
+ * Every filter that is specified must match; filters that are left unspecified are ignored.
+ * If a `mutationKey` filter is provided but the mutation has no `mutationKey` of its own, it does not match.
+ *
+ * @example
+ * ```ts
+ * const mutationCache = queryClient.getMutationCache()
+ *
+ * const matchingMutations = mutationCache
+ *   .getAll()
+ *   .filter((mutation) => matchMutation({ mutationKey: ['addPost'] }, mutation))
+ * ```
+ */
 export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
@@ -219,6 +274,12 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
 /**
  * Default query & mutation keys hash function.
  * Hashes the value into a stable hash.
+ *
+ * @example
+ * ```ts
+ * // Object keys are sorted, so key order doesn't affect the hash:
+ * hashKey(['todos', { page: 1, filter: 'done' }]) // === '["todos",{"filter":"done","page":1}]'
+ * ```
  */
 export function hashKey(queryKey: QueryKey | MutationKey): string {
   return JSON.stringify(queryKey, (_, val) =>
@@ -415,6 +476,20 @@ export function replaceData<
   return data
 }
 
+/**
+ * Intended to be passed as a query's `placeholderData` option, for example
+ * `placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
+ * query key is fetching, it keeps displaying the previously fetched data until the new data arrives.
+ *
+ * @example
+ * ```ts
+ * new QueryObserver(queryClient, {
+ *   queryKey: ['posts', page],
+ *   queryFn: () => fetchPosts(page),
+ *   placeholderData: keepPreviousData,
+ * })
+ * ```
+ */
 export function keepPreviousData<T>(
   previousData: T | undefined,
 ): T | undefined {
@@ -431,7 +506,23 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   return max && newItems.length > max ? newItems.slice(0, -1) : newItems
 }
 
+/**
+ * Sentinel value that can be passed as a query's `queryFn` to conditionally disable the query (equivalent
+ * to `enabled: false`) while preserving full type inference for the query's data. Unlike `enabled: false`,
+ * a query disabled via `skipToken` cannot be triggered with `refetch`.
+ *
+ * @example
+ * ```ts
+ * new QueryObserver(queryClient, {
+ *   queryKey: ['post', postId],
+ *   queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ * })
+ * ```
+ */
 export const skipToken = Symbol()
+/**
+ * The type of the {@link skipToken} sentinel value.
+ */
 export type SkipToken = typeof skipToken
 
 export function ensureQueryFn<
@@ -467,6 +558,21 @@ export function ensureQueryFn<
   return options.queryFn
 }
 
+/**
+ * Resolves a `throwOnError` option to a boolean.
+ * If `throwOnError` is a function, it is called with `params` (e.g. the error and, depending on the caller,
+ * additional context such as the query or mutation) and its result is returned, allowing the throwing
+ * behavior to be decided per error. Otherwise, `throwOnError` itself is coerced to a boolean (`undefined`
+ * resolves to `false`).
+ *
+ * @example
+ * ```ts
+ * const throwOnError =
+ *   query.state.error && typeof options.throwOnError === 'function'
+ *     ? shouldThrowError(options.throwOnError, [query.state.error, query])
+ *     : options.throwOnError
+ * ```
+ */
 export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   throwOnError: boolean | T | undefined,
   params: Parameters<T>,

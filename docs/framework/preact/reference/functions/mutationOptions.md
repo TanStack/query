@@ -9,7 +9,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:49](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L49)
+Defined in: [packages/preact-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L34)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -37,14 +37,14 @@ You can generally pass everything to `mutationOptions` that you can also pass to
 
 #### options
 
-`WithRequired`\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The mutation options to use, identical to what you'd pass to `useMutation`, with a
 required `mutationKey`.
 
 ### Returns
 
-`WithRequired`\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+[`WithRequired`](../type-aliases/WithRequired.md)\<[`UseMutationOptions`](../interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object, unchanged.
 
@@ -52,21 +52,7 @@ The same options object, unchanged.
 
 [useMutation](useMutation.md) to run the mutation these options describe.
 
-### Examples
-
-```tsx
-import { mutationOptions, useMutation } from '@tanstack/preact-query'
-
-export const createPostOptions = mutationOptions({
-  mutationKey: ['posts', 'create'],
-  mutationFn: createPost,
-})
-
-function CreatePost() {
-  const mutation = useMutation(createPostOptions)
-  return <button onClick={() => mutation.mutate({ title: 'Hello' })}>Create</button>
-}
-```
+### Example
 
 Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
 ```tsx
@@ -92,11 +78,12 @@ function SavingIndicator() {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [preact-query/src/mutationOptions.ts:87](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L87)
+Defined in: [packages/preact-query/src/mutationOptions.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L74)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
-`mutationKey` is required on this overload — use this when you don't need to look the mutation up later
-(e.g. with `useMutationState`).
+`mutationKey` is required on this overload — use this when you don't need to target the mutation via a
+`mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters,
+such as `status`.
 
 ### Type Parameters
 
@@ -134,6 +121,10 @@ The same options object, unchanged.
 ### See
 
 [useMutation](useMutation.md) to run the mutation these options describe.
+
+### Remarks
+
+See the other overload's example for looking a mutation up via `useMutationState`.
 
 ### Example
 

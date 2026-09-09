@@ -23,7 +23,7 @@ options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -35,4 +35,4 @@ options depend on Lit host state.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
