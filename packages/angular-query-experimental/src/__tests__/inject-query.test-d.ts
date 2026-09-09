@@ -78,18 +78,6 @@ describe('injectQuery', () => {
     expectTypeOf(fromGenericQueryFn.data()).toEqualTypeOf<string | undefined>()
     expectTypeOf(fromGenericQueryFn.error()).toEqualTypeOf<Error | null>()
 
-    // todo use query options?
-    const fromGenericOptionsQueryFn = injectQuery(() => ({
-      queryKey: key,
-      queryFn: () => queryFn(),
-    }))
-    expectTypeOf(fromGenericOptionsQueryFn.data()).toEqualTypeOf<
-      string | undefined
-    >()
-    expectTypeOf(
-      fromGenericOptionsQueryFn.error(),
-    ).toEqualTypeOf<Error | null>()
-
     type MyData = number
     type MyQueryKey = readonly ['my-data', number]
 

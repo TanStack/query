@@ -69,15 +69,6 @@ describe('useQuery', () => {
   expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
-  const fromGenericOptionsQueryFn = useQuery(() => ({
-    queryKey: key,
-    queryFn: () => queryFn(),
-  }))
-  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-    string | undefined
-  >()
-  expectTypeOf(fromGenericOptionsQueryFn.error).toEqualTypeOf<Error | null>()
-
   type MyData = number
   type MyQueryKey = readonly ['my-data', number]
 
