@@ -244,7 +244,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -260,7 +260,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -276,7 +276,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('')
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -292,7 +292,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onError })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -307,7 +307,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSuccess })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -322,7 +322,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSettled })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -339,7 +339,7 @@ describe('injectMutation', () => {
 
       mutation.mutate('', { onSettled: onSettledOnFunction })
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
@@ -635,7 +635,7 @@ describe('injectMutation', () => {
     })
 
     const promise = mutateAsync('Mock data')
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     await expect(promise).resolves.toBe('Mock data')
   })
