@@ -333,31 +333,30 @@ describe('injectQuery', () => {
 
     expect(fetchFn).not.toHaveBeenCalled()
 
-    void query.refetch().then(() => {
-      expect(fetchFn).toHaveBeenCalledTimes(1)
-      expect(fetchFn).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          queryKey: [...key, 'key11'],
-        }),
-      )
-    })
-
+    void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(fetchFn).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        queryKey: [...key, 'key11'],
+      }),
+    )
 
     keySignal.set('key12')
 
-    void query.refetch().then(() => {
-      expect(fetchFn).toHaveBeenCalledTimes(2)
-      expect(fetchFn).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({
-          queryKey: [...key, 'key12'],
-        }),
-      )
-    })
-
+    void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+    expect(fetchFn).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        queryKey: [...key, 'key12'],
+      }),
+    )
+    expect(query.data()).toBe('Some data')
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
