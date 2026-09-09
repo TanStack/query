@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
@@ -329,4 +329,150 @@ describe('createMutation', () => {
       expect.anything(),
     )
   })
+
+  it(
+    'should be able to call `onSuccess` callback after successful mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSuccess: () => callbacks.push('useMutation.onSuccess'),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSuccess',
+        'mutateAsync.onSuccess',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to call `onError` callback after failed mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+          onError: () => callbacks.push('useMutation.onError'),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+    }),
+  )
+
+  it(
+    'should be able to call `onSettled` callback after mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSettled: () => callbacks.push('useMutation.onSettled'),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSettled',
+        'mutateAsync.onSettled',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to override the useMutation success callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSuccess: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSuccess')),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .then((result) => callbacks.push(`mutateAsync.result:${result}`))
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSuccess',
+        'useMutation.onSettled',
+        'mutateAsync.onSuccess',
+        'mutateAsync.onSettled',
+        'mutateAsync.result:todo',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to override the error callbacks when using mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+          onError: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onError')),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .catch((error) =>
+          callbacks.push(`mutateAsync.error:${(error as Error).message}`),
+        )
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(callbacks).toEqual([
+        'useMutation.onError',
+        'useMutation.onSettled',
+        'mutateAsync.onError',
+        'mutateAsync.onSettled',
+        'mutateAsync.error:oops',
+      ])
+    }),
+  )
 })
