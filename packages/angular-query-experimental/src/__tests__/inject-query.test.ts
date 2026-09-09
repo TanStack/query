@@ -428,7 +428,7 @@ describe('injectQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(spy).toHaveBeenCalledTimes(1)
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(query.status()).toBe('success')
 
     key.set(key2)
@@ -462,7 +462,7 @@ describe('injectQuery', () => {
 
     enabled.set(true)
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(spy).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
   })
@@ -480,19 +480,19 @@ describe('injectQuery', () => {
       }))
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(spy).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
 
     filter.set('')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(spy).toHaveBeenCalledTimes(1)
     expect(query.isFetching()).toBe(false)
 
     filter.set('b')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(spy).toHaveBeenCalledTimes(2)
   })
 
@@ -565,7 +565,7 @@ describe('injectQuery', () => {
       )
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     keySignal.set('key12')
 
@@ -579,7 +579,7 @@ describe('injectQuery', () => {
       )
     })
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
@@ -716,7 +716,7 @@ describe('injectQuery', () => {
       expect(query.data()).toBeUndefined()
       expect(queryFn).toHaveBeenCalledTimes(0)
 
-      await vi.advanceTimersByTimeAsync(11)
+      await vi.advanceTimersByTimeAsync(10)
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('idle')
       expect(query.data()).toBeUndefined()
