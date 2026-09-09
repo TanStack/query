@@ -27,3 +27,4 @@
 >
   mutate2
 </button>
+<div>data: {mutation.data ?? 'null'}, status: {mutation.status}</div>

@@ -310,10 +310,16 @@ describe('createMutation', () => {
       props: { queryClient, onSuccessPerCall },
     })
 
+    expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('data: Todo 2, status: success'),
+    ).toBeInTheDocument()
 
     expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
     expect(onSuccessPerCall).toHaveBeenCalledWith(
