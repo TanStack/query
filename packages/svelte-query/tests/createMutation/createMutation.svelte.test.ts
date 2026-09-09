@@ -13,6 +13,8 @@ import SuccessContext from './SuccessContext.svelte'
 import InvalidateFromContext from './InvalidateFromContext.svelte'
 import PerCallSuccess from './PerCallSuccess.svelte'
 import MutationFnContext from './MutationFnContext.svelte'
+import ParallelMutateAsync from './ParallelMutateAsync.svelte'
+import ConcurrentMutate from './ConcurrentMutate.svelte'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -256,5 +258,75 @@ describe('createMutation', () => {
 
     expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
     expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
+  })
+
+  it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'all' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle Promise.all rejection when one parallel mutateAsync call fails', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'all', failOn: 'file2' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: upload failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle partial failure in parallel mutateAsync calls with Promise.allSettled', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'allSettled', failOn: 'file2' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should only fire the per-call onSuccess for the last mutate() call', async () => {
+    const onSuccessPerCall = vi.fn()
+
+    const rendered = render(ConcurrentMutate, {
+      props: { queryClient, onSuccessPerCall },
+    })
+
+    expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('data: Todo 2, status: success'),
+    ).toBeInTheDocument()
+
+    expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
+    expect(onSuccessPerCall).toHaveBeenCalledWith(
+      'Todo 2',
+      'Todo 2',
+      undefined,
+      expect.anything(),
+    )
   })
 })
