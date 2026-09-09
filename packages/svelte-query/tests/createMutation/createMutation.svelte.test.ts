@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
@@ -13,6 +13,8 @@ import SuccessContext from './SuccessContext.svelte'
 import InvalidateFromContext from './InvalidateFromContext.svelte'
 import PerCallSuccess from './PerCallSuccess.svelte'
 import MutationFnContext from './MutationFnContext.svelte'
+import ParallelMutateAsync from './ParallelMutateAsync.svelte'
+import ConcurrentMutate from './ConcurrentMutate.svelte'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -42,6 +44,234 @@ describe('createMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
+
+  it(
+    'should call mutate callbacks when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('todo', {
+        onSuccess: () => callbacks.push('mutate.onSuccess'),
+        onSettled: () => callbacks.push('mutate.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+    }),
+  )
+
+  it(
+    'should call mutate error callbacks when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('todo', {
+        onError: () => callbacks.push('mutate.onError'),
+        onSettled: () => callbacks.push('mutate.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+    }),
+  )
+
+  it(
+    'should call only mutate onSuccess when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('todo', {
+        onSuccess: () => callbacks.push('mutate.onSuccess'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onSuccess'])
+    }),
+  )
+
+  it(
+    'should call only mutate onError when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('todo', {
+        onError: () => callbacks.push('mutate.onError'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onError'])
+    }),
+  )
+
+  it(
+    'should call only mutate onSettled when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('todo', {
+        onSettled: () => callbacks.push('mutate.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutate.onSettled'])
+    }),
+  )
+
+  it(
+    'should call mutateAsync callbacks when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'mutateAsync.onSuccess',
+        'mutateAsync.onSettled',
+      ])
+    }),
+  )
+
+  it(
+    'should call mutateAsync error callbacks when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'mutateAsync.onError',
+        'mutateAsync.onSettled',
+      ])
+    }),
+  )
+
+  it(
+    'should call only mutateAsync onSuccess when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+    }),
+  )
+
+  it(
+    'should call only mutateAsync onError when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onError'])
+    }),
+  )
+
+  it(
+    'should call only mutateAsync onSettled when createMutation has no callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['mutateAsync.onSettled'])
+    }),
+  )
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const onSuccessMock = vi.fn()
@@ -112,6 +342,152 @@ describe('createMutation', () => {
     expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
     expect(rendered.getByText('Failure Reason: undefined')).toBeInTheDocument()
   })
+
+  it(
+    'should be able to call `onSuccess` callback after successful mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSuccess: () => callbacks.push('useMutation.onSuccess'),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSuccess',
+        'mutateAsync.onSuccess',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to call `onError` callback after failed mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+          onError: () => callbacks.push('useMutation.onError'),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+        })
+        .catch(noop)
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
+    }),
+  )
+
+  it(
+    'should be able to call `onSettled` callback after mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSettled: () => callbacks.push('useMutation.onSettled'),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutateAsync('todo', {
+        onSettled: () => callbacks.push('mutateAsync.onSettled'),
+      })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSettled',
+        'mutateAsync.onSettled',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to override the useMutation success callbacks',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (text: string) => sleep(10).then(() => text),
+          onSuccess: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSuccess')),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .then((result) => callbacks.push(`mutateAsync.result:${result}`))
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(callbacks).toEqual([
+        'useMutation.onSuccess',
+        'useMutation.onSettled',
+        'mutateAsync.onSuccess',
+        'mutateAsync.onSettled',
+        'mutateAsync.result:todo',
+      ])
+    }),
+  )
+
+  it(
+    'should be able to override the error callbacks when using mutateAsync',
+    withEffectRoot(async () => {
+      const callbacks: Array<string> = []
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => Promise.reject(new Error('oops'))),
+          onError: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onError')),
+          onSettled: () =>
+            sleep(10).then(() => callbacks.push('useMutation.onSettled')),
+        }),
+        () => queryClient,
+      )
+
+      mutation
+        .mutateAsync('todo', {
+          onError: () => callbacks.push('mutateAsync.onError'),
+          onSettled: () => callbacks.push('mutateAsync.onSettled'),
+        })
+        .catch((error) =>
+          callbacks.push(`mutateAsync.error:${(error as Error).message}`),
+        )
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(callbacks).toEqual([
+        'useMutation.onError',
+        'useMutation.onSettled',
+        'mutateAsync.onError',
+        'mutateAsync.onSettled',
+        'mutateAsync.error:oops',
+      ])
+    }),
+  )
 
   it(
     'should recreate observer when queryClient changes',
@@ -256,5 +632,75 @@ describe('createMutation', () => {
 
     expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
     expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
+  })
+
+  it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'all' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle Promise.all rejection when one parallel mutateAsync call fails', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'all', failOn: 'file2' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: upload failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle partial failure in parallel mutateAsync calls with Promise.allSettled', async () => {
+    const rendered = render(ParallelMutateAsync, {
+      props: { queryClient, strategy: 'allSettled', failOn: 'file2' },
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should only fire the per-call onSuccess for the last mutate() call', async () => {
+    const onSuccessPerCall = vi.fn()
+
+    const rendered = render(ConcurrentMutate, {
+      props: { queryClient, onSuccessPerCall },
+    })
+
+    expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('data: Todo 2, status: success'),
+    ).toBeInTheDocument()
+
+    expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
+    expect(onSuccessPerCall).toHaveBeenCalledWith(
+      'Todo 2',
+      'Todo 2',
+      undefined,
+      expect.anything(),
+    )
   })
 })
