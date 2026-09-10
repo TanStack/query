@@ -6,6 +6,7 @@ import {
   createSignal,
   isPending as isValuePending,
   onCleanup,
+  onSettled,
   resolve,
   runWithOwner,
   sharedConfig,
@@ -212,6 +213,12 @@ export function useBaseQueryLayer<
   let observerSub: (() => void) | null = null
   let cacheSub: (() => void) | null = null
   let disposed = false
+  /**
+   * A cached mount can start a refetch while a conditional subtree is still
+   * creating its effects. Defer only that attach until the subtree is ready,
+   * while exposing the observer's optimistic fetch status synchronously.
+   */
+  let deferredMountFetchStatus: MetaState['fetchStatus'] | null = null
   /** Set once the mount flow decides the observer should be live — a client
    * swap re-attaches the rebuilt observer iff its predecessor was attached. */
   let shouldAttach = false
@@ -348,7 +355,25 @@ export function useBaseQueryLayer<
       createRenderEffect(
         () => isRestoring(),
         (restoring) => {
-          if (!restoring) attach()
+          if (!restoring) {
+            const currentQuery = observer.getCurrentQuery()
+            const state = currentQuery.state
+            const optimisticFetchStatus = observer.getOptimisticResult(
+              untrack(defaultedOptions),
+            ).fetchStatus
+            if (
+              state.data !== undefined &&
+              optimisticFetchStatus !== state.fetchStatus
+            ) {
+              deferredMountFetchStatus = optimisticFetchStatus
+              onSettled(() => {
+                deferredMountFetchStatus = null
+                attach()
+              })
+            } else {
+              attach()
+            }
+          }
         },
       )
     }
@@ -599,12 +624,19 @@ export function useBaseQueryLayer<
    * the client must have a server counterpart (and vice versa) or every id
    * downstream shifts and hydration key-misses the whole subtree.
    */
-  const metaProjection = createProjection<MetaState>(
-    (draft) => {
-      Object.assign(draft, metaFrom(query().state))
-    },
-    untrack(() => metaFrom(query().state)),
-  )
+  const projectedMeta = () => {
+    const state = query().state
+    if (deferredMountFetchStatus !== null && state.data !== undefined) {
+      return {
+        ...metaFrom(state),
+        fetchStatus: deferredMountFetchStatus,
+      }
+    }
+    return metaFrom(state)
+  }
+  const metaProjection = createProjection<MetaState>((draft) => {
+    Object.assign(draft, projectedMeta())
+  }, untrack(projectedMeta))
   const meta = isServer
     ? new Proxy({} as MetaState, {
         get: (_, key) => serverMeta()[key as keyof MetaState],
