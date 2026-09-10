@@ -70,12 +70,13 @@ export type UseQueryOptions<
 /* --- Create Query and Create Base Query  Types --- */
 
 /**
- * `data` is non-optional: it is a suspending async read. It never returns
- * `undefined` — a read either suspends into the nearest `<Loading>`
- * boundary (first fetch in flight, disabled, restoring), returns a value
+ * `data` is a suspending async read: a read either suspends into the nearest
+ * `<Loading>` boundary (first fetch in flight, restoring), returns a value
  * (committed, placeholder, initial), or throws (`<Errored>` /
- * `throwOnError`). The v5 `TData | undefined` face existed because reads
- * could observe the pre-fetch gap; here that gap is suspension.
+ * `throwOnError`), so it is `TData` rather than the v5 `TData | undefined`.
+ * The exception is a disabled query with nothing cached, which reads
+ * `undefined` without suspending; the hook overloads widen `data` for
+ * options that can disable the query (`enabled`, `skipToken`).
  */
 export type UseBaseQueryResult<
   TData = unknown,

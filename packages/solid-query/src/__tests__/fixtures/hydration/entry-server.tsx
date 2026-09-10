@@ -62,6 +62,7 @@ const counts: FetchCounts = {
   stale: 0,
   placeholder: 0,
   prefetched: 0,
+  disabled: 0,
 }
 const snapshots = trackSnapshots(client)
 const html = await renderApp(client, counts)
@@ -84,6 +85,7 @@ const filteredCounts: FetchCounts = {
   stale: 0,
   placeholder: 0,
   prefetched: 0,
+  disabled: 0,
 }
 const filteredHtml = await renderApp(filteredClient, filteredCounts)
 

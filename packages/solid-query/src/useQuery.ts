@@ -10,6 +10,7 @@ import type {
   UseQueryResult,
 } from './types'
 import type {
+  AlwaysEnabledOptions,
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
@@ -20,7 +21,17 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: () => QueryClient,
+): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: AlwaysEnabledOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: () => QueryClient,
 ): UseQueryResult<TData, TError>
 
@@ -30,9 +41,9 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: () => QueryClient,
-): DefinedUseQueryResult<TData, TError>
+): UseQueryResult<TData | undefined, TError>
 export function useQuery<
   TQueryFnData,
   TError = DefaultError,

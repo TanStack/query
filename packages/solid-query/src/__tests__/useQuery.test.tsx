@@ -295,7 +295,7 @@ describe('useQuery', () => {
   it('should not cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we do not have data yet', async () => {
     const key = queryKey()
     let fetchCount = 0
-    let state!: UseQueryResult<string>
+    let state!: UseQueryResult<string | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -671,7 +671,7 @@ describe('useQuery', () => {
   it('should not update disabled query when refetch with refetchQueries', async () => {
     const key = queryKey()
     let count = 0
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -701,7 +701,7 @@ describe('useQuery', () => {
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
     const key = queryKey()
     let count = 0
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -732,7 +732,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const [count, setCount] = createSignal(0)
     let fetches = 0
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -759,15 +759,12 @@ describe('useQuery', () => {
 
     setCount(1)
     await vi.advanceTimersByTimeAsync(10)
-    // Switching to a disabled key never fetches; the committed value from the
-    // previous key holds while the new (never-arriving) read stays pending.
+    // switching to a disabled key never fetches; the read is `undefined`
     expect(fetches).toBe(1)
     expect(state.status).toBe('pending')
     expect(state.fetchStatus).toBe('idle')
+    expect(rendered.getByText('data:')).toBeInTheDocument()
 
-    // Settle the parked read before the test ends: a transition held on a
-    // never-resolving promise outlives unmount in the global reactive engine
-    // and would corrupt later tests.
     setCount(0)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 0')).toBeInTheDocument()
@@ -855,15 +852,10 @@ describe('useQuery', () => {
     expect(state.isFetching).toBe(false)
   })
 
-  // The key switches park the data node on the never-resolving pending read
-  // (disabled query, nothing to fetch), so the committed UI holds the
-  // previous key's data through the transition. `refetch()` syncs the
-  // observer to the latest computed options at call time — the deferred
-  // setOptions render effect can't be relied on under a held transition.
   it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
     const key = queryKey()
     const [count, setCount] = createSignal(10)
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     queryClient.setQueryData([key, 10], 10)
 
@@ -890,14 +882,17 @@ describe('useQuery', () => {
     setCount(11)
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(state.isPlaceholderData).toBe(true)
 
     setCount(12)
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
+    expect(state.isPlaceholderData).toBe(true)
 
     void state.refetch()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 12')).toBeInTheDocument()
+    expect(state.isPlaceholderData).toBe(false)
   })
 
   it('should use the correct query function when components use different configurations', async () => {
@@ -2377,7 +2372,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const [enabled, setEnabled] = createSignal(false)
     let count = 0
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -2399,8 +2394,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    // disabled with nothing cached: the read parks in <Loading>
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // disabled with nothing cached: the read is `undefined`, no suspension
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
     expect(count).toBe(0)
 
     queryClient.prefetchQuery({
@@ -2408,7 +2403,7 @@ describe('useQuery', () => {
       queryFn: () => Promise.resolve('prefetched data'),
     })
     await vi.advanceTimersByTimeAsync(0)
-    // the cache write revives the parked read even while disabled
+    // the cache write is served even while disabled
     expect(rendered.getByText('data: prefetched data')).toBeInTheDocument()
     expect(count).toBe(0)
 
@@ -2435,9 +2430,9 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>FetchStatus: {query.fetchStatus}</div>
-          <Loading fallback={<h2>no data</h2>}>
-            <h2>Data: {query.data}</h2>
+          <div>Loading: {String(query.isLoading)}</div>
+          <Loading fallback={<h2>fallback</h2>}>
+            <h2>Data: {query.data ?? 'no data'}</h2>
           </Loading>
         </div>
       )
@@ -2445,15 +2440,19 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    expect(rendered.getByText('FetchStatus: idle')).toBeInTheDocument()
-    expect(rendered.getByText('no data')).toBeInTheDocument()
+    expect(rendered.getByText('Loading: false')).toBeInTheDocument()
+    expect(rendered.getByText('Data: no data')).toBeInTheDocument()
+    expect(rendered.queryByText('fallback')).not.toBeInTheDocument()
 
     setShouldFetch(true)
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('FetchStatus: fetching')).toBeInTheDocument()
+    // the committed `undefined` read holds while the first fetch runs
+    expect(rendered.getByText('Loading: true')).toBeInTheDocument()
+    expect(rendered.getByText('Data: no data')).toBeInTheDocument()
+    expect(rendered.queryByText('fallback')).not.toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: data')).toBeInTheDocument()
-    expect(rendered.getByText('FetchStatus: idle')).toBeInTheDocument()
+    expect(rendered.getByText('Loading: false')).toBeInTheDocument()
   })
 
   // See https://github.com/TanStack/query/issues/7711
@@ -3055,7 +3054,7 @@ describe('useQuery', () => {
   it('should use placeholder data even for disabled queries', async () => {
     const key1 = queryKey()
     const [count, setCount] = createSignal(0)
-    let state!: UseQueryResult<string>
+    let state!: UseQueryResult<string | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -3538,7 +3537,7 @@ describe('useQuery', () => {
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
     const key = queryKey()
     let count = 0
-    let state!: UseQueryResult<number>
+    let state!: UseQueryResult<number | undefined>
 
     function Page() {
       state = useQuery(() => ({
@@ -3567,8 +3566,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, () => <Page />)
 
-    // Disabled query with no data: the data read stays pending
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.getByText('data:')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(state.isPending).toBe(true)
     expect(state.isFetching).toBe(false)
 
@@ -3580,17 +3579,12 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(10)
     // Resetting a disabled query does not refetch
+    expect(rendered.getByText('data:')).toBeInTheDocument()
     expect(state.isPending).toBe(true)
+    expect(state.isFetching).toBe(false)
     expect(state.fetchStatus).toBe('idle')
     expect(count).toBe(1)
-    // PORT-REVIEW (kept running): `state.isFetching` reports true here even
-    // though nothing fetches — the isFetching projection ORs in a
-    // "value pending" probe on the data node, and after a reset the disabled
-    // query's data read is parked pending forever. Asserting via fetchStatus
-    // (which correctly reads 'idle') instead. See port-notes/useQuery.md.
 
-    // Settle the parked pending read before the test ends (a never-resolving
-    // read held past unmount corrupts the global reactive engine).
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()

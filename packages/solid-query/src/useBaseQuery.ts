@@ -28,12 +28,10 @@ import type {
 const isServer = typeof window === 'undefined'
 
 /**
- * A read of a pending-idle query (disabled, or reset with nothing in flight)
- * has no value and nothing to wait on. Parking the reader on a promise that
- * never resolves suspends it into the nearest `<Loading>` boundary until the
- * query actually starts fetching (enabling it, a refetch, a cache write) —
- * at which point the version bump re-runs the compute and the superseded
- * in-flight is ignored by the engine.
+ * Parks a read whose answer is on its way through a channel other than a
+ * fetch this compute could start (hydration adoption, node priming, a
+ * persister restore). Each of those lands by re-running the tracked compute,
+ * so the promise itself never needs to settle.
  */
 const NEVER: Promise<never> = new Promise(noop)
 
@@ -377,19 +375,33 @@ export function useBaseQueryLayer<
     return enabled !== false
   }
 
+  let servedQuery:
+    | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+    | undefined
+
   const resolvePlaceholder = (
     opts: ReturnType<typeof defaultedOptions>,
+    previous?: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
   ): TQueryData | undefined => {
     const placeholder = opts.placeholderData
     if (placeholder === undefined) return undefined
-    // The function form receives previous data/query in React Query as a
-    // `keepPreviousData` vehicle. Solid 2 holds the previous committed value
-    // natively while a new promise is pending, so previous-data plumbing is
-    // unnecessary here; a function placeholder computes from nothing.
+    // The function form is React Query's `keepPreviousData` vehicle. While a
+    // fetch is pending, Solid 2 holds the previous committed value natively,
+    // so no `previous` is passed. A disabled query has no pending fetch to
+    // hold against, so there the previously served query is supplied.
     return typeof placeholder === 'function'
-      ? (placeholder as () => TQueryData | undefined)()
+      ? (
+          placeholder as (
+            previousData: TQueryData | undefined,
+            previousQuery:
+              | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+              | undefined,
+          ) => TQueryData | undefined
+        )(previous?.state.data, previous)
       : placeholder
   }
+
+  const placeholderPrevious = () => (isEnabled() ? undefined : servedQuery)
 
   /**
    * The data compute. It returns either the settled `{ value }` root or a
@@ -431,11 +443,15 @@ export function useBaseQueryLayer<
     const wrap = (d: any): { value: TData } => ({
       value: select ? select(d as TQueryData) : (d as TData),
     })
+    const serve = (d: any): { value: TData } => {
+      servedQuery = q
+      return wrap(d)
+    }
 
     // Placeholder: show immediately instead of suspending while the first
     // fetch runs. When the fetch lands the version bump swaps in real data.
     if (state.data === undefined && state.status === 'pending') {
-      const placeholder = resolvePlaceholder(opts)
+      const placeholder = resolvePlaceholder(opts, placeholderPrevious())
       if (placeholder !== undefined) return wrap(placeholder)
     }
 
@@ -453,7 +469,7 @@ export function useBaseQueryLayer<
     if (state.fetchStatus !== 'idle') {
       if (state.data === undefined || prev !== undefined) {
         const promise = q.promise
-        if (promise) return chainOnce(promise, select, wrap)
+        if (promise) return chainOnce(promise, select, serve)
       }
     }
 
@@ -472,16 +488,16 @@ export function useBaseQueryLayer<
       }
     }
 
-    if (state.data !== undefined) return wrap(state.data)
+    if (state.data !== undefined) return serve(state.data)
 
     // Pending-idle: nothing in flight, nothing cached. If the query is
     // enabled, the tracked read itself starts the fetch (the router
     // `query()` model — reads pull the async). This is not just the server
-    // path: on the client it is what revives a query whose enabling change
-    // arrives while the subtree is parked under a suspended boundary —
-    // parked boundaries hold effects, so the observer's option-driven fetch
-    // can never fire there, but computes still re-run. `q.fetch` dedupes
-    // against any fetch the observer already started.
+    // path: on the client it is what starts the fetch for a query whose
+    // enabling change arrives while the subtree sits under a suspended
+    // boundary — suspended boundaries hold effects, so the observer's
+    // option-driven fetch can never fire there, but computes still re-run.
+    // `q.fetch` dedupes against any fetch the observer already started.
     if (isEnabled()) {
       /**
        * Never start a fetch inside the hydration window. Adoption
@@ -529,9 +545,12 @@ export function useBaseQueryLayer<
        * sees the identical options object — a no-op diff.
        */
       if (!isServer) observer.setOptions(opts as any)
-      return chainOnce(q.fetch(opts as any), select, wrap)
+      return chainOnce(q.fetch(opts as any), select, serve)
     }
-    return NEVER
+    // Disabled with nothing cached: there is no answer and nothing will
+    // produce one, so the read is `undefined` rather than a suspension that
+    // could never settle.
+    return { value: undefined as TData }
   }
 
   /**
@@ -636,7 +655,9 @@ export function useBaseQueryLayer<
 
   const hasPlaceholder = () =>
     meta.status === 'pending' &&
-    untrack(() => resolvePlaceholder(defaultedOptions())) !== undefined
+    untrack(() =>
+      resolvePlaceholder(defaultedOptions(), placeholderPrevious()),
+    ) !== undefined
   const status = () => (hasPlaceholder() ? 'success' : meta.status)
   const isPending = () => status() === 'pending'
   /**

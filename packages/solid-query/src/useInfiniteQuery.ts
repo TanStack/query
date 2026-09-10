@@ -18,6 +18,7 @@ import type {
 } from './types'
 import type { Accessor } from 'solid-js'
 import type {
+  AlwaysEnabledInfiniteOptions,
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
@@ -97,7 +98,7 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
+  options: AlwaysEnabledInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -106,6 +107,22 @@ export function useInfiniteQuery<
   >,
   queryClient?: Accessor<QueryClient>,
 ): UseInfiniteQueryResult<TData, TError>
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: Accessor<QueryClient>,
+): UseInfiniteQueryResult<TData | undefined, TError>
 
 export function useInfiniteQuery<
   TQueryFnData,

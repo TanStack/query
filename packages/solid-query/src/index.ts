@@ -35,6 +35,7 @@ export type {
 export { useQuery } from './useQuery'
 export { queryOptions } from './queryOptions'
 export type {
+  AlwaysEnabledOptions,
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
@@ -50,6 +51,7 @@ export { useIsFetching } from './useIsFetching'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
+  AlwaysEnabledInfiniteOptions,
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'

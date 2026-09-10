@@ -10,6 +10,7 @@ import { Errored, Loading, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQuery } from '..'
 import { renderWithClient } from './utils'
+import type { UseQueryResult } from '..'
 
 describe('useQuery 2.0 read semantics', () => {
   let queryCache: QueryCache
@@ -273,17 +274,19 @@ describe('useQuery 2.0 read semantics', () => {
     expect(rendered.getByText('written')).toBeInTheDocument()
   })
 
-  it('suspends a disabled query until it is enabled', async () => {
+  it('reads undefined for a disabled query and suspends once it is enabled', async () => {
     const key = queryKey()
     const [enabled, setEnabled] = createSignal(false)
 
+    let state!: UseQueryResult<string | undefined>
+
     function Page() {
-      const state = useQuery(() => ({
+      state = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'ready'),
         enabled: enabled(),
       }))
-      return <span>{state.data}</span>
+      return <span>data: {String(state.data)}</span>
     }
 
     const rendered = renderWithClient(queryClient, () => (
@@ -292,14 +295,70 @@ describe('useQuery 2.0 read semantics', () => {
       </Loading>
     ))
 
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
-    // Still parked: disabled means nothing is in flight to wait for.
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(state.isPending).toBe(true)
+    expect(state.isLoading).toBe(false)
 
+    // the committed `undefined` read holds while the first fetch runs;
+    // `isLoading` reports it (`data: undefined, isLoading: true`)
     setEnabled(true)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(state.isLoading).toBe(true)
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('ready')).toBeInTheDocument()
+    expect(rendered.getByText('data: ready')).toBeInTheDocument()
+    expect(state.isLoading).toBe(false)
+  })
+
+  it('does not hold a boundary hostage when the enabling control is inside it', async () => {
+    const key = queryKey()
+    const [term, setTerm] = createSignal('')
+    const queryFn = vi.fn((ctx: { queryKey: ReadonlyArray<unknown> }) =>
+      sleep(10).then(() => `results for ${ctx.queryKey[1]}`),
+    )
+
+    function Search() {
+      const results = useQuery(() => ({
+        queryKey: [key, term()],
+        queryFn,
+        enabled: term() !== '',
+      }))
+      return (
+        <div>
+          <input
+            aria-label="term"
+            value={term()}
+            onInput={(e) => setTerm(e.currentTarget.value)}
+          />
+          <span>{results.data ?? 'type to search'}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Loading fallback={<span>loading</span>}>
+        <Search />
+      </Loading>
+    ))
+
+    expect(rendered.getByText('type to search')).toBeInTheDocument()
+    expect(rendered.getByLabelText('term')).toBeInTheDocument()
+    expect(queryFn).not.toHaveBeenCalled()
+
+    fireEvent.input(rendered.getByLabelText('term'), {
+      target: { value: 'solid' },
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByLabelText('term')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('results for solid')).toBeInTheDocument()
+    expect(rendered.getByLabelText('term')).toBeInTheDocument()
   })
 
   it('exposes background fetch state reactively', async () => {

@@ -44,9 +44,18 @@ describe('SSR hydration', () => {
       stale: 1,
       placeholder: 0,
       prefetched: 1,
+      disabled: 0,
     })
     expect(string.html).toContain('fresh-server')
     expect(string.html).toContain('stale-server')
+
+    // Disabled query (data|status|fetchStatus): the render completing is
+    // the assertion — a suspended read here would hold the stream forever.
+    const disabled = /<span id="disabled"[^>]*>(.*?)<\/span>/.exec(
+      string.html,
+    )![1]!
+    expect(disabled.replace(/<!--[^>]*-->/g, '')).toBe('undefined|pending|idle')
+    expect(string.html).not.toMatch(/sq:\[\\"disabled\\"\]/)
     // Cache entries ride Solid's hydration registry content-addressed by
     // query hash (`sq:<hash>` → { data, t }) — `t` (dataUpdatedAt) lets
     // the hydrating client reconstruct the entry with staleness intact,
@@ -178,6 +187,11 @@ describe('SSR hydration', () => {
       expect(app.counts.fresh).toBe(0)
       expect(container.querySelector('#fresh')?.textContent).toBe(
         'fresh-server',
+      )
+
+      expect(app.counts.disabled).toBe(0)
+      expect(container.querySelector('#disabled')?.textContent).toBe(
+        'undefined|pending|idle',
       )
 
       // The placeholder query hydrated showing its placeholder (identical

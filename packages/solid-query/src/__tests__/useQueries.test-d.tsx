@@ -190,6 +190,33 @@ describe('useQueries', () => {
       const queryResults = useCustomQueries()
       const data = queryResults[0].data
 
+      // the forwarded options may carry `enabled`
+      expectTypeOf(data).toEqualTypeOf<Data | undefined>()
+    })
+
+    it('narrows data when the forwarded options cannot disable the query', () => {
+      type Data = string
+
+      const useCustomQueries = (
+        options?: OmitKeyof<
+          QueryOptions<Data>,
+          'queryKey' | 'queryFn' | 'enabled' | 'initialData'
+        >,
+      ) => {
+        return useQueries(() => ({
+          queries: [
+            {
+              ...options,
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve('data'),
+            },
+          ],
+        }))
+      }
+
+      const queryResults = useCustomQueries()
+      const data = queryResults[0].data
+
       expectTypeOf(data).toEqualTypeOf<Data>()
     })
   })
@@ -228,8 +255,37 @@ describe('useQueries', () => {
 
     const firstResult = queryResults[0]
 
-    expectTypeOf(firstResult).toEqualTypeOf<UseQueryResult<number, Error>>()
-    expectTypeOf(firstResult.data).toEqualTypeOf<number>()
+    expectTypeOf(firstResult).toEqualTypeOf<
+      UseQueryResult<number | undefined, Error>
+    >()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('TData should include undefined when enabled is not literally true', () => {
+    const queryResults = useQueries(() => ({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(5),
+          enabled: Math.random() > 0.5,
+        },
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('always'),
+          enabled: true as const,
+        },
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(true),
+          enabled: false,
+          initialData: false,
+        },
+      ],
+    }))
+
+    expectTypeOf(queryResults[0].data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(queryResults[1].data).toEqualTypeOf<string>()
+    expectTypeOf(queryResults[2].data).toEqualTypeOf<boolean>()
   })
 
   it('should return correct data for dynamic queries with mixed result types', () => {
