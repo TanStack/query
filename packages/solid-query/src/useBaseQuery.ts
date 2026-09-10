@@ -6,6 +6,7 @@ import {
   createSignal,
   isPending as isValuePending,
   onCleanup,
+  onSettled,
   resolve,
   runWithOwner,
   sharedConfig,
@@ -212,12 +213,6 @@ export function useBaseQueryLayer<
   let observerSub: (() => void) | null = null
   let cacheSub: (() => void) | null = null
   let disposed = false
-  let pulledQueryBeforeAttach: Query<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey
-  > | null = null
   /**
    * A cached mount can start a refetch while a conditional subtree is still
    * creating its effects. Defer only that attach until the subtree is ready,
@@ -362,10 +357,6 @@ export function useBaseQueryLayer<
         (restoring) => {
           if (!restoring) {
             const currentQuery = observer.getCurrentQuery()
-            if (pulledQueryBeforeAttach === currentQuery) {
-              attach()
-              return
-            }
             const state = currentQuery.state
             const optimisticFetchStatus = observer.getOptimisticResult(
               untrack(defaultedOptions),
@@ -375,7 +366,7 @@ export function useBaseQueryLayer<
               optimisticFetchStatus !== state.fetchStatus
             ) {
               deferredMountFetchStatus = optimisticFetchStatus
-              queueMicrotask(() => {
+              onSettled(() => {
                 deferredMountFetchStatus = null
                 attach()
               })
@@ -563,7 +554,6 @@ export function useBaseQueryLayer<
        * sees the identical options object — a no-op diff.
        */
       if (!isServer) observer.setOptions(opts as any)
-      if (!observerSub) pulledQueryBeforeAttach = q
       return chainOnce(q.fetch(opts as any), select, wrap)
     }
     return NEVER
