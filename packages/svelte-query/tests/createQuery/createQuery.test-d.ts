@@ -96,4 +96,22 @@ describe('createQuery', () => {
       })
     })
   })
+
+  describe('generic queryFn', () => {
+    it('should infer the result type from a generic query function', () => {
+      const key = queryKey()
+
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const query = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => queryFn(),
+      }))
+
+      expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    })
+  })
 })
