@@ -6,7 +6,7 @@ title: Reactivity
 Vue uses the [the signals paradigm](https://vuejs.org/guide/extras/reactivity-in-depth.html#connection-to-signals) to handle and track reactivity. A key feature of
 this system is the reactive system only triggers updates on specifically watched reactive properties. A consequence of this is you also need to ensure that the queries are updated when values they consume are updated.
 
-# Keeping Queries Reactive
+## Keeping Queries Reactive
 
 When creating a composable for a query your first choice may be to write it like so:
 
@@ -58,7 +58,7 @@ const onChangeUser = (newUserId: string) => {
 In vue query any reactive properties within a query key are tracked for changes automatically. This allows vue-query to refetch data whenever the
 parameters for a given request change.
 
-## Accounting for Non-Reactive Queries
+### Accounting for Non-Reactive Queries
 
 While far less likely, sometimes passing non-reactive variables is intentional. For example, some entities only need to be fetched once and don't need tracking or we invalidate a mutation a query options object after a mutation.
 If we use our custom composable defined above the usage in this case feels a bit off:
@@ -93,7 +93,7 @@ const userId = ref('1')
 const { data: projects } = useUserProjects(userId)
 ```
 
-## Using Derived State inside Queries
+### Using Derived State inside Queries
 
 It's quite common to derive some new reactive state from another source of reactive state. Commonly, this problem manifests in situations where you deal with component props. Let's assume our `userId` is a prop passed to a component:
 
@@ -140,7 +140,7 @@ const { data: projects } = useUserProjects(() => props.userId)
 
 This gives us a terse syntax and the reactivity we need without any unneeded memoization overhead.
 
-## Other tracked Query Options
+### Other tracked Query Options
 
 Above, we only touched one query option that tracks reactive dependencies. However, in addition to `queryKey`, `enabled` also allows
 the use of reactive values. This comes in handy in situations where you want to control the fetching of a query based on some derived state:
@@ -157,13 +157,13 @@ export function useUserProjects(userId: MaybeRef<string>) {
 
 More details on this option can be found on the [useQuery reference](./reference/functions/useQuery.md) page.
 
-## Immutability
+### Immutability
 
 Results from `useQuery` are always immutable. This is necessary for performance and caching purposes. If you need to mutate a value returned from `useQuery`, you must create a copy of the data.
 
 One implication of this design is that passing values from `useQuery` to a two-way binding such as `v-model` will not work. You must create a mutable copy of the data before attempting to update it in place.
 
-# Key Takeaways
+## Key Takeaways
 
 - `enabled` and `queryKey` are the two query options that can accept reactive values.
 - Pass query option that accept all three types of values in Vue: refs, plain values, and reactive getters.
