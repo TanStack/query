@@ -40,6 +40,30 @@ type MAXIMUM_DEPTH = 20
 // Widen the type of the symbol to enable type inference even if skipToken is not immutable.
 type SkipTokenForUseQueries = symbol
 
+type HasDefinedInitialData<T> = 'initialData' extends keyof T
+  ? {} extends Pick<T, 'initialData' & keyof T>
+    ? false
+    : undefined extends T['initialData' & keyof T]
+      ? false
+      : true
+  : false
+
+// `TData | undefined` when the entry can disable its query (same rule as the `useQuery` overloads).
+type DataFor<T, TData> =
+  HasDefinedInitialData<T> extends true
+    ? TData
+    : 'enabled' extends keyof T
+      ? Exclude<T['enabled' & keyof T], undefined> extends true
+        ? TData
+        : TData | undefined
+      : 'queryFn' extends keyof T
+        ? [
+            Extract<Exclude<T['queryFn' & keyof T], undefined>, symbol>,
+          ] extends [never]
+          ? TData
+          : TData | undefined
+        : TData
+
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
@@ -100,7 +124,7 @@ type GetResults<T> =
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseQueryResult<
-                    unknown extends TData ? TQueryFnData : TData,
+                    DataFor<T, unknown extends TData ? TQueryFnData : TData>,
                     unknown extends TError ? DefaultError : TError
                   >
                 : // Fallback
@@ -187,7 +211,8 @@ export function useQueries<
    * whose options stay reactive through the per-index accessor — option
    * changes flow into the existing row without tearing it down, while
    * length changes create/dispose tail rows. Every result has identical
-   * semantics to `useQuery`: reads suspend, settled data is non-nullable.
+   * semantics to `useQuery`: reads suspend while a fetch is in flight, a
+   * disabled entry with nothing cached reads `undefined`.
    */
   const length = createMemo(() => queriesOptions().queries.length)
   const results = repeat(length, (index) => {

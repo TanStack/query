@@ -587,12 +587,15 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(10)
-    // Disabled: nothing fetches and the guard-free data read parks the
-    // boundary.
     expect(queryFn).toHaveBeenCalledTimes(0)
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByRole('heading').textContent).toBe('')
 
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    // the committed `undefined` read holds while the fetch is in flight
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByRole('heading').textContent).toBe('')
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByRole('heading').textContent).toBe('23')
     // Exactly one fetch: the pull path syncs observer options before
@@ -767,12 +770,13 @@ describe('useQuery suspense semantics (Loading/Errored boundaries)', () => {
     const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
-    // Disabled: the guard-free data read parks the boundary — nothing to
-    // render and nothing in flight.
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
 
     // enable -> fetch fails -> throw error, exactly once
     fireEvent.click(rendered.getByLabelText('fail'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()

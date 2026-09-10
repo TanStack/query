@@ -21,6 +21,7 @@ export interface FetchCounts {
   stale: number
   placeholder: number
   prefetched: number
+  disabled: number
 }
 
 export interface AppProps {
@@ -80,10 +81,25 @@ function Queries(props: AppProps) {
     staleTime: 60_000,
   }))
 
+  // Disabled with nothing cached: reads `undefined` instead of suspending,
+  // otherwise the boundary would hold the stream open forever.
+  const disabled = useQuery(() => ({
+    queryKey: ['disabled'],
+    queryFn: async () => {
+      props.counts.disabled++
+      await sleep(5)
+      return `disabled-${props.source}`
+    },
+    enabled: false,
+  }))
+
   return (
     <div>
       <span id="fresh">{fresh.data}</span>
       <span id="stale">{stale.data}</span>
+      <span id="disabled">
+        {String(disabled.data)}|{disabled.status}|{disabled.fetchStatus}
+      </span>
       {/* Meta guards: boundaries serialize settled state only, so these
           must show settled values in the server HTML — a transient
           ('pending', fetching) here is a hydration mismatch in waiting. */}

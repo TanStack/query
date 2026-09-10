@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
+import { skipToken } from '@tanstack/query-core'
 import { queryOptions, useQuery } from '../index'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
@@ -246,6 +247,77 @@ describe('useQuery', () => {
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
+    })
+  })
+
+  describe('queries that can be disabled', () => {
+    it('TData includes undefined when enabled is a boolean', () => {
+      const { data } = useQuery(() => ({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        enabled: Math.random() > 0.5,
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    })
+
+    it('TData includes undefined when enabled is a callback', () => {
+      const { data } = useQuery(() => ({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        enabled: (query) => query.state.dataUpdateCount === 0,
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    })
+
+    it('TData stays defined when enabled is literally true', () => {
+      const { data } = useQuery(() => ({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        enabled: true as const,
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+    })
+
+    it('TData includes undefined when queryFn may be skipToken', () => {
+      const { data } = useQuery(() => ({
+        queryKey: queryKey(),
+        queryFn: Math.random() > 0.5 ? skipToken : () => ({ wow: true }),
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    })
+
+    it('TData stays defined when a query that can be disabled has initialData', () => {
+      const { data } = useQuery(() => ({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        enabled: false,
+        initialData: { wow: true },
+      }))
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+    })
+
+    it('carries through queryOptions', () => {
+      const canDisable = queryOptions({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+        enabled: false,
+      })
+      const always = queryOptions({
+        queryKey: queryKey(),
+        queryFn: () => ({ wow: true }),
+      })
+
+      expectTypeOf(useQuery(() => canDisable).data).toEqualTypeOf<
+        { wow: boolean } | undefined
+      >()
+      expectTypeOf(useQuery(() => always).data).toEqualTypeOf<{
+        wow: boolean
+      }>()
     })
   })
 
