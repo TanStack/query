@@ -105,6 +105,30 @@ describe('pending tasks integration', () => {
     expect(events).toEqual(['add', 'release:ok'])
   })
 
+  it('registers the task when invalidateQueries starts a fetch', async () => {
+    const key = queryKey()
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'ok'),
+      })),
+    )
+    readData = () => query.data()
+    TestBed.tick()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(events).toEqual(['add', 'release:ok'])
+    events.length = 0
+
+    void queryClient.invalidateQueries({ queryKey: key })
+
+    // Registered synchronously with the fetch the invalidation started, not one notifyManager
+    // schedule turn later
+    expect(events).toEqual(['add'])
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(events).toEqual(['add', 'release:ok'])
+  })
+
   it('keeps coverage when a refetch starts before the previous idle notification is delivered', async () => {
     const key = queryKey()
     let resolveFetch!: (value: string) => void

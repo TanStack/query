@@ -88,8 +88,8 @@ export function createBaseQuery<
 
   let pendingTaskRef: PendingTaskRef | null = null
   // Fetches start synchronously but notifyManager delivers 'fetching' a schedule turn later;
-  // registering only in the subscriber leaves that turn uncovered and zoneless SSR can serialize
-  // mid-fetch. Register eagerly wherever a fetch may have started.
+  // registering only in the subscriber callback leaves that turn uncovered and zoneless SSR can
+  // serialize mid-fetch. Register eagerly wherever a fetch may have started.
   const trackFetch = (
     observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   ) => {
@@ -126,13 +126,9 @@ export function createBaseQuery<
       ? () => undefined
       : untracked(() =>
           ngZone.runOutsideAngular(() => {
-            return observer.subscribe(
-              notifyManager.batchCalls((state) => {
+            const notifyState = notifyManager.batchCalls(
+              (state: QueryObserverResult<TData, TError>) => {
                 ngZone.run(() => {
-                  if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
-                    pendingTaskRef = pendingTasks.add()
-                  }
-
                   try {
                     if (
                       state.isError &&
@@ -160,8 +156,15 @@ export function createBaseQuery<
                     }
                   }
                 })
-              }),
+              },
             )
+
+            return observer.subscribe((state) => {
+              // Fetches started outside this injection point (invalidateQueries, refetchQueries,
+              // retries) are only visible here, and the batched callback runs a turn later.
+              trackFetch(observer)
+              notifyState(state)
+            })
           }),
         )
 
