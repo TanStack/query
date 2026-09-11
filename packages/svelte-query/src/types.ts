@@ -1,6 +1,7 @@
 import type { Snippet } from 'svelte'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -69,6 +70,12 @@ export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
+
+/** Result from createInfiniteQuery with initialData */
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<

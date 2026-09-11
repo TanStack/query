@@ -59,7 +59,9 @@ export type UnusedSkipTokenOptions<
 > & {
   /**
    * `skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
-   * you don't intend to run the query yet, omit `queryFn` or use a default query function instead.
+   * you don't intend to run the query yet, set `enabled: false` — omitting `queryFn` alone still triggers a
+   * fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default query function has been
+   * defined. A default query function only supplies `queryFn`; it doesn't defer the fetch on its own.
    */
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
@@ -108,6 +110,7 @@ export type DefinedInitialDataOptions<
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -122,9 +125,18 @@ export type DefinedInitialDataOptions<
  * })
  *
  * function Posts() {
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData`.
- *   const { data } = useQuery(postsOptions)
- *   return <>{data.map((post) => <p key={post.id}>{post.title}</p>)}</>
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const { data, isError, error } = useQuery(postsOptions)
+ *
+ *   return (
+ *     <div>
+ *       {isError ? <span>Error: {error.message}</span> : null}
+ *       <ul>
+ *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
+ *       </ul>
+ *     </div>
+ *   )
  * }
  * ```
  */
@@ -144,23 +156,14 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example
+ * A parameterized factory, so the same options object can be reused per `id`:
  * ```tsx
- * import { queryOptions } from '@tanstack/preact-query'
- *
- * export const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
- * ```
- *
- * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
- * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -169,33 +172,13 @@ export function queryOptions<
  *   })
  *
  * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
- *   return <h1>{data?.title}</h1>
+ *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <h1>{data.title}</h1>
  * }
- *
- * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.query(postOptions(id)).catch(noop)
- * ```
- *
- * @example
- * The same options object works with every API that accepts query options:
- * ```tsx
- * import {
- *   noop,
- *   queryOptions,
- *   useQuery,
- *   useSuspenseQuery,
- * } from '@tanstack/preact-query'
- *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- * })
- *
- * useQuery(todosOptions)
- * useSuspenseQuery(todosOptions)
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
  * ```
  */
 export function queryOptions<
@@ -214,23 +197,15 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.
  *
  * @example
+ * A parameterized factory, so the same options object can be reused per `id`:
  * ```tsx
- * import { queryOptions } from '@tanstack/preact-query'
- *
- * export const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- * })
- * ```
- *
- * @example
- * A parameterized factory, reused across a hook and an imperative call with the same cache entry:
- * ```tsx
- * import { noop, queryOptions, useQuery } from '@tanstack/preact-query'
+ * import { queryOptions, useQuery } from '@tanstack/preact-query'
  *
  * export const postOptions = (id: string) =>
  *   queryOptions({
@@ -239,33 +214,35 @@ export function queryOptions<
  *   })
  *
  * function Post({ id }: { id: string }) {
- *   const { data } = useQuery(postOptions(id))
- *   return <h1>{data?.title}</h1>
- * }
+ *   const { data, isPending, isError, error } = useQuery(postOptions(id))
  *
- * // Elsewhere, e.g. to warm the cache before rendering `<Post>`:
- * queryClient.query(postOptions(id)).catch(noop)
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <h1>{data.title}</h1>
+ * }
  * ```
  *
  * @example
- * The same options object works with every API that accepts query options:
+ * A factory that disables the query, type safe, until `postId` is set:
  * ```tsx
- * import {
- *   noop,
- *   queryOptions,
- *   useQuery,
- *   useSuspenseQuery,
- * } from '@tanstack/preact-query'
+ * import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
  *
- * const todosOptions = queryOptions({
- *   queryKey: ['todos'],
- *   queryFn: fetchTodos,
- * })
+ * export const postOptions = (postId: number | undefined) =>
+ *   queryOptions({
+ *     queryKey: ['post', postId],
+ *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+ *   })
  *
- * useQuery(todosOptions)
- * useSuspenseQuery(todosOptions)
- * queryClient.query(todosOptions).catch(noop)
- * queryClient.getQueryData(todosOptions.queryKey) // typed as Array<Todo> | undefined
+ * function Post({ postId }: { postId: number | undefined }) {
+ *   const { data, isLoading, isError, error } = useQuery(postOptions(postId))
+ *
+ *   if (postId == null) return 'Select a post'
+ *   if (isLoading) return 'Loading...'
+ *   if (isError) return <span>Error: {error.message}</span>
+ *
+ *   return <h1>{data?.title}</h1>
+ * }
  * ```
  */
 export function queryOptions<

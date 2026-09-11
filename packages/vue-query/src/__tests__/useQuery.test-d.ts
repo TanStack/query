@@ -153,6 +153,26 @@ describe('useQuery', () => {
     })
   })
 
+  describe('generic queryFn', () => {
+    it('should infer the result type from a generic query function', () => {
+      const key = queryKey()
+
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const query = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => queryFn(),
+        }),
+      )
+
+      expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    })
+  })
+
   describe('generic queryKey inference (#8199)', () => {
     it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
       const basket = { fruit: 'apple', vegetable: 'broccoli' } as const
@@ -357,6 +377,32 @@ describe('useQuery', () => {
       if (query.isSuccess) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
+    })
+  })
+
+  describe('queryKey reactivity rules', () => {
+    it('should reject a bare reactive getter for the whole queryKey array', () => {
+      const id = ref(1)
+      assertType(
+        useQuery({
+          // @ts-expect-error when passed directly to useQuery, queryKey cannot be a bare
+          // reactive getter for the whole array (queryOptions() allows this)
+          queryKey: () => ['post', id.value],
+          queryFn: () => sleep(0).then(() => 'Some data'),
+        }),
+      )
+    })
+  })
+
+  describe('select', () => {
+    it('should narrow data to the type select returns', () => {
+      const { data } = useQuery({
+        queryKey: queryKey(),
+        queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
+        select: (posts) => posts.length,
+      })
+
+      expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
     })
   })
 })

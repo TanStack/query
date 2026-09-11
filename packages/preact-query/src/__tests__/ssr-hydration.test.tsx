@@ -11,6 +11,7 @@ import {
   QueryClientProvider,
   dehydrate,
   hydrate,
+  noop,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -72,10 +73,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: successKey,
-      queryFn: () => fetchDataSuccess('success'),
-    })
+    await prefetchClient
+      .query({
+        queryKey: successKey,
+        queryFn: () => fetchDataSuccess('success'),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -149,10 +152,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: errorKey,
-      queryFn: () => fetchDataError(),
-    })
+    await prefetchClient
+      .query({
+        queryKey: errorKey,
+        queryFn: () => fetchDataError(),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({

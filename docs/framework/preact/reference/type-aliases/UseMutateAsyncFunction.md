@@ -7,7 +7,7 @@ title: UseMutateAsyncFunction
 type UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> = MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/types.ts:453](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L453)
+Defined in: [packages/preact-query/src/types.ts:453](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L453)
 
 The type of `mutateAsync`, as returned by `useMutation`. Similar to [UseMutateFunction](UseMutateFunction.md), but returns a
 promise which can be awaited.
@@ -22,7 +22,7 @@ The type your mutation function resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your mutation function may throw.
 

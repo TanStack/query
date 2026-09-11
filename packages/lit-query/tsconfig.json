@@ -5,6 +5,5 @@
     "rootDir": ".",
     "lib": ["ES2022", "DOM"]
   },
-  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
-  "references": [{ "path": "../query-core" }]
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"]
 }

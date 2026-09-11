@@ -212,7 +212,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 
 [//]: # 'Suspense'
 
-If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery.md) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery.md) hooks available in the library.
+If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/functions/usePrefetchQuery.md) or the [`usePrefetchInfiniteQuery`](../reference/functions/usePrefetchInfiniteQuery.md) hooks available in the library.
 
 You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
@@ -448,7 +448,7 @@ Integration with other routers is also possible, see the [react-router](../examp
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../reference/QueryClient.md#queryclientsetquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../reference/classes/QueryClient.md#setquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 

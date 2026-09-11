@@ -242,7 +242,7 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 
 #### refetchActive / refetchInactive
 
-[queryClient.invalidateQueries](../../../reference/QueryClient.md#queryclientinvalidatequeries) had two additional, similar flags:
+[queryClient.invalidateQueries](../reference/classes/QueryClient.md#invalidatequeries) had two additional, similar flags:
 
 ```
 refetchActive: Boolean
@@ -427,7 +427,7 @@ React Query defaults to "tracking" query properties, which should give you a nic
 
 ### Bailing out of updates with setQueryData
 
-When using the [functional updater form of setQueryData](../../../reference/QueryClient.md#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+When using the [functional updater form of setQueryData](../reference/classes/QueryClient.md#setquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
 queryClient.setQueryData(['todo', id], (previousTodo) =>

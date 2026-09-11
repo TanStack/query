@@ -22,5 +22,5 @@
     "*.config.js",
     "package.json"
   ],
-  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
+  "references": [{ "path": "../query-devtools" }]
 }

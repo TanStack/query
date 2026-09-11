@@ -1351,6 +1351,47 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
+      []
+
+    function Page() {
+      const state = useInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: { pages: [1], pageParams: [1] },
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+        initialPageParam: 0,
+        retry: false,
+      }))
+
+      createRenderEffect(() => {
+        states.push({
+          data: JSON.parse(JSON.stringify(state.data)),
+          isError: state.isError,
+        })
+      })
+
+      return null
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1] },
+      isError: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [1] },
+      isError: true,
+    })
+  })
+
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
     const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
