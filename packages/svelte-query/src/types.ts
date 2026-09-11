@@ -17,6 +17,7 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryPersister,
 } from '@tanstack/query-core'
 
 export type Accessor<T> = () => T
@@ -42,7 +43,12 @@ export type CreateQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
+> = OmitKeyof<
+  CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  'persister'
+> & {
+  persister?: QueryPersister<any, any>
+}
 
 /** Result from createQuery */
 export type CreateQueryResult<
