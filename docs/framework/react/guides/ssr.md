@@ -7,6 +7,8 @@ redirect_from:
 
 In this guide you'll learn how to use React Query with server rendering.
 
+For TanStack Start, use the [Start + TanStack Query guide](https://tanstack.com/start/latest/docs/framework/react/guide/tanstack-query) for its SSR integration, request-scoped QueryClient setup, and mutation invalidation example.
+
 See the guide on [Prefetching & Router Integration](./prefetching.md) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls.md) before that.
 
 For deeper examples on hydration + prefetching (including code splitting), see the [Dependent Queries & Code Splitting](./prefetching.md#dependent-queries-code-splitting) section.
