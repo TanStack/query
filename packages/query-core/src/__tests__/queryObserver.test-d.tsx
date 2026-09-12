@@ -433,6 +433,38 @@ describe('queryObserver', () => {
           { myCount: number } | undefined
         >()
       })
+
+      it('should keep the query data type on the options that precede it', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ count: 1 }),
+          select: (data) => data.count,
+          placeholderData: (previousData) => {
+            expectTypeOf(previousData).toEqualTypeOf<
+              { count: number } | undefined
+            >()
+            return { count: 0 }
+          },
+          enabled: (query) => {
+            expectTypeOf(query.state.data).toEqualTypeOf<
+              { count: number } | undefined
+            >()
+            return true
+          },
+        })
+
+        expectTypeOf<
+          QueryObserverOptions<
+            { count: number },
+            DefaultError,
+            number,
+            { count: number }
+          >['placeholderData']
+        >()
+          .extract<Function>()
+          .parameter(0)
+          .toEqualTypeOf<{ count: number } | undefined>()
+      })
     })
 
     describe('initialData', () => {
