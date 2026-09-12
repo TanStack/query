@@ -3,10 +3,9 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver } from '..'
 import type {
   DefaultError,
-  FetchStatus,
+  InfiniteQueryObserverResult,
   InitialDataFunction,
   NetworkMode,
-  NotifyOnChangeProps,
   PlaceholderDataFunction,
   QueryMeta,
   QueryObserverOptions,
@@ -95,6 +94,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a boolean from an enabled callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+          // @ts-expect-error an enabled callback must return a boolean
+          enabled: () => 'yes',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['enabled'], Function>
+        >().returns.toEqualTypeOf<boolean>()
+      })
     })
 
     describe('staleTime', () => {
@@ -109,6 +121,19 @@ describe('queryObserver', () => {
             return 0
           },
         })
+      })
+
+      it('should only accept a StaleTime from a staleTime callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+          // @ts-expect-error a staleTime callback must return a StaleTime
+          staleTime: () => 'soon',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['staleTime'], Function>
+        >().returns.toEqualTypeOf<number | 'static'>()
       })
     })
 
@@ -125,6 +150,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a number, false or undefined from a refetchInterval callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error a refetchInterval callback must return a number, false or undefined
+          refetchInterval: () => 'often',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['refetchInterval'], Function>
+        >().returns.toEqualTypeOf<number | false | undefined>()
+      })
     })
 
     describe('refetchOnWindowFocus', () => {
@@ -139,6 +177,19 @@ describe('queryObserver', () => {
             return true
           },
         })
+      })
+
+      it('should only accept a boolean or the always literal from a refetchOnWindowFocus callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a boolean or the always literal
+          refetchOnWindowFocus: () => 'sometimes',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['refetchOnWindowFocus'], Function>
+        >().returns.toEqualTypeOf<boolean | 'always'>()
       })
     })
 
@@ -155,6 +206,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a boolean or the always literal from a refetchOnReconnect callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a boolean or the always literal
+          refetchOnReconnect: () => 'sometimes',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['refetchOnReconnect'], Function>
+        >().returns.toEqualTypeOf<boolean | 'always'>()
+      })
     })
 
     describe('refetchOnMount', () => {
@@ -169,6 +233,19 @@ describe('queryObserver', () => {
             return true
           },
         })
+      })
+
+      it('should only accept a boolean or the always literal from a refetchOnMount callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a boolean or the always literal
+          refetchOnMount: () => 'sometimes',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['refetchOnMount'], Function>
+        >().returns.toEqualTypeOf<boolean | 'always'>()
       })
     })
 
@@ -198,6 +275,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a boolean from a throwOnError callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a boolean
+          throwOnError: () => 'yes',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['throwOnError'], Function>
+        >().returns.toEqualTypeOf<boolean>()
+      })
     })
 
     describe('retry', () => {
@@ -210,6 +300,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a boolean from a retry callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a boolean
+          retry: () => 'maybe',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['retry'], Function>
+        >().returns.toEqualTypeOf<boolean>()
+      })
     })
 
     describe('retryDelay', () => {
@@ -221,6 +324,19 @@ describe('queryObserver', () => {
             return 0
           },
         })
+      })
+
+      it('should only accept a number from a retryDelay callback', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a number
+          retryDelay: () => 'soon',
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['retryDelay'], Function>
+        >().returns.toEqualTypeOf<number>()
       })
     })
 
@@ -237,6 +353,19 @@ describe('queryObserver', () => {
           },
         })
       })
+
+      it('should only accept a string from a queryKeyHashFn', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          // @ts-expect-error the callback must return a string
+          queryKeyHashFn: () => 42,
+        })
+
+        expectTypeOf<
+          Extract<QueryObserverOptions['queryKeyHashFn'], Function>
+        >().returns.toEqualTypeOf<string>()
+      })
     })
 
     describe('structuralSharing', () => {
@@ -249,6 +378,12 @@ describe('queryObserver', () => {
             return newData
           },
         })
+      })
+
+      it('should only accept unknown from a structuralSharing callback', () => {
+        expectTypeOf<
+          Extract<QueryObserverOptions['structuralSharing'], Function>
+        >().returns.toEqualTypeOf<unknown>()
       })
     })
 
@@ -446,7 +581,12 @@ describe('queryObserver', () => {
       it('should type notifyOnChangeProps as its named type', () => {
         expectTypeOf<
           QueryObserverOptions['notifyOnChangeProps']
-        >().toEqualTypeOf<NotifyOnChangeProps | undefined>()
+        >().toEqualTypeOf<
+          | Array<keyof InfiniteQueryObserverResult>
+          | 'all'
+          | undefined
+          | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
+        >()
       })
     })
 
@@ -542,9 +682,12 @@ describe('queryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
-        expectTypeOf(
-          observer.getCurrentResult().status,
-        ).toEqualTypeOf<QueryStatus>()
+        expectTypeOf(observer.getCurrentResult().status).toEqualTypeOf<
+          'pending' | 'error' | 'success'
+        >()
+        expectTypeOf<QueryStatus>().toEqualTypeOf<
+          'pending' | 'error' | 'success'
+        >()
       })
     })
 
@@ -555,9 +698,9 @@ describe('queryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
         })
 
-        expectTypeOf(
-          observer.getCurrentResult().fetchStatus,
-        ).toEqualTypeOf<FetchStatus>()
+        expectTypeOf(observer.getCurrentResult().fetchStatus).toEqualTypeOf<
+          'fetching' | 'paused' | 'idle'
+        >()
       })
     })
 
