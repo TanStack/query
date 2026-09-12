@@ -1049,6 +1049,10 @@ describe('queryObserver', () => {
       expectTypeOf(
         withCustomError.getOptimisticResult(customErrorOptions),
       ).toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
+
+      expectTypeOf(observer.getOptimisticResult)
+        .parameter(0)
+        .toEqualTypeOf<typeof options>()
     })
   })
 
@@ -1099,6 +1103,14 @@ describe('queryObserver', () => {
       expectTypeOf(
         withCustomError.trackResult(withCustomError.getCurrentResult()),
       ).toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
+
+      expectTypeOf(observer.trackResult)
+        .parameter(0)
+        .toEqualTypeOf<QueryObserverResult<{ value: string }, DefaultError>>()
+
+      expectTypeOf(withCustomError.trackResult)
+        .parameter(0)
+        .toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
     })
 
     it('should type the tracked property in the onPropTracked callback', () => {
@@ -1246,6 +1258,13 @@ describe('queryObserver', () => {
       expectTypeOf(withCustomError.fetchOptimistic).returns.toEqualTypeOf<
         Promise<QueryObserverResult<{ value: string }, CustomError>>
       >()
+
+      expectTypeOf(observer.fetchOptimistic)
+        .parameter(0)
+        .toHaveProperty('select')
+        .toEqualTypeOf<
+          ((data: { value: string }) => { value: string }) | undefined
+        >()
     })
   })
 
