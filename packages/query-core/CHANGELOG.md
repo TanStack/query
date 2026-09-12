@@ -1,5 +1,17 @@
 # @tanstack/query-core
 
+## 5.103.0
+
+### Minor Changes
+
+- [#11438](https://github.com/TanStack/query/pull/11438) [`e57f816`](https://github.com/TanStack/query/commit/e57f8163b18ab3abfe52ad69cdbdda4d31453393) - Export the `FocusManager`, `OnlineManager`, and `TimeoutManager` types so their methods appear in the generated reference docs.
+
+### Patch Changes
+
+- [#11332](https://github.com/TanStack/query/pull/11332) [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12) - Reuse the shared query option resolver for refetch intervals to reduce bundle size.
+
+- [#11436](https://github.com/TanStack/query/pull/11436) [`a1119e5`](https://github.com/TanStack/query/commit/a1119e5a3ffa52534de7390f17c7183d17658051) - ref(hydration): remove outdated dehydratedAt fallback
+
 ## 5.102.8
 
 ## 5.102.7
