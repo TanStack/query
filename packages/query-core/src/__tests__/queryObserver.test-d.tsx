@@ -1288,6 +1288,41 @@ describe('queryObserver', () => {
         readonly ['a', 1]
       >()
     })
+
+    it('should type the counters and timestamps of the query state as numbers', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      const state = observer.getCurrentQuery().state
+
+      expectTypeOf(state.dataUpdateCount).toEqualTypeOf<number>()
+      expectTypeOf(state.dataUpdatedAt).toEqualTypeOf<number>()
+      expectTypeOf(state.errorUpdateCount).toEqualTypeOf<number>()
+      expectTypeOf(state.errorUpdatedAt).toEqualTypeOf<number>()
+      expectTypeOf(state.fetchFailureCount).toEqualTypeOf<number>()
+    })
+
+    it('should type the remaining fields of the query state', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      const state = observer.getCurrentQuery().state
+
+      expectTypeOf(state.isInvalidated).toEqualTypeOf<boolean>()
+      expectTypeOf(state.fetchMeta).toEqualTypeOf<{
+        fetchMore?: { direction: 'forward' | 'backward' }
+      } | null>()
+      expectTypeOf(state.status).toEqualTypeOf<
+        'pending' | 'error' | 'success'
+      >()
+      expectTypeOf(state.fetchStatus).toEqualTypeOf<
+        'fetching' | 'paused' | 'idle'
+      >()
+    })
   })
 
   describe('refetch', () => {
