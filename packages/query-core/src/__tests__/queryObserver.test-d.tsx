@@ -11,6 +11,7 @@ import type {
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryPersister,
   QueryStatus,
   RefetchOptions,
 } from '..'
@@ -665,6 +666,14 @@ describe('queryObserver', () => {
           NonNullable<QueryObserverOptions<{ value: string }>['persister']>
         >().returns.toEqualTypeOf<
           { value: string } | Promise<{ value: string }>
+        >()
+      })
+
+      it('should differ from the persister of a paged query', () => {
+        expectTypeOf<
+          QueryPersister<{ value: string }, ReadonlyArray<unknown>, never>
+        >().not.toEqualTypeOf<
+          QueryPersister<{ value: string }, ReadonlyArray<unknown>, number>
         >()
       })
     })
