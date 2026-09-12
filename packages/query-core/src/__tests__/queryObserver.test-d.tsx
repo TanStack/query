@@ -1252,6 +1252,10 @@ describe('queryObserver', () => {
       expectTypeOf(observer.refetch).parameters.toEqualTypeOf<
         [options?: RefetchOptions]
       >()
+      expectTypeOf<RefetchOptions>().toEqualTypeOf<{
+        throwOnError?: boolean
+        cancelRefetch?: boolean
+      }>()
     })
   })
 
