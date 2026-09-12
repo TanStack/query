@@ -1139,6 +1139,9 @@ describe('queryObserver', () => {
       expectTypeOf(
         withCustomError.getCurrentQuery().state.error,
       ).toEqualTypeOf<CustomError | null>()
+      expectTypeOf(
+        withCustomError.getCurrentQuery().state.fetchFailureReason,
+      ).toEqualTypeOf<CustomError | null>()
     })
 
     it('should keep the data type from before select', () => {
