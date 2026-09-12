@@ -7,10 +7,10 @@ import type {
   InitialDataFunction,
   NetworkMode,
   PlaceholderDataFunction,
+  Query,
   QueryMeta,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryPersister,
   QueryStatus,
   RefetchOptions,
 } from '..'
@@ -599,11 +599,23 @@ describe('queryObserver', () => {
 
     describe('persister', () => {
       it('should type persister from the queryFn data', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+          persister: (persistedQueryFn, _context, query) => {
+            expectTypeOf(persistedQueryFn).returns.toEqualTypeOf<
+              { value: string } | Promise<{ value: string }>
+            >()
+            expectTypeOf(query).toEqualTypeOf<Query>()
+
+            return { value: 'data' }
+          },
+        })
+
         expectTypeOf<
-          QueryObserverOptions<{ value: string }>['persister']
-        >().toEqualTypeOf<
-          | QueryPersister<{ value: string }, ReadonlyArray<unknown>, never>
-          | undefined
+          NonNullable<QueryObserverOptions<{ value: string }>['persister']>
+        >().returns.toEqualTypeOf<
+          { value: string } | Promise<{ value: string }>
         >()
       })
     })
