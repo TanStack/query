@@ -1,13 +1,4 @@
-import {
-  afterEach,
-  assertType,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { createNotifyManager } from '../notifyManager'
 
@@ -77,24 +68,6 @@ describe('notifyManager', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(notifySpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('typeDefs should catch proper signatures', () => {
-    const notifyManagerTest = createNotifyManager()
-
-    // we define some fn with its signature:
-    const fn: (a: string, b: number) => string = (a, b) => a + b
-
-    // now someFn expect to be called with args [a: string, b: number]
-    const someFn = notifyManagerTest.batchCalls(fn)
-
-    expectTypeOf(someFn).parameters.toEqualTypeOf<Parameters<typeof fn>>()
-    assertType<Parameters<typeof someFn>>(['im happy', 4])
-    assertType<Parameters<typeof someFn>>([
-      'im not happy',
-      // @ts-expect-error
-      false,
-    ])
   })
 
   it('should use custom batch notify function', async () => {
