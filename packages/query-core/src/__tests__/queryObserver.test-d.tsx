@@ -163,6 +163,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['refetchInterval'], Function>
         >().returns.toEqualTypeOf<number | false | undefined>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['refetchInterval'], Function>
+        >().toEqualTypeOf<number | false | undefined>()
       })
     })
 
