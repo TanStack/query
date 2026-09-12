@@ -31,37 +31,6 @@ describe('queryObserver', () => {
     queryClient.clear()
   })
 
-  describe('type parameters', () => {
-    it('should default to an unknown data type and the default error', () => {
-      expectTypeOf<
-        Awaited<ReturnType<QueryObserver['refetch']>>
-      >().toEqualTypeOf<QueryObserverResult<unknown, DefaultError>>()
-    })
-
-    it('should derive the remaining type parameters from the data type alone', () => {
-      expectTypeOf<
-        QueryObserverOptions<{ value: string }>['select']
-      >().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
-      >()
-      expectTypeOf<
-        QueryObserverBaseResult<{ value: string }>['error']
-      >().toEqualTypeOf<DefaultError | null>()
-    })
-
-    it('should only accept an array as its queryKey', () => {
-      const observer = new QueryObserver(queryClient, {
-        // @ts-expect-error a query key must be an array
-        queryKey: 'not-an-array',
-        queryFn: () => Promise.resolve('data'),
-      })
-
-      expectTypeOf(observer.getCurrentQuery().queryKey).toEqualTypeOf<
-        ReadonlyArray<unknown>
-      >()
-    })
-  })
-
   describe('QueryObserverOptions', () => {
     it('should keep every option writable', () => {
       type Options = QueryObserverOptions<
@@ -77,7 +46,27 @@ describe('queryObserver', () => {
       }>()
     })
 
+    it('should derive its remaining type parameters from the data type', () => {
+      expectTypeOf<
+        QueryObserverOptions<{ value: string }>['select']
+      >().toEqualTypeOf<
+        ((data: { value: string }) => { value: string }) | undefined
+      >()
+    })
+
     describe('queryKey', () => {
+      it('should only accept an array', () => {
+        const observer = new QueryObserver(queryClient, {
+          // @ts-expect-error a query key must be an array
+          queryKey: 'not-an-array',
+          queryFn: () => Promise.resolve('data'),
+        })
+
+        expectTypeOf(observer.getCurrentQuery().queryKey).toEqualTypeOf<
+          ReadonlyArray<unknown>
+        >()
+      })
+
       it('should be required', () => {
         // @ts-expect-error queryKey is required
         new QueryObserver(queryClient, {
@@ -783,6 +772,12 @@ describe('queryObserver', () => {
           QueryObserverBaseResult<{ value: string }, CustomError>['error']
         >().toEqualTypeOf<CustomError | null>()
       })
+
+      it('should default the error type of the base result', () => {
+        expectTypeOf<
+          QueryObserverBaseResult<{ value: string }>['error']
+        >().toEqualTypeOf<DefaultError | null>()
+      })
     })
 
     describe('discriminant flags', () => {
@@ -1463,6 +1458,12 @@ describe('queryObserver', () => {
   })
 
   describe('refetch', () => {
+    it('should resolve with an unknown data type when no type parameter is given', () => {
+      expectTypeOf<
+        Awaited<ReturnType<QueryObserver['refetch']>>
+      >().toEqualTypeOf<QueryObserverResult<unknown, DefaultError>>()
+    })
+
     it('should resolve with the observed result type', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: queryKey(),
