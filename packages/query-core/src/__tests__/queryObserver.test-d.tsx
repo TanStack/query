@@ -622,6 +622,62 @@ describe('queryObserver', () => {
         }
       })
     })
+
+    describe('discriminants', () => {
+      it('should fix isPending to true on the pending branch', () => {
+        type Pending = Extract<
+          QueryObserverResult<{ value: string }>,
+          { status: 'pending'; isLoading: boolean }
+        >
+
+        expectTypeOf<Pending['isPending']>().toEqualTypeOf<true>()
+      })
+
+      it('should fix isLoading to true on the loading branch', () => {
+        type Loading = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isLoading: true }
+        >
+
+        expectTypeOf<Loading['isLoading']>().toEqualTypeOf<true>()
+      })
+
+      it('should fix isSuccess to true on the success branch', () => {
+        type Success = Extract<
+          QueryObserverResult<{ value: string }>,
+          { status: 'success'; isPlaceholderData: false }
+        >
+
+        expectTypeOf<Success['isSuccess']>().toEqualTypeOf<true>()
+      })
+
+      it('should fix isPlaceholderData to true on the placeholder branch', () => {
+        type Placeholder = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isPlaceholderData: true }
+        >
+
+        expectTypeOf<Placeholder['isPlaceholderData']>().toEqualTypeOf<true>()
+      })
+
+      it('should fix isLoadingError to true on the loading error branch', () => {
+        type LoadingError = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isLoadingError: true }
+        >
+
+        expectTypeOf<LoadingError['isLoadingError']>().toEqualTypeOf<true>()
+      })
+
+      it('should fix isRefetchError to true on the refetch error branch', () => {
+        type RefetchError = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isRefetchError: true }
+        >
+
+        expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
+      })
+    })
   })
 
   describe('setOptions', () => {
