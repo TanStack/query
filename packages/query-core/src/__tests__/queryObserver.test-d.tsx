@@ -706,6 +706,25 @@ describe('queryObserver', () => {
       })
     })
 
+    describe('discriminant flags', () => {
+      it('should type them as booleans on the base result', () => {
+        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
+
+        expectTypeOf<Base['isPending']>().toEqualTypeOf<boolean>()
+        expectTypeOf<Base['isSuccess']>().toEqualTypeOf<boolean>()
+        expectTypeOf<Base['isError']>().toEqualTypeOf<boolean>()
+        expectTypeOf<Base['isLoadingError']>().toEqualTypeOf<boolean>()
+        expectTypeOf<Base['isRefetchError']>().toEqualTypeOf<boolean>()
+        expectTypeOf<Base['isPlaceholderData']>().toEqualTypeOf<boolean>()
+      })
+
+      it('should type status as the query status union on the base result', () => {
+        expectTypeOf<
+          QueryObserverBaseResult<{ value: string }, CustomError>['status']
+        >().toEqualTypeOf<'pending' | 'error' | 'success'>()
+      })
+    })
+
     describe('failureReason', () => {
       it('should type failureReason from the error type', () => {
         const observer = new QueryObserver<boolean, CustomError>(queryClient, {
