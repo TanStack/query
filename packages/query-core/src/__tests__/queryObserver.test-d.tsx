@@ -1081,6 +1081,25 @@ describe('queryObserver', () => {
     })
   })
 
+  describe('options', () => {
+    it('should expose the observed types through the options it holds', () => {
+      const observer = new QueryObserver<{ value: string }, CustomError>(
+        queryClient,
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        },
+      )
+
+      expectTypeOf<Extract<typeof observer.options.throwOnError, Function>>()
+        .parameter(0)
+        .toEqualTypeOf<CustomError>()
+      expectTypeOf(observer.options.select).toEqualTypeOf<
+        ((data: { value: string }) => { value: string }) | undefined
+      >()
+    })
+  })
+
   describe('getOptimisticResult', () => {
     it('should be typed from the options it is given', () => {
       const observer = new QueryObserver(queryClient, {
