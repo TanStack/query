@@ -1054,6 +1054,31 @@ describe('queryObserver', () => {
         .parameter(0)
         .toEqualTypeOf<typeof options>()
     })
+
+    it('should require the options that are always defaulted', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      type Options = Parameters<typeof observer.getOptimisticResult>[0]
+      type OptionalKeys = {
+        [K in keyof Options]-?: {} extends Pick<Options, K> ? K : never
+      }[keyof Options]
+
+      expectTypeOf<
+        'throwOnError' extends OptionalKeys ? true : false
+      >().toEqualTypeOf<false>()
+      expectTypeOf<
+        'refetchOnReconnect' extends OptionalKeys ? true : false
+      >().toEqualTypeOf<false>()
+      expectTypeOf<
+        'queryHash' extends OptionalKeys ? true : false
+      >().toEqualTypeOf<false>()
+      expectTypeOf<Options['select']>().toEqualTypeOf<
+        ((data: { value: string }) => { value: string }) | undefined
+      >()
+    })
   })
 
   describe('getCurrentResult', () => {
