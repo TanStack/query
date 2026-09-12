@@ -1312,6 +1312,7 @@ describe('queryObserver', () => {
 
       const state = observer.getCurrentQuery().state
 
+      expectTypeOf(observer.getCurrentQuery().queryHash).toEqualTypeOf<string>()
       expectTypeOf(state.isInvalidated).toEqualTypeOf<boolean>()
       expectTypeOf(state.fetchMeta).toEqualTypeOf<{
         fetchMore?: { direction: 'forward' | 'backward' }
