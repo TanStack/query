@@ -32,91 +32,6 @@ describe('queryObserver', () => {
     queryClient.clear()
   })
 
-  it('should be inferred as a correct result type', () => {
-    const observer = new QueryObserver(queryClient, {
-      queryKey: queryKey(),
-      queryFn: () => Promise.resolve({ value: 'data' }),
-    })
-
-    const result = observer.getCurrentResult()
-
-    if (result.isPending) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isError).toEqualTypeOf<false>()
-      expectTypeOf(result.isPending).toEqualTypeOf<true>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-      expectTypeOf(result.status).toEqualTypeOf<'pending'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
-    }
-    if (result.isLoading) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isError).toEqualTypeOf<false>()
-      expectTypeOf(result.isPending).toEqualTypeOf<true>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<true>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-      expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
-      expectTypeOf(result.status).toEqualTypeOf<'pending'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
-    }
-
-    if (result.isLoadingError) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-      expectTypeOf(result.isError).toEqualTypeOf<true>()
-      expectTypeOf(result.isPending).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-      expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
-      expectTypeOf(result.status).toEqualTypeOf<'error'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
-    }
-
-    if (result.isRefetchError) {
-      expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
-      expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-      expectTypeOf(result.isError).toEqualTypeOf<true>()
-      expectTypeOf(result.isPending).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<true>()
-      expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
-      expectTypeOf(result.status).toEqualTypeOf<'error'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
-    }
-
-    if (result.isSuccess) {
-      expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isError).toEqualTypeOf<false>()
-      expectTypeOf(result.isPending).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-      expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
-      expectTypeOf(result.status).toEqualTypeOf<'success'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
-    }
-
-    if (result.isPlaceholderData) {
-      expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isError).toEqualTypeOf<false>()
-      expectTypeOf(result.isPending).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-      expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-      expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-      expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
-      expectTypeOf(result.status).toEqualTypeOf<'success'>()
-      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
-    }
-  })
-
   describe('QueryObserverOptions', () => {
     describe('queryFn', () => {
       it('should type the context given to the queryFn', () => {
@@ -676,6 +591,139 @@ describe('queryObserver', () => {
         >
 
         expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
+      })
+    })
+
+    describe('branches', () => {
+      it('should type every flag on the pending branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isPending) {
+          expectTypeOf(result.data).toEqualTypeOf<undefined>()
+          expectTypeOf(result.error).toEqualTypeOf<null>()
+          expectTypeOf(result.isError).toEqualTypeOf<false>()
+          expectTypeOf(result.isPending).toEqualTypeOf<true>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf(result.status).toEqualTypeOf<'pending'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
+        }
+      })
+
+      it('should type every flag on the loading branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isLoading) {
+          expectTypeOf(result.data).toEqualTypeOf<undefined>()
+          expectTypeOf(result.error).toEqualTypeOf<null>()
+          expectTypeOf(result.isError).toEqualTypeOf<false>()
+          expectTypeOf(result.isPending).toEqualTypeOf<true>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<true>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf(result.status).toEqualTypeOf<'pending'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
+        }
+      })
+
+      it('should type every flag on the loading error branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isLoadingError) {
+          expectTypeOf(result.data).toEqualTypeOf<undefined>()
+          expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
+          expectTypeOf(result.isError).toEqualTypeOf<true>()
+          expectTypeOf(result.isPending).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf(result.status).toEqualTypeOf<'error'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
+        }
+      })
+
+      it('should type every flag on the refetch error branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isRefetchError) {
+          expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
+          expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
+          expectTypeOf(result.isError).toEqualTypeOf<true>()
+          expectTypeOf(result.isPending).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<true>()
+          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf(result.status).toEqualTypeOf<'error'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
+        }
+      })
+
+      it('should type every flag on the success branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isSuccess) {
+          expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
+          expectTypeOf(result.error).toEqualTypeOf<null>()
+          expectTypeOf(result.isError).toEqualTypeOf<false>()
+          expectTypeOf(result.isPending).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf(result.status).toEqualTypeOf<'success'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
+        }
+      })
+
+      it('should type every flag on the placeholder branch', () => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        })
+
+        const result = observer.getCurrentResult()
+
+        if (result.isPlaceholderData) {
+          expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
+          expectTypeOf(result.error).toEqualTypeOf<null>()
+          expectTypeOf(result.isError).toEqualTypeOf<false>()
+          expectTypeOf(result.isPending).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
+          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
+          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf(result.status).toEqualTypeOf<'success'>()
+          expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
+        }
       })
     })
   })
