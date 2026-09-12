@@ -52,6 +52,20 @@ describe('queryObserver', () => {
   })
 
   describe('QueryObserverOptions', () => {
+    it('should keep every option writable', () => {
+      type Options = QueryObserverOptions<
+        { value: string },
+        CustomError,
+        { value: string },
+        { value: string },
+        ReadonlyArray<unknown>
+      >
+
+      expectTypeOf<Options>().toEqualTypeOf<{
+        -readonly [K in keyof Options]: Options[K]
+      }>()
+    })
+
     describe('queryKey', () => {
       it('should be required', () => {
         // @ts-expect-error queryKey is required
