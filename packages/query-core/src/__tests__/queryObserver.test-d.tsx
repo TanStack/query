@@ -75,6 +75,7 @@ describe('queryObserver', () => {
             expectTypeOf(context.queryKey).toEqualTypeOf<readonly ['a', 1]>()
             expectTypeOf(context.signal).toEqualTypeOf<AbortSignal>()
             expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
+            expectTypeOf(context.meta).toEqualTypeOf<QueryMeta | undefined>()
             return Promise.resolve('data')
           },
         })
@@ -269,8 +270,11 @@ describe('queryObserver', () => {
         new QueryObserver<{ value: string }, CustomError>(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
-          throwOnError: (error) => {
+          throwOnError: (error, query) => {
             expectTypeOf(error).toEqualTypeOf<CustomError>()
+            expectTypeOf(query.state.data).toEqualTypeOf<
+              { value: string } | undefined
+            >()
             return false
           },
         })
@@ -294,7 +298,8 @@ describe('queryObserver', () => {
       it('should type the error given to a retry callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
-          retry: (_failureCount, error) => {
+          retry: (failureCount, error) => {
+            expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
             return false
           },
@@ -319,7 +324,8 @@ describe('queryObserver', () => {
       it('should type the error given to a retryDelay callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
-          retryDelay: (_failureCount, error) => {
+          retryDelay: (failureCount, error) => {
+            expectTypeOf(failureCount).toEqualTypeOf<number>()
             expectTypeOf(error).toEqualTypeOf<CustomError>()
             return 0
           },
@@ -373,7 +379,8 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
-          structuralSharing: (_oldData, newData) => {
+          structuralSharing: (oldData, newData) => {
+            expectTypeOf(oldData).toEqualTypeOf<unknown>()
             expectTypeOf(newData).toEqualTypeOf<unknown>()
             return newData
           },
