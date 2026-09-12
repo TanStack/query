@@ -586,8 +586,8 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('discriminants', () => {
-      it('should fix isPending to true on the pending branch', () => {
+    describe('QueryObserverPendingResult', () => {
+      it('should be extractable from the result union by its isPending literal', () => {
         type Pending = Extract<
           QueryObserverResult<{ value: string }>,
           { status: 'pending'; isLoading: boolean }
@@ -596,54 +596,7 @@ describe('queryObserver', () => {
         expectTypeOf<Pending['isPending']>().toEqualTypeOf<true>()
       })
 
-      it('should fix isLoading to true on the loading branch', () => {
-        type Loading = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isLoading: true }
-        >
-
-        expectTypeOf<Loading['isLoading']>().toEqualTypeOf<true>()
-      })
-
-      it('should fix isSuccess to true on the success branch', () => {
-        type Success = Extract<
-          QueryObserverResult<{ value: string }>,
-          { status: 'success'; isPlaceholderData: false }
-        >
-
-        expectTypeOf<Success['isSuccess']>().toEqualTypeOf<true>()
-      })
-
-      it('should fix isPlaceholderData to true on the placeholder branch', () => {
-        type Placeholder = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isPlaceholderData: true }
-        >
-
-        expectTypeOf<Placeholder['isPlaceholderData']>().toEqualTypeOf<true>()
-      })
-
-      it('should fix isLoadingError to true on the loading error branch', () => {
-        type LoadingError = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isLoadingError: true }
-        >
-
-        expectTypeOf<LoadingError['isLoadingError']>().toEqualTypeOf<true>()
-      })
-
-      it('should fix isRefetchError to true on the refetch error branch', () => {
-        type RefetchError = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isRefetchError: true }
-        >
-
-        expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
-      })
-    })
-
-    describe('branches', () => {
-      it('should type every flag on the pending branch', () => {
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
@@ -663,8 +616,19 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+    })
 
-      it('should type every flag on the loading branch', () => {
+    describe('QueryObserverLoadingResult', () => {
+      it('should be extractable from the result union by its isLoading literal', () => {
+        type Loading = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isLoading: true }
+        >
+
+        expectTypeOf<Loading['isLoading']>().toEqualTypeOf<true>()
+      })
+
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
@@ -685,8 +649,19 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+    })
 
-      it('should type every flag on the loading error branch', () => {
+    describe('QueryObserverLoadingErrorResult', () => {
+      it('should be extractable from the result union by its isLoadingError literal', () => {
+        type LoadingError = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isLoadingError: true }
+        >
+
+        expectTypeOf<LoadingError['isLoadingError']>().toEqualTypeOf<true>()
+      })
+
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
@@ -707,8 +682,19 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+    })
 
-      it('should type every flag on the refetch error branch', () => {
+    describe('QueryObserverRefetchErrorResult', () => {
+      it('should be extractable from the result union by its isRefetchError literal', () => {
+        type RefetchError = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isRefetchError: true }
+        >
+
+        expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
+      })
+
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
@@ -729,8 +715,19 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+    })
 
-      it('should type every flag on the success branch', () => {
+    describe('QueryObserverSuccessResult', () => {
+      it('should be extractable from the result union by its isSuccess literal', () => {
+        type Success = Extract<
+          QueryObserverResult<{ value: string }>,
+          { status: 'success'; isPlaceholderData: false }
+        >
+
+        expectTypeOf<Success['isSuccess']>().toEqualTypeOf<true>()
+      })
+
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
@@ -751,8 +748,19 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
         }
       })
+    })
 
-      it('should type every flag on the placeholder branch', () => {
+    describe('QueryObserverPlaceholderResult', () => {
+      it('should be extractable from the result union by its isPlaceholderData literal', () => {
+        type Placeholder = Extract<
+          QueryObserverResult<{ value: string }>,
+          { isPlaceholderData: true }
+        >
+
+        expectTypeOf<Placeholder['isPlaceholderData']>().toEqualTypeOf<true>()
+      })
+
+      it('should pin every flag along with its data and error types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
