@@ -885,6 +885,47 @@ describe('queryObserver', () => {
             QueryObserverBaseResult<{ value: string }, CustomError>['data']
           >().toEqualTypeOf<{ value: string } | undefined>()
         })
+
+        it('should stay possibly undefined on an isError check', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          if (result.isError) {
+            expectTypeOf(result.data).toEqualTypeOf<
+              { value: string } | undefined
+            >()
+          }
+        })
+
+        it('should be defined on a success status check', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          if (result.status === 'success') {
+            expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
+          }
+        })
+
+        it('should be undefined on a pending status check', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          if (result.status === 'pending') {
+            expectTypeOf(result.data).toEqualTypeOf<undefined>()
+          }
+        })
       })
 
       describe('error', () => {
@@ -898,6 +939,32 @@ describe('queryObserver', () => {
           expectTypeOf<
             QueryObserverBaseResult<{ value: string }>['error']
           >().toEqualTypeOf<DefaultError | null>()
+        })
+
+        it('should be the observed error type on an isError check', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          if (result.isError) {
+            expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
+          }
+        })
+
+        it('should be the observed error type on an error status check', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          if (result.status === 'error') {
+            expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
+          }
         })
       })
 
@@ -1032,75 +1099,6 @@ describe('queryObserver', () => {
             'fetching' | 'paused' | 'idle'
           >()
         })
-      })
-    })
-
-    describe('narrowing', () => {
-      it('should narrow error to the error type on an isError check', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
-
-        const result = observer.getCurrentResult()
-
-        if (result.isError) {
-          expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-        }
-      })
-
-      it('should keep data possibly undefined on an isError check', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
-
-        const result = observer.getCurrentResult()
-
-        if (result.isError) {
-          expectTypeOf(result.data).toEqualTypeOf<
-            { value: string } | undefined
-          >()
-        }
-      })
-
-      it('should narrow data to be defined on a success status check', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
-
-        const result = observer.getCurrentResult()
-
-        if (result.status === 'success') {
-          expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
-        }
-      })
-
-      it('should narrow error to the error type on an error status check', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
-
-        const result = observer.getCurrentResult()
-
-        if (result.status === 'error') {
-          expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-        }
-      })
-
-      it('should narrow data to undefined on a pending status check', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
-
-        const result = observer.getCurrentResult()
-
-        if (result.status === 'pending') {
-          expectTypeOf(result.data).toEqualTypeOf<undefined>()
-        }
       })
     })
 
