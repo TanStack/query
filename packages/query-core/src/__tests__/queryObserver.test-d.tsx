@@ -296,32 +296,14 @@ describe('queryObserver', () => {
   })
 
   describe('the options', () => {
-    it('should type the queryKey given to the queryFn', () => {
+    it('should type the context given to the queryFn', () => {
       const key = ['a', 1] as const
 
       new QueryObserver(queryClient, {
         queryKey: key,
         queryFn: (context) => {
           expectTypeOf(context.queryKey).toEqualTypeOf<readonly ['a', 1]>()
-          return Promise.resolve('data')
-        },
-      })
-    })
-
-    it('should type the signal given to the queryFn', () => {
-      new QueryObserver(queryClient, {
-        queryKey: queryKey(),
-        queryFn: (context) => {
           expectTypeOf(context.signal).toEqualTypeOf<AbortSignal>()
-          return Promise.resolve('data')
-        },
-      })
-    })
-
-    it('should type the client given to the queryFn', () => {
-      new QueryObserver(queryClient, {
-        queryKey: queryKey(),
-        queryFn: (context) => {
           expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
           return Promise.resolve('data')
         },
