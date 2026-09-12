@@ -5,7 +5,6 @@ import type {
   DefaultError,
   InfiniteQueryObserverResult,
   InitialDataFunction,
-  NetworkMode,
   PlaceholderDataFunction,
   Query,
   QueryMeta,
@@ -555,7 +554,7 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<QueryObserverOptions['networkMode']>().toEqualTypeOf<
-          NetworkMode | undefined
+          'online' | 'always' | 'offlineFirst' | undefined
         >()
       })
     })
@@ -579,7 +578,7 @@ describe('queryObserver', () => {
     describe('meta', () => {
       it('should type meta as its named type', () => {
         expectTypeOf<QueryObserverOptions['meta']>().toEqualTypeOf<
-          QueryMeta | undefined
+          Record<string, unknown> | undefined
         >()
       })
     })
