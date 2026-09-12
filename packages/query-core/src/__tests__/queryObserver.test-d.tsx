@@ -1337,6 +1337,26 @@ describe('queryObserver', () => {
       expectTypeOf(state.fetchFailureCount).toEqualTypeOf<number>()
     })
 
+    it('should always declare data on the query state', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      type State = (typeof observer)['getCurrentQuery'] extends () => {
+        state: infer TState
+      }
+        ? TState
+        : never
+      type OptionalKeys = {
+        [K in keyof State]-?: {} extends Pick<State, K> ? K : never
+      }[keyof State]
+
+      expectTypeOf<
+        'data' extends OptionalKeys ? true : false
+      >().toEqualTypeOf<false>()
+    })
+
     it('should type the remaining fields of the query state', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: queryKey(),
