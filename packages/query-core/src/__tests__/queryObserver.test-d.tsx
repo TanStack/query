@@ -297,7 +297,7 @@ describe('queryObserver', () => {
       it('should type the queryKey of the previousQuery it is given', () => {
         const testQueryKey = ['SomeQuery', 42, { foo: 'bar' }] as const
 
-        new QueryObserver(new QueryClient(), {
+        new QueryObserver(queryClient, {
           queryKey: testQueryKey,
           placeholderData: (_, previousQuery) => {
             if (previousQuery) {
@@ -310,7 +310,7 @@ describe('queryObserver', () => {
       })
 
       it('should type the error of the previousQuery it is given', () => {
-        new QueryObserver<boolean, CustomError>(new QueryClient(), {
+        new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
           placeholderData: (_, previousQuery) => {
             if (previousQuery) {
@@ -326,7 +326,7 @@ describe('queryObserver', () => {
       it('should type previousData as the query data', () => {
         const queryData = { foo: 'bar' } as const
 
-        new QueryObserver(new QueryClient(), {
+        new QueryObserver(queryClient, {
           queryKey: queryKey(),
           queryFn: () => queryData,
           select: (data) => data.foo,
