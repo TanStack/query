@@ -38,6 +38,17 @@ describe('queryObserver', () => {
       >().toEqualTypeOf<QueryObserverResult<unknown, DefaultError>>()
     })
 
+    it('should derive the remaining type parameters from the data type alone', () => {
+      expectTypeOf<
+        QueryObserverOptions<{ value: string }>['select']
+      >().toEqualTypeOf<
+        ((data: { value: string }) => { value: string }) | undefined
+      >()
+      expectTypeOf<
+        QueryObserverBaseResult<{ value: string }>['error']
+      >().toEqualTypeOf<DefaultError | null>()
+    })
+
     it('should only accept an array as its queryKey', () => {
       const observer = new QueryObserver(queryClient, {
         // @ts-expect-error a query key must be an array
