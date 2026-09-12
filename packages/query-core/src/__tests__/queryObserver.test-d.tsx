@@ -263,9 +263,19 @@ describe('queryObserver', () => {
 
     describe('initialData', () => {
       it('should type an initialData function from the data type', () => {
-        expectTypeOf<
-          InitialDataFunction<{ value: string }>
-        >().returns.toEqualTypeOf<{ value: string } | undefined>()
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+          initialData: () => {
+            expectTypeOf<
+              QueryObserverOptions<{ value: string }>['initialData']
+            >()
+              .extract<InitialDataFunction<any>>()
+              .returns.toEqualTypeOf<{ value: string } | undefined>()
+
+            return { value: 'data' }
+          },
+        })
       })
     })
 
