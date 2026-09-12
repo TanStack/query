@@ -696,6 +696,20 @@ describe('queryObserver', () => {
           QueryObserverBaseResult<{ value: string }, CustomError>['data']
         >().toEqualTypeOf<{ value: string } | undefined>()
       })
+
+      it('should always declare data and refetch on the base result', () => {
+        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
+        type OptionalKeys = {
+          [K in keyof Base]-?: {} extends Pick<Base, K> ? K : never
+        }[keyof Base]
+
+        expectTypeOf<
+          'data' extends OptionalKeys ? true : false
+        >().toEqualTypeOf<false>()
+        expectTypeOf<
+          'refetch' extends OptionalKeys ? true : false
+        >().toEqualTypeOf<false>()
+      })
     })
 
     describe('error', () => {
