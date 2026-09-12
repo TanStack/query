@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver } from '..'
-import type { DefaultError } from '..'
+import type { DefaultError, QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -98,6 +98,36 @@ describe('queryObserver', () => {
       expectTypeOf(result.status).toEqualTypeOf<'success'>()
       expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
     }
+  })
+
+  describe('select', () => {
+    it('should infer the selected type in the subscribe callback', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => ({ count: 1 }),
+        select: (data) => ({ myCount: data.count }),
+      })
+
+      observer.subscribe((result) => {
+        expectTypeOf(result).toEqualTypeOf<
+          QueryObserverResult<{ myCount: number }>
+        >()
+      })
+    })
+
+    it('should infer the selected type from the refetch result', async () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => ({ count: 1 }),
+        select: (data) => ({ myCount: data.count }),
+      })
+
+      const observerResult = await observer.refetch()
+
+      expectTypeOf(observerResult.data).toEqualTypeOf<
+        { myCount: number } | undefined
+      >()
+    })
   })
 
   describe('placeholderData', () => {
