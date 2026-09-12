@@ -117,7 +117,7 @@ describe('queryObserver', () => {
     }
   })
 
-  describe('constructor', () => {
+  describe('QueryObserverOptions', () => {
     describe('queryFn', () => {
       it('should type the context given to the queryFn', () => {
         const key = ['a', 1] as const
@@ -345,7 +345,7 @@ describe('queryObserver', () => {
         >().returns.toEqualTypeOf<{ value: string } | undefined>()
       })
 
-      it('previousQuery should have typed queryKey', () => {
+      it('should type the queryKey of the previousQuery it is given', () => {
         const testQueryKey = ['SomeQuery', 42, { foo: 'bar' }] as const
 
         new QueryObserver(new QueryClient(), {
@@ -360,7 +360,7 @@ describe('queryObserver', () => {
         })
       })
 
-      it('previousQuery should have typed error', () => {
+      it('should type the error of the previousQuery it is given', () => {
         new QueryObserver<boolean, CustomError>(new QueryClient(), {
           queryKey: queryKey(),
           placeholderData: (_, previousQuery) => {
@@ -374,7 +374,7 @@ describe('queryObserver', () => {
         })
       })
 
-      it('previousData should have the same type as query data', () => {
+      it('should type previousData as the query data', () => {
         const queryData = { foo: 'bar' } as const
 
         new QueryObserver(new QueryClient(), {
@@ -466,92 +466,7 @@ describe('queryObserver', () => {
     })
   })
 
-  describe('setOptions', () => {
-    it('should keep the observed data type in the options it is given', () => {
-      const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      observer.setOptions({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-        select: (data) => {
-          expectTypeOf(data).toEqualTypeOf<{ value: string }>()
-          return data
-        },
-      })
-
-      observer.setOptions({
-        queryKey: queryKey(),
-        // @ts-expect-error the queryFn must return the observed data type
-        queryFn: () => 42,
-      })
-    })
-  })
-
-  describe('getOptimisticResult', () => {
-    it('should be typed from the options it is given', () => {
-      const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      const options = queryClient.defaultQueryOptions({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      expectTypeOf(observer.getOptimisticResult(options)).toEqualTypeOf<
-        QueryObserverResult<{ value: string }, DefaultError>
-      >()
-
-      const withCustomError = new QueryObserver<{ value: string }, CustomError>(
-        queryClient,
-        {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        },
-      )
-
-      const customErrorOptions = queryClient.defaultQueryOptions<
-        { value: string },
-        CustomError
-      >({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      expectTypeOf(
-        withCustomError.getOptimisticResult(customErrorOptions),
-      ).toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
-    })
-  })
-
-  describe('getCurrentResult', () => {
-    it('should be typed from the observed types', () => {
-      const observer = new QueryObserver(queryClient, {
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve({ value: 'data' }),
-      })
-
-      expectTypeOf(observer.getCurrentResult()).toEqualTypeOf<
-        QueryObserverResult<{ value: string }, DefaultError>
-      >()
-
-      const withCustomError = new QueryObserver<{ value: string }, CustomError>(
-        queryClient,
-        {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        },
-      )
-
-      expectTypeOf(withCustomError.getCurrentResult()).toEqualTypeOf<
-        QueryObserverResult<{ value: string }, CustomError>
-      >()
-    })
-
+  describe('QueryObserverResult', () => {
     describe('properties', () => {
       it('should type its timestamps and counters as numbers', () => {
         const observer = new QueryObserver(queryClient, {
@@ -706,6 +621,93 @@ describe('queryObserver', () => {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
         }
       })
+    })
+  })
+
+  describe('setOptions', () => {
+    it('should keep the observed data type in the options it is given', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      observer.setOptions({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+        select: (data) => {
+          expectTypeOf(data).toEqualTypeOf<{ value: string }>()
+          return data
+        },
+      })
+
+      observer.setOptions({
+        queryKey: queryKey(),
+        // @ts-expect-error the queryFn must return the observed data type
+        queryFn: () => 42,
+      })
+    })
+  })
+
+  describe('getOptimisticResult', () => {
+    it('should be typed from the options it is given', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      expectTypeOf(observer.getOptimisticResult(options)).toEqualTypeOf<
+        QueryObserverResult<{ value: string }, DefaultError>
+      >()
+
+      const withCustomError = new QueryObserver<{ value: string }, CustomError>(
+        queryClient,
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        },
+      )
+
+      const customErrorOptions = queryClient.defaultQueryOptions<
+        { value: string },
+        CustomError
+      >({
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      expectTypeOf(
+        withCustomError.getOptimisticResult(customErrorOptions),
+      ).toEqualTypeOf<QueryObserverResult<{ value: string }, CustomError>>()
+    })
+  })
+
+  describe('getCurrentResult', () => {
+    it('should be typed from the observed types', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      expectTypeOf(observer.getCurrentResult()).toEqualTypeOf<
+        QueryObserverResult<{ value: string }, DefaultError>
+      >()
+
+      const withCustomError = new QueryObserver<{ value: string }, CustomError>(
+        queryClient,
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+        },
+      )
+
+      expectTypeOf(withCustomError.getCurrentResult()).toEqualTypeOf<
+        QueryObserverResult<{ value: string }, CustomError>
+      >()
     })
   })
 
