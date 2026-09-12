@@ -8,6 +8,7 @@ import type {
   PlaceholderDataFunction,
   Query,
   QueryMeta,
+  QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
   QueryStatus,
@@ -686,6 +687,22 @@ describe('queryObserver', () => {
         expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
         expectTypeOf(result.isFetchedAfterMount).toEqualTypeOf<boolean>()
         expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
+      })
+    })
+
+    describe('data', () => {
+      it('should type data from the observed data type on the base result', () => {
+        expectTypeOf<
+          QueryObserverBaseResult<{ value: string }, CustomError>['data']
+        >().toEqualTypeOf<{ value: string } | undefined>()
+      })
+    })
+
+    describe('error', () => {
+      it('should type error from the observed error type on the base result', () => {
+        expectTypeOf<
+          QueryObserverBaseResult<{ value: string }, CustomError>['error']
+        >().toEqualTypeOf<CustomError | null>()
       })
     })
 
