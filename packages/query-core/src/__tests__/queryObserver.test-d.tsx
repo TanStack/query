@@ -671,196 +671,203 @@ describe('queryObserver', () => {
   })
 
   describe('QueryObserverResult', () => {
-    describe('timestamps and counters', () => {
-      it('should type its timestamps and counters as numbers', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+    describe('QueryObserverBaseResult', () => {
+      describe('timestamps and counters', () => {
+        it('should type its timestamps and counters as numbers', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          expectTypeOf(result.dataUpdatedAt).toEqualTypeOf<number>()
+          expectTypeOf(result.errorUpdatedAt).toEqualTypeOf<number>()
+          expectTypeOf(result.failureCount).toEqualTypeOf<number>()
+          expectTypeOf(result.errorUpdateCount).toEqualTypeOf<number>()
+        })
+      })
+
+      describe('state flags', () => {
+        it('should type its state flags as booleans', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          const result = observer.getCurrentResult()
+
+          expectTypeOf(result.isFetching).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isRefetching).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isPaused).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isStale).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isEnabled).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isFetchedAfterMount).toEqualTypeOf<boolean>()
+          expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
+        })
+      })
+
+      describe('data', () => {
+        it('should type data from the observed data type on the base result', () => {
+          expectTypeOf<
+            QueryObserverBaseResult<{ value: string }, CustomError>['data']
+          >().toEqualTypeOf<{ value: string } | undefined>()
         })
 
-        const result = observer.getCurrentResult()
+        it('should keep every property of the base result writable', () => {
+          type Base = QueryObserverBaseResult<{ value: string }, CustomError>
 
-        expectTypeOf(result.dataUpdatedAt).toEqualTypeOf<number>()
-        expectTypeOf(result.errorUpdatedAt).toEqualTypeOf<number>()
-        expectTypeOf(result.failureCount).toEqualTypeOf<number>()
-        expectTypeOf(result.errorUpdateCount).toEqualTypeOf<number>()
-      })
-    })
-
-    describe('state flags', () => {
-      it('should type its state flags as booleans', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+          expectTypeOf<Base>().toEqualTypeOf<{
+            -readonly [K in keyof Base]: Base[K]
+          }>()
         })
 
-        const result = observer.getCurrentResult()
+        it('should keep every property of each result branch writable', () => {
+          type Writable<T> = { -readonly [K in keyof T]: T[K] }
+          type Branch<TFilter> = Extract<
+            QueryObserverResult<{ value: string }, CustomError>,
+            TFilter
+          >
 
-        expectTypeOf(result.isFetching).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isRefetching).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isPaused).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isStale).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isEnabled).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isFetchedAfterMount).toEqualTypeOf<boolean>()
-        expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
-      })
-    })
-
-    describe('data', () => {
-      it('should type data from the observed data type on the base result', () => {
-        expectTypeOf<
-          QueryObserverBaseResult<{ value: string }, CustomError>['data']
-        >().toEqualTypeOf<{ value: string } | undefined>()
-      })
-
-      it('should keep every property of the base result writable', () => {
-        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
-
-        expectTypeOf<Base>().toEqualTypeOf<{
-          -readonly [K in keyof Base]: Base[K]
-        }>()
-      })
-
-      it('should keep every property of each result branch writable', () => {
-        type Writable<T> = { -readonly [K in keyof T]: T[K] }
-        type Branch<TFilter> = Extract<
-          QueryObserverResult<{ value: string }, CustomError>,
-          TFilter
-        >
-
-        expectTypeOf<
-          Branch<{ status: 'pending'; isLoading: boolean }>
-        >().toEqualTypeOf<
-          Writable<Branch<{ status: 'pending'; isLoading: boolean }>>
-        >()
-        expectTypeOf<Branch<{ isLoading: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoading: true }>>
-        >()
-        expectTypeOf<Branch<{ isSuccess: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isSuccess: true }>>
-        >()
-        expectTypeOf<Branch<{ isLoadingError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoadingError: true }>>
-        >()
-        expectTypeOf<Branch<{ isRefetchError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isRefetchError: true }>>
-        >()
-        expectTypeOf<Branch<{ isPlaceholderData: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isPlaceholderData: true }>>
-        >()
-      })
-
-      it('should always declare data and refetch on the base result', () => {
-        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
-        type OptionalKeys = {
-          [K in keyof Base]-?: {} extends Pick<Base, K> ? K : never
-        }[keyof Base]
-
-        expectTypeOf<
-          'data' extends OptionalKeys ? true : false
-        >().toEqualTypeOf<false>()
-        expectTypeOf<
-          'refetch' extends OptionalKeys ? true : false
-        >().toEqualTypeOf<false>()
-      })
-    })
-
-    describe('error', () => {
-      it('should type error from the observed error type on the base result', () => {
-        expectTypeOf<
-          QueryObserverBaseResult<{ value: string }, CustomError>['error']
-        >().toEqualTypeOf<CustomError | null>()
-      })
-
-      it('should default the error type of the base result', () => {
-        expectTypeOf<
-          QueryObserverBaseResult<{ value: string }>['error']
-        >().toEqualTypeOf<DefaultError | null>()
-      })
-    })
-
-    describe('discriminant flags', () => {
-      it('should type them as booleans on the base result', () => {
-        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
-
-        expectTypeOf<Base['isPending']>().toEqualTypeOf<boolean>()
-        expectTypeOf<Base['isSuccess']>().toEqualTypeOf<boolean>()
-        expectTypeOf<Base['isError']>().toEqualTypeOf<boolean>()
-        expectTypeOf<Base['isLoadingError']>().toEqualTypeOf<boolean>()
-        expectTypeOf<Base['isRefetchError']>().toEqualTypeOf<boolean>()
-        expectTypeOf<Base['isPlaceholderData']>().toEqualTypeOf<boolean>()
-      })
-
-      it('should type status as the query status union on the base result', () => {
-        expectTypeOf<
-          QueryObserverBaseResult<{ value: string }, CustomError>['status']
-        >().toEqualTypeOf<'pending' | 'error' | 'success'>()
-      })
-    })
-
-    describe('failureReason', () => {
-      it('should type failureReason from the error type', () => {
-        const observer = new QueryObserver<boolean, CustomError>(queryClient, {
-          queryKey: queryKey(),
+          expectTypeOf<
+            Branch<{ status: 'pending'; isLoading: boolean }>
+          >().toEqualTypeOf<
+            Writable<Branch<{ status: 'pending'; isLoading: boolean }>>
+          >()
+          expectTypeOf<Branch<{ isLoading: true }>>().toEqualTypeOf<
+            Writable<Branch<{ isLoading: true }>>
+          >()
+          expectTypeOf<Branch<{ isSuccess: true }>>().toEqualTypeOf<
+            Writable<Branch<{ isSuccess: true }>>
+          >()
+          expectTypeOf<Branch<{ isLoadingError: true }>>().toEqualTypeOf<
+            Writable<Branch<{ isLoadingError: true }>>
+          >()
+          expectTypeOf<Branch<{ isRefetchError: true }>>().toEqualTypeOf<
+            Writable<Branch<{ isRefetchError: true }>>
+          >()
+          expectTypeOf<Branch<{ isPlaceholderData: true }>>().toEqualTypeOf<
+            Writable<Branch<{ isPlaceholderData: true }>>
+          >()
         })
 
-        expectTypeOf(
-          observer.getCurrentResult().failureReason,
-        ).toEqualTypeOf<CustomError | null>()
-      })
-    })
+        it('should always declare data and refetch on the base result', () => {
+          type Base = QueryObserverBaseResult<{ value: string }, CustomError>
+          type OptionalKeys = {
+            [K in keyof Base]-?: {} extends Pick<Base, K> ? K : never
+          }[keyof Base]
 
-    describe('refetch', () => {
-      it('should type its refetch from the observed types', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+          expectTypeOf<
+            'data' extends OptionalKeys ? true : false
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            'refetch' extends OptionalKeys ? true : false
+          >().toEqualTypeOf<false>()
         })
-
-        expectTypeOf(observer.getCurrentResult().refetch).returns.toEqualTypeOf<
-          Promise<QueryObserverResult<{ value: string }, DefaultError>>
-        >()
       })
 
-      it('should only accept RefetchOptions in its refetch', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+      describe('error', () => {
+        it('should type error from the observed error type on the base result', () => {
+          expectTypeOf<
+            QueryObserverBaseResult<{ value: string }, CustomError>['error']
+          >().toEqualTypeOf<CustomError | null>()
         })
 
-        expectTypeOf(
-          observer.getCurrentResult().refetch,
-        ).parameters.toEqualTypeOf<[options?: RefetchOptions]>()
+        it('should default the error type of the base result', () => {
+          expectTypeOf<
+            QueryObserverBaseResult<{ value: string }>['error']
+          >().toEqualTypeOf<DefaultError | null>()
+        })
       })
-    })
 
-    describe('status', () => {
-      it('should type status as the query status union', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+      describe('discriminant flags', () => {
+        it('should type them as booleans on the base result', () => {
+          type Base = QueryObserverBaseResult<{ value: string }, CustomError>
+
+          expectTypeOf<Base['isPending']>().toEqualTypeOf<boolean>()
+          expectTypeOf<Base['isSuccess']>().toEqualTypeOf<boolean>()
+          expectTypeOf<Base['isError']>().toEqualTypeOf<boolean>()
+          expectTypeOf<Base['isLoadingError']>().toEqualTypeOf<boolean>()
+          expectTypeOf<Base['isRefetchError']>().toEqualTypeOf<boolean>()
+          expectTypeOf<Base['isPlaceholderData']>().toEqualTypeOf<boolean>()
         })
 
-        expectTypeOf(observer.getCurrentResult().status).toEqualTypeOf<
-          'pending' | 'error' | 'success'
-        >()
-        expectTypeOf<QueryStatus>().toEqualTypeOf<
-          'pending' | 'error' | 'success'
-        >()
+        it('should type status as the query status union on the base result', () => {
+          expectTypeOf<
+            QueryObserverBaseResult<{ value: string }, CustomError>['status']
+          >().toEqualTypeOf<'pending' | 'error' | 'success'>()
+        })
       })
-    })
 
-    describe('fetchStatus', () => {
-      it('should type fetchStatus as the fetch status union', () => {
-        const observer = new QueryObserver(queryClient, {
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
+      describe('failureReason', () => {
+        it('should type failureReason from the error type', () => {
+          const observer = new QueryObserver<boolean, CustomError>(
+            queryClient,
+            {
+              queryKey: queryKey(),
+            },
+          )
+
+          expectTypeOf(
+            observer.getCurrentResult().failureReason,
+          ).toEqualTypeOf<CustomError | null>()
+        })
+      })
+
+      describe('refetch', () => {
+        it('should type its refetch from the observed types', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          expectTypeOf(
+            observer.getCurrentResult().refetch,
+          ).returns.toEqualTypeOf<
+            Promise<QueryObserverResult<{ value: string }, DefaultError>>
+          >()
         })
 
-        expectTypeOf(observer.getCurrentResult().fetchStatus).toEqualTypeOf<
-          'fetching' | 'paused' | 'idle'
-        >()
+        it('should only accept RefetchOptions in its refetch', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          expectTypeOf(
+            observer.getCurrentResult().refetch,
+          ).parameters.toEqualTypeOf<[options?: RefetchOptions]>()
+        })
+      })
+
+      describe('status', () => {
+        it('should type status as the query status union', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          expectTypeOf(observer.getCurrentResult().status).toEqualTypeOf<
+            'pending' | 'error' | 'success'
+          >()
+          expectTypeOf<QueryStatus>().toEqualTypeOf<
+            'pending' | 'error' | 'success'
+          >()
+        })
+      })
+
+      describe('fetchStatus', () => {
+        it('should type fetchStatus as the fetch status union', () => {
+          const observer = new QueryObserver(queryClient, {
+            queryKey: queryKey(),
+            queryFn: () => Promise.resolve({ value: 'data' }),
+          })
+
+          expectTypeOf(observer.getCurrentResult().fetchStatus).toEqualTypeOf<
+            'fetching' | 'paused' | 'idle'
+          >()
+        })
       })
     })
 
