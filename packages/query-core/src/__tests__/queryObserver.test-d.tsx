@@ -1417,6 +1417,24 @@ describe('queryObserver', () => {
         'fetching' | 'paused' | 'idle'
       >()
     })
+
+    it('should keep the query state and its own fields writable', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
+
+      type CurrentQuery = ReturnType<typeof observer.getCurrentQuery>
+      type Fields = Pick<CurrentQuery, 'queryKey' | 'queryHash' | 'state'>
+      type State = CurrentQuery['state']
+
+      expectTypeOf<Fields>().toEqualTypeOf<{
+        -readonly [K in keyof Fields]: Fields[K]
+      }>()
+      expectTypeOf<State>().toEqualTypeOf<{
+        -readonly [K in keyof State]: State[K]
+      }>()
+    })
   })
 
   describe('refetch', () => {
