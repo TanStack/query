@@ -426,6 +426,276 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
+  describe('nested mutate from per-call callbacks', () => {
+    it('should call the outer mutate onSettled with the outer result when nested mutate starts from onSuccess', async () => {
+      const outerOnSettled = vi.fn()
+      const innerOnSettled = vi.fn()
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text),
+      })
+      const unsubscribe = mutationObserver.subscribe(vi.fn())
+
+      mutationObserver.mutate('first', {
+        onSuccess: () => {
+          mutationObserver.mutate('second', {
+            onSettled: innerOnSettled,
+          })
+        },
+        onSettled: outerOnSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(outerOnSettled).toHaveBeenCalledTimes(1)
+      expect(outerOnSettled).toHaveBeenCalledWith(
+        'first',
+        null,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).toHaveBeenCalledTimes(1)
+      expect(innerOnSettled).toHaveBeenCalledWith(
+        'second',
+        null,
+        'second',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).not.toHaveBeenCalledWith(
+        'first',
+        null,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+
+      unsubscribe()
+    })
+
+    it('should not invoke the inner mutate onSettled with the outer result while the inner mutation is still pending', async () => {
+      let resolveSecond: (value: string) => void
+      const secondPromise = new Promise<string>((resolve) => {
+        resolveSecond = resolve
+      })
+      const outerOnSettled = vi.fn()
+      const innerOnSettled = vi.fn()
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) =>
+          text === 'first' ? Promise.resolve(text) : secondPromise,
+      })
+      const unsubscribe = mutationObserver.subscribe(vi.fn())
+
+      mutationObserver.mutate('first', {
+        onSuccess: () => {
+          mutationObserver.mutate('second', {
+            onSettled: innerOnSettled,
+          })
+        },
+        onSettled: outerOnSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(outerOnSettled).toHaveBeenCalledTimes(1)
+      expect(outerOnSettled).toHaveBeenCalledWith(
+        'first',
+        null,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).not.toHaveBeenCalled()
+
+      resolveSecond!('second')
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(innerOnSettled).toHaveBeenCalledTimes(1)
+      expect(innerOnSettled).toHaveBeenCalledWith(
+        'second',
+        null,
+        'second',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+
+      unsubscribe()
+    })
+
+    it('should call the outer mutate onSettled with the outer error when nested mutate starts from onError', async () => {
+      const outerError = new Error('fail-first')
+      const outerOnSettled = vi.fn()
+      const innerOnSettled = vi.fn()
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) =>
+          text === 'first' ? Promise.reject(outerError) : Promise.resolve(text),
+      })
+      const unsubscribe = mutationObserver.subscribe(vi.fn())
+
+      mutationObserver
+        .mutate('first', {
+          onError: () => {
+            mutationObserver.mutate('second', {
+              onSettled: innerOnSettled,
+            })
+          },
+          onSettled: outerOnSettled,
+        })
+        .catch(() => {})
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(outerOnSettled).toHaveBeenCalledTimes(1)
+      expect(outerOnSettled).toHaveBeenCalledWith(
+        undefined,
+        outerError,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).toHaveBeenCalledTimes(1)
+      expect(innerOnSettled).toHaveBeenCalledWith(
+        'second',
+        null,
+        'second',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).not.toHaveBeenCalledWith(
+        undefined,
+        outerError,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+
+      unsubscribe()
+    })
+
+    it('should keep the outer onMutate result on the outer mutate onSettled when nested mutate starts from onSuccess', async () => {
+      const outerOnSettled = vi.fn()
+      const innerOnSettled = vi.fn()
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text),
+        onMutate: (text: string) => ({ label: text }),
+      })
+      const unsubscribe = mutationObserver.subscribe(vi.fn())
+
+      mutationObserver.mutate('first', {
+        onSuccess: () => {
+          mutationObserver.mutate('second', {
+            onSettled: innerOnSettled,
+          })
+        },
+        onSettled: outerOnSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(outerOnSettled).toHaveBeenCalledWith(
+        'first',
+        null,
+        'first',
+        { label: 'first' },
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+      expect(innerOnSettled).toHaveBeenCalledWith(
+        'second',
+        null,
+        'second',
+        { label: 'second' },
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+
+      unsubscribe()
+    })
+
+    it('should not throw when nested mutate is called without options from onSuccess', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', unhandledRejectionFn)
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const outerOnSettled = vi.fn()
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text),
+      })
+      const unsubscribe = mutationObserver.subscribe(vi.fn())
+
+      mutationObserver.mutate('first', {
+        onSuccess: () => {
+          mutationObserver.mutate('second')
+        },
+        onSettled: outerOnSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(unhandledRejectionFn).not.toHaveBeenCalled()
+      expect(outerOnSettled).toHaveBeenCalledTimes(1)
+      expect(outerOnSettled).toHaveBeenCalledWith(
+        'first',
+        null,
+        'first',
+        undefined,
+        {
+          client: queryClient,
+          meta: undefined,
+          mutationKey: undefined,
+        },
+      )
+
+      unsubscribe()
+    })
+  })
+
   describe('erroneous mutation callback', () => {
     it('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
       onTestFinished,

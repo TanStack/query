@@ -2576,4 +2576,194 @@ describe('useMutation', () => {
 
     expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
   })
+
+  it('should call the outer mutate onSettled with the outer result when nested mutate starts from onSuccess', async () => {
+    const outerOnSettled = vi.fn()
+    const innerOnSettled = vi.fn()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('first', {
+              onSuccess: () => {
+                mutate('second', {
+                  onSettled: innerOnSettled,
+                })
+              },
+              onSettled: outerOnSettled,
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(outerOnSettled).toHaveBeenCalledTimes(1)
+    expect(outerOnSettled).toHaveBeenCalledWith(
+      'first',
+      null,
+      'first',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+    expect(innerOnSettled).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(innerOnSettled).toHaveBeenCalledTimes(1)
+    expect(innerOnSettled).toHaveBeenCalledWith(
+      'second',
+      null,
+      'second',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+  })
+
+  it('should call the outer mutate onSettled with the outer error when nested mutate starts from onError', async () => {
+    const outerError = new Error('fail-first')
+    const outerOnSettled = vi.fn()
+    const innerOnSettled = vi.fn()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) =>
+          sleep(10).then(() => {
+            if (text === 'first') {
+              throw outerError
+            }
+            return text
+          }),
+        retry: false,
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('first', {
+              onError: () => {
+                mutate('second', {
+                  onSettled: innerOnSettled,
+                })
+              },
+              onSettled: outerOnSettled,
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(outerOnSettled).toHaveBeenCalledTimes(1)
+    expect(outerOnSettled).toHaveBeenCalledWith(
+      undefined,
+      outerError,
+      'first',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+    expect(innerOnSettled).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(innerOnSettled).toHaveBeenCalledTimes(1)
+    expect(innerOnSettled).toHaveBeenCalledWith(
+      'second',
+      null,
+      'second',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+  })
+
+  it('should not throw when nested mutate is called without options from onSuccess', async ({
+    onTestFinished,
+  }) => {
+    const unhandledRejectionFn = vi.fn()
+    process.on('unhandledRejection', unhandledRejectionFn)
+    onTestFinished(() => {
+      process.off('unhandledRejection', unhandledRejectionFn)
+    })
+
+    const outerOnSettled = vi.fn()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('first', {
+              onSuccess: () => {
+                mutate('second')
+              },
+              onSettled: outerOnSettled,
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(unhandledRejectionFn).not.toHaveBeenCalled()
+    expect(outerOnSettled).toHaveBeenCalledTimes(1)
+    expect(outerOnSettled).toHaveBeenCalledWith(
+      'first',
+      null,
+      'first',
+      undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(unhandledRejectionFn).not.toHaveBeenCalled()
+  })
 })
