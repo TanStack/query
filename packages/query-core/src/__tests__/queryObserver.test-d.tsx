@@ -49,7 +49,7 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('callbacks', () => {
+    describe('enabled', () => {
       it('should type the query given to an enabled callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -62,7 +62,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('staleTime', () => {
       it('should type the query given to a staleTime callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -75,7 +77,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('refetchInterval', () => {
       it('should type the query given to a refetchInterval callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -88,7 +92,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('refetchOnWindowFocus', () => {
       it('should type the query given to a refetchOnWindowFocus callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -101,7 +107,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('refetchOnReconnect', () => {
       it('should type the query given to a refetchOnReconnect callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -114,7 +122,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('refetchOnMount', () => {
       it('should type the query given to a refetchOnMount callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -127,7 +137,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('retryOnMount', () => {
       it('should type the query given to a retryOnMount callback', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -140,7 +152,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('throwOnError', () => {
       it('should type the error given to a throwOnError callback', () => {
         new QueryObserver<{ value: string }, CustomError>(queryClient, {
           queryKey: queryKey(),
@@ -151,7 +165,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('retry', () => {
       it('should type the error given to a retry callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
@@ -161,7 +177,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('retryDelay', () => {
       it('should type the error given to a retryDelay callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
@@ -171,7 +189,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('queryKeyHashFn', () => {
       it('should type the queryKey given to a queryKeyHashFn', () => {
         const key = ['a', 1] as const
 
@@ -184,7 +204,9 @@ describe('queryObserver', () => {
           },
         })
       })
+    })
 
+    describe('structuralSharing', () => {
       it('should type a structuralSharing callback as unknown', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -245,7 +267,9 @@ describe('queryObserver', () => {
           InitialDataFunction<{ value: string }>
         >().returns.toEqualTypeOf<{ value: string } | undefined>()
       })
+    })
 
+    describe('initialDataUpdatedAt', () => {
       it('should accept a function for initialDataUpdatedAt', () => {
         expectTypeOf<
           QueryObserverOptions['initialDataUpdatedAt']
@@ -306,7 +330,7 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('plain options', () => {
+    describe('gcTime', () => {
       it('should reject a non-number gcTime', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -319,7 +343,9 @@ describe('queryObserver', () => {
           number | undefined
         >()
       })
+    })
 
+    describe('queryHash', () => {
       it('should reject a non-string queryHash', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -332,7 +358,9 @@ describe('queryObserver', () => {
           string | undefined
         >()
       })
+    })
 
+    describe('networkMode', () => {
       it('should type networkMode as the network mode union', () => {
         new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -345,31 +373,41 @@ describe('queryObserver', () => {
           NetworkMode | undefined
         >()
       })
+    })
 
+    describe('suspense', () => {
       it('should type suspense as a boolean', () => {
         expectTypeOf<QueryObserverOptions['suspense']>().toEqualTypeOf<
           boolean | undefined
         >()
       })
+    })
 
+    describe('refetchIntervalInBackground', () => {
       it('should type refetchIntervalInBackground as a boolean', () => {
         expectTypeOf<
           QueryObserverOptions['refetchIntervalInBackground']
         >().toEqualTypeOf<boolean | undefined>()
       })
+    })
 
+    describe('meta', () => {
       it('should type meta as its named type', () => {
         expectTypeOf<QueryObserverOptions['meta']>().toEqualTypeOf<
           QueryMeta | undefined
         >()
       })
+    })
 
+    describe('notifyOnChangeProps', () => {
       it('should type notifyOnChangeProps as its named type', () => {
         expectTypeOf<
           QueryObserverOptions['notifyOnChangeProps']
         >().toEqualTypeOf<NotifyOnChangeProps | undefined>()
       })
+    })
 
+    describe('persister', () => {
       it('should type persister from the queryFn data', () => {
         expectTypeOf<
           QueryObserverOptions<{ value: string }>['persister']
@@ -382,7 +420,7 @@ describe('queryObserver', () => {
   })
 
   describe('QueryObserverResult', () => {
-    describe('properties', () => {
+    describe('timestamps and counters', () => {
       it('should type its timestamps and counters as numbers', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -396,7 +434,9 @@ describe('queryObserver', () => {
         expectTypeOf(result.failureCount).toEqualTypeOf<number>()
         expectTypeOf(result.errorUpdateCount).toEqualTypeOf<number>()
       })
+    })
 
+    describe('state flags', () => {
       it('should type its state flags as booleans', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -413,7 +453,9 @@ describe('queryObserver', () => {
         expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
         expectTypeOf(result.isFetchedAfterMount).toEqualTypeOf<boolean>()
       })
+    })
 
+    describe('failureReason', () => {
       it('should type failureReason from the error type', () => {
         const observer = new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: queryKey(),
@@ -423,7 +465,9 @@ describe('queryObserver', () => {
           observer.getCurrentResult().failureReason,
         ).toEqualTypeOf<CustomError | null>()
       })
+    })
 
+    describe('refetch', () => {
       it('should type its refetch from the observed types', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -445,7 +489,9 @@ describe('queryObserver', () => {
           observer.getCurrentResult().refetch,
         ).parameters.toEqualTypeOf<[options?: RefetchOptions]>()
       })
+    })
 
+    describe('status', () => {
       it('should type status as the query status union', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
@@ -456,7 +502,9 @@ describe('queryObserver', () => {
           observer.getCurrentResult().status,
         ).toEqualTypeOf<QueryStatus>()
       })
+    })
 
+    describe('fetchStatus', () => {
       it('should type fetchStatus as the fetch status union', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: queryKey(),
