@@ -53,6 +53,19 @@ describe('queryObserver', () => {
   })
 
   describe('QueryObserverOptions', () => {
+    describe('queryKey', () => {
+      it('should be required', () => {
+        // @ts-expect-error queryKey is required
+        new QueryObserver(queryClient, {
+          queryFn: () => Promise.resolve('data'),
+        })
+
+        expectTypeOf(
+          new QueryObserver(queryClient, { queryKey: queryKey() }),
+        ).toBeObject()
+      })
+    })
+
     describe('queryFn', () => {
       it('should type the context given to the queryFn', () => {
         const key = ['a', 1] as const
@@ -482,6 +495,7 @@ describe('queryObserver', () => {
         expectTypeOf(result.isEnabled).toEqualTypeOf<boolean>()
         expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
         expectTypeOf(result.isFetchedAfterMount).toEqualTypeOf<boolean>()
+        expectTypeOf(result.isInitialLoading).toEqualTypeOf<boolean>()
       })
     })
 
