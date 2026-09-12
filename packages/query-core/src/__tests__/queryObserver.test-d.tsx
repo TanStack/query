@@ -1084,6 +1084,17 @@ describe('queryObserver', () => {
     })
   })
 
+  describe('subscribe', () => {
+    it('should return an unsubscribe function', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => Promise.resolve('data'),
+      })
+
+      expectTypeOf(observer.subscribe(() => {})).toEqualTypeOf<() => void>()
+    })
+  })
+
   describe('destroy', () => {
     it('should return void', () => {
       const observer = new QueryObserver(queryClient, {
