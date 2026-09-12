@@ -700,6 +700,43 @@ describe('queryObserver', () => {
         >().toEqualTypeOf<{ value: string } | undefined>()
       })
 
+      it('should keep every property of the base result writable', () => {
+        type Base = QueryObserverBaseResult<{ value: string }, CustomError>
+
+        expectTypeOf<Base>().toEqualTypeOf<{
+          -readonly [K in keyof Base]: Base[K]
+        }>()
+      })
+
+      it('should keep every property of each result branch writable', () => {
+        type Writable<T> = { -readonly [K in keyof T]: T[K] }
+        type Branch<TFilter> = Extract<
+          QueryObserverResult<{ value: string }, CustomError>,
+          TFilter
+        >
+
+        expectTypeOf<
+          Branch<{ status: 'pending'; isLoading: boolean }>
+        >().toEqualTypeOf<
+          Writable<Branch<{ status: 'pending'; isLoading: boolean }>>
+        >()
+        expectTypeOf<Branch<{ isLoading: true }>>().toEqualTypeOf<
+          Writable<Branch<{ isLoading: true }>>
+        >()
+        expectTypeOf<Branch<{ isSuccess: true }>>().toEqualTypeOf<
+          Writable<Branch<{ isSuccess: true }>>
+        >()
+        expectTypeOf<Branch<{ isLoadingError: true }>>().toEqualTypeOf<
+          Writable<Branch<{ isLoadingError: true }>>
+        >()
+        expectTypeOf<Branch<{ isRefetchError: true }>>().toEqualTypeOf<
+          Writable<Branch<{ isRefetchError: true }>>
+        >()
+        expectTypeOf<Branch<{ isPlaceholderData: true }>>().toEqualTypeOf<
+          Writable<Branch<{ isPlaceholderData: true }>>
+        >()
+      })
+
       it('should always declare data and refetch on the base result', () => {
         type Base = QueryObserverBaseResult<{ value: string }, CustomError>
         type OptionalKeys = {
