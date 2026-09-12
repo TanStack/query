@@ -32,6 +32,26 @@ describe('queryObserver', () => {
     queryClient.clear()
   })
 
+  describe('type parameters', () => {
+    it('should default to an unknown data type and the default error', () => {
+      expectTypeOf<
+        Awaited<ReturnType<QueryObserver['refetch']>>
+      >().toEqualTypeOf<QueryObserverResult<unknown, DefaultError>>()
+    })
+
+    it('should only accept an array as its queryKey', () => {
+      const observer = new QueryObserver(queryClient, {
+        // @ts-expect-error a query key must be an array
+        queryKey: 'not-an-array',
+        queryFn: () => Promise.resolve('data'),
+      })
+
+      expectTypeOf(observer.getCurrentQuery().queryKey).toEqualTypeOf<
+        ReadonlyArray<unknown>
+      >()
+    })
+  })
+
   describe('QueryObserverOptions', () => {
     describe('queryFn', () => {
       it('should type the context given to the queryFn', () => {
