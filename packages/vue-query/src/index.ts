@@ -44,6 +44,9 @@ export type {
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
 export type { MutationOptions } from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
-export type { MutationFilters, MutationStateOptions } from './useMutationState'
-export type { QueryFilters } from './useIsFetching'
+export type {
+  MutationStateOptions,
+  UseIsMutatingFilters,
+} from './useMutationState'
+export type { UseIsFetchingFilters } from './useIsFetching'
 export type { VueQueryPluginOptions } from './vueQueryPlugin'
