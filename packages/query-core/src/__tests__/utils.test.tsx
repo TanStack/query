@@ -61,6 +61,17 @@ describe('core/utils', () => {
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toBe(false)
     })
+
+    it('should return `false` for same-length objects with different keys', () => {
+      // Both objects have the same number of keys, but the key sets differ.
+      // `b` is missing on the second object and `c` is missing on the first,
+      // so they are not shallowly equal even though both differing values
+      // happen to be `undefined`.
+      expect(
+        shallowEqualObjects({ a: 1, b: undefined }, { a: 1, c: undefined }),
+      ).toEqual(false)
+      expect(shallowEqualObjects({ a: 1, b: 2 }, { a: 1, c: 2 })).toEqual(false)
+    })
   })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
