@@ -7,6 +7,39 @@ import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
+import { hashKey } from '../utils'
+import type { DehydratedState } from '../hydration'
+import type { QueryKey } from '../types'
+
+function createDehydratedState(query: {
+  queryKey: QueryKey
+  queryHash: string
+  data: unknown
+}): DehydratedState {
+  return {
+    mutations: [],
+    queries: [
+      {
+        queryKey: query.queryKey,
+        queryHash: query.queryHash,
+        state: {
+          data: query.data,
+          dataUpdateCount: 1,
+          dataUpdatedAt: Date.now(),
+          error: null,
+          errorUpdateCount: 0,
+          errorUpdatedAt: 0,
+          fetchFailureCount: 0,
+          fetchFailureReason: null,
+          fetchMeta: null,
+          isInvalidated: false,
+          status: 'success',
+          fetchStatus: 'idle',
+        },
+      },
+    ],
+  }
+}
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -744,6 +777,7 @@ describe('dehydration and rehydration', () => {
 
   it('should set the fetchStatus to idle when creating a query with dehydrate', async () => {
     const key = queryKey()
+    const keyHash = hashKey(key)
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
@@ -775,7 +809,7 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+      dehydrated.queries.find((q) => q.queryHash === keyHash)?.state
         .fetchStatus,
     ).toBe('fetching')
     const stringified = JSON.stringify(dehydrated)
@@ -792,7 +826,9 @@ describe('dehydration and rehydration', () => {
 
   it('should dehydrate and hydrate meta for queries', async () => {
     const metaKey = queryKey()
+    const metaKeyHash = hashKey(metaKey)
     const noMetaKey = queryKey()
+    const noMetaKeyHash = hashKey(noMetaKey)
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
     void queryClient
@@ -815,22 +851,18 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(metaKey))
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === metaKeyHash)?.meta,
     ).toEqual({
       some: 'meta',
     })
 
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(noMetaKey))
-        ?.meta,
+      dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)?.meta,
     ).toEqual(undefined)
 
     expect(
       Object.keys(
-        dehydrated.queries.find(
-          (q) => q.queryHash === JSON.stringify(noMetaKey),
-        )!,
+        dehydrated.queries.find((q) => q.queryHash === noMetaKeyHash)!,
       ),
     ).not.toEqual(expect.arrayContaining(['meta']))
 
@@ -915,6 +947,7 @@ describe('dehydration and rehydration', () => {
 
   it('should not change fetchStatus when updating a query with dehydrate', async () => {
     const key = queryKey()
+    const keyHash = hashKey(key)
     const queryClient = new QueryClient()
 
     const options = {
@@ -928,7 +961,7 @@ describe('dehydration and rehydration', () => {
 
     const dehydrated = dehydrate(queryClient)
     expect(
-      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+      dehydrated.queries.find((q) => q.queryHash === keyHash)?.state
         .fetchStatus,
     ).toBe('idle')
     const stringified = JSON.stringify(dehydrated)
@@ -2074,5 +2107,94 @@ describe('dehydration and rehydration', () => {
 
     clientQueryClient.clear()
     serverQueryClient.clear()
+  })
+
+  it('should hydrate under the recomputed hash when the payload carries a foreign queryHash', () => {
+    const key = queryKey()
+    const dehydrated = createDehydratedState({
+      queryKey: key,
+      queryHash: 'hash-from-another-implementation',
+      data: 'stale-hash data',
+    })
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, dehydrated)
+
+    expect(queryCache.get('hash-from-another-implementation')).toBeUndefined()
+    expect(queryCache.get(hashKey(key))?.state.data).toBe('stale-hash data')
+    expect(queryClient.getQueryData(key)).toBe('stale-hash data')
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
+  })
+
+  it('should hydrate using a custom queryKeyHashFn from the client defaults', () => {
+    const key = queryKey()
+    const queryKeyHashFn = (queryKey_: any) => `client-default-${queryKey_[0]}`
+    const dehydrated = createDehydratedState({
+      queryKey: key,
+      queryHash: hashKey(key),
+      data: 'client default data',
+    })
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: { queries: { queryKeyHashFn } },
+    })
+    hydrate(queryClient, dehydrated)
+
+    expect(queryCache.get(`client-default-${key[0]}`)?.state.data).toBe(
+      'client default data',
+    )
+    expect(queryClient.getQueryData(key)).toBe('client default data')
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
+  })
+
+  it('should hydrate using a custom queryKeyHashFn from setQueryDefaults', () => {
+    const key = queryKey()
+    const queryKeyHashFn = (queryKey_: any) => `per-key-${queryKey_[0]}`
+    const dehydrated = createDehydratedState({
+      queryKey: key,
+      queryHash: hashKey(key),
+      data: 'per-key data',
+    })
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    queryClient.setQueryDefaults(key, { queryKeyHashFn })
+    hydrate(queryClient, dehydrated)
+
+    expect(queryCache.get(`per-key-${key[0]}`)?.state.data).toBe('per-key data')
+    expect(queryClient.getQueryData(key)).toBe('per-key data')
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
+  })
+
+  it('should hydrate using a custom queryKeyHashFn passed through hydrate options', () => {
+    const key = queryKey()
+    const queryKeyHashFn = (queryKey_: any) => `custom-${queryKey_[0]}`
+    const dehydrated = createDehydratedState({
+      queryKey: key,
+      queryHash: hashKey(key),
+      data: 'custom hash data',
+    })
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, dehydrated, {
+      defaultOptions: { queries: { queryKeyHashFn } },
+    })
+
+    expect(queryCache.get(`custom-${key[0]}`)?.state.data).toBe(
+      'custom hash data',
+    )
+    expect(queryCache.getAll()).toHaveLength(1)
+
+    queryClient.clear()
   })
 })

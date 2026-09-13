@@ -737,7 +737,10 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         let filtered = props.localStore.filter
           ? curr.filter(
               (item) =>
-                rankItem(item.queryHash, props.localStore.filter || '').passed,
+                rankItem(
+                  displayValue(item.queryKey),
+                  props.localStore.filter || '',
+                ).passed,
             )
           : [...curr]
 
@@ -1457,14 +1460,16 @@ const QueryRow: Component<{ query: Query }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
+        aria-label={`Query key ${displayValue(props.query.queryKey)}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
         >
           {observers()}
         </div>
-        <code class="tsqd-query-hash">{props.query.queryHash}</code>
+        <code class="tsqd-query-hash">
+          {displayValue(props.query.queryKey)}
+        </code>
         <Show when={isDisabled()}>
           <div class="tsqd-query-disabled-indicator" aria-hidden="true">
             disabled
