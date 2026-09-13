@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { injectQuery, queryOptions } from '..'
+import { injectQuery, queryOptions, skipToken } from '..'
 import type { Signal } from '@angular/core'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
@@ -352,6 +352,22 @@ describe('injectQuery', () => {
       if (query.isError()) {
         expectTypeOf(query.error).toEqualTypeOf<Signal<Error>>()
       }
+    })
+  })
+
+  describe('skipToken', () => {
+    it('should narrow data to string | undefined for a conditional skipToken inside a whole-options getter', () => {
+      const key = queryKey()
+      const postId: number | undefined = 1
+      const query = injectQuery(() => ({
+        queryKey: [...key, postId],
+        queryFn:
+          postId != null
+            ? () => sleep(0).then(() => `post ${postId}`)
+            : skipToken,
+      }))
+
+      expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
     })
   })
 })
