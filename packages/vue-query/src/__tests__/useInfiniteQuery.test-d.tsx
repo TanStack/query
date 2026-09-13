@@ -1,5 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -103,6 +104,31 @@ describe('Discriminated union return type', () => {
     }
   })
 
+  it('should accept a computed queryFn resolving to skipToken', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+
+    // The resulting `data` type can't be asserted here: `vue-tsc`'s language-service plugin (unlike `tsc` or
+    // vitest's own typecheck) fails to resolve `TQueryFnData` through this inference path, leaking the
+    // unresolved type parameter into `query.data`'s type. Runtime skip/refetch behavior is covered in
+    // `useInfiniteQuery.test.ts`.
+    assertType(
+      reactive(
+        useInfiniteQuery({
+          queryKey: key,
+          queryFn: computed(() =>
+            id.value
+              ? ({ pageParam }: { pageParam: number }) =>
+                  sleep(0).then(() => 'data on page ' + pageParam)
+              : skipToken,
+          ),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
+      ),
+    )
+  })
+
   it('should accept computed options using infiniteQueryOptions', () => {
     const key = queryKey()
     const options = computed(() =>
@@ -138,12 +164,10 @@ describe('Discriminated union return type', () => {
 })
 
 describe('queryKey reactivity rules', () => {
-  it('should reject a bare reactive getter for the whole queryKey array', () => {
+  it('should accept a bare reactive getter for the whole queryKey array', () => {
     const id = ref(1)
     assertType(
       useInfiniteQuery({
-        // @ts-expect-error when passed directly to useInfiniteQuery, queryKey cannot be a bare
-        // reactive getter for the whole array (queryOptions() allows this)
         queryKey: () => ['post', id.value],
         queryFn: () => sleep(0).then(() => 'Some data'),
         getNextPageParam: () => undefined,
