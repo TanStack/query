@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
+import ErrorBoundary from './ErrorBoundary.svelte'
 import InitialData from './InitialData.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
@@ -170,5 +172,109 @@ describe('createInfiniteQuery', () => {
     expect(
       rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
     ).toBeInTheDocument()
+  })
+
+  it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Error test')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Error test',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Local Error')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: (err: Error) => err.message === 'Local Error',
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Local Error',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw to the nearest svelte:boundary when throwOnError function returns false', async () => {
+    const key = queryKey()
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Local Error')),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: (err: Error) => err.message !== 'Local Error',
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
+    expect(rendered.getByTestId('status')).toHaveTextContent('error')
+  })
+
+  it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
   })
 })
