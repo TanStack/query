@@ -28,6 +28,60 @@ broadcastQueryClient({
 
 ## API
 
+### broadcastQueryClientRestore
+
+Use the additive restore API when a new tab must bootstrap its cache before
+queries are allowed to fetch:
+
+```tsx
+import { broadcastQueryClientRestore } from '@tanstack/query-broadcast-client-experimental'
+
+const [cleanup, restored] = broadcastQueryClientRestore({
+  queryClient,
+  broadcastChannel: 'my-app',
+  timeout: 1000,
+})
+
+await restored
+renderApplication()
+
+// Later, when this QueryClient or broadcast session is disposed or replaced:
+cleanup()
+```
+
+Keep `cleanup` for the lifetime of the QueryClient. Do not call it immediately
+after `restored`, because the restore session also owns live synchronization.
+Call it when the QueryClient or session is disposed or replaced so the previous
+channel and query-cache listeners do not remain active.
+
+The restore API starts normal live synchronization on the same channel before
+requesting snapshots, and automatically responds to restore requests. Do not
+call both APIs for the same QueryClient and channel; the restore API already
+owns the live session.
+
+The response window accepts snapshots from configured responder sessions. Query
+state is merged with dataUpdatedAt, so the newest state for each query wins.
+Bootstrap includes successful queries by default and excludes mutations. Each
+query is sent independently so a structured-clone failure does not discard all
+valid queries.
+
+Framework applications should use the existing restore-aware integration:
+
+```tsx
+import { BroadcastQueryClientProvider } from '@tanstack/react-query-persist-client'
+;<BroadcastQueryClientProvider
+  client={queryClient}
+  broadcastOptions={{ broadcastChannel: 'my-app', timeout: 1000 }}
+>
+  <App />
+</BroadcastQueryClientProvider>
+```
+
+The corresponding Preact, Solid, Svelte, and Angular adapters use their native
+restore mechanisms. Vue applications can pass broadcastQueryClientRestore
+through the Vue plugin's clientPersister option. Lit currently has no restore
+gate; await the returned promise before creating query controllers.
+
 ### `broadcastQueryClient`
 
 Pass this function a `QueryClient` instance and optionally, a `broadcastChannel`.
@@ -63,6 +117,15 @@ interface BroadcastQueryClientOptions {
     error: unknown,
     event: BroadcastErrorEvent,
   ) => void | Promise<void>
+  /** Whether a live-sync session may answer cache bootstrap requests. */
+  respondToCacheRequests?: boolean
+  /** Used when this session answers cache bootstrap requests. */
+  dehydrateOptions?: Pick<DehydrateOptions, 'shouldDehydrateQuery'>
+  /** Called for bootstrap request, response, or hydration failures. */
+  onBroadcastRestoreError?: (
+    error: unknown,
+    event: BroadcastRestoreErrorEvent,
+  ) => void | Promise<void>
 }
 
 interface BroadcastErrorEvent {
@@ -70,6 +133,39 @@ interface BroadcastErrorEvent {
   queryHash: string
   queryKey: QueryKey
 }
+
+interface BroadcastRestoreErrorEvent {
+  type: 'request' | 'response' | 'hydrate'
+  requestId: string
+  responderId?: string
+  responseId?: string
+  queryHash?: string
+  queryKey?: QueryKey
+}
+
+interface BroadcastQueryClientRestoreOptions extends Omit<
+  BroadcastQueryClientOptions,
+  'respondToCacheRequests'
+> {
+  timeout?: number
+  hydrateOptions?: HydrateOptions
+}
+```
+
+Existing `broadcastQueryClient` sessions do not answer bootstrap requests by
+default. A live-sync session can explicitly opt in when it should provide
+snapshots to restoring tabs. `broadcastQueryClientRestore` is already a
+responder and does not accept `respondToCacheRequests`:
+
+```tsx
+broadcastQueryClient({
+  queryClient,
+  broadcastChannel: 'my-app',
+  respondToCacheRequests: true,
+  dehydrateOptions: {
+    shouldDehydrateQuery: (query) => query.queryKey[0] !== 'private',
+  },
+})
 ```
 
 The default options are:
@@ -97,6 +193,33 @@ broadcastQueryClient({
     Sentry.captureException(error, {
       tags: { broadcastEvent: event.type },
       extra: { queryHash: event.queryHash, queryKey: event.queryKey },
+    })
+  },
+})
+```
+
+The restore API additionally accepts timeout, query dehydration filtering,
+hydrate options, and onBroadcastRestoreError. Restore errors are reported
+separately from the existing live-sync onBroadcastError callback so existing
+callbacks retain their current type and behavior.
+
+The default timeout is 1000ms. A longer window improves the chance of receiving
+the freshest state from an available responder session but increases cold-start
+latency when no responder exists. A timeout of 0 does not wait for responses.
+
+For bootstrap failures, use onBroadcastRestoreError:
+
+```tsx
+broadcastQueryClientRestore({
+  queryClient,
+  broadcastChannel: 'my-app',
+  onBroadcastRestoreError: (error, event) => {
+    Sentry.captureException(error, {
+      tags: { broadcastEvent: event.type },
+      extra: {
+        requestId: event.requestId,
+        queryHash: event.queryHash,
+      },
     })
   },
 })

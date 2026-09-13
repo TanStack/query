@@ -2500,6 +2500,9 @@ importers:
 
   packages/angular-query-persist-client:
     dependencies:
+      '@tanstack/query-broadcast-client-experimental':
+        specifier: workspace:*
+        version: link:../query-broadcast-client-experimental
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
@@ -2661,6 +2664,9 @@ importers:
 
   packages/preact-query-persist-client:
     dependencies:
+      '@tanstack/query-broadcast-client-experimental':
+        specifier: workspace:*
+        version: link:../query-broadcast-client-experimental
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
@@ -2923,6 +2929,9 @@ importers:
 
   packages/react-query-persist-client:
     dependencies:
+      '@tanstack/query-broadcast-client-experimental':
+        specifier: workspace:*
+        version: link:../query-broadcast-client-experimental
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
@@ -3001,6 +3010,9 @@ importers:
 
   packages/solid-query-persist-client:
     dependencies:
+      '@tanstack/query-broadcast-client-experimental':
+        specifier: workspace:*
+        version: link:../query-broadcast-client-experimental
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
@@ -3100,6 +3112,9 @@ importers:
 
   packages/svelte-query-persist-client:
     dependencies:
+      '@tanstack/query-broadcast-client-experimental':
+        specifier: workspace:*
+        version: link:../query-broadcast-client-experimental
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
