@@ -180,6 +180,103 @@ describe('injectQueries', () => {
     expect(rendered.getByText('status2: success, data2: 2')).toBeInTheDocument()
   })
 
+  describe('throwOnError', () => {
+    it('should throw when throwOnError is true', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      TestBed.runInInjectionContext(() =>
+        injectQueries(() => ({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(0).then(() => 1),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(0).then(() => Promise.reject(new Error('Some error'))),
+              throwOnError: true,
+            },
+          ],
+        })),
+      )
+
+      await expect(vi.runAllTimersAsync()).rejects.toThrow('Some error')
+    })
+
+    it('should keep the queries observable after throwing', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const result = TestBed.runInInjectionContext(() =>
+        injectQueries(() => ({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(10).then(() => 1),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(20).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError: true,
+            },
+          ],
+        })),
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(result()[0].data()).toBe(1)
+
+      await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow(
+        'Some error',
+      )
+
+      // `throwOnError` means "also throw", so the results the caller renders
+      // from must still be updated - including the sibling that succeeded.
+      expect(result()[0].data()).toBe(1)
+      expect(result()[1].status()).toBe('error')
+      expect(result()[1].error()).toEqual(Error('Some error'))
+    })
+
+    it('should evaluate throwOnError with the error and query of the failing query only', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const boundaryFn = vi.fn().mockReturnValue(false)
+
+      TestBed.runInInjectionContext(() =>
+        injectQueries(() => ({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => sleep(10).then(() => 1),
+            },
+            {
+              queryKey: key2,
+              queryFn: () =>
+                sleep(10).then(() => Promise.reject(new Error('Some error'))),
+              retry: false,
+              throwOnError: boundaryFn,
+            },
+          ],
+        })),
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          queryKey: key2,
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    })
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()
