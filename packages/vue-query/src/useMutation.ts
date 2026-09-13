@@ -285,17 +285,14 @@ export function useMutation<
     Readonly<MutationResult<TData, TError, TVariables, TOnMutateResult>>
   >
 
-  watch(
-    () => state.error,
-    (error) => {
-      if (
-        error &&
-        shouldThrowError(defaultedOptions.value.throwOnError, [error as TError])
-      ) {
-        throw error
-      }
-    },
-  )
+  watch([() => state.isError, () => state.error], ([isError, error]) => {
+    if (
+      isError &&
+      shouldThrowError(defaultedOptions.value.throwOnError, [error as TError])
+    ) {
+      throw error
+    }
+  })
 
   return {
     ...resultRefs,
