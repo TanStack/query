@@ -296,6 +296,27 @@ describe('useQueries', () => {
     }))
   })
 
+  it('should allow combine to return a shape other than the results array', () => {
+    const result = useQueries(() => ({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        },
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(2),
+        },
+      ],
+      combine: (results) => ({
+        data: results.every((queryResult) => queryResult.data),
+        pending: results.some((queryResult) => queryResult.isPending),
+      }),
+    }))
+
+    expectTypeOf(result).toEqualTypeOf<{ data: boolean; pending: boolean }>()
+  })
+
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
       const key1 = queryKey()
