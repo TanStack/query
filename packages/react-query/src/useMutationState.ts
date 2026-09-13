@@ -165,8 +165,24 @@ export function useMutationState<
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
   const result = React.useRef<Array<TResult>>(null)
-  if (result.current === null) {
-    result.current = getResult(mutationCache, options)
+  const filtersRef = React.useRef<MutationFilters | undefined>(undefined)
+  const selectRef = React.useRef(options.select)
+  // Also recomputed here, not only when the cache notifies: `getSnapshot` returns this
+  // ref, so a render with new options would otherwise keep the previous result. Guarded
+  // on the options, the way `QueryObserver` guards `select`, so an unrelated render does
+  // not re-run it.
+  const nextFilters = replaceEqualDeep(filtersRef.current, options.filters)
+  if (
+    result.current === null ||
+    nextFilters !== filtersRef.current ||
+    options.select !== selectRef.current
+  ) {
+    filtersRef.current = nextFilters
+    selectRef.current = options.select
+    result.current =
+      result.current === null
+        ? getResult(mutationCache, options)
+        : replaceEqualDeep(result.current, getResult(mutationCache, options))
   }
 
   React.useEffect(() => {
