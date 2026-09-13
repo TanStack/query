@@ -3,14 +3,21 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver } from '..'
 import type {
   DefaultError,
+  DefinedQueryObserverResult,
   InfiniteQueryObserverResult,
   InitialDataFunction,
   PlaceholderDataFunction,
   Query,
   QueryMeta,
   QueryObserverBaseResult,
+  QueryObserverLoadingErrorResult,
+  QueryObserverLoadingResult,
   QueryObserverOptions,
+  QueryObserverPendingResult,
+  QueryObserverPlaceholderResult,
+  QueryObserverRefetchErrorResult,
   QueryObserverResult,
+  QueryObserverSuccessResult,
   QueryPersister,
   QueryStatus,
   RefetchOptions,
@@ -1141,6 +1148,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverPendingResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
+      })
     })
 
     describe('QueryObserverLoadingResult', () => {
@@ -1173,6 +1186,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.status).toEqualTypeOf<'pending'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
+      })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverLoadingResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
       })
     })
 
@@ -1207,6 +1226,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
       })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverLoadingErrorResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
+      })
     })
 
     describe('QueryObserverRefetchErrorResult', () => {
@@ -1239,6 +1264,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
+      })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverRefetchErrorResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
       })
     })
 
@@ -1273,6 +1304,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
         }
       })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverSuccessResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
+      })
     })
 
     describe('QueryObserverPlaceholderResult', () => {
@@ -1305,6 +1342,12 @@ describe('queryObserver', () => {
           expectTypeOf(result.status).toEqualTypeOf<'success'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
         }
+      })
+
+      it('should declare exactly the base and narrowed keys', () => {
+        expectTypeOf<keyof QueryObserverPlaceholderResult>().toEqualTypeOf<
+          keyof QueryObserverBaseResult
+        >()
       })
     })
   })
