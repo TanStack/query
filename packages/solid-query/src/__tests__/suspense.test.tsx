@@ -384,7 +384,9 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('show')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('show'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // Cached data renders immediately without suspending; the mount refetch
+    // happens in the background
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('fetching: true')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(100)
@@ -894,5 +896,88 @@ describe("useQuery's in Suspense mode", () => {
     })
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).toBeInTheDocument()
+  })
+
+  it('should not trigger Suspense when mounting with cached data, even while a background refetch runs', async () => {
+    const key = queryKey()
+    let fetches = 0
+    let fallbackRenders = 0
+
+    queryClient.setQueryData(key, 'cached')
+
+    function Fallback() {
+      fallbackRenders++
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => `data${++fetches}`),
+        staleTime: 0,
+      }))
+
+      return <div>content: {query.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback={<Fallback />}>
+        <Page />
+      </Suspense>
+    ))
+
+    // Cached data renders immediately without suspending
+    expect(rendered.getByText('content: cached')).toBeInTheDocument()
+    const contentElement = rendered.getByText('content: cached')
+
+    // staleTime: 0 kicks off a background refetch on mount; it must not
+    // suspend the boundary (a suspended boundary detaches its DOM, which
+    // restarts CSS animations even if the fallback is never painted)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('content: data1')).toBeInTheDocument()
+
+    // Same DOM node throughout — no remount, no detach/re-insert
+    expect(rendered.getByText('content: data1')).toBe(contentElement)
+    expect(fallbackRenders).toBe(0)
+  })
+
+  it('should not re-trigger Suspense when an invalidation refetches a mounted query', async () => {
+    const key = queryKey()
+    let fetches = 0
+    let fallbackRenders = 0
+
+    function Fallback() {
+      fallbackRenders++
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => `data${++fetches}`),
+      }))
+
+      return <div>content: {query.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback={<Fallback />}>
+        <Page />
+      </Suspense>
+    ))
+
+    // Initial load has no data and should suspend exactly once
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('content: data1')).toBeInTheDocument()
+    expect(fallbackRenders).toBe(1)
+    const contentElement = rendered.getByText('content: data1')
+
+    // A background refetch of a mounted query must not suspend again
+    queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('content: data2')).toBeInTheDocument()
+
+    expect(rendered.getByText('content: data2')).toBe(contentElement)
+    expect(fallbackRenders).toBe(1)
   })
 })
