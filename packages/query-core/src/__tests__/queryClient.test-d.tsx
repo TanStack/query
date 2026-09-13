@@ -16,6 +16,7 @@ import type {
   FetchInfiniteQueryOptions,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  MutationFunctionContext,
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
@@ -1136,11 +1137,12 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       queryClient.setMutationDefaults(typedMutationKey, {
-        onSettled(data, error, variables, context) {
+        onSettled(data, error, variables, onMutateResult, context) {
           expectTypeOf(data).toEqualTypeOf<unknown>()
           expectTypeOf(error).toEqualTypeOf<DefaultError | null>()
           expectTypeOf(variables).toEqualTypeOf<void>()
-          expectTypeOf(context).toEqualTypeOf<unknown>()
+          expectTypeOf(onMutateResult).toEqualTypeOf<unknown>()
+          expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
         },
       })
     })
