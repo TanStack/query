@@ -207,6 +207,7 @@ export class QueryClient {
     const cachedData = query.state.data
 
     if (cachedData === undefined) {
+      // eslint-disable-next-line no-restricted-syntax
       return this.fetchQuery(options)
     }
 
@@ -214,6 +215,7 @@ export class QueryClient {
       options.revalidateIfStale &&
       query.isStaleByTime(resolveQueryValue(defaultedOptions.staleTime, query))
     ) {
+      // eslint-disable-next-line no-restricted-syntax
       void this.prefetchQuery(defaultedOptions)
     }
 
@@ -639,6 +641,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 
@@ -705,6 +708,7 @@ export class QueryClient {
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     options._type = 'infinite'
+    // eslint-disable-next-line no-restricted-syntax
     return this.fetchQuery(options as any)
   }
 
@@ -726,6 +730,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
@@ -749,6 +754,7 @@ export class QueryClient {
   ): Promise<InfiniteData<TData, TPageParam>> {
     options._type = 'infinite'
 
+    // eslint-disable-next-line no-restricted-syntax
     return this.ensureQueryData(options as any)
   }
 

@@ -115,6 +115,8 @@ describe('setQueryData', () => {
 describe('fetchInfiniteQuery', () => {
   it('should allow passing pages', async () => {
     const key = queryKey()
+    // grandfathered direct test
+    // eslint-disable-next-line no-restricted-syntax
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),

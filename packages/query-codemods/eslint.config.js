@@ -15,4 +15,11 @@ export default [
       'sort-imports': 'off',
     },
   },
+  {
+    files: ['src/**/__testfixtures__/**'],
+    rules: {
+      // Codemod fixtures intentionally preserve historical QueryClient syntax.
+      'no-restricted-syntax': 'off',
+    },
+  },
 ]
