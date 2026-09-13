@@ -1350,6 +1350,38 @@ describe('queryObserver', () => {
         >()
       })
     })
+
+    describe('DefinedQueryObserverResult', () => {
+      it('should only hold the branches that always have data', () => {
+        expectTypeOf<
+          DefinedQueryObserverResult<{ value: string }, CustomError>
+        >().toEqualTypeOf<
+          | QueryObserverRefetchErrorResult<{ value: string }, CustomError>
+          | QueryObserverSuccessResult<{ value: string }, CustomError>
+        >()
+      })
+
+      it('should always define data on every one of its branches', () => {
+        expectTypeOf<
+          DefinedQueryObserverResult<{ value: string }>['data']
+        >().toEqualTypeOf<{ value: string }>()
+      })
+
+      it('should be a subset of the result union', () => {
+        expectTypeOf<
+          Exclude<
+            DefinedQueryObserverResult<{ value: string }>,
+            QueryObserverResult<{ value: string }>
+          >
+        >().toEqualTypeOf<never>()
+      })
+
+      it('should default its data to unknown and its error to the default error', () => {
+        expectTypeOf<DefinedQueryObserverResult>().toEqualTypeOf<
+          DefinedQueryObserverResult<unknown, DefaultError>
+        >()
+      })
+    })
   })
 
   describe('setOptions', () => {
