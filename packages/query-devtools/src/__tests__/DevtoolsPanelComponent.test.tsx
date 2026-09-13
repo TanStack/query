@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import { render } from '@solidjs/testing-library'
+import { fireEvent, render } from '@solidjs/testing-library'
 import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 
 // `solid-transition-group` internally imports from
@@ -107,6 +107,59 @@ describe('DevtoolsPanelComponent', () => {
         />
       )),
     ).not.toThrow()
+  })
+
+  it('keeps a surviving panel subscribed when another panel unmounts', () => {
+    const renderPanel = () =>
+      render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          queryFlavor="TanStack Query"
+          version="5"
+          onlineManager={onlineManager}
+        />
+      ))
+
+    const first = renderPanel()
+    const second = renderPanel()
+
+    // Tearing one panel down must not disturb the other's cache subscriptions.
+    first.unmount()
+
+    queryClient.setQueryData(['survivor'], 'value')
+
+    expect(
+      second.getByLabelText(/Query key \["survivor"\]/),
+    ).toBeInTheDocument()
+  })
+
+  it('shows a mutation started after another panel unmounts', async () => {
+    const renderPanel = () =>
+      render(() => (
+        <DevtoolsPanelComponent
+          client={queryClient}
+          queryFlavor="TanStack Query"
+          version="5"
+          onlineManager={onlineManager}
+        />
+      ))
+
+    const first = renderPanel()
+    const second = renderPanel()
+
+    first.unmount()
+
+    fireEvent.click(second.getByText('Mutations'))
+
+    queryClient.getMutationCache().build(queryClient, {
+      mutationKey: ['survivor'],
+      mutationFn: () => Promise.resolve('ok'),
+    })
+
+    // Mutation-cache subscribers are dispatched on a microtask.
+    expect(
+      await second.findByLabelText(/Mutation submitted at/),
+    ).toBeInTheDocument()
   })
 
   it('should not render the open devtools button in panel-only mode', () => {

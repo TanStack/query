@@ -10,9 +10,10 @@ import {
   createUniqueId,
 } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
-import * as goober from 'goober'
 import { tokens } from './theme'
 import {
+  createStylesCache,
+  cssForTarget,
   deleteNestedDataByPath,
   displayValue,
   updateNestedDataByPath,
@@ -27,6 +28,7 @@ import {
   Trash,
 } from './icons'
 import { useQueryDevtoolsContext, useTheme } from './contexts'
+import type * as goober from 'goober'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -54,9 +56,7 @@ function chunkArray<T extends { label: string; value: unknown }>(
 
 const Expander = (props: { expanded: boolean }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -97,9 +97,7 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -158,9 +156,7 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -187,9 +183,7 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -217,9 +211,7 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -268,9 +260,7 @@ function isIterable(x: any): x is Iterable<unknown> {
 
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -670,5 +660,7 @@ const stylesFactory = (
   }
 }
 
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)
+const cachedStyles = createStylesCache(stylesFactory)
+
+const lightStyles = (css: (typeof goober)['css']) => cachedStyles('light', css)
+const darkStyles = (css: (typeof goober)['css']) => cachedStyles('dark', css)
