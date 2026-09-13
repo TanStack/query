@@ -40,6 +40,22 @@ describe('dehydration and rehydration', () => {
       queryClient.clear()
     })
 
+    it('should use a provided dehydration timestamp', () => {
+      const key = queryKey()
+      const queryClient = new QueryClient()
+      queryClient.setQueryData(key, 'data')
+      const query = queryClient.getQueryCache().find({ queryKey: key })!
+      const dateNowSpy = vi.spyOn(Date, 'now')
+
+      const dehydrated = dehydrateQuery(query, undefined, undefined, 123)
+
+      expect(dehydrated.dehydratedAt).toBe(123)
+      expect(dateNowSpy).not.toHaveBeenCalled()
+
+      dateNowSpy.mockRestore()
+      queryClient.clear()
+    })
+
     it('should serialize data when dehydrating a query directly', () => {
       const key = queryKey()
       const data = new Date('2024-01-01T00:00:00.000Z')
@@ -79,6 +95,21 @@ describe('dehydration and rehydration', () => {
 
       queryClient.clear()
     })
+  })
+
+  it('should use dehydratedAt specified in dehydrate options', () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+    queryClient.setQueryData(key, 'data')
+    const dateNowSpy = vi.spyOn(Date, 'now')
+
+    const dehydrated = dehydrate(queryClient, { dehydratedAt: 123 })
+
+    expect(dehydrated.queries[0]?.dehydratedAt).toBe(123)
+    expect(dateNowSpy).not.toHaveBeenCalled()
+
+    dateNowSpy.mockRestore()
+    queryClient.clear()
   })
 
   it('should work with serializable values', async () => {
