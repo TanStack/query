@@ -9,12 +9,11 @@ import type {
   DataTag,
   DefaultError,
   DefaultedQueryObserverOptions,
-  EnsureQueryDataOptions,
-  FetchInfiniteQueryOptions,
   InfiniteData,
   InfiniteQueryExecuteOptions,
   MutationOptions,
   OmitKeyof,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
 } from '../types'
@@ -349,6 +348,10 @@ describe('fully typed usage', () => {
     // Construct typed arguments
     //
 
+    const queryOptions: QueryExecuteOptions<TData, TError> = {
+      queryKey: ['key', 'query'],
+    }
+
     const infiniteQueryOptions: InfiniteQueryExecuteOptions<
       TData,
       TError,
@@ -362,21 +365,6 @@ describe('fully typed usage', () => {
       },
       initialPageParam: 0,
     }
-
-    const queryOptions: EnsureQueryDataOptions<TData, TError> = {
-      queryKey: ['key', 'query'],
-    }
-
-    const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<TData, TError> =
-      {
-        queryKey: ['key', 'infinite'],
-        pages: 5,
-        getNextPageParam: (lastPage) => {
-          expectTypeOf(lastPage).toEqualTypeOf<TData>()
-          return 0
-        },
-        initialPageParam: 0,
-      }
 
     const mutationOptions: MutationOptions<TData, TError> = {}
 
@@ -458,9 +446,8 @@ describe('fully typed usage', () => {
 
     queryClient.prefetchQuery(queryOptions)
 
-    const fetchInfiniteQueryResult = await queryClient.fetchInfiniteQuery(
-      fetchInfiniteQueryOptions,
-    )
+    const fetchInfiniteQueryResult =
+      await queryClient.fetchInfiniteQuery(infiniteQueryOptions)
     expectTypeOf(fetchInfiniteQueryResult).toEqualTypeOf<
       InfiniteData<TData, unknown>
     >()
@@ -468,9 +455,8 @@ describe('fully typed usage', () => {
     const infiniteQuery = await queryClient.infiniteQuery(infiniteQueryOptions)
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 
-    const infiniteQueryData = await queryClient.ensureInfiniteQueryData(
-      fetchInfiniteQueryOptions,
-    )
+    const infiniteQueryData =
+      await queryClient.ensureInfiniteQueryData(infiniteQueryOptions)
     expectTypeOf(infiniteQueryData).toEqualTypeOf<
       InfiniteData<TData, unknown>
     >()
@@ -508,7 +494,7 @@ describe('fully typed usage', () => {
     queryClient.cancelQueries(queryFilters)
     queryClient.invalidateQueries(queryFilters)
     queryClient.refetchQueries(queryFilters)
-    queryClient.prefetchInfiniteQuery(fetchInfiniteQueryOptions)
+    queryClient.prefetchInfiniteQuery(infiniteQueryOptions)
     queryClient.setQueryDefaults(filterKey, {} as any)
     queryClient.getMutationDefaults(mutationKey)
   })
@@ -520,10 +506,10 @@ describe('fully typed usage', () => {
     // Construct typed arguments
     //
 
-    const queryOptions: EnsureQueryDataOptions = {
+    const queryOptions: QueryExecuteOptions = {
       queryKey: ['key'] as any,
     }
-    const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
+    const fetchInfiniteQueryOptions: InfiniteQueryExecuteOptions = {
       queryKey: ['key'] as any,
       pages: 5,
       getNextPageParam: (lastPage) => {
