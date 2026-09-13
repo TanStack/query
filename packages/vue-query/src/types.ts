@@ -46,11 +46,13 @@ export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T
-    : T extends object
-      ? {
-          [Property in keyof T]: MaybeRefDeep<T[Property]>
-        }
-      : T
+    : T extends Primitive
+      ? T
+      : T extends object
+        ? {
+            [Property in keyof T]: MaybeRefDeep<T[Property]>
+          }
+        : T
 >
 
 /** @internal Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening. */
