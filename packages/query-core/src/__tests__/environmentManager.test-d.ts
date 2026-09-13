@@ -13,14 +13,14 @@ describe('environmentManager', () => {
       // @ts-expect-error the server check has to answer with a boolean
       const invalid: IsServerValue = () => 'server'
 
-      expectTypeOf(invalid).toEqualTypeOf<IsServerValue>()
+      expectTypeOf(invalid).toEqualTypeOf<() => boolean>()
     })
 
     it('should reject an override that requires an argument', () => {
       // @ts-expect-error the server check is called without any argument
       const invalid: IsServerValue = (_: string) => true
 
-      expectTypeOf(invalid).toEqualTypeOf<IsServerValue>()
+      expectTypeOf(invalid).toEqualTypeOf<() => boolean>()
     })
   })
 
