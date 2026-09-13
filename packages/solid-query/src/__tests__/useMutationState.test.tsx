@@ -111,4 +111,36 @@ describe('useMutationState', () => {
 
     expect(variables).toEqual([[], [1], []])
   })
+
+  it('should not make the computation that triggers a mutation depend on its result', async () => {
+    const mutationKey = queryKey()
+    let effectRuns = 0
+
+    function Page() {
+      const states = useMutationState(() => ({ filters: { mutationKey } }))
+      const mutation = useMutation(() => ({
+        mutationKey,
+        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+      }))
+
+      createEffect(() => {
+        effectRuns++
+        // Guarded so that a genuine feedback loop still terminates the test.
+        if (effectRuns === 1) {
+          mutation.mutate(1)
+        }
+      })
+
+      return <div>count: {states().length}</div>
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+    await vi.advanceTimersByTimeAsync(150)
+
+    // `mutate` notifies the mutation cache synchronously, so the subscription
+    // callback runs while this effect is the active computation. Reading the
+    // result signal there used to register it as a dependency of that effect,
+    // which `setResult` then immediately invalidated.
+    expect(effectRuns).toBe(1)
+  })
 })
