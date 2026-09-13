@@ -12,6 +12,25 @@ describe('notifyManager', () => {
     >()
   })
 
+  it('should expose every method as readonly', () => {
+    type Manager = ReturnType<typeof createNotifyManager>
+
+    expectTypeOf<Manager>().toEqualTypeOf<{
+      readonly [K in keyof Manager]: Manager[K]
+    }>()
+  })
+
+  it('should only expose its documented members', () => {
+    expectTypeOf<keyof ReturnType<typeof createNotifyManager>>().toEqualTypeOf<
+      | 'batch'
+      | 'batchCalls'
+      | 'schedule'
+      | 'setNotifyFunction'
+      | 'setBatchNotifyFunction'
+      | 'setScheduler'
+    >()
+  })
+
   describe('batch', () => {
     it('should pass the return type of the callback through', () => {
       const notifyManagerTest = createNotifyManager()
@@ -30,10 +49,18 @@ describe('notifyManager', () => {
 
       expectTypeOf(notifyManagerTest.batch(() => {})).toEqualTypeOf<void>()
     })
+
+    it('should only accept a callback taking no arguments', () => {
+      const notifyManagerTest = createNotifyManager()
+
+      expectTypeOf(notifyManagerTest.batch).parameters.toEqualTypeOf<
+        [callback: () => unknown]
+      >()
+    })
   })
 
   describe('batchCalls', () => {
-    it('typeDefs should catch proper signatures', () => {
+    it('should catch improper signatures of the wrapped function', () => {
       const notifyManagerTest = createNotifyManager()
 
       // we define some fn with its signature:
@@ -86,6 +113,17 @@ describe('notifyManager', () => {
       )
 
       expectTypeOf(someFn).parameters.toEqualTypeOf<Array<number>>()
+    })
+
+    it('should constrain its type argument to an argument tuple', () => {
+      const notifyManagerTest = createNotifyManager()
+
+      expectTypeOf(
+        notifyManagerTest.batchCalls<[a: string, b: number]>((_a, _b) => {}),
+      ).parameters.toEqualTypeOf<[a: string, b: number]>()
+
+      // @ts-expect-error a non-array type does not satisfy Array<unknown>
+      notifyManagerTest.batchCalls<string>(() => {})
     })
   })
 
