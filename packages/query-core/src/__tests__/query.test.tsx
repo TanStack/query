@@ -1169,6 +1169,77 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
+  it('should not reject a promise when removeQueries silently cancels an in-flight fetch and stale data exists', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'initial')
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(100).then(() => 'new data'))
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // remove the query while the fetch above is still in flight; this does
+    // not start a replacement fetch, unlike refetchQueries({ cancelRefetch: true })
+    queryClient.removeQueries({ queryKey: key })
+
+    // the promise should resolve with the last known data instead of
+    // rejecting with an internal, silent CancelledError
+    await expect(promise).resolves.toBe('initial')
+  })
+
+  it('should reject a promise when removeQueries silently cancels an in-flight fetch and no data exists yet', async () => {
+    const key = queryKey()
+
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(100).then(() => 'data'))
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+    // swallow the expected rejection so it doesn't surface as an unhandled rejection
+    promise.catch(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    queryClient.removeQueries({ queryKey: key })
+
+    await expect(promise).rejects.toBeInstanceOf(CancelledError)
+  })
+
+  it('should not reject a promise when resetQueries silently cancels an in-flight fetch and cached data exists (no initialData)', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryData(key, 'initial')
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(100).then(() => 'new data'))
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // resetQueries destroys the query (silent cancel) and then immediately
+    // overwrites state with the query's initial state, so `this.state.data`
+    // alone is no longer enough to recover the last known data here.
+    queryClient.resetQueries({ queryKey: key })
+
+    await expect(promise).resolves.toBe('initial')
+  })
+
   it('should have an error log when queryFn data is not serializable', async () => {
     const consoleMock = vi.spyOn(console, 'error')
 
