@@ -9,9 +9,9 @@ title: useInfiniteQuery
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:64](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L64)
+Defined in: [packages/preact-query/src/useInfiniteQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L65)
 
-The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
 This overload is selected when `initialData` is set.
@@ -28,7 +28,7 @@ This overload is selected when `initialData` is set.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -48,7 +48,7 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -57,9 +57,10 @@ be used.
 
 [`DefinedUseInfiniteQueryResult`](../type-aliases/DefinedUseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 
@@ -104,9 +105,9 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:189](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L189)
+Defined in: [packages/preact-query/src/useInfiniteQuery.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L191)
 
-The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
 ### Type Parameters
@@ -121,7 +122,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -141,7 +142,7 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -150,9 +151,10 @@ be used.
 
 [`UseInfiniteQueryResult`](../type-aliases/UseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 
@@ -263,9 +265,9 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/useInfiniteQuery.ts:344](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L344)
+Defined in: [packages/preact-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L347)
 
-The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `queryFn`,
+The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
 ### Type Parameters
@@ -280,7 +282,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -300,7 +302,7 @@ The [UseInfiniteQueryOptions](../interfaces/UseInfiniteQueryOptions.md) to use â
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -309,9 +311,10 @@ be used.
 
 [`UseInfiniteQueryResult`](../type-aliases/UseInfiniteQueryResult.md)\<`TData`, `TError`\>
 
-The same properties as `useQuery`, with the addition of `data.pages`, `data.pageParams`,
-`fetchNextPage`, `fetchPreviousPage`, `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and
-`isFetchingPreviousPage`.
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
 
 ### Remarks
 

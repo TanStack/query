@@ -8,6 +8,7 @@ import {
 } from 'vue-demi'
 import { QueryObserver, experimental_streamedQuery } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { keepPreviousData } from '..'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQueryClient } from '../useQueryClient'
@@ -455,6 +456,122 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(6)
+  })
+
+  it('should derive data via select without changing what is cached', async () => {
+    const key = queryKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ['a', 'b', 'c']),
+      select: (posts) => posts.length,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 3 },
+    })
+
+    const queryClient = useQueryClient()
+    expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('should stay disabled until the dependent value is set', async () => {
+    const key = queryKey()
+    const postId = ref<number>()
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    const query = useQuery({
+      queryKey: [...key, postId],
+      queryFn: fetchFn,
+      enabled: () => postId.value != null,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).not.toHaveBeenCalled()
+    expect(query).toMatchObject({ status: { value: 'pending' } })
+
+    postId.value = 1
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'Some data' },
+    })
+  })
+
+  it('should seed from initialData and skip the loading state', () => {
+    const key = queryKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'fetched data'),
+      initialData: 'seeded data',
+    })
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'seeded data' },
+    })
+  })
+
+  it('should still fetch in the background and replace initialData with the fetched value', async () => {
+    const key = queryKey()
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'fetched data'))
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn: fetchFn,
+      initialData: 'seeded data',
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'fetched data' },
+    })
+  })
+
+  it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
+    const key = queryKey()
+    const page = ref(0)
+    const fetchFn = vi.fn((pageParam: number) =>
+      sleep(10).then(() => `page-${pageParam}`),
+    )
+
+    const query = useQuery({
+      queryKey: [...key, page],
+      queryFn: () => fetchFn(page.value),
+      placeholderData: keepPreviousData,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-0' },
+      isPlaceholderData: { value: false },
+    })
+
+    page.value = 1
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-0' },
+      isPlaceholderData: { value: true },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-1' },
+      isPlaceholderData: { value: false },
+    })
   })
 
   describe('throwOnError', () => {

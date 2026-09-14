@@ -181,8 +181,8 @@ export type SuspenseQueriesResults<
         : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
 
 /**
- * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
- * `throwOnError`, `enabled`, or `placeholderData`.
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+ * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
  *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
@@ -427,8 +427,8 @@ export function useSuspenseQueries<
 ): TCombinedResult
 
 /**
- * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
- * `throwOnError`, `enabled`, or `placeholderData`.
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+ * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
  *
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
