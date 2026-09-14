@@ -1,6 +1,6 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { environmentManager } from './environmentManager'
+import { isServer as isServerEnvironment } from './environmentManager'
 import { noop, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
@@ -56,6 +56,24 @@ export function canFetch(networkMode: NetworkMode | undefined): boolean {
     : true
 }
 
+/**
+ * The error thrown by a `Retryer` (and surfaced to `query.promise`/`mutation`) when a fetch is cancelled, e.g. via
+ * `query.cancel()`. `revert`, if `true`, tells the caller to restore the state the query was in before the fetch
+ * started instead of surfacing the error. `silent`, if `true`, tells the caller to suppress this error and instead
+ * resolve with the promise of the fetch that triggered the cancellation.
+ * @example
+ * ```ts
+ * query.cancel()
+ *
+ * try {
+ *   await query.promise
+ * } catch (error) {
+ *   if (error instanceof CancelledError) {
+ *     // the fetch was cancelled, e.g. via `query.cancel()`
+ *   }
+ * }
+ * ```
+ */
 export class CancelledError extends Error {
   revert?: boolean
   silent?: boolean
@@ -175,7 +193,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? (environmentManager.isServer() ? 0 : 3)
+        const retry = config.retry ?? (isServerEnvironment() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'

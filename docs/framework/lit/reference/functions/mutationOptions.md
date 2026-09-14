@@ -33,13 +33,13 @@ Preserves and types mutation options for reuse across Lit Query APIs.
 
 ### options
 
-`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+[`MutationObserverOptions`](../interfaces/MutationObserverOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 Mutation options to preserve.
 
 ## Returns
 
-`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+[`MutationObserverOptions`](../interfaces/MutationObserverOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 The same options object.
 

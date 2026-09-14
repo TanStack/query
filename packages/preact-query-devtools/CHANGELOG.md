@@ -1,5 +1,61 @@
 # @tanstack/preact-query-devtools
 
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies [[`6c27607`](https://github.com/TanStack/query/commit/6c27607d7ffc87612a8f1222a95f28bf5f9a045e)]:
+  - @tanstack/preact-query@5.102.8
+  - @tanstack/query-devtools@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies [[`67fddee`](https://github.com/TanStack/query/commit/67fddee6310ca0dd87749ed7a1b4a7178c6e6aae)]:
+  - @tanstack/preact-query@5.102.7
+  - @tanstack/query-devtools@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.6
+  - @tanstack/query-devtools@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/preact-query@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.4
+  - @tanstack/query-devtools@5.102.4
+
+## 5.102.3
+
+### Patch Changes
+
+- Updated dependencies [[`714c285`](https://github.com/TanStack/query/commit/714c2856e09bbaf7448ccc02364887e36c18b37c)]:
+  - @tanstack/preact-query@5.102.3
+  - @tanstack/query-devtools@5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.102.2
+  - @tanstack/query-devtools@5.102.2
+
 ## 5.102.1
 
 ### Patch Changes

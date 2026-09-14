@@ -6,11 +6,21 @@ If you have questions about implementation details, help or support, then please
 
 ## Reporting Issues
 
-If you have found what you think is a bug, please [file an issue](https://github.com/TanStack/query/issues/new/choose). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [GitHub Discussions](https://github.com/TanStack/query/discussions)
+If you have found what you think is a bug, first search the [open and closed issues](https://github.com/TanStack/query/issues?q=is%3Aissue) to make sure it has not already been reported. If you cannot find an existing report, use the [bug report template](https://github.com/TanStack/query/issues/new?template=bug_report.yml). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [GitHub Discussions](https://github.com/TanStack/query/discussions).
 
 ## Suggesting new features
 
 If you are here to suggest a feature, first create an issue if it does not already exist. From there, we will discuss use-cases for the feature and then finally discuss how it could be implemented.
+
+## Pull Request Guidelines
+
+Every pull request must follow the [TanStack Query pull request template](.github/pull_request_template.md). Complete its description and checklist without removing or bypassing the required sections.
+
+- Search the [open and closed pull requests](https://github.com/TanStack/query/pulls?q=is%3Apr) before starting work to avoid duplicating an existing contribution.
+- Keep each pull request focused on one change or topic. Pull requests that combine unrelated changes will be closed with a request to split them into separately reviewable contributions.
+- Write a concise description that clearly explains what changed and why. Follow the sections in the pull request template; a long, unstructured description makes a contribution harder to review.
+- You may use AI tools to help generate code, but you remain responsible for understanding, testing, and verifying every submitted change. Do not submit unreviewed, low-quality, or irrelevant generated code.
+- Do not mass-submit unrelated or low-quality AI-generated pull requests. We treat that behavior as spam and may close the pull requests, block the contributor, and report the GitHub account.
 
 ## Development
 
@@ -137,7 +147,7 @@ If you want to run an example without installing dependencies for the whole repo
 
 ## Changesets
 
-This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. If your PR should release a new package version (patch, minor, or major), please run `pnpm changeset` and commit the file. If needed, changeset descriptions can be more descriptive, and will be included in the changelog. If your PR affects docs, examples, styles, etc., you probably don't need to generate a changeset.
+This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. Every change that affects a published package must include a changeset. Run `pnpm changeset` and commit the generated file. Changeset descriptions are included in the changelog, so make them clear and useful. Documentation, CI, examples, and other development-only changes do not require a changeset.
 
 ## Pull requests
 

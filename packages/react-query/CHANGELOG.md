@@ -1,5 +1,56 @@
 # @tanstack/react-query
 
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- [#11305](https://github.com/TanStack/query/pull/11305) [`ac2b612`](https://github.com/TanStack/query/commit/ac2b61230ea35b90b177ba35dc030598bac9c9a6) - fix(react-query): throw falsy errors from `useQueries` and `useSuspenseQueries` to the error boundary
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies [[`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d)]:
+  - @tanstack/query-core@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies [[`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec)]:
+  - @tanstack/query-core@5.102.4
+
+## 5.102.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- Updated dependencies [[`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc)]:
+  - @tanstack/query-core@5.102.2
+
 ## 5.102.1
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
-import { createInfiniteQuery } from '../../src/index.js'
+import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -52,7 +52,7 @@ describe('createInfiniteQuery', () => {
   })
 
   describe('initialData', () => {
-    it('TData should have undefined in the union even when initialData is provided', () => {
+    it('TData should always be defined when initialData is provided', () => {
       const { data } = createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -64,9 +64,23 @@ describe('createInfiniteQuery', () => {
       }))
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    })
+
+    it('TData should always be defined when initialData is provided through infiniteQueryOptions', () => {
+      const options = infiniteQueryOptions({
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }: { pageParam: number }) => {
+          return pageParam * 5
+        },
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        initialData: { pages: [5], pageParams: [1] },
+      })
+      const { data } = createInfiniteQuery(() => options)
+
+      // known issue: type of pageParams is unknown when returned from createInfiniteQuery
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {

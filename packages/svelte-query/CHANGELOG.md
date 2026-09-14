@@ -1,5 +1,64 @@
 # @tanstack/svelte-query
 
+## 6.1.48
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
+## 6.1.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.7
+
+## 6.1.46
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.6
+
+## 6.1.45
+
+### Patch Changes
+
+- Updated dependencies [[`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d)]:
+  - @tanstack/query-core@5.102.5
+
+## 6.1.44
+
+### Patch Changes
+
+- Updated dependencies [[`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec)]:
+  - @tanstack/query-core@5.102.4
+
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.3
+
+## 6.1.42
+
+### Patch Changes
+
+- [#10892](https://github.com/TanStack/query/pull/10892) [`cafd540`](https://github.com/TanStack/query/commit/cafd540c02f78be260198c4e84d054390c02c6b8) - Fix `createQueries` crashing with `TypeError: 'deleteProperty' on proxy: trap returned falsish for property 'N'` when two or more items were removed from its reactive array in the same update.
+
+- [#11127](https://github.com/TanStack/query/pull/11127) [`320ed25`](https://github.com/TanStack/query/commit/320ed25caca4e219b53f778c59cbb380543a21f4) - Fix `createQueries` staying inactive when it is initialized with an empty `queries` array.
+
+- [#11153](https://github.com/TanStack/query/pull/11153) [`250050d`](https://github.com/TanStack/query/commit/250050d863d33fbc881c6e342c104d510403a9e1) - fix(svelte-query): remove mutations that no longer match the filter in `useMutationState`
+
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies [[`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc)]:
+  - @tanstack/query-core@5.102.2
+
 ## 6.1.40
 
 ### Patch Changes
