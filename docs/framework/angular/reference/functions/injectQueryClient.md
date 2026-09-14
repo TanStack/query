@@ -7,7 +7,7 @@ title: injectQueryClient
 function injectQueryClient(injectOptions): QueryClient;
 ```
 
-Defined in: [inject-query-client.ts:18](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query-client.ts#L18)
+Defined in: [packages/angular-query-experimental/src/inject-query-client.ts:18](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query-client.ts#L18)
 
 Injects a `QueryClient` instance and allows passing a custom injector.
 
@@ -21,7 +21,7 @@ Type of the options argument to inject and optionally a custom injector.
 
 ## Returns
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The `QueryClient` instance.
 

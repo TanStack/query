@@ -9,7 +9,7 @@ redirect_from:
 function useIsFetching(filters?, queryClient?): number;
 ```
 
-Defined in: [react-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/react-query/src/useIsFetching.ts#L44)
+Defined in: [packages/react-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/react-query/src/useIsFetching.ts#L44)
 
 The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
 the background (useful for app-wide loading indicators).
@@ -18,13 +18,13 @@ the background (useful for app-wide loading indicators).
 
 ### filters?
 
-`QueryFilters`\<readonly `unknown`[]\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-The QueryFilters to narrow down the matched queries.
+The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

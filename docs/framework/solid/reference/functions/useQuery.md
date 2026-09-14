@@ -11,7 +11,7 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
+Defined in: [packages/solid-query/src/useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
 
 ### Type Parameters
 
@@ -212,7 +212,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [useQuery.ts:226](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L226)
+Defined in: [packages/solid-query/src/useQuery.ts:226](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L226)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 

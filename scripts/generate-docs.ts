@@ -163,7 +163,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     gitRevision: 'main',
     entryPoints: pkg.entryPoints,
     tsconfig: pkg.tsconfig,
-    exclude: pkg.exclude,
+    ...(pkg.exclude && { exclude: pkg.exclude }),
     out: outputDir,
   })
 
@@ -196,19 +196,16 @@ const packages: Array<PackageReferenceDocsConfig> = [
       '../packages/angular-query-experimental/tsconfig.json',
     ),
     outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/solid-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/solid-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/solid/reference'),
-    exclude: ['./packages/query-core/**/*'],
     redirectFrom: {
       'functions/infiniteQueryOptions': [
         'framework/solid/reference/infiniteQueryOptions',
@@ -234,13 +231,11 @@ const packages: Array<PackageReferenceDocsConfig> = [
     entryPoints: [resolve(__dirname, '../packages/vue-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/vue-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/vue/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/react-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/react/reference'),
-    exclude: ['./packages/query-core/**/*'],
     redirectFrom: {
       'functions/infiniteQueryOptions': [
         'framework/react/reference/infiniteQueryOptions',
@@ -285,19 +280,61 @@ const packages: Array<PackageReferenceDocsConfig> = [
       'functions/useSuspenseQuery': [
         'framework/react/reference/useSuspenseQuery',
       ],
+      // Redirects from the legacy hand-written docs/reference/*.md pages, removed in favor of
+      // this generated reference.
+      'classes/QueryClient': [
+        'reference/QueryClient',
+        'framework/react/reference/QueryClient',
+      ],
+      'classes/QueryCache': [
+        'reference/QueryCache',
+        'framework/react/reference/QueryCache',
+      ],
+      'classes/MutationCache': [
+        'reference/MutationCache',
+        'framework/react/reference/MutationCache',
+      ],
+      'classes/QueryObserver': [
+        'reference/QueryObserver',
+        'framework/react/reference/QueryObserver',
+      ],
+      'classes/InfiniteQueryObserver': [
+        'reference/InfiniteQueryObserver',
+        'framework/react/reference/InfiniteQueryObserver',
+      ],
+      'classes/QueriesObserver': [
+        'reference/QueriesObserver',
+        'framework/react/reference/QueriesObserver',
+      ],
+      // focusManager/onlineManager/timeoutManager are class instances, not object literals, so
+      // TypeDoc can't inline their methods onto the `variables/*` instance page — the method docs
+      // that the legacy pages covered now live on the `interfaces/*` page for the class itself.
+      'interfaces/FocusManager': [
+        'reference/focusManager',
+        'framework/react/reference/focusManager',
+      ],
+      'interfaces/OnlineManager': [
+        'reference/onlineManager',
+        'framework/react/reference/onlineManager',
+      ],
+      'interfaces/TimeoutManager': ['reference/timeoutManager'],
+      'variables/notifyManager': [
+        'reference/notifyManager',
+        'framework/react/reference/notifyManager',
+      ],
+      'variables/environmentManager': ['reference/environmentManager'],
+      'functions/experimental_streamedQuery': ['reference/streamedQuery'],
     },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/preact-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
-    exclude: ['./packages/query-core/**/*'],
   },
   {
     entryPoints: [resolve(__dirname, '../packages/lit-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/lit-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/lit/reference'),
-    exclude: ['./packages/query-core/**/*'],
     excludeExternals: true,
     simplifyLitQueriesControllerTypes: true,
     trimGeneratedMarkdown: true,

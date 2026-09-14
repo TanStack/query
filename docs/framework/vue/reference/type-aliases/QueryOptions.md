@@ -7,7 +7,7 @@ title: QueryOptions
 type QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = { [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" ? MaybeRefOrGetter<boolean | undefined> | (() => QueryBooleanOption<TQueryFnData, TError, TQueryData, DeepUnwrapRef<TQueryKey>>) : Property extends "queryKey" ? MaybeRefOrGetter<TQueryKey> : QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, DeepUnwrapRef<TQueryKey>>[Property] } & ShallowOption;
 ```
 
-Defined in: [vue-query/src/queryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L35)
+Defined in: [packages/vue-query/src/queryOptions.ts:35](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L35)
 
 The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
 dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
@@ -34,7 +34,7 @@ The type your `queryFn` resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
@@ -53,6 +53,6 @@ The type of data stored in the cache, before `select` runs. Defaults to
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.

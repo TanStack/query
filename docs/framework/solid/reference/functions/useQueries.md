@@ -9,7 +9,7 @@ redirect_from:
 function useQueries<T, TCombinedResult>(queriesOptions, queryClient?): TCombinedResult;
 ```
 
-Defined in: [useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
+Defined in: [packages/solid-query/src/useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -38,31 +38,31 @@ previously rendered queries, because the number of queries can differ between re
 `TCombinedResult` *extends* 
   \| \[\]
   \| \[
-  \| `QueryObserverRefetchErrorResult`\<`unknown`, `Error`\>
-  \| `QueryObserverSuccessResult`\<`unknown`, `Error`\>
-  \| `QueryObserverLoadingErrorResult`\<`unknown`, `Error`\>
-  \| `QueryObserverLoadingResult`\<`unknown`, `Error`\>
-  \| `QueryObserverPendingResult`\<`unknown`, `Error`\>
-  \| `QueryObserverPlaceholderResult`\<`unknown`, `Error`\>
-  \| `QueryObserverRefetchErrorResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverSuccessResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverLoadingErrorResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverLoadingResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverPendingResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverPlaceholderResult`\<`unknown`, `unknown`\>\]
+  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>\]
   \| (
-  \| `QueryObserverRefetchErrorResult`\<`unknown`, `Error`\>
-  \| `QueryObserverSuccessResult`\<`unknown`, `Error`\>
-  \| `QueryObserverLoadingErrorResult`\<`unknown`, `Error`\>
-  \| `QueryObserverLoadingResult`\<`unknown`, `Error`\>
-  \| `QueryObserverPendingResult`\<`unknown`, `Error`\>
-  \| `QueryObserverPlaceholderResult`\<`unknown`, `Error`\>
-  \| `QueryObserverRefetchErrorResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverSuccessResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverLoadingErrorResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverLoadingResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverPendingResult`\<`unknown`, `unknown`\>
-  \| `QueryObserverPlaceholderResult`\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<Tail\[K\<(...)\>\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
+  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `Error`\>
+  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<Tail\[K\<(...)\>\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
 
 ## Parameters
 

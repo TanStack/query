@@ -7,7 +7,7 @@ title: UsePrefetchQueryOptions
 type UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = OmitKeyof<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, never>, "queryFn"> & object;
 ```
 
-Defined in: [vue-query/src/usePrefetchQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L15)
+Defined in: [packages/vue-query/src/usePrefetchQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L15)
 
 ## Type Declaration
 
@@ -37,4 +37,4 @@ optional queryFn: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQuer
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md)

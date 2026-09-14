@@ -7,7 +7,7 @@ title: UseInfiniteQueryOptions
 type UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = MaybeRef<{ [Property in keyof InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>]: Property extends "enabled" ? MaybeRefOrGetter<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, DeepUnwrapRef<TQueryKey>, TPageParam>[Property]> : MaybeRefDeep<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, DeepUnwrapRef<TQueryKey>, TPageParam>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [vue-query/src/useInfiniteQuery.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L27)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L27)
 
 ## Type Parameters
 
@@ -17,7 +17,7 @@ Defined in: [vue-query/src/useInfiniteQuery.ts:27](https://github.com/TanStack/q
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -25,7 +25,7 @@ Defined in: [vue-query/src/useInfiniteQuery.ts:27](https://github.com/TanStack/q
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 ### TPageParam
 

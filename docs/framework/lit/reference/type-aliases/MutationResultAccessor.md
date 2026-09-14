@@ -42,7 +42,7 @@ Throws synchronously if no `QueryClient` can be resolved.
 
 ##### args
 
-...`Parameters`\<`MutateFunction`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
+...`Parameters`\<[`MutateFunction`](MutateFunction.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
 
 #### Returns
 

@@ -7,6 +7,8 @@ redirect_from:
 
 In this guide you'll learn how to use React Query with server rendering.
 
+For TanStack Start, use the [Start + TanStack Query guide](https://tanstack.com/start/latest/docs/framework/react/guide/tanstack-query) for its SSR integration, request-scoped QueryClient setup, and mutation invalidation example.
+
 See the guide on [Prefetching & Router Integration](./prefetching.md) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls.md) before that.
 
 For deeper examples on hydration + prefetching (including code splitting), see the [Dependent Queries & Code Splitting](./prefetching.md#dependent-queries-code-splitting) section.
@@ -556,7 +558,7 @@ On the server, `gcTime` defaults to `Infinity` which disables manual garbage col
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient.md#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
 

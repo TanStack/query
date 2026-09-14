@@ -30,13 +30,13 @@ subscription.
 
 ### filters
 
-[`Accessor`](../type-aliases/Accessor.md)\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
 Mutation filters, or a getter that returns mutation filters.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.
