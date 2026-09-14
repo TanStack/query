@@ -129,6 +129,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['enabled'], Function>
         >().returns.toEqualTypeOf<boolean>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['enabled'], Function>
+        >().toEqualTypeOf<boolean | undefined>()
       })
     })
 
@@ -216,6 +219,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['refetchOnWindowFocus'], Function>
         >().returns.toEqualTypeOf<boolean | 'always'>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['refetchOnWindowFocus'], Function>
+        >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
 
@@ -244,6 +250,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['refetchOnReconnect'], Function>
         >().returns.toEqualTypeOf<boolean | 'always'>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['refetchOnReconnect'], Function>
+        >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
 
@@ -272,6 +281,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['refetchOnMount'], Function>
         >().returns.toEqualTypeOf<boolean | 'always'>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['refetchOnMount'], Function>
+        >().toEqualTypeOf<boolean | 'always' | undefined>()
       })
     })
 
@@ -316,6 +328,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['throwOnError'], Function>
         >().returns.toEqualTypeOf<boolean>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['throwOnError'], Function>
+        >().toEqualTypeOf<boolean | undefined>()
       })
     })
 
@@ -416,6 +431,9 @@ describe('queryObserver', () => {
         expectTypeOf<
           Extract<QueryObserverOptions['structuralSharing'], Function>
         >().returns.toEqualTypeOf<unknown>()
+        expectTypeOf<
+          Exclude<QueryObserverOptions['structuralSharing'], Function>
+        >().toEqualTypeOf<boolean | undefined>()
       })
     })
 
@@ -524,6 +542,21 @@ describe('queryObserver', () => {
         expectTypeOf<
           PlaceholderDataFunction<{ value: string }>
         >().returns.toEqualTypeOf<{ value: string } | undefined>()
+      })
+
+      it('should accept the query data directly, not only a function', () => {
+        new QueryObserver(queryClient, {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve({ value: 'data' }),
+          placeholderData: { value: 'placeholder' },
+        })
+
+        expectTypeOf<
+          Exclude<
+            QueryObserverOptions<{ value: string }>['placeholderData'],
+            Function
+          >
+        >().toEqualTypeOf<{ value: string } | undefined>()
       })
 
       it('should type the queryKey of the previousQuery it is given', () => {
