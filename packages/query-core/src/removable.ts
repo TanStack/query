@@ -14,6 +14,10 @@ export abstract class Removable {
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
+    if (isServerEnvironment()) {
+      return
+    }
+
     if (isValidTimeout(this.gcTime)) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
