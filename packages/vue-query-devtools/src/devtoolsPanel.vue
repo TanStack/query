@@ -7,7 +7,8 @@ import type { DevtoolsPanelOptions } from './types'
 const props = defineProps<DevtoolsPanelOptions>()
 const style = computed<any>(() => {
   return {
-    height: '500px',
+    height: '100%',
+    minHeight: '500px',
     ...props.style,
   }
 })
