@@ -1364,6 +1364,46 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
+  it('should be able to throw a falsy error when throwOnError is set to true', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    function Page() {
+      const { mutate } = useMutation<string, string>({
+        mutationFn: () => {
+          return Promise.reject('')
+        },
+        throwOnError: true,
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={() => (
+          <div>
+            <span>error boundary</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    fireEvent.click(getByText('mutate'))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryByText('error boundary')).not.toBeNull()
+
+    consoleMock.mockRestore()
+  })
+
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
