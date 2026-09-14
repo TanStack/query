@@ -470,8 +470,8 @@ describe('QueryCache', () => {
 
       const options = infiniteQueryOptions({
         queryKey: queryKeyRef,
-        initialPageParam: ref(0),
-        getNextPageParam: ref(getNextPageParam),
+        initialPageParam: 0,
+        getNextPageParam,
       })
 
       queryClient.infiniteQuery({

@@ -22,7 +22,7 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { UseQueryOptions } from './useQuery'
+import type { UseQueryOptions } from './queryOptions'
 import type { QueryClient } from './queryClient'
 import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
 

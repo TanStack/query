@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { onScopeDispose, ref } from 'vue-demi'
+import { computed, onScopeDispose, ref } from 'vue-demi'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
@@ -504,5 +505,59 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(6)
+  })
+
+  it('should skip a query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
+    const key = queryKey()
+    const id = ref<string | null>(null)
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: key,
+          queryFn: computed(() => (id.value ? fetchFn : skipToken)),
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).not.toHaveBeenCalled()
+    expect(queriesState.value).toMatchObject([{ status: 'pending' }])
+
+    id.value = '1'
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(queriesState.value).toMatchObject([
+      { status: 'success', data: 'Some data' },
+    ])
+  })
+
+  it('should refetch when a bare reactive getter for the whole queryKey array changes', async () => {
+    const key = queryKey()
+    const id = ref(1)
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    useQueries({
+      queries: [
+        {
+          queryKey: () => [...key, id.value],
+          queryFn: fetchFn,
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    id.value = 2
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
   })
 })

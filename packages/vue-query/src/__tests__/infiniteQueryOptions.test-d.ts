@@ -1,20 +1,30 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { dataTagSymbol } from '@tanstack/query-core'
-import { reactive } from 'vue-demi'
+import { dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { computed, reactive, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { QueryClient } from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import type { InfiniteData } from '@tanstack/query-core'
+import type { InfiniteData, QueryKeyWithDataTag } from '@tanstack/query-core'
+import type { InfiniteQueryOptions } from '../infiniteQueryOptions'
 
 // Regression test for exported infiniteQueryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
 // internal data tag symbols into the consumer's .d.ts output.
-export const exportedInfiniteQueryOptions = infiniteQueryOptions({
-  queryKey: ['invalid'],
-  getNextPageParam: () => 1,
-  initialPageParam: 1,
-})
+export const exportedInfiniteQueryOptions: InfiniteQueryOptions<
+  unknown,
+  Error,
+  InfiniteData<unknown>,
+  Array<string>,
+  number
+> & {
+  initialData?: undefined
+} & QueryKeyWithDataTag<Array<string>, InfiniteData<unknown>, Error> =
+  infiniteQueryOptions({
+    queryKey: ['invalid'],
+    getNextPageParam: () => 1,
+    initialPageParam: 1,
+  })
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
@@ -29,6 +39,66 @@ describe('infiniteQueryOptions', () => {
         stallTime: 1000,
       }),
     )
+  })
+  it('should allow a bare reactive getter for the whole queryKey array', () => {
+    const id = ref(1)
+
+    const options = infiniteQueryOptions({
+      queryKey: () => ['post', id.value] as const,
+      queryFn: () => Promise.resolve('data'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow computed ref as enabled property', () => {
+    const enabled = computed(() => true)
+
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow ref as enabled property', () => {
+    const enabled = ref(true)
+
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow getter function as enabled property', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: () => true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+  it('should allow a plain callback as enabled property', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: (query) => query.state.data === undefined,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
   })
   it('should infer types for callbacks', () => {
     const key = queryKey()
@@ -161,5 +231,60 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
+  })
+
+  it('should allow a computed queryFn resolving to skipToken', () => {
+    const id = ref<string | null>('1')
+
+    const options = infiniteQueryOptions({
+      queryKey: computed(() => ['foo', id.value]),
+      queryFn: computed(() =>
+        id.value
+          ? ({ pageParam }: { pageParam: number }) =>
+              Promise.resolve({ id: id.value, pageParam })
+          : skipToken,
+      ),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const { data } = reactive(useInfiniteQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<{ id: string | null; pageParam: number }> | undefined
+    >()
+  })
+
+  it('should reject a ref for an option other than enabled/queryKey/queryFn', () => {
+    // Unlike `useInfiniteQuery`, `infiniteQueryOptions` only tracks `enabled`/`queryKey`/`queryFn` reactively —
+    // every other option (`staleTime` here) stays a plain value. This is deliberate: the returned object is
+    // shared with plain APIs like `queryClient.infiniteQuery`, so a `ref` slipping into an arbitrary option
+    // would make the declared (plain) type lie about the actual (reactive) value.
+    assertType(
+      infiniteQueryOptions({
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }: { pageParam: number }) =>
+          Promise.resolve(pageParam),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+        // @ts-expect-error staleTime must be a plain value, not a ref
+        staleTime: ref(1000),
+      }),
+    )
+  })
+
+  it('should reject the whole options object wrapped in a ref', () => {
+    assertType(
+      infiniteQueryOptions(
+        // @ts-expect-error infiniteQueryOptions only accepts a plain object, not a ref
+        ref({
+          queryKey: queryKey(),
+          queryFn: ({ pageParam }: { pageParam: number }) =>
+            Promise.resolve(pageParam),
+          getNextPageParam: () => 1,
+          initialPageParam: 1,
+        }),
+      ),
+    )
   })
 })

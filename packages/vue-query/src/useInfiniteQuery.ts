@@ -2,6 +2,7 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   DefinedInitialDataInfiniteOptions,
+  InfiniteQueryOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 import type {
@@ -16,13 +17,16 @@ import type {
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 
 import type {
-  DeepUnwrapRef,
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
   ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
+
+// Widen `SkipToken`'s `unique symbol` to `symbol` so it survives a `queryFn: cond ? fn : skipToken` ternary
+// inside a whole-options getter or a `computed` — see `SkipTokenForUseQuery` in `queryOptions.ts`.
+type SkipTokenForUseInfiniteQuery = symbol
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -38,25 +42,34 @@ export type UseInfiniteQueryOptions<
       TData,
       TQueryKey,
       TPageParam
-    >]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
-        >
-      : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
-        >
+    >]: Property extends 'enabled' | 'queryKey'
+      ? InfiniteQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >[Property]
+      : Property extends 'queryFn'
+        ? MaybeRefDeep<
+            | InfiniteQueryOptions<
+                TQueryFnData,
+                TError,
+                TData,
+                TQueryKey,
+                TPageParam
+              >[Property]
+            | SkipTokenForUseInfiniteQuery
+          >
+        : MaybeRefDeep<
+            InfiniteQueryOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryKey,
+              TPageParam
+            >[Property]
+          >
   } & ShallowOption
 >
 
@@ -73,8 +86,8 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
@@ -138,8 +151,8 @@ export function useInfiniteQuery<
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
@@ -273,8 +286,8 @@ export function useInfiniteQuery<
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries.
  *
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseInfiniteQueryOptions} to
  * use.
