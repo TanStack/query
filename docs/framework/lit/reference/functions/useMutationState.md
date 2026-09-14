@@ -24,7 +24,7 @@ the controller resolves the client from the nearest connected
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `unknown`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `unknown`, `unknown`, `unknown`\>
 
 ## Parameters
 
@@ -43,7 +43,7 @@ Mutation state filters and optional selector.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

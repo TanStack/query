@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [types.ts:334](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L334)
+Defined in: [packages/solid-query/src/types.ts:334](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L334)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 
@@ -21,7 +21,7 @@ The type your `mutationFn` resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `mutationFn` may throw.
 

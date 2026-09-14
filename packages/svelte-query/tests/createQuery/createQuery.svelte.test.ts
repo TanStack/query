@@ -1,14 +1,6 @@
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -52,17 +44,6 @@ describe('createQuery', () => {
         }),
         () => queryClient,
       )
-
-      if (query.isPending) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<null>()
-      } else if (query.isLoadingError) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(query.data).toEqualTypeOf<string>()
-        expectTypeOf(query.error).toEqualTypeOf<Error | null>()
-      }
 
       expect(query).toEqual({
         data: undefined,

@@ -7,7 +7,7 @@ title: injectIsFetching
 function injectIsFetching(filters?, options?): Signal<number>;
 ```
 
-Defined in: [inject-is-fetching.ts:63](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L63)
+Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:63](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L63)
 
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
 background (useful for app-wide loading indicators).
@@ -16,9 +16,9 @@ background (useful for app-wide loading indicators).
 
 ### filters?
 
-`QueryFilters`\<readonly `unknown`[]\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-The QueryFilters to narrow down the matched queries.
+The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
 ### options?
 

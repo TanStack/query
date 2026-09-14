@@ -7,7 +7,7 @@ title: DefinedUseBaseQueryResult
 type DefinedUseBaseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [types.ts:131](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L131)
+Defined in: [packages/solid-query/src/types.ts:131](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L131)
 
 The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
 
@@ -21,6 +21,6 @@ The type `data` ends up as, after `select` runs (if set).
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors this query may hold.

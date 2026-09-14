@@ -7,7 +7,7 @@ title: QueriesOptions
 type QueriesOptions<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? QueryObserverOptionsForCreateQueries[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryOptionsForCreateQueries<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesOptions<[...Tails], [...TResults, GetCreateQueryOptionsForCreateQueries<Head>], [...TDepth, 1]> : ReadonlyArray<unknown> extends T ? T : T extends QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>[] ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] : QueryObserverOptionsForCreateQueries[];
 ```
 
-Defined in: [inject-queries.ts:154](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L154)
+Defined in: [packages/angular-query-experimental/src/inject-queries.ts:154](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L154)
 
 The `queries` array accepted by `injectQueries`. Recursively unwraps each tuple element so every entry's
 `queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — past that, tuple

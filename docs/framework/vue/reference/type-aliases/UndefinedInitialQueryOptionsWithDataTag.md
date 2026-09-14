@@ -7,7 +7,7 @@ title: UndefinedInitialQueryOptionsWithDataTag
 type UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey> = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [vue-query/src/queryOptions.ts:123](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L123)
+Defined in: [packages/vue-query/src/queryOptions.ts:123](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L123)
 
 ## Type Parameters
 
@@ -17,7 +17,7 @@ Defined in: [vue-query/src/queryOptions.ts:123](https://github.com/TanStack/quer
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -25,4 +25,4 @@ Defined in: [vue-query/src/queryOptions.ts:123](https://github.com/TanStack/quer
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

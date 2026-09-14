@@ -35,17 +35,36 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   return undefined
 }
 
+/**
+ * Options for `dehydrate`, controlling which queries/mutations are included in the resulting `DehydratedState` and
+ * how their data/errors are transformed before being serialized (e.g. for embedding in server-rendered markup).
+ */
 export interface DehydrateOptions {
+  /** Transforms a query's `data` before it is dehydrated. Useful for non-JSON-serializable data. */
   serializeData?: TransformerFn
+  /** Predicate to decide whether a given `Mutation` should be dehydrated. Defaults to `defaultShouldDehydrateMutation`. */
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
+  /** Predicate to decide whether a given `Query` should be dehydrated. Defaults to `defaultShouldDehydrateQuery`. */
   shouldDehydrateQuery?: (query: Query) => boolean
+  /**
+   * Predicate to decide whether a query's error should be redacted before dehydration. Errors are redacted
+   * (replaced with a generic `Error('redacted')`) unless this function is provided and returns `false` for the
+   * given error, in which case the original error is kept.
+   */
   shouldRedactErrors?: (error: unknown) => boolean
 }
 
+/**
+ * Options for `hydrate`, controlling the default options applied to queries/mutations restored from a
+ * `DehydratedState`, and how to reverse any transformation applied by `DehydrateOptions.serializeData`.
+ */
 export interface HydrateOptions {
   defaultOptions?: {
+    /** Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. */
     deserializeData?: TransformerFn
+    /** Default options merged into every query restored from the dehydrated state. */
     queries?: QueryOptions
+    /** Default options merged into every mutation restored from the dehydrated state. */
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
 }
@@ -67,6 +86,11 @@ interface DehydratedQuery {
   queryType?: 'infinite'
 }
 
+/**
+ * A serializable snapshot of a `QueryClient`'s cache, as produced by `dehydrate` and consumed by `hydrate`. Typically
+ * transported from server to client (e.g. embedded in server-rendered markup) to seed the client's cache with data
+ * that has already been fetched, avoiding a redundant fetch on the client.
+ */
 export interface DehydratedState {
   mutations: Array<DehydratedMutation>
   queries: Array<DehydratedQuery>
@@ -111,10 +135,16 @@ function dehydratePromise(
   return promise
 }
 
-// Most config is not dehydrated but instead meant to configure again when
-// consuming the de/rehydrated data, typically with useQuery on the client.
-// Sometimes it might make sense to prefetch data on the server and include
-// in the html-payload, but not consume it on the initial render.
+/**
+ * Dehydrates a single `Query` into a serializable `DehydratedQuery` snapshot. Note that most query config (e.g.
+ * `queryFn`, `staleTime`) is not dehydrated but instead meant to be configured again when consuming the
+ * de/rehydrated data, typically with `useQuery` on the client. If the query is still `pending`, its in-flight
+ * promise is dehydrated too so it can be resumed on the other side instead of re-fetched.
+ * @param query - The query to dehydrate.
+ * @param serializeData - Optional transform applied to `query.state.data` before it is included in the snapshot.
+ * @param shouldRedactErrors - Optional predicate; if it returns `false` for the promise's rejection error, that
+ * error is kept as-is instead of being redacted.
+ */
 export function dehydrateQuery(
   query: Query,
   serializeData?: TransformerFn,
@@ -140,14 +170,40 @@ export function dehydrateQuery(
   }
 }
 
+/**
+ * The default `shouldDehydrateMutation` predicate used by `dehydrate`. Only dehydrates mutations that are
+ * currently paused (e.g. paused by `networkMode` while offline).
+ */
 export function defaultShouldDehydrateMutation(mutation: Mutation) {
   return mutation.state.isPaused
 }
 
+/**
+ * The default `shouldDehydrateQuery` predicate used by `dehydrate`. Only dehydrates queries whose status is
+ * `'success'`.
+ */
 export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
+/**
+ * Dehydrates a `QueryClient`'s cache (queries and mutations) into a plain, serializable `DehydratedState`,
+ * typically to embed in server-rendered markup and later restore into a client-side `QueryClient` via `hydrate`.
+ * Which queries/mutations are included, and how their data/errors are transformed, is controlled by `options`,
+ * falling back to the client's `dehydrate` default options, and finally to `defaultShouldDehydrateQuery` /
+ * `defaultShouldDehydrateMutation`.
+ * @example
+ * ```ts
+ * const queryClient = new QueryClient()
+ *
+ * await queryClient.prefetchQuery({
+ *   queryKey: ['posts'],
+ *   queryFn: getPosts,
+ * })
+ *
+ * const dehydratedState = dehydrate(queryClient)
+ * ```
+ */
 export function dehydrate(
   client: QueryClient,
   options: DehydrateOptions = {},
@@ -188,6 +244,23 @@ export function dehydrate(
   return { mutations, queries }
 }
 
+/**
+ * Restores a `DehydratedState` (as produced by `dehydrate`) into a `QueryClient`'s cache, typically to seed the
+ * client with data already fetched on the server. `mutations` and `queries` are each optional on `dehydratedState`.
+ * Queries not yet in the cache are built from the dehydrated snapshot; queries that already exist are only updated
+ * when the dehydrated data is newer than what's already cached. Newly built queries have their `fetchStatus` reset
+ * to `'idle'` so they don't hydrate stuck in a fetching state. If a dehydrated query still had an in-flight
+ * promise, it is resumed via `query.fetch()` (reusing that promise as `initialPromise`) rather than re-invoking
+ * `queryFn`.
+ * @example
+ * ```ts
+ * // dehydratedState was produced by `dehydrate` on the server
+ * // and sent to the client, e.g. embedded in server-rendered markup.
+ * const queryClient = new QueryClient()
+ *
+ * hydrate(queryClient, dehydratedState)
+ * ```
+ */
 export function hydrate(
   client: QueryClient,
   dehydratedState: Partial<DehydratedState>,

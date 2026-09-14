@@ -45,7 +45,7 @@ Maps each matching mutation to the value returned by the accessor.
 
 ##### mutation
 
-`Mutation`
+[`Mutation`](../classes/Mutation.md)
 
 #### Returns
 

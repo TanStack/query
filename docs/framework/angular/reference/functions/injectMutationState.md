@@ -7,16 +7,16 @@ title: injectMutationState
 function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>;
 ```
 
-Defined in: [inject-mutation-state.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L106)
+Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L106)
 
 Injects a signal that gives you access to all mutations in the `MutationCache`. You can pass `filters`
-(MutationFilters) to narrow down your mutations, and `select` to transform the mutation state.
+([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation state.
 
 ## Type Parameters
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 ## Parameters
 

@@ -153,6 +153,26 @@ describe('useQuery', () => {
     })
   })
 
+  describe('generic queryFn', () => {
+    it('should infer the result type from a generic query function', () => {
+      const key = queryKey()
+
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const query = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => queryFn(),
+        }),
+      )
+
+      expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    })
+  })
+
   describe('generic queryKey inference (#8199)', () => {
     it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
       const basket = { fruit: 'apple', vegetable: 'broccoli' } as const

@@ -7,7 +7,7 @@ title: useQueries
 function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
 ```
 
-Defined in: [preact-query/src/useQueries.ts:302](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L302)
+Defined in: [packages/preact-query/src/useQueries.ts:302](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L302)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -50,7 +50,7 @@ shared to be as referentially stable as possible.
 
 An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
 `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
-`placeholderData` accepts a QueriesPlaceholderDataFunction, which is called with `previousData`
+`placeholderData` accepts a [QueriesPlaceholderDataFunction](../type-aliases/QueriesPlaceholderDataFunction.md), which is called with `previousData`
 and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
 
 #### subscribed?
@@ -67,7 +67,7 @@ true
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.

@@ -9,7 +9,7 @@ redirect_from:
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [useMutation.ts:173](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L173)
+Defined in: [packages/solid-query/src/useMutation.ts:173](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L173)
 
 ## Type Parameters
 

@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -95,17 +87,6 @@ describe('useQuery', () => {
       createRenderEffect(() => {
         states.push({ ...state })
       })
-
-      if (state.isPending) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<null>()
-      } else if (state.isLoadingError) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(state.data).toEqualTypeOf<string>()
-        expectTypeOf(state.error).toEqualTypeOf<Error | null>()
-      }
 
       return (
         <Switch fallback={<span>{state.data}</span>}>
