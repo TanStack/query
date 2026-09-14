@@ -31,9 +31,15 @@ function reconcileFn<TData, TError>(
     | string
     | false
     | ((oldData: TData | undefined, newData: TData) => TData),
+  observerDataChanged: boolean,
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
-  if (reconcileOption === false) return result
+  if (reconcileOption === false || result.data === undefined) {
+    return result
+  }
+  if (!observerDataChanged) {
+    return { ...result, data: store.data } as typeof result
+  }
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result
@@ -143,6 +149,11 @@ export function useBaseQuery<
   )
 
   let observerResult = observer().getOptimisticResult(defaultedOptions())
+  // Reconciliation can retain the store's data reference after the observer
+  // moves to new data, so status-only updates must compare observer references.
+  let lastDataObserver = observer()
+  let lastDataQueryHash = lastDataObserver.getCurrentQuery().queryHash
+  let lastObserverData = observerResult.data
   const [state, setState] =
     createStore<QueryObserverResult<TData, TError>>(observerResult)
 
@@ -188,7 +199,13 @@ export function useBaseQuery<
   }
 
   function setStateWithReconciliation(res: typeof observerResult) {
-    const opts = observer().options
+    const currentObserver = observer()
+    const opts = currentObserver.options
+    const queryHash = currentObserver.getCurrentQuery().queryHash
+    const observerDataChanged =
+      currentObserver !== lastDataObserver ||
+      queryHash !== lastDataQueryHash ||
+      res.data !== lastObserverData
     // @ts-expect-error - Reconcile option is not correctly typed internally
     const reconcileOptions = opts.reconcile
 
@@ -197,9 +214,13 @@ export function useBaseQuery<
         store,
         res,
         reconcileOptions === undefined ? false : reconcileOptions,
-        opts.queryHash,
+        observerDataChanged,
+        queryHash,
       )
     })
+    lastDataObserver = currentObserver
+    lastDataQueryHash = queryHash
+    lastObserverData = res.data
   }
 
   function createDeepSignal<T>(): Signal<T> {
