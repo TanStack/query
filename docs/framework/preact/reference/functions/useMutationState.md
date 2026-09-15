@@ -7,21 +7,21 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): TResult[];
 ```
 
-Defined in: [preact-query/src/useMutationState.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L157)
+Defined in: [packages/preact-query/src/useMutationState.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L157)
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
-`filters` (MutationFilters) to narrow down your mutations, and `select` to transform the mutation
+`filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation
 state.
 
 ## Type Parameters
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `Error`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
 
 ## Parameters
 
@@ -34,7 +34,7 @@ mutation state.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -88,9 +88,9 @@ function Posts() {
 }
 ```
 
-Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
-mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
-latest invocation:
+Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
+entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the
+last item that `useMutationState` returns to get the latest successful invocation:
 ```tsx
 import { useMutationState } from '@tanstack/preact-query'
 
