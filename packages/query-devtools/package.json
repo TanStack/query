@@ -60,20 +60,22 @@
     "src",
     "!src/__tests__"
   ],
-  "devDependencies": {
+  "dependencies": {
     "@kobalte/core": "^0.13.4",
     "@solid-primitives/keyed": "^1.2.2",
     "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^1.3.11",
-    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
-    "npm-run-all2": "^5.0.0",
     "solid-js": "^1.9.7",
     "solid-transition-group": "^0.2.3",
-    "superjson": "^2.2.2",
+    "superjson": "^2.2.2"
+  },
+  "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
+    "npm-run-all2": "^5.0.0",
     "unplugin-solid": "^2.0.0",
     "vite-plugin-solid": "^2.11.6"
   }

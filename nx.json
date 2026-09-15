@@ -36,6 +36,12 @@
     },
     "test:knip": {
       "cache": true,
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["directory:packages/*"]
+        }
+      ],
       "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:sherif": {
