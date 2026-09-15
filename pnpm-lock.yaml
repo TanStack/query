@@ -2750,7 +2750,7 @@ importers:
         version: 5.0.2
 
   packages/query-devtools:
-    devDependencies:
+    dependencies:
       '@kobalte/core':
         specifier: ^0.13.4
         version: 0.13.11(solid-js@1.9.12)
@@ -2763,9 +2763,6 @@ importers:
       '@solid-primitives/storage':
         specifier: ^1.3.11
         version: 1.3.11(solid-js@1.9.12)
-      '@solidjs/testing-library':
-        specifier: ^0.8.10
-        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.12))(solid-js@1.9.12)
       '@tanstack/match-sorter-utils':
         specifier: ^8.19.4
         version: 8.19.4
@@ -2778,9 +2775,6 @@ importers:
       goober:
         specifier: ^2.1.16
         version: 2.1.18(csstype@3.2.3)
-      npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
       solid-js:
         specifier: ^1.9.7
         version: 1.9.12
@@ -2790,6 +2784,13 @@ importers:
       superjson:
         specifier: ^2.2.2
         version: 2.2.6
+    devDependencies:
+      '@solidjs/testing-library':
+        specifier: ^0.8.10
+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.12))(solid-js@1.9.12)
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       unplugin-solid:
         specifier: ^2.0.0
         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.27.4)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.12)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4(esbuild@0.27.4))
@@ -2827,6 +2828,10 @@ importers:
         version: 5.0.2
 
   packages/query-test-utils:
+    dependencies:
+      vitest:
+        specifier: ^4.0.18
+        version: 4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
     devDependencies:
       npm-run-all2:
         specifier: ^5.0.0
@@ -22653,6 +22658,15 @@ snapshots:
       msw: 2.12.14(@types/node@22.19.15)(typescript@6.0.3)
       vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  '@vitest/mocker@4.1.2(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))':
+    dependencies:
+      '@vitest/spy': 4.1.2
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      msw: 2.12.14(@types/node@22.19.15)(typescript@7.0.2)
+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+
   '@vitest/pretty-format@4.1.2':
     dependencies:
       tinyrainbow: 3.1.0
@@ -28900,6 +28914,32 @@ snapshots:
       - '@types/node'
     optional: true
 
+  msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2):
+    dependencies:
+      '@inquirer/confirm': 5.1.21(@types/node@22.19.15)
+      '@mswjs/interceptors': 0.41.3
+      '@open-draft/deferred-promise': 2.2.0
+      '@types/statuses': 2.0.6
+      cookie: 1.1.1
+      graphql: 16.13.2
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      rettime: 0.10.1
+      statuses: 2.0.2
+      strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.1
+      type-fest: 5.5.0
+      until-async: 3.0.2
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 7.0.2
+    transitivePeerDependencies:
+      - '@types/node'
+    optional: true
+
   muggle-string@0.4.1: {}
 
   mute-stream@2.0.0: {}
@@ -33036,6 +33076,34 @@ snapshots:
     dependencies:
       '@vitest/expect': 4.1.2
       '@vitest/mocker': 4.1.2(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
+      '@vitest/pretty-format': 4.1.2
+      '@vitest/runner': 4.1.2
+      '@vitest/snapshot': 4.1.2
+      '@vitest/spy': 4.1.2
+      '@vitest/utils': 4.1.2
+      es-module-lexer: 2.0.0
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      obug: 2.1.4
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      std-env: 4.0.0
+      tinybench: 2.9.0
+      tinyexec: 1.3.0
+      tinyglobby: 0.2.17
+      tinyrainbow: 3.1.0
+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/node': 22.19.15
+      jsdom: 27.4.0
+    transitivePeerDependencies:
+      - msw
+
+  vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)):
+    dependencies:
+      '@vitest/expect': 4.1.2
+      '@vitest/mocker': 4.1.2(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@vitest/pretty-format': 4.1.2
       '@vitest/runner': 4.1.2
       '@vitest/snapshot': 4.1.2
