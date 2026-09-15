@@ -56,35 +56,35 @@ export default [
         'error',
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="fetchQuery"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchQuery"], [callee.computed=true][callee.property.value="fetchQuery"])',
           message: 'Use queryClient.query(options) instead.',
         },
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="prefetchQuery"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchQuery"], [callee.computed=true][callee.property.value="prefetchQuery"])',
           message:
             'Use queryClient.query(options).catch(noop) instead if errors should be swallowed.',
         },
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="ensureQueryData"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureQueryData"], [callee.computed=true][callee.property.value="ensureQueryData"])',
           message:
             "Use queryClient.query({ ...options, staleTime: 'static' }) instead.",
         },
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="fetchInfiniteQuery"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchInfiniteQuery"], [callee.computed=true][callee.property.value="fetchInfiniteQuery"])',
           message: 'Use queryClient.infiniteQuery(options) instead.',
         },
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="prefetchInfiniteQuery"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchInfiniteQuery"], [callee.computed=true][callee.property.value="prefetchInfiniteQuery"])',
           message:
             'Use queryClient.infiniteQuery(options).catch(noop) instead if errors should be swallowed.',
         },
         {
           selector:
-            'CallExpression[callee.type="MemberExpression"][callee.property.name="ensureInfiniteQueryData"]',
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureInfiniteQueryData"], [callee.computed=true][callee.property.value="ensureInfiniteQueryData"])',
           message:
             "Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead.",
         },
