@@ -122,7 +122,11 @@ export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {
   return provideTanStackQuery(queryClient)
 }
 
-const queryFeatures = ['Devtools', 'PersistQueryClient'] as const
+const queryFeatures = [
+  'Devtools',
+  'PersistQueryClient',
+  'BroadcastQueryClient',
+] as const
 
 type QueryFeatureKind = (typeof queryFeatures)[number]
 
@@ -161,10 +165,18 @@ export type DevtoolsFeature = QueryFeature<'Devtools'>
 export type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
 
 /**
+ * A type alias that represents a feature which enables broadcast bootstrap.
+ */
+export type BroadcastQueryClientFeature = QueryFeature<'BroadcastQueryClient'>
+
+/**
  * A type alias that represents all Query features available for use with `provideTanStackQuery`.
  * Features can be enabled by adding special functions to the `provideTanStackQuery` call.
  * See documentation for each symbol to find corresponding function name. See also `provideTanStackQuery`
  * documentation on how to use those functions.
  * @see {@link provideTanStackQuery}
  */
-export type QueryFeatures = DevtoolsFeature | PersistQueryClientFeature
+export type QueryFeatures =
+  | DevtoolsFeature
+  | PersistQueryClientFeature
+  | BroadcastQueryClientFeature

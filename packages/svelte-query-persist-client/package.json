@@ -49,6 +49,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
+    "@tanstack/query-broadcast-client-experimental": "workspace:*",
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
