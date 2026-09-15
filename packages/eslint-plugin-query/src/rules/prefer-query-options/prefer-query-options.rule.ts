@@ -20,14 +20,7 @@ const queriesHooks = ['useQueries', 'useSuspenseQueries']
 
 const filterHooks = ['useIsFetching']
 
-const queryClientOptionMethods = [
-  'fetchQuery',
-  'prefetchQuery',
-  'fetchInfiniteQuery',
-  'prefetchInfiniteQuery',
-  'ensureQueryData',
-  'ensureInfiniteQueryData',
-]
+const queryClientOptionMethods = ['query', 'infiniteQuery']
 
 const queryClientQueryKeyMethods = [
   'getQueryData',

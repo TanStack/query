@@ -204,66 +204,29 @@ ruleTester.run('no-void-query-fn', rule, {
       `,
     },
     {
-      name: 'fetchQuery queryFn returns a value',
+      name: 'query queryFn returns a value',
       code: normalizeIndent`
         import { QueryClient } from '@tanstack/react-query'
 
         const queryClient = new QueryClient()
-        queryClient.fetchQuery({
+        queryClient.query({
           queryKey: ['test'],
           queryFn: () => fetch('/api/test').then((r) => r.json()),
         })
       `,
     },
     {
-      name: 'prefetchQuery queryFn returns a value',
+      name: 'infiniteQuery queryFn returns a value',
       code: normalizeIndent`
         import { QueryClient } from '@tanstack/react-query'
 
         const queryClient = new QueryClient()
-        queryClient.prefetchQuery({
-          queryKey: ['test'],
-          queryFn: () => fetch('/api/test').then((r) => r.json()),
-        })
-      `,
-    },
-    {
-      name: 'prefetchInfiniteQuery queryFn returns a value',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.prefetchInfiniteQuery({
+        queryClient.infiniteQuery({
           queryKey: ['test'],
           queryFn: ({ pageParam }: { pageParam: number }) =>
             fetch(\`/api/test?page=\${pageParam}\`).then((r) => r.json()),
           initialPageParam: 0,
-        })
-      `,
-    },
-    {
-      name: 'ensureQueryData queryFn returns a value',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.ensureQueryData({
-          queryKey: ['test'],
-          queryFn: () => fetch('/api/test').then((r) => r.json()),
-        })
-      `,
-    },
-    {
-      name: 'ensureInfiniteQueryData queryFn returns a value',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.ensureInfiniteQueryData({
-          queryKey: ['test'],
-          queryFn: ({ pageParam }: { pageParam: number }) =>
-            fetch(\`/api/test?page=\${pageParam}\`).then((r) => r.json()),
-          initialPageParam: 0,
+          getNextPageParam: () => undefined,
         })
       `,
     },
@@ -555,12 +518,12 @@ ruleTester.run('no-void-query-fn', rule, {
       errors: [{ messageId: 'noVoidReturn' }],
     },
     {
-      name: 'fetchQuery queryFn returns void',
+      name: 'query queryFn returns void',
       code: normalizeIndent`
         import { QueryClient } from '@tanstack/react-query'
 
         const queryClient = new QueryClient()
-        queryClient.fetchQuery({
+        queryClient.query({
           queryKey: ['test'],
           queryFn: async () => {
             await fetch('/api/test')
@@ -570,63 +533,18 @@ ruleTester.run('no-void-query-fn', rule, {
       errors: [{ messageId: 'noVoidReturn' }],
     },
     {
-      name: 'prefetchQuery queryFn returns void',
+      name: 'infiniteQuery queryFn returns void',
       code: normalizeIndent`
         import { QueryClient } from '@tanstack/react-query'
 
         const queryClient = new QueryClient()
-        queryClient.prefetchQuery({
-          queryKey: ['test'],
-          queryFn: async () => {
-            await fetch('/api/test')
-          },
-        })
-      `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'prefetchInfiniteQuery queryFn returns void',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.prefetchInfiniteQuery({
+        queryClient.infiniteQuery({
           queryKey: ['test'],
           queryFn: async ({ pageParam }: { pageParam: number }) => {
             await fetch(\`/api/test?page=\${pageParam}\`)
           },
           initialPageParam: 0,
-        })
-      `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'ensureQueryData queryFn returns void',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.ensureQueryData({
-          queryKey: ['test'],
-          queryFn: async () => {
-            await fetch('/api/test')
-          },
-        })
-      `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'ensureInfiniteQueryData queryFn returns void',
-      code: normalizeIndent`
-        import { QueryClient } from '@tanstack/react-query'
-
-        const queryClient = new QueryClient()
-        queryClient.ensureInfiniteQueryData({
-          queryKey: ['test'],
-          queryFn: async ({ pageParam }: { pageParam: number }) => {
-            await fetch(\`/api/test?page=\${pageParam}\`)
-          },
-          initialPageParam: 0,
+          getNextPageParam: () => undefined,
         })
       `,
       errors: [{ messageId: 'noVoidReturn' }],
