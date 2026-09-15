@@ -211,7 +211,7 @@ decide whether a query is fresh enough to be used as an initial value).
 
 ##### filters
 
-`MaybeRefDeep`\<[`WithRequired`](../type-aliases/WithRequired.md)\<`QueryFilters`\<readonly `unknown`[]\>, `"queryKey"`\>\>
+`MaybeRefDeep`\<[`WithRequired`](../type-aliases/WithRequired.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>, `"queryKey"`\>\>
 
 #### Returns
 
@@ -256,7 +256,7 @@ information about queries in rare scenarios.
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 #### Returns
 

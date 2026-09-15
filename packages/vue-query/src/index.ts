@@ -8,6 +8,9 @@ export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
 export type {
   QueryOptions,
+  UseQueryOptions,
+  UndefinedInitialQueryOptions,
+  DefinedInitialQueryOptions,
   UndefinedInitialQueryOptionsWithDataTag,
   DefinedInitialQueryOptionsWithDataTag,
 } from './queryOptions'
@@ -30,13 +33,7 @@ export { VUE_QUERY_CLIENT } from './utils'
 
 export type { UsePrefetchQueryOptions } from './usePrefetchQuery'
 export type { UsePrefetchInfiniteQueryOptions } from './usePrefetchInfiniteQuery'
-export type {
-  UseQueryOptions,
-  UseQueryReturnType,
-  UseQueryDefinedReturnType,
-  UndefinedInitialQueryOptions,
-  DefinedInitialQueryOptions,
-} from './useQuery'
+export type { UseQueryReturnType, UseQueryDefinedReturnType } from './useQuery'
 export type {
   UseInfiniteQueryOptions,
   UseInfiniteQueryReturnType,

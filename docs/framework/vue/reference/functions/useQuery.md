@@ -9,14 +9,14 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:138](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L138)
+Defined in: [packages/vue-query/src/useQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L65)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter. Other options are read once and are not
-reactive.
+(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
+reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -88,12 +88,12 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:279](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L279)
+Defined in: [packages/vue-query/src/useQuery.ts:206](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L206)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter. Other options are read once and are not
-reactive.
+(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
+reactive when passed as a `ref` or a `computed`.
 
 ### Type Parameters
 
@@ -257,15 +257,15 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:355](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L355)
+Defined in: [packages/vue-query/src/useQuery.ts:282](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L282)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
 overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
-(`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
-individual entries — the array itself can't be a bare getter.
+(`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+reactive getters as individual entries.
 
 When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
 dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
@@ -331,9 +331,9 @@ const { data } = useQuery(() => ({
 ```
 
 `skipToken` disables the query in a type-safe way, without a non-null assertion on `props.postId` —
-`queryFn` is only ever called when it's defined. This requires a whole-options getter: `queryFn` is a
-single value, not `queryKey`/`enabled`, so it isn't itself reactive — the getter is what re-evaluates it
-on every change to `props.postId`. `refetch` doesn't work while `queryFn` is `skipToken` — use
+`queryFn` is only ever called when it's defined. The whole-options getter re-evaluates `queryFn` on every
+change to `props.postId`. `queryFn` can also be a `computed`, but never a bare getter, since a function
+there is the query function itself. `refetch` doesn't work while `queryFn` is `skipToken` — use
 `enabled: false` instead if you need to trigger the query manually:
 ```vue
 <script setup lang="ts">
