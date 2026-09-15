@@ -7,10 +7,10 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options, queryClient?): Readonly<Ref<TResult[]>>;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:192](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L192)
+Defined in: [packages/vue-query/src/useMutationState.ts:196](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L196)
 
 `useMutationState` is a composable that gives you access to all mutations in the `MutationCache`. You can
-pass `filters` ([MutationFilters](../type-aliases/MutationFilters.md)) to narrow down your mutations, and `select` to transform the
+pass `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the
 mutation state.
 
 `options` may be a plain object or a reactive getter (`() => ({ ... })`) — pass a getter if the filters

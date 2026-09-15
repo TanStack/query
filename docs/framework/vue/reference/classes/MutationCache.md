@@ -141,7 +141,7 @@ information about a mutation in rare scenarios.
 
 ##### filters
 
-`MaybeRefDeep`\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\>
+`MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\>
 
 #### Returns
 
@@ -186,7 +186,7 @@ information about mutations in rare scenarios.
 
 ##### filters
 
-`MaybeRefDeep`\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
+`MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
 #### Returns
 

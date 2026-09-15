@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:88](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L88)
+Defined in: [packages/vue-query/src/useMutationState.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L92)
 
 ## Type Parameters
 
@@ -24,10 +24,10 @@ Defined in: [packages/vue-query/src/useMutationState.ts:88](https://github.com/T
 ### filters?
 
 ```ts
-optional filters: MutationFilters;
+optional filters: VueMutationFilters;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:93](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L93)
+Defined in: [packages/vue-query/src/useMutationState.ts:97](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L97)
 
 ***
 
@@ -37,7 +37,7 @@ Defined in: [packages/vue-query/src/useMutationState.ts:93](https://github.com/T
 optional select: (mutation) => TResult;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:94](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L94)
+Defined in: [packages/vue-query/src/useMutationState.ts:98](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L98)
 
 #### Parameters
 

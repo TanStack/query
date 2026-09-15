@@ -4,10 +4,10 @@ title: DefinedInitialQueryOptionsWithDataTag
 ---
 
 ```ts
-type DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey> = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+type DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithDefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:131](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L131)
+Defined in: [packages/vue-query/src/queryOptions.ts:206](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L206)
 
 ## Type Parameters
 
