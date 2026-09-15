@@ -4,6 +4,7 @@ import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
+  HydrationBoundary,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -377,6 +378,104 @@ describe('Server side rendering with de/rehydration', () => {
     unmount()
     queryClient.clear()
   })
+
+  it.each([
+    ['hydrate options', 'hydrate'],
+    ['HydrationBoundary options', 'boundary'],
+    ['client defaults', 'defaults'],
+  ] as const)(
+    'should deserialize the server snapshot with %s',
+    async (_source, optionSource) => {
+      const key = queryKey()
+      const date = new Date('2024-01-01T00:00:00.000Z')
+      const deserializeData = (data: unknown) => new Date(data as string)
+      const hydrationOptions = {
+        defaultOptions: { deserializeData },
+      }
+
+      function DateComponent() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => Promise.resolve(date),
+          staleTime: Infinity,
+        })
+        return data instanceof Date ? data.toISOString() : `serialized:${data}`
+      }
+
+      setIsServer(true)
+      const prefetchClient = new QueryClient()
+      await prefetchClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve(date),
+      })
+      const dehydrated = JSON.parse(
+        JSON.stringify(
+          dehydrate(prefetchClient, {
+            serializeData: (data) => (data as Date).toISOString(),
+          }),
+        ),
+      )
+
+      const renderClient = new QueryClient()
+      hydrate(renderClient, dehydrated, hydrationOptions)
+      const markup = ReactDOMServer.renderToString(
+        <QueryClientProvider client={renderClient}>
+          <DateComponent />
+        </QueryClientProvider>,
+      )
+      renderClient.clear()
+      setIsServer(false)
+
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          hydrate: {
+            deserializeData:
+              optionSource === 'defaults'
+                ? deserializeData
+                : (data) => `default:${data}`,
+          },
+        },
+      })
+      if (optionSource === 'hydrate') {
+        hydrate(queryClient, dehydrated, hydrationOptions)
+      } else if (optionSource === 'defaults') {
+        hydrate(queryClient, dehydrated)
+      }
+
+      const el = document.createElement('div')
+      el.innerHTML = markup
+      const onRecoverableError = vi.fn()
+      const children =
+        optionSource === 'boundary' ? (
+          <HydrationBoundary state={dehydrated} options={hydrationOptions}>
+            <DateComponent />
+          </HydrationBoundary>
+        ) : (
+          <DateComponent />
+        )
+      const unmount = ReactHydrate(
+        <QueryClientProvider
+          client={queryClient}
+          serverSnapshot={dehydrated}
+          serverSnapshotOptions={
+            optionSource === 'defaults' ? undefined : hydrationOptions
+          }
+        >
+          {children}
+        </QueryClientProvider>,
+        el,
+        { onRecoverableError },
+      )
+
+      expect(markup).toBe(date.toISOString())
+      expect(onRecoverableError).toHaveBeenCalledTimes(0)
+      expect(el.innerHTML).toBe(date.toISOString())
+
+      unmount()
+      queryClient.clear()
+      prefetchClient.clear()
+    },
+  )
 
   // Adapted from the reproduction in
   // https://github.com/TanStack/query/issues/9399#issuecomment-4323008704 — the streamed promise
