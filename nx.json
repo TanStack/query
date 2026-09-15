@@ -27,6 +27,7 @@
   "targetDefaults": {
     "compile": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/dist-ts"]
     },

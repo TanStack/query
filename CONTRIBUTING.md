@@ -164,6 +164,13 @@ For each new commit added to `main`, a GitHub Workflow is triggered which runs t
 TanStack Query uses [Nx](https://nx.dev/) as its monorepo tool.
 To run tests in a local environment, you should use `nx` commands from the root directory.
 
+The `compile` target writes only its own package's `dist-ts` output. Nx compiles
+its dependencies first. TypeScript tests use `--project` to read these dependency
+declarations without rebuilding them. Each compiler version writes its own
+declarations and build metadata to `.cache/test-types` inside the package.
+This lets type tests run in parallel without overwriting each other's output or
+the `compile` output. The package's `clean` script removes these test outputs.
+
 ### ✅ Run all tests
 
 To run tests for **all packages**, run:
