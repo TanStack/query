@@ -1,4 +1,10 @@
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  untrack,
+} from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { QueryFilters } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -34,7 +40,10 @@ export function useIsFetching(
   const client = createMemo(() => resolveClient())
   const queryCache = createMemo(() => client().getQueryCache())
 
-  const [fetches, setFetches] = createSignal(client().isFetching(filters?.()))
+  // Seeding the signal is a one-shot read; the effect below keeps it current.
+  const [fetches, setFetches] = createSignal(
+    untrack(() => client().isFetching(filters?.())),
+  )
 
   createEffect(() => {
     setFetches(client().isFetching(filters?.()))

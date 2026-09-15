@@ -1,4 +1,10 @@
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  untrack,
+} from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { MutationFilters } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -33,8 +39,9 @@ export function useIsMutating(
   const client = createMemo(() => resolveClient())
   const mutationCache = createMemo(() => client().getMutationCache())
 
+  // Seeding the signal is a one-shot read; the effect below keeps it current.
   const [mutations, setMutations] = createSignal(
-    client().isMutating(filters?.()),
+    untrack(() => client().isMutating(filters?.())),
   )
 
   createEffect(() => {

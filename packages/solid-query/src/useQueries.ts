@@ -10,6 +10,7 @@ import {
   on,
   onCleanup,
   onMount,
+  untrack,
 } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -300,21 +301,29 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver(
-    client(),
-    defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+  // The observer and the initial store contents are seeded once; the queries are
+  // kept up to date afterwards by `setQueries` below, so these reads are
+  // deliberately one-shot and must not register as dependencies.
+  const observer = untrack(
+    () =>
+      new QueriesObserver(
+        client(),
+        defaultedQueries(),
+        queriesOptions().combine
+          ? ({
+              combine: queriesOptions().combine,
+            } as QueriesObserverOptions<TCombinedResult>)
+          : undefined,
+      ),
   )
 
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+    untrack(() =>
+      observer.getOptimisticResult(
+        defaultedQueries(),
+        (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+      )[1](),
+    ),
   )
 
   createRenderEffect(
@@ -346,14 +355,16 @@ export function useQueries<
     ),
   )
 
-  batch(() => {
-    const dataResources_ = dataResources()
-    for (let index = 0; index < dataResources_.length; index++) {
-      const dataResource = dataResources_[index]!
-      dataResource[1].mutate(() => unwrap(state[index]!.data))
-      dataResource[1].refetch()
-    }
-  })
+  untrack(() =>
+    batch(() => {
+      const dataResources_ = dataResources()
+      for (let index = 0; index < dataResources_.length; index++) {
+        const dataResource = dataResources_[index]!
+        dataResource[1].mutate(() => unwrap(state[index]!.data))
+        dataResource[1].refetch()
+      }
+    }),
+  )
 
   let taskQueue: Array<() => void> = []
   const subscribeToObserver = () =>
@@ -424,7 +435,7 @@ export function useQueries<
       return new Proxy(s, handler(index))
     })
 
-  const [proxyState, setProxyState] = createStore(getProxies())
+  const [proxyState, setProxyState] = createStore(untrack(getProxies))
   createRenderEffect(() => setProxyState(getProxies()))
 
   return proxyState as TCombinedResult

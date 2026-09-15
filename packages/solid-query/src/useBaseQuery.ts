@@ -10,6 +10,7 @@ import {
   createSignal,
   on,
   onCleanup,
+  untrack,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
@@ -136,13 +137,18 @@ export function useBaseQuery<
     }
     return defaultOptions
   })
-  const initialOptions = defaultedOptions()
+  // The initial options, the observer and its first result are all read once,
+  // to seed state that is kept up to date afterwards by the computations below.
+  // None of these reads should register as a dependency.
+  const initialOptions = untrack(defaultedOptions)
 
   const [observer, setObserver] = createSignal(
-    new Observer(client(), defaultedOptions()),
+    untrack(() => new Observer(client(), defaultedOptions())),
   )
 
-  let observerResult = observer().getOptimisticResult(defaultedOptions())
+  let observerResult = untrack(() =>
+    observer().getOptimisticResult(defaultedOptions()),
+  )
   const [state, setState] =
     createStore<QueryObserverResult<TData, TError>>(observerResult)
 
