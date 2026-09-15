@@ -446,6 +446,49 @@ describe('mutationCache', () => {
     })
   })
 
+  describe('clear', () => {
+    it('should notify subscribers after all mutations have been removed', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const mutation1 = testCache.build(testClient, {})
+      const mutation2 = testCache.build(testClient, {})
+      const callback = vi.fn(() => testCache.getAll())
+      testCache.subscribe(callback)
+
+      testCache.clear()
+
+      expect(callback).toHaveBeenCalledTimes(2)
+      expect(callback).toHaveBeenNthCalledWith(1, {
+        type: 'removed',
+        mutation: mutation1,
+      })
+      expect(callback).toHaveBeenNthCalledWith(2, {
+        type: 'removed',
+        mutation: mutation2,
+      })
+      expect(callback).toHaveNthReturnedWith(1, [])
+      expect(callback).toHaveNthReturnedWith(2, [])
+      expect(testCache.getAll()).toEqual([])
+    })
+
+    it('should preserve mutations added by removal subscribers', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const original = testCache.build(testClient, {})
+      const key = queryKey()
+      testCache.subscribe((event) => {
+        if (event.type === 'removed' && event.mutation === original) {
+          testCache.build(testClient, { mutationKey: key })
+        }
+      })
+
+      testCache.clear()
+
+      expect(testCache.getAll()).toHaveLength(1)
+      expect(testCache.getAll()[0]?.options.mutationKey).toEqual(key)
+    })
+  })
+
   describe('remove', () => {
     it('should remove only the target mutation from scope when multiple scoped mutations exist', () => {
       const testCache = new MutationCache()
