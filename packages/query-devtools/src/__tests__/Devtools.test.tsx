@@ -998,6 +998,43 @@ describe('Devtools', () => {
       )
     })
 
+    it.each([
+      { option: true, saved: undefined, hidden: true },
+      { option: false, saved: undefined, hidden: false },
+      { option: undefined, saved: undefined, hidden: false },
+      { option: true, saved: 'false', hidden: false },
+      { option: false, saved: 'true', hidden: true },
+    ])(
+      'uses hideDisabledQueries=$option with saved preference $saved',
+      ({ option, saved, hidden }) => {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: ['disabled-option'],
+          queryFn: () => 'disabled',
+          enabled: false,
+        })
+        const unsubscribe = observer.subscribe(() => {})
+        queryClient.setQueryData(['disabled-option'], 'disabled')
+        queryClient.setQueryData(['visible-option'], 'visible')
+
+        try {
+          const rendered = renderDevtools(
+            { initialIsOpen: true, hideDisabledQueries: option },
+            saved === undefined
+              ? {}
+              : { 'TanstackQueryDevtools.hideDisabledQueries': saved },
+          )
+          expect(
+            rendered.queryByLabelText(/Query key \["disabled-option"\]/) === null,
+          ).toBe(hidden)
+          expect(
+            rendered.getByLabelText(/Query key \["visible-option"\]/),
+          ).toBeInTheDocument()
+        } finally {
+          unsubscribe()
+        }
+      },
+    )
+
     it('should hide disabled queries when "hideDisabledQueries" is enabled in localStorage', () => {
       const disabled = new QueryObserver(queryClient, {
         queryKey: ['hide-test-disabled'],
