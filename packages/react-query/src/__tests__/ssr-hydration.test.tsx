@@ -4,6 +4,7 @@ import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
+  HydrationBoundary,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -14,10 +15,14 @@ import {
 } from '..'
 import { setIsServer } from './utils'
 
-const ReactHydrate = (element: React.ReactElement, container: Element) => {
+const ReactHydrate = (
+  element: React.ReactElement,
+  container: Element,
+  options?: { onRecoverableError?: (error: unknown) => void },
+) => {
   let root: any
   act(() => {
-    root = hydrateRoot(container, element)
+    root = hydrateRoot(container, element, options)
   })
   return () => {
     root.unmount()
@@ -274,5 +279,297 @@ describe('Server side rendering with de/rehydration', () => {
     unmount()
     queryClient.clear()
     consoleMock.mockRestore()
+  })
+
+  it('should not mismatch when a pending prefetched query resolves before client hydration', async () => {
+    const key = queryKey()
+
+    let resolveQuery!: (value: string) => void
+    const pendingQuery = new Promise<string>((resolve) => {
+      resolveQuery = resolve
+    })
+    const queryFn = vi.fn(() => pendingQuery)
+    const renderedStates: Array<string> = []
+
+    // -- Shared part --
+    function SuccessComponent() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn,
+      })
+      const rendered = `SuccessComponent - status:${result.status} fetching:${result.isFetching} data:${result.data}`
+      renderedStates.push(rendered)
+      return rendered
+    }
+
+    // -- Server part --
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient()
+    // Prefetch without awaiting: the query is dehydrated while still pending.
+    prefetchClient.prefetchQuery({ queryKey: key, queryFn }).catch(noop)
+    // Let the retryer start so the pending promise is part of the dehydrated state.
+    await vi.advanceTimersByTimeAsync(1)
+    const dehydratedStateServer = dehydrate(prefetchClient, {
+      shouldDehydrateQuery: () => true,
+    })
+    expect(dehydratedStateServer.queries[0]?.promise).toBeDefined()
+
+    const renderCache = new QueryCache()
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
+    )
+    renderClient.clear()
+    setIsServer(false)
+
+    const expectedMarkup =
+      'SuccessComponent - status:pending fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
+
+    // -- Client part --
+    renderedStates.length = 0
+    const el = document.createElement('div')
+    el.innerHTML = markup
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    // Pass the dehydrated promise through (not JSON-serializable) to mimic a
+    // framework streaming the pending query's promise to the browser.
+    hydrate(queryClient, dehydratedStateServer)
+
+    // The streamed promise resolves before React hydrates, so the live cache is
+    // already successful while the server markup shows the pending state.
+    resolveQuery('success!')
+    await vi.advanceTimersByTimeAsync(1)
+
+    expect(queryClient.getQueryData(key)).toBe('success!')
+
+    const onRecoverableError = vi.fn()
+    const unmount = ReactHydrate(
+      <QueryClientProvider
+        client={queryClient}
+        serverSnapshot={dehydratedStateServer}
+      >
+        <SuccessComponent />
+      </QueryClientProvider>,
+      el,
+      { onRecoverableError },
+    )
+
+    // Hydration must not report a mismatch, and the first client render must
+    // replay the frozen server snapshot (pending) even though the live cache is
+    // already successful.
+    expect(onRecoverableError).toHaveBeenCalledTimes(0)
+    expect(renderedStates[0]).toBe(expectedMarkup)
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(renderedStates.at(-1)).toBe(
+      'SuccessComponent - status:success fetching:false data:success!',
+    )
+    expect(el.innerHTML).toBe(
+      'SuccessComponent - status:success fetching:false data:success!',
+    )
+
+    unmount()
+    queryClient.clear()
+  })
+
+  it.each([
+    ['hydrate options', 'hydrate'],
+    ['HydrationBoundary options', 'boundary'],
+    ['client defaults', 'defaults'],
+  ] as const)(
+    'should deserialize the server snapshot with %s',
+    async (_source, optionSource) => {
+      const key = queryKey()
+      const date = new Date('2024-01-01T00:00:00.000Z')
+      const deserializeData = (data: unknown) => new Date(data as string)
+      const hydrationOptions = {
+        defaultOptions: { deserializeData },
+      }
+
+      function DateComponent() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => Promise.resolve(date),
+          staleTime: Infinity,
+        })
+        return data instanceof Date ? data.toISOString() : `serialized:${data}`
+      }
+
+      setIsServer(true)
+      const prefetchClient = new QueryClient()
+      await prefetchClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve(date),
+      })
+      const dehydrated = JSON.parse(
+        JSON.stringify(
+          dehydrate(prefetchClient, {
+            serializeData: (data) => (data as Date).toISOString(),
+          }),
+        ),
+      )
+
+      const renderClient = new QueryClient()
+      hydrate(renderClient, dehydrated, hydrationOptions)
+      const markup = ReactDOMServer.renderToString(
+        <QueryClientProvider client={renderClient}>
+          <DateComponent />
+        </QueryClientProvider>,
+      )
+      renderClient.clear()
+      setIsServer(false)
+
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          hydrate: {
+            deserializeData:
+              optionSource === 'defaults'
+                ? deserializeData
+                : (data) => `default:${data}`,
+          },
+        },
+      })
+      if (optionSource === 'hydrate') {
+        hydrate(queryClient, dehydrated, hydrationOptions)
+      } else if (optionSource === 'defaults') {
+        hydrate(queryClient, dehydrated)
+      }
+
+      const el = document.createElement('div')
+      el.innerHTML = markup
+      const onRecoverableError = vi.fn()
+      const children =
+        optionSource === 'boundary' ? (
+          <HydrationBoundary state={dehydrated} options={hydrationOptions}>
+            <DateComponent />
+          </HydrationBoundary>
+        ) : (
+          <DateComponent />
+        )
+      const unmount = ReactHydrate(
+        <QueryClientProvider
+          client={queryClient}
+          serverSnapshot={dehydrated}
+          serverSnapshotOptions={
+            optionSource === 'defaults' ? undefined : hydrationOptions
+          }
+        >
+          {children}
+        </QueryClientProvider>,
+        el,
+        { onRecoverableError },
+      )
+
+      expect(markup).toBe(date.toISOString())
+      expect(onRecoverableError).toHaveBeenCalledTimes(0)
+      expect(el.innerHTML).toBe(date.toISOString())
+
+      unmount()
+      queryClient.clear()
+      prefetchClient.clear()
+    },
+  )
+
+  // Adapted from the reproduction in
+  // https://github.com/TanStack/query/issues/9399#issuecomment-4323008704 — the streamed promise
+  // is simulated with a synchronously-resolvable thenable, so the client's `hydrate` resolves it
+  // via `tryResolveSync` during the first render.
+  it('should not mismatch on a query whose streamed promise is synchronously resolved by hydrate', async () => {
+    const key = queryKey()
+    const renderedStates: Array<string> = []
+
+    function SuccessComponent() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve('success!'),
+      })
+      const rendered = `SuccessComponent - status:${result.status} fetching:${result.isFetching} data:${result.data}`
+      renderedStates.push(rendered)
+      return rendered
+    }
+
+    // -- Server --
+    setIsServer(true)
+    const prefetchClient = new QueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+    let resolvePrefetch: ((value: string) => void) | undefined
+    const prefetchPromise = new Promise<string>((resolve) => {
+      resolvePrefetch = resolve
+    })
+    void prefetchClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => prefetchPromise,
+    })
+
+    const dehydrated = dehydrate(prefetchClient)
+    expect(dehydrated.queries[0]?.state.status).toBe('pending')
+
+    const renderClient = new QueryClient()
+    hydrate(renderClient, dehydrated)
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
+    )
+    renderClient.clear()
+    setIsServer(false)
+
+    const expectedMarkup =
+      'SuccessComponent - status:pending fetching:true data:undefined'
+    expect(markup).toBe(expectedMarkup)
+
+    // The promise resolves *between* SSR and client hydration (streamed value arrives).
+    resolvePrefetch?.('success!')
+    const promiseRef = dehydrated.queries[0]?.promise
+    if (promiseRef) {
+      // Synchronously-resolvable thenable, mirroring a streamed React promise.
+      // @ts-expect-error deliberately replacing the native `then` so it resolves synchronously
+      promiseRef.then = (cb?: (value: unknown) => unknown) => {
+        cb?.('success!')
+        return promiseRef
+      }
+    }
+
+    // -- Client --
+    renderedStates.length = 0
+    const el = document.createElement('div')
+    el.innerHTML = markup
+    const queryClient = new QueryClient()
+    hydrate(queryClient, dehydrated)
+
+    expect(queryClient.getQueryData(key)).toBe('success!')
+
+    const onRecoverableError = vi.fn()
+    const unmount = ReactHydrate(
+      <QueryClientProvider client={queryClient} serverSnapshot={dehydrated}>
+        <SuccessComponent />
+      </QueryClientProvider>,
+      el,
+      { onRecoverableError },
+    )
+
+    // No mismatch, and the first client render replays the pending server snapshot even though
+    // `hydrate` resolved the streamed promise synchronously.
+    expect(onRecoverableError).toHaveBeenCalledTimes(0)
+    expect(renderedStates[0]).toBe(expectedMarkup)
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(renderedStates.at(-1)).toBe(
+      'SuccessComponent - status:success fetching:false data:success!',
+    )
+    expect(el.innerHTML).toBe(
+      'SuccessComponent - status:success fetching:false data:success!',
+    )
+
+    unmount()
+    queryClient.clear()
   })
 })
