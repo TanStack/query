@@ -144,7 +144,7 @@ describe('core/utils', () => {
       expect(partialMatchKey(a, b)).toBe(true)
     })
 
-    it('should return `false` if array b is longer than array a', () => {
+    it('should return `false` if a is shorter and b has a trailing undefined', () => {
       const a = [1]
       const b = [1, undefined]
       expect(partialMatchKey(a, b)).toBe(false)
