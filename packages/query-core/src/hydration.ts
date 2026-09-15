@@ -52,6 +52,11 @@ export interface DehydrateOptions {
    * given error, in which case the original error is kept.
    */
   shouldRedactErrors?: (error: unknown) => boolean
+  /**
+   * The timestamp to store on dehydrated queries.
+   * Defaults to `Date.now()`.
+   */
+  dehydratedAt?: number
 }
 
 /**
@@ -149,9 +154,10 @@ export function dehydrateQuery(
   query: Query,
   serializeData?: TransformerFn,
   shouldRedactErrors?: (error: unknown) => boolean,
+  dehydratedAt = Date.now(),
 ): DehydratedQuery {
   return {
-    dehydratedAt: Date.now(),
+    dehydratedAt,
     state: {
       ...query.state,
       ...(query.state.data !== undefined && {
@@ -232,12 +238,22 @@ export function dehydrate(
   const serializeData =
     options.serializeData ?? client.getDefaultOptions().dehydrate?.serializeData
 
+  const dehydratedAt =
+    options.dehydratedAt ?? client.getDefaultOptions().dehydrate?.dehydratedAt
+
   const queries = client
     .getQueryCache()
     .getAll()
     .flatMap((query) =>
       filterQuery(query)
-        ? [dehydrateQuery(query, serializeData, shouldRedactErrors)]
+        ? [
+            dehydrateQuery(
+              query,
+              serializeData,
+              shouldRedactErrors,
+              dehydratedAt,
+            ),
+          ]
         : [],
     )
 
