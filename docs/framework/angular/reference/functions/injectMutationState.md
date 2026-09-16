@@ -4,10 +4,10 @@ title: injectMutationState
 ---
 
 ```ts
-function injectMutationState<TResult>(injectMutationStateFn: () => MutationStateOptions<TResult>, options?: InjectMutationStateOptions): Signal<TResult[]>;
+function injectMutationState<TResult, TMutation>(options): Signal<TResult[]>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L106)
+Defined in: [packages/angular-query/src/inject-mutation-state.ts:55](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation-state.ts#L55)
 
 Injects a signal that gives you access to all mutations in the `MutationCache`. You can pass `filters`
 ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation state.
@@ -18,21 +18,19 @@ Injects a signal that gives you access to all mutations in the `MutationCache`. 
 
 `TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
+### TMutation
+
+`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
+
 ## Parameters
 
-### injectMutationStateFn
+### options
 
-() => `MutationStateOptions`\<`TResult`\>
+() => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
 
 A function returning the `filters` to narrow down matched mutations, and an
 optional `select` to transform the mutation state. Similar to `computed` from Angular, this function runs
 in the reactive context, so signals read inside it re-narrow the matched mutations.
-
-### options?
-
-[`InjectMutationStateOptions`](../interfaces/InjectMutationStateOptions.md)
-
-Additional configuration
 
 ## Returns
 

@@ -176,20 +176,20 @@
               "to": "framework/angular/quick-start"
             },
             {
-              "label": "Angular HttpClient and other data fetching clients",
-              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
-            },
-            {
               "label": "Devtools",
               "to": "framework/angular/devtools"
             },
             {
-              "label": "TypeScript",
-              "to": "framework/angular/typescript"
+              "label": "Angular HttpClient",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
             },
             {
-              "label": "Zoneless",
-              "to": "framework/angular/zoneless"
+              "label": "Resource API",
+              "to": "framework/angular/resource-api"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/angular/typescript"
             }
           ]
         },
@@ -775,12 +775,28 @@
               "to": "framework/angular/guides/default-query-function"
             },
             {
+              "label": "SSR",
+              "to": "framework/angular/guides/ssr"
+            },
+            {
               "label": "Testing",
               "to": "framework/angular/guides/testing"
             },
             {
               "label": "Does this replace state managers?",
               "to": "framework/angular/guides/does-this-replace-client-state"
+            },
+            {
+              "label": "Migrating from Experimental",
+              "to": "framework/angular/guides/migrating-from-experimental"
+            },
+            {
+              "label": "Migrating from ngneat/query",
+              "to": "framework/angular/guides/migrating-from-ngneat-query"
+            },
+            {
+              "label": "Error Handling",
+              "to": "framework/angular/guides/error-handling"
             }
           ]
         },
@@ -5049,27 +5065,11 @@
               "to": "framework/angular/reference/functions/partialMatchKey"
             },
             {
-              "label": "Functions / provideAngularQuery",
-              "to": "framework/angular/reference/functions/provideAngularQuery"
-            },
-            {
-              "label": "Functions / provideIsRestoring",
-              "to": "framework/angular/reference/functions/provideIsRestoring"
-            },
-            {
-              "label": "Functions / provideQueryClient",
-              "to": "framework/angular/reference/functions/provideQueryClient"
-            },
-            {
               "label": "Functions / provideTanStackQuery",
               "to": "framework/angular/reference/functions/provideTanStackQuery"
             },
             {
-              "label": "Functions / queryFeature",
-              "to": "framework/angular/reference/functions/queryFeature"
-            },
-            {
-              "label": "Functions / queryOptions",
+              "label": "queryOptions",
               "to": "framework/angular/reference/functions/queryOptions"
             },
             {
@@ -5131,10 +5131,6 @@
             {
               "label": "Interfaces / CancelOptions",
               "to": "framework/angular/reference/interfaces/CancelOptions"
-            },
-            {
-              "label": "Interfaces / CreateBaseQueryOptions",
-              "to": "framework/angular/reference/interfaces/CreateBaseQueryOptions"
             },
             {
               "label": "Interfaces / CreateInfiniteQueryOptions",

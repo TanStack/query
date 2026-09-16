@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+main {
+  margin: 3rem auto;
+  max-width: 42rem;
+  padding: 0 1rem;
+}
+
+form,
+label,
+.invite-code-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+label {
+  max-width: 22rem;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+input {
+  padding: 0.55rem 0.7rem;
+}
+
+button {
+  padding: 0.275rem 0.7rem;
+}
+
+button {
+  justify-self: start;
+}
+
+.hint {
+  color: #5f6368;
+  font-size: 0.9rem;
+}
+
+.checking {
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  color: #805b00;
+}
+
+.error {
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  color: #b42318;
+}
+
+.success {
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  color: #067647;
+}
+
+.invite-code-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  border-left: 3px solid #d0d5dd;
+  padding-left: 0.75rem;
+}
+
+.invite-code-row > button {
+  margin-bottom: 0;
+}
+
+.invite-code-row > p {
+  grid-column: 1 / -1;
+}

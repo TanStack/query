@@ -82,6 +82,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": { "exclude": ["@angular"] }
+          },
           "configurations": {
             "production": {
               "buildTarget": "infinite-query-with-max-pages:build:production"

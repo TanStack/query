@@ -4,10 +4,10 @@ title: injectMutation
 ---
 
 ```ts
-function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn: () => CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, options?: InjectMutationOptions): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function injectMutation<TData, TError, TVariables, TOnMutateResult>(optionsFn): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-mutation.ts:174](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L174)
+Defined in: [packages/angular-query/src/inject-mutation.ts:28](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation.ts#L28)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `injectMutation` is the function for that. Unlike queries, mutations are not run automatically.
@@ -32,18 +32,12 @@ Unlike queries, mutations are typically used to create/update/delete data or per
 
 ## Parameters
 
-### injectMutationFn
+### optionsFn
 
 () => [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 A function that returns mutation options. Similar to `computed` from Angular,
 this function runs in the reactive context, so signals read inside it drive the mutation's options.
-
-### options?
-
-[`InjectMutationOptions`](../interfaces/InjectMutationOptions.md)
-
-Additional configuration
 
 ## Returns
 
