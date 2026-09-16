@@ -384,6 +384,8 @@ describe('queryClient', () => {
 
     it('should resolve with the data type', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.fetchQuery(typedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<TypedData>()
@@ -391,6 +393,8 @@ describe('queryClient', () => {
 
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.fetchQuery(untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
@@ -415,6 +419,8 @@ describe('queryClient', () => {
     })
 
     it('should allow passing pages', async () => {
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await new QueryClient().fetchInfiniteQuery({
         queryKey: queryKey(),
         queryFn: () => Promise.resolve('string'),
@@ -451,6 +457,8 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.fetchInfiniteQuery(
         typedFetchInfiniteQueryOptions,
       )
@@ -460,6 +468,8 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.fetchInfiniteQuery(
         untypedFetchInfiniteQueryOptions,
       )
@@ -518,6 +528,8 @@ describe('queryClient', () => {
   describe('ensureQueryData', () => {
     it('should resolve with the data type', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.ensureQueryData(typedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<TypedData>()
@@ -525,6 +537,8 @@ describe('queryClient', () => {
 
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.ensureQueryData(untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
@@ -639,6 +653,8 @@ describe('queryClient', () => {
   describe('ensureInfiniteQueryData', () => {
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.ensureInfiniteQueryData(
         typedFetchInfiniteQueryOptions,
       )
@@ -648,6 +664,8 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const data = await queryClient.ensureInfiniteQueryData(
         untypedFetchInfiniteQueryOptions,
       )
@@ -658,6 +676,8 @@ describe('queryClient', () => {
     it('should accept a revalidateIfStale that FetchInfiniteQueryOptions does not have', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.ensureInfiniteQueryData({
         ...typedFetchInfiniteQueryOptions,
         revalidateIfStale: true,
@@ -929,6 +949,8 @@ describe('queryClient', () => {
   describe('prefetchQuery', () => {
     it('should return a promise of void rather than the data', () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const result = queryClient.prefetchQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
@@ -941,6 +963,8 @@ describe('queryClient', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should return a promise of void rather than the pages', () => {
       const queryClient = new QueryClient()
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       const result = queryClient.prefetchInfiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),

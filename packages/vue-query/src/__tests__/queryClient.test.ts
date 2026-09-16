@@ -88,6 +88,8 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.ensureQueryData({
         queryKey: queryKeyRef,
         queryFn: fn,
@@ -331,6 +333,8 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.fetchQuery({
         queryKey: queryKeyRef,
       })
@@ -390,6 +394,8 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
 
       expect(QueryClientOrigin.prototype.prefetchQuery).toHaveBeenCalledWith({
@@ -403,6 +409,8 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
         initialPageParam: 0,
@@ -426,6 +434,8 @@ describe('QueryCache', () => {
         getNextPageParam: () => 12,
       })
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.fetchInfiniteQuery(options)
 
       expect(
@@ -495,6 +505,8 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
+      // grandfathered direct test
+      // eslint-disable-next-line no-restricted-syntax
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,

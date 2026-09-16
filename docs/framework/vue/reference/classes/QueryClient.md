@@ -81,7 +81,7 @@ The returned promise never rejects, even if individual cancellations fail.
 
 ##### filters?
 
-`QueryFilters`\<`TTaggedQueryKey`\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<`TTaggedQueryKey`\>
 
 ##### options?
 
@@ -714,7 +714,7 @@ contents.
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\>
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\>
 
 #### Returns
 
@@ -1118,7 +1118,7 @@ loading more infinite query results.
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 #### Returns
 
@@ -1155,7 +1155,7 @@ matching a set of filters.
 
 ##### filters
 
-`MaybeRefDeep`\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
+`MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
 #### Returns
 
@@ -1611,7 +1611,7 @@ the cache is removed.
 
 ##### filters?
 
-`QueryFilters`\<`TTaggedQueryKey`\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<`TTaggedQueryKey`\>
 
 #### Returns
 
@@ -1653,7 +1653,7 @@ matched set are then refetched, and the returned promise resolves once that refe
 
 ##### filters?
 
-`QueryFilters`\<`TTaggedQueryKey`\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<`TTaggedQueryKey`\>
 
 ##### options?
 
@@ -1843,7 +1843,7 @@ filters are updated; no new cache entries are created. Internally this calls
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\>
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\>
 
 ##### updater
 
