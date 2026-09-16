@@ -15,7 +15,7 @@
     "package.json"
   ],
   "references": [
-    { "path": "../angular-query-experimental" },
+    { "path": "../angular-query" },
     { "path": "../query-persist-client-core" }
   ]
 }

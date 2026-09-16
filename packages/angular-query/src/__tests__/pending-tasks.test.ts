@@ -1,0 +1,832 @@
+import {
+  ApplicationRef,
+  ChangeDetectionStrategy,
+  Component,
+} from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import { HttpClient, provideHttpClient } from '@angular/common/http'
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
+import { lastValueFrom } from 'rxjs'
+import {
+  QueryClient,
+  injectMutation,
+  injectQuery,
+  onlineManager,
+  skipToken,
+} from '..'
+import { flushQueryUpdates, setupTanStackQueryTestBed } from './test-utils'
+
+describe('PendingTasks Integration', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+        mutations: {
+          retry: false,
+        },
+      },
+    })
+
+    setupTanStackQueryTestBed(queryClient)
+  })
+
+  afterEach(() => {
+    onlineManager.setOnline(true)
+    queryClient.clear()
+    vi.useRealTimers()
+  })
+
+  it.each([false, true])(
+    'keeps all mutation invocations pending (reset=%s)',
+    async (reset) => {
+      vi.useRealTimers()
+      const resolve = new Map<string, (value: string) => void>()
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: (id: string) =>
+            new Promise<string>((done) => resolve.set(id, done)),
+        })),
+      )
+      const first = mutation.mutateAsync('first')
+      const second = mutation.mutateAsync('second')
+      await Promise.resolve()
+      if (reset) mutation.reset()
+      let stable = false
+      const stability = TestBed.inject(ApplicationRef)
+        .whenStable()
+        .then(() => {
+          stable = true
+        })
+      resolve.get('second')!('second')
+      await second
+      await Promise.resolve()
+      expect(stable).toBe(false)
+      expect(queryClient.isMutating()).toBe(1)
+      resolve.get('first')!('first')
+      await first
+      await stability
+      expect(stable).toBe(true)
+    },
+  )
+
+  describe('Synchronous Resolution', () => {
+    it('should handle synchronous queryFn with whenStable()', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectQuery(() => ({
+          queryKey: ['sync'],
+          queryFn: () => 'instant-data',
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
+
+      // Should start as pending even with synchronous data
+      expect(query.status()).toBe('pending')
+      expect(query.data()).toBeUndefined()
+
+      const stablePromise = app.whenStable()
+      // Flush microtasks to allow TanStack Query's scheduled notifications to process
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('instant-data')
+    })
+
+    it('should handle synchronous error with whenStable()', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['sync-error'],
+          queryFn: () => {
+            throw new Error('instant-error')
+          },
+        })),
+      )
+
+      const stablePromise = app.whenStable()
+      // Flush microtasks to allow TanStack Query's scheduled notifications to process
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(query.status()).toBe('error')
+      expect(query.error()).toEqual(new Error('instant-error'))
+    })
+
+    it('should handle synchronous mutationFn with whenStable()', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      let mutationFnCalled = false
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => {
+            mutationFnCalled = true
+            await Promise.resolve()
+            return `processed: ${data}`
+          },
+        })),
+      )
+
+      mutation.mutate('test')
+
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(mutationFnCalled).toBe(true)
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('processed: test')
+    })
+
+    it('should handle synchronous mutation error with whenStable()', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async () => {
+            await Promise.resolve()
+            throw new Error('sync-mutation-error')
+          },
+        })),
+      )
+
+      mutation.mutate()
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(mutation.isError()).toBe(true)
+      expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+    })
+
+    it('should keep whenStable pending after mutate starts', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async () => {
+            await sleep(20)
+            return 'done'
+          },
+        })),
+      )
+
+      mutation.mutate()
+
+      let stableResolved = false
+      const stablePromise = app.whenStable().then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+      expect(stableResolved).toBe(false)
+
+      await vi.advanceTimersByTimeAsync(21)
+      await vi.advanceTimersByTimeAsync(0)
+      await stablePromise
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('done')
+    })
+  })
+
+  describe('Race Conditions', () => {
+    it('should not register a pending task while query is disabled by enabled', async () => {
+      const queryFn = vi.fn(async () => {
+        await sleep(10)
+        return 'disabled-data'
+      })
+
+      @Component({
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectQuery(() => ({
+          queryKey: ['disabled-enabled'],
+          queryFn,
+          enabled: false,
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
+
+      await Promise.resolve()
+
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.isPending()).toBe(true)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(fixture.isStable()).toBe(true)
+    })
+
+    it('should not register a pending task while query is disabled by skipToken', async () => {
+      @Component({
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectQuery(() => ({
+          queryKey: ['disabled-skip-token'],
+          queryFn: skipToken,
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
+
+      await Promise.resolve()
+
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.isPending()).toBe(true)
+      expect(query.isEnabled()).toBe(false)
+      expect(fixture.isStable()).toBe(true)
+    })
+
+    it('should handle query that completes during initial subscription', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      let resolveQuery: (value: string) => void
+
+      const queryPromise = new Promise<string>((resolve) => {
+        resolveQuery = resolve
+      })
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['race-condition'],
+          queryFn: () => queryPromise,
+        })),
+      )
+
+      // Resolve immediately to create potential race condition
+      resolveQuery!('race-data')
+
+      const stablePromise = app.whenStable()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('race-data')
+    })
+
+    it('should handle rapid refetches without task leaks', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        callCount = 0
+        query = injectQuery(() => ({
+          queryKey: ['rapid-refetch'],
+          queryFn: async () => {
+            this.callCount++
+            await sleep(10)
+            return `data-${this.callCount}`
+          },
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
+
+      // Trigger multiple rapid refetches
+      query.refetch()
+      query.refetch()
+      query.refetch()
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(20)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toMatch(/^data-\d+$/)
+    })
+
+    it('should keep PendingTasks active when query starts offline (never reaches fetching)', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      onlineManager.setOnline(false)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['start-offline'],
+          networkMode: 'online', // Default: won't fetch while offline
+          queryFn: async () => {
+            await sleep(10)
+            return 'online-data'
+          },
+        })),
+      )
+
+      // Allow query to initialize
+      await Promise.resolve()
+      await flushQueryUpdates()
+
+      // Query should initialize directly to 'paused' (never goes through 'fetching')
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('paused')
+
+      const stablePromise = app.whenStable()
+      let stableResolved = false
+      void stablePromise.then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+
+      // PendingTasks should block stability even though we never hit 'fetching'
+      expect(stableResolved).toBe(false)
+
+      // Bring the app back online so the query can fetch
+      onlineManager.setOnline(true)
+
+      await vi.advanceTimersByTimeAsync(20)
+      await Promise.resolve()
+
+      await stablePromise
+
+      expect(stableResolved).toBe(true)
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('online-data')
+    })
+
+    it('should keep PendingTasks active while query retry is paused offline', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      let attempt = 0
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['paused-offline'],
+          retry: 1,
+          retryDelay: 50, // Longer delay to ensure we can go offline before retry
+          queryFn: async () => {
+            attempt++
+            if (attempt === 1) {
+              throw new Error('offline-fail')
+            }
+            await sleep(10)
+            return 'final-data'
+          },
+        })),
+      )
+
+      // Allow the initial attempt to start and fail
+      await flushQueryUpdates()
+      await Promise.resolve()
+
+      // Wait for the first attempt to complete and start retry delay
+      await vi.advanceTimersByTimeAsync(10)
+      await Promise.resolve()
+
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('fetching')
+
+      // Simulate the app going offline during retry delay
+      onlineManager.setOnline(false)
+
+      // Advance past the retry delay to trigger the pause
+      await vi.advanceTimersByTimeAsync(50)
+      await Promise.resolve()
+
+      expect(query.fetchStatus()).toBe('paused')
+
+      const stablePromise = app.whenStable()
+      let stableResolved = false
+      void stablePromise.then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+
+      // PendingTasks should continue blocking stability while the fetch is paused
+      expect(stableResolved).toBe(false)
+      expect(query.status()).toBe('pending')
+
+      // Bring the app back online so the retry can continue
+      onlineManager.setOnline(true)
+
+      // Give time for the retry to resume and complete
+      await vi.advanceTimersByTimeAsync(20)
+      await Promise.resolve()
+
+      await stablePromise
+
+      expect(stableResolved).toBe(true)
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('final-data')
+    })
+  })
+
+  describe('Component Destruction', () => {
+    it('becomes stable after destruction before an unresolved query completes', async () => {
+      vi.useRealTimers()
+      let resolveQuery!: (value: string) => void
+      const queryPromise = new Promise<string>((resolve) => {
+        resolveQuery = resolve
+      })
+
+      @Component({ template: '' })
+      class UnresolvedQueryComponent {
+        query = injectQuery(() => ({
+          queryKey: ['unresolved-component-query'],
+          queryFn: () => queryPromise,
+        }))
+      }
+
+      const fixture = TestBed.createComponent(UnresolvedQueryComponent)
+      fixture.detectChanges()
+      expect(fixture.isStable()).toBe(false)
+
+      fixture.destroy()
+      await fixture.whenStable()
+      expect(fixture.isStable()).toBe(true)
+
+      resolveQuery('eventual data')
+      await Promise.resolve()
+    })
+
+    it('becomes stable after destruction before an unresolved mutation completes', async () => {
+      vi.useRealTimers()
+      let resolveMutation!: (value: string) => void
+      const mutationPromise = new Promise<string>((resolve) => {
+        resolveMutation = resolve
+      })
+
+      @Component({ template: '' })
+      class UnresolvedMutationComponent {
+        mutation = injectMutation(() => ({
+          mutationFn: () => mutationPromise,
+        }))
+      }
+
+      const fixture = TestBed.createComponent(UnresolvedMutationComponent)
+      fixture.detectChanges()
+      fixture.componentInstance.mutation.mutate()
+      expect(fixture.isStable()).toBe(false)
+
+      fixture.destroy()
+      await fixture.whenStable()
+      expect(fixture.isStable()).toBe(true)
+
+      resolveMutation('eventual data')
+      await Promise.resolve()
+    })
+  })
+
+  describe('Concurrent Operations', () => {
+    it('should handle multiple queries running simultaneously', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query1 = injectQuery(() => ({
+          queryKey: ['concurrent-1'],
+          queryFn: async () => {
+            await sleep(30)
+            return 'data-1'
+          },
+        }))
+
+        query2 = injectQuery(() => ({
+          queryKey: ['concurrent-2'],
+          queryFn: async () => {
+            await sleep(50)
+            return 'data-2'
+          },
+        }))
+
+        query3 = injectQuery(() => ({
+          queryKey: ['concurrent-3'],
+          queryFn: () => 'instant-data',
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const { query1, query2, query3 } = fixture.componentInstance
+
+      expect(query1.status()).toBe('pending')
+      expect(query2.status()).toBe('pending')
+      expect(query3.status()).toBe('pending')
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
+      await stablePromise
+
+      expect(query1.status()).toBe('success')
+      expect(query1.data()).toBe('data-1')
+      expect(query2.status()).toBe('success')
+      expect(query2.data()).toBe('data-2')
+      expect(query3.status()).toBe('success')
+      expect(query3.data()).toBe('instant-data')
+    })
+
+    it('should handle multiple mutations running simultaneously', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const mutation1 = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => {
+            await sleep(30)
+            return `processed-1: ${data}`
+          },
+        })),
+      )
+
+      const mutation2 = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => {
+            await sleep(50)
+            return `processed-2: ${data}`
+          },
+        })),
+      )
+
+      const mutation3 = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => {
+            await Promise.resolve()
+            return `processed-3: ${data}`
+          },
+        })),
+      )
+
+      mutation1.mutate('test1')
+      mutation2.mutate('test2')
+      mutation3.mutate('test3')
+
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
+      await stablePromise
+
+      expect(mutation1.isSuccess()).toBe(true)
+      expect(mutation1.data()).toBe('processed-1: test1')
+      expect(mutation2.isSuccess()).toBe(true)
+      expect(mutation2.data()).toBe('processed-2: test2')
+      expect(mutation3.isSuccess()).toBe(true)
+      expect(mutation3.data()).toBe('processed-3: test3')
+    })
+
+    it('should handle mixed queries and mutations', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['mixed-query'],
+          queryFn: async () => {
+            await sleep(40)
+            return 'query-data'
+          },
+        })),
+      )
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => {
+            await sleep(60)
+            return `mutation: ${data}`
+          },
+        })),
+      )
+
+      mutation.mutate('test')
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(70)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('query-data')
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('mutation: test')
+    })
+  })
+
+  describe('HttpClient Integration', () => {
+    beforeEach(() => {
+      setupTanStackQueryTestBed(queryClient, {
+        providers: [provideHttpClient(), provideHttpClientTesting()],
+      })
+    })
+
+    it('should handle multiple HttpClient requests with lastValueFrom', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      const httpClient = TestBed.inject(HttpClient)
+      const httpTestingController = TestBed.inject(HttpTestingController)
+
+      const query1 = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['http-1'],
+          queryFn: () =>
+            lastValueFrom(httpClient.get<{ id: number }>('/api/1')),
+        })),
+      )
+
+      const query2 = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['http-2'],
+          queryFn: () =>
+            lastValueFrom(httpClient.get<{ id: number }>('/api/2')),
+        })),
+      )
+
+      setTimeout(() => {
+        const req1 = httpTestingController.expectOne('/api/1')
+        req1.flush({ id: 1 })
+
+        const req2 = httpTestingController.expectOne('/api/2')
+        req2.flush({ id: 2 })
+      }, 10)
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(20)
+      await stablePromise
+
+      expect(query1.status()).toBe('success')
+      expect(query1.data()).toEqual({ id: 1 })
+      expect(query2.status()).toBe('success')
+      expect(query2.data()).toEqual({ id: 2 })
+
+      httpTestingController.verify()
+    })
+
+    it('should handle HttpClient request cancellation', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      const httpClient = TestBed.inject(HttpClient)
+      const httpTestingController = TestBed.inject(HttpTestingController)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['http-cancel'],
+          queryFn: () =>
+            lastValueFrom(httpClient.get<{ data: string }>('/api/cancel')),
+        })),
+      )
+
+      // Cancel the request before it completes
+      setTimeout(() => {
+        const req = httpTestingController.expectOne('/api/cancel')
+        req.error(new ProgressEvent('error'), {
+          status: 0,
+          statusText: 'Unknown Error',
+        })
+      }, 10)
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(20)
+      await stablePromise
+
+      expect(query.status()).toBe('error')
+
+      httpTestingController.verify()
+    })
+  })
+
+  describe('Edge Cases', () => {
+    it('should handle query cancellation mid-flight', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['cancel-test'],
+          queryFn: async () => {
+            await sleep(100)
+            return 'data'
+          },
+        })),
+      )
+
+      // Cancel the query after a short delay
+      setTimeout(() => {
+        queryClient.cancelQueries({ queryKey: ['cancel-test'] })
+      }, 20)
+
+      // Advance to the cancellation point
+      await vi.advanceTimersByTimeAsync(20)
+
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(130)
+      await stablePromise
+
+      // Cancellation should restore the pre-fetch state
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+    })
+
+    it('should handle query retry and pending task tracking', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      let attemptCount = 0
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['retry-test'],
+          retry: 2,
+          retryDelay: 10,
+          queryFn: async () => {
+            attemptCount++
+            if (attemptCount <= 2) {
+              throw new Error(`Attempt ${attemptCount} failed`)
+            }
+            return 'success-data'
+          },
+        })),
+      )
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(50)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('success-data')
+      expect(attemptCount).toBe(3) // Initial + 2 retries
+    })
+
+    it('should handle mutation with optimistic updates', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      const testQueryKey = ['optimistic-test']
+
+      queryClient.setQueryData(testQueryKey, 'initial-data')
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (newData: string) => {
+            await sleep(50)
+            return newData
+          },
+          onMutate: async (newData) => {
+            // Optimistic update
+            const previousData = queryClient.getQueryData(testQueryKey)
+            queryClient.setQueryData(testQueryKey, newData)
+            return { previousData }
+          },
+          onError: (_err, _newData, context) => {
+            // Rollback on error
+            if (context?.previousData) {
+              queryClient.setQueryData(testQueryKey, context.previousData)
+            }
+          },
+        })),
+      )
+
+      mutation.mutate('optimistic-data')
+
+      await Promise.resolve()
+
+      // Data should be optimistically updated immediately
+      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
+      await stablePromise
+
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('optimistic-data')
+      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')
+    })
+  })
+})

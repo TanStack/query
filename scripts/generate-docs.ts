@@ -189,11 +189,11 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
 const packages: Array<PackageReferenceDocsConfig> = [
   {
     entryPoints: [
-      resolve(__dirname, '../packages/angular-query-experimental/src/index.ts'),
+      resolve(__dirname, '../packages/angular-query/src/index.ts'),
     ],
     tsconfig: resolve(
       __dirname,
-      '../packages/angular-query-experimental/tsconfig.json',
+      '../packages/angular-query/tsconfig.json',
     ),
     outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
   },

@@ -5,12 +5,13 @@ import {
   computed,
   effect,
   inject,
+  runInInjectionContext,
   signal,
   viewChild,
 } from '@angular/core'
 import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
-import type { DevtoolsPanelRef } from '@tanstack/angular-query-experimental/devtools-panel'
+import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools/devtools-panel'
 
 @Component({
   selector: 'lazy-load-devtools-panel-example',
@@ -49,11 +50,11 @@ export default class LazyLoadDevtoolsPanelExampleComponent {
     if (this.devtools()) return
     if (this.isOpen()) {
       this.devtools.set(
-        import('@tanstack/angular-query-experimental/devtools-panel').then(
+        import('@tanstack/angular-query-devtools/devtools-panel').then(
           ({ injectDevtoolsPanel }) =>
-            injectDevtoolsPanel(this.devToolsOptions, {
-              injector: this.injector,
-            }),
+            runInInjectionContext(this.injector, () =>
+              injectDevtoolsPanel(this.devToolsOptions),
+            ),
         ),
       )
     }

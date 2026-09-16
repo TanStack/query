@@ -1,0 +1,307 @@
+import { describe, expectTypeOf, it } from 'vitest'
+import { injectQueries, skipToken, toResource } from '..'
+import { queryOptions } from '../query-options'
+import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
+import type { Resource, Signal } from '@angular/core'
+
+describe('InjectQueries config object overload', () => {
+  it('infers tagged custom errors in parallel queries and combine', () => {
+    class CustomError extends Error {
+      detail = 'detail'
+    }
+    const options = queryOptions<number, CustomError>({
+      queryKey: ['tagged'],
+      queryFn: () => 1,
+    })
+    const queries = injectQueries(() => ({ queries: [options] }))
+    expectTypeOf(queries()[0].error()).toEqualTypeOf<CustomError | null>()
+    expectTypeOf(queries()[0].data()).toEqualTypeOf<number | undefined>()
+    const combined = injectQueries(() => ({
+      queries: [options],
+      combine: (results) => results[0].error,
+    }))
+    expectTypeOf(combined()).toEqualTypeOf<CustomError | null>()
+  })
+  it('preserves custom errors from annotated options without a query-key tag', () => {
+    class CustomError extends Error {
+      detail = 'detail'
+    }
+    const options: CreateQueryOptions<number, CustomError> = {
+      queryKey: ['annotated'],
+      queryFn: () => 1,
+    }
+    const queries = injectQueries(() => ({ queries: [options] }))
+    expectTypeOf(queries()[0].error()).toEqualTypeOf<CustomError | null>()
+    expectTypeOf(queries()[0].data()).toEqualTypeOf<number | undefined>()
+    const combined = injectQueries(() => ({
+      queries: [options],
+      combine: (results) => results[0].error,
+    }))
+    expectTypeOf(combined()).toEqualTypeOf<CustomError | null>()
+  })
+
+  it('should expose Angular resource views', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve('data'),
+        },
+      ],
+    }))
+
+    expectTypeOf(toResource(queryResults()[0])).toMatchTypeOf<
+      Resource<string | undefined>
+    >()
+
+    // @ts-expect-error Resources are created explicitly with toResource.
+    queryResults()[0].resource
+  })
+
+  it('TData should always be defined when initialData is provided as an object', () => {
+    const query1 = {
+      queryKey: ['key1'],
+      queryFn: () => {
+        return {
+          wow: true,
+        }
+      },
+      initialData: {
+        wow: false,
+      },
+    }
+
+    const query2 = {
+      queryKey: ['key2'],
+      queryFn: () => 'Query Data',
+      initialData: 'initial data',
+    }
+
+    const query3 = {
+      queryKey: ['key2'],
+      queryFn: () => 'Query Data',
+    }
+
+    const queryResults = injectQueries(() => ({
+      queries: [query1, query2, query3],
+    }))
+
+    const query1Data = queryResults()[0].data()
+    const query2Data = queryResults()[1].data()
+    const query3Data = queryResults()[2].data()
+
+    expectTypeOf(query1Data).toEqualTypeOf<{ wow: boolean }>()
+    expectTypeOf(query2Data).toEqualTypeOf<string>()
+    expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
+  })
+
+  it('TData should be defined when passed through queryOptions', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => {
+        return {
+          wow: true,
+        }
+      },
+      initialData: {
+        wow: true,
+      },
+    })
+    const queryResults = injectQueries(() => ({ queries: [options] }))
+
+    const data = queryResults()[0].data()
+
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+  })
+
+  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into injectQuery', () => {
+    const query1 = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      select: (data) => data > 1,
+    })
+
+    const query2 = {
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      select: (data: number) => data > 1,
+    }
+
+    const queryResults = injectQueries(() => ({ queries: [query1, query2] }))
+    const query1Data = queryResults()[0].data()
+    const query2Data = queryResults()[1].data()
+
+    expectTypeOf(query1Data).toEqualTypeOf<boolean | undefined>()
+    expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
+  })
+
+  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        },
+      ],
+    }))
+
+    const data = queryResults()[0].data()
+
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+  })
+
+  describe('custom injectable', () => {
+    it('should allow custom hooks using UseQueryOptions', () => {
+      type Data = string
+
+      const injectCustomQueries = (
+        options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+      ) => {
+        return injectQueries(() => ({
+          queries: [
+            {
+              ...options,
+              queryKey: ['todos-key'],
+              queryFn: () => Promise.resolve('data'),
+            },
+          ],
+        }))
+      }
+
+      const queryResults = injectCustomQueries()
+      const data = queryResults()[0].data()
+
+      expectTypeOf(data).toEqualTypeOf<Data | undefined>()
+    })
+  })
+
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['withSkipToken'],
+          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        },
+      ],
+    }))
+
+    const firstResult = queryResults()[0]
+
+    expectTypeOf(firstResult).toEqualTypeOf<CreateQueryResult<number, Error>>()
+    expectTypeOf(firstResult.data()).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should return correct data for dynamic queries with mixed result types', () => {
+    const Queries1 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key1'],
+          queryFn: () => Promise.resolve(1),
+        }),
+    }
+    const Queries2 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        }),
+    }
+
+    const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
+    const result = injectQueries(() => ({
+      queries: [...queries1List, { ...Queries2.get() }],
+    }))
+
+    expectTypeOf(result).toBeFunction()
+  })
+})
+
+describe('InjectQueries combine', () => {
+  it('should provide the correct type for the combine function', () => {
+    injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+        },
+        {
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        },
+      ],
+      combine: (results) => {
+        expectTypeOf(results[0].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(results[0].refetch).toBeCallableWith()
+        expectTypeOf(results[1].data).toEqualTypeOf<boolean | undefined>()
+        expectTypeOf(results[1].refetch).toBeCallableWith()
+      },
+    }))
+  })
+
+  it('should provide the correct types on the combined result with initial data', () => {
+    injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+          initialData: 1,
+        },
+      ],
+      combine: (results) => {
+        expectTypeOf(results[0].data).toEqualTypeOf<number>()
+        expectTypeOf(results[0].refetch).toBeCallableWith()
+      },
+    }))
+  })
+
+  it('should provide the correct result type', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+        },
+        {
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        },
+      ],
+      combine: (results) => ({
+        data: {
+          1: results[0].data,
+          2: results[1].data,
+        },
+        fn: () => {},
+      }),
+    }))
+
+    expectTypeOf(queryResults).branded.toEqualTypeOf<
+      Signal<{
+        data: {
+          1: number | undefined
+          2: boolean | undefined
+        }
+        fn: () => void
+      }>
+    >()
+  })
+
+  it('should provide the correct types on the result with initial data', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+          initialData: 1,
+        },
+      ],
+    }))
+
+    expectTypeOf(queryResults()[0].data()).toEqualTypeOf<number>()
+  })
+})
