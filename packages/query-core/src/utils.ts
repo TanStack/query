@@ -417,9 +417,14 @@ export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
   }
 
   // If has no constructor
-  const ctor = o.constructor
+  const objectPrototype = Object.getPrototypeOf(o)
+  const ctor = objectPrototype?.constructor
   if (ctor === undefined) {
     return true
+  }
+
+  if (typeof ctor !== 'function') {
+    return false
   }
 
   // If has modified prototype
@@ -434,7 +439,7 @@ export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
   }
 
   // Handles Objects created by Object.create(<arbitrary prototype>)
-  if (Object.getPrototypeOf(o) !== Object.prototype) {
+  if (objectPrototype !== Object.prototype) {
     return false
   }
 
