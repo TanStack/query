@@ -1,5 +1,13 @@
 # @tanstack/query-core
 
+## 5.103.1
+
+### Patch Changes
+
+- [#11512](https://github.com/TanStack/query/pull/11512) [`8330b2f`](https://github.com/TanStack/query/commit/8330b2f2d431f226d7bb95eb727c637be9d4c6d8) - Handle plain objects with an own `constructor` data property during structural sharing and query-key hashing.
+
+- [#11510](https://github.com/TanStack/query/pull/11510) [`3212966`](https://github.com/TanStack/query/commit/3212966a3681e02d14eb79e9cce0d3265b046877) - Preserve `null` values returned by custom `streamedQuery` reducers instead of replacing them with `initialValue`.
+
 ## 5.103.0
 
 ### Minor Changes
