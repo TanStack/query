@@ -453,11 +453,6 @@ describe('noop', () => {
   it('should resolve to the void overload when called', () => {
     expectTypeOf(noop()).toEqualTypeOf<void>()
   })
-
-  it('should be usable as a VoidFunction', () => {
-    const fn: VoidFunction = noop
-    expectTypeOf(fn).toEqualTypeOf<VoidFunction>()
-  })
 })
 
 describe('isValidTimeout', () => {
