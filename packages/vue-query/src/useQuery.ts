@@ -3,89 +3,16 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
-  InitialDataFunction,
-  NonUndefinedGuard,
-  QueryBooleanOption,
   QueryKey,
-  QueryObserverOptions,
 } from '@tanstack/query-core'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
-import type {
-  DeepUnwrapRef,
-  MaybeRef,
-  MaybeRefDeep,
-  MaybeRefOrGetter,
-  ShallowOption,
-} from './types'
+import type { MaybeRefOrGetter } from './types'
 import type { QueryClient } from './queryClient'
-
-export type UseQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = MaybeRef<
-  {
-    [Property in keyof QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >]: Property extends 'enabled'
-      ?
-          | MaybeRefOrGetter<boolean | undefined>
-          | (() => QueryBooleanOption<
-              TQueryFnData,
-              TError,
-              TQueryData,
-              DeepUnwrapRef<TQueryKey>
-            >)
-      : Property extends 'queryKey'
-        ? MaybeRef<
-            QueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              TQueryKey
-            >[Property]
-          >
-        : MaybeRefDeep<
-            QueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              DeepUnwrapRef<TQueryKey>
-            >[Property]
-          >
-  } & ShallowOption
->
-
-export type UndefinedInitialQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?:
-    | undefined
-    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-    | NonUndefinedGuard<TQueryFnData>
-}
-
-export type DefinedInitialQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
-}
+import type {
+  DefinedInitialQueryOptions,
+  UndefinedInitialQueryOptions,
+  UseQueryOptions,
+} from './queryOptions'
 
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
@@ -102,9 +29,9 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter. Other options are read once and are not
- * reactive.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
+ * reactive when passed as a `ref` or a `computed`.
  *
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
  * `initialData` set.
@@ -147,9 +74,9 @@ export function useQuery<
 
 /**
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter. Other options are read once and are not
- * reactive.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
+ * reactive when passed as a `ref` or a `computed`.
  *
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -292,8 +219,8 @@ export function useQuery<
  * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
- * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
- * individual entries — the array itself can't be a bare getter.
+ * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
+ * reactive getters as individual entries.
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
@@ -325,9 +252,9 @@ export function useQuery<
  *
  * @example
  * `skipToken` disables the query in a type-safe way, without a non-null assertion on `props.postId` —
- * `queryFn` is only ever called when it's defined. This requires a whole-options getter: `queryFn` is a
- * single value, not `queryKey`/`enabled`, so it isn't itself reactive — the getter is what re-evaluates it
- * on every change to `props.postId`. `refetch` doesn't work while `queryFn` is `skipToken` — use
+ * `queryFn` is only ever called when it's defined. The whole-options getter re-evaluates `queryFn` on every
+ * change to `props.postId`. `queryFn` can also be a `computed`, but never a bare getter, since a function
+ * there is the query function itself. `refetch` doesn't work while `queryFn` is `skipToken` — use
  * `enabled: false` instead if you need to trigger the query manually:
  * ```vue
  * <script setup lang="ts">

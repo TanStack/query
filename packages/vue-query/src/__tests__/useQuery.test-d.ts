@@ -1,7 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { queryOptions, useQuery } from '..'
+import { queryOptions, skipToken, useQuery } from '..'
 import type { Ref } from 'vue-demi'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
@@ -380,13 +380,33 @@ describe('useQuery', () => {
     })
   })
 
+  describe('skipToken', () => {
+    it('should accept skipToken inside a whole-options getter', () => {
+      const id = ref<string | null>('1')
+
+      const query = reactive(
+        useQuery(() => {
+          const current = id.value
+          return {
+            queryKey: ['post', current],
+            queryFn: current
+              ? () => sleep(0).then(() => 'Some data')
+              : skipToken,
+          }
+        }),
+      )
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
+      }
+    })
+  })
+
   describe('queryKey reactivity rules', () => {
-    it('should reject a bare reactive getter for the whole queryKey array', () => {
+    it('should accept a bare reactive getter for the whole queryKey array', () => {
       const id = ref(1)
       assertType(
         useQuery({
-          // @ts-expect-error when passed directly to useQuery, queryKey cannot be a bare
-          // reactive getter for the whole array (queryOptions() allows this)
           queryKey: () => ['post', id.value],
           queryFn: () => sleep(0).then(() => 'Some data'),
         }),

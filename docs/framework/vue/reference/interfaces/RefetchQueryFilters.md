@@ -5,9 +5,12 @@ title: RefetchQueryFilters
 
 Defined in: [packages/query-core/src/types.ts:730](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L730)
 
+Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
+All provided filters must match; filters that are left unspecified are ignored.
+
 ## Extends
 
-- `QueryFilters`\<`TQueryKey`\>
+- [`QueryFilters`](QueryFilters.md)\<`TQueryKey`\>
 
 ## Type Parameters
 
@@ -29,9 +32,7 @@ Match query key exactly
 
 #### Inherited from
 
-```ts
-QueryFilters.exact
-```
+[`QueryFilters`](QueryFilters.md).[`exact`](QueryFilters.md#exact)
 
 ***
 
@@ -47,9 +48,7 @@ Include queries matching their fetchStatus
 
 #### Inherited from
 
-```ts
-QueryFilters.fetchStatus
-```
+[`QueryFilters`](QueryFilters.md).[`fetchStatus`](QueryFilters.md#fetchstatus)
 
 ***
 
@@ -75,9 +74,7 @@ Include queries matching this predicate function
 
 #### Inherited from
 
-```ts
-QueryFilters.predicate
-```
+[`QueryFilters`](QueryFilters.md).[`predicate`](QueryFilters.md#predicate)
 
 ***
 
@@ -93,9 +90,7 @@ Include queries matching this query key
 
 #### Inherited from
 
-```ts
-QueryFilters.queryKey
-```
+[`QueryFilters`](QueryFilters.md).[`queryKey`](QueryFilters.md#querykey)
 
 ***
 
@@ -111,9 +106,7 @@ Include or exclude stale queries
 
 #### Inherited from
 
-```ts
-QueryFilters.stale
-```
+[`QueryFilters`](QueryFilters.md).[`stale`](QueryFilters.md#stale)
 
 ***
 
@@ -131,6 +124,4 @@ Defaults to `'all'`.
 
 #### Inherited from
 
-```ts
-QueryFilters.type
-```
+[`QueryFilters`](QueryFilters.md).[`type`](QueryFilters.md#type)
