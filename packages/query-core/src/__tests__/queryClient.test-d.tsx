@@ -576,6 +576,21 @@ describe('queryClient', () => {
       >()
     })
 
+    it('should type pages as a number', () => {
+      expectTypeOf<
+        Extract<
+          InfiniteQueryExecuteOptions<
+            { count: number },
+            Error,
+            unknown,
+            QueryKey,
+            number
+          >,
+          { pages: unknown }
+        >['pages']
+      >().toEqualTypeOf<number>()
+    })
+
     it('should allow passing getNextPageParam without pages', () => {
       assertType<Parameters<QueryClient['infiniteQuery']>>([
         {
