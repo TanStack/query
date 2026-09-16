@@ -3,50 +3,48 @@ import { Subscribable } from '../subscribable'
 
 describe('subscribable', () => {
   describe('Subscribable', () => {
-    describe('TListener', () => {
-      it('should only accept a function type', () => {
-        // @ts-expect-error a listener must extend Function
-        new Subscribable<string>()
+    it('should constrain TListener to a function type', () => {
+      // @ts-expect-error a listener must extend Function
+      new Subscribable<string>()
 
-        expectTypeOf(new Subscribable<() => void>()).toEqualTypeOf<
-          Subscribable<() => void>
-        >()
-      })
+      expectTypeOf(new Subscribable<() => void>()).toEqualTypeOf<
+        Subscribable<() => void>
+      >()
+    })
 
-      it('should accept a function type with parameters and a return type', () => {
-        expectTypeOf(
-          new Subscribable<(value: number) => string>(),
-        ).toEqualTypeOf<Subscribable<(value: number) => string>>()
-      })
+    it('should accept TListener with parameters and a return type', () => {
+      expectTypeOf(new Subscribable<(value: number) => string>()).toEqualTypeOf<
+        Subscribable<(value: number) => string>
+      >()
+    })
 
-      it('should accept any Function subtype, not just a call signature', () => {
-        // `Function` is wider than `(...args: Array<any>) => any`: a construct
-        // signature and a function carrying extra properties both satisfy the
-        // former but not the latter.
-        type Constructor = new () => object
-        interface CallableWithProperty extends Function {
-          custom: number
-        }
+    it('should accept any Function subtype as TListener, not just a call signature', () => {
+      // `Function` is wider than `(...args: Array<any>) => any`: a construct
+      // signature and a function carrying extra properties both satisfy the
+      // former but not the latter.
+      type Constructor = new () => object
+      interface CallableWithProperty extends Function {
+        custom: number
+      }
 
-        expectTypeOf(new Subscribable<Constructor>()).toEqualTypeOf<
-          Subscribable<Constructor>
-        >()
-        expectTypeOf(new Subscribable<CallableWithProperty>()).toEqualTypeOf<
-          Subscribable<CallableWithProperty>
-        >()
-      })
+      expectTypeOf(new Subscribable<Constructor>()).toEqualTypeOf<
+        Subscribable<Constructor>
+      >()
+      expectTypeOf(new Subscribable<CallableWithProperty>()).toEqualTypeOf<
+        Subscribable<CallableWithProperty>
+      >()
+    })
 
-      it('should not have a default type argument', () => {
-        // @ts-expect-error a listener type must be provided
-        type WithoutArgument = Subscribable
+    it('should not default TListener', () => {
+      // @ts-expect-error a listener type must be provided
+      type WithoutArgument = Subscribable
 
-        // the `@ts-expect-error` above is the verification here: omitting the
-        // argument has to be an error. It leaves the alias as the error type,
-        // so there is no positive assertion to pair it with -- these only
-        // record that the erroring alias is `any` while a supplied one is not.
-        expectTypeOf<WithoutArgument>().toBeAny()
-        expectTypeOf<Subscribable<() => void>>().not.toBeAny()
-      })
+      // the `@ts-expect-error` above is the verification here: omitting the
+      // argument has to be an error. It leaves the alias as the error type,
+      // so there is no positive assertion to pair it with -- these only
+      // record that the erroring alias is `any` while a supplied one is not.
+      expectTypeOf<WithoutArgument>().toBeAny()
+      expectTypeOf<Subscribable<() => void>>().not.toBeAny()
     })
 
     it('should only expose subscribe and hasListeners', () => {

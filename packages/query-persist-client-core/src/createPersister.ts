@@ -130,7 +130,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const storageKey = `${prefix}-${queryHash}`
       try {
         const storedData = await storage.getItem(storageKey)
-        if (storedData) {
+        if (storedData != null) {
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(storedData)

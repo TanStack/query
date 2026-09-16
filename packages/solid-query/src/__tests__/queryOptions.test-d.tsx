@@ -90,6 +90,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })

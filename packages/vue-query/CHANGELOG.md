@@ -1,5 +1,16 @@
 # @tanstack/vue-query
 
+## 5.103.0
+
+### Patch Changes
+
+- [#11439](https://github.com/TanStack/query/pull/11439) [`12027ef`](https://github.com/TanStack/query/commit/12027efd5c709b95064848239e67fa7bb0155864) - fix(vue-query): make sure useQuery can accept queryOptions on type level
+
+- [#11287](https://github.com/TanStack/query/pull/11287) [`2bc8ecf`](https://github.com/TanStack/query/commit/2bc8ecf39bef623ed0680a11898b6e757d7de78b) - Re-export core query and mutation filter types without shadowing them with Vue-specific filter types.
+
+- Updated dependencies [[`e57f816`](https://github.com/TanStack/query/commit/e57f8163b18ab3abfe52ad69cdbdda4d31453393), [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12), [`a1119e5`](https://github.com/TanStack/query/commit/a1119e5a3ffa52534de7390f17c7183d17658051), [`cbf77bf`](https://github.com/TanStack/query/commit/cbf77bf8e1a9ce09caef0cdd9a8ed10fef57edf0)]:
+  - @tanstack/query-core@5.103.0
+
 ## 5.102.8
 
 ### Patch Changes
