@@ -1,5 +1,5 @@
 {
-  "name": "angular-cli-20",
+  "name": "angular-cli",
   "private": true,
   "scripts": {
     "ng": "ng",

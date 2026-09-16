@@ -10,7 +10,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-cli-20": {
+    "angular-cli": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -85,10 +85,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-cli-20:build:production"
+              "buildTarget": "angular-cli:build:production"
             },
             "development": {
-              "buildTarget": "angular-cli-20:build:development"
+              "buildTarget": "angular-cli:build:development"
             }
           },
           "defaultConfiguration": "development"

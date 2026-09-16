@@ -2405,7 +2405,7 @@ importers:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
 
-  integrations/angular-cli-20:
+  integrations/angular-cli:
     dependencies:
       '@angular/common':
         specifier: ^22.0.0
