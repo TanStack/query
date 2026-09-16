@@ -13,95 +13,89 @@ type SimpleParams = Extract<Params, { reducer?: never }>
 type ReducibleParams = Exclude<Params, { reducer?: never }>
 
 describe('streamedQuery', () => {
-  describe('TQueryFnData', () => {
-    it('should infer the chunk type from the stream returned by streamFn', () => {
-      expectTypeOf(
-        streamedQuery({
-          streamFn: () => numberStream(),
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<number>, QueryKey>>()
-    })
-
-    it('should infer the chunk type from a promise of a stream', () => {
-      expectTypeOf(
-        streamedQuery({
-          streamFn: () => Promise.resolve(numberStream()),
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<number>, QueryKey>>()
-    })
-
-    it('should default to unknown when the stream type cannot be inferred', () => {
-      expectTypeOf(
-        streamedQuery({
-          streamFn: () =>
-            ({}) as AsyncIterable<unknown> | Promise<AsyncIterable<unknown>>,
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<unknown>, QueryKey>>()
-    })
-
-    it('should default to unknown when there is no inference site', () => {
-      // an `AsyncIterable` of an unconstrained type parameter gives the
-      // inference nothing to latch onto, so the default has to fill in
-      function streamOf<T>(): AsyncIterable<T> {
-        return {} as AsyncIterable<T>
-      }
-
-      expectTypeOf(streamedQuery({ streamFn: () => streamOf() })).toEqualTypeOf<
-        QueryFunction<Array<unknown>, QueryKey>
-      >()
-    })
-  })
-
-  describe('TData', () => {
-    it('should default to an array of the chunk type', () => {
-      expectTypeOf(
-        streamedQuery<{ value: string }>({
-          streamFn: () => ({}) as AsyncIterable<{ value: string }>,
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<{ value: string }>, QueryKey>>()
-    })
-
-    it('should be the reducer result when a reducer is provided', () => {
-      expectTypeOf(
-        streamedQuery({
-          streamFn: () => numberStream(),
-          reducer: (acc: string, chunk: number) => acc + chunk,
-          initialValue: '',
-        }),
-      ).toEqualTypeOf<QueryFunction<string, QueryKey>>()
-    })
-  })
-
-  describe('TQueryKey', () => {
-    it('should default to QueryKey', () => {
+  it('should infer TQueryFnData from the stream returned by streamFn', () => {
+    expectTypeOf(
       streamedQuery({
-        streamFn: (context) => {
-          expectTypeOf(context.queryKey).toEqualTypeOf<QueryKey>()
-          return numberStream()
-        },
-      })
-    })
-
-    it('should be carried into the returned QueryFunction when given explicitly', () => {
-      expectTypeOf(
-        streamedQuery<number, Array<number>, ['stream', number]>({
-          streamFn: () => numberStream(),
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<number>, ['stream', number]>>()
-    })
-
-    it('should only accept a query key', () => {
-      // @ts-expect-error a query key must be an array
-      streamedQuery<number, Array<number>, string>({
         streamFn: () => numberStream(),
-      })
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<number>, QueryKey>>()
+  })
 
-      expectTypeOf(
-        streamedQuery<number, Array<number>, ReadonlyArray<unknown>>({
-          streamFn: () => numberStream(),
-        }),
-      ).toEqualTypeOf<QueryFunction<Array<number>, ReadonlyArray<unknown>>>()
+  it('should infer TQueryFnData from a promise of a stream', () => {
+    expectTypeOf(
+      streamedQuery({
+        streamFn: () => Promise.resolve(numberStream()),
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<number>, QueryKey>>()
+  })
+
+  it('should default TQueryFnData to unknown when the stream type cannot be inferred', () => {
+    expectTypeOf(
+      streamedQuery({
+        streamFn: () =>
+          ({}) as AsyncIterable<unknown> | Promise<AsyncIterable<unknown>>,
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<unknown>, QueryKey>>()
+  })
+
+  it('should default TQueryFnData to unknown when there is no inference site', () => {
+    // an `AsyncIterable` of an unconstrained type parameter gives the
+    // inference nothing to latch onto, so the default has to fill in
+    function streamOf<T>(): AsyncIterable<T> {
+      return {} as AsyncIterable<T>
+    }
+
+    expectTypeOf(streamedQuery({ streamFn: () => streamOf() })).toEqualTypeOf<
+      QueryFunction<Array<unknown>, QueryKey>
+    >()
+  })
+
+  it('should default TData to an array of the chunk type', () => {
+    expectTypeOf(
+      streamedQuery<{ value: string }>({
+        streamFn: () => ({}) as AsyncIterable<{ value: string }>,
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<{ value: string }>, QueryKey>>()
+  })
+
+  it('should set TData to the reducer result when a reducer is provided', () => {
+    expectTypeOf(
+      streamedQuery({
+        streamFn: () => numberStream(),
+        reducer: (acc: string, chunk: number) => acc + chunk,
+        initialValue: '',
+      }),
+    ).toEqualTypeOf<QueryFunction<string, QueryKey>>()
+  })
+
+  it('should default TQueryKey to QueryKey', () => {
+    streamedQuery({
+      streamFn: (context) => {
+        expectTypeOf(context.queryKey).toEqualTypeOf<QueryKey>()
+        return numberStream()
+      },
     })
+  })
+
+  it('should carry TQueryKey into the returned QueryFunction when given explicitly', () => {
+    expectTypeOf(
+      streamedQuery<number, Array<number>, ['stream', number]>({
+        streamFn: () => numberStream(),
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<number>, ['stream', number]>>()
+  })
+
+  it('should constrain TQueryKey to a query key', () => {
+    // @ts-expect-error a query key must be an array
+    streamedQuery<number, Array<number>, string>({
+      streamFn: () => numberStream(),
+    })
+
+    expectTypeOf(
+      streamedQuery<number, Array<number>, ReadonlyArray<unknown>>({
+        streamFn: () => numberStream(),
+      }),
+    ).toEqualTypeOf<QueryFunction<Array<number>, ReadonlyArray<unknown>>>()
   })
 
   describe('StreamedQueryParams', () => {
