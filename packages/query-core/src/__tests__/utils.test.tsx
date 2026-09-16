@@ -467,6 +467,26 @@ describe('core/utils', () => {
 
       expect(resultNode).toBe(nextNode)
     })
+
+    it('should preserve Symbol properties (like Symbol.iterator) when replacing values in objects', () => {
+      const prev = {
+        [Symbol.iterator]: function* () {
+          yield 1
+        },
+        foo: () => 1,
+      }
+      const next = {
+        [Symbol.iterator]: function* () {
+          yield 1
+        },
+        foo: () => 2,
+      }
+      const result = replaceEqualDeep(prev, next)
+      expect(result).not.toBe(prev)
+      expect(result).not.toBe(next)
+      expect(typeof (result as any)[Symbol.iterator]).toBe('function')
+      expect(Array.from(result as any)).toEqual([1])
+    })
   })
 
   describe('matchMutation', () => {

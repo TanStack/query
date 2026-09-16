@@ -332,6 +332,20 @@ export function partialMatchKey(a: any, b: any): boolean {
 
 const hasOwn = Object.prototype.hasOwnProperty
 
+function getObjectKeys(o: any): Array<string | symbol> {
+  const keys: Array<string | symbol> = Object.keys(o)
+  const symbols = Object.getOwnPropertySymbols(o)
+  if (symbols.length === 0) {
+    return keys
+  }
+  for (const symbol of symbols) {
+    if (Object.prototype.propertyIsEnumerable.call(o, symbol)) {
+      keys.push(symbol)
+    }
+  }
+  return keys
+}
+
 /**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
@@ -349,9 +363,9 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
 
   if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
 
-  const aItems = array ? a : Object.keys(a)
+  const aItems = array ? a : getObjectKeys(a)
   const aSize = aItems.length
-  const bItems = array ? b : Object.keys(b)
+  const bItems = array ? b : getObjectKeys(b)
   const bSize = bItems.length
   const copy: any = array ? new Array(bSize) : {}
 
