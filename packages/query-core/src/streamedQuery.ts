@@ -139,6 +139,7 @@ export function streamedQuery<
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
-    return context.client.getQueryData(context.queryKey) ?? initialValue
+    const data = context.client.getQueryData<TData>(context.queryKey)
+    return data === undefined ? initialValue : data
   }
 }
