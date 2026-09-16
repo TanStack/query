@@ -2,10 +2,8 @@
 import * as React from 'react'
 
 import { noop, notifyManager } from '@tanstack/query-core'
-import {
-  QueryServerSnapshotContext,
-  useQueryClient,
-} from './QueryClientProvider'
+import { useQueryClient } from './QueryClientProvider'
+import { QueryServerSnapshotContext } from './HydrationBoundary'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,

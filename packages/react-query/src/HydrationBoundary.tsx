@@ -1,14 +1,22 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { QueryCache, QueryClient, hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
   HydrateOptions,
   OmitKeyof,
-  QueryClient,
 } from '@tanstack/query-core'
+
+/**
+ * Internal context that carries the frozen server snapshot for the nearest
+ * hydration boundary. Hooks use it to replay the result that produced the
+ * server markup instead of reading newer data from the live cache.
+ */
+export const QueryServerSnapshotContext = React.createContext<
+  QueryClient | undefined
+>(undefined)
 
 /**
  * The props accepted by `HydrationBoundary`.
@@ -85,7 +93,7 @@ export interface HydrationBoundaryProps {
  */
 export const HydrationBoundary = ({
   children,
-  options = {},
+  options,
   state,
   queryClient,
 }: HydrationBoundaryProps) => {
@@ -95,6 +103,53 @@ export const HydrationBoundary = ({
   React.useEffect(() => {
     optionsRef.current = options
   })
+
+  // Keep an immutable copy of the query state that produced this boundary's
+  // server markup. We build the queries directly instead of calling `hydrate`
+  // because hydration deliberately changes fetchStatus and may resolve a
+  // streamed promise synchronously.
+  const snapshotClient = React.useMemo(() => {
+    if (!state || typeof state !== 'object') {
+      return undefined
+    }
+
+    const queryCache = new QueryCache()
+    const clientOptions = client.getDefaultOptions().hydrate
+    const boundaryOptions = options?.defaultOptions
+    const frozenClient = new QueryClient({ queryCache })
+    const deserializeData =
+      boundaryOptions?.deserializeData ?? clientOptions?.deserializeData
+
+    // State is supplied from the outside, so handle an invalid shape
+    // gracefully just like the live-cache hydration below.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const queries = state.queries || []
+
+    queries.forEach(
+      ({ queryKey, queryHash, state: queryState, meta, queryType }) => {
+        const data =
+          queryState.data === undefined || !deserializeData
+            ? queryState.data
+            : deserializeData(queryState.data)
+
+        queryCache.build(
+          frozenClient,
+          {
+            ...clientOptions?.queries,
+            ...boundaryOptions?.queries,
+            queryKey,
+            queryHash,
+            meta,
+            _type: queryType,
+          },
+          // Copy the state so the caller's dehydrated state remains untouched.
+          { ...queryState, data },
+        )
+      },
+    )
+
+    return frozenClient
+  }, [client, options, state])
 
   // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
@@ -167,5 +222,9 @@ export const HydrationBoundary = ({
     }
   }, [client, hydrationQueue])
 
-  return children as React.ReactElement
+  return (
+    <QueryServerSnapshotContext.Provider value={snapshotClient}>
+      {children}
+    </QueryServerSnapshotContext.Provider>
+  )
 }

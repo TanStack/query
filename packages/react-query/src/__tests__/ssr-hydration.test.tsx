@@ -320,7 +320,9 @@ describe('Server side rendering with de/rehydration', () => {
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
-        <SuccessComponent />
+        <HydrationBoundary state={dehydratedStateServer}>
+          <SuccessComponent />
+        </HydrationBoundary>
       </QueryClientProvider>,
     )
     renderClient.clear()
@@ -351,11 +353,10 @@ describe('Server side rendering with de/rehydration', () => {
 
     const onRecoverableError = vi.fn()
     const unmount = ReactHydrate(
-      <QueryClientProvider
-        client={queryClient}
-        serverSnapshot={dehydratedStateServer}
-      >
-        <SuccessComponent />
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedStateServer}>
+          <SuccessComponent />
+        </HydrationBoundary>
       </QueryClientProvider>,
       el,
       { onRecoverableError },
@@ -379,8 +380,80 @@ describe('Server side rendering with de/rehydration', () => {
     queryClient.clear()
   })
 
+  it('should not mismatch when a query above the boundary creates an empty cache entry', async () => {
+    const key = queryKey()
+    const queryFn = () => new Promise<string>(noop)
+    const renderedStates: Array<string> = []
+
+    function Page() {
+      const result = useQuery({ queryKey: key, queryFn })
+      const rendered = `${result.status}:${result.data}`
+      renderedStates.push(rendered)
+      return <div>{rendered}</div>
+    }
+
+    function App({
+      client,
+      state,
+    }: {
+      client: QueryClient
+      state: ReturnType<typeof dehydrate>
+    }) {
+      return (
+        <QueryClientProvider client={client}>
+          <Page />
+          <HydrationBoundary state={state}>
+            <Page />
+          </HydrationBoundary>
+        </QueryClientProvider>
+      )
+    }
+
+    const prefetchClient = new QueryClient()
+    prefetchClient.setQueryData(key, 'server data')
+    const dehydrated = dehydrate(prefetchClient)
+
+    setIsServer(true)
+    const renderClient = new QueryClient()
+    const markup = ReactDOMServer.renderToString(
+      <App client={renderClient} state={dehydrated} />,
+    )
+    setIsServer(false)
+
+    expect(markup).toBe(
+      '<div>pending:undefined</div><div>success:server data</div>',
+    )
+
+    renderedStates.length = 0
+    const el = document.createElement('div')
+    el.innerHTML = markup
+    const queryClient = new QueryClient()
+    const onRecoverableError = vi.fn()
+    const unmount = ReactHydrate(
+      <App client={queryClient} state={dehydrated} />,
+      el,
+      { onRecoverableError },
+    )
+
+    expect(onRecoverableError).toHaveBeenCalledTimes(0)
+    expect(renderedStates.slice(0, 2)).toEqual([
+      'pending:undefined',
+      'success:server data',
+    ])
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(Array.from(el.children, (child) => child.textContent)).toEqual([
+      'success:server data',
+      'success:server data',
+    ])
+
+    unmount()
+    queryClient.clear()
+    renderClient.clear()
+    prefetchClient.clear()
+  })
+
   it.each([
-    ['hydrate options', 'hydrate'],
     ['HydrationBoundary options', 'boundary'],
     ['client defaults', 'defaults'],
   ] as const)(
@@ -420,7 +493,9 @@ describe('Server side rendering with de/rehydration', () => {
       hydrate(renderClient, dehydrated, hydrationOptions)
       const markup = ReactDOMServer.renderToString(
         <QueryClientProvider client={renderClient}>
-          <DateComponent />
+          <HydrationBoundary state={dehydrated} options={hydrationOptions}>
+            <DateComponent />
+          </HydrationBoundary>
         </QueryClientProvider>,
       )
       renderClient.clear()
@@ -436,32 +511,21 @@ describe('Server side rendering with de/rehydration', () => {
           },
         },
       })
-      if (optionSource === 'hydrate') {
-        hydrate(queryClient, dehydrated, hydrationOptions)
-      } else if (optionSource === 'defaults') {
+      if (optionSource === 'defaults') {
         hydrate(queryClient, dehydrated)
       }
 
       const el = document.createElement('div')
       el.innerHTML = markup
       const onRecoverableError = vi.fn()
-      const children =
-        optionSource === 'boundary' ? (
-          <HydrationBoundary state={dehydrated} options={hydrationOptions}>
+      const unmount = ReactHydrate(
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary
+            state={dehydrated}
+            options={optionSource === 'boundary' ? hydrationOptions : undefined}
+          >
             <DateComponent />
           </HydrationBoundary>
-        ) : (
-          <DateComponent />
-        )
-      const unmount = ReactHydrate(
-        <QueryClientProvider
-          client={queryClient}
-          serverSnapshot={dehydrated}
-          serverSnapshotOptions={
-            optionSource === 'defaults' ? undefined : hydrationOptions
-          }
-        >
-          {children}
         </QueryClientProvider>,
         el,
         { onRecoverableError },
@@ -516,7 +580,9 @@ describe('Server side rendering with de/rehydration', () => {
     hydrate(renderClient, dehydrated)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
-        <SuccessComponent />
+        <HydrationBoundary state={dehydrated}>
+          <SuccessComponent />
+        </HydrationBoundary>
       </QueryClientProvider>,
     )
     renderClient.clear()
@@ -549,8 +615,10 @@ describe('Server side rendering with de/rehydration', () => {
 
     const onRecoverableError = vi.fn()
     const unmount = ReactHydrate(
-      <QueryClientProvider client={queryClient} serverSnapshot={dehydrated}>
-        <SuccessComponent />
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydrated}>
+          <SuccessComponent />
+        </HydrationBoundary>
       </QueryClientProvider>,
       el,
       { onRecoverableError },
