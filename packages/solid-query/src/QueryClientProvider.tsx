@@ -39,14 +39,20 @@ export const HYDRATION_KEY_PREFIX = 'sq:'
  *
  * A mutation can additionally declare its invalidation SCOPE with
  * `X-Revalidate` keys (the `revalidate` option of Solid's `reload`/
- * `redirect` response helpers). The payload covers the slice of that scope
- * the server could recompute; whatever a declared key matches beyond it is
- * swept client-side (see the consumer below). For the sweep to be
- * delivered, the collector must contribute a slice — return the dehydrated
- * state even when it holds no queries if `outcome.revalidateKeys` is
- * present, rather than skipping the source.
+ * `redirect`/`respond` response helpers). The payload covers the slice of
+ * that scope the server could recompute; whatever a declared key matches
+ * beyond it is swept client-side (see the consumer below). The transport
+ * delivers a response carrying keys to the consumer whether or not the
+ * collector contributed a slice — with no slice, the whole scope is swept.
  */
 export const FLIGHT_DATA_SOURCE = 'sq'
+
+/**
+ * The reserved `X-Revalidate` key meaning every entry: `revalidate: '*'`
+ * on Solid's response helpers. Named so a host that keys its cache
+ * differently still reads the same spelling as "all".
+ */
+const REVALIDATE_ALL = '*'
 
 /**
  * The client half of key-scoped invalidation. A mutation declares its
@@ -61,24 +67,44 @@ export const FLIGHT_DATA_SOURCE = 'sq'
  * A key matches by queryKey prefix — `revalidate: 'users'` sweeps every
  * query whose key begins with `'users'`. Payload-covered hashes are exempt:
  * they hydrated with fresh data a moment ago, and refetching them would
- * spend the round trip single flight just saved.
+ * spend the round trip single flight just saved. The payload is absent
+ * when the server folded no slice for this cache (no collector registered,
+ * a redirect leaving the app) — then nothing is covered and the declared
+ * scope is swept in full.
+ *
+ * The header's three states are three scopes. Absent: the mutation
+ * declared nothing, and this cache is left as it is — the route data the
+ * router reloads is its own business, and a response helper without
+ * `revalidate` is a host-default that Solid Router reads as "everything"
+ * but the query cache does not presume. Empty (`revalidate: []`): nothing,
+ * explicitly. The reserved key `*` (`revalidate: '*'`): every query in the
+ * cache, minus what the payload covered — the way to say "all" to any
+ * host, rather than relying on one host's default.
  */
 function sweepRevalidatedQueries(
   client: QueryClient,
-  payload: DehydratedState,
+  payload: DehydratedState | undefined,
   response: Response,
 ): void {
-  const keys = response.headers.get(REVALIDATE_HEADER)?.split(',')
-  if (!keys) return
-  const covered = new Set(payload.queries.map((query) => query.queryHash))
+  const declared = response.headers.get(REVALIDATE_HEADER)
+  if (declared === null) return
+  const covered = new Set(
+    payload?.queries.map((query) => query.queryHash) ?? [],
+  )
+  const uncovered = (query: Query) => !covered.has(query.queryHash)
+  const keys = declared.split(',')
+  // Background refetch failures surface through the queries' own error
+  // states; an unhandled rejection here would fail the mutation instead.
+  if (keys.includes(REVALIDATE_ALL)) {
+    client.invalidateQueries({ predicate: uncovered }).catch(() => undefined)
+    return
+  }
   for (const key of keys) {
+    // An empty key is the empty declaration's spelling, not a prefix that
+    // happens to match everything.
+    if (!key) continue
     client
-      .invalidateQueries({
-        queryKey: [key],
-        predicate: (query) => !covered.has(query.queryHash),
-      })
-      // Background refetch failures surface through the queries' own error
-      // states; an unhandled rejection here would fail the mutation instead.
+      .invalidateQueries({ queryKey: [key], predicate: uncovered })
       .catch(() => undefined)
   }
 }
@@ -208,6 +234,8 @@ export const QueryClientProvider = (
       subscribeFlightData<DehydratedState>(
         FLIGHT_DATA_SOURCE,
         (data, context) => {
+          // `data` is undefined for a response that carried metadata but
+          // no slice for this cache; `hydrate` ignores a non-object.
           hydrate(props.client, data)
           // Fresh data first, then the declared-scope sweep: stale marks
           // land synchronously, refetches run in the background — the
