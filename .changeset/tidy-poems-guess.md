@@ -1,5 +1,5 @@
 ---
-'@tanstack/react-query': minor
+'@tanstack/react-query': patch
 ---
 
-Add optional `serverSnapshot` and `serverSnapshotOptions` props to `QueryClientProvider`. When supplied with the same state and hydration options used to hydrate the client, `useQuery` and the other hooks built on `useBaseQuery` replay the frozen, deserialized server-rendered result during hydration (through `useSyncExternalStore`'s server snapshot) before switching to the live cache. This prevents hydration mismatches when a streamed query promise resolves before the browser hydrates, which previously made the first client render differ from the server markup.
+Make queries inside a `HydrationBoundary` replay the boundary's server-rendered state during hydration before switching to the live cache. This prevents hydration mismatches when the cache changes before browser hydration, including when a query above the boundary creates an empty cache entry or a streamed promise resolves early.
