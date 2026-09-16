@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { QueryClient, dehydrate } from '@tanstack/query-core'
+import { QueryClient, dehydrate, hashKey } from '@tanstack/query-core'
 import { removeOldestQuery } from '../retryStrategies'
 import type { PersistedClient } from '../persist'
 
@@ -22,7 +22,7 @@ describe('removeOldestQuery', () => {
   ): PersistedQuery {
     queryClient.setQueryData([queryHash], 'data')
     const query = dehydrate(queryClient).queries.find(
-      (dehydratedQuery) => dehydratedQuery.queryHash === `["${queryHash}"]`,
+      (dehydratedQuery) => dehydratedQuery.queryHash === hashKey([queryHash]),
     )!
     return { ...query, state: { ...query.state, dataUpdatedAt } }
   }
