@@ -5,8 +5,7 @@ title: Migrating from ngneat/query
 
 Angular Query requires Angular 20.1 or newer.
 
-This guide uses `@ngneat/query` in its examples. The same migration applies to its
-`@openng/query` fork.
+This guide uses `@ngneat/query` in its examples.
 
 ## Replace the packages
 
@@ -18,8 +17,6 @@ unless your application imports it independently.
 npm uninstall @ngneat/query @ngneat/query-devtools @tanstack/query-core
 npm install @tanstack/angular-query @tanstack/angular-query-devtools
 ```
-
-If you use OpenNG, uninstall `@openng/query` and `@openng/query-devtools` instead.
 
 ## Configure the `QueryClient`
 
