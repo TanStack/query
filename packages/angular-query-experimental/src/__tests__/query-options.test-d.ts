@@ -76,8 +76,7 @@ it('should work when passed to fetchQuery', () => {
     queryFn: () => Promise.resolve(5),
   })
 
-  // grandfathered direct test
-  // eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
   const data = new QueryClient().fetchQuery(options)
   assertType<Promise<number>>(data)
 })

@@ -157,8 +157,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    // grandfathered direct test
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -172,8 +171,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    // grandfathered direct test
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
