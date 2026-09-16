@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
-    "compile": "tsc --build",
+    "compile": "tsc --project tsconfig.json",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:lib": "vitest",
