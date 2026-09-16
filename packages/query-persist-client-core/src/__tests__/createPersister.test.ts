@@ -92,6 +92,32 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
+  it('should restore a stored zero value', async () => {
+    const queryClient = new QueryClient()
+    const queryKey = ['foo']
+    queryClient.setQueryData(queryKey, 'cached')
+    const query = queryClient.getQueryCache().find({ queryKey })!
+    const deserialize = vi.fn(() => ({
+      buster: '',
+      queryHash: query.queryHash,
+      queryKey: query.queryKey,
+      state: query.state,
+    }))
+    const persister = experimental_createQueryPersister<number>({
+      storage: {
+        getItem: () => 0,
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+      },
+      deserialize,
+    })
+
+    await expect(persister.retrieveQuery(query.queryHash)).resolves.toBe(
+      'cached',
+    )
+    expect(deserialize).toHaveBeenCalledExactlyOnceWith(0)
+  })
+
   it('should fetch if query already has data', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn } = setupPersister(['foo'], {
