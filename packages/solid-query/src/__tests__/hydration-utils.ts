@@ -3,8 +3,9 @@
  *
  * The fixture app in `fixtures/hydration/` is built with vite in a plain node
  * subprocess (vite/esbuild cannot run inside the jsdom worker): a server
- * bundle, a streaming server bundle, and a hydratable client bundle. The
- * subprocess also executes both server entries and returns their reports.
+ * bundle, a streaming server bundle, a boundary-less disabled-query bundle,
+ * and a hydratable client bundle. The subprocess also executes every server
+ * entry and returns their reports.
  */
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync } from 'node:fs'
@@ -49,6 +50,14 @@ export interface ServerReport {
     counts: { header: number; feed: number }
     queries: Array<QuerySnapshot>
     cacheEmptyAfterDispose: boolean
+  }
+  /** Boundary-less render of a single disabled query — see
+   * `fixtures/hydration/entry-server-disabled.tsx`. */
+  disabled: {
+    /** False if the render timed out instead of completing. */
+    finished: boolean
+    html: string
+    fetches: number
   }
 }
 

@@ -531,6 +531,18 @@ export function useBaseQueryLayer<
       if (!isServer) observer.setOptions(opts as any)
       return chainOnce(q.fetch(opts as any), select, wrap)
     }
+    /**
+     * Disabled, with nothing cached. The three guards above are all
+     * unreachable on the server, but this one is not, and parking here has
+     * no server meaning: the render has to finish, and nothing will enable
+     * the query or write the cache before it does. So commit the idle
+     * value — 'pending' with no data IS a disabled query's settled SSR
+     * truth, which is the contract `serverMeta` already honors by not
+     * tying its read to this node while disabled, and it is the state the
+     * client hydrates to. Committed rather than passed through `wrap`:
+     * `select` must not be invoked on absent data.
+     */
+    if (isServer) return { value: undefined as TData }
     return NEVER
   }
 

@@ -99,6 +99,21 @@ describe('SSR hydration', () => {
     )
   })
 
+  it('finishes a render that reads a disabled query', () => {
+    // A disabled query has nothing in flight, nothing cached, and nothing
+    // that can enable it or write the cache before the render finishes, so
+    // a server read of it has nothing to wait on. Its idle state is the
+    // settled SSR truth: the render must complete and serialize that,
+    // rather than park the reader the way the client does (where a later
+    // enable, refetch or cache write revives the compute). Rendered
+    // without a boundary, so parking cannot hide as a fallback.
+    const { disabled } = harness.report
+    expect(disabled.finished).toBe(true)
+    expect(disabled.fetches).toBe(0)
+    const out = /<div [^>]*id="out"[^>]*>(.*?)<\/div>/.exec(disabled.html)![1]!
+    expect(out.replace(/<!--[^>]*-->/g, '')).toBe('undefined|pending|false')
+  })
+
   it('clears the per-request cache when the render disposes', () => {
     // The provider's dispose-time teardown (cancel + clear) must leave
     // nothing behind: user-configured finite gcTime schedules timers on
