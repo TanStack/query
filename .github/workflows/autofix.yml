@@ -23,6 +23,8 @@ jobs:
           persist-credentials: false
       - name: Setup Tools
         uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Generate reference docs
+        run: pnpm run generate-docs
       - name: Fix formatting
         run: pnpm run format
       - name: Apply fixes
