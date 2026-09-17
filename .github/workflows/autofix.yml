@@ -21,6 +21,9 @@ permissions:
 
 jobs:
   autofix:
+    # Skip pushes of this workflow's own commit; matches the `commit-message` below. A manual
+    # `workflow_dispatch` carries no `head_commit`, so it always runs — the way to force a rerun.
+    if: ${{ !contains(github.event.head_commit.message, 'apply automated fixes') }}
     name: autofix
     runs-on: ubuntu-latest
     steps:
