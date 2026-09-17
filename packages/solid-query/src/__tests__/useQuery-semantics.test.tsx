@@ -510,4 +510,84 @@ describe('useQuery 2.0 read semantics', () => {
       expect(rendered.getByText('n: 42')).toBeInTheDocument()
     })
   })
+
+  describe('cache removal', () => {
+    // `removeQueries()` drops entries instead of refetching them, and a
+    // mounted observer must not undo that: the read layer recomputes on the
+    // 'removed' event, and rebuilding the entry there would re-point the
+    // observer and let its mount-fetch policy repopulate the removed key.
+    it('leaves a removed query out of the cache while an observer is mounted', async () => {
+      const key = queryKey()
+      let fetches = 0
+      const queryFn = () =>
+        sleep(10).then(() => (++fetches === 1 ? 'v1' : 'v2'))
+      const events: Array<string> = []
+
+      function Page() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn,
+          staleTime: 60_000,
+        }))
+        return <span>{state.data}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('v1')).toBeInTheDocument()
+
+      queryCache.subscribe((event) => events.push(event.type))
+      queryClient.removeQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(30)
+
+      // No 'added' behind the 'removed', so nothing re-created the entry.
+      expect(events).toEqual(['removed'])
+      expect(queryCache.getAll()).toHaveLength(0)
+      expect(queryClient.getQueryData(key)).toBeUndefined()
+      // The removal is not a refetch trigger.
+      expect(fetches).toBe(1)
+      // The mounted reader holds the value it last had, rather than
+      // suspending back into <Loading> over a key that no longer exists.
+      expect(rendered.getByText('v1')).toBeInTheDocument()
+    })
+
+    it('picks up a real entry written after a removal', async () => {
+      const key = queryKey()
+
+      function Page() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'v1'),
+          staleTime: 60_000,
+        }))
+        return <span>{state.data}</span>
+      }
+
+      const rendered = renderWithClient(queryClient, () => (
+        <Loading fallback={<span>loading</span>}>
+          <Page />
+        </Loading>
+      ))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(rendered.getByText('v1')).toBeInTheDocument()
+
+      queryClient.removeQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryCache.getAll()).toHaveLength(0)
+
+      // The held-over entry must not shadow the cache once it owns the hash
+      // again: a write rebuilds it, and the reader tracks the new instance.
+      queryClient.setQueryData(key, 'v2')
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryCache.getAll()).toHaveLength(1)
+      expect(rendered.getByText('v2')).toBeInTheDocument()
+    })
+  })
 })

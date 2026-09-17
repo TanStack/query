@@ -216,6 +216,27 @@ export function useBaseQueryLayer<
    * swap re-attaches the rebuilt observer iff its predecessor was attached. */
   let shouldAttach = false
   let activeClient = untrack(client)
+  /**
+   * The entry this hook last read at its current hash, and the fallback for
+   * `query()` when the cache no longer holds that hash. Removal is the case
+   * that needs it: `removeQueries()` (or `clear()`) fires 'removed' for a
+   * hash this hook is mounted on, which bumps `version` and re-runs every
+   * derived read, and a plain `build()` there would re-create the entry the
+   * caller just removed. That resurrection is not passive, since the 'added'
+   * entry also re-points the still-live observer, whose mount-fetch policy
+   * then refetches and repopulates the key, contrary to `removeQueries`
+   * being documented to remove entries instead of refetching them.
+   *
+   * The removed instance keeps its final state, so reads hold their last
+   * value until options change or a real entry returns (`setQueryData`, a
+   * refetch, a later mount). That is what the other adapters do: a React
+   * observer keeps rendering the removed query's last result while the
+   * cache stays empty.
+   *
+   * Cleared on a client swap, below: the fallback is only meaningful for the
+   * cache it was read from.
+   */
+  let lastQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
 
   const attach = () => {
     if (!disposed && !observerSub && !untrack(isRestoring)) {
@@ -236,6 +257,7 @@ export function useBaseQueryLayer<
   const syncClient = (c: QueryClient) => {
     if (isServer || c === activeClient) return
     activeClient = c
+    lastQuery = undefined
     cacheSub?.()
     cacheSub = c.getQueryCache().subscribe(onCacheEvent)
     observerSub?.()
@@ -365,7 +387,14 @@ export function useBaseQueryLayer<
     version()
     const c = client()
     syncClient(c)
-    return c.getQueryCache().build(c, defaultedOptions() as any) as any
+    const cache = c.getQueryCache()
+    const opts = defaultedOptions()
+    const existing = cache.get<TQueryFnData, TError, TQueryData, TQueryKey>(
+      opts.queryHash,
+    )
+    if (existing) return (lastQuery = existing)
+    if (lastQuery?.queryHash === opts.queryHash) return lastQuery
+    return (lastQuery = cache.build(c, opts as any) as any)
   }
 
   const isEnabled = () => {
