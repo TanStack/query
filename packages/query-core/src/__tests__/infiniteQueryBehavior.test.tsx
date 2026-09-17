@@ -474,6 +474,30 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
+  it('should preserve a null first page parameter when refetching', async () => {
+    const key = queryKey()
+    const pageParams: Array<unknown> = []
+    const queryFn = ({ pageParam }: { pageParam: unknown }) => {
+      pageParams.push(pageParam)
+      return String(pageParam)
+    }
+
+    await queryClient.infiniteQuery({
+      queryKey: key,
+      queryFn,
+      initialPageParam: null,
+      getNextPageParam: () => undefined,
+    })
+    await queryClient.infiniteQuery({
+      queryKey: key,
+      queryFn,
+      initialPageParam: 'replacement',
+      getNextPageParam: () => undefined,
+    })
+
+    expect(pageParams).toEqual([null, null])
+  })
+
   it('should not fetch next page when getNextPageParam returns null', async () => {
     const key = queryKey()
 

@@ -97,7 +97,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           do {
             const param =
               currentPage === 0
-                ? (oldPageParams[0] ?? options.initialPageParam)
+                ? oldPageParams[0] === undefined
+                  ? options.initialPageParam
+                  : oldPageParams[0]
                 : getNextPageParam(options, result)
             if (currentPage > 0 && param == null) {
               break
