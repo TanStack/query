@@ -1,5 +1,37 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.4
+
+### Patch Changes
+
+- [#11449](https://github.com/TanStack/query/pull/11449) [`fd3f1c9`](https://github.com/TanStack/query/commit/fd3f1c9462f65382d90b1b058bafe214f3c37b69) - fix: finish server renders that read a disabled query. Reading `.data` from a
+  `useQuery` with `enabled: false` and nothing cached stopped an SSR render from
+  ever completing — no bytes at all, since the data node was handed a promise
+  that can never settle. That parking is intended client behaviour (the reader
+  suspends into the nearest `<Loading>` until an enable, refetch or cache write
+  revives the compute), but on the server there is no later: the render has to
+  finish, and nothing will enable the query or write the cache before it does.
+  A disabled query with no data now commits its idle state on the server, which
+  is the contract the scalar metadata channel already honoured and the state the
+  client hydrates to. Client behaviour is unchanged.
+
+- [#11517](https://github.com/TanStack/query/pull/11517) [`09f2666`](https://github.com/TanStack/query/commit/09f266618d1360f49e87b94a686b57ccc501635a) - The single-flight consumer applies `X-Revalidate` on responses that carried no slice for the query cache (no collector registered, a redirect leaving the app) instead of throwing on the missing payload — nothing is covered, so the declared scope is swept in full. The header's three states are three scopes: absent leaves the cache alone, an empty declaration (`revalidate: []`) sweeps nothing, and the reserved key `*` (`revalidate: '*'`) invalidates every query the payload did not cover.
+
+- [#11360](https://github.com/TanStack/query/pull/11360) [`0e6ff54`](https://github.com/TanStack/query/commit/0e6ff548b813e47b9844a931c85bc9fefda96643) - fix: stop a mounted observer from re-creating and refetching a removed
+  query. The read layer bumps its per-hook version signal on every cache
+  event for its hash, `removed` included, and the recompute that followed
+  called `queryCache.build()`, which put the entry the caller had just
+  deleted straight back. The resurrection was not passive: the rebuilt
+  entry also re-pointed the still-live observer, whose mount-fetch policy
+  then refetched and repopulated the key, so `removeQueries()` (and
+  `clear()`) could not be made to stick while any hook observed the key.
+  `query()` now reuses the entry it last read when the cache no longer
+  holds that hash, and only builds when the hash is genuinely new, so a
+  removal leaves the cache empty and fires no fetch, while the mounted
+  reader holds its last value until options change or a real entry returns
+  through `setQueryData`, a refetch or a later mount. This is the behavior
+  of the other adapters, and of solid-query at 6.0.0-rc.0.
+
 ## 6.0.0-rc.3
 
 ### Patch Changes
