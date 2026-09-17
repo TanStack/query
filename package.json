@@ -29,7 +29,7 @@
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
     "dev": "pnpm run watch",
     "format": "prettier --experimental-cli --ignore-unknown '**/*' --write",
-    "generate-docs": "node scripts/generate-docs.ts",
+    "generate-docs": "tsc -b packages/query-devtools/tsconfig.json && node scripts/generate-docs.ts",
     "changeset": "changeset",
     "changeset:version": "changeset version && pnpm install --no-frozen-lockfile && pnpm format",
     "changeset:publish": "changeset publish"
