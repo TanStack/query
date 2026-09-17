@@ -12,7 +12,6 @@ Defined in: [packages/query-core/src/types.ts:380](https://github.com/TanStack/q
 ## Extended by
 
 - [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
-- [`CreateBaseQueryOptions`](CreateBaseQueryOptions.md)
 
 ## Type Parameters
 

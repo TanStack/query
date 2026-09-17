@@ -3,16 +3,11 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:121](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L121)
-
-The options accepted by `injectInfiniteQuery`. Same as [CreateBaseQueryOptions](CreateBaseQueryOptions.md), minus `suspense` —
-which `angular-query-experimental` doesn't support, unlike `react-query` — extends
-[InfiniteQueryObserverOptions](InfiniteQueryObserverOptions.md) from `@tanstack/query-core` for the infinite-query-specific options
-(`getNextPageParam`, `initialPageParam`, etc.).
+Defined in: [packages/angular-query/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L174)
 
 ## Extends
 
-- [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>, `"suspense"`\>
+- `OmitKeyof`\<`InfiniteQueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>, `"notifyOnChangeProps"` \| `"suspense"` \| `"throwOnError"`\>
 
 ## Type Parameters
 

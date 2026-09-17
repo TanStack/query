@@ -3,42 +3,25 @@ id: quick-start
 title: Quick Start
 ---
 
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
-
 [//]: # 'Example'
 
 If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](./examples/basic)
 
-### Provide the client to your App
+### Configure the QueryClient
+
+Pass a factory to `provideTanStackQuery`. Angular runs it once per injector and in an injection context, so it can use `inject()`.
 
 ```ts
 import { provideHttpClient } from '@angular/common/http'
-import {
-  provideTanStackQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
+import { bootstrapApplication } from '@angular/platform-browser'
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(), provideTanStackQuery(new QueryClient())],
+  providers: [
+    provideHttpClient(),
+    provideTanStackQuery(() => new QueryClient()),
+  ],
 })
-```
-
-or in a NgModule-based app
-
-```ts
-import { provideHttpClient } from '@angular/common/http'
-import {
-  provideTanStackQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule],
-  providers: [provideTanStackQuery(new QueryClient())],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
 ```
 
 ### Component with query and mutation
@@ -52,7 +35,7 @@ import {
   injectMutation,
   injectQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 @Component({
   template: `

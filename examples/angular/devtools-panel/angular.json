@@ -80,6 +80,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": { "exclude": ["@angular"] }
+          },
           "configurations": {
             "production": {
               "buildTarget": "devtools-panel:build:production"

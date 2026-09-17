@@ -25,6 +25,7 @@ packages:
   - '!examples/vue/nuxt*'
 
 overrides:
+  '@inquirer/external-editor': '3.0.5'
   'chokidar': '5.0.0'
   '@types/react': '^19.2.7'
   '@types/react-dom': '^19.2.3'
@@ -42,6 +43,7 @@ overrides:
   '@typescript-eslint/visitor-keys': '8.58.1'
   typescript-eslint: '8.58.1'
   vite: '^6.4.1'
+  '@angular/build@22.1.8>vite': '7.1.11'
   esbuild: '^0.27.2'
 
 allowBuilds:

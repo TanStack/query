@@ -3,12 +3,7 @@ id: BaseQueryNarrowing
 title: BaseQueryNarrowing
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:83](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L83)
-
-The `isSuccess`/`isError`/`isPending` methods on a query result. Unlike `react-query`'s derived booleans,
-these are type-guard methods you call — `if (query.isSuccess())` — so that `query.data` narrows away
-`undefined` inside the branch, the same way `status` narrowing works on the plain object `react-query`
-returns.
+Defined in: [packages/angular-query/src/types.ts:60](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L60)
 
 ## Type Parameters
 
@@ -26,60 +21,30 @@ The type of errors your `queryFn` may throw.
 
 ## Properties
 
-### isError()
+### isError
 
 ```ts
-isError: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>;
+isError: SignalFunction<(this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:91](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L91)
-
-#### Parameters
-
-##### this
-
-[`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
-
-#### Returns
-
-`this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>`
+Defined in: [packages/angular-query/src/types.ts:70](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L70)
 
 ***
 
-### isPending()
+### isPending
 
 ```ts
-isPending: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>;
+isPending: SignalFunction<(this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:98](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L98)
-
-#### Parameters
-
-##### this
-
-[`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
-
-#### Returns
-
-`this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>`
+Defined in: [packages/angular-query/src/types.ts:79](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L79)
 
 ***
 
-### isSuccess()
+### isSuccess
 
 ```ts
-isSuccess: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>;
+isSuccess: SignalFunction<(this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:84](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L84)
-
-#### Parameters
-
-##### this
-
-[`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
-
-#### Returns
-
-`this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>`
+Defined in: [packages/angular-query/src/types.ts:61](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L61)
