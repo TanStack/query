@@ -171,7 +171,12 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
 
   // `outputDir` was emptied above, so a failed conversion would otherwise leave it that way and
   // look like every page was intentionally deleted. Fail loudly instead — TypeDoc reports the
-  // underlying diagnostics (e.g. TS6305 when a referenced project has not been built) on stderr.
+  // underlying diagnostics on stderr.
+  //
+  // The most likely cause is TS6305: `angular-query-experimental` reaches `@tanstack/query-devtools`
+  // through a TypeScript project reference, so it consumes that package's emitted `.d.ts` rather than
+  // its source (which is solid-js JSX and cannot be compiled under Angular's tsconfig). The
+  // `generate-docs` script builds it first, so this should only surface if that build was skipped.
   if (!project) {
     throw new Error(
       `TypeDoc failed to convert ${pkg.entryPoints.join(', ')}. See the diagnostics above.`,

@@ -23,12 +23,6 @@ jobs:
           persist-credentials: false
       - name: Setup Tools
         uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
-      # `angular-query-experimental` reaches `@tanstack/query-devtools` through a TypeScript project
-      # reference, so it reads that package's emitted `.d.ts` rather than its source — the source is
-      # solid-js JSX, which cannot be compiled under Angular's tsconfig. Without this build TypeDoc
-      # fails with TS6305 and emits no Angular pages.
-      - name: Build referenced packages
-        run: npx tsc -b packages/query-devtools/tsconfig.json
       - name: Generate reference docs
         run: pnpm run generate-docs
       - name: Fix formatting
