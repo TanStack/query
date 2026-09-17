@@ -169,20 +169,27 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
 
   const project = await app.convert()
 
-  if (project) {
-    if (pkg.simplifyLitQueriesControllerTypes) {
-      simplifyLitQueriesControllerTypes(project)
-    }
+  // `outputDir` was emptied above, so a failed conversion would otherwise leave it that way and
+  // look like every page was intentionally deleted. Fail loudly instead — TypeDoc reports the
+  // underlying diagnostics (e.g. TS6305 when a referenced project has not been built) on stderr.
+  if (!project) {
+    throw new Error(
+      `TypeDoc failed to convert ${pkg.entryPoints.join(', ')}. See the diagnostics above.`,
+    )
+  }
 
-    await app.generateOutputs(project)
+  if (pkg.simplifyLitQueriesControllerTypes) {
+    simplifyLitQueriesControllerTypes(project)
+  }
 
-    if (pkg.trimGeneratedMarkdown) {
-      await trimTrailingWhitespaceInMarkdown(outputDir)
-    }
+  await app.generateOutputs(project)
 
-    if (pkg.redirectFrom) {
-      await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
-    }
+  if (pkg.trimGeneratedMarkdown) {
+    await trimTrailingWhitespaceInMarkdown(outputDir)
+  }
+
+  if (pkg.redirectFrom) {
+    await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
   }
 }
 
