@@ -232,5 +232,102 @@ describe('single-flight data source', () => {
       expect(queryClient.getQueryState(['posts', 1])!.isInvalidated).toBe(true)
       expect(queryClient.getQueryState(['tags'])!.isInvalidated).toBe(false)
     })
+
+    it('sweeps the whole declared scope when no slice was folded', async () => {
+      // The transport delivers a metadata-bearing response to every
+      // registered consumer, slice or not: no collector registered, or a
+      // redirect leaving the app. Nothing is covered, so every match of a
+      // declared key is swept.
+      render(() => (
+        <QueryClientProvider client={queryClient}>
+          <div />
+        </QueryClientProvider>
+      ))
+      queryClient.setQueryData(['users'], 'cached')
+      queryClient.setQueryData(['users', 2], 'cached')
+      queryClient.setQueryData(['posts', 1], 'cached')
+
+      const consumer = getFlightDataConsumer(FLIGHT_DATA_SOURCE)!
+      await consumer(undefined, { response: revalidateResponse('users') })
+
+      expect(queryClient.getQueryState(['users'])!.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(['users', 2])!.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(['posts', 1])!.isInvalidated).toBe(false)
+    })
+
+    it("'*' sweeps every query the payload did not cover", async () => {
+      // `revalidate: '*'` is the host-independent spelling of "all": the
+      // whole cache goes stale except what the flight payload just seeded.
+      render(() => (
+        <QueryClientProvider client={queryClient}>
+          <div />
+        </QueryClientProvider>
+      ))
+      queryClient.setQueryData(['users', 2], 'cached')
+      queryClient.setQueryData(['posts', 1], 'cached')
+      queryClient.setQueryData(['tags'], 'cached')
+      await vi.advanceTimersByTimeAsync(10)
+
+      const consumer = getFlightDataConsumer(FLIGHT_DATA_SOURCE)!
+      await consumer(flightSlice(['tags'], 'fresh-tags'), {
+        response: revalidateResponse('*'),
+      })
+
+      expect(queryClient.getQueryState(['users', 2])!.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(['posts', 1])!.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(['tags'])!.isInvalidated).toBe(false)
+      expect(queryClient.getQueryData(['tags'])).toBe('fresh-tags')
+    })
+
+    it("'*' with no slice sweeps the whole cache", async () => {
+      render(() => (
+        <QueryClientProvider client={queryClient}>
+          <div />
+        </QueryClientProvider>
+      ))
+      queryClient.setQueryData(['users', 2], 'cached')
+      queryClient.setQueryData(['posts', 1], 'cached')
+
+      const consumer = getFlightDataConsumer(FLIGHT_DATA_SOURCE)!
+      await consumer(undefined, { response: revalidateResponse('*') })
+
+      expect(queryClient.getQueryState(['users', 2])!.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(['posts', 1])!.isInvalidated).toBe(true)
+    })
+
+    it('an empty declaration sweeps nothing', async () => {
+      // `revalidate: []` narrows the scope to zero keys — distinct from the
+      // header being absent, and never a prefix that matches everything.
+      render(() => (
+        <QueryClientProvider client={queryClient}>
+          <div />
+        </QueryClientProvider>
+      ))
+      queryClient.setQueryData(['users', 2], 'cached')
+      queryClient.setQueryData([''], 'cached')
+
+      const consumer = getFlightDataConsumer(FLIGHT_DATA_SOURCE)!
+      await consumer(undefined, { response: revalidateResponse('') })
+
+      expect(queryClient.getQueryState(['users', 2])!.isInvalidated).toBe(false)
+      expect(queryClient.getQueryState([''])!.isInvalidated).toBe(false)
+    })
+
+    it('a response with neither slice nor keys leaves the cache alone', async () => {
+      // A redirect with no `revalidate` and nothing folded: the router
+      // navigates; the cache has been told nothing.
+      render(() => (
+        <QueryClientProvider client={queryClient}>
+          <div />
+        </QueryClientProvider>
+      ))
+      queryClient.setQueryData(['users'], 'cached')
+
+      const consumer = getFlightDataConsumer(FLIGHT_DATA_SOURCE)!
+      await consumer(undefined, { response: new Response(null) })
+
+      expect(queryClient.getQueryState(['users'])!.isInvalidated).toBe(false)
+      expect(queryClient.getQueryData(['users'])).toBe('cached')
+    })
   })
 })
