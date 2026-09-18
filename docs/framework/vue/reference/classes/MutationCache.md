@@ -18,7 +18,7 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new MutationCache(config): MutationCache;
+new MutationCache(config: MutationCacheConfig): MutationCache;
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
@@ -106,7 +106,7 @@ MC.clear
 ### find()
 
 ```ts
-find<TData, TError, TVariables, TOnMutateResult>(filters): 
+find<TData, TError, TVariables, TOnMutateResult>(filters: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): 
   | Mutation<TData, TError, TVariables, TOnMutateResult>
   | undefined;
 ```
@@ -171,7 +171,7 @@ MC.find
 ### findAll()
 
 ```ts
-findAll(filters): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
 Defined in: [packages/vue-query/src/mutationCache.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationCache.ts#L27)
@@ -308,7 +308,7 @@ MC.onUnsubscribe
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: MutationCacheListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

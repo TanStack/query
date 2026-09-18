@@ -4,7 +4,7 @@ title: useSuspenseQuery
 ---
 
 ```ts
-function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
+function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseSuspenseQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/preact-query/src/useSuspenseQuery.ts:95](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L95)

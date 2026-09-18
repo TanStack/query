@@ -4,7 +4,7 @@ title: queryFeature
 ---
 
 ```ts
-function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
+function queryFeature<TFeatureKind>(kind: TFeatureKind, providers: Provider[]): QueryFeature<TFeatureKind>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/providers.ts:143](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L143)

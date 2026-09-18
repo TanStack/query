@@ -45,7 +45,8 @@ export interface UseBaseQueryOptions<
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
+   *
+   * @defaultValue false
    */
   deferStream?: boolean
   /**
@@ -175,7 +176,8 @@ export interface InfiniteQueryOptions<
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
+   *
+   * @defaultValue false
    */
   deferStream?: boolean
   /**

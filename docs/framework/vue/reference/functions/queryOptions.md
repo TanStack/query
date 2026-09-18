@@ -6,7 +6,7 @@ title: queryOptions
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/vue-query/src/queryOptions.ts:244](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L244)
@@ -75,7 +75,7 @@ const { data, isError, error } = useQuery(postsOptions)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): () => DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: () => DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/vue-query/src/queryOptions.ts:281](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L281)
@@ -149,7 +149,7 @@ const { data } = useQuery(postOptions)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/vue-query/src/queryOptions.ts:326](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L326)
@@ -215,7 +215,7 @@ const { data, isPending, isError, error } = useQuery(postOptions('1'))
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: () => UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/vue-query/src/queryOptions.ts:392](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L392)

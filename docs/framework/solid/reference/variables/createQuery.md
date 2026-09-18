@@ -5,8 +5,8 @@ title: createQuery
 
 ```ts
 const createQuery: {
-<TQueryFnData, TError, TData, TQueryKey>  (options, queryClient?): UseQueryResult<TData, TError>;
-<TQueryFnData, TError, TData, TQueryKey>  (options, queryClient?): DefinedUseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>  (options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>  (options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 } = useQuery;
 ```
 
@@ -15,7 +15,7 @@ Defined in: [packages/solid-query/src/index.ts:57](https://github.com/TanStack/q
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
 ### Type Parameters
@@ -214,7 +214,7 @@ function Posts() {
 ## Call Signature
 
 ```ts
-<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
+<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.

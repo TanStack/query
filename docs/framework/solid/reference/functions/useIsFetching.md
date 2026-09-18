@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsFetching(filters?, queryClient?): Accessor<number>;
+function useIsFetching(filters?: Accessor<QueryFilters<readonly unknown[]>>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
 Defined in: [packages/solid-query/src/useIsFetching.ts:29](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsFetching.ts#L29)

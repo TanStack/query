@@ -5,9 +5,9 @@ title: dehydrateQuery
 
 ```ts
 function dehydrateQuery(
-   query,
-   serializeData?,
-   shouldRedactErrors?): DehydratedQuery;
+   query: Query,
+   serializeData?: TransformerFn,
+   shouldRedactErrors?: (error: unknown) => boolean): DehydratedQuery;
 ```
 
 Defined in: [packages/query-core/src/hydration.ts:148](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L148)
@@ -33,7 +33,7 @@ Optional transform applied to `query.state.data` before it is included in the sn
 
 ### shouldRedactErrors?
 
-(`error`) => `boolean`
+(`error`: `unknown`) => `boolean`
 
 Optional predicate; if it returns `false` for the promise's rejection error, that
 error is kept as-is instead of being redacted.

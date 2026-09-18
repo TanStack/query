@@ -6,7 +6,7 @@ title: mutationOptions
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/vue-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L34)
@@ -76,7 +76,7 @@ const isCreatingPost = computed(() => creatingPosts.value.length > 0)
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/vue-query/src/mutationOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L80)
@@ -153,7 +153,7 @@ const mutation = useMutation(createPostOptions)
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/vue-query/src/mutationOptions.ts:124](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L124)
@@ -225,7 +225,7 @@ const mutation = useMutation(createPostOptions)
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/vue-query/src/mutationOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L169)

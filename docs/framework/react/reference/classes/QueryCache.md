@@ -34,7 +34,7 @@ const unsubscribe = queryCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new QueryCache(config): QueryCache;
+new QueryCache(config: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
@@ -87,9 +87,9 @@ Subscribable.listeners
 
 ```ts
 build<TQueryFnData, TError, TData, TQueryKey>(
-   client, 
-   options, 
-state?): Query<TQueryFnData, TError, TData, TQueryKey>;
+   client: QueryClient, 
+   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">, 
+state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:147](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L147)
@@ -175,7 +175,7 @@ queryCache.clear()
 ### find()
 
 ```ts
-find<TQueryFnData, TError, TData>(filters): 
+find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly unknown[]>, "queryKey">): 
   | Query<TQueryFnData, TError, TData, readonly unknown[]>
   | undefined;
 ```
@@ -233,7 +233,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 ### findAll()
 
 ```ts
-findAll(filters): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:320](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L320)
@@ -271,7 +271,7 @@ const queries = queryCache.findAll({ queryKey: ['posts'] })
 ### get()
 
 ```ts
-get<TQueryFnData, TError, TData, TQueryKey>(queryHash): 
+get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string): 
   | Query<TQueryFnData, TError, TData, TQueryKey>
   | undefined;
 ```
@@ -410,7 +410,7 @@ Subscribable.onUnsubscribe
 ### remove()
 
 ```ts
-remove(query): void;
+remove(query: Query<any, any, any, any>): void;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L208)
@@ -446,7 +446,7 @@ if (query) {
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: QueryCacheListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

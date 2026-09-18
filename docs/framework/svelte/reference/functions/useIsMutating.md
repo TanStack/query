@@ -4,7 +4,7 @@ title: useIsMutating
 ---
 
 ```ts
-function useIsMutating(filters?, queryClient?): ReactiveValue<number>;
+function useIsMutating(filters?: MutationFilters<unknown, Error, unknown, unknown>, queryClient?: QueryClient): ReactiveValue<number>;
 ```
 
 Defined in: [packages/svelte-query/src/useIsMutating.svelte.ts:28](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsMutating.svelte.ts#L28)

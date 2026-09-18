@@ -16,7 +16,7 @@ Handles scheduling and batching callbacks in TanStack Query.
 ### batch()
 
 ```ts
-readonly batch: <T>(callback) => T;
+readonly batch: <T>(callback: () => T) => T;
 ```
 
 Batches all updates scheduled inside the passed callback.
@@ -43,7 +43,7 @@ The return value of `callback` is passed through.
 ### batchCalls()
 
 ```ts
-readonly batchCalls: <T>(callback) => BatchCallsCallback<T>;
+readonly batchCalls: <T>(callback: BatchCallsCallback<T>) => BatchCallsCallback<T>;
 ```
 
 All calls to the wrapped function will be batched.
@@ -67,7 +67,7 @@ All calls to the wrapped function will be batched.
 ### schedule()
 
 ```ts
-schedule: (callback) => void;
+schedule: (callback: NotifyCallback) => void;
 ```
 
 Schedules a function to be run on the next batch.
@@ -86,7 +86,7 @@ By default, the batch is run with a `setTimeout`, but this can be configured via
 ### setBatchNotifyFunction()
 
 ```ts
-readonly setBatchNotifyFunction: (fn) => void;
+readonly setBatchNotifyFunction: (fn: BatchNotifyFunction) => void;
 ```
 
 Use this method to set a custom function to batch notifications together into a single tick.
@@ -115,7 +115,7 @@ notifyManager.setBatchNotifyFunction(batch)
 ### setNotifyFunction()
 
 ```ts
-readonly setNotifyFunction: (fn) => void;
+readonly setNotifyFunction: (fn: NotifyFunction) => void;
 ```
 
 Use this method to set a custom notify function.
@@ -134,7 +134,7 @@ This can be used to for example wrap notifications with `React.act` while runnin
 ### setScheduler()
 
 ```ts
-readonly setScheduler: (fn) => void;
+readonly setScheduler: (fn: ScheduleFunction) => void;
 ```
 
 Configures a custom callback that schedules when the next batch runs.

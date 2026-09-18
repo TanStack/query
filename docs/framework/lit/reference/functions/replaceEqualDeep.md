@@ -5,9 +5,9 @@ title: replaceEqualDeep
 
 ```ts
 function replaceEqualDeep<T>(
-   a,
-   b,
-   depth?): T;
+   a: unknown,
+   b: T,
+   depth?: number): T;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:340](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L340)

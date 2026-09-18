@@ -6,7 +6,7 @@ title: mutationOptions
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/angular-query-experimental/src/mutation-options.ts:40](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L40)
@@ -82,7 +82,7 @@ export class SavingIndicator {
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/angular-query-experimental/src/mutation-options.ts:98](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L98)

@@ -4,7 +4,7 @@ title: useIsFetching
 ---
 
 ```ts
-function useIsFetching(filters?, queryClient?): ReactiveValue<number>;
+function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): ReactiveValue<number>;
 ```
 
 Defined in: [packages/svelte-query/src/useIsFetching.svelte.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsFetching.svelte.ts#L40)

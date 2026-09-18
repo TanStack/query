@@ -15,19 +15,9 @@ It can be used to change the default event listeners or to manually change the f
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<Listener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
+| Property | Modifier | Type |
+| ------ | ------ | ------ |
+| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
 
 ## Methods
 
@@ -126,7 +116,7 @@ Subscribable.onUnsubscribe
 ### setEventListener()
 
 ```ts
-setEventListener(setup): void;
+setEventListener(setup: SetupFn): void;
 ```
 
 Defined in: [packages/query-core/src/focusManager.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L77)
@@ -171,7 +161,7 @@ focusManager.setEventListener((handleFocus) => {
 ### setFocused()
 
 ```ts
-setFocused(focused?): void;
+setFocused(focused?: boolean): void;
 ```
 
 Defined in: [packages/query-core/src/focusManager.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L107)
@@ -209,7 +199,7 @@ focusManager.setFocused(undefined)
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: Listener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
