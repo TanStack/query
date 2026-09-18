@@ -1,3 +1,4 @@
+import { shouldThrowError } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -71,10 +72,22 @@ export function createBaseQuery<
     createResult(),
   )
 
+  // Separate trigger so the throw-effect below can react to result updates
+  // without reading `query.isError`/`isFetching` there, which would mark them
+  // as tracked on the `trackResult` proxy and permanently widen
+  // `notifyOnChangeProps` for every consumer of this query. This still
+  // notifies reliably once `throwOnError` is set, because `QueryObserver`
+  // force-adds `'error'` to the notified props in that case (see
+  // `queryObserver.ts`), regardless of what any consumer has read.
+  let resultVersion = $state(0)
+
   $effect(() => {
     const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() => update(createResult()))
+      : observer.subscribe(() => {
+          update(createResult())
+          resultVersion++
+        })
     observer.updateResult()
     return unsubscribe
   })
@@ -100,8 +113,28 @@ export function createBaseQuery<
       //
       // this could technically be its own effect but that doesn't seem necessary
       update(createResult())
+      resultVersion++
     },
   )
+
+  $effect(() => {
+    // Must throw from inside this reaction, not from the `subscribe` callback
+    // above (which runs outside any active Svelte reaction) — otherwise
+    // `<svelte:boundary>` never sees the error.
+    void resultVersion
+    const currentResult = observer.getCurrentResult()
+
+    if (
+      currentResult.isError &&
+      !currentResult.isFetching &&
+      shouldThrowError(resolvedOptions.throwOnError, [
+        currentResult.error,
+        observer.getCurrentQuery(),
+      ])
+    ) {
+      throw currentResult.error
+    }
+  })
 
   return query
 }
