@@ -4,7 +4,7 @@ title: shouldThrowError
 ---
 
 ```ts
-function shouldThrowError<T>(throwOnError, params): boolean;
+function shouldThrowError<T>(throwOnError: boolean | T | undefined, params: Parameters<T>): boolean;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:582](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L582)
@@ -19,7 +19,7 @@ resolves to `false`).
 
 ### T
 
-`T` *extends* (...`args`) => `boolean`
+`T` *extends* (...`args`: `any`[]) => `boolean`
 
 ## Parameters
 

@@ -4,7 +4,7 @@ title: keepPreviousData
 ---
 
 ```ts
-function keepPreviousData<T>(previousData): T | undefined;
+function keepPreviousData<T>(previousData: T | undefined): T | undefined;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:499](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L499)

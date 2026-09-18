@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
+function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/react-query/src/usePrefetchQuery.tsx:42](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchQuery.tsx#L42)

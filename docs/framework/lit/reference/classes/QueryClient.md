@@ -28,7 +28,7 @@ await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
 ### Constructor
 
 ```ts
-new QueryClient(config): QueryClient;
+new QueryClient(config: QueryClientConfig): QueryClient;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:89](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L89)
@@ -48,7 +48,7 @@ Defined in: [packages/query-core/src/queryClient.ts:89](https://github.com/TanSt
 ### cancelQueries()
 
 ```ts
-cancelQueries<TTaggedQueryKey>(filters?, cancelOptions?): Promise<void>;
+cancelQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, cancelOptions?: CancelOptions): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:434](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L434)
@@ -116,7 +116,7 @@ queryClient.clear()
 ### defaultMutationOptions()
 
 ```ts
-defaultMutationOptions<T>(options?): T;
+defaultMutationOptions<T>(options?: T): T;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:1063](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1063)
@@ -147,7 +147,9 @@ on top. A no-op if the options are already defaulted (`_defaulted: true`).
 ### defaultQueryOptions()
 
 ```ts
-defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options): DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
+defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options:
+  | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>
+| DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:976](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L976)
@@ -198,7 +200,7 @@ on top. A no-op if the options are already defaulted (`_defaulted: true`).
 ### ~~ensureInfiniteQueryData()~~
 
 ```ts
-ensureInfiniteQueryData<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<InfiniteData<TData, TPageParam>>;
+ensureInfiniteQueryData<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:740](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L740)
@@ -244,7 +246,7 @@ Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This
 ### ~~ensureQueryData()~~
 
 ```ts
-ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options): Promise<TData>;
+ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:197](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L197)
@@ -286,7 +288,7 @@ Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method 
 ### ~~fetchInfiniteQuery()~~
 
 ```ts
-fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<InfiniteData<TData, TPageParam>>;
+fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:695](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L695)
@@ -332,7 +334,7 @@ Use queryClient.infiniteQuery(options) instead. This method will be removed in t
 ### ~~fetchQuery()~~
 
 ```ts
-fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData>;
+fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:602](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L602)
@@ -430,7 +432,7 @@ const mutations = mutationCache.findAll({ status: 'pending' })
 ### getMutationDefaults()
 
 ```ts
-getMutationDefaults(mutationKey): OmitKeyof<MutationObserverOptions<any, any, any, any>, "mutationKey">;
+getMutationDefaults(mutationKey: readonly unknown[]): OmitKeyof<MutationObserverOptions<any, any, any, any>, "mutationKey">;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:951](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L951)
@@ -460,7 +462,7 @@ const defaultOptions = queryClient.getMutationDefaults(['addPost'])
 ### getQueriesData()
 
 ```ts
-getQueriesData<TQueryFnData, TQueryFilters>(filters): [readonly unknown[], TQueryFnData | undefined][];
+getQueriesData<TQueryFnData, TQueryFilters>(filters: TQueryFilters): [readonly unknown[], TQueryFnData | undefined][];
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:242](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L242)
@@ -536,7 +538,7 @@ const queries = queryCache.findAll({ queryKey: ['posts'] })
 ### getQueryData()
 
 ```ts
-getQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(queryKey): TInferredQueryFnData | undefined;
+getQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:183](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L183)
@@ -580,7 +582,7 @@ Use `useQuery` to create a `QueryObserver` that subscribes to changes.
 ### getQueryDefaults()
 
 ```ts
-getQueryDefaults(queryKey): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, "queryKey">;
+getQueryDefaults(queryKey: readonly unknown[]): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, "queryKey">;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:894](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L894)
@@ -610,7 +612,7 @@ const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ### getQueryState()
 
 ```ts
-getQueryState<TQueryFnData, TError, TTaggedQueryKey, TInferredQueryFnData, TInferredError>(queryKey):
+getQueryState<TQueryFnData, TError, TTaggedQueryKey, TInferredQueryFnData, TInferredError>(queryKey: TTaggedQueryKey):
   | QueryState<TInferredQueryFnData, TInferredError>
   | undefined;
 ```
@@ -665,7 +667,7 @@ console.log(state?.dataUpdatedAt)
 ### infiniteQuery()
 
 ```ts
-infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
+infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:669](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L669)
@@ -728,7 +730,7 @@ try {
 ### invalidateQueries()
 
 ```ts
-invalidateQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
+invalidateQueries<TTaggedQueryKey>(filters?: InvalidateQueryFilters<TTaggedQueryKey>, options?: InvalidateOptions): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:462](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L462)
@@ -771,7 +773,7 @@ await queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'active'
 ### isFetching()
 
 ```ts
-isFetching<TQueryFilters>(filters?): number;
+isFetching<TQueryFilters>(filters?: TQueryFilters): number;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:150](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L150)
@@ -809,7 +811,7 @@ if (queryClient.isFetching()) {
 ### isMutating()
 
 ```ts
-isMutating<TMutationFilters>(filters?): number;
+isMutating<TMutationFilters>(filters?: TMutationFilters): number;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:168](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L168)
@@ -865,7 +867,7 @@ the shared listeners until the last one unmounts.
 ### ~~prefetchInfiniteQuery()~~
 
 ```ts
-prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): Promise<void>;
+prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:718](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L718)
@@ -911,7 +913,7 @@ Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.ca
 ### ~~prefetchQuery()~~
 
 ```ts
-prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options): Promise<void>;
+prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:636](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L636)
@@ -953,7 +955,7 @@ Use queryClient.query(options) instead. You can swallow errors with `.catch(noop
 ### query()
 
 ```ts
-query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options): Promise<TData>;
+query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options: QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:556](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L556)
@@ -1030,7 +1032,7 @@ try {
 ### refetchQueries()
 
 ```ts
-refetchQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
+refetchQueries<TTaggedQueryKey>(filters?: RefetchQueryFilters<TTaggedQueryKey>, options?: RefetchOptions): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:499](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L499)
@@ -1075,7 +1077,7 @@ await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
 ### removeQueries()
 
 ```ts
-removeQueries<TTaggedQueryKey>(filters?): void;
+removeQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>): void;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:378](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L378)
@@ -1112,7 +1114,7 @@ queryClient.removeQueries({ queryKey: ['posts'], exact: true })
 ### resetQueries()
 
 ```ts
-resetQueries<TTaggedQueryKey>(filters?, options?): Promise<void>;
+resetQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, options?: ResetOptions): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:399](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L399)
@@ -1178,7 +1180,7 @@ await queryClient.resumePausedMutations()
 ### setDefaultOptions()
 
 ```ts
-setDefaultOptions(options): void;
+setDefaultOptions(options: DefaultOptions): void;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:845](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L845)
@@ -1218,7 +1220,7 @@ queryClient.setDefaultOptions({
 ### setMutationDefaults()
 
 ```ts
-setMutationDefaults<TData, TError, TVariables, TOnMutateResult>(mutationKey, options): void;
+setMutationDefaults<TData, TError, TVariables, TOnMutateResult>(mutationKey: readonly unknown[], options: OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): void;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:923](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L923)
@@ -1275,9 +1277,9 @@ queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 ```ts
 setQueriesData<TQueryFnData, TQueryFilters>(
-   filters,
-   updater,
-   options?): [readonly unknown[], TQueryFnData | undefined][];
+   filters: TQueryFilters,
+   updater: Updater<NoInfer<TQueryFnData> | undefined, NoInfer<TQueryFnData> | undefined>,
+   options?: SetDataOptions): [readonly unknown[], TQueryFnData | undefined][];
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:321](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L321)
@@ -1329,9 +1331,9 @@ queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
 
 ```ts
 setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
-   queryKey,
-   updater,
-   options?): NoInfer<TInferredQueryFnData> | undefined;
+   queryKey: TTaggedQueryKey,
+   updater: Updater<NoInfer<TInferredQueryFnData> | undefined, NoInfer<TInferredQueryFnData> | undefined>,
+   options?: SetDataOptions): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L273)
@@ -1395,7 +1397,7 @@ queryClient.setQueryData(['posts'], (oldPosts) => [...oldPosts, newPost])
 ### setQueryDefaults()
 
 ```ts
-setQueryDefaults<TQueryFnData, TError, TData, TQueryData>(queryKey, options): void;
+setQueryDefaults<TQueryFnData, TError, TData, TQueryData>(queryKey: readonly unknown[], options: Partial<OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>, "queryKey">>): void;
 ```
 
 Defined in: [packages/query-core/src/queryClient.ts:864](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L864)

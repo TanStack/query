@@ -33,7 +33,7 @@ try {
 ### Constructor
 
 ```ts
-new CancelledError(options?): CancelledError;
+new CancelledError(options?: CancelOptions): CancelledError;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:80](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L80)

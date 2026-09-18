@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
+function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/react-query/src/usePrefetchInfiniteQuery.tsx:56](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchInfiniteQuery.tsx#L56)

@@ -8,7 +8,7 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/solid-query/src/mutationOptions.ts:33](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L33)
@@ -77,7 +77,7 @@ function SavingIndicator() {
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/solid-query/src/mutationOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L73)

@@ -33,7 +33,7 @@ try {
 ### Constructor
 
 ```ts
-new CancelledError(options?): CancelledError;
+new CancelledError(options?: CancelOptions): CancelledError;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:80](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L80)
@@ -169,7 +169,7 @@ Error.stackTraceLimit
 ### captureStackTrace()
 
 ```ts
-static captureStackTrace(targetObject, constructorOpt?): void;
+static captureStackTrace(targetObject: object, constructorOpt?: Function): void;
 ```
 
 Defined in: node\_modules/.pnpm/@types+node@22.19.15/node\_modules/@types/node/globals.d.ts:52
@@ -243,7 +243,7 @@ Error.captureStackTrace
 ### prepareStackTrace()
 
 ```ts
-static prepareStackTrace(err, stackTraces): any;
+static prepareStackTrace(err: Error, stackTraces: CallSite[]): any;
 ```
 
 Defined in: node\_modules/.pnpm/@types+node@22.19.15/node\_modules/@types/node/globals.d.ts:56

@@ -6,7 +6,7 @@ title: useInfiniteQuery
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
 Defined in: [packages/vue-query/src/useInfiniteQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L117)
@@ -103,7 +103,7 @@ const { data, isError, error } = useInfiniteQuery({
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
 Defined in: [packages/vue-query/src/useInfiniteQuery.ts:251](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L251)
@@ -266,7 +266,7 @@ onUnmounted(() => observer?.disconnect())
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryReturnType<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
 Defined in: [packages/vue-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L347)

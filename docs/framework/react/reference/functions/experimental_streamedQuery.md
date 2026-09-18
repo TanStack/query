@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn): QueryFunction<TData, TQueryKey>;
+function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<TData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/streamedQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L75)

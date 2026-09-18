@@ -47,7 +47,7 @@ const observer = new MutationObserver(queryClient, {
 ### Constructor
 
 ```ts
-new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client, options): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
+new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client: QueryClient, options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:58](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L58)
@@ -157,7 +157,7 @@ Subscribable.hasListeners
 ### mutate()
 
 ```ts
-mutate(variables, options?): Promise<TData>;
+mutate(variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:207](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L207)
@@ -271,7 +271,7 @@ observer.reset()
 ### setOptions()
 
 ```ts
-setOptions(options): void;
+setOptions(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): void;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L96)
@@ -307,7 +307,7 @@ observer.setOptions({
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: MutationObserverListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

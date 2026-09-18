@@ -5,9 +5,9 @@ title: createMutationController
 
 ```ts
 function createMutationController<TData, TError, TVariables, TOnMutateResult>(
-   host,
-   options,
-queryClient?): MutationResultAccessor<TData, TError, TVariables, TOnMutateResult>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+queryClient?: QueryClient): MutationResultAccessor<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/lit-query/src/createMutationController.ts:340](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L340)

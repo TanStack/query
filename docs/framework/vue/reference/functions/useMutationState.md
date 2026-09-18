@@ -4,7 +4,9 @@ title: useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options, queryClient?): Readonly<Ref<TResult[]>>;
+function useMutationState<TResult, TMutation>(options: 
+  | MutationStateOptions<TResult, TMutation>
+| () => MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): Readonly<Ref<TResult[]>>;
 ```
 
 Defined in: [packages/vue-query/src/useMutationState.ts:196](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L196)

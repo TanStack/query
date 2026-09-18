@@ -5,9 +5,9 @@ title: useMutationState
 
 ```ts
 function useMutationState<TResult>(
-   host,
-   options,
-queryClient?): MutationStateAccessor<TResult>;
+   host: ReactiveControllerHost,
+   options: MutationStateOptions<TResult>,
+queryClient?: QueryClient): MutationStateAccessor<TResult>;
 ```
 
 Defined in: [packages/lit-query/src/useMutationState.ts:192](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L192)

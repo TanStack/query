@@ -6,7 +6,7 @@ title: createInfiniteQuery
 ## Call Signature
 
 ```ts
-function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedCreateInfiniteQueryResult<TData, TError>;
+function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L21)
@@ -50,7 +50,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github
 ## Call Signature
 
 ```ts
-function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): CreateInfiniteQueryResult<TData, TError>;
+function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L40)
@@ -94,7 +94,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github
 ## Call Signature
 
 ```ts
-function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): CreateInfiniteQueryResult<TData, TError>;
+function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:152](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L152)
