@@ -154,7 +154,7 @@ const query = queryCache.build(queryClient, {
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L232)
+Defined in: [packages/query-core/src/queryCache.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L228)
 
 Removes all queries from the cache.
 
@@ -180,7 +180,7 @@ find<TQueryFnData, TError, TData>(filters):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L299)
+Defined in: [packages/query-core/src/queryCache.ts:295](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L295)
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -236,7 +236,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 findAll(filters): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:324](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L324)
+Defined in: [packages/query-core/src/queryCache.ts:320](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L320)
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -276,7 +276,7 @@ get<TQueryFnData, TError, TData, TQueryKey>(queryHash):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:254](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L254)
+Defined in: [packages/query-core/src/queryCache.ts:250](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L250)
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -329,7 +329,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L277)
+Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
 
 Returns all queries within the cache.
 
