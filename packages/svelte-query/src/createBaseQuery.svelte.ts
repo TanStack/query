@@ -1,3 +1,4 @@
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -72,9 +73,16 @@ export function createBaseQuery<
   )
 
   $effect(() => {
+    // Keep the observer read tracked (changing options must re-subscribe), but
+    // untrack the subscription itself: subscribing synchronously executes
+    // `queryFn` for queries without cached data, and any reactive state it reads before
+    // its first `await` would otherwise become a dependency of this effect.
+    // Writes to that state would then tear the observer down (cancelling the
+    // in-flight fetch) and re-subscribe indefinitely.
+    const o = observer
     const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() => update(createResult()))
+      : untrack(() => o.subscribe(() => update(createResult())))
     observer.updateResult()
     return unsubscribe
   })

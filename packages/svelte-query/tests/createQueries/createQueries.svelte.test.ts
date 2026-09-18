@@ -373,5 +373,45 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
+
   })
+  it(
+    'should not re-subscribe when queryFn reads reactive state before its first await',
+    withEffectRoot(async () => {
+      const key = queryKey()
+      const tick = ref(0)
+      const fetches: Array<number> = []
+
+      const result = createQueries(
+        () => ({
+          queries: [
+            {
+              queryKey: key,
+              queryFn: async (ctx) => {
+                // consume the abort signal, like real transports do, so that
+                // tearing the observer down cancels the in-flight fetch
+                void ctx.signal
+                // reactive read before the first await: executing queryFn in
+                // the subscription effect used to track this state
+                const startedAt = tick.value
+                fetches.push(startedAt)
+                await sleep(150)
+                // write to the same state while the fetch is in flight
+                tick.value = startedAt + 1
+                await sleep(150)
+                return startedAt
+              },
+            },
+          ],
+        }),
+        () => queryClient,
+      )
+
+      await vi.advanceTimersByTimeAsync(1000)
+
+      expect(fetches.length).toBe(1)
+      expect(result[0].data).toBe(0)
+      expect(result[0].status).toBe('success')
+    }),
+  )
 })
