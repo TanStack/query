@@ -41,8 +41,8 @@ export type UndefinedInitialDataInfiniteOptions<
 }
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
- * never `undefined`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is statically
+ * guaranteed to produce defined data — `data` is never `undefined`.
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -81,11 +81,11 @@ export type DefinedInitialDataInfiniteOptions<
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is statically guaranteed to produce defined data, so the resulting `data` is never `undefined`.
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `useInfiniteQuery`, with `initialData` set.
+ * `useInfiniteQuery`, with `initialData` statically guaranteed to produce defined data.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
  * @example

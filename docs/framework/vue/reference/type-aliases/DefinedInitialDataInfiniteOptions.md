@@ -9,8 +9,8 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, T
 
 Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:54](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L54)
 
-The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined`.
+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is statically
+guaranteed to produce defined data — `data` is never `undefined`.
 
 ## Type Declaration
 
