@@ -7,7 +7,8 @@ import type { DefinedInitialDataInfiniteOptions } from '../infiniteQueryOptions'
 
 const queryOptions = {
   queryKey: ['initial-data'],
-  queryFn: ({ pageParam }: { pageParam: number }) => Promise.resolve(`${pageParam}`),
+  queryFn: ({ pageParam }: { pageParam: number }) =>
+    Promise.resolve(`${pageParam}`),
   initialPageParam: 0,
   getNextPageParam: () => 1,
 }
@@ -21,7 +22,9 @@ describe('infiniteQueryOptions initialData', () => {
     const { data } = useInfiniteQuery(options)
 
     expectTypeOf(data.value).toEqualTypeOf<InfiniteData<string> | undefined>()
-    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<string>
+    >()
   })
 
   it('accepts an initializer that may return undefined', () => {
@@ -59,7 +62,13 @@ describe('infiniteQueryOptions initialData', () => {
     })
 
     expectTypeOf(options).toExtend<
-      DefinedInitialDataInfiniteOptions<string, Error, InfiniteData<string>, Array<string>, number>
+      DefinedInitialDataInfiniteOptions<
+        string,
+        Error,
+        InfiniteData<string>,
+        Array<string>,
+        number
+      >
     >()
   })
 
@@ -70,13 +79,22 @@ describe('infiniteQueryOptions initialData', () => {
     })
 
     expectTypeOf(options).toExtend<
-      DefinedInitialDataInfiniteOptions<string, Error, InfiniteData<string>, Array<string>, number>
+      DefinedInitialDataInfiniteOptions<
+        string,
+        Error,
+        InfiniteData<string>,
+        Array<string>,
+        number
+      >
     >()
   })
 
   it('still accepts missing and explicitly undefined initial data', () => {
     const absent = infiniteQueryOptions(queryOptions)
-    const explicit = infiniteQueryOptions({ ...queryOptions, initialData: undefined })
+    const explicit = infiniteQueryOptions({
+      ...queryOptions,
+      initialData: undefined,
+    })
 
     expectTypeOf(useInfiniteQuery(absent).data.value).toEqualTypeOf<
       InfiniteData<string> | undefined
