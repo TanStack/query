@@ -40,6 +40,6 @@ that observer results (e.g. `MutationObserverResult`) are derived from.
 | <a id="failurecount"></a> `failureCount` | `number` | The number of times the mutation function has failed for the current attempt. |
 | <a id="failurereason"></a> `failureReason` | `TError` \| `null` | The reason the current attempt failed, as reported by the retryer. |
 | <a id="ispaused"></a> `isPaused` | `boolean` | Whether the mutation is currently paused (see network mode), or is waiting for another mutation with the same `scope` to finish. |
-| <a id="status"></a> `status` | [`MutationStatus`](../type-aliases/MutationStatus.md) | The status of the mutation. |
+| <a id="status"></a> `status` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | The status of the mutation. |
 | <a id="submittedat"></a> `submittedAt` | `number` | The timestamp for when the mutation was submitted. |
 | <a id="variables"></a> `variables` | `TVariables` \| `undefined` | The variables the mutation was last called with. |

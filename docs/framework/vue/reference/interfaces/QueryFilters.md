@@ -24,7 +24,7 @@ All provided filters must match; filters that are left unspecified are ignored.
 | Property | Type | Description |
 | ------ | ------ | ------ |
 | <a id="exact"></a> `exact?` | `boolean` | Match query key exactly |
-| <a id="fetchstatus"></a> `fetchStatus?` | [`FetchStatus`](../type-aliases/FetchStatus.md) | Include queries matching their fetchStatus |
+| <a id="fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | Include queries matching their fetchStatus |
 | <a id="predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | Include queries matching this predicate function |
 | <a id="querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | Include queries matching this query key |
 | <a id="stale"></a> `stale?` | `boolean` | Include or exclude stale queries |

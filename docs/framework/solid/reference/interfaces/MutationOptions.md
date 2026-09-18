@@ -43,9 +43,9 @@ The type returned by `onMutate`, passed on to `onSuccess`/`onError`/`onSettled`.
 | ------ | ------ | ------ |
 | <a id="gctime"></a> `gcTime?` | `number` | The time in milliseconds that an unused/inactive mutation remains in memory before it is garbage collected. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. |
 | <a id="meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | - |
-| <a id="mutationfn"></a> `mutationFn?` | [`MutationFunction`](../type-aliases/MutationFunction.md)\<`TData`, `TVariables`\> | - |
+| <a id="mutationfn"></a> `mutationFn?` | (`variables`: `TVariables`, `context`: [`MutationFunctionContext`](../type-aliases/MutationFunctionContext.md)) => `Promise`\<`TData`\> | - |
 | <a id="mutationkey"></a> `mutationKey?` | readonly `unknown`[] | - |
-| <a id="networkmode"></a> `networkMode?` | [`NetworkMode`](../type-aliases/NetworkMode.md) | Controls whether a mutation is allowed to run based on the current network connectivity. Defaults to `'online'`. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | Controls whether a mutation is allowed to run based on the current network connectivity. Defaults to `'online'`. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
 | <a id="onerror"></a> `onError?` | (`error`: `TError`, `variables`: `TVariables`, `onMutateResult`: `TOnMutateResult` \| `undefined`, `context`: [`MutationFunctionContext`](../type-aliases/MutationFunctionContext.md)) => `unknown` | - |
 | <a id="onmutate"></a> `onMutate?` | (`variables`: `TVariables`, `context`: [`MutationFunctionContext`](../type-aliases/MutationFunctionContext.md)) => `TOnMutateResult` \| `Promise`\<`TOnMutateResult`\> | - |
 | <a id="onsettled"></a> `onSettled?` | (`data`: `TData` \| `undefined`, `error`: `TError` \| `null`, `variables`: `TVariables`, `onMutateResult`: `TOnMutateResult` \| `undefined`, `context`: [`MutationFunctionContext`](../type-aliases/MutationFunctionContext.md)) => `unknown` | - |

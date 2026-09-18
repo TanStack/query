@@ -3,7 +3,7 @@ id: InvalidateOptions
 title: InvalidateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:734](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L734)
+Defined in: [packages/query-core/src/types.ts:746](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L746)
 
 ## Extends
 

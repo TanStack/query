@@ -3,7 +3,7 @@ id: QueryObserverSuccessResult
 title: QueryObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:955](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L955)
+Defined in: [packages/query-core/src/types.ts:969](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L969)
 
 ## Extends
 
@@ -30,7 +30,7 @@ Defined in: [packages/query-core/src/types.ts:955](https://github.com/TanStack/q
 | <a id="errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. | - |
 | <a id="failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. | - |
 | <a id="failurereason"></a> `failureReason` | `TError` \| `null` | The failure reason for the query retry. - Reset to `null` when the query succeeds. | - |
-| <a id="fetchstatus"></a> `fetchStatus` | [`FetchStatus`](../type-aliases/FetchStatus.md) | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. | - |
+| <a id="fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. | - |
 | <a id="isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. | - |
 | <a id="iserror"></a> `isError` | `false` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. | [`QueryObserverBaseResult`](QueryObserverBaseResult.md).[`isError`](QueryObserverBaseResult.md#iserror) |
 | <a id="isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. | - |

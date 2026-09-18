@@ -7,7 +7,7 @@ title: QueryKeyHashFunction
 type QueryKeyHashFunction<TQueryKey> = (queryKey: TQueryKey) => string;
 ```
 
-Defined in: [packages/query-core/src/types.ts:192](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L192)
+Defined in: [packages/query-core/src/types.ts:200](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L200)
 
 ## Type Parameters
 
