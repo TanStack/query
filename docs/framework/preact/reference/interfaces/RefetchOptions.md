@@ -3,7 +3,7 @@ id: RefetchOptions
 title: RefetchOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:704](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L704)
+Defined in: [packages/query-core/src/types.ts:717](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L717)
 
 ## Extends
 

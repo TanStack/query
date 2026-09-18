@@ -3,7 +3,7 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:715](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L715)
+Defined in: [packages/query-core/src/types.ts:728](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L728)
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -23,7 +23,7 @@ All provided filters must match; filters that are left unspecified are ignored.
 | Property | Type | Description |
 | ------ | ------ | ------ |
 | <a id="exact"></a> `exact?` | `boolean` | Match query key exactly |
-| <a id="fetchstatus"></a> `fetchStatus?` | [`FetchStatus`](../type-aliases/FetchStatus.md) | Include queries matching their fetchStatus |
+| <a id="fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | Include queries matching their fetchStatus |
 | <a id="predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | Include queries matching this predicate function |
 | <a id="querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | Include queries matching this query key |
 | <a id="refetchtype"></a> `refetchType?` | `QueryTypeFilter` \| `"none"` | Controls which of the matched (now-invalidated) queries are refetched in the background. Defaults to `'active'`. - `'active'`: only queries with at least one active observer are refetched. - `'inactive'`: only queries with no active observer are refetched. - `'all'`: every matched query is refetched, active or not. - `'none'`: no query is refetched; matched queries are only marked as invalidated. |

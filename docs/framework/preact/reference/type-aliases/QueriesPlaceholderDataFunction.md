@@ -7,7 +7,7 @@ title: QueriesPlaceholderDataFunction
 type QueriesPlaceholderDataFunction<TQueryData> = (previousData: undefined, previousQuery: undefined) => TQueryData | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:187](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L187)
+Defined in: [packages/query-core/src/types.ts:194](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L194)
 
 ## Type Parameters
 

@@ -33,4 +33,4 @@ All provided filters must match; filters that are left unspecified are ignored.
 | <a id="exact"></a> `exact?` | `boolean` | Match mutation key exactly |
 | <a id="mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
 | <a id="predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
-| <a id="status"></a> `status?` | [`MutationStatus`](../type-aliases/MutationStatus.md) | Filter by mutation status |
+| <a id="status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |

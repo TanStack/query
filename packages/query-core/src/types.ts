@@ -99,14 +99,17 @@ export type InferErrorFromTag<TError, TTaggedQueryKey extends QueryKey> =
       : TaggedError
     : TError
 
+/** @inline */
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
+/** @inline */
 export type StaleTime = number | 'static'
 
+/** @inline */
 export type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -116,6 +119,7 @@ export type StaleTimeFunction<
   | StaleTime
   | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
+/** @inline */
 export type QueryBooleanOption<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -125,6 +129,7 @@ export type QueryBooleanOption<
   | boolean
   | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
 
+/** @inline */
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -170,10 +175,12 @@ export type QueryFunctionContext<
       meta: QueryMeta | undefined
     }
 
+/** @inline */
 export type InitialDataFunction<T> = () => T | undefined
 
 type NonFunctionGuard<T> = T extends Function ? never : T
 
+/** @inline */
 export type PlaceholderDataFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -189,10 +196,12 @@ export type QueriesPlaceholderDataFunction<TQueryData> = (
   previousQuery: undefined,
 ) => TQueryData | undefined
 
+/** @inline */
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
 ) => string
 
+/** @inline */
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: Array<TQueryFnData>,
@@ -200,6 +209,7 @@ export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   allPageParams: Array<TPageParam>,
 ) => TPageParam | undefined | null
 
+/** @inline */
 export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
   allPages: Array<TQueryFnData>,
@@ -220,8 +230,10 @@ export type QueryMeta = Register extends {
     : Record<string, unknown>
   : Record<string, unknown>
 
+/** @inline */
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
+/** @inline */
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'
@@ -365,6 +377,7 @@ export interface InfiniteQueryPageParamsOptions<
   getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
+/** @inline */
 export type ThrowOnError<
   TQueryFnData,
   TError,
@@ -758,7 +771,9 @@ export interface FetchPreviousPageOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
+/** @inline */
 export type QueryStatus = 'pending' | 'error' | 'success'
+/** @inline */
 export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<
@@ -1172,6 +1187,7 @@ export type MutationKey = Register extends {
       : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
+/** @inline */
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
 export type MutationScope = {
@@ -1192,6 +1208,7 @@ export type MutationFunctionContext = {
   mutationKey?: MutationKey
 }
 
+/** @inline */
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
   context: MutationFunctionContext,
@@ -1527,6 +1544,7 @@ export interface SetDataOptions {
   updatedAt?: number
 }
 
+/** @inline */
 export type NotifyEventType =
   | 'added'
   | 'removed'

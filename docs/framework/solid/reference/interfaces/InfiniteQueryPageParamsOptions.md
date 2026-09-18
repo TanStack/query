@@ -3,7 +3,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:352](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L352)
+Defined in: [packages/query-core/src/types.ts:364](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L364)
 
 ## Extends
 
@@ -23,6 +23,6 @@ Defined in: [packages/query-core/src/types.ts:352](https://github.com/TanStack/q
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="getnextpageparam"></a> `getNextPageParam` | [`GetNextPageParamFunction`](../type-aliases/GetNextPageParamFunction.md)\<`TPageParam`, `TQueryFnData`\> | This function can be set to automatically get the next cursor for infinite queries. The result will also be used to determine the value of `hasNextPage`. |
-| <a id="getpreviouspageparam"></a> `getPreviousPageParam?` | [`GetPreviousPageParamFunction`](../type-aliases/GetPreviousPageParamFunction.md)\<`TPageParam`, `TQueryFnData`\> | This function can be set to automatically get the previous cursor for infinite queries. The result will also be used to determine the value of `hasPreviousPage`. |
+| <a id="getnextpageparam"></a> `getNextPageParam` | (`lastPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `lastPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | This function can be set to automatically get the next cursor for infinite queries. The result will also be used to determine the value of `hasNextPage`. |
+| <a id="getpreviouspageparam"></a> `getPreviousPageParam?` | (`firstPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `firstPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | This function can be set to automatically get the previous cursor for infinite queries. The result will also be used to determine the value of `hasPreviousPage`. |
 | <a id="initialpageparam"></a> `initialPageParam` | `TPageParam` | - |

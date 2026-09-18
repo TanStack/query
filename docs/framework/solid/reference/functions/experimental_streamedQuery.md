@@ -4,7 +4,7 @@ title: experimental_streamedQuery
 ---
 
 ```ts
-function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<TData, TQueryKey>;
+function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): (context: object) => TData | Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/streamedQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L75)
@@ -38,7 +38,45 @@ The function that returns an AsyncIterable to stream data from.
 
 ## Returns
 
-[`QueryFunction`](../type-aliases/QueryFunction.md)\<`TData`, `TQueryKey`\>
+```ts
+(context: object): TData | Promise<TData>;
+```
+
+### Parameters
+
+#### context
+
+##### client
+
+`QueryClient`
+
+##### direction?
+
+`unknown`
+
+**Deprecated**
+
+if you want access to the direction, you can add it to the pageParam
+
+##### meta
+
+`Record`\<`string`, `unknown`\> \| `undefined`
+
+##### pageParam?
+
+`unknown`
+
+##### queryKey
+
+`TQueryKey`
+
+##### signal
+
+`AbortSignal`
+
+### Returns
+
+`TData` \| `Promise`\<`TData`\>
 
 ## Example
 

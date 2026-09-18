@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1507](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1507)
+Defined in: [packages/query-core/src/types.ts:1524](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1524)
 
 ## Type Parameters
 
