@@ -233,6 +233,7 @@ export type QueryMeta = Register extends {
 /** @inline */
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
+/** @inline */
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'

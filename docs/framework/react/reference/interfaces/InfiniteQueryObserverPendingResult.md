@@ -3,7 +3,7 @@ id: InfiniteQueryObserverPendingResult
 title: InfiniteQueryObserverPendingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1057](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1057)
+Defined in: [packages/query-core/src/types.ts:1058](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1058)
 
 ## Extends
 

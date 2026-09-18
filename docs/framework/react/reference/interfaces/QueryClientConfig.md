@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [packages/query-core/src/types.ts:1511](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1511)
+Defined in: [packages/query-core/src/types.ts:1512](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1512)
 
 ## Properties
 

@@ -11,7 +11,7 @@ type MutationObserverResult<TData, TError, TVariables, TOnMutateResult> =
 | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1500](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1500)
+Defined in: [packages/query-core/src/types.ts:1501](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1501)
 
 ## Type Parameters
 

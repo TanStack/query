@@ -7,7 +7,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1204](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1204)
+Defined in: [packages/query-core/src/types.ts:1205](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1205)
 
 ## Properties
 

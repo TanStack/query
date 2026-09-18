@@ -32,15 +32,19 @@ export interface Retryer<TData = unknown> {
 
 type RetryerStatus = 'pending' | 'resolved' | 'rejected'
 
+/** @inline */
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
+/** @inline */
 type ShouldRetryFunction<TError = DefaultError> = (
   failureCount: number,
   error: TError,
 ) => boolean
 
+/** @inline */
 export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
+/** @inline */
 type RetryDelayFunction<TError = DefaultError> = (
   failureCount: number,
   error: TError,

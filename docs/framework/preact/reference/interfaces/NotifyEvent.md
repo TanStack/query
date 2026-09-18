@@ -3,7 +3,7 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: [packages/query-core/src/types.ts:1556](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1556)
+Defined in: [packages/query-core/src/types.ts:1557](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1557)
 
 ## Properties
 
