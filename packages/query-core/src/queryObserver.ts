@@ -620,7 +620,8 @@ export class QueryObserver<
       // Memoize placeholder data
       if (
         prevResult?.isPlaceholderData &&
-        options.placeholderData === prevResultOptions?.placeholderData
+        options.placeholderData === prevResultOptions?.placeholderData &&
+        options.select === prevResultOptions.select
       ) {
         placeholderData = prevResult.data
         // we have to skip select when reading this memoization

@@ -45,6 +45,47 @@ describe('useQuery', () => {
   })
 
   it.each([false, true])(
+    'should report a re-added placeholder selector error (StrictMode: %s)',
+    (strict) => {
+      const key = queryKey()
+      const error = new Error('selection failed')
+      let shouldThrow = false
+      const select = (value: number) => {
+        if (shouldThrow) throw error
+        return value * 2
+      }
+      const view = renderHook(
+        ({ selected }) =>
+          useQuery(
+            {
+              queryKey: key,
+              queryFn: () => 2,
+              enabled: false,
+              placeholderData: 2,
+              select: selected ? select : undefined,
+            },
+            queryClient,
+          ),
+        {
+          initialProps: { selected: true },
+          wrapper: strict ? React.StrictMode : undefined,
+        },
+      )
+      expect(view.result.current.data).toBe(4)
+      view.rerender({ selected: false })
+      expect(view.result.current.data).toBe(2)
+      shouldThrow = true
+      view.rerender({ selected: true })
+      expect(view.result.current).toMatchObject({
+        status: 'error',
+        error,
+        isPlaceholderData: false,
+      })
+      view.unmount()
+    },
+  )
+
+  it.each([false, true])(
     'should recover when a throwing selector is removed (StrictMode: %s)',
     (strict) => {
       const key = queryKey()
