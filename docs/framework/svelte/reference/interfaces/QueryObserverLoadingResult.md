@@ -3,7 +3,7 @@ id: QueryObserverLoadingResult
 title: QueryObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:922](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L922)
+Defined in: [packages/query-core/src/types.ts:923](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L923)
 
 ## Extends
 

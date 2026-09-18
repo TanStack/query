@@ -7,7 +7,7 @@ title: MutationScope
 type MutationScope = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1193](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1193)
+Defined in: [packages/query-core/src/types.ts:1194](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1194)
 
 ## Properties
 

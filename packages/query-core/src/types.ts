@@ -271,7 +271,7 @@ export interface QueryOptions<
   /**
    * Controls whether a query is allowed to run based on the current network connectivity.
    *
-   * Defaults to `'online'`.
+   * @defaultValue 'online'
    * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   networkMode?: NetworkMode
@@ -337,7 +337,7 @@ export interface QueryOptions<
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   structuralSharing?:
     | boolean
@@ -406,7 +406,7 @@ export interface QueryObserverOptions<
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    * Accepts a boolean or function that returns a boolean.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   enabled?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
@@ -415,14 +415,14 @@ export interface QueryObserverOptions<
    * If set to `'static'`, the data will never be considered stale.
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    *
-   * Defaults to `0`.
+   * @defaultValue 0
    */
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
    *
-   * Defaults to `false`.
+   * @defaultValue false
    */
   refetchInterval?:
     | number
@@ -433,7 +433,7 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    *
-   * Defaults to `false`.
+   * @defaultValue false
    */
   refetchIntervalInBackground?: boolean
   /**
@@ -442,7 +442,7 @@ export interface QueryObserverOptions<
    * If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   refetchOnWindowFocus?:
     | boolean
@@ -470,7 +470,7 @@ export interface QueryObserverOptions<
    * If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used).
    * If set to a function, the function will be executed with the latest data and query to compute the value
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   refetchOnMount?:
     | boolean
@@ -482,7 +482,7 @@ export interface QueryObserverOptions<
    * If set to `false`, the query will not be retried on mount if it contains an error.
    * If set to a function, the function will be executed with the query to compute the value.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   retryOnMount?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
@@ -501,7 +501,7 @@ export interface QueryObserverOptions<
    * If set to `false` and `suspense` is `false`, errors are returned as state.
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    *
-   * Defaults to `false`.
+   * @defaultValue false
    */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
@@ -515,7 +515,7 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
    *
-   * Defaults to `false`.
+   * @defaultValue false
    */
   suspense?: boolean
   /**
@@ -707,9 +707,9 @@ export type FetchInfiniteQueryOptions<
 export interface ResultOptions {
   /**
    * If set to `true`, the method throws if any of the underlying query refetch tasks fail.
+   * If set to `false`, failed refetches are swallowed and not surfaced to the caller.
    *
-   * Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the
-   * caller.
+   * @defaultValue false
    */
   throwOnError?: boolean
 }
@@ -720,7 +720,7 @@ export interface RefetchOptions extends ResultOptions {
    *
    * If set to `false`, no refetch will be made if there is already a request running.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   cancelRefetch?: boolean
 }
@@ -731,11 +731,12 @@ export interface InvalidateQueryFilters<
   /**
    * Controls which of the matched (now-invalidated) queries are refetched in the background.
    *
-   * Defaults to `'active'`.
    * - `'active'`: only queries with at least one active observer are refetched.
    * - `'inactive'`: only queries with no active observer are refetched.
    * - `'all'`: every matched query is refetched, active or not.
    * - `'none'`: no query is refetched; matched queries are only marked as invalidated.
+   *
+   * @defaultValue 'active'
    */
   refetchType?: QueryTypeFilter | 'none'
 }
@@ -754,7 +755,7 @@ export interface FetchNextPageOptions extends ResultOptions {
    *
    * If set to `false`, calling `fetchNextPage` repeatedly won't have any effect until the first invocation has resolved.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   cancelRefetch?: boolean
 }
@@ -766,7 +767,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
    *
    * If set to `false`, calling `fetchPreviousPage` repeatedly won't have any effect until the first invocation has resolved.
    *
-   * Defaults to `true`.
+   * @defaultValue true
    */
   cancelRefetch?: boolean
 }
@@ -1251,7 +1252,7 @@ export interface MutationOptions<
    * If set to an integer number, e.g. 3, failed mutations will retry until the failed mutation count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed mutations will retry until the function returns false.
    *
-   * Defaults to `0`.
+   * @defaultValue 0
    */
   retry?: RetryValue<TError>
   /**
@@ -1264,7 +1265,7 @@ export interface MutationOptions<
   /**
    * Controls whether a mutation is allowed to run based on the current network connectivity.
    *
-   * Defaults to `'online'`.
+   * @defaultValue 'online'
    * @see [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   networkMode?: NetworkMode
@@ -1293,7 +1294,7 @@ export interface MutationObserverOptions<
    * If set to a function, it will be passed the error and should return a boolean indicating whether to throw the
    * error (`true`) or return it as state (`false`).
    *
-   * Defaults to `false`.
+   * @defaultValue false
    */
   throwOnError?: boolean | ((error: TError) => boolean)
 }
