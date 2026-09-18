@@ -8,7 +8,7 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L142)
@@ -84,7 +84,7 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:183](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L183)
@@ -153,7 +153,7 @@ function Post({ id }: { id: string }) {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:247](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L247)

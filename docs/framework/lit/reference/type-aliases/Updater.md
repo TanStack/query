@@ -4,7 +4,7 @@ title: Updater
 ---
 
 ```ts
-type Updater<TInput, TOutput> = TOutput | (input) => TOutput;
+type Updater<TInput, TOutput> = TOutput | (input: TInput) => TOutput;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:105](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L105)

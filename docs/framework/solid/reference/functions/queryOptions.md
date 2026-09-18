@@ -8,7 +8,7 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:89](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L89)
@@ -86,7 +86,7 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:139](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L139)

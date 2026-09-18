@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: QueryClient): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/react-query/src/useMutation.ts:191](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutation.ts#L191)

@@ -4,7 +4,7 @@ title: MutationFunction
 ---
 
 ```ts
-type MutationFunction<TData, TVariables> = (variables, context) => Promise<TData>;
+type MutationFunction<TData, TVariables> = (variables: TVariables, context: MutationFunctionContext) => Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/types.ts:1195](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1195)

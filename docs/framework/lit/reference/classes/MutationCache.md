@@ -28,7 +28,7 @@ const unsubscribe = mutationCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new MutationCache(config): MutationCache;
+new MutationCache(config: MutationCacheConfig): MutationCache;
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
@@ -104,7 +104,7 @@ mutationCache.clear()
 ### find()
 
 ```ts
-find<TData, TError, TVariables, TOnMutateResult>(filters):
+find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters):
   | Mutation<TData, TError, TVariables, TOnMutateResult>
   | undefined;
 ```
@@ -163,7 +163,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### findAll()
 
 ```ts
-findAll(filters): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:308](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L308)
@@ -288,7 +288,7 @@ Subscribable.onUnsubscribe
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: MutationCacheListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

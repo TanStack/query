@@ -4,7 +4,7 @@ title: useMutation
 ---
 
 ```ts
-function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult>;
+function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: QueryClient): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/vue-query/src/useMutation.ts:231](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L231)

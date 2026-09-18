@@ -4,7 +4,7 @@ title: useIsMutating
 ---
 
 ```ts
-function useIsMutating(filters, queryClient?): Ref<number>;
+function useIsMutating(filters: UseIsMutatingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
 Defined in: [packages/vue-query/src/useMutationState.ts:53](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L53)

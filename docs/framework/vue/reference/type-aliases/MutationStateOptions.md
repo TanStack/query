@@ -21,30 +21,7 @@ Defined in: [packages/vue-query/src/useMutationState.ts:92](https://github.com/T
 
 ## Properties
 
-### filters?
-
-```ts
-optional filters: VueMutationFilters;
-```
-
-Defined in: [packages/vue-query/src/useMutationState.ts:97](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L97)
-
-***
-
-### select()?
-
-```ts
-optional select: (mutation) => TResult;
-```
-
-Defined in: [packages/vue-query/src/useMutationState.ts:98](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L98)
-
-#### Parameters
-
-##### mutation
-
-`TMutation`
-
-#### Returns
-
-`TResult`
+| Property | Type |
+| ------ | ------ |
+| <a id="filters"></a> `filters?` | `VueMutationFilters` |
+| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

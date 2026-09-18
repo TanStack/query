@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useQueryClient(queryClient?): QueryClient;
+function useQueryClient(queryClient?: QueryClient): QueryClient;
 ```
 
 Defined in: [packages/react-query/src/QueryClientProvider.tsx:21](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L21)

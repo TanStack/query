@@ -155,6 +155,19 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     hidePageHeader: true,
     hidePageTitle: true,
     useCodeBlocks: true,
+    // `parametersFormat` and `typeDeclarationFormat` are deliberately left as lists: the first
+    // inlines the huge conditional types of `useQueries` into a single cell and drops `@default`
+    // blocks, and the second collapses `@example` code blocks onto one line, which swallows the
+    // following statement into a `//` comment.
+    interfacePropertiesFormat: 'table',
+    typeAliasPropertiesFormat: 'table',
+    tableColumnSettings: {
+      hideInherited: true,
+      hideSources: true,
+    },
+    // Without this, a function property renders as `(data) => TData` — the table and list formats
+    // both omit the parameter types otherwise.
+    expandParameters: true,
     excludePrivate: true,
     excludeInternal: true,
     excludeExternals: pkg.excludeExternals,

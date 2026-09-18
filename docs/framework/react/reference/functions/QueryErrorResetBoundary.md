@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function QueryErrorResetBoundary(__namedParameters): Element;
+function QueryErrorResetBoundary(__namedParameters: QueryErrorResetBoundaryProps): Element;
 ```
 
 Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:136](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L136)

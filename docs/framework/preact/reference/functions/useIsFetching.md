@@ -4,7 +4,7 @@ title: useIsFetching
 ---
 
 ```ts
-function useIsFetching(filters?, queryClient?): number;
+function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): number;
 ```
 
 Defined in: [packages/preact-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useIsFetching.ts#L44)

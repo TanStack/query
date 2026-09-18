@@ -17,10 +17,6 @@ Defined in: [packages/query-core/src/types.ts:348](https://github.com/TanStack/q
 
 ## Properties
 
-### initialPageParam
-
-```ts
-initialPageParam: TPageParam;
-```
-
-Defined in: [packages/query-core/src/types.ts:349](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L349)
+| Property | Type |
+| ------ | ------ |
+| <a id="initialpageparam"></a> `initialPageParam` | `TPageParam` |

@@ -43,9 +43,9 @@ const unsubscribe = observer.subscribe((result) => {
 
 ```ts
 new QueriesObserver<TCombinedResult>(
-   client, 
-   queries, 
-options?): QueriesObserver<TCombinedResult>;
+   client: QueryClient, 
+   queries: QueryObserverOptions<any, any, any, any, any, never>[], 
+options?: QueriesObserverOptions<TCombinedResult>): QueriesObserver<TCombinedResult>;
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L70)
@@ -155,7 +155,7 @@ in the same order as the queries passed to the constructor or
 ### getOptimisticResult()
 
 ```ts
-getOptimisticResult(queries, combine): [QueryObserverResult[], (r?) => TCombinedResult, () => QueryObserverResult[]];
+getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [QueryObserverResult[], (r?: QueryObserverResult[]) => TCombinedResult, () => QueryObserverResult[]];
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:238](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L238)
@@ -178,7 +178,7 @@ wrap the results for property-access tracking.
 
 #### Returns
 
-\[[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[], (`r?`) => `TCombinedResult`, () => [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]\]
+\[[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[], (`r?`: [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]) => `TCombinedResult`, () => [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]\]
 
 ***
 
@@ -262,7 +262,7 @@ Subscribable.onUnsubscribe
 ### setQueries()
 
 ```ts
-setQueries(queries, options?): void;
+setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L127)
@@ -300,7 +300,7 @@ observer.setQueries([
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: QueriesObserverListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
