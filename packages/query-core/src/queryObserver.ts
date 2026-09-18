@@ -671,10 +671,13 @@ export class QueryObserver<
           this.#selectError = selectError as TError
         }
       }
-    } else if (data === undefined) {
-      // a stored select error belongs to previously selected data; once that
-      // data is gone (query switch or reset), it must not leak into this result
+    } else if (data === undefined || !options.select) {
+      // Selection errors no longer apply when their data or selector is gone.
       this.#selectError = null
+      if (!options.select) {
+        // Re-adding the same selector must run it again, including error handling.
+        this.#selectFn = undefined
+      }
     }
 
     if (this.#selectError) {

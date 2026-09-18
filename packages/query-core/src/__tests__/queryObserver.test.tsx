@@ -24,6 +24,34 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it.each([false, true])(
+    'should clear a removed selector error with cached data (change key: %s)',
+    (changeKey) => {
+      const key = queryKey()
+      const nextKey = changeKey ? queryKey() : key
+      queryClient.setQueryData(key, 2)
+      queryClient.setQueryData(nextKey, 2)
+      const error = new Error('selection failed')
+      const select = (_value: number): number => {
+        throw error
+      }
+      const options = { queryKey: key, queryFn: () => 2, enabled: false }
+      const observer = new QueryObserver(queryClient, { ...options, select })
+      expect(observer.getCurrentResult().error).toBe(error)
+      observer.setOptions({ ...options, queryKey: nextKey })
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'success',
+        data: 2,
+        error: null,
+      })
+      observer.setOptions({ ...options, queryKey: nextKey, select })
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'error',
+        error,
+      })
+    },
+  )
+
   it('should trigger a fetch when subscribed', () => {
     const key = queryKey()
     const queryFn = vi
