@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions, toResource } from '..'
-import type { CreateQueryOptions } from '..'
+import type { CreateQueryOptions, CreateQueryResult } from '..'
 import type { Resource, Signal } from '@angular/core'
 
 describe('initialData', () => {
@@ -160,6 +160,13 @@ describe('initialData', () => {
       }))
     })
   })
+})
+
+it('supports reading data from a generic result type', () => {
+  const readId = <T extends { id: number }>(query: CreateQueryResult<T>) =>
+    query.data()?.id
+
+  expectTypeOf(readId).toBeCallableWith({} as CreateQueryResult<{ id: number }>)
 })
 
 describe('Discriminated union return type', () => {

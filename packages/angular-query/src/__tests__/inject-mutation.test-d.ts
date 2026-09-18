@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { injectMutation } from '..'
-import type { CreateMutationOptions } from '..'
+import type { CreateMutationOptions, CreateMutationResult } from '..'
 import type { Signal } from '@angular/core'
 import type {
   MutationFunctionContext,
@@ -10,6 +10,16 @@ import type {
 } from '@tanstack/query-core'
 
 describe('injectMutation', () => {
+  it('supports reading data from a generic result type', () => {
+    const readId = <T extends { id: number }>(
+      mutation: CreateMutationResult<T>,
+    ) => mutation.data()?.id
+
+    expectTypeOf(readId).toBeCallableWith(
+      {} as CreateMutationResult<{ id: number }>,
+    )
+  })
+
   describe('Discriminated union return type', () => {
     it('data should be possibly undefined by default', () => {
       const mutation = injectMutation(() => ({

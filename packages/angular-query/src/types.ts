@@ -16,7 +16,12 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
-import type { MapToSignals, MethodKeys } from './utils/signal-proxy'
+import type { MapToSignals } from './utils/signal-proxy'
+import type {
+  InfiniteQueryResultFields,
+  MutationResultFields,
+  QueryResultFields,
+} from './utils/result-fields'
 
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
@@ -209,7 +214,7 @@ export type CreateBaseQueryResult<
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<
     OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>,
-    MethodKeys<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
+    QueryResultFields
   >
 
 /**
@@ -239,7 +244,7 @@ export type DefinedCreateQueryResult<
 > = DefinedQueryNarrowing<TData, TError> &
   MapToSignals<
     OmitKeyof<TState, keyof DefinedQueryNarrowing, 'safely'>,
-    MethodKeys<OmitKeyof<TState, keyof DefinedQueryNarrowing, 'safely'>>
+    QueryResultFields
   >
 
 /**
@@ -257,7 +262,7 @@ export type CreateInfiniteQueryResult<
   TState extends InfiniteQueryObserverResult<TData, TError> =
     InfiniteQueryObserverResult<TData, TError>,
 > = BaseInfiniteQueryNarrowing<TData, TError> &
-  MapToSignals<TState, MethodKeys<TState>>
+  MapToSignals<TState, InfiniteQueryResultFields>
 
 /**
  * The result of `injectInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
@@ -275,10 +280,7 @@ export type DefinedCreateInfiniteQueryResult<
     TError
   > = DefinedInfiniteQueryObserverResult<TData, TError>,
 > = DefinedInfiniteQueryNarrowing<TData, TError> &
-  MapToSignals<
-    TDefinedInfiniteQueryObserver,
-    MethodKeys<TDefinedInfiniteQueryObserver>
-  >
+  MapToSignals<TDefinedInfiniteQueryObserver, InfiniteQueryResultFields>
 
 /**
  * The options accepted by `injectMutation`. Same as {@link MutationObserverOptions} from
@@ -484,5 +486,5 @@ export type CreateMutationResult<
 > = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> &
   MapToSignals<
     OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>,
-    MethodKeys<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
+    MutationResultFields
   >
