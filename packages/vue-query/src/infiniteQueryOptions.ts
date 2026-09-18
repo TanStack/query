@@ -1,6 +1,7 @@
 import type {
   DefaultError,
   InfiniteData,
+  InitialDataFunction,
   NonUndefinedGuard,
   QueryKey,
   QueryKeyWithDataTag,
@@ -8,8 +9,8 @@ import type {
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
- * may be `undefined` while the query is `pending`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` may be
+ * `undefined` — `data` may be `undefined` while the query is `pending`.
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -31,7 +32,10 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData?: undefined
+  initialData?:
+    | undefined
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>
 }
 
 /**
@@ -69,55 +73,6 @@ export type DefinedInitialDataInfiniteOptions<
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
 }
-
-/**
- * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
- * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
- * `options.queryKey` is required and is the query key to generate options for.
- *
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
- * `useInfiniteQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
- * @example
- * ```vue
- * <script setup lang="ts">
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query'
- *
- * const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- * })
- *
- * const { data, isError, error, fetchNextPage } = useInfiniteQuery(projectsOptions)
- * </script>
- * ```
- */
-export function infiniteQueryOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
-  options: UndefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-): UndefinedInitialDataInfiniteOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> &
-  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
@@ -165,6 +120,55 @@ export function infiniteQueryOptions<
     TPageParam
   >,
 ): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+
+/**
+ * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
+ * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+ * `options.queryKey` is required and is the query key to generate options for.
+ *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
+ * `useInfiniteQuery`.
+ * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ *
+ * @example
+ * ```vue
+ * <script setup lang="ts">
+ * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query'
+ *
+ * const projectsOptions = infiniteQueryOptions({
+ *   queryKey: ['projects'],
+ *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *   initialPageParam: 0,
+ *   getNextPageParam: (lastPage) => lastPage.nextId,
+ * })
+ *
+ * const { data, isError, error, fetchNextPage } = useInfiniteQuery(projectsOptions)
+ * </script>
+ * ```
+ */
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
