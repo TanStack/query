@@ -3,7 +3,7 @@ id: FetchNextPageOptions
 title: FetchNextPageOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:750](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L750)
+Defined in: [packages/query-core/src/types.ts:751](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L751)
 
 ## Extends
 
@@ -11,7 +11,7 @@ Defined in: [packages/query-core/src/types.ts:750](https://github.com/TanStack/q
 
 ## Properties
 
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="cancelrefetch"></a> `cancelRefetch?` | `boolean` | If set to `true`, calling `fetchNextPage` repeatedly will invoke `queryFn` every time, whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage` repeatedly won't have any effect until the first invocation has resolved. Defaults to `true`. |
-| <a id="throwonerror"></a> `throwOnError?` | `boolean` | If set to `true`, the method throws if any of the underlying query refetch tasks fail. Defaults to `false`, in which case failed refetches are swallowed and not surfaced to the caller. |
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="cancelrefetch"></a> `cancelRefetch?` | `boolean` | `true` | If set to `true`, calling `fetchNextPage` repeatedly will invoke `queryFn` every time, whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage` repeatedly won't have any effect until the first invocation has resolved. |
+| <a id="throwonerror"></a> `throwOnError?` | `boolean` | `false` | If set to `true`, the method throws if any of the underlying query refetch tasks fail. If set to `false`, failed refetches are swallowed and not surfaced to the caller. |

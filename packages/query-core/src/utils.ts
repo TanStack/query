@@ -32,7 +32,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    *
-   * Defaults to `'all'`.
+   * @defaultValue 'all'
    */
   type?: QueryTypeFilter
   /**
