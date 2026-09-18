@@ -759,11 +759,18 @@ describe('useQuery', () => {
 
     setCount(1)
     await vi.advanceTimersByTimeAsync(10)
-    // Switching to a disabled key never fetches; the committed value from the
+    // Switching to a disabled key never fetches; the committed frame from the
     // previous key holds while the new (never-arriving) read stays pending.
+    // Every committed face reads that frame — status included: the meta
+    // projection's flip to 'pending' is held in the same batch as the data
+    // node, so it is not visible mid-hold (a write becomes visible at flush,
+    // to every channel). The pending probe is the one channel that says a
+    // new answer is outstanding.
     expect(fetches).toBe(1)
-    expect(state.status).toBe('pending')
+    expect(rendered.getByText('data: 0')).toBeInTheDocument()
+    expect(state.status).toBe('success')
     expect(state.fetchStatus).toBe('idle')
+    expect(state.isFetching).toBe(true)
 
     // Settle the parked read before the test ends: a transition held on a
     // never-resolving promise outlives unmount in the global reactive engine
@@ -3522,8 +3529,13 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(5)
-    // Reset wipes the committed data and refetches from scratch
-    expect(state.isPending).toBe(true)
+    // Reset wipes the cache entry and refetches from scratch. The refetch
+    // is a transition: the committed frame — data AND the meta faces read
+    // from it — holds until the new answer lands, so `isPending` stays
+    // false and the DOM keeps 'data: 1'. The pending probe is what reports
+    // the outstanding fetch.
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(state.isPending).toBe(false)
     expect(state.isFetching).toBe(true)
 
     await vi.advanceTimersByTimeAsync(5)
@@ -3579,15 +3591,16 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     await vi.advanceTimersByTimeAsync(10)
-    // Resetting a disabled query does not refetch
-    expect(state.isPending).toBe(true)
+    // Resetting a disabled query does not refetch. The data read parks on
+    // the wiped entry (nothing cached, nothing enabled to fetch it), and a
+    // parked read is a hold: the committed frame — 'data: 1', status
+    // 'success' — stays up, so `isPending` reads false. `fetchStatus` is
+    // the honest "nothing in flight" here; `isFetching` ORs in the pending
+    // probe on the parked node and reports true (see port-notes/useQuery.md).
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+    expect(state.isPending).toBe(false)
     expect(state.fetchStatus).toBe('idle')
     expect(count).toBe(1)
-    // PORT-REVIEW (kept running): `state.isFetching` reports true here even
-    // though nothing fetches — the isFetching projection ORs in a
-    // "value pending" probe on the data node, and after a reset the disabled
-    // query's data read is parked pending forever. Asserting via fetchStatus
-    // (which correctly reads 'idle') instead. See port-notes/useQuery.md.
 
     // Settle the parked pending read before the test ends (a never-resolving
     // read held past unmount corrupts the global reactive engine).
