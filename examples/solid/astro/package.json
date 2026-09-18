@@ -18,8 +18,8 @@
     "@tanstack/solid-query": "^6.0.0-rc.4",
     "@tanstack/solid-query-devtools": "^6.0.0-rc.4",
     "astro": "^5.5.6",
-    "@solidjs/web": "^2.0.0-rc.0",
-    "solid-js": "^2.0.0-rc.0",
+    "@solidjs/web": "^2.0.0-rc.9",
+    "solid-js": "^2.0.0-rc.9",
     "tailwindcss": "^3.4.7",
     "typescript": "5.8.3"
   }

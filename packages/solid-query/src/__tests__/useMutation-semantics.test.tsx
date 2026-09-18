@@ -238,16 +238,14 @@ describe('useMutation 2.0 semantics', () => {
     expect(rendered.getByText('count: 0, pending: true')).toBeInTheDocument()
 
     // Mutation succeeds at +10ms, invalidation refetch needs +5ms more.
-    // The settle holds until fresh data lands. Engine sequencing for
-    // optimistic overlays: async landings commit UNDER the overlay mask,
-    // then the mask lifts in the immediately-following commit — so fresh
-    // data appears first with pending still up, and pending clears next.
-    // The invariant that matters: stale data is never paired with a
-    // settled mutation — (0, false) never reappears, (0-settled) and
-    // (1-before-success-landed) don't exist.
+    // The settle holds until fresh data lands, and the optimistic frame
+    // releases once nothing authoritative is left to wait on — fresh data
+    // and the lifted overlay commit in ONE frame. The invariant: stale
+    // data is never paired with a settled mutation — (0, false) never
+    // reappears, and (1, true) is not a frame either.
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('count: 1, pending: false')).toBeInTheDocument()
-    expect(commits).toEqual(['0:false', '0:true', '1:true', '1:false'])
+    expect(commits).toEqual(['0:false', '0:true', '1:false'])
   })
 
   it('reset returns to idle', async () => {

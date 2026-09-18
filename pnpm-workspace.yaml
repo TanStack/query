@@ -51,6 +51,19 @@ overrides:
   '@typescript-eslint/visitor-keys': '8.58.1'
   typescript-eslint: '8.58.1'
   vite: '^6.4.1'
+  # The Solid 2.0 packages, their examples and the vite integration run on
+  # vite 8: @solidjs/vite-plugin 3.0.0-next.32+ (the versions carrying the
+  # Solid 2.0 compiler) require vite ^8. vitest takes vite as a peer, so the
+  # packages' vitest gets its own vite-8 instance of the same version.
+  '@tanstack/solid-query>vite': '^8.3.0'
+  '@tanstack/solid-query-devtools>vite': '^8.3.0'
+  '@tanstack/solid-query-persist-client>vite': '^8.3.0'
+  '@tanstack/query-example-solid-basic>vite': '^8.3.0'
+  '@tanstack/query-example-solid-basic-graphql-request>vite': '^8.3.0'
+  '@tanstack/query-example-solid-default-query-function>vite': '^8.3.0'
+  '@tanstack/query-example-solid-offline>vite': '^8.3.0'
+  '@tanstack/query-example-solid-simple>vite': '^8.3.0'
+  'solid-vite>vite': '^8.3.0'
   esbuild: '^0.27.2'
 
 allowBuilds:
