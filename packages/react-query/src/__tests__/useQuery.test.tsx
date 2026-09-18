@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -43,6 +43,35 @@ describe('useQuery', () => {
     queryClient.clear()
     vi.useRealTimers()
   })
+
+  it.each([false, true])(
+    'should update placeholder selection on rerender (StrictMode: %s)',
+    (strict) => {
+      const key = queryKey()
+      const initialProps: { factor: number | undefined } = { factor: 2 }
+      const view = renderHook(
+        ({ factor }: { factor: number | undefined }) =>
+          useQuery(
+            {
+              queryKey: key,
+              queryFn: () => 2,
+              enabled: false,
+              placeholderData: 2,
+              select:
+                factor === undefined ? undefined : (value) => value * factor,
+            },
+            queryClient,
+          ),
+        { initialProps, wrapper: strict ? React.StrictMode : undefined },
+      )
+      expect(view.result.current.data).toBe(4)
+      view.rerender({ factor: 3 })
+      expect(view.result.current.data).toBe(6)
+      view.rerender({ factor: undefined })
+      expect(view.result.current.data).toBe(2)
+      view.unmount()
+    },
+  )
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {

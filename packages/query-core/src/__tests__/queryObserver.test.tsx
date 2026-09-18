@@ -24,6 +24,40 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
+  it.each([false, true])(
+    'should update selected placeholder data when select changes (function: %s)',
+    (functional) => {
+      const key = queryKey()
+      const placeholderData = functional ? () => 2 : 2
+      const options = {
+        queryKey: key,
+        queryFn: () => 2,
+        enabled: false,
+        placeholderData,
+      }
+      const observer = new QueryObserver(queryClient, {
+        ...options,
+        select: (value) => value * 2,
+      })
+      expect(observer.getCurrentResult().data).toBe(4)
+      observer.setOptions({ ...options, select: (value) => value * 3 })
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 6,
+        isPlaceholderData: true,
+      })
+      observer.setOptions(options)
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 2,
+        isPlaceholderData: true,
+      })
+      observer.setOptions({ ...options, select: (value) => value * 4 })
+      expect(observer.getCurrentResult()).toMatchObject({
+        data: 8,
+        isPlaceholderData: true,
+      })
+    },
+  )
+
   it('should trigger a fetch when subscribed', () => {
     const key = queryKey()
     const queryFn = vi
