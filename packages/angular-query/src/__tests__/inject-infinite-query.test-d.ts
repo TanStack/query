@@ -1,10 +1,20 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { injectInfiniteQuery, skipToken, toResource } from '..'
-import type { CreateInfiniteQueryOptions } from '..'
+import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from '..'
 import type { Signal } from '@angular/core'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('injectInfiniteQuery', () => {
+  it('supports reading data from a generic result type', () => {
+    const readPages = <T extends InfiniteData<{ id: number }>>(
+      query: CreateInfiniteQueryResult<T>,
+    ) => query.data()?.pages
+
+    expectTypeOf(readPages).toBeCallableWith(
+      {} as CreateInfiniteQueryResult<InfiniteData<{ id: number }>>,
+    )
+  })
+
   it('should expose status predicates as Angular signals', () => {
     const query = injectInfiniteQuery(() => ({
       queryKey: ['infiniteQuery'],

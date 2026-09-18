@@ -5,8 +5,10 @@ export type MethodKeys<T> = {
   [K in keyof T]: T[K] extends (...args: Array<any>) => any ? K : never
 }[keyof T]
 
-export type MapToSignals<T, TExcludeFields extends MethodKeys<T> = never> = {
-  [K in keyof T]: K extends TExcludeFields ? T[K] : Signal<T[K]>
+export type MapToSignals<T, TSignalFields extends keyof any = never> = {
+  [K in keyof T as K extends TSignalFields ? K : never]: Signal<T[K]>
+} & {
+  [K in keyof T as K extends TSignalFields ? never : K]: T[K]
 }
 
 /**

@@ -64,10 +64,15 @@ const mutationFields = {
 export const queryResultFields = /* @__PURE__ */ Object.keys(
   queryFields,
 ) as Array<keyof typeof queryFields>
+export type QueryResultFields = (typeof queryResultFields)[number]
+
 export const infiniteQueryResultFields = /* @__PURE__ */ Object.keys(
   infiniteQueryFields,
 ) as Array<keyof typeof infiniteQueryFields>
+export type InfiniteQueryResultFields =
+  (typeof infiniteQueryResultFields)[number]
 
 export const mutationResultFields = /* @__PURE__ */ Object.keys(
   mutationFields,
 ) as Array<keyof typeof mutationFields>
+export type MutationResultFields = (typeof mutationResultFields)[number]
