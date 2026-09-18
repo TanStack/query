@@ -8,6 +8,7 @@
     DevtoolsErrorType,
     DevtoolsPosition,
     TanstackQueryDevtools,
+    Theme,
   } from '@tanstack/query-devtools'
 
   interface DevtoolsOptions {
@@ -49,6 +50,11 @@
      * Set this to true to hide disabled queries from the devtools panel.
      */
     hideDisabledQueries?: boolean
+    /**
+     * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+     * Defaults to 'system'.
+     */
+    theme?: Theme
   }
 
   let {
@@ -60,6 +66,7 @@
     styleNonce = undefined,
     shadowDOMTarget = undefined,
     hideDisabledQueries = false,
+    theme = 'system',
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
@@ -82,6 +89,7 @@
           styleNonce,
           shadowDOMTarget,
           hideDisabledQueries,
+          theme,
         })
 
         devtools.mount(ref)
@@ -103,6 +111,10 @@
 
     $effect(() => {
       devtools?.setErrorTypes(errorTypes)
+    })
+
+    $effect(() => {
+      devtools?.setTheme(theme)
     })
   }
 </script>
