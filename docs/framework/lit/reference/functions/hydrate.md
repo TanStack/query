@@ -5,9 +5,9 @@ title: hydrate
 
 ```ts
 function hydrate(
-   client,
-   dehydratedState,
-   options?): void;
+   client: QueryClient,
+   dehydratedState: Partial<DehydratedState>,
+   options?: HydrateOptions): void;
 ```
 
 Defined in: [packages/query-core/src/hydration.ts:264](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L264)

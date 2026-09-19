@@ -22,19 +22,9 @@ detect changes.
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<Listener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
+| Property | Modifier | Type |
+| ------ | ------ | ------ |
+| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
 
 ## Methods
 
@@ -117,7 +107,7 @@ Subscribable.onUnsubscribe
 ### setEventListener()
 
 ```ts
-setEventListener(setup): void;
+setEventListener(setup: SetupFn): void;
 ```
 
 Defined in: [packages/query-core/src/onlineManager.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L75)
@@ -155,7 +145,7 @@ onlineManager.setEventListener((setOnline) => {
 ### setOnline()
 
 ```ts
-setOnline(online): void;
+setOnline(online: boolean): void;
 ```
 
 Defined in: [packages/query-core/src/onlineManager.ts:95](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L95)
@@ -189,7 +179,7 @@ onlineManager.setOnline(false)
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: Listener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

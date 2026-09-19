@@ -1,5 +1,12 @@
 # @tanstack/solid-query
 
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies [[`8330b2f`](https://github.com/TanStack/query/commit/8330b2f2d431f226d7bb95eb727c637be9d4c6d8), [`3212966`](https://github.com/TanStack/query/commit/3212966a3681e02d14eb79e9cce0d3265b046877)]:
+  - @tanstack/query-core@5.103.1
+
 ## 5.103.0
 
 ### Patch Changes

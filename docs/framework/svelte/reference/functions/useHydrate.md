@@ -5,9 +5,9 @@ title: useHydrate
 
 ```ts
 function useHydrate(
-   state?, 
-   options?, 
-   queryClient?): void;
+   state?: unknown, 
+   options?: HydrateOptions, 
+   queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/svelte-query/src/useHydrate.ts:33](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L33)

@@ -7,7 +7,7 @@ title: EnsureInfiniteQueryDataOptions
 type EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:631](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L631)
+Defined in: [packages/query-core/src/types.ts:686](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L686)
 
 ## Type Declaration
 

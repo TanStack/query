@@ -4,7 +4,7 @@ title: UseMutateFunction
 ---
 
 ```ts
-type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
+type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
 Defined in: [packages/react-query/src/types.ts:433](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L433)

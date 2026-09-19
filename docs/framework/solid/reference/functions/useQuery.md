@@ -8,7 +8,7 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
@@ -209,7 +209,7 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/useQuery.ts:226](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L226)

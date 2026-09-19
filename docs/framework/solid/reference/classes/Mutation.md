@@ -49,7 +49,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### Constructor
 
 ```ts
-new Mutation<TData, TError, TVariables, TOnMutateResult>(config): Mutation<TData, TError, TVariables, TOnMutateResult>;
+new Mutation<TData, TError, TVariables, TOnMutateResult>(config: MutationConfig<TData, TError, TVariables, TOnMutateResult>): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/query-core/src/mutation.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L152)
@@ -216,7 +216,7 @@ Removable.destroy
 ### execute()
 
 ```ts
-execute(variables): Promise<TData>;
+execute(variables: TVariables): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/mutation.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L284)
@@ -308,7 +308,7 @@ Removable.scheduleGc
 ### updateGcTime()
 
 ```ts
-protected updateGcTime(newGcTime): void;
+protected updateGcTime(newGcTime: number | undefined): void;
 ```
 
 Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)

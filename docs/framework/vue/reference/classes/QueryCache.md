@@ -18,7 +18,7 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new QueryCache(config): QueryCache;
+new QueryCache(config: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
@@ -77,9 +77,9 @@ QC.listeners
 
 ```ts
 build<TQueryFnData, TError, TData, TQueryKey>(
-   client, 
-   options, 
-state?): Query<TQueryFnData, TError, TData, TQueryKey>;
+   client: QueryClient, 
+   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">, 
+state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:147](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L147)
@@ -150,7 +150,7 @@ QC.build
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L232)
+Defined in: [packages/query-core/src/queryCache.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L228)
 
 Removes all queries from the cache.
 
@@ -177,7 +177,7 @@ QC.clear
 ### find()
 
 ```ts
-find<TQueryFnData, TError, TData>(filters): 
+find<TQueryFnData, TError, TData>(filters: MaybeRefDeep<WithRequired<QueryFilters<readonly unknown[]>, "queryKey">>): 
   | Query<TQueryFnData, TError, TData, readonly unknown[]>
   | undefined;
 ```
@@ -241,7 +241,7 @@ QC.find
 ### findAll()
 
 ```ts
-findAll(filters): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
@@ -285,12 +285,12 @@ QC.findAll
 ### get()
 
 ```ts
-get<TQueryFnData, TError, TData, TQueryKey>(queryHash): 
+get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string): 
   | Query<TQueryFnData, TError, TData, TQueryKey>
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:254](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L254)
+Defined in: [packages/query-core/src/queryCache.ts:250](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L250)
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -349,7 +349,7 @@ QC.get
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L277)
+Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
 
 Returns all queries within the cache.
 
@@ -436,7 +436,7 @@ QC.onUnsubscribe
 ### remove()
 
 ```ts
-remove(query): void;
+remove(query: Query<any, any, any, any>): void;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L208)
@@ -478,7 +478,7 @@ QC.remove
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: QueryCacheListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)

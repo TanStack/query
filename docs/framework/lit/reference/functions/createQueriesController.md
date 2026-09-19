@@ -5,9 +5,9 @@ title: createQueriesController
 
 ```ts
 function createQueriesController<TQueryOptions, TCombinedResult>(
-   host,
-   options,
-queryClient?): QueriesResultAccessor<TCombinedResult>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateQueriesControllerOptions<TQueryOptions, TCombinedResult>>,
+queryClient?: QueryClient): QueriesResultAccessor<TCombinedResult>;
 ```
 
 Defined in: [packages/lit-query/src/createQueriesController.ts:701](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L701)

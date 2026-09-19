@@ -7,7 +7,7 @@ title: UseMutationOptions
 type UseMutationOptions<TData, TError, TVariables, TOnMutateResult> = Accessor<MutationOptions<TData, TError, TVariables, TOnMutateResult>>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:260](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L260)
+Defined in: [packages/solid-query/src/types.ts:262](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L262)
 
 The accessor `useMutation` expects as its first argument — Solid re-evaluates it reactively, so callbacks
 and other options can depend on signals.

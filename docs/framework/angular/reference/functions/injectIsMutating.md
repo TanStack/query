@@ -4,7 +4,7 @@ title: injectIsMutating
 ---
 
 ```ts
-function injectIsMutating(filters?, options?): Signal<number>;
+function injectIsMutating(filters?: MutationFilters<unknown, Error, unknown, unknown>, options?: InjectIsMutatingOptions): Signal<number>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-is-mutating.ts:46](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L46)

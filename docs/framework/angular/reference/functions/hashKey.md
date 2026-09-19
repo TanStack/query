@@ -4,7 +4,7 @@ title: hashKey
 ---
 
 ```ts
-function hashKey(queryKey): string;
+function hashKey(queryKey: readonly unknown[]): string;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L284)

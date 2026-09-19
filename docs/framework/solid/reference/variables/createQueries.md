@@ -4,7 +4,11 @@ title: createQueries
 ---
 
 ```ts
-const createQueries: <T, TCombinedResult>(queriesOptions, queryClient?) => TCombinedResult = useQueries;
+const createQueries: <T, TCombinedResult>(queriesOptions: Accessor<{
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : { [K in string | number | symbol]: GetResults<(...)[(...)]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends ...[] ? ...[] : ...[]]
+     | readonly [{ [K in string | number | symbol]: GetOptions<T[K<K>]> }];
+}>, queryClient?: Accessor<QueryClient>) => TCombinedResult = useQueries;
 ```
 
 Defined in: [packages/solid-query/src/index.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L86)
@@ -67,7 +71,7 @@ previously rendered queries, because the number of queries can differ between re
 ### queriesOptions
 
 `Accessor`\<\{
-  `combine?`: (`result`) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : \{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* ...[] ? ...[] : ...[]\]
      \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\<K\>\]\> \}\];
 \}\>

@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsMutating(filters?, queryClient?): Accessor<number>;
+function useIsMutating(filters?: Accessor<MutationFilters<unknown, Error, unknown, unknown>>, queryClient?: Accessor<QueryClient>): Accessor<number>;
 ```
 
 Defined in: [packages/solid-query/src/useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)

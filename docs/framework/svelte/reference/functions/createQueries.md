@@ -4,7 +4,11 @@ title: createQueries
 ---
 
 ```ts
-function createQueries<T, TCombinedResult>(createQueriesOptions, queryClient?): TCombinedResult;
+function createQueries<T, TCombinedResult>(createQueriesOptions: Accessor<{
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetCreateQueryResult<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetCreateQueryResult<...>, GetCreateQueryResult<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetCreateQueryResult<T[K<(...)>]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetCreateQueryOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetCreateQueryOptionsForCreateQueries<...>, GetCreateQueryOptionsForCreateQueries<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[] ? CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[] : CreateQueryOptionsForCreateQueries<..., ..., ..., ...>[]]
+     | readonly [{ [K in string | number | symbol]: GetCreateQueryOptionsForCreateQueries<T[K<K>]> }];
+}>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
 Defined in: [packages/svelte-query/src/createQueries.svelte.ts:260](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.svelte.ts#L260)
@@ -24,7 +28,7 @@ Defined in: [packages/svelte-query/src/createQueries.svelte.ts:260](https://gith
 ### createQueriesOptions
 
 [`Accessor`](../type-aliases/Accessor.md)\<\{
-  `combine?`: (`result`) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryResult`\<...\>, `GetCreateQueryResult`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\<(...)\>\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<...\>, `GetCreateQueryOptionsForCreateQueries`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] ? `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] : `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[]\]
      \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\<K\>\]\> \}\];
 \}\>
