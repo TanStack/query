@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { createRenderStream } from '@testing-library/react-render-stream'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -44,6 +44,47 @@ describe('useInfiniteQuery', () => {
     queryClient.clear()
     vi.useRealTimers()
   })
+
+  it.each([false, true])(
+    'should cache an unconsumed refetch after unmount when an earlier fetch consumed the signal (StrictMode: %s)',
+    async (strict) => {
+      const key = queryKey()
+      let consumeSignal = true
+      const view = renderHook(
+        () =>
+          useInfiniteQuery(
+            {
+              queryKey: key,
+              queryFn: (context) => {
+                if (consumeSignal) {
+                  void context.signal
+                  return Promise.resolve('initial')
+                }
+                return sleep(10).then(() => 'fresh')
+              },
+              initialPageParam: 0,
+              getNextPageParam: () => undefined,
+            },
+            queryClient,
+          ),
+        { wrapper: strict ? React.StrictMode : undefined },
+      )
+      await act(() => vi.advanceTimersByTimeAsync(0))
+      consumeSignal = false
+      let result: ReturnType<typeof view.result.current.refetch> | undefined
+      act(() => {
+        result = view.result.current.refetch()
+      })
+      view.unmount()
+      await vi.advanceTimersByTimeAsync(10)
+      await result
+
+      expect(queryClient.getQueryData(key)).toEqual({
+        pages: ['fresh'],
+        pageParams: [0],
+      })
+    },
+  )
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
