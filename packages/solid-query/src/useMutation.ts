@@ -235,7 +235,7 @@ export function useMutation<
   ) => {
     if (!pendingObserver.getCurrentResult().isPending) return
 
-    let release = noop
+    let release: () => void = noop
     release = pendingObserver.subscribe((result) => {
       if (!result.isPending) {
         retainedSubscriptions.delete(release)
