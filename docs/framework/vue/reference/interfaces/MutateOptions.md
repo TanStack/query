@@ -3,7 +3,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1352](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1352)
+Defined in: [packages/query-core/src/types.ts:1400](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1400)
 
 ## Type Parameters
 
