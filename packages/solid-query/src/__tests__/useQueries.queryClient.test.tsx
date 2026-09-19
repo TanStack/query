@@ -34,7 +34,7 @@ describe('useQueries custom queryClient accessor', () => {
 
       return (
         <>
-          <div data-testid="data">{String(queries[0]?.data ?? 'pending')}</div>
+          <div data-testid="data">{String(queries[0].data ?? 'pending')}</div>
           <button onClick={() => setClient(queryClient2)}>switch client</button>
         </>
       )

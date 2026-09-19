@@ -301,16 +301,18 @@ export function useQueries<
   )
 
   const observer = createMemo(
-    on(client, (currentClient) =>
-      new QueriesObserver(
-        currentClient,
-        defaultedQueries(),
-        queriesOptions().combine
-          ? ({
-              combine: queriesOptions().combine,
-            } as QueriesObserverOptions<TCombinedResult>)
-          : undefined,
-      ),
+    on(
+      client,
+      (currentClient) =>
+        new QueriesObserver(
+          currentClient,
+          defaultedQueries(),
+          queriesOptions().combine
+            ? ({
+                combine: queriesOptions().combine,
+              } as QueriesObserverOptions<TCombinedResult>)
+            : undefined,
+        ),
     ),
   )
 
