@@ -9,7 +9,7 @@ type ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey> =
   | (error: TError, query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:381](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L381)
+Defined in: [packages/query-core/src/types.ts:388](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L388)
 
 ## Type Parameters
 

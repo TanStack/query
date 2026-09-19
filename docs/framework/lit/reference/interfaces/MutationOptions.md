@@ -3,7 +3,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1218](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1218)
+Defined in: [packages/query-core/src/types.ts:1225](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1225)
 
 ## Extended by
 

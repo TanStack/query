@@ -3,7 +3,7 @@ id: FetchNextPageOptions
 title: FetchNextPageOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:751](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L751)
+Defined in: [packages/query-core/src/types.ts:758](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L758)
 
 ## Extends
 
