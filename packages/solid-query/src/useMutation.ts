@@ -209,7 +209,12 @@ export function useMutation<
 
   const updateState = (
     result: ReturnType<
-      MutationObserver<TData, TError, TVariables, TOnMutateResult>['getCurrentResult']
+      MutationObserver<
+        TData,
+        TError,
+        TVariables,
+        TOnMutateResult
+      >['getCurrentResult']
     >,
   ) => {
     setState({
