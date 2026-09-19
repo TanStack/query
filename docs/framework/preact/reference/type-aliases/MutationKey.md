@@ -7,4 +7,4 @@ title: MutationKey
 type MutationKey = Register extends object ? TMutationKey extends ReadonlyArray<unknown> ? TMutationKey : TMutationKey extends unknown[] ? TMutationKey : ReadonlyArray<unknown> : ReadonlyArray<unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1181](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1181)
+Defined in: [packages/query-core/src/types.ts:1188](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1188)

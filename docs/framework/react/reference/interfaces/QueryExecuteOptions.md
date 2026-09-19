@@ -3,7 +3,7 @@ id: QueryExecuteOptions
 title: QueryExecuteOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:587](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L587)
+Defined in: [packages/query-core/src/types.ts:594](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L594)
 
 ## Extends
 
