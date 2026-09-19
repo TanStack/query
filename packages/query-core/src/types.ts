@@ -1221,24 +1221,57 @@ export interface MutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > {
+  /**
+   * The function that performs the asynchronous task this mutation runs.
+   * Required, unless a default mutation function has been set for the matching `mutationKey` via
+   * `queryClient.setMutationDefaults`.
+   * Receives the `variables` passed to `mutate`, and a {@link MutationFunctionContext} holding the
+   * `QueryClient`, the `mutationKey` and `meta`.
+   * Must return a promise that resolves the mutation's data.
+   */
   mutationFn?: MutationFunction<TData, TVariables>
+  /**
+   * The key to use for this mutation. Optional, but required to inherit defaults registered with
+   * `queryClient.setMutationDefaults`, and to match this mutation with `useMutationState` or
+   * `queryClient.isMutating`.
+   */
   mutationKey?: MutationKey
+  /**
+   * This function fires before the mutation function runs, and receives the same variables.
+   * Useful for optimistic updates applied in the hope that the mutation succeeds.
+   * The value it returns is passed to `onSuccess`, `onError` and `onSettled` as `onMutateResult`,
+   * which is where an optimistic update is usually rolled back.
+   * If a promise is returned, it is awaited before the mutation function runs.
+   */
   onMutate?: (
     variables: TVariables,
     context: MutationFunctionContext,
   ) => Promise<TOnMutateResult> | TOnMutateResult
+  /**
+   * This function fires when the mutation succeeds, and is passed the mutation's result.
+   * If a promise is returned, it is awaited before `onSettled` runs.
+   */
   onSuccess?: (
     data: TData,
     variables: TVariables,
     onMutateResult: TOnMutateResult,
     context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
+  /**
+   * This function fires when the mutation encounters an error, and is passed the error.
+   * If a promise is returned, it is awaited before `onSettled` runs.
+   */
   onError?: (
     error: TError,
     variables: TVariables,
     onMutateResult: TOnMutateResult | undefined,
     context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
+  /**
+   * This function fires when the mutation either succeeds or errors, and is passed either the data
+   * or the error.
+   * If a promise is returned, it is awaited before the mutation settles.
+   */
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
@@ -1278,7 +1311,17 @@ export interface MutationOptions<
   gcTime?: number
   /** @internal */
   _defaulted?: boolean
+  /**
+   * Additional payload to be stored on the mutation cache entry.
+   * Use it to pass information that can be read wherever the `mutation` is available, such as the
+   * `onError` and `onSuccess` callbacks of the `MutationCache`.
+   */
   meta?: MutationMeta
+  /**
+   * Controls whether this mutation runs alongside others or waits its turn.
+   * Mutations sharing the same `scope.id` run serially, in the order they were started.
+   * Without a scope, a mutation runs as soon as it is triggered.
+   */
   scope?: MutationScope
 }
 

@@ -3,7 +3,7 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1539](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1539)
+Defined in: [packages/query-core/src/types.ts:1582](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1582)
 
 ## Properties
 
