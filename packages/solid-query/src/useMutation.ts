@@ -1,11 +1,5 @@
 import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
-import {
-  createComputed,
-  createMemo,
-  createSignal,
-  on,
-  onCleanup,
-} from 'solid-js'
+import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
@@ -188,12 +182,12 @@ export function useMutation<
   const resolveClient = useQueryClientResolver(queryClient)
   const client = createMemo(() => resolveClient())
 
-  const [observer, setObserver] = createSignal(
-    new MutationObserver<TData, TError, TVariables, TOnMutateResult>(
-      client(),
-      options(),
-    ),
-  )
+  let observer = new MutationObserver<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >(client(), options())
 
   const mutate: UseMutateFunction<
     TData,
@@ -201,12 +195,10 @@ export function useMutation<
     TVariables,
     TOnMutateResult
   > = (...args) => {
-    observer()
-      .mutate(args[0] as TVariables, args[1])
-      .catch(noop)
+    observer.mutate(args[0] as TVariables, args[1]).catch(noop)
   }
 
-  const initialResult = observer().getCurrentResult()
+  const initialResult = observer.getCurrentResult()
   const [state, setState] = createStore<
     UseMutationResult<TData, TError, TVariables, TOnMutateResult>
   >({
@@ -217,12 +209,7 @@ export function useMutation<
 
   const updateState = (
     result: ReturnType<
-      MutationObserver<
-        TData,
-        TError,
-        TVariables,
-        TOnMutateResult
-      >['getCurrentResult']
+      MutationObserver<TData, TError, TVariables, TOnMutateResult>['getCurrentResult']
     >,
   ) => {
     setState({
@@ -232,10 +219,10 @@ export function useMutation<
     })
   }
 
-  let unsubscribe = observer().subscribe(updateState)
+  let unsubscribe = observer.subscribe(updateState)
 
   createComputed(() => {
-    observer().setOptions(options())
+    observer.setOptions(options())
   })
 
   createComputed(
@@ -244,15 +231,14 @@ export function useMutation<
       (nextClient) => {
         unsubscribe()
 
-        const nextObserver = new MutationObserver<
+        observer = new MutationObserver<
           TData,
           TError,
           TVariables,
           TOnMutateResult
         >(nextClient, options())
-        setObserver(nextObserver)
-        updateState(nextObserver.getCurrentResult())
-        unsubscribe = nextObserver.subscribe(updateState)
+        updateState(observer.getCurrentResult())
+        unsubscribe = observer.subscribe(updateState)
       },
       { defer: true },
     ),
@@ -264,7 +250,7 @@ export function useMutation<
       () => {
         if (
           state.isError &&
-          shouldThrowError(observer().options.throwOnError, [state.error])
+          shouldThrowError(observer.options.throwOnError, [state.error])
         ) {
           throw state.error
         }
