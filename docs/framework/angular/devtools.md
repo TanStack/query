@@ -161,7 +161,7 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 - `hideDisabledQueries?: boolean`
-  - Set this to true to hide disabled queries from the devtools panel.
+  - Set this to true to hide disabled queries from the devtools panel by default. A saved Show/Hide preference from the devtools settings takes precedence.
 - `theme?: "light" | "dark" | "system"`
   - Defaults to `system`.
   - Set this to change the theme of the devtools panel.
