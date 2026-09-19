@@ -338,7 +338,8 @@ export function useQueries<
         setState(
           nextObserver.getOptimisticResult(
             defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
+              .combine,
           )[1](),
         )
         setObserver(nextObserver)
