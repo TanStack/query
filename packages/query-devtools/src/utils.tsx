@@ -1,4 +1,5 @@
 import { serialize } from 'superjson'
+import * as goober from 'goober'
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
@@ -321,4 +322,41 @@ export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   styleTag.id = '_goober'
   styleTag.setAttribute('nonce', nonce)
   root.appendChild(styleTag)
+}
+
+// `bind` returns a new function on every call, so binding per component would
+// give the style caches below a key that never repeats. Bind once per shadow
+// root instead, and reuse the unbound `css` when there is no shadow root.
+const boundCssCache = new WeakMap<object, (typeof goober)['css']>()
+
+export const cssForTarget = (target: ShadowRoot | undefined) => {
+  if (!target) return goober.css
+  let bound = boundCssCache.get(target)
+  if (!bound) {
+    bound = goober.css.bind({ target })
+    boundCssCache.set(target, bound)
+  }
+  return bound
+}
+
+// A stylesheet depends only on its theme and the `css` instance it compiles
+// with, so it can be compiled once and shared by every component instance
+// rather than recompiled for each one.
+export const createStylesCache = <T,>(
+  factory: (theme: 'light' | 'dark', css: (typeof goober)['css']) => T,
+) => {
+  const cache = new WeakMap<(typeof goober)['css'], Map<'light' | 'dark', T>>()
+  return (theme: 'light' | 'dark', css: (typeof goober)['css']) => {
+    let byTheme = cache.get(css)
+    if (!byTheme) {
+      byTheme = new Map()
+      cache.set(css, byTheme)
+    }
+    let styles = byTheme.get(theme)
+    if (!styles) {
+      styles = factory(theme, css)
+      byTheme.set(theme, styles)
+    }
+    return styles
+  }
 }

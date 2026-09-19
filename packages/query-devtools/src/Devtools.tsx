@@ -10,7 +10,6 @@ import {
   onMount,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
@@ -20,6 +19,8 @@ import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
+  createStylesCache,
+  cssForTarget,
   displayValue,
   getMutationStatusColor,
   getQueryStatusColor,
@@ -60,7 +61,9 @@ import {
   DEFAULT_SORT_ORDER,
   DEFAULT_WIDTH,
   INITIAL_IS_OPEN,
+  OVERSCAN,
   POSITION,
+  QUERY_ROW_HEIGHT_MULTIPLIER,
   firstBreakpoint,
   secondBreakpoint,
   thirdBreakpoint,
@@ -78,6 +81,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
+import type * as goober from 'goober'
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
 interface DevtoolsPanelProps {
@@ -113,9 +117,7 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -283,9 +285,7 @@ const PiPPanel: Component<{
 }> = (props) => {
   const pip = usePiPWindow()
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -352,9 +352,7 @@ export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -409,9 +407,7 @@ export const ParentPanel: Component<{
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -671,14 +667,154 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   )
 }
 
+/**
+ * Windowed list renderer for the query and mutation panes.
+ *
+ * Only the rows intersecting the scroll viewport (plus `OVERSCAN` on each side)
+ * are mounted, so the DOM node count and the per-row cache subscriptions stay
+ * bounded regardless of how many entries the cache holds. Rows have a fixed
+ * `rowHeight`, so offsets are computed arithmetically without measuring the DOM.
+ * The currently selected row is always kept mounted so its subscriptions and
+ * focus survive scrolling and live re-sorts.
+ */
+function VirtualList<T>(props: {
+  items: Array<T>
+  getKey: (item: T) => string
+  rowHeight: number
+  pinnedKey?: string | null
+  overflowClass: string
+  containerClass: string
+  rowClass: string
+  children: (item: Accessor<T>) => JSX.Element
+}): JSX.Element {
+  let scrollRef!: HTMLDivElement
+  const [scrollTop, setScrollTop] = createSignal(0)
+  // Seed with a bounded default (never the item count) so a large list cannot
+  // fully mount before the first measurement arrives.
+  const [viewportHeight, setViewportHeight] = createSignal(DEFAULT_HEIGHT)
+
+  onMount(() => {
+    const el = scrollRef
+    const view = el.ownerDocument.defaultView
+    setScrollTop(el.scrollTop)
+    if (el.clientHeight > 0) {
+      setViewportHeight(el.clientHeight)
+    }
+
+    const onScroll = () => setScrollTop(el.scrollTop)
+    el.addEventListener('scroll', onScroll, { passive: true })
+
+    // Resolve ResizeObserver from the element's own document so the observer
+    // works when the panel is rendered into a Picture-in-Picture window.
+    let observer: ResizeObserver | undefined
+    const ObserverCtor = view?.ResizeObserver
+    if (ObserverCtor) {
+      observer = new ObserverCtor((entries) => {
+        const height = entries[0]?.contentRect.height
+        if (typeof height === 'number' && height > 0) {
+          setViewportHeight(height)
+        }
+        setScrollTop(el.scrollTop)
+      })
+      observer.observe(el)
+    }
+
+    onCleanup(() => {
+      el.removeEventListener('scroll', onScroll)
+      observer?.disconnect()
+    })
+  })
+
+  const totalSize = createMemo(() => props.items.length * props.rowHeight)
+
+  // Resolve the selected row's index separately so scrolling (which only
+  // changes scrollTop) never triggers this O(N) scan. It re-runs only when the
+  // list or the selection changes, keeping scroll updates O(window) even for
+  // very large caches.
+  const pinnedIndex = createMemo(() => {
+    const pinnedKey = props.pinnedKey
+    if (pinnedKey == null) return -1
+    return props.items.findIndex((item) => props.getKey(item) === pinnedKey)
+  })
+
+  const virtualRows = createMemo(() => {
+    const rowHeight = props.rowHeight
+    const count = props.items.length
+    if (rowHeight <= 0 || count === 0) {
+      return [] as Array<{ key: string; item: T; start: number }>
+    }
+
+    const height = viewportHeight()
+    // Clamp the scroll offset so a shrinking list (after filtering/sorting)
+    // never scrolls past the end and blanks the viewport.
+    const maxScrollTop = Math.max(0, count * rowHeight - height)
+    const clampedTop = Math.min(scrollTop(), maxScrollTop)
+    const first = Math.max(0, Math.floor(clampedTop / rowHeight) - OVERSCAN)
+    const last = Math.min(
+      count,
+      first + Math.ceil(height / rowHeight) + OVERSCAN * 2,
+    )
+
+    const indexes = new Set<number>()
+    for (let i = first; i < last; i++) {
+      indexes.add(i)
+    }
+
+    const pinned = pinnedIndex()
+    if (pinned >= 0 && pinned < count) {
+      indexes.add(pinned)
+    }
+
+    return [...indexes]
+      .sort((a, b) => a - b)
+      .map((index) => {
+        const item = props.items[index]!
+        return { key: props.getKey(item), item, start: index * rowHeight }
+      })
+  })
+
+  // Keep the element's scroll position in sync when the list shrinks below the
+  // current offset, so the scrollbar and the computed window agree.
+  createEffect(() => {
+    const maxScrollTop = Math.max(0, totalSize() - viewportHeight())
+    if (scrollTop() > maxScrollTop) {
+      scrollRef.scrollTop = maxScrollTop
+    }
+  })
+
+  return (
+    <div ref={scrollRef} class={props.overflowClass}>
+      <div class={props.containerClass} style={{ height: `${totalSize()}px` }}>
+        <Key by={(row) => row.key} each={virtualRows()}>
+          {(row) => {
+            // The window is rebuilt from scratch on every recomputation, so each
+            // row's wrapper is a new object and the keyed item signal always
+            // notifies. Reading the item here would make this child a tracked
+            // expression and rebuild the row's whole subtree on every scroll and
+            // cache event, so hand the row an accessor instead and let it read
+            // the item through a prop.
+            const item = createMemo(() => row().item)
+            return (
+              <div
+                class={props.rowClass}
+                style={{ transform: `translateY(${row().start}px)` }}
+              >
+                {props.children(item)}
+              </div>
+            )
+          }}
+        </Key>
+      </div>
+    </div>
+  )
+}
+
 export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -718,9 +854,28 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     return useQueryDevtoolsContext().client.getMutationCache()
   })
 
-  const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache().getAll().length
-  }, false)
+  const queryCount = createSubscribeToQueryCacheBatcher(
+    (queryCache) => {
+      return queryCache().getAll().length
+    },
+    false,
+    () => true,
+    true,
+  )
+
+  // Every cache event recomputes the list, and the result is usually the
+  // same queries in the same order - half of all events are observer
+  // notifications that cannot reorder anything. Returning a new array each
+  // time makes the whole downstream chain re-run regardless, so hold the
+  // previous array whenever the recompute produced an identical list.
+  let previousQueries: Array<Query> = []
+  const sameAsPrevious = (next: Array<Query>) => {
+    if (next.length !== previousQueries.length) return false
+    for (let i = 0; i < next.length; i++) {
+      if (next[i] !== previousQueries[i]) return false
+    }
+    return true
+  }
 
   const queries = createMemo(
     on(
@@ -749,6 +904,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         const sorted = sortFn()
           ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
           : filtered
+
+        if (sameAsPrevious(sorted)) return previousQueries
+        previousQueries = sorted
         return sorted
       },
     ),
@@ -805,6 +963,30 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     const variable = computedStyle.getPropertyValue('--tsqd-font-size')
     el.style.setProperty('--tsqd-font-size', variable)
   }
+
+  // Fixed row height for the virtualized lists, derived from the panel's
+  // resolved `--tsqd-font-size` so it tracks the user's font-size setting and
+  // any inherited scaling. Read from the always-mounted panel container rather
+  // than the toggling scroll element, and refreshed on window focus like the
+  // font-size variable itself (see the onMount above).
+  const [rowFontSize, setRowFontSize] = createSignal(16)
+  onMount(() => {
+    const readRowFontSize = () => {
+      const value =
+        getComputedStyle(containerRef).getPropertyValue('--tsqd-font-size')
+      const parsed = Number.parseFloat(value)
+      if (Number.isFinite(parsed) && parsed > 0) {
+        setRowFontSize(parsed)
+      }
+    }
+    readRowFontSize()
+    const view = containerRef.ownerDocument.defaultView
+    view?.addEventListener('focus', readRowFontSize)
+    onCleanup(() => view?.removeEventListener('focus', readRowFontSize))
+  })
+  const rowHeight = createMemo(
+    () => rowFontSize() * QUERY_ROW_HEIGHT_MULTIPLIER,
+  )
   return (
     <>
       <div
@@ -1332,32 +1514,44 @@ export const ContentView: Component<ContentViewProps> = (props) => {
           </div>
         </div>
         <Show when={selectedView() === 'queries'}>
-          <div
-            class={cx(
+          <VirtualList
+            items={queries()}
+            getKey={(q) => q.queryHash}
+            rowHeight={rowHeight()}
+            pinnedKey={selectedQueryHash()}
+            overflowClass={cx(
               styles().overflowQueryContainer,
               'tsqd-queries-overflow-container',
             )}
+            containerClass={cx(
+              'tsqd-queries-container',
+              styles().virtualSpacer,
+            )}
+            rowClass={styles().virtualRow}
           >
-            <div class="tsqd-queries-container">
-              <Key by={(q) => q.queryHash} each={queries()}>
-                {(query) => <QueryRow query={query()} />}
-              </Key>
-            </div>
-          </div>
+            {(query) => <QueryRow query={query()} />}
+          </VirtualList>
         </Show>
         <Show when={selectedView() === 'mutations'}>
-          <div
-            class={cx(
+          <VirtualList
+            items={mutations()}
+            getKey={(m) => String(m.mutationId)}
+            rowHeight={rowHeight()}
+            pinnedKey={
+              selectedMutationId() != null ? String(selectedMutationId()) : null
+            }
+            overflowClass={cx(
               styles().overflowQueryContainer,
               'tsqd-mutations-overflow-container',
             )}
+            containerClass={cx(
+              'tsqd-mutations-container',
+              styles().virtualSpacer,
+            )}
+            rowClass={styles().virtualRow}
           >
-            <div class="tsqd-mutations-container">
-              <Key by={(m) => m.mutationId} each={mutations()}>
-                {(mutation) => <MutationRow mutation={mutation()} />}
-              </Key>
-            </div>
-          </div>
+            {(mutation) => <MutationRow mutation={mutation()} />}
+          </VirtualList>
         </Show>
       </div>
       <Show when={selectedView() === 'queries' && selectedQueryHash()}>
@@ -1373,9 +1567,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
 const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1464,7 +1656,9 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         >
           {observers()}
         </div>
-        <code class="tsqd-query-hash">{props.query.queryHash}</code>
+        <code class="tsqd-query-hash" title={props.query.queryHash}>
+          {props.query.queryHash}
+        </code>
         <Show when={isDisabled()}>
           <div class="tsqd-query-disabled-indicator" aria-hidden="true">
             disabled
@@ -1482,9 +1676,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1492,33 +1684,21 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
+  // Read this row's own stable mutation instance directly instead of scanning
+  // the entire cache on every event. The subscription still fires on mutation-
+  // cache changes (that is what triggers the re-read), but the read itself is
+  // O(1), so a burst of mutation activity no longer costs O(rows x cache size).
   const mutationState = createSubscribeToMutationCacheBatcher(
-    (mutationCache) => {
-      const mutations = mutationCache().getAll()
-      const mutation = mutations.find(
-        (m) => m.mutationId === props.mutation.mutationId,
-      )
-      return mutation?.state
-    },
+    () => props.mutation.state,
   )
 
-  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return false
-    return mutation.state.isPaused
-  })
+  const isPaused = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.isPaused,
+  )
 
-  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === props.mutation.mutationId,
-    )
-    if (!mutation) return 'idle'
-    return mutation.state.status
-  })
+  const status = createSubscribeToMutationCacheBatcher(
+    () => props.mutation.state.status,
+  )
 
   const color = createMemo(() =>
     getMutationStatusColor({
@@ -1580,7 +1760,14 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
             <LoadingCircle />
           </Show>
         </div>
-        <code class="tsqd-query-hash">
+        <code
+          class="tsqd-query-hash"
+          title={`${
+            props.mutation.options.mutationKey
+              ? JSON.stringify(props.mutation.options.mutationKey) + ' - '
+              : ''
+          }${new Date(props.mutation.state.submittedAt).toLocaleString()}`}
+        >
           <Show when={props.mutation.options.mutationKey}>
             {JSON.stringify(props.mutation.options.mutationKey)} -{' '}
           </Show>
@@ -1592,45 +1779,33 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
 }
 
 const QueryStatusCount: Component = () => {
-  const stale = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'stale').length,
+  // Tally every status in one pass. Five independent subscriptions each walked
+  // the whole cache on every cache event, so the status badges alone cost five
+  // full scans per event. `getQueryStatusLabel` returns exactly these five
+  // labels, so the tally is exhaustive.
+  const counts = createSubscribeToQueryCacheBatcher(
+    (queryCache) => {
+      const tally = { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 }
+      for (const query of queryCache().getAll()) {
+        tally[getQueryStatusLabel(query)]++
+      }
+      return tally
+    },
+    true,
+    () => true,
+    true,
   )
 
-  const fresh = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fresh').length,
-  )
-
-  const fetching = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'fetching').length,
-  )
-
-  const paused = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'paused').length,
-  )
-
-  const inactive = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .filter((q) => getQueryStatusLabel(q) === 'inactive').length,
-  )
+  // Memos so each badge still only updates when its own count changes, as it
+  // did when every count had its own equality-checked signal.
+  const stale = createMemo(() => counts().stale)
+  const fresh = createMemo(() => counts().fresh)
+  const fetching = createMemo(() => counts().fetching)
+  const paused = createMemo(() => counts().paused)
+  const inactive = createMemo(() => counts().inactive)
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1649,62 +1824,31 @@ const QueryStatusCount: Component = () => {
 }
 
 const MutationStatusCount: Component = () => {
-  const success = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'green',
-        ).length,
-  )
+  // Tally every status color in one pass; four independent subscriptions each
+  // walked the whole cache on every mutation-cache event. `gray` is counted
+  // even though no badge displays it, because an idle mutation resolves to it
+  // and the tally has to stay exhaustive.
+  const counts = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const tally = { green: 0, yellow: 0, purple: 0, red: 0, gray: 0 }
+    for (const mutation of mutationCache().getAll()) {
+      tally[
+        getMutationStatusColor({
+          isPaused: mutation.state.isPaused,
+          status: mutation.state.status,
+        })
+      ]++
+    }
+    return tally
+  })
 
-  const pending = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'yellow',
-        ).length,
-  )
-
-  const paused = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'purple',
-        ).length,
-  )
-
-  const error = createSubscribeToMutationCacheBatcher(
-    (mutationCache) =>
-      mutationCache()
-        .getAll()
-        .filter(
-          (m) =>
-            getMutationStatusColor({
-              isPaused: m.state.isPaused,
-              status: m.state.status,
-            }) === 'red',
-        ).length,
-  )
+  // Memos so each badge still only updates when its own count changes.
+  const success = createMemo(() => counts().green)
+  const pending = createMemo(() => counts().yellow)
+  const paused = createMemo(() => counts().purple)
+  const error = createMemo(() => counts().red)
 
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1723,9 +1867,7 @@ const MutationStatusCount: Component = () => {
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1838,9 +1980,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 
 const QueryDetails = () => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -1858,59 +1998,44 @@ const QueryDetails = () => {
     return useQueryDevtoolsContext().errorTypes || []
   })
 
+  // The cache is keyed by query hash, so resolve the selected query directly
+  // instead of scanning every query in the cache on each event.
   const activeQuery = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash()),
+    (queryCache) => queryCache().get(selectedQueryHash()!),
     false,
   )
 
   const activeQueryFresh = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache()
-      .getAll()
-      .find((query) => query.queryHash === selectedQueryHash())
+    return queryCache().get(selectedQueryHash()!)
   }, false)
 
   const activeQueryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state,
+    (queryCache) => queryCache().get(selectedQueryHash()!)?.state,
     false,
   )
 
   const activeQueryStateData = createSubscribeToQueryCacheBatcher(
     (queryCache) => {
-      return queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())?.state.data
+      return queryCache().get(selectedQueryHash()!)?.state.data
     },
     false,
   )
 
   const statusLabel = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash()!)
     if (!query) return 'inactive'
     return getQueryStatusLabel(query)
   })
 
   const queryStatus = createSubscribeToQueryCacheBatcher((queryCache) => {
-    const query = queryCache()
-      .getAll()
-      .find((q) => q.queryHash === selectedQueryHash())
+    const query = queryCache().get(selectedQueryHash()!)
     if (!query) return 'pending'
     return query.state.status
   })
 
   const observerCount = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .getAll()
-        .find((query) => query.queryHash === selectedQueryHash())
-        ?.getObserversCount() ?? 0,
+      queryCache().get(selectedQueryHash()!)?.getObserversCount() ?? 0,
   )
 
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
@@ -2383,9 +2508,7 @@ const QueryDetails = () => {
 
 const MutationDetails = () => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
+  const css = cssForTarget(useQueryDevtoolsContext().shadowDOMTarget)
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
@@ -2393,37 +2516,28 @@ const MutationDetails = () => {
   const { colors } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
-  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === selectedMutationId(),
-    )
-    if (!mutation) return false
-    return mutation.state.isPaused
-  })
-
-  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
-    const mutations = mutationCache().getAll()
-    const mutation = mutations.find(
-      (m) => m.mutationId === selectedMutationId(),
-    )
-    if (!mutation) return 'idle'
-    return mutation.state.status
-  })
-
-  const color = createMemo(() =>
-    getMutationStatusColor({
-      isPaused: isPaused(),
-      status: status(),
-    }),
-  )
-
+  // The mutation cache has no keyed lookup, so the scan cannot be avoided - but
+  // all three values come from the same mutation, so one scan serves them all.
+  // The equality check stays disabled: a mutation's object identity does not
+  // change across status transitions, so the subscription would otherwise never
+  // notify and the pane would freeze on its first rendered state.
   const activeMutation = createSubscribeToMutationCacheBatcher(
     (mutationCache) =>
       mutationCache()
         .getAll()
         .find((mutation) => mutation.mutationId === selectedMutationId()),
     false,
+  )
+
+  const isPaused = createMemo(() => activeMutation()?.state.isPaused ?? false)
+
+  const status = createMemo(() => activeMutation()?.state.status ?? 'idle')
+
+  const color = createMemo(() =>
+    getMutationStatusColor({
+      isPaused: isPaused(),
+      status: status(),
+    }),
   )
 
   const getQueryStatusColors = () => {
@@ -2569,13 +2683,106 @@ const MutationDetails = () => {
   )
 }
 
+// Longest a coalesced subscriber will wait before reflecting a change, in
+// milliseconds. Roughly one frame: long enough to fold a stream of cache
+// events into a single pass, short enough to stay imperceptible.
+const COALESCE_WINDOW_MS = 16
+
+// Share of the main thread a coalesced subscriber is allowed to take when its
+// passes cost more than the window. The next window is widened to this
+// multiple of the last pass, so the panel keeps well clear of starving the
+// application no matter how large the cache grows.
+const COALESCE_PASS_MULTIPLE = 3
+
+// Monotonic, unlike `Date.now`, which can step backwards on a clock
+// correction and would then hold a subscriber closed for the size of the step.
+const now = () =>
+  typeof performance !== 'undefined' ? performance.now() : Date.now()
+
+type QueryCacheSubscriber = {
+  setter: Setter<any>
+  shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
+  // Subscribers whose callback walks the whole cache opt into coalescing, so
+  // a stream of events costs one pass per window rather than one per event.
+  coalesce: boolean
+  scheduled: boolean
+  running: boolean
+  missedWhileRunning: boolean
+  timeout: ReturnType<typeof setTimeout> | undefined
+  lastRun: number
+  lastPassMs: number
+}
+
 const queryCacheMap = new Map<
   (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
+  QueryCacheSubscriber
 >()
+
+// A window is at least one frame, and widens when a pass costs enough that a
+// frame would not contain it, which caps the share of the main thread a
+// subscriber can take however large the cache grows.
+const windowFor = (value: QueryCacheSubscriber) =>
+  Math.max(COALESCE_WINDOW_MS, value.lastPassMs * COALESCE_PASS_MULTIPLE)
+
+// Runs a coalesced subscriber and records what it cost, so the next window can
+// be widened to match. `lastRun` is stamped on the way out rather than on the
+// way in: the window has to measure the gap between passes, not the gap
+// between their start times, or an expensive pass consumes its own window.
+const runPass = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+) => {
+  const started = now()
+  // Marked for the duration of the pass so that a cache event raised from
+  // inside it is deferred rather than starting a nested pass. It is a separate
+  // flag from `scheduled`, which means a trailing pass is already armed: an
+  // event arriving mid-pass has nothing armed to pick it up, so it has to be
+  // remembered and armed once the pass unwinds.
+  value.running = true
+  try {
+    value.setter(callback(queryCache))
+  } finally {
+    const finished = now()
+    value.lastPassMs = finished - started
+    value.lastRun = finished
+    value.running = false
+  }
+}
+
+// Arms the single trailing pass that everything arriving inside a window folds
+// into.
+const scheduleTrailingPass = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+  delay: number,
+) => {
+  value.scheduled = true
+  value.timeout = setTimeout(() => {
+    value.scheduled = false
+    value.timeout = undefined
+    // The entry may have been disposed, or replaced, while the pass was
+    // pending; either way this pass no longer owns the signal.
+    if (queryCacheMap.get(callback) !== value) return
+    batch(() => runPassAndRearm(callback, value, queryCache))
+  }, delay)
+}
+
+// Both exits from a pass have to behave the same way. An event raised while a
+// pass was unwinding has nothing in flight that can reflect it, so it is
+// remembered and armed here; doing this on only one of the two paths would turn
+// a would-be nested pass into a silently lost one.
+const runPassAndRearm = (
+  callback: (q: Accessor<QueryCache>) => any,
+  value: QueryCacheSubscriber,
+  queryCache: Accessor<QueryCache>,
+) => {
+  runPass(callback, value, queryCache)
+  if (!value.missedWhileRunning) return
+  value.missedWhileRunning = false
+  scheduleTrailingPass(callback, value, queryCache, windowFor(value))
+}
 
 const setupQueryCacheSubscription = () => {
   const queryCache = createMemo(() => {
@@ -2587,13 +2794,42 @@ const setupQueryCacheSubscription = () => {
     batch(() => {
       for (const [callback, value] of queryCacheMap.entries()) {
         if (!value.shouldUpdate(q)) continue
-        value.setter(callback(queryCache))
+
+        if (!value.coalesce) {
+          value.setter(callback(queryCache))
+          continue
+        }
+
+        // A pass is already scheduled for this subscriber; it will pick the
+        // latest state up when it runs.
+        if (value.scheduled) continue
+
+        // Raised from inside a pass that is still unwinding. Nothing in flight
+        // can reflect it, so record it and let the pass arm a trailing one.
+        if (value.running) {
+          value.missedWhileRunning = true
+          continue
+        }
+
+        // Without the floor in `windowFor`, a pass costing more than the
+        // window would leave every event outside the window, so nothing would
+        // coalesce and the passes would run back to back - the stall this is
+        // meant to prevent.
+        const window = windowFor(value)
+        const elapsed = now() - value.lastRun
+        if (elapsed >= window) {
+          runPassAndRearm(callback, value, queryCache)
+          continue
+        }
+
+        // Mid-window: fold this and everything else that arrives into one
+        // trailing pass.
+        scheduleTrailingPass(callback, value, queryCache, window - elapsed)
       }
     })
   })
 
   onCleanup(() => {
-    queryCacheMap.clear()
     unsubscribe()
   })
 
@@ -2604,6 +2840,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   callback: (queryCache: Accessor<QueryCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
+  coalesce: boolean = false,
 ) => {
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
@@ -2619,13 +2856,27 @@ const createSubscribeToQueryCacheBatcher = <T,>(
     setValue(callback(queryCache))
   })
 
-  queryCacheMap.set(callback, {
-    setter: setValue,
+  const entry = {
+    setter: setValue as Setter<any>,
     shouldUpdate: shouldUpdate,
-  })
+    coalesce,
+    scheduled: false,
+    running: false,
+    missedWhileRunning: false,
+    timeout: undefined as ReturnType<typeof setTimeout> | undefined,
+    // Never run, so the first change is always a leading edge no matter what
+    // origin the clock happens to count from.
+    lastRun: -Infinity,
+    lastPassMs: 0,
+  }
+  queryCacheMap.set(callback, entry)
 
   onCleanup(() => {
-    queryCacheMap.delete(callback)
+    if (entry.timeout !== undefined) clearTimeout(entry.timeout)
+    // Only retract our own registration: reading the map back would let a
+    // subscriber that happened to share this callback identity be torn down
+    // by someone else's cleanup.
+    if (queryCacheMap.get(callback) === entry) queryCacheMap.delete(callback)
   })
 
   return value
@@ -2643,15 +2894,20 @@ const setupMutationCacheSubscription = () => {
   })
 
   const unsubscribe = mutationCache().subscribe(() => {
-    for (const [callback, setter] of mutationCacheMap.entries()) {
-      queueMicrotask(() => {
-        setter(callback(mutationCache))
+    // One microtask around the whole fan-out, with the writes batched inside
+    // it, so a mutation-cache event produces a single downstream update rather
+    // than one per subscriber. The batch has to live inside the microtask: a
+    // batch around the loop would exit before any deferred setter ran.
+    queueMicrotask(() => {
+      batch(() => {
+        for (const [callback, setter] of mutationCacheMap.entries()) {
+          setter(callback(mutationCache))
+        }
       })
-    }
+    })
   })
 
   onCleanup(() => {
-    mutationCacheMap.clear()
     unsubscribe()
   })
 
@@ -3330,10 +3586,22 @@ const stylesFactory = (
         flex-direction: column;
       }
     `,
+    virtualSpacer: css`
+      position: relative;
+      width: 100%;
+    `,
+    virtualRow: css`
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    `,
     queryRow: css`
       display: flex;
       align-items: center;
       padding: 0;
+      width: 100%;
+      height: calc(var(--tsqd-font-size) * ${QUERY_ROW_HEIGHT_MULTIPLIER});
       border: none;
       cursor: pointer;
       color: ${t(colors.gray[700], colors.gray[300])};
@@ -3368,18 +3636,20 @@ const stylesFactory = (
       & .tsqd-query-hash {
         user-select: text;
         font-size: ${font.size.xs};
-        display: flex;
-        align-items: center;
+        display: block;
+        line-height: ${tokens.size[6]};
         min-height: ${tokens.size[6]};
         flex: 1;
+        min-width: 0;
         padding: ${tokens.size[1]} ${tokens.size[2]};
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
-        text-overflow: clip;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       & .tsqd-query-disabled-indicator {
@@ -3768,5 +4038,7 @@ const stylesFactory = (
   }
 }
 
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)
+const cachedStyles = createStylesCache(stylesFactory)
+
+const lightStyles = (css: (typeof goober)['css']) => cachedStyles('light', css)
+const darkStyles = (css: (typeof goober)['css']) => cachedStyles('dark', css)
