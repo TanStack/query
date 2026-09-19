@@ -62,10 +62,7 @@ export type UnusedSkipTokenOptions<
    * fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default query function has been
    * defined. A default query function only supplies `queryFn`; it doesn't defer the fetch on its own.
    */
-  queryFn?: Exclude<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
-    SkipToken | undefined
-  >
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
 /**
@@ -285,8 +282,12 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+): OmitKeyof<
+  UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+} & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export function queryOptions(options: unknown) {
   return options
