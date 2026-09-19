@@ -6,6 +6,7 @@ import {
   createMemo,
   createRenderEffect,
   createResource,
+  createSignal,
   mergeProps,
   on,
   onCleanup,
@@ -300,21 +301,50 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver(
-    client(),
-    defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+  const [observer, setObserver] = createSignal(
+    new QueriesObserver(
+      client(),
+      defaultedQueries(),
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+    ),
   )
 
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
+    observer().getOptimisticResult(
       defaultedQueries(),
       (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
     )[1](),
+  )
+
+  createComputed(
+    on(
+      client,
+      (nextClient) => {
+        const nextObserver = new QueriesObserver(
+          nextClient,
+          defaultedQueries(),
+          queriesOptions().combine
+            ? ({
+                combine: queriesOptions().combine,
+              } as QueriesObserverOptions<TCombinedResult>)
+            : undefined,
+        )
+
+        taskQueue = []
+        setState(
+          nextObserver.getOptimisticResult(
+            defaultedQueries(),
+            (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+          )[1](),
+        )
+        setObserver(nextObserver)
+      },
+      { defer: true },
+    ),
   )
 
   createRenderEffect(
@@ -322,7 +352,7 @@ export function useQueries<
       () => queriesOptions().queries.length,
       () =>
         setState(
-          observer.getOptimisticResult(
+          observer().getOptimisticResult(
             defaultedQueries(),
             (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
               .combine,
@@ -356,9 +386,13 @@ export function useQueries<
   })
 
   let taskQueue: Array<() => void> = []
-  const subscribeToObserver = () =>
-    observer.subscribe((result) => {
+  const subscribeToObserver = () => {
+    const currentObserver = observer()
+
+    return currentObserver.subscribe((result) => {
       taskQueue.push(() => {
+        if (observer() !== currentObserver) return
+
         batch(() => {
           const dataResources_ = dataResources()
           for (let index = 0; index < dataResources_.length; index++) {
@@ -378,6 +412,7 @@ export function useQueries<
         taskQueue = []
       })
     })
+  }
 
   let unsubscribe: () => void = noop
   createComputed<() => void>((cleanup) => {
@@ -389,7 +424,7 @@ export function useQueries<
   onCleanup(unsubscribe)
 
   onMount(() => {
-    observer.setQueries(
+    observer().setQueries(
       defaultedQueries(),
       queriesOptions().combine
         ? ({
@@ -400,7 +435,7 @@ export function useQueries<
   })
 
   createComputed(() => {
-    observer.setQueries(
+    observer().setQueries(
       defaultedQueries(),
       queriesOptions().combine
         ? ({
