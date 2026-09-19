@@ -14,4 +14,4 @@ type NotifyEventType =
   | "observerOptionsUpdated";
 ```
 
-Defined in: [packages/query-core/src/types.ts:1549](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1549)
+Defined in: [packages/query-core/src/types.ts:1592](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1592)
