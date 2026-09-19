@@ -3,7 +3,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: [packages/query-core/src/types.ts:360](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L360)
+Defined in: [packages/query-core/src/types.ts:395](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L395)
 
 ## Extended by
 

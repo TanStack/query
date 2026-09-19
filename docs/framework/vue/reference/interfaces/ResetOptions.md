@@ -3,7 +3,7 @@ id: ResetOptions
 title: ResetOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:756](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L756)
+Defined in: [packages/query-core/src/types.ts:791](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L791)
 
 ## Extends
 

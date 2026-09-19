@@ -34,6 +34,25 @@ export type Override<TTargetA, TTargetB> = {
     : TTargetA[AKey]
 }
 
+/**
+ * The interface to augment via declaration merging to override Query's default types repository-wide.
+ * Each field it declares replaces the default of the matching type: `defaultError` for {@link DefaultError},
+ * `queryKey` for {@link QueryKey}, `mutationKey` for {@link MutationKey}, `queryMeta` for {@link QueryMeta} and
+ * `mutationMeta` for {@link MutationMeta}. Leave a field out to keep that type's default.
+ * Augment the module you install — `@tanstack/react-query`, `@tanstack/vue-query`,
+ * `@tanstack/solid-query`, `@tanstack/svelte-query`, `@tanstack/preact-query`,
+ * `@tanstack/angular-query-experimental` or `@tanstack/lit-query`. Augmenting `@tanstack/query-core`
+ * works too and covers every adapter at once.
+ * @example
+ * ```ts
+ * // Use the module you installed — here, the React adapter.
+ * declare module '@tanstack/react-query' {
+ *   interface Register {
+ *     defaultError: AxiosError
+ *   }
+ * }
+ * ```
+ */
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
@@ -42,12 +61,20 @@ export interface Register {
   // mutationKey: ReadonlyArray<unknown>
 }
 
+/**
+ * The error type used wherever an error is not given an explicit type parameter.
+ * Defaults to `Error`; declare `defaultError` on {@link Register} to change it everywhere at once.
+ */
 export type DefaultError = Register extends {
   defaultError: infer TError
 }
   ? TError
   : Error
 
+/**
+ * The type of a query key — the serializable array that identifies a query in the cache.
+ * Defaults to `ReadonlyArray<unknown>`; declare `queryKey` on {@link Register} to narrow it repository-wide.
+ */
 export type QueryKey = Register extends {
   queryKey: infer TQueryKey
 }
@@ -217,11 +244,19 @@ export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   allPageParams: Array<TPageParam>,
 ) => TPageParam | undefined | null
 
+/**
+ * The data shape of an infinite query: every page fetched so far, plus the page param each one was fetched with.
+ * `pages` and `pageParams` are index-aligned — `pageParams[i]` is the param that produced `pages[i]`.
+ */
 export interface InfiniteData<TData, TPageParam = unknown> {
   pages: Array<TData>
   pageParams: Array<TPageParam>
 }
 
+/**
+ * The type of the `meta` object that can be attached to a query and read back from `queryFn`, callbacks and
+ * cache-level handlers. Defaults to `Record<string, unknown>`; declare `queryMeta` on {@link Register} to narrow it.
+ */
 export type QueryMeta = Register extends {
   queryMeta: infer TQueryMeta
 }
@@ -1185,6 +1220,10 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverPendingResult<TData, TError>
   | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
+/**
+ * The type of a mutation key — the serializable array used to identify and filter mutations.
+ * Defaults to `ReadonlyArray<unknown>`; declare `mutationKey` on {@link Register} to narrow it repository-wide.
+ */
 export type MutationKey = Register extends {
   mutationKey: infer TMutationKey
 }
@@ -1198,10 +1237,19 @@ export type MutationKey = Register extends {
 /** @inline */
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
+/**
+ * Groups mutations so they run one after another instead of in parallel.
+ * Mutations that share the same `id` form a queue: while one is running, the others wait in `isPaused: true`
+ * state and resume automatically when their turn comes. Mutations with no scope always run in parallel.
+ */
 export type MutationScope = {
   id: string
 }
 
+/**
+ * The type of the `meta` object that can be attached to a mutation and read back from `mutationFn`, callbacks and
+ * cache-level handlers. Defaults to `Record<string, unknown>`; declare `mutationMeta` on {@link Register} to narrow it.
+ */
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
 }
@@ -1586,11 +1634,20 @@ export interface DefaultOptions<TError = DefaultError> {
   dehydrate?: DehydrateOptions
 }
 
+/**
+ * Options for cancelling an in-flight fetch, e.g. via `query.cancel()`.
+ * They are carried on the {@link CancelledError} that the cancelled fetch rejects with.
+ */
 export interface CancelOptions {
   revert?: boolean
   silent?: boolean
 }
 
+/**
+ * Options for writing data into the cache, e.g. via `queryClient.setQueryData()`.
+ * `updatedAt` overrides the timestamp the data is recorded with, which is what staleness is measured from;
+ * omit it to use the current time.
+ */
 export interface SetDataOptions {
   updatedAt?: number
 }
