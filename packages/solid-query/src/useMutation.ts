@@ -224,6 +224,27 @@ export function useMutation<
     })
   }
 
+  const retainedSubscriptions = new Set<() => void>()
+  const retainPendingObserver = (
+    pendingObserver: MutationObserver<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    >,
+  ) => {
+    if (!pendingObserver.getCurrentResult().isPending) return
+
+    let release = noop
+    release = pendingObserver.subscribe((result) => {
+      if (!result.isPending) {
+        retainedSubscriptions.delete(release)
+        release()
+      }
+    })
+    retainedSubscriptions.add(release)
+  }
+
   let unsubscribe = observer.subscribe(updateState)
 
   createComputed(() => {
@@ -234,6 +255,7 @@ export function useMutation<
     on(
       client,
       (nextClient) => {
+        retainPendingObserver(observer)
         unsubscribe()
 
         observer = new MutationObserver<
@@ -263,7 +285,11 @@ export function useMutation<
     ),
   )
 
-  onCleanup(() => unsubscribe())
+  onCleanup(() => {
+    unsubscribe()
+    retainedSubscriptions.forEach((release) => release())
+    retainedSubscriptions.clear()
+  })
 
   return state
 }
