@@ -6,7 +6,6 @@ import {
   createMemo,
   createRenderEffect,
   createResource,
-  createSignal,
   mergeProps,
   on,
   onCleanup,
@@ -301,15 +300,17 @@ export function useQueries<
     ),
   )
 
-  const [observer, setObserver] = createSignal(
-    new QueriesObserver(
-      client(),
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+  const observer = createMemo(
+    on(client, (currentClient) =>
+      new QueriesObserver(
+        currentClient,
+        defaultedQueries(),
+        queriesOptions().combine
+          ? ({
+              combine: queriesOptions().combine,
+            } as QueriesObserverOptions<TCombinedResult>)
+          : undefined,
+      ),
     ),
   )
 
@@ -320,20 +321,11 @@ export function useQueries<
     )[1](),
   )
 
+  let taskQueue: Array<() => void> = []
   createComputed(
     on(
-      client,
-      (nextClient) => {
-        const nextObserver = new QueriesObserver(
-          nextClient,
-          defaultedQueries(),
-          queriesOptions().combine
-            ? ({
-                combine: queriesOptions().combine,
-              } as QueriesObserverOptions<TCombinedResult>)
-            : undefined,
-        )
-
+      observer,
+      (nextObserver) => {
         taskQueue = []
         setState(
           nextObserver.getOptimisticResult(
@@ -342,7 +334,6 @@ export function useQueries<
               .combine,
           )[1](),
         )
-        setObserver(nextObserver)
       },
       { defer: true },
     ),
@@ -386,7 +377,6 @@ export function useQueries<
     }
   })
 
-  let taskQueue: Array<() => void> = []
   const subscribeToObserver = () => {
     const currentObserver = observer()
 
