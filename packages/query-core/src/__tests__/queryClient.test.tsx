@@ -1955,7 +1955,7 @@ describe('queryClient', () => {
           gcTime: 10,
         })
         .catch(noop)
-      expect(queryCache.find({ queryKey: key })).toBeDefined()
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
       await vi.advanceTimersByTimeAsync(15)
       expect(queryCache.find({ queryKey: key })).not.toBeDefined()
     })

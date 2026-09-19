@@ -221,7 +221,7 @@ describe('prefer-query-options', () => {
               const queryClient = useQueryClient()
 
               function run(queryClient) {
-                queryClient.fetchQuery({
+                queryClient.query({
                   queryKey: ['todos'],
                   queryFn: () => fetchTodos(),
                 })
@@ -232,12 +232,12 @@ describe('prefer-query-options', () => {
           `,
         },
         {
-          name: 'non-queryClient fetchQuery call is ignored',
+          name: 'non-queryClient query call is ignored',
           code: normalizeIndent`
             import { useQuery } from '@tanstack/react-query'
 
             const analytics = {
-              fetchQuery(options) {
+              query(options) {
                 return options
               },
             }
@@ -245,7 +245,7 @@ describe('prefer-query-options', () => {
             function Component() {
               useQuery(todosOptions)
 
-              analytics.fetchQuery({
+              analytics.query({
                 queryKey: ['todos'],
                 queryFn: () => fetchTodos(),
               })
@@ -581,13 +581,13 @@ describe('prefer-query-options', () => {
       valid: [],
       invalid: [
         {
-          name: 'client.fetchQuery with inline queryKey + queryFn',
+          name: 'client.query with inline queryKey + queryFn',
           code: normalizeIndent`
             import { useQueryClient } from '@tanstack/react-query'
 
             function Component() {
               const client = useQueryClient()
-              client.fetchQuery({
+              client.query({
                 queryKey: ['todos'],
                 queryFn: () => fetchTodos(),
               })
@@ -603,7 +603,7 @@ describe('prefer-query-options', () => {
 
             function Component() {
               const client = getClient()
-              client.fetchQuery({
+              client.query({
                 queryKey: ['todos'],
                 queryFn: () => fetchTodos(),
               })
@@ -619,7 +619,7 @@ describe('prefer-query-options', () => {
 
             const queryClient = new Client()
 
-            queryClient.fetchQuery({
+            queryClient.query({
               queryKey: ['todos'],
               queryFn: () => fetchTodos(),
             })
@@ -661,13 +661,13 @@ describe('prefer-query-options', () => {
       valid: [],
       invalid: [
         {
-          name: 'queryClient.fetchQuery with inline queryKey + queryFn',
+          name: 'queryClient.query with inline queryKey + queryFn',
           code: normalizeIndent`
             import { useQueryClient } from '@tanstack/react-query'
 
             function Component() {
               const queryClient = useQueryClient()
-              queryClient.fetchQuery({
+              queryClient.query({
                 queryKey: ['todos'],
                 queryFn: () => fetchTodos(),
               })
@@ -677,81 +677,13 @@ describe('prefer-query-options', () => {
           errors: [{ messageId: 'preferQueryOptions' }],
         },
         {
-          name: 'queryClient.prefetchQuery with inline queryKey + queryFn',
+          name: 'queryClient.infiniteQuery with inline queryKey + queryFn',
           code: normalizeIndent`
             import { useQueryClient } from '@tanstack/react-query'
 
             function Component() {
               const queryClient = useQueryClient()
-              queryClient.prefetchQuery({
-                queryKey: ['todos'],
-                queryFn: () => fetchTodos(),
-              })
-              return null
-            }
-          `,
-          errors: [{ messageId: 'preferQueryOptions' }],
-        },
-        {
-          name: 'queryClient.fetchInfiniteQuery with inline queryKey + queryFn',
-          code: normalizeIndent`
-            import { useQueryClient } from '@tanstack/react-query'
-
-            function Component() {
-              const queryClient = useQueryClient()
-              queryClient.fetchInfiniteQuery({
-                queryKey: ['todos'],
-                queryFn: ({ pageParam }) => fetchTodos(pageParam),
-                initialPageParam: 0,
-                getNextPageParam: (lastPage) => lastPage.nextCursor,
-              })
-              return null
-            }
-          `,
-          errors: [{ messageId: 'preferQueryOptions' }],
-        },
-        {
-          name: 'queryClient.prefetchInfiniteQuery with inline queryKey + queryFn',
-          code: normalizeIndent`
-            import { useQueryClient } from '@tanstack/react-query'
-
-            function Component() {
-              const queryClient = useQueryClient()
-              queryClient.prefetchInfiniteQuery({
-                queryKey: ['todos'],
-                queryFn: ({ pageParam }) => fetchTodos(pageParam),
-                initialPageParam: 0,
-                getNextPageParam: (lastPage) => lastPage.nextCursor,
-              })
-              return null
-            }
-          `,
-          errors: [{ messageId: 'preferQueryOptions' }],
-        },
-        {
-          name: 'queryClient.ensureQueryData with inline queryKey + queryFn',
-          code: normalizeIndent`
-            import { useQueryClient } from '@tanstack/react-query'
-
-            function Component() {
-              const queryClient = useQueryClient()
-              queryClient.ensureQueryData({
-                queryKey: ['todos'],
-                queryFn: () => fetchTodos(),
-              })
-              return null
-            }
-          `,
-          errors: [{ messageId: 'preferQueryOptions' }],
-        },
-        {
-          name: 'queryClient.ensureInfiniteQueryData with inline queryKey + queryFn',
-          code: normalizeIndent`
-            import { useQueryClient } from '@tanstack/react-query'
-
-            function Component() {
-              const queryClient = useQueryClient()
-              queryClient.ensureInfiniteQueryData({
+              queryClient.infiniteQuery({
                 queryKey: ['todos'],
                 queryFn: ({ pageParam }) => fetchTodos(pageParam),
                 initialPageParam: 0,
