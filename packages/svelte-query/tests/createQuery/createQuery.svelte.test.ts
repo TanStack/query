@@ -8,7 +8,11 @@ import {
   keepPreviousData,
   noop,
 } from '../../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
+import {
+  promiseWithResolvers,
+  ref,
+  withEffectRoot,
+} from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Counter from './Counter.svelte'
 import IsRestoring from './IsRestoring.svelte'
@@ -1649,5 +1653,41 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
+
   })
+  it(
+    'should not re-subscribe when queryFn reads reactive state before its first await',
+    withEffectRoot(async () => {
+      const key = queryKey()
+      const tick = ref(0)
+      const fetches: Array<number> = []
+
+      const query = createQuery<number, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: async (ctx) => {
+            // consume the abort signal, like real transports do, so that
+            // tearing the observer down cancels the in-flight fetch
+            void ctx.signal
+            // reactive read before the first await: executing queryFn in
+            // the subscription effect used to track this state
+            const startedAt = tick.value
+            fetches.push(startedAt)
+            await sleep(150)
+            // write to the same state while the fetch is in flight
+            tick.value = startedAt + 1
+            await sleep(150)
+            return startedAt
+          },
+        }),
+        () => queryClient,
+      )
+
+      await vi.advanceTimersByTimeAsync(1000)
+
+      expect(fetches.length).toBe(1)
+      expect(query.data).toBe(0)
+      expect(query.status).toBe('success')
+    }),
+  )
 })

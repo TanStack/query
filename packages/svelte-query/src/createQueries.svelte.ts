@@ -1,4 +1,5 @@
 import { QueriesObserver } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { createRawRef } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
@@ -308,9 +309,16 @@ export function createQueries<
   const [results, update] = createRawRef<TCombinedResult>(createResult())
 
   $effect(() => {
+    // Keep the observer read tracked (changing queries must re-subscribe), but
+    // untrack the subscription itself: subscribing synchronously executes
+    // `queryFn` for queries without cached data, and any reactive state it reads before
+    // its first `await` would otherwise become a dependency of this effect.
+    // Writes to that state would then tear the observer down (cancelling the
+    // in-flight fetch) and re-subscribe indefinitely.
+    const o = observer
     const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() => update(createResult()))
+      : untrack(() => o.subscribe(() => update(createResult())))
     return unsubscribe
   })
 
