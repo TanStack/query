@@ -1,5 +1,5 @@
 import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
-import { createComputed, createMemo, on, onCleanup } from 'solid-js'
+import { createComputed, createMemo, on, onCleanup, untrack } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
@@ -182,12 +182,16 @@ export function useMutation<
   const resolveClient = useQueryClientResolver(queryClient)
   const client = createMemo(() => resolveClient())
 
-  const observer = new MutationObserver<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >(client(), options())
+  // The observer is created once, from the current client and options; later
+  // changes are handed to it through `setOptions` below. Reading them here is
+  // deliberately one-shot, so it must not register as a dependency.
+  const observer = untrack(
+    () =>
+      new MutationObserver<TData, TError, TVariables, TOnMutateResult>(
+        client(),
+        options(),
+      ),
+  )
 
   const mutate: UseMutateFunction<
     TData,
