@@ -1,6 +1,6 @@
 import {
+  DestroyRef,
   NgZone,
-  VERSION,
   computed,
   effect,
   inject,
@@ -9,6 +9,7 @@ import {
 } from '@angular/core'
 import {
   QueryClient,
+  noop,
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
@@ -16,11 +17,7 @@ import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import { PENDING_TASKS } from './pending-tasks-compat'
 import type { PendingTaskRef } from './pending-tasks-compat'
-import type {
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
 
 /**
@@ -44,10 +41,11 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
+  const destroyRef = inject(DestroyRef)
   const ngZone = inject(NgZone)
   const pendingTasks = inject(PENDING_TASKS)
   const queryClient = inject(QueryClient)
-  const isRestoring = injectIsRestoring()
+  const isRestoringSignal = injectIsRestoring()
 
   /**
    * Signal that has the default options from query client applied
@@ -57,7 +55,7 @@ export function createBaseQuery<
    */
   const defaultedOptionsSignal = computed(() => {
     const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
-    defaultedOptions._optimisticResults = isRestoring()
+    defaultedOptions._optimisticResults = isRestoringSignal()
       ? 'isRestoring'
       : 'optimistic'
     return defaultedOptions
@@ -73,49 +71,51 @@ export function createBaseQuery<
     > | null = null
 
     return computed(() => {
-      return (instance ||= new Observer(queryClient, defaultedOptionsSignal()))
+      const observerOptions = defaultedOptionsSignal()
+      return untracked(() => {
+        if (instance) {
+          instance.setOptions(observerOptions)
+        } else {
+          instance = new Observer(queryClient, observerOptions)
+        }
+        return instance
+      })
     })
   })()
 
-  const optimisticResultSignal = computed(() =>
-    observerSignal().getOptimisticResult(defaultedOptionsSignal()),
-  )
+  let cleanup: () => void = noop
+  let pendingTaskRef: PendingTaskRef | null = null
 
-  const resultFromSubscriberSignal = signal<QueryObserverResult<
-    TData,
-    TError
-  > | null>(null)
-
-  effect(
-    (onCleanup) => {
-      const observer = observerSignal()
-      const defaultedOptions = defaultedOptionsSignal()
-
-      untracked(() => {
-        observer.setOptions(defaultedOptions)
-      })
-      onCleanup(() => {
-        ngZone.run(() => resultFromSubscriberSignal.set(null))
-      })
-    },
-    {
-      // Set allowSignalWrites to support Angular < v19
-      // Set to undefined to avoid warning on newer versions
-      allowSignalWrites: VERSION.major < '19' || undefined,
-    },
-  )
-
-  effect((onCleanup) => {
-    // observer.trackResult is not used as this optimization is not needed for Angular
+  /**
+   * Returning a writable signal from a computed is similar to `linkedSignal`,
+   * but compatible with Angular < 19
+   *
+   * Compared to `linkedSignal`, this pattern requires extra parentheses:
+   * - Accessing value: `result()()`
+   * - Setting value: `result().set(newValue)`
+   */
+  const linkedResultSignal = computed(() => {
     const observer = observerSignal()
-    let pendingTaskRef: PendingTaskRef | null = null
+    const defaultedOptions = defaultedOptionsSignal()
+    const isRestoring = isRestoringSignal()
 
-    const unsubscribe = isRestoring()
-      ? () => undefined
-      : untracked(() =>
-          ngZone.runOutsideAngular(() => {
-            return observer.subscribe(
+    return untracked(() => {
+      // observer.trackResult is not used as this optimization is not needed for Angular
+      const currentResult = observer.getOptimisticResult(defaultedOptions)
+      const result = signal(currentResult)
+
+      cleanup()
+
+      if (currentResult.fetchStatus === 'fetching' && !pendingTaskRef) {
+        pendingTaskRef = pendingTasks.add()
+      }
+
+      const unsubscribe = isRestoring
+        ? noop
+        : ngZone.runOutsideAngular(() =>
+            observer.subscribe(
               notifyManager.batchCalls((state) => {
+                result.set(state)
                 ngZone.run(() => {
                   if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
                     pendingTaskRef = pendingTasks.add()
@@ -137,27 +137,39 @@ export function createBaseQuery<
                     ngZone.onError.emit(state.error)
                     throw state.error
                   }
-                  resultFromSubscriberSignal.set(state)
                 })
               }),
-            )
-          }),
-        )
+            ),
+          )
 
-    onCleanup(() => {
-      if (pendingTaskRef) {
-        pendingTaskRef()
-        pendingTaskRef = null
+      cleanup = () => {
+        unsubscribe()
+        if (pendingTaskRef) {
+          pendingTaskRef()
+          pendingTaskRef = null
+        }
       }
-      unsubscribe()
+
+      return result
     })
+  })
+
+  destroyRef.onDestroy(() => cleanup())
+
+  /**
+   * This effect is responsible for triggering
+   * the query by listing to the result.
+   *
+   * If this effect was removed, queries would
+   * be executed lazily on read.
+   */
+  effect(() => {
+    linkedResultSignal()
   })
 
   return signalProxy(
     computed(() => {
-      const subscriberResult = resultFromSubscriberSignal()
-      const optimisticResult = optimisticResultSignal()
-      const result = subscriberResult ?? optimisticResult
+      const result = linkedResultSignal()()
 
       // Wrap methods to ensure observer has latest options before execution
       const observer = observerSignal()
