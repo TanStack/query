@@ -9,7 +9,10 @@ title: createQuery
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L74)
+Defined in: [packages/svelte-query/src/createQuery.ts:77](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L77)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 ### Type Parameters
 
@@ -112,7 +115,10 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:122](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L122)
+Defined in: [packages/svelte-query/src/createQuery.ts:128](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L128)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 
@@ -193,7 +199,7 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:248](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L248)
+Defined in: [packages/svelte-query/src/createQuery.ts:254](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L254)
 
 ### Type Parameters
 

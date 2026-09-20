@@ -9,7 +9,12 @@ title: createInfiniteQuery
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L21)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:36](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L36)
+
+The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+
+This overload is selected when `initialData` is set.
 
 ### Type Parameters
 
@@ -39,13 +44,27 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
 
+The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`createInfiniteQuery`, with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
+
 #### queryClient?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
 [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+
+The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
+to page through the query.
+
+### See
+
+[infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `createInfiniteQuery` and imperative APIs
+like `queryClient.infiniteQuery`.
 
 ## Call Signature
 
@@ -53,7 +72,12 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:21](https://github
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L40)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L70)
+
+The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+
+This overload is selected when `initialData` is not set.
 
 ### Type Parameters
 
@@ -83,13 +107,27 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
 
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`createInfiniteQuery`, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
+
 #### queryClient?
 
 [`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
 ### Returns
 
 [`CreateInfiniteQueryResult`](../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+
+The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
+to page through the query.
+
+### See
+
+[infiniteQueryOptions](infiniteQueryOptions.md) to share these options between `createInfiniteQuery` and imperative APIs
+like `queryClient.infiniteQuery`.
 
 ## Call Signature
 
@@ -97,7 +135,10 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:40](https://github
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:152](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L152)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:185](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L185)
+
+The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
+`initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
 ### Type Parameters
 
