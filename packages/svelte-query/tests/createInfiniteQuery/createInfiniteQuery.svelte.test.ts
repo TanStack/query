@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
+import { flushSync } from 'svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { ref } from '../utils.svelte.js'
+import {
+  InfiniteQueryObserver,
+  createInfiniteQuery,
+  focusManager,
+  infiniteQueryOptions,
+} from '../../src/index.js'
+import { promiseWithResolvers, ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
@@ -170,5 +177,98 @@ describe('createInfiniteQuery', () => {
     expect(
       rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
     ).toBeInTheDocument()
+  })
+
+  it('does not cancel a refetch when reactive options retain the same values', async () => {
+    let state = $state({ enabled: true })
+    let now = Date.now()
+    vi.spyOn(Date, 'now').mockImplementation(() => now)
+
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { staleTime: 60_000, retry: false },
+      },
+    })
+    queryClient.mount()
+
+    const key = ['items'] as const
+    let response: ReturnType<typeof promiseWithResolvers<void>> | undefined
+    const reads: Array<{ page: number; signal: AbortSignal }> = []
+
+    const options = () =>
+      infiniteQueryOptions({
+        queryKey: key,
+        enabled: state.enabled,
+        initialPageParam: 0,
+        queryFn: async ({ pageParam, signal }) => {
+          reads.push({ page: pageParam, signal })
+          await response?.promise
+          return {
+            items: [pageParam],
+            next: pageParam === 0 ? 1 : undefined,
+          }
+        },
+        getNextPageParam: (page) => page.next,
+      })
+
+    const first = new InfiniteQueryObserver(queryClient, options())
+    const stop = first.subscribe(() => {})
+    await vi.waitFor(() =>
+      expect(first.getCurrentResult().isSuccess).toBe(true),
+    )
+    await first.fetchNextPage()
+    stop()
+
+    now += 60_001
+    const dispose = $effect.root(() => {
+      const query = createInfiniteQuery(options, () => queryClient)
+      $effect(() => {
+        void query.data
+        void query.isFetchingNextPage
+        void query.fetchStatus
+      })
+    })
+
+    try {
+      flushSync()
+      await vi.waitFor(() => expect(reads).toHaveLength(4))
+      await vi.waitFor(() =>
+        expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle'),
+      )
+      flushSync()
+
+      now += 60_001
+      reads.length = 0
+      response = promiseWithResolvers<void>()
+
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+      await vi.waitFor(() => expect(reads).toHaveLength(1))
+
+      state = { enabled: true }
+      flushSync()
+
+      const aborted = reads[0]!.signal.aborted
+      response.resolve()
+
+      await vi.waitFor(() =>
+        expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle'),
+      )
+
+      expect({
+        aborted,
+        pages: reads.map(({ page }) => page),
+      }).toEqual({
+        aborted: false,
+        pages: [0, 1],
+      })
+    } finally {
+      response?.resolve()
+      dispose()
+      queryClient.clear()
+      queryClient.unmount()
+      vi.restoreAllMocks()
+      focusManager.setFocused(true)
+    }
   })
 })
