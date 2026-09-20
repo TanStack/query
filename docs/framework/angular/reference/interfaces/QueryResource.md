@@ -17,109 +17,14 @@ Defined in: [packages/angular-query/src/query-resource.ts:6](https://github.com/
 
 ## Properties
 
-### error
-
-```ts
-readonly error: Signal<Error | undefined>;
-```
-
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:139
-
-When in the `error` state, this returns the last known error from the `Resource`.
-
-#### Inherited from
-
-```ts
-Resource.error
-```
-
-***
-
-### isLoading
-
-```ts
-readonly isLoading: Signal<boolean>;
-```
-
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:143
-
-Whether this resource is loading a new value (or reloading the existing one).
-
-#### Inherited from
-
-```ts
-Resource.isLoading
-```
-
-***
-
-### reload()
-
-```ts
-reload: () => boolean;
-```
-
-Defined in: [packages/angular-query/src/query-resource.ts:20](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-resource.ts#L20)
-
-Requests a new query fetch only when the current query data is stale.
-
-Used for compatibility with Angular APIs that might want to reload a resource,
-like Signal Forms' validateAsync resource interface.
-
-#### Returns
-
-`boolean`
-
-`true` if a reload was initiated, `false` if a reload was unnecessary or unsupported.
-
-***
-
-### snapshot
-
-```ts
-readonly snapshot: Signal<ResourceSnapshot<TValue>>;
-```
-
-Defined in: [packages/angular-query/src/query-resource.ts:10](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-resource.ts#L10)
-
-The current query state as a single snapshot.
-
-***
-
-### status
-
-```ts
-readonly status: Signal<ResourceStatus>;
-```
-
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:135
-
-The current status of the `Resource`, which describes what the resource is currently doing and
-what can be expected of its `value`.
-
-#### Inherited from
-
-```ts
-Resource.status
-```
-
-***
-
-### value
-
-```ts
-readonly value: Signal<TValue>;
-```
-
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:130
-
-The current value of the `Resource`, or throws an error if the resource is in an error state.
-
-#### Inherited from
-
-```ts
-Resource.value
-```
+| Property | Modifier | Type | Description | Overrides |
+| ------ | ------ | ------ | ------ | ------ |
+| <a id="error"></a> `error` | `readonly` | `Signal`\<`Error` \| `undefined`\> | When in the `error` state, this returns the last known error from the `Resource`. | - |
+| <a id="isloading"></a> `isLoading` | `readonly` | `Signal`\<`boolean`\> | Whether this resource is loading a new value (or reloading the existing one). | - |
+| <a id="reload"></a> `reload` | `public` | () => `boolean` | Requests a new query fetch only when the current query data is stale. Used for compatibility with Angular APIs that might want to reload a resource, like Signal Forms' validateAsync resource interface. | - |
+| <a id="snapshot"></a> `snapshot` | `readonly` | `Signal`\<`ResourceSnapshot`\<`TValue`\>\> | The current query state as a single snapshot. | `Resource.snapshot` |
+| <a id="status"></a> `status` | `readonly` | `Signal`\<`ResourceStatus`\> | The current status of the `Resource`, which describes what the resource is currently doing and what can be expected of its `value`. | - |
+| <a id="value"></a> `value` | `readonly` | `Signal`\<`TValue`\> | The current value of the `Resource`, or throws an error if the resource is in an error state. | - |
 
 ## Methods
 
@@ -128,10 +33,10 @@ Resource.value
 #### Call Signature
 
 ```ts
-hasValue(this): this is Resource<Exclude<TValue, undefined>>;
+hasValue(this: TValue extends undefined ? QueryResource<TValue> : never): this is Resource<Exclude<TValue, undefined>>;
 ```
 
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:149
+Defined in: node\_modules/.pnpm/@angular+core@22.1.6\_@angular+compiler@22.1.6\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/types/\_api-chunk.d.ts:186
 
 Whether this resource has a valid current value.
 
@@ -159,7 +64,7 @@ Resource.hasValue
 hasValue(): boolean;
 ```
 
-Defined in: node\_modules/.pnpm/@angular+core@20.3.18\_@angular+compiler@20.3.18\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/api.d.d.ts:150
+Defined in: node\_modules/.pnpm/@angular+core@22.1.6\_@angular+compiler@22.1.6\_rxjs@7.8.2\_zone.js@0.16.1/node\_modules/@angular/core/types/\_api-chunk.d.ts:187
 
 ##### Returns
 

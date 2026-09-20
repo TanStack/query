@@ -3,7 +3,7 @@ id: QueryCacheConfig
 title: QueryCacheConfig
 ---
 
-Defined in: [packages/query-core/src/queryCache.ts:25](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L25)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:14
 
 Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
 component or observer triggered it. Unlike `QueryClient`'s `defaultOptions`, which a query can

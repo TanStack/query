@@ -5,11 +5,11 @@ title: StaleTimeFunction
 
 ```ts
 type StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey> = 
-  | number | "static"
-  | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => number | "static";
+  | StaleTime
+  | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime;
 ```
 
-Defined in: [packages/query-core/src/types.ts:140](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L140)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:44
 
 ## Type Parameters
 

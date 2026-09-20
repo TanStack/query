@@ -13,38 +13,15 @@ Defined in: [packages/angular-query/src/inject-mutation-state.ts:23](https://git
 
 ### TResult
 
-`TResult` = `MutationState`
+`TResult` = [`MutationState`](../interfaces/MutationState.md)
 
 ### TMutation
 
-`TMutation` *extends* `Mutation`\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = `MutationTypeFromResult`\<`TResult`\>
 
 ## Properties
 
-### filters?
-
-```ts
-optional filters: MutationFilters;
-```
-
-Defined in: [packages/angular-query/src/inject-mutation-state.ts:28](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation-state.ts#L28)
-
-***
-
-### select()?
-
-```ts
-optional select: (mutation) => TResult;
-```
-
-Defined in: [packages/angular-query/src/inject-mutation-state.ts:29](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-mutation-state.ts#L29)
-
-#### Parameters
-
-##### mutation
-
-`TMutation`
-
-#### Returns
-
-`TResult`
+| Property | Type |
+| ------ | ------ |
+| <a id="filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
+| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

@@ -15,18 +15,10 @@ Defined in: [packages/angular-query/src/inject-queries.types.ts:141](https://git
 
 `T` *extends* `any`[]
 
-The type of the `queries` array as written at the call site.
-
 ### TResults
 
 `TResults` *extends* `any`[] = \[\]
 
-The internal accumulator that this type builds during recursion. It is not meant to
-be set explicitly.
-
 ### TDepth
 
 `TDepth` *extends* `ReadonlyArray`\<`number`\> = \[\]
-
-The internal recursion-depth counter, checked against the 20-element limit. It is not
-meant to be set explicitly.

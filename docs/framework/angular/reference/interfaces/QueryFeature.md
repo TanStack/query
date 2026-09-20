@@ -3,15 +3,7 @@ id: QueryFeature
 title: QueryFeature
 ---
 
-An opaque configuration returned by Query feature functions. Pass these values to
-`provideTanStackQuery`; application code does not construct or inspect them.
+Defined in: [packages/angular-query/src/providers.ts:122](https://github.com/TanStack/query/blob/main/packages/angular-query/src/providers.ts#L122)
 
-```ts
-provideTanStackQuery(
-  () => new QueryClient(),
-  withHydrationKey('secondary-cache'),
-)
-```
-
-See [provideTanStackQuery](../functions/provideTanStackQuery.md) for provider setup
-and [SSR](../../guides/ssr.md) for hydration features.
+Opaque configuration returned by Query feature functions such as `withHydrationKey`.
+Pass features to `provideTanStackQuery`; applications do not construct them directly.

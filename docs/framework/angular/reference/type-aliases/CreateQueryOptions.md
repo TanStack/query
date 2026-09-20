@@ -7,7 +7,7 @@ title: CreateQueryOptions
 type CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "notifyOnChangeProps" | "suspense" | "throwOnError">;
 ```
 
-Defined in: [packages/angular-query/src/types.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L23)
+Defined in: [packages/angular-query/src/types.ts:28](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L28)
 
 ## Type Parameters
 
@@ -17,7 +17,7 @@ Defined in: [packages/angular-query/src/types.ts:23](https://github.com/TanStack
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -25,4 +25,4 @@ Defined in: [packages/angular-query/src/types.ts:23](https://github.com/TanStack
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

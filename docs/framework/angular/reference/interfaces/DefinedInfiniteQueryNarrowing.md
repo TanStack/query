@@ -3,7 +3,7 @@ id: DefinedInfiniteQueryNarrowing
 title: DefinedInfiniteQueryNarrowing
 ---
 
-Defined in: [packages/angular-query/src/types.ts:147](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L147)
+Defined in: [packages/angular-query/src/types.ts:152](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L152)
 
 ## Type Parameters
 
@@ -13,34 +13,12 @@ Defined in: [packages/angular-query/src/types.ts:147](https://github.com/TanStac
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](../type-aliases/DefaultError.md)
 
 ## Properties
 
-### isError
-
-```ts
-isError: SignalFunction<(this) => this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L160)
-
-***
-
-### isPending
-
-```ts
-isPending: SignalFunction<(this) => this is never>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:169](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L169)
-
-***
-
-### isSuccess
-
-```ts
-isSuccess: SignalFunction<(this) => this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:151](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L151)
+| Property | Type |
+| ------ | ------ |
+| <a id="iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverRefetchErrorResult<TData, TError>>`\> |
+| <a id="ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> |
+| <a id="issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateInfiniteQueryResult`](../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateInfiniteQueryResult<TData, TError, InfiniteQueryObserverSuccessResult<TData, TError>>`\> |

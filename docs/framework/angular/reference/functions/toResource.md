@@ -4,7 +4,7 @@ title: toResource
 ---
 
 ```ts
-function toResource<TValue>(query): QueryResource<TValue>;
+function toResource<TValue>(query: QueryResourceSource<TValue>): QueryResource<TValue>;
 ```
 
 Defined in: [packages/angular-query/src/query-resource.ts:40](https://github.com/TanStack/query/blob/main/packages/angular-query/src/query-resource.ts#L40)

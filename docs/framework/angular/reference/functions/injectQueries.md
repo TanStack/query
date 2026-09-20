@@ -4,25 +4,12 @@ title: injectQueries
 ---
 
 ```ts
-function injectQueries<T, TCombinedResult>(optionsFn): Signal<TCombinedResult>;
+function injectQueries<T, TCombinedResult>(optionsFn: () => InjectQueriesOptions<T, TCombinedResult>): Signal<TCombinedResult>;
 ```
 
-Defined in: [packages/angular-query/src/inject-queries.ts:43](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L43)
+Defined in: [packages/angular-query/src/inject-queries.ts:57](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-queries.ts#L57)
 
 Injects multiple queries that run in parallel and react to Angular signals.
-
-```ts
-class UsersComponent {
-  readonly users = input.required<Array<User>>()
-
-  readonly userQueries = injectQueries(() => ({
-    queries: this.users().map((user) => ({
-      queryKey: ['user', user.id],
-      queryFn: () => fetchUserById(user.id),
-    })),
-  }))
-}
-```
 
 ## Type Parameters
 
@@ -40,10 +27,40 @@ class UsersComponent {
 
 () => [`InjectQueriesOptions`](../interfaces/InjectQueriesOptions.md)\<`T`, `TCombinedResult`\>
 
-A function that returns queries' options.
+A function that returns the queries' options. Similar to `computed` from Angular,
+this function runs in the reactive context, so signals read inside it drive the queries.
 
 ## Returns
 
 `Signal`\<`TCombinedResult`\>
 
 A signal containing the query results in the same order as the input queries.
+
+## See
+
+https://tanstack.com/query/latest/docs/framework/angular/guides/parallel-queries
+
+## Example
+
+```angular-ts
+@Component({
+  selector: 'users',
+  template: `
+    @for (query of userQueries(); track $index) {
+      @if (query.isSuccess()) {
+        <p>{{ query.data().name }}</p>
+      }
+    }
+  `,
+})
+export class UsersComponent {
+  readonly users = input.required<Array<User>>()
+
+  readonly userQueries = injectQueries(() => ({
+    queries: this.users().map((user) => ({
+      queryKey: ['user', user.id],
+      queryFn: () => fetchUserById(user.id),
+    })),
+  }))
+}
+```

@@ -7,7 +7,7 @@ title: isServer
 const isServer: boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L114)
+Defined in: packages/query-core/dist-ts/src/utils.d.ts:83
 
 ## Deprecated
 

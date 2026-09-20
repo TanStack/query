@@ -3,7 +3,7 @@ id: QueryCache
 title: QueryCache
 ---
 
-Defined in: [packages/query-core/src/queryCache.ts:123](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L123)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:85
 
 The `QueryCache` is the storage mechanism for TanStack Query. It stores all the data, meta
 information, and state of the queries it contains.
@@ -31,16 +31,16 @@ const unsubscribe = queryCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new QueryCache(config: QueryCacheConfig): QueryCache;
+new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:88
 
 #### Parameters
 
-##### config
+##### config?
 
-[`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
+[`QueryCacheConfig`](../interfaces/QueryCacheConfig.md)
 
 #### Returns
 
@@ -57,10 +57,10 @@ Subscribable<QueryCacheListener>.constructor
 ### config
 
 ```ts
-config: QueryCacheConfig = {};
+config: QueryCacheConfig;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:87
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanSt
 protected listeners: Set<QueryCacheListener>;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
 
 #### Inherited from
 
@@ -89,7 +89,7 @@ build<TQueryFnData, TError, TData, TQueryKey>(
 state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:147](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L147)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:105
 
 Returns the existing `Query` instance for the given options' `queryKey`/`queryHash`, or
 builds and adds a new one to the cache if none exists yet. Used by framework adapters and
@@ -151,7 +151,7 @@ const query = queryCache.build(queryClient, {
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L228)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:135
 
 Removes all queries from the cache.
 
@@ -177,7 +177,7 @@ find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly un
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:295](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L295)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:180
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -230,10 +230,10 @@ const query = queryCache.find({ queryKey: ['posts'] })
 ### findAll()
 
 ```ts
-findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters?: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:320](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L320)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:196
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -243,9 +243,9 @@ information about queries in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
-[`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\> = `{}`
+[`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\>
 
 #### Returns
 
@@ -273,7 +273,7 @@ get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:250](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L250)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:150
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -326,7 +326,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:161
 
 Returns all queries within the cache.
 
@@ -350,9 +350,7 @@ const queries = queryCache.getAll()
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
-
-Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
 
 #### Returns
 
@@ -372,7 +370,7 @@ Subscribable.hasListeners
 protected onSubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L45)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:6
 
 #### Returns
 
@@ -392,7 +390,7 @@ Subscribable.onSubscribe
 protected onUnsubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L49)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:7
 
 #### Returns
 
@@ -412,7 +410,7 @@ Subscribable.onUnsubscribe
 remove(query: Query<any, any, any, any>): void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L208)
+Defined in: packages/query-core/dist-ts/src/queryCache.d.ts:124
 
 Destroys the given `Query` and removes it from the cache, notifying subscribers with a
 `'removed'` event. A no-op if the query is no longer the one currently stored under its hash
@@ -448,11 +446,7 @@ if (query) {
 subscribe(listener: QueryCacheListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
-
-Registers a listener to be called on every update this object notifies about. Returns a function
-that removes the listener again — call it to stop listening. The base class never drops a listener
-on its own, though some subclasses clear all of theirs in `destroy()`.
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
 
 #### Parameters
 

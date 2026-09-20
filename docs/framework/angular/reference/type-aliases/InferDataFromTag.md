@@ -7,7 +7,7 @@ title: InferDataFromTag
 type InferDataFromTag<TQueryFnData, TTaggedQueryKey> = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown> ? TaggedValue : TQueryFnData;
 ```
 
-Defined in: [packages/query-core/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L117)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:40
 
 ## Type Parameters
 

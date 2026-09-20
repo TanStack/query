@@ -4,7 +4,7 @@ title: unsetMarker
 ---
 
 ```ts
-const unsetMarker: typeof unsetMarker;
+const unsetMarker: unique symbol;
 ```
 
-Defined in: [packages/query-core/src/types.ts:92](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L92)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:27

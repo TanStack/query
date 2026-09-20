@@ -3,7 +3,7 @@ id: HydrateOptions
 title: HydrateOptions
 ---
 
-Defined in: [packages/query-core/src/hydration.ts:61](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L61)
+Defined in: packages/query-core/dist-ts/src/hydration.d.ts:28
 
 Options for `hydrate`, controlling the default options applied to queries/mutations restored from a
 `DehydratedState`, and how to reverse any transformation applied by `DehydrateOptions.serializeData`.

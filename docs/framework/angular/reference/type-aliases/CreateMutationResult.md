@@ -4,10 +4,15 @@ title: CreateMutationResult
 ---
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TOnMutateResult, TState> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">, MethodKeys<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">>>;
+type CreateMutationResult<TData, TError, TVariables, TOnMutateResult, TState> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">, MutationResultFields>;
 ```
 
-Defined in: [packages/angular-query/src/types.ts:373](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L373)
+Defined in: [packages/angular-query/src/types.ts:474](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L474)
+
+The result of `injectMutation`. Based on [CreateBaseMutationResult](CreateBaseMutationResult.md), but value fields are exposed as
+a `Signal` — read them with `mutation.data()`, not `mutation.data` — while function fields (`mutate`,
+`mutateAsync`, `reset`) are called directly, unchanged. `isSuccess`/`isError`/`isPending`/`isIdle` are
+[BaseMutationNarrowing](../interfaces/BaseMutationNarrowing.md) type-guard methods rather than plain booleans.
 
 ## Type Parameters
 

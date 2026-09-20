@@ -3,10 +3,10 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: [packages/query-core/src/types.ts:1669](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1669)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:941
 
 ## Properties
 
 | Property | Type |
 | ------ | ------ |
-| <a id="type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` |
+| <a id="type"></a> `type` | [`NotifyEventType`](../type-aliases/NotifyEventType.md) |

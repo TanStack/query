@@ -3,7 +3,7 @@ id: TimeoutManager
 title: TimeoutManager
 ---
 
-Defined in: [packages/query-core/src/timeoutManager.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L70)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:46
 
 Allows customization of how timeouts are created.
 
@@ -27,7 +27,7 @@ coalesces timeouts.
 clearInterval(intervalId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:224](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L224)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:148
 
 `clearInterval` can be used to cancel an interval, like the global
 `clearInterval` function. It should be called with an interval ID
@@ -68,7 +68,7 @@ timeoutManager.clearInterval(intervalId)
 clearTimeout(timeoutId: ManagedTimerId | undefined): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L179)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:112
 
 `clearTimeout` cancels a timeout callback scheduled with `setTimeout`,
 like the global `clearTimeout` function. It should be called with a
@@ -109,7 +109,7 @@ timeoutManager.clearTimeout(timeoutId)
 setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:200](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L200)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:130
 
 `setInterval` schedules a callback to be called approximately every
 `delay` milliseconds, like the global `setInterval` function.
@@ -154,7 +154,7 @@ const intervalId = timeoutManager.setInterval(
 setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:155](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L155)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:94
 
 `setTimeout` schedules a callback to run after approximately `delay`
 milliseconds, like the global `setTimeout` function. The callback can be
@@ -202,7 +202,7 @@ const timeoutIdNumber: number = Number(timeoutId)
 setTimeoutProvider<TTimerId>(provider: TimeoutProvider<TTimerId>): void;
 ```
 
-Defined in: [packages/query-core/src/timeoutManager.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L106)
+Defined in: packages/query-core/dist-ts/src/timeoutManager.d.ts:73
 
 `setTimeoutProvider` can be used to set a custom implementation of the
 `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions,

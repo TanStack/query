@@ -7,7 +7,7 @@ title: QueryPersister
 type QueryPersister<T, TQueryKey, TPageParam> = [TPageParam] extends [never] ? (queryFn: QueryFunction<T, TQueryKey, never>, context: QueryFunctionContext<TQueryKey>, query: Query) => T | Promise<T> : (queryFn: QueryFunction<T, TQueryKey, TPageParam>, context: QueryFunctionContext<TQueryKey>, query: Query) => T | Promise<T>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L160)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:46
 
 ## Type Parameters
 

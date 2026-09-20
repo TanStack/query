@@ -3,7 +3,7 @@ id: DefinedQueryNarrowing
 title: DefinedQueryNarrowing
 ---
 
-Defined in: [packages/angular-query/src/types.ts:90](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L90)
+Defined in: [packages/angular-query/src/types.ts:95](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L95)
 
 ## Type Parameters
 
@@ -13,34 +13,12 @@ Defined in: [packages/angular-query/src/types.ts:90](https://github.com/TanStack
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](../type-aliases/DefaultError.md)
 
 ## Properties
 
-### isError
-
-```ts
-isError: SignalFunction<(this) => this is DefinedCreateQueryResult<TData, TError, QueryObserverRefetchErrorResult<TData, TError>>>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:100](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L100)
-
-***
-
-### isPending
-
-```ts
-isPending: SignalFunction<(this) => this is never>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:109](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L109)
-
-***
-
-### isSuccess
-
-```ts
-isSuccess: SignalFunction<(this) => this is DefinedCreateQueryResult<TData, TError, QueryObserverSuccessResult<TData, TError>>>;
-```
-
-Defined in: [packages/angular-query/src/types.ts:91](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L91)
+| Property | Type |
+| ------ | ------ |
+| <a id="iserror"></a> `isError` | `SignalFunction`\<(`this`: [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateQueryResult<TData, TError, QueryObserverRefetchErrorResult<TData, TError>>`\> |
+| <a id="ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>) => `this is never`\> |
+| <a id="issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>) => `this is DefinedCreateQueryResult<TData, TError, QueryObserverSuccessResult<TData, TError>>`\> |
