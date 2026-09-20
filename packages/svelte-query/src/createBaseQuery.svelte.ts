@@ -1,3 +1,4 @@
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -74,7 +75,7 @@ export function createBaseQuery<
   $effect(() => {
     const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() => update(createResult()))
+      : observer.subscribe(() => untrack(() => update(createResult())))
     observer.updateResult()
     return unsubscribe
   })
