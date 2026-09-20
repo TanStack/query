@@ -11,6 +11,7 @@ import {
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Counter from './Counter.svelte'
+import IsRestoringDynamic from './IsRestoringDynamic.svelte'
 import IsRestoring from './IsRestoring.svelte'
 import Select from './Select.svelte'
 import TwoQueries from './TwoQueries.svelte'
@@ -1650,4 +1651,44 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
+
+  it('should subscribe and fetch when isRestoring transitions to false', async () => {
+  const key = queryKey()
+  const queryFn = vi.fn().mockImplementation(async () => {
+    await sleep(10)
+    return 'restored-data'
+  })
+
+  const isRestoringRef = $state({ current: true })
+
+  const rendered = render(IsRestoringDynamic, {
+    props: {
+      queryClient,
+      queryFn,
+      queryKey: key,
+      isRestoringRef,
+    },
+  })
+
+  await vi.advanceTimersByTimeAsync(0)
+
+  // While restoring, observer should not fetch
+  expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+  expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+  expect(queryFn).toHaveBeenCalledTimes(0)
+
+  // Complete restoration
+  isRestoringRef.current = false
+
+  // Wait for the effect to attach the subscription and start fetching
+  await vi.advanceTimersByTimeAsync(0)
+  expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
+  expect(queryFn).toHaveBeenCalledTimes(1)
+
+  // Let the fetch resolve
+  await vi.advanceTimersByTimeAsync(10)
+  expect(rendered.getByTestId('status')).toHaveTextContent('success')
+  expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+  expect(rendered.getByTestId('data')).toHaveTextContent('restored-data')
+})
 })

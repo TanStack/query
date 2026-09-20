@@ -46,6 +46,7 @@ export function createBaseQuery<
       resolvedOptions,
     ),
   )
+
   watchChanges(
     () => client,
     'pre',
@@ -66,19 +67,13 @@ export function createBaseQuery<
       ? observer.trackResult(result)
       : result
   }
+
   const [query, update] = createRawRef(
     // svelte-ignore state_referenced_locally - intentional, initial value
     createResult(),
   )
 
-  $effect(() => {
-    const unsubscribe = isRestoring.current
-      ? () => undefined
-      : observer.subscribe(() => update(createResult()))
-    observer.updateResult()
-    return unsubscribe
-  })
-
+  // Keep observer options updated before DOM flush
   watchChanges(
     () => resolvedOptions,
     'pre',
@@ -86,22 +81,25 @@ export function createBaseQuery<
       observer.setOptions(resolvedOptions)
     },
   )
-  watchChanges(
-    () => [resolvedOptions, observer],
-    'pre',
-    () => {
-      // The only reason this is necessary is because of `isRestoring`.
-      // Because we don't subscribe while restoring, the following can occur:
-      // - `isRestoring` is true
-      // - `isRestoring` becomes false
-      // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
-      //   but the subsequent `fetch` has already completed
-      // - `result` misses the intermediate restored-but-not-fetched state
-      //
-      // this could technically be its own effect but that doesn't seem necessary
+
+  // Manage subscription lifecycle reactively to prevent restoration race conditions
+  $effect(() => {
+    if (isRestoring.current) {
+      return
+    }
+
+    const unsubscribe = observer.subscribe(() => {
       update(createResult())
-    },
-  )
+    })
+
+    // Surface any state that settled between render and subscription commit
+    update(createResult())
+    observer.updateResult()
+
+    return () => {
+      unsubscribe()
+    }
+  })
 
   return query
 }
