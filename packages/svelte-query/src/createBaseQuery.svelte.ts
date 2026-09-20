@@ -1,3 +1,4 @@
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -73,6 +74,10 @@ export function createBaseQuery<
     createResult(),
   )
 
+  const refreshResult = () => {
+    untrack(() => update(createResult()))
+  }
+
   // Keep observer options updated before DOM flush
   watchChanges(
     () => resolvedOptions,
@@ -88,12 +93,10 @@ export function createBaseQuery<
       return
     }
 
-    const unsubscribe = observer.subscribe(() => {
-      update(createResult())
-    })
+    const unsubscribe = observer.subscribe(refreshResult)
 
-    // Surface any state that settled between render and subscription commit
-    update(createResult())
+    // Surface any state that settled between render and subscription commit without tracking resolvedOptions
+    refreshResult()
     observer.updateResult()
 
     return () => {
