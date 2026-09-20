@@ -1,4 +1,5 @@
 import { render } from '@testing-library/svelte'
+import { tick } from 'svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, noop } from '@tanstack/svelte-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
@@ -10,12 +11,31 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
+import BroadcastQueryClientProvider from './BroadcastQueryClientProvider/Provider.svelte'
 import { StatelessRef } from './utils.svelte.js'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
+
+const mockBroadcastState = vi.hoisted(() => {
+  let resolveRestore: (() => void) | undefined
+
+  return {
+    resolveRestore: () => resolveRestore?.(),
+    restore: vi.fn(() => {
+      const restorePromise = new Promise<void>((resolve) => {
+        resolveRestore = resolve
+      })
+      return [vi.fn(), restorePromise] as const
+    }),
+  }
+})
+
+vi.mock('@tanstack/query-broadcast-client-experimental', () => ({
+  broadcastQueryClientRestore: mockBroadcastState.restore,
+}))
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -275,6 +295,51 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
+  })
+
+  it('BroadcastQueryClientProvider holds a fresh query until bootstrap completes', async () => {
+    const queryClient = new QueryClient()
+    queryClient.setQueryData(['broadcast-bootstrap'], 'from-cache')
+    const onFetch = vi.fn()
+
+    const rendered = render(BroadcastQueryClientProvider, {
+      props: { queryClient, onFetch },
+    })
+
+    expect(rendered.getByText('from-cache')).toBeInTheDocument()
+    expect(onFetch).not.toHaveBeenCalled()
+    expect(mockBroadcastState.restore).toHaveBeenCalledWith({
+      broadcastChannel: 'test-channel',
+      queryClient,
+    })
+
+    mockBroadcastState.resolveRestore()
+    await Promise.resolve()
+
+    expect(rendered.getByText('from-cache')).toBeInTheDocument()
+    expect(onFetch).not.toHaveBeenCalled()
+
+    rendered.unmount()
+  })
+
+  it('BroadcastQueryClientProvider refetches a stale query after bootstrap completes', async () => {
+    const queryClient = new QueryClient()
+    queryClient.setQueryData(['broadcast-bootstrap'], 'stale', {
+      updatedAt: 0,
+    })
+    const onFetch = vi.fn()
+
+    const rendered = render(BroadcastQueryClientProvider, {
+      props: { queryClient, onFetch, staleTime: 0 },
+    })
+
+    expect(onFetch).not.toHaveBeenCalled()
+    mockBroadcastState.resolveRestore()
+    await tick()
+    await tick()
+
+    expect(onFetch).toHaveBeenCalledOnce()
+    rendered.unmount()
   })
 
   it('should call onSuccess after successful restoring', async () => {
