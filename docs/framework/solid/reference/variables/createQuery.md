@@ -18,6 +18,9 @@ Defined in: [packages/solid-query/src/index.ts:57](https://github.com/TanStack/q
 <TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
 ### Type Parameters
 
 #### TQueryFnData
@@ -216,6 +219,9 @@ function Posts() {
 ```ts
 <TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
 

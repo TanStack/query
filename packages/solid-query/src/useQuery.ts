@@ -15,6 +15,9 @@ import type {
 } from './queryOptions'
 
 /**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - An accessor returning the {@link UndefinedInitialDataOptions} to use — everything you can
  * pass to `useQuery`.
@@ -186,6 +189,9 @@ export function useQuery<
 ): UseQueryResult<TData, TError>
 
 /**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
  *
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
