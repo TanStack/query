@@ -9,6 +9,9 @@ const createMutation: <TData, TError, TVariables, TOnMutateResult>(options: UseM
 
 Defined in: [packages/solid-query/src/index.ts:80](https://github.com/TanStack/query/blob/main/packages/solid-query/src/index.ts#L80)
 
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the function for that.
+
 ## Type Parameters
 
 ### TData
