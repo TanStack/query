@@ -3,6 +3,9 @@ import { useQueryClient } from './useQueryClient.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 /**
+ * The `useIsFetching` function returns the `number` of the queries that your application is loading or
+ * fetching in the background (useful for app-wide loading indicators).
+ *
  * @param filters - {@link QueryFilters} to narrow down which queries to count. Omit to count every fetching
  * query.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will

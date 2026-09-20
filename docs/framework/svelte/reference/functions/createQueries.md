@@ -11,7 +11,9 @@ function createQueries<T, TCombinedResult>(createQueriesOptions: Accessor<{
 }>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
-Defined in: [packages/svelte-query/src/createQueries.svelte.ts:260](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.svelte.ts#L260)
+Defined in: [packages/svelte-query/src/createQueries.svelte.ts:262](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.svelte.ts#L262)
+
+The `createQueries` function can be used to fetch a variable number of queries.
 
 ## Type Parameters
 
