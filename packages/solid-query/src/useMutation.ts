@@ -13,7 +13,7 @@ import type { Accessor } from 'solid-js'
 
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
- * `useMutation` is the function for that.
+ * `useMutation` is the primitive for that.
  *
  * @param options - An accessor returning the {@link UseMutationOptions} to use.
  * @param queryClient - An accessor for a custom `QueryClient`. Otherwise, the one from the nearest context
