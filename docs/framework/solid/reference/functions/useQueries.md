@@ -15,7 +15,7 @@ function useQueries<T, TCombinedResult>(queriesOptions: Accessor<{
 
 Defined in: [packages/solid-query/src/useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
 
-The `useQueries` hook can be used to fetch a variable number of queries.
+The `useQueries` function can be used to fetch a variable number of queries.
 
 The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
 `placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'

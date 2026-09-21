@@ -11,7 +11,7 @@ function useIsMutating(filters?: Accessor<MutationFilters<unknown, Error, unknow
 
 Defined in: [packages/solid-query/src/useIsMutating.ts:28](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useIsMutating.ts#L28)
 
-The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
+The `useIsMutating` function returns the `number` of mutations that your application currently has `pending`
 (useful for app-wide loading indicators).
 
 ## Parameters
