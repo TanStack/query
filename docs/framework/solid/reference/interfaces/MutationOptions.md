@@ -3,7 +3,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [packages/solid-query/src/types.ts:243](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L243)
+Defined in: [packages/solid-query/src/types.ts:251](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L251)
 
 The options accepted by `useMutation` and `mutationOptions`.
 

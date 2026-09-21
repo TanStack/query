@@ -9,7 +9,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:307](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L307)
+Defined in: [packages/solid-query/src/types.ts:315](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L315)
 
 The result of `useMutation`. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with
 `mutate` narrowed to the fire-and-forget [UseMutateFunction](UseMutateFunction.md) signature, plus the added `mutateAsync`.
