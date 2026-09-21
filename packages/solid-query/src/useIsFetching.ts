@@ -5,7 +5,7 @@ import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 
 /**
- * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching
+ * The `useIsFetching` function returns the `number` of the queries that your application is loading or fetching
  * in the background (useful for app-wide loading indicators).
  *
  * @param filters - An accessor returning the {@link QueryFilters} to narrow down the matched queries.
