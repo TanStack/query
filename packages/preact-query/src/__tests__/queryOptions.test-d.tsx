@@ -18,6 +18,13 @@ import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
+
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
@@ -57,6 +64,44 @@ describe('queryOptions', () => {
     const { data } = useSuspenseQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+  it('should work when passed to query', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with select', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
+  })
+  it('should work when passed to query with enabled: false', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      enabled: false,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with skipToken', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<unknown>()
+  })
 
   it('should work when passed to fetchQuery', async () => {
     const options = queryOptions({
@@ -64,6 +109,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })

@@ -33,8 +33,8 @@ describe('useQueries with persist and memoized combine', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     Object.keys(storage).forEach((key) => delete storage[key])
+    vi.useRealTimers()
   })
 
   it('should update UI when combine is memoized with persist', async () => {
@@ -73,6 +73,7 @@ describe('useQueries with persist and memoized combine', () => {
         queries: [1, 2, 3].map((id) => ({
           queryHash: `["post",${id}]`,
           queryKey: ['post', id],
+          dehydratedAt: Date.now(),
           state: {
             data: id,
             dataUpdateCount: 1,

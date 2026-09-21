@@ -42,7 +42,7 @@ export default defineNuxtPlugin((nuxt) => {
     })
   }
 
-  if (import.meta.client) {
+  if (import.meta.client && vueQueryState.value !== null) {
     hydrate(queryClient, vueQueryState.value)
   }
 })
@@ -50,12 +50,13 @@ export default defineNuxtPlugin((nuxt) => {
 
 Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
-- Prefetch all the queries that you need with `queryClient.prefetchQuery` or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
 
 ```ts
 export default defineComponent({
   setup() {
-    const { data, suspense } = useQuery({
+    const queryClient = useQueryClient()
+    const { data } = useQuery({
       queryKey: ['test'],
       queryFn: fetcher,
     })
@@ -110,7 +111,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 
 - Use `useContext` to get nuxt context
 - Use `useQueryClient` to get server-side instance of `queryClient`
-- Prefetch all the queries that you need with `queryClient.prefetchQuery` or `suspense`
+- Prefetch all the queries that you need with `queryClient.query`, `queryClient.infiniteQuery`, or `suspense`
 - Dehydrate `queryClient` to the `nuxtContext`
 
 ```vue
@@ -149,7 +150,7 @@ export default defineComponent({
     // This won't be prefetched, it will start fetching on client side
     const { data2 } = useQuery(
       {
-        queryKey: 'todos2',
+        queryKey: ['todos2'],
         queryFn: getTodos,
       },
       queryClient,
@@ -169,7 +170,7 @@ export default defineComponent({
 </script>
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` or `suspense` for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `queryClient.query` or `suspense` for a specific query.
 
 ## Using Vite SSR
 
@@ -237,7 +238,7 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 
 Any query with an error is automatically excluded from dehydration. This means that the default behavior is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `queryClient.query` and catch any errors to handle those manually.
 
 ### Staleness is measured from when the query was fetched on the server
 
@@ -253,6 +254,25 @@ In case you are creating the `QueryClient` for every request, Vue Query creates 
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
+
+## `dehydrate`/`hydrate` options
+
+`dehydrate` and `hydrate` are re-exported from `@tanstack/query-core`, so they're available directly from `@tanstack/vue-query` — as used throughout this guide.
+
+`dehydrate(client, options?)` accepts a `DehydrateOptions` object:
+
+- `shouldDehydrateMutation: (mutation) => boolean` — whether to dehydrate a given mutation. Called for each mutation in the cache; defaults to only including paused mutations. To extend the default behavior instead of replacing it, import and call `defaultShouldDehydrateMutation` as part of your return statement.
+- `shouldDehydrateQuery: (query) => boolean` — whether to dehydrate a given query. Called for each query in the cache; defaults to only including successful queries (see [above](#only-successful-queries-are-included-in-dehydration)). Extend it the same way, with `defaultShouldDehydrateQuery`.
+- `serializeData?: (data) => any` — transforms (serializes) data during dehydration.
+- `shouldRedactErrors?: (error) => boolean` — only applies to queries still `pending` at dehydration time, whose promise is dehydrated too: decides whether to redact the error if that promise later rejects. Defaults to redacting all such errors. Does **not** apply to `query.state.error` on already-settled queries — that error is included in the dehydrated state as-is, so sanitize it yourself via `shouldDehydrateQuery` if it may contain sensitive data.
+
+`hydrate(client, dehydratedState, options?)` accepts a `HydrateOptions` object:
+
+- `defaultOptions.mutations` — default mutation options for the hydrated mutations.
+- `defaultOptions.queries` — default query options for the hydrated queries.
+- `defaultOptions.deserializeData?: (data) => any` — transforms (deserializes) data before it's put into the cache.
+
+One caveat with `hydrate`: if a query being hydrated already exists in the cache, it's only overwritten when the incoming data is newer than what's already there — otherwise it's silently skipped.
 
 Alternatively, you can set a smaller `gcTime`.

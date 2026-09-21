@@ -26,7 +26,7 @@ describe('useIsMutating', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Trigger/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
   })
 })

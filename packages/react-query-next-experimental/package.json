@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.100.9",
+  "version": "5.103.2",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,20 +15,18 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
-    "compile": "tsc --build",
+    "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:tscurrent": "tsc --build",
-    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsup --tsconfig tsconfig.prod.json"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",

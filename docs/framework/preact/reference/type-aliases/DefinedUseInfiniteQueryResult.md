@@ -3,13 +3,14 @@ id: DefinedUseInfiniteQueryResult
 title: DefinedUseInfiniteQueryResult
 ---
 
-# Type Alias: DefinedUseInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [preact-query/src/types.ts:178](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/types.ts#L178)
+Defined in: [packages/preact-query/src/types.ts:376](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L376)
+
+The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Re-exports
+[DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md) from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -17,6 +18,10 @@ Defined in: [preact-query/src/types.ts:178](https://github.com/theVedanta/query/
 
 `TData` = `unknown`
 
+The type `data` ends up as after `select` runs.
+
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your `queryFn` may throw.

@@ -32,10 +32,10 @@ describe('useSuspenseQueries', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
+    vi.useRealTimers()
   })
 
   function SuspenseFallback() {
@@ -575,6 +575,42 @@ describe('useSuspenseQueries', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     // query should resume
     expect(rendered.getByText('Data 1')).toBeInTheDocument()
+  })
+
+  it('should throw error when a queryFn rejects with a falsy error', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => Promise.reject()),
+            retry: false,
+          },
+        ],
+      })
+
+      return <div>data: {String(query.data)}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleMock.mockRestore()
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {

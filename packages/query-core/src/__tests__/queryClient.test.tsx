@@ -8,11 +8,18 @@ import {
   dehydrate,
   focusManager,
   hydrate,
+  noop,
   onlineManager,
   skipToken,
 } from '..'
 import { mockOnlineManagerIsOnline } from './utils'
-import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
+import type {
+  InfiniteData,
+  Query,
+  QueryCache,
+  QueryFunction,
+  QueryObserverOptions,
+} from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -40,7 +47,9 @@ describe('queryClient', () => {
         defaultOptions: { queries: { queryFn } },
       })
 
-      expect(() => testClient.prefetchQuery({ queryKey: key })).not.toThrow()
+      expect(() =>
+        testClient.query({ queryKey: key }).catch(noop),
+      ).not.toThrow()
     })
 
     it('should merge defaultOptions when query is added to cache', async () => {
@@ -53,7 +62,7 @@ describe('queryClient', () => {
       })
 
       const fetchData = () => Promise.resolve('data')
-      await testClient.prefetchQuery({ queryKey: key, queryFn: fetchData })
+      await testClient.query({ queryKey: key, queryFn: fetchData }).catch(noop)
       const newQuery = testClient.getQueryCache().find({ queryKey: key })
       expect(newQuery?.options.gcTime).toBe(Infinity)
     })
@@ -327,10 +336,12 @@ describe('queryClient', () => {
 
     it('should not set isFetching to false', async () => {
       const key = queryKey()
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 23),
-      })
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 23),
+        })
+        .catch(noop)
       expect(queryClient.getQueryState(key)).toMatchObject({
         data: undefined,
         fetchStatus: 'fetching',
@@ -395,15 +406,19 @@ describe('queryClient', () => {
   describe('isFetching', () => {
     it('should return length of fetching queries', async () => {
       expect(queryClient.isFetching()).toBe(0)
-      queryClient.prefetchQuery({
-        queryKey: queryKey(),
-        queryFn: () => sleep(10).then(() => 'data'),
-      })
+      void queryClient
+        .query({
+          queryKey: queryKey(),
+          queryFn: () => sleep(10).then(() => 'data'),
+        })
+        .catch(noop)
       expect(queryClient.isFetching()).toBe(1)
-      queryClient.prefetchQuery({
-        queryKey: queryKey(),
-        queryFn: () => sleep(5).then(() => 'data'),
-      })
+      void queryClient
+        .query({
+          queryKey: queryKey(),
+          queryFn: () => sleep(5).then(() => 'data'),
+        })
+        .catch(noop)
       expect(queryClient.isFetching()).toBe(2)
       await vi.advanceTimersByTimeAsync(5)
       expect(queryClient.isFetching()).toEqual(1)
@@ -449,6 +464,7 @@ describe('queryClient', () => {
     })
   })
 
+  /** @deprecated */
   describe('ensureQueryData', () => {
     it('should return the cached query data if the query is found', async () => {
       const key = queryKey()
@@ -457,6 +473,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], 'bar')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual('bar')
     })
@@ -468,15 +485,17 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], null)
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual(null)
     })
 
-    it('should call fetchQuery and return its results if the query is not found', async () => {
+    it('should call ensureQueryData and return its results if the query is not found', async () => {
       const key = queryKey()
       const queryFn = () => Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key], queryFn }),
       ).resolves.toEqual('data')
     })
@@ -492,6 +511,7 @@ describe('queryClient', () => {
         })
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -500,6 +520,7 @@ describe('queryClient', () => {
       ).resolves.toEqual('old')
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -508,11 +529,12 @@ describe('queryClient', () => {
       ).resolves.toEqual('new')
     })
 
-    it('should not fetch with initialDat', async () => {
+    it('should not fetch with initialData', async () => {
       const key = queryKey()
       const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -524,6 +546,100 @@ describe('queryClient', () => {
     })
   })
 
+  describe('query with static staleTime', () => {
+    it('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      queryClient.setQueryData([key, 'id'], 'bar')
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('bar')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('should return the cached query data if the query is found and cached query data is falsy', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve(0))
+
+      queryClient.setQueryData([key, 'id'], null)
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual(null)
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('should call queryFn and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: [key],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not fetch when initialData is provided', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialData: 'initial',
+        }),
+      ).resolves.toEqual('initial')
+
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('supports manual background revalidation via a second query call', async () => {
+      const key = queryKey()
+      let value = 'data-1'
+      const queryFn = vi.fn(() => Promise.resolve(value))
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('data-1')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      value = 'data-2'
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn,
+          staleTime: 0,
+        })
+        .catch(noop)
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data-2')
+    })
+  })
+
+  /** @deprecated */
   describe('ensureInfiniteQueryData', () => {
     it('should return the cached query data if the query is found', async () => {
       const key = queryKey()
@@ -532,6 +648,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], { pages: ['bar'], pageParams: [0] })
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -546,6 +663,7 @@ describe('queryClient', () => {
       const queryFn = () => Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -563,6 +681,7 @@ describe('queryClient', () => {
       const queryFn = () => sleep(TIMEOUT).then(() => 'new')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -573,6 +692,7 @@ describe('queryClient', () => {
       ).resolves.toEqual({ pages: ['old'], pageParams: [0] })
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -581,6 +701,45 @@ describe('queryClient', () => {
           revalidateIfStale: true,
         }),
       ).resolves.toEqual({ pages: ['new'], pageParams: [0] })
+    })
+  })
+
+  describe('infiniteQuery with static staleTime', () => {
+    it('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      queryClient.setQueryData([key, 'id'], {
+        pages: ['bar'],
+        pageParams: [0],
+      })
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['bar'], pageParams: [0] })
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('should fetch the query and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['data'], pageParams: [1] })
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -615,6 +774,7 @@ describe('queryClient', () => {
     })
   })
 
+  /** @deprecated */
   describe('fetchQuery', () => {
     it('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -625,6 +785,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
@@ -637,6 +798,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery({
           queryKey: key,
           queryFn: (): Promise<unknown> => {
@@ -650,10 +812,13 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const fetchFn = () => Promise.resolve('data')
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
       })
+
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -666,6 +831,8 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -680,6 +847,7 @@ describe('queryClient', () => {
         refetchType: 'none',
       })
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -693,6 +861,7 @@ describe('queryClient', () => {
 
     it('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -706,6 +875,7 @@ describe('queryClient', () => {
 
     it('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -719,9 +889,9 @@ describe('queryClient', () => {
 
     it('should not force fetch', async () => {
       const key = queryKey()
-
       queryClient.setQueryData(key, 'og')
       const fetchFn = () => Promise.resolve('new')
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -738,6 +908,7 @@ describe('queryClient', () => {
       const queryFn = () => ++count
 
       queryClient.setQueryData(key, count)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const firstPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -745,12 +916,14 @@ describe('queryClient', () => {
       })
       await expect(firstPromise).resolves.toBe(0)
       await vi.advanceTimersByTimeAsync(10)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const secondPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
         staleTime: 10,
       })
       await expect(secondPromise).resolves.toBe(1)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const thirdPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -758,6 +931,7 @@ describe('queryClient', () => {
       })
       await expect(thirdPromise).resolves.toBe(1)
       await vi.advanceTimersByTimeAsync(10)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const fourthPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -769,6 +943,7 @@ describe('queryClient', () => {
     it('should allow new meta', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -778,6 +953,7 @@ describe('queryClient', () => {
       })
       expect(first).toStrictEqual({ foo: true })
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -789,6 +965,434 @@ describe('queryClient', () => {
     })
   })
 
+  describe('query', () => {
+    it('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+        Promise.resolve('data')
+
+      await expect(
+        queryClient.query<
+          StrictData,
+          any,
+          StrictData,
+          StrictData,
+          StrictQueryKey
+        >({
+          queryKey: key,
+          queryFn: fetchFn,
+        }),
+      ).resolves.toEqual('data')
+    })
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    it('should not retry by default', async () => {
+      const key = queryKey()
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+        }),
+      ).rejects.toEqual(new Error('error'))
+    })
+
+    it('should return the cached data on cache hit', async () => {
+      const key = queryKey()
+
+      const fetchFn = () => Promise.resolve('data')
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+      })
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+      })
+
+      expect(second).toBe(first)
+    })
+
+    it('should fetch when disabled', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
+          enabled: false,
+        }),
+      ).resolves.toBe('data')
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch when disabled by callback', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
+          enabled: () => false,
+        }),
+      ).resolves.toBe('data')
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch when disabled and apply select', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: false,
+        staleTime: 0,
+        select: (data) => `${data}-selected`,
+      })
+
+      expect(result).toBe('fetched-data-selected')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch instead of returning initialData when disabled', async () => {
+      const booleanQueryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: queryKey(),
+          queryFn: booleanQueryFn,
+          // @ts-expect-error enabled is not supported for imperative queries
+          enabled: false,
+          initialData: 'initial-data',
+        }),
+      ).resolves.toBe('fetched-data')
+
+      expect(booleanQueryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should throw when skipToken is provided and no cached data exists', async () => {
+      const key = queryKey()
+      const select = vi.fn((data: unknown) => (data as string).length)
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: skipToken,
+          select,
+        }),
+      ).rejects.toThrow()
+
+      expect(select).not.toHaveBeenCalled()
+    })
+
+    it('should return cached data when skipToken is provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn: skipToken,
+        staleTime: 'static',
+        select: (data: unknown) => (data as string).length,
+      })
+
+      expect(result).toBe('cached-data'.length)
+    })
+
+    it('should return cached data when skipToken and enabled false are both provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, { value: 'cached-data' })
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn: skipToken,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: false,
+        staleTime: 'static',
+        select: (data: { value: string }) => data.value.toUpperCase(),
+      })
+
+      expect(result).toBe('CACHED-DATA')
+    })
+
+    it('should throw when skipToken is provided with no cached data', async () => {
+      await expect(
+        queryClient.query({
+          queryKey: queryKey(),
+          queryFn: skipToken,
+        }),
+      ).rejects.toThrow()
+    })
+
+    it('should fetch when enabled callback returns false', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: () => false,
+      })
+
+      expect(result).toBe('fetched-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch when enabled callback returns true and cache is stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: () => true,
+        staleTime: 0,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should read from cache with static staleTime even if invalidated', async () => {
+      const key = queryKey()
+
+      const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(first.data).toBe('data')
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      expect(second).toBe(first)
+    })
+
+    it('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
+      const key1 = queryKey()
+      const promise = queryClient.query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 1),
+        gcTime: 0,
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(promise).resolves.toEqual(1)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(queryClient.getQueryData(key1)).toEqual(undefined)
+    })
+
+    it('should keep a query in cache if garbage collection time is Infinity', async () => {
+      const key1 = queryKey()
+      const promise = queryClient.query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 1),
+        gcTime: Infinity,
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      const result2 = queryClient.getQueryData(key1)
+      await expect(promise).resolves.toEqual(1)
+      expect(result2).toEqual(1)
+    })
+
+    it('should not force fetch', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'og')
+      const fetchFn = () => Promise.resolve('new')
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        initialData: 'initial',
+        staleTime: 100,
+      })
+      expect(first).toBe('og')
+    })
+
+    it('should only fetch if the data is older then the given stale time', async () => {
+      const key = queryKey()
+
+      let count = 0
+      const queryFn = () => ++count
+
+      queryClient.setQueryData(key, count)
+      const firstPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 100,
+      })
+      await expect(firstPromise).resolves.toBe(0)
+      await vi.advanceTimersByTimeAsync(10)
+      const secondPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(secondPromise).resolves.toBe(1)
+      const thirdPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(thirdPromise).resolves.toBe(1)
+      await vi.advanceTimersByTimeAsync(10)
+      const fourthPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(fourthPromise).resolves.toBe(2)
+    })
+
+    it('should evaluate staleTime when provided as a function', async () => {
+      const key = queryKey()
+      const staleTime = vi.fn(() => 0)
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(staleTime).toHaveBeenCalledTimes(1)
+    })
+
+    it('should allow new meta', async () => {
+      const key = queryKey()
+
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: true,
+        },
+      })
+      expect(first).toStrictEqual({ foo: true })
+
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: false,
+        },
+      })
+      expect(second).toStrictEqual({ foo: false })
+    })
+
+    it('should fetch when enabled is true and cache is stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: true,
+        staleTime: 0,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should propagate errors', async () => {
+      const key = queryKey()
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+        }),
+      ).rejects.toEqual(new Error('error'))
+    })
+
+    it('should apply select when data is fresh in cache', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: Infinity,
+        select: (data) => `${data}-selected`,
+      })
+
+      expect(result).toBe('cached-data-selected')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    it('should apply select to freshly fetched data', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve({ value: 'fetched-data' }))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        select: (data) => data.value.toUpperCase(),
+      })
+
+      expect(result).toBe('FETCHED-DATA')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  /** @deprecated */
   describe('fetchInfiniteQuery', () => {
     it('should not type-error with strict query key', async () => {
       type StrictData = string
@@ -804,6 +1408,7 @@ describe('queryClient', () => {
         Promise.resolve(data.pages[0])
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchInfiniteQuery<
           StrictData,
           any,
@@ -816,6 +1421,7 @@ describe('queryClient', () => {
 
     it('should return infinite query data', async () => {
       const key = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
         initialPageParam: 10,
@@ -833,6 +1439,234 @@ describe('queryClient', () => {
     })
   })
 
+  describe('infiniteQuery', () => {
+    it('should not type-error with strict query key', async () => {
+      type StrictData = string
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const data = {
+        pages: ['data'],
+        pageParams: [0],
+      } as const
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
+        Promise.resolve(data.pages[0])
+
+      await expect(
+        queryClient.infiniteQuery<
+          StrictData,
+          any,
+          StrictData,
+          StrictQueryKey,
+          number
+        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+      ).resolves.toEqual(data)
+    })
+
+    it('should return infinite query data', async () => {
+      const key = queryKey()
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        initialPageParam: 10,
+        queryFn: ({ pageParam }) => Number(pageParam),
+      })
+      const result2 = queryClient.getQueryData(key)
+
+      const expected = {
+        pages: [10],
+        pageParams: [10],
+      }
+
+      expect(result).toEqual(expected)
+      expect(result2).toEqual(expected)
+    })
+
+    it('should fetch when disabled', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(pageParam),
+      )
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: key,
+          queryFn,
+          initialPageParam: 0,
+          // @ts-expect-error enabled is not supported for imperative queries
+          enabled: false,
+        }),
+      ).resolves.toEqual({ pages: [0], pageParams: [0] })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch when disabled and apply select', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(`'fetched-${String(pageParam)}`),
+      )
+
+      queryClient.setQueryData(key, {
+        pages: ['cached-page'],
+        pageParams: [0],
+      })
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        // @ts-expect-error enabled is not supported for imperative queries
+        enabled: false,
+        select: (data) => data.pages.map((page) => `${page}-selected`),
+      })
+
+      expect(result).toEqual(["'fetched-0-selected"])
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return cached data when skipToken is provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['page-1'],
+        pageParams: [0],
+      })
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn: skipToken,
+        initialPageParam: 0,
+        staleTime: 'static',
+      })
+
+      expect(result).toEqual({
+        pages: ['page-1'],
+        pageParams: [0],
+      })
+    })
+
+    it('should throw when skipToken is provided and no cached data exists', async () => {
+      const key = queryKey()
+      const select = vi.fn(
+        (data: { pages: Array<string> }) => data.pages.length,
+      )
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: key,
+          queryFn: skipToken,
+          initialPageParam: 0,
+          select,
+        }),
+      ).rejects.toThrow()
+
+      expect(select).not.toHaveBeenCalled()
+    })
+
+    it('should throw when skipToken is provided with no cached data', async () => {
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: queryKey(),
+          queryFn: skipToken,
+          initialPageParam: 0,
+        }),
+      ).rejects.toThrow()
+    })
+
+    it('should evaluate staleTime callback and refetch when it returns stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: [{ value: 'old-page', staleTime: 0 }],
+        pageParams: [0],
+      })
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve({
+          value: `new-page-${String(pageParam)}`,
+          staleTime: 0,
+        }),
+      )
+      const staleTimeSpy = vi.fn()
+      const staleTime = (
+        query: Query<
+          { value: string; staleTime: number },
+          Error,
+          InfiniteData<{ value: string; staleTime: number }, number>
+        >,
+      ) => {
+        staleTimeSpy()
+        return query.state.data?.pages[0]?.staleTime ?? 0
+      }
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime,
+      })
+
+      expect(result).toEqual({
+        pages: [{ value: 'new-page-0', staleTime: 0 }],
+        pageParams: [0],
+      })
+      expect(staleTimeSpy).toHaveBeenCalled()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('should read from cache with static staleTime even if invalidated', async () => {
+      const key = queryKey()
+
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve({ value: `fetched-${String(pageParam)}` }),
+      )
+      const first = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime: 'static',
+      })
+
+      expect(first).toEqual({
+        pages: [{ value: 'fetched-0' }],
+        pageParams: [0],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      const second = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime: 'static',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(second).toBe(first)
+    })
+
+    it('should apply select to infinite query data', async () => {
+      const key = queryKey()
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        initialPageParam: 10,
+        queryFn: ({ pageParam }) => Number(pageParam),
+        select: (data) => data.pages.map((page) => page * 2),
+      })
+
+      expect(result).toEqual([20])
+    })
+  })
+
+  /** @deprecated */
   describe('prefetchInfiniteQuery', () => {
     it('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -842,6 +1676,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
@@ -861,6 +1696,7 @@ describe('queryClient', () => {
     it('should return infinite query data', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
@@ -878,6 +1714,7 @@ describe('queryClient', () => {
     it('should prefetch multiple pages', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -899,6 +1736,7 @@ describe('queryClient', () => {
       const key = queryKey()
       let count = 0
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -922,6 +1760,102 @@ describe('queryClient', () => {
     })
   })
 
+  describe('infiniteQuery used for prefetching', () => {
+    it('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
+        Promise.resolve('data')
+
+      await queryClient
+        .infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>({
+          queryKey: key,
+          queryFn: fetchFn,
+          initialPageParam: 0,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['data'],
+        pageParams: [0],
+      })
+    })
+
+    it('should return infinite query data', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => Number(pageParam),
+          initialPageParam: 10,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: [10],
+        pageParams: [10],
+      })
+    })
+
+    it('should prefetch multiple pages', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => String(pageParam),
+          getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+            lastPageParam + 5,
+          initialPageParam: 10,
+          pages: 3,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+    })
+
+    it('should stop prefetching if getNextPageParam returns undefined', async () => {
+      const key = queryKey()
+      let count = 0
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => String(pageParam),
+          getNextPageParam: (_lastPage, _pages, lastPageParam) => {
+            count++
+            return lastPageParam >= 20 ? undefined : lastPageParam + 5
+          },
+          initialPageParam: 10,
+          pages: 5,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+
+      // this check ensures we're exiting the fetch loop early
+      expect(count).toBe(3)
+    })
+  })
+
+  /** @deprecated */
   describe('prefetchQuery', () => {
     it('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -931,6 +1865,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery<
         StrictData,
         any,
@@ -946,6 +1881,7 @@ describe('queryClient', () => {
     it('should return undefined when an error is thrown', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: (): Promise<unknown> => {
@@ -960,11 +1896,65 @@ describe('queryClient', () => {
     it('should be garbage collected after gcTime if unused', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: () => 'data',
         gcTime: 10,
       })
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+      await vi.advanceTimersByTimeAsync(15)
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
+    })
+  })
+
+  describe('query used for prefetching', () => {
+    it('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+        Promise.resolve('data')
+
+      await queryClient
+        .query<StrictData, any, StrictData, StrictData, StrictQueryKey>({
+          queryKey: key,
+          queryFn: fetchFn,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual('data')
+    })
+
+    it('should resolve to undefined when error is caught with noop', async () => {
+      const key = queryKey()
+
+      const result = await queryClient
+        .query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+          retry: false,
+        })
+        .catch(noop)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('should be garbage collected after gcTime if unused', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => 'data',
+          gcTime: 10,
+        })
+        .catch(noop)
       expect(queryCache.find({ queryKey: key })).toBeDefined()
       await vi.advanceTimersByTimeAsync(15)
       expect(queryCache.find({ queryKey: key })).not.toBeDefined()
@@ -978,8 +1968,8 @@ describe('queryClient', () => {
       const fetchFn = () => Promise.resolve('data')
 
       // check the query was added to the cache
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: fetchFn })
-      expect(queryCache.find({ queryKey: key })).toBeTruthy()
+      await queryClient.query({ queryKey: key, queryFn: fetchFn }).catch(noop)
+      expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
       // check the error doesn't occur
       expect(() =>
@@ -987,7 +1977,7 @@ describe('queryClient', () => {
       ).not.toThrow()
 
       // check query was successful removed
-      expect(queryCache.find({ queryKey: key })).toBeFalsy()
+      expect(queryCache.find({ queryKey: key })).toBeUndefined()
     })
   })
 
@@ -996,7 +1986,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       queryClient.setQueryData(key1, 'data')
 
-      const pending = queryClient.fetchQuery({
+      const pending = queryClient.query({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
@@ -1017,14 +2007,16 @@ describe('queryClient', () => {
 
     it('should not revert if revert option is set to false', async () => {
       const key1 = queryKey()
-      await queryClient.fetchQuery({
+      await queryClient.query({
         queryKey: key1,
         queryFn: () => 'data',
       })
-      queryClient.prefetchQuery({
-        queryKey: key1,
-        queryFn: () => sleep(1000).then(() => 'data2'),
-      })
+      void queryClient
+        .query({
+          queryKey: key1,
+          queryFn: () => sleep(1000).then(() => 'data2'),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
       await queryClient.cancelQueries({ queryKey: key1 }, { revert: false })
       const state1 = queryClient.getQueryState(key1)
@@ -1036,7 +2028,7 @@ describe('queryClient', () => {
     it('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
       const key = queryKey()
 
-      const promise = queryClient.fetchQuery({
+      const promise = queryClient.query({
         queryKey: key,
         queryFn: () => sleep(50).then(() => 25),
       })
@@ -1065,7 +2057,7 @@ describe('queryClient', () => {
       const queryFn = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data')
-      await queryClient.fetchQuery({ queryKey: key, queryFn })
+      await queryClient.query({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -1081,7 +2073,7 @@ describe('queryClient', () => {
       const queryFn = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data')
-      await queryClient.fetchQuery({ queryKey: key, queryFn })
+      await queryClient.query({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -1108,8 +2100,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1140,8 +2132,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1163,8 +2155,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1187,8 +2179,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       queryClient.invalidateQueries({ queryKey: key1 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
@@ -1213,8 +2205,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1236,8 +2228,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1259,8 +2251,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1282,8 +2274,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1300,7 +2292,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       const queryFnError = () => Promise.reject<unknown>('error')
       try {
-        await queryClient.fetchQuery({
+        await queryClient.query({
           queryKey: key1,
           queryFn: queryFnError,
           retry: false,
@@ -1323,7 +2315,7 @@ describe('queryClient', () => {
       const queryFn1 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
@@ -1339,7 +2331,7 @@ describe('queryClient', () => {
       const queryFn1 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
@@ -1352,7 +2344,7 @@ describe('queryClient', () => {
     it('should not refetch static queries', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => 'data1')
-      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+      await queryClient.query({ queryKey: key, queryFn: queryFn })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -1379,8 +2371,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1402,8 +2394,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         enabled: false,
@@ -1425,8 +2417,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1451,8 +2443,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1479,8 +2471,8 @@ describe('queryClient', () => {
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
-      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
+      await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1585,7 +2577,7 @@ describe('queryClient', () => {
     it('should not refetch static queries after invalidation', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => 'data1')
-      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+      await queryClient.query({ queryKey: key, queryFn: queryFn })
 
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -1608,19 +2600,31 @@ describe('queryClient', () => {
 
       const callback = vi.fn()
 
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+      await queryClient
+        .query({ queryKey: key, queryFn: () => 'data' })
+        .catch(noop)
 
       queryCache.subscribe(callback)
 
       queryClient.resetQueries({ queryKey: key })
 
-      expect(callback).toHaveBeenCalled()
+      const query = queryCache.find({ queryKey: key })
+      expect(callback).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: 'updated',
+          query,
+          action: expect.objectContaining({ type: 'setState' }),
+        }),
+      )
     })
 
     it('should reset query', async () => {
       const key = queryKey()
 
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+      await queryClient
+        .query({ queryKey: key, queryFn: () => 'data' })
+        .catch(noop)
 
       let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
@@ -1630,7 +2634,6 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
       expect(state?.status).toEqual('pending')
       expect(state?.fetchStatus).toEqual('idle')
@@ -1639,11 +2642,13 @@ describe('queryClient', () => {
     it('should reset query data to initial data if set', async () => {
       const key = queryKey()
 
-      await queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => 'data',
-        initialData: 'initial',
-      })
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => 'data',
+          initialData: 'initial',
+        })
+        .catch(noop)
 
       let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
@@ -1652,8 +2657,40 @@ describe('queryClient', () => {
 
       state = queryClient.getQueryState(key)
 
-      expect(state).toBeTruthy()
       expect(state?.data).toEqual('initial')
+    })
+
+    it('should refetch queries matched by a state-dependent predicate', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(new Error('error'))
+        .mockResolvedValue('data')
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          retry: false,
+        }),
+      ).rejects.toThrow('error')
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        retry: false,
+        retryOnMount: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+
+      await queryClient.resetQueries({
+        predicate: (query) => query.state.status === 'error',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data')
+
+      unsubscribe()
     })
 
     it('should refetch all active queries', async () => {
@@ -1781,8 +2818,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1816,8 +2853,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1861,8 +2898,8 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer1.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
@@ -1885,12 +2922,12 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       await queryClient.resumePausedMutations()
 
       // still paused because we are still offline
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       onlineManager.setOnline(true)
 
@@ -1909,7 +2946,7 @@ describe('queryClient', () => {
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
 
       const state = dehydrate(queryClient)
 
@@ -1928,7 +2965,7 @@ describe('queryClient', () => {
       // still paused because we are still offline
       expect(
         newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
-      ).toBeTruthy()
+      ).toBe(true)
 
       await newQueryClient.resumePausedMutations()
 
@@ -2004,9 +3041,9 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer.getCurrentResult().isPaused).toBe(true)
+      expect(observer2.getCurrentResult().isPaused).toBe(true)
+      expect(observer3.getCurrentResult().isPaused).toBe(true)
       onlineManager.setOnline(true)
 
       await vi.advanceTimersByTimeAsync(110)

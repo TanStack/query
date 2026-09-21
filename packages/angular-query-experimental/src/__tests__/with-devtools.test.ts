@@ -17,6 +17,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { DevtoolsOptions } from '../devtools'
 
@@ -28,6 +29,7 @@ const mockDevtoolsInstance = {
   setErrorTypes: vi.fn(),
   setButtonPosition: vi.fn(),
   setInitialIsOpen: vi.fn(),
+  setTheme: vi.fn(),
 }
 
 function MockTanstackQueryDevtools() {
@@ -58,8 +60,8 @@ describe('withDevtools feature', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.useRealTimers()
     TestBed.resetTestingModule()
+    vi.useRealTimers()
   })
 
   it.each([
@@ -431,6 +433,38 @@ describe('withDevtools feature', () => {
 
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledWith(true)
+  })
+
+  it('should update theme', async () => {
+    const theme = signal<Theme>('system')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme: theme(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
+
+    TestBed.tick()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set('dark')
+
+    TestBed.tick()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
   })
 
   it('should destroy devtools', async () => {

@@ -47,8 +47,8 @@ describe('PendingTasks Integration', () => {
 
   afterEach(() => {
     onlineManager.setOnline(true)
-    vi.useRealTimers()
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   describe('Synchronous Resolution', () => {

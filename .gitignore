@@ -44,7 +44,6 @@ stats.html
 .nx/workspace-data
 .pnpm-store
 .svelte-kit
-.tsup
 .vinxi
 temp
 

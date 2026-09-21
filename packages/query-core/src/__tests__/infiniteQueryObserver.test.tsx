@@ -70,7 +70,7 @@ describe('InfiniteQueryObserver', () => {
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
     })
-    expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
+    expect(queryFn).toHaveBeenCalledWith(expect.objectContaining({ meta }))
   })
 
   it('should make getNextPageParam and getPreviousPageParam receive current pageParams', async () => {
@@ -162,7 +162,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
     next = undefined
@@ -171,7 +171,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
-    expect(queryFn).toBeCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
@@ -194,7 +194,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
     next = null
@@ -203,7 +203,7 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
-    expect(queryFn).toBeCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
