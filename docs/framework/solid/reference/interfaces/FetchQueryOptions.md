@@ -3,7 +3,7 @@ id: FetchQueryOptions
 title: FetchQueryOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:650](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L650)
+Defined in: [packages/query-core/src/types.ts:654](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L654)
 
 ## Deprecated
 
