@@ -1,5 +1,11 @@
 # @tanstack/svelte-query
 
+## 6.2.3
+
+### Patch Changes
+
+- [#9810](https://github.com/TanStack/query/pull/9810) [`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99) - fix: support async Svelte
+
 ## 6.2.2
 
 ### Patch Changes
