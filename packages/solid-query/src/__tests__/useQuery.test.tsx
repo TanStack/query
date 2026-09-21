@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -25,191 +17,37 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
-  QueryClientProvider,
   keepPreviousData,
+  noop,
+  skipToken,
   useQuery,
 } from '..'
-import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
-import type {
-  DefinedUseQueryResult,
-  OmitKeyof,
-  QueryFunction,
-  UseQueryOptions,
-  UseQueryResult,
-} from '..'
+import {
+  Blink,
+  mockOnlineManagerIsOnline,
+  renderWithClient,
+  setActTimeout,
+} from './utils'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
-  })
-
-  it('should return the correct types', () => {
-    const key = queryKey()
-
-    // @ts-expect-error
-    function Page() {
-      // unspecified query function should default to unknown
-      const noQueryFn = useQuery(() => ({ queryKey: key }))
-      expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
-      expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
-
-      // it should infer the result type from the query function
-      const fromQueryFn = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      }))
-      expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-
-      // it should be possible to specify the result type
-      const withResult = useQuery<string>(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      }))
-      expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
-
-      // it should be possible to specify the error type
-      const withError = useQuery<string, Error>(() => ({
-        queryKey: key,
-        queryFn: () => 'test',
-      }))
-      expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
-
-      // it should provide the result type in the configuration
-      useQuery(() => ({
-        queryKey: [key],
-        queryFn: () => true,
-      }))
-
-      // it should be possible to specify a union type as result type
-      const unionTypeSync = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
-      }))
-      expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-      const unionTypeAsync = useQuery<'a' | 'b'>(() => ({
-        queryKey: key,
-        queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-      }))
-      expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-
-      // should error when the query function result does not match with the specified type
-      // @ts-expect-error
-      useQuery<number>(() => ({ queryKey: key, queryFn: () => 'test' }))
-
-      // it should infer the result type from a generic query function
-      function queryFn<T = string>(): Promise<T> {
-        return Promise.resolve({} as T)
-      }
-
-      const fromGenericQueryFn = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      }))
-      expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
-
-      const fromGenericOptionsQueryFn = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      }))
-      expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-        string | undefined
-      >()
-      expectTypeOf(
-        fromGenericOptionsQueryFn.error,
-      ).toEqualTypeOf<Error | null>()
-
-      type MyData = number
-      type MyQueryKey = readonly ['my-data', number]
-
-      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = ({
-        queryKey: [, n],
-      }) => {
-        return n + 42
-      }
-
-      useQuery(() => ({
-        queryKey: ['my-data', 100] as const,
-        queryFn: getMyDataArrayKey,
-      }))
-
-      const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
-        expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
-        return Number(context.queryKey[0]) + 42
-      }
-
-      useQuery(() => ({
-        queryKey: ['1'] as ['1'],
-        queryFn: getMyDataStringKey,
-      }))
-
-      // it should handle query-functions that return Promise<any>
-      useQuery(() => ({
-        queryKey: key,
-        queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
-      }))
-
-      // handles wrapped queries with custom fetcher passed as inline queryFn
-      const useWrappedQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: (
-          obj: TQueryKey[1],
-          token: string,
-          // return type must be wrapped with TQueryFnReturn
-        ) => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData',
-          'safely'
-        >,
-      ) =>
-        useQuery(() => ({
-          queryKey: qk,
-          queryFn: () => fetcher(qk[1], 'token'),
-          ...options,
-        }))
-      const test = useWrappedQuery([''], () => Promise.resolve('1'))
-      expectTypeOf(test.data).toEqualTypeOf<string | undefined>()
-
-      // handles wrapped queries with custom fetcher passed directly to useQuery
-      const useWrappedFuncStyleQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: () => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData',
-          'safely'
-        >,
-      ) => useQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
-      const testFuncStyle = useWrappedFuncStyleQuery([''], () =>
-        Promise.resolve(true),
-      )
-      expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
-    }
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -229,11 +67,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('default')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -254,17 +88,6 @@ describe('useQuery', () => {
         states.push({ ...state })
       })
 
-      if (state.isPending) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<null>()
-      } else if (state.isLoadingError) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(state.data).toEqualTypeOf<string>()
-        expectTypeOf(state.error).toEqualTypeOf<Error | null>()
-      }
-
       return (
         <Switch fallback={<span>{state.data}</span>}>
           <Match when={state.isPending}>
@@ -277,11 +100,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
@@ -314,7 +133,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -343,7 +161,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -374,11 +191,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('Status: error')).toBeInTheDocument()
@@ -409,7 +222,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -438,7 +250,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -467,7 +278,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -475,10 +285,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -492,11 +304,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states.length).toBe(2)
@@ -520,11 +328,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
         initialData: 'initialData',
       }))
@@ -541,11 +349,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
     // first refetch only, second refetch is ignored
@@ -559,11 +363,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
         initialData: 'initialData',
       }))
@@ -580,11 +384,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
     // first refetch (gets cancelled) and second refetch
@@ -598,11 +398,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetchCount++
-          return 'data'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetchCount++
+            return 'data'
+          }),
         enabled: false,
       }))
 
@@ -618,11 +418,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
     // first refetch will not get cancelled, second one gets skipped
@@ -645,11 +441,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -696,11 +488,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
@@ -753,11 +541,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -784,11 +568,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -812,11 +592,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -841,11 +617,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -870,11 +642,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -907,11 +675,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: test')).toBeInTheDocument()
@@ -943,11 +707,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -988,11 +748,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -1034,11 +790,7 @@ describe('useQuery', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -1046,6 +798,65 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should maintain referential equality when reconcile option is a string key', async () => {
+    const key = queryKey()
+    const states: Array<Array<{ id: string; done: boolean }>> = []
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return [
+              { id: '1', done: false },
+              { id: '2', done: count > 1 },
+            ]
+          }),
+        reconcile: 'id',
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":false}]',
+      ),
+    ).toBeInTheDocument()
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":true}]',
+      ),
+    ).toBeInTheDocument()
+
+    // reconcile by 'id' updates in-place, so the array reference stays the same
+    // and the effect is not triggered again
+    expect(states).toHaveLength(1)
   })
 
   it('should share equal data structures between query results', async () => {
@@ -1067,11 +878,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count === 1 ? result1 : result2
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count === 1 ? result1 : result2
+          }),
         reconcile: (oldData, newData) => {
           return reconcile(newData)(oldData)
         },
@@ -1091,11 +902,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: false')).toBeInTheDocument()
@@ -1151,11 +958,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: set')).toBeInTheDocument()
@@ -1179,11 +982,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       }))
 
@@ -1203,11 +1006,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
@@ -1256,11 +1055,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       }))
 
@@ -1277,11 +1076,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
 
@@ -1302,11 +1097,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: false,
       }))
 
@@ -1323,11 +1118,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
 
@@ -1366,11 +1157,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -1420,11 +1207,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(30)
 
@@ -1489,11 +1272,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(
@@ -1574,11 +1353,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(50)
 
@@ -1653,11 +1428,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
@@ -1686,10 +1457,12 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     function FirstComponent() {
@@ -1725,11 +1498,7 @@ describe('useQuery', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(200)
 
@@ -1794,11 +1563,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(70)
 
@@ -1832,11 +1597,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
 
@@ -1883,11 +1644,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('First Data: init')).toBeInTheDocument()
     expect(rendered.getByText('Second Data: init')).toBeInTheDocument()
@@ -1906,11 +1663,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
@@ -1929,11 +1682,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -1961,11 +1710,7 @@ describe('useQuery', () => {
       return <div>{state.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2000,11 +1745,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     // use "act" to wait for state update and prevent console warning
 
@@ -2033,11 +1774,7 @@ describe('useQuery', () => {
       return <div>status: {status}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
   })
@@ -2062,11 +1799,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('default')).toBeInTheDocument()
@@ -2094,11 +1827,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     window.dispatchEvent(new Event('visibilitychange'))
 
@@ -2127,11 +1856,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     window.dispatchEvent(new Event('visibilitychange'))
 
@@ -2160,11 +1885,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     window.dispatchEvent(new Event('visibilitychange'))
 
@@ -2193,11 +1914,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     window.dispatchEvent(new Event('visibilitychange'))
@@ -2230,11 +1947,7 @@ describe('useQuery', () => {
       return <div>data: {state.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2268,10 +1981,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2287,11 +2002,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2312,10 +2023,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2331,11 +2044,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2375,11 +2084,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error')).toBeInTheDocument()
@@ -2413,12 +2118,10 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary fallback={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -2454,11 +2157,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -2495,11 +2194,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
@@ -2536,11 +2231,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(
@@ -2570,11 +2261,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(result?.data).toBe('data')
@@ -2600,12 +2287,10 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary fallback={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -2634,19 +2319,17 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
-          fallback={(error) => (
-            <div>
-              <div>error boundary</div>
-              <div>{error?.message}</div>
-            </div>
-          )}
-        >
-          <Page />
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary
+        fallback={(error) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error?.message}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -2661,11 +2344,11 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw new Error('some error')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw new Error('some error')
+          }),
         retry: 2,
 
         retryDelay: 100,
@@ -2693,11 +2376,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2729,11 +2408,11 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw new Error('some error')
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw new Error('some error')
+          }),
         retry: 2,
         retryDelay: 100,
       }))
@@ -2763,11 +2442,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2801,10 +2476,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetched'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetched'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2826,11 +2503,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
@@ -2872,11 +2545,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -2892,6 +2561,33 @@ describe('useQuery', () => {
       isStale: true,
       isFetching: false,
     })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      }))
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+      return null
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
 
   it('should not fetch if initial data is set with a stale time', async () => {
@@ -2911,11 +2607,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(60)
 
@@ -2952,11 +2644,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(70)
 
@@ -2996,11 +2684,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3043,11 +2727,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3083,11 +2763,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('pending')).toBeInTheDocument()
@@ -3135,11 +2811,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('pending')).toBeInTheDocument()
@@ -3183,11 +2855,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('pending')).toBeInTheDocument()
@@ -3215,11 +2883,11 @@ describe('useQuery', () => {
     function Page() {
       const query = useQuery<unknown, string>(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          throw `fetching error ${count}`
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            throw `fetching error ${count}`
+          }),
         retry: 3,
         retryDelay: 1,
       }))
@@ -3234,11 +2902,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     // The query should display the first error result
     await vi.advanceTimersByTimeAsync(11)
@@ -3306,11 +2970,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3354,11 +3014,7 @@ describe('useQuery', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3407,11 +3063,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -3422,11 +3080,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3446,11 +3100,13 @@ describe('useQuery', () => {
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 1000,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -3458,11 +3114,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3479,15 +3131,15 @@ describe('useQuery', () => {
 
       const query = useQuery<unknown, Error>(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (counter < 2) {
-            counter++
-            throw new Error('error')
-          } else {
-            return 'data'
-          }
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (counter < 2) {
+              counter++
+              throw new Error('error')
+            } else {
+              return 'data'
+            }
+          }),
         retryDelay: 10,
       }))
 
@@ -3499,11 +3151,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     // First attempt fails immediately
     await vi.advanceTimersByTimeAsync(10)
@@ -3533,20 +3181,22 @@ describe('useQuery', () => {
 
       const query = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         enabled: enabled(),
       }))
 
       createEffect(() => {
         async function prefetch() {
-          await queryClient.prefetchQuery({
-            queryKey: key,
-            queryFn: () => Promise.resolve('prefetched data'),
-          })
+          await queryClient
+            .query({
+              queryKey: key,
+              queryFn: () => Promise.resolve('prefetched data'),
+            })
+            .catch(noop)
           setPrefetched(true)
         }
         prefetch()
@@ -3561,11 +3211,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isPrefetched')).toBeInTheDocument()
@@ -3602,11 +3248,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('FetchStatus: idle')).toBeInTheDocument()
     expect(rendered.getByText('Data: no data')).toBeInTheDocument()
@@ -3654,11 +3296,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Outer />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Outer />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('component')).toBeInTheDocument()
@@ -3718,11 +3356,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Outer />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Outer />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('component')).toBeInTheDocument()
@@ -3766,11 +3400,7 @@ describe('useQuery', () => {
       return <div>data: {result.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('data: initialData')).toBeInTheDocument()
 
@@ -3800,11 +3430,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3841,11 +3467,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
 
@@ -3871,11 +3493,7 @@ describe('useQuery', () => {
       return <div>fetchStatus: {fetchStatus}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(queryCache.find({ queryKey: key })).not.toBeUndefined()
@@ -3883,7 +3501,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', () => {
     const key = queryKey()
 
     function Page() {
@@ -3902,11 +3520,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('status: pending, idle')).toBeInTheDocument()
   })
@@ -3923,11 +3537,7 @@ describe('useQuery', () => {
       return <div>{query.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3951,11 +3561,7 @@ describe('useQuery', () => {
       return <div>{query.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3998,11 +3604,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('status pending')).toBeInTheDocument()
 
@@ -4040,11 +3642,7 @@ describe('useQuery', () => {
       return <div>count: {state.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     // mount
     await vi.advanceTimersByTimeAsync(10)
@@ -4083,11 +3681,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     // Initial fetch (10ms)
     await vi.advanceTimersByTimeAsync(10)
@@ -4156,11 +3750,7 @@ describe('useQuery', () => {
       return <div>count: {state.data}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
@@ -4193,11 +3783,7 @@ describe('useQuery', () => {
       return <>{JSON.stringify(result.data)}</>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('[""]')).toBeInTheDocument()
@@ -4212,11 +3798,7 @@ describe('useQuery', () => {
       return <>{JSON.stringify(result.data)}</>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('[{"a":"a"}]')).toBeInTheDocument()
@@ -4250,11 +3832,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(queryFn).toHaveBeenCalledTimes(0)
 
@@ -4289,11 +3867,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: data')).toBeInTheDocument()
@@ -4343,11 +3917,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: data')).toBeInTheDocument()
@@ -4405,11 +3975,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
@@ -4457,11 +4023,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
@@ -4517,11 +4079,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('Data: selected 101')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -4567,11 +4125,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: [2,3]')).toBeInTheDocument()
@@ -4620,11 +4174,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: [2,3]')).toBeInTheDocument()
@@ -4661,12 +4211,10 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Blink duration={5}>
-          <Page />
-        </Blink>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Blink duration={5}>
+        <Page />
+      </Blink>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -4704,15 +4252,13 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Blink duration={5}>
-          <Page limit={0} />
-          <Page limit={1} />
-          <Page limit={2} />
-          <Page limit={3} />
-        </Blink>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Blink duration={5}>
+        <Page limit={0} />
+        <Page limit={1} />
+        <Page limit={2} />
+        <Page limit={3} />
+      </Blink>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -4772,11 +4318,7 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(50)
     expect(states.length).toBe(2)
@@ -4801,11 +4343,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
       }))
 
@@ -4824,11 +4366,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
@@ -4876,11 +4414,11 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            count++
+            return count
+          }),
         staleTime: Infinity,
         enabled: false,
         notifyOnChangeProps: 'all',
@@ -4903,11 +4441,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('data: null')).toBeInTheDocument()
 
@@ -4950,7 +4484,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should only call the query hash function once', async () => {
+  it('should only call the query hash function once', () => {
     const key = queryKey()
 
     let hashes = 0
@@ -4970,16 +4504,13 @@ describe('useQuery', () => {
       return null
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     expect(hashes).toBe(1)
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
+    const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
@@ -4987,11 +4518,11 @@ describe('useQuery', () => {
 
     function Page(props: { enabled: boolean }) {
       const state = useQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn,
         enabled: props.enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5022,11 +4553,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // initial state check
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
@@ -5035,18 +4562,18 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('error')).toBeInTheDocument()
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // change to enabled to false
     fireEvent.click(rendered.getByLabelText('retry'))
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('error')).toBeInTheDocument()
-    expect(queryFn).toBeCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
@@ -5058,7 +4585,7 @@ describe('useQuery', () => {
             props.id % 2 === 1 ? Promise.reject(new Error('Error')) : 'data',
           ),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5089,11 +4616,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // initial state check
     expect(rendered.getByText('status: pending')).toBeInTheDocument()
@@ -5118,7 +4641,7 @@ describe('useQuery', () => {
         queryKey: [props.id],
         queryFn: () => sleep(10).then(() => Promise.reject(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5148,11 +4671,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // initial state check
     expect(rendered.getByText('status: fetching')).toBeInTheDocument()
@@ -5183,14 +4702,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          if (count === 0) {
-            count++
-            throw error
-          }
-          return 5
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (count === 0) {
+              count++
+              throw error
+            }
+            return 5
+          }),
         retry: false,
       }))
 
@@ -5213,11 +4732,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error')).toBeInTheDocument()
@@ -5280,11 +4795,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       window.dispatchEvent(new Event('offline'))
 
@@ -5312,11 +4823,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, string, string>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -5336,11 +4847,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
         rendered.getByText(
@@ -5388,11 +4895,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -5410,11 +4917,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
         rendered.getByText('status: pending, fetchStatus: fetching'),
@@ -5443,11 +4946,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
         }))
 
         return (
@@ -5467,11 +4970,7 @@ describe('useQuery', () => {
 
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
         rendered.getByText('status: pending, fetchStatus: paused'),
@@ -5493,11 +4992,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           initialData: 'initial',
         }))
 
@@ -5518,11 +5017,7 @@ describe('useQuery', () => {
 
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
         rendered.getByText('status: success, fetchStatus: paused'),
@@ -5546,11 +5041,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           initialData: 'initial',
         }))
 
@@ -5571,11 +5066,7 @@ describe('useQuery', () => {
 
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       window.dispatchEvent(new Event('offline'))
 
@@ -5615,11 +5106,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, Error>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('failed' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('failed' + count)
+            }),
           retry: 2,
           retryDelay: 10,
         }))
@@ -5635,11 +5126,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       // First retry (online): retryDelay (10ms) + queryFn (10ms)
       await vi.advanceTimersByTimeAsync(10)
@@ -5680,16 +5167,77 @@ describe('useQuery', () => {
       expect(count).toBe(3)
     })
 
-    it('online queries should fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+    it('online queries should not fetch if paused initial load and we go online after unmount', async () => {
       const key = queryKey()
       let count = 0
 
       function Component() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
+          queryFn: async ({ signal: _signal }) => {
             count++
+            await sleep(10)
+            return `signal${count}`
+          },
+        }))
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      function Page() {
+        const [show, setShow] = createSignal(true)
+
+        return (
+          <div>
+            {show() && <Component />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockOnlineManagerIsOnline(false)
+
+      const rendered = renderWithClient(queryClient, () => <Page />)
+
+      window.dispatchEvent(new Event('offline'))
+
+      expect(
+        rendered.getByText('status: pending, fetchStatus: paused'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
+
+      onlineMock.mockRestore()
+      window.dispatchEvent(new Event('online'))
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
+        status: 'pending',
+      })
+
+      expect(count).toBe(0)
+    })
+
+    it('online queries should re-fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+      const key = queryKey()
+      let count = 0
+
+      queryClient.setQueryData(key, 'initial')
+
+      function Component() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
             return 'data' + count
           },
         }))
@@ -5717,22 +5265,16 @@ describe('useQuery', () => {
 
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      window.dispatchEvent(new Event('offline'))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
-        rendered.getByText('status: pending, fetchStatus: paused'),
+        rendered.getByText('status: success, fetchStatus: paused'),
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
-      onlineMock.mockRestore()
-      window.dispatchEvent(new Event('online'))
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getQueryState(key)).toMatchObject({
@@ -5741,6 +5283,8 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5750,11 +5294,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data' + count
+            }),
           refetchOnReconnect: false,
         }))
 
@@ -5775,11 +5319,7 @@ describe('useQuery', () => {
 
       const onlineMock = mockOnlineManagerIsOnline(false)
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       expect(
         rendered.getByText('status: pending, fetchStatus: paused'),
@@ -5803,17 +5343,16 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not fetch if paused and we go online if already unmounted when signal consumed', async () => {
+    it('online queries should fetch if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
       const key = queryKey()
       let count = 0
 
       function Component() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async ({ signal: _signal }) => {
-            await sleep(10)
+          queryFn: () => {
             count++
-            return `signal${count}`
+            return Promise.resolve(`data${count}`)
           },
         }))
 
@@ -5843,11 +5382,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       await vi.advanceTimersByTimeAsync(10)
       expect(
@@ -5863,16 +5398,16 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
+      queryClient.getQueryCache().onOnline()
+
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(queryClient.getQueryState(key)).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
 
-      expect(count).toBe(1)
-
-      onlineMock.mockRestore()
+      expect(count).toBe(2)
     })
   })
 
@@ -5886,11 +5421,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            return 'data ' + count
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              return 'data ' + count
+            }),
           networkMode: 'always',
         }))
 
@@ -5904,11 +5439,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       await vi.advanceTimersByTimeAsync(10)
       expect(
@@ -5928,11 +5459,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('error ' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('error ' + count)
+            }),
           networkMode: 'always',
           retry: 1,
           retryDelay: 5,
@@ -5950,11 +5481,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       await vi.advanceTimersByTimeAsync(10)
       await vi.advanceTimersByTimeAsync(10)
@@ -5982,11 +5509,11 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery<unknown, Error>(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            count++
-            throw new Error('failed' + count)
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('failed' + count)
+            }),
           retry: 2,
           retryDelay: 1,
           networkMode: 'offlineFirst',
@@ -6003,11 +5530,7 @@ describe('useQuery', () => {
         )
       }
 
-      const rendered = render(() => (
-        <QueryClientProvider client={queryClient}>
-          <Page />
-        </QueryClientProvider>
-      ))
+      const rendered = renderWithClient(queryClient, () => <Page />)
 
       window.dispatchEvent(new Event('offline'))
 
@@ -6056,7 +5579,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       }))
 
       createRenderEffect(() => {
@@ -6066,14 +5589,10 @@ describe('useQuery', () => {
       return <></>
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     expect(states).toHaveLength(1)
 
@@ -6108,11 +5627,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
@@ -6141,11 +5656,7 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
 
@@ -6157,6 +5668,52 @@ describe('useQuery', () => {
     fireEvent.click(fetchBtn)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 3')).toBeInTheDocument()
+  })
+
+  it('should not fetch while restoring and refetch after restoring is complete', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn,
+      }))
+
+      return (
+        <div>
+          <div data-testid="status">{query.status}</div>
+          <div data-testid="fetchStatus">{query.fetchStatus}</div>
+          <div data-testid="data">{query.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <IsRestoringProvider value={isRestoring}>
+        <Page />
+      </IsRestoringProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    // Restoring complete: should refetch
+    setIsRestoring(false)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should use provided custom queryClient', async () => {
@@ -6179,5 +5736,81 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
+  })
+
+  it('should refetch query when queryClient changes', async () => {
+    const key = queryKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    function Page(props: { client: () => QueryClient }) {
+      const query = useQuery(
+        () => ({
+          queryKey: key,
+          queryFn,
+        }),
+        props.client,
+      )
+
+      return <div>status: {query.status}</div>
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => <Page client={client} />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(
+      queryClient1.getQueryCache().find({ queryKey: key })?.state.data,
+    ).toBe('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    setClient(queryClient2)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once postId is set', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
+
+    function Page() {
+      const [postId, setPostId] = createSignal<number>()
+
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: postId() != null ? queryFn : skipToken,
+      }))
+
+      return (
+        <div>
+          <div>data: {state.data ?? 'none'}</div>
+          <button onClick={() => setPostId(1)}>set postId</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('data: post 1')).toBeInTheDocument()
   })
 })

@@ -121,7 +121,7 @@ Due to this change, disabled queries (even temporarily disabled ones) will start
   isInitialLoading // [!code ++]
 ```
 
-See also the guide on [disabling queries](./disabling-queries.md#isInitialLoading)
+See also the guide on [disabling queries](./disabling-queries.md#isloading-previously-isinitialloading)
 
 ### new API for `useQueries`
 
@@ -242,7 +242,7 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 
 #### refetchActive / refetchInactive
 
-[queryClient.invalidateQueries](../../../reference/QueryClient.md#queryclientinvalidatequeries) had two additional, similar flags:
+[queryClient.invalidateQueries](../reference/classes/QueryClient.md#invalidatequeries) had two additional, similar flags:
 
 ```
 refetchActive: Boolean
@@ -296,7 +296,7 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 ### The `cancel` method on promises is no longer supported
 
-The [old `cancel` method](./query-cancellation.md#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](./query-cancellation.md) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
+The old `cancel` method (which allowed you to define a `cancel` function on promises and was used by the library to support query cancellation) has been removed. We recommend using the [newer API](./query-cancellation.md) (introduced with v3.30.0) for query cancellation, which uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) in your query function to support query cancellation.
 
 ### TypeScript
 
@@ -359,7 +359,7 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 ### Separate hydration exports have been removed
 
-With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+With version [3.22.0](https://github.com/TanStack/query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
 
 ```tsx
 - import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration' // [!code --]
@@ -423,11 +423,11 @@ With v4, React Query introduces a new `networkMode` to tackle all these issues. 
 
 ### Tracked Queries per default
 
-React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
+React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/TanStack/query/releases/tag/v3.6.0) and has now become the default behavior with v4.
 
 ### Bailing out of updates with setQueryData
 
-When using the [functional updater form of setQueryData](../../../reference/QueryClient.md#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+When using the [functional updater form of setQueryData](../reference/classes/QueryClient.md#setquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
 queryClient.setQueryData(['todo', id], (previousTodo) =>

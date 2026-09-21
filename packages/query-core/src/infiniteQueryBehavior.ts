@@ -44,7 +44,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           previous?: boolean,
         ): Promise<InfiniteData<unknown>> => {
           if (cancelled) {
-            return Promise.reject()
+            return Promise.reject(context.signal.reason)
           }
 
           if (param == null && data.pages.length) {

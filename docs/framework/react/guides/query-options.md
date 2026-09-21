@@ -25,16 +25,19 @@ useSuspenseQuery(groupOptions(5))
 useQueries({
   queries: [groupOptions(1), groupOptions(2)],
 })
-queryClient.prefetchQuery(groupOptions(23))
+queryClient.query(groupOptions(23))
 queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 ```
 
 [//]: # 'Example1'
 
-For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQueryOptions.md) helper is available.
+For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/functions/infiniteQueryOptions.md) helper is available.
+
+[//]: # 'SelectDescription'
 
 You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](./render-optimizations.md#select) functions:
 
+[//]: # 'SelectDescription'
 [//]: # 'Example2'
 
 ```ts

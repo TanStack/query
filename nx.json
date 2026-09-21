@@ -27,6 +27,7 @@
   "targetDefaults": {
     "compile": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/dist-ts"]
     },
@@ -36,6 +37,12 @@
     },
     "test:knip": {
       "cache": true,
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["directory:packages/*"]
+        }
+      ],
       "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:sherif": {
@@ -62,6 +69,7 @@
     },
     "test:types": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"]
     },
     "build": {

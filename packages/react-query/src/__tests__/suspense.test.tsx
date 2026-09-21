@@ -3,6 +3,7 @@ import { act, render } from '@testing-library/react'
 import { Suspense } from 'react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
+import type { StaleTime } from '@tanstack/query-core'
 import type { QueryKey } from '..'
 
 function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
@@ -16,7 +17,7 @@ function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
 function createTestQuery(options: {
   fetchCount: { count: number }
   queryKey: QueryKey
-  staleTime?: number | (() => number)
+  staleTime?: StaleTime | (() => StaleTime)
 }) {
   return function TestComponent() {
     const { data } = useSuspenseQuery({
@@ -49,13 +50,14 @@ describe('Suspense Timer Tests', () => {
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {
     const TestComponent = createTestQuery({
       fetchCount,
-      queryKey: ['test'],
+      queryKey: queryKey(),
       staleTime: 10,
     })
 
@@ -81,7 +83,7 @@ describe('Suspense Timer Tests', () => {
   it('should enforce minimum staleTime of 1000ms when using suspense with function', async () => {
     const TestComponent = createTestQuery({
       fetchCount,
-      queryKey: ['test-func'],
+      queryKey: queryKey(),
       staleTime: () => 10,
     })
 
@@ -152,6 +154,58 @@ describe('Suspense Timer Tests', () => {
     )
 
     await act(() => vi.advanceTimersByTimeAsync(500))
+
+    expect(fetchCount.count).toBe(1)
+  })
+
+  it('should preserve staleTime when value is static', async () => {
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: queryKey(),
+      staleTime: 'static',
+    })
+
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: data')).toBeInTheDocument()
+
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback="loading">
+          <TestComponent />
+        </Suspense>
+      </QueryClientProvider>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(2000))
+
+    expect(fetchCount.count).toBe(1)
+  })
+
+  it('should preserve staleTime when function returns static', async () => {
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: queryKey(),
+      staleTime: () => 'static',
+    })
+
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: data')).toBeInTheDocument()
+
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback="loading">
+          <TestComponent />
+        </Suspense>
+      </QueryClientProvider>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(2000))
 
     expect(fetchCount.count).toBe(1)
   })

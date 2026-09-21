@@ -162,6 +162,189 @@ ruleTester.run('no-void-query-fn', rule, {
         }
       `,
     },
+    {
+      name: 'useInfiniteQuery queryFn returns a value',
+      code: normalizeIndent`
+        import { useInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useInfiniteQuery({
+            queryKey: ['test'],
+            queryFn: ({ pageParam }) => ({ data: 'test', page: pageParam }),
+            initialPageParam: 0,
+            getNextPageParam: (lastPage) => undefined,
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQuery queryFn returns a value',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useSuspenseQuery({
+            queryKey: ['test'],
+            queryFn: () => ({ data: 'test' }),
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'queryOptions queryFn returns a value',
+      code: normalizeIndent`
+        import { queryOptions } from '@tanstack/react-query'
+
+        const options = queryOptions({
+          queryKey: ['test'],
+          queryFn: () => ({ data: 'test' }),
+        })
+      `,
+    },
+    {
+      name: 'fetchQuery queryFn returns a value',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.fetchQuery({
+          queryKey: ['test'],
+          queryFn: () => fetch('/api/test').then((r) => r.json()),
+        })
+      `,
+    },
+    {
+      name: 'prefetchQuery queryFn returns a value',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.prefetchQuery({
+          queryKey: ['test'],
+          queryFn: () => fetch('/api/test').then((r) => r.json()),
+        })
+      `,
+    },
+    {
+      name: 'prefetchInfiniteQuery queryFn returns a value',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.prefetchInfiniteQuery({
+          queryKey: ['test'],
+          queryFn: ({ pageParam }: { pageParam: number }) =>
+            fetch(\`/api/test?page=\${pageParam}\`).then((r) => r.json()),
+          initialPageParam: 0,
+        })
+      `,
+    },
+    {
+      name: 'ensureQueryData queryFn returns a value',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.ensureQueryData({
+          queryKey: ['test'],
+          queryFn: () => fetch('/api/test').then((r) => r.json()),
+        })
+      `,
+    },
+    {
+      name: 'ensureInfiniteQueryData queryFn returns a value',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.ensureInfiniteQueryData({
+          queryKey: ['test'],
+          queryFn: ({ pageParam }: { pageParam: number }) =>
+            fetch(\`/api/test?page=\${pageParam}\`).then((r) => r.json()),
+          initialPageParam: 0,
+        })
+      `,
+    },
+    {
+      name: 'queryFn returns a numeric enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum ExampleEnum {
+          A,
+          B,
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => ExampleEnum.A,
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'queryFn returns a string enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum StringEnum {
+          Foo = 'foo',
+          Bar = 'bar',
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => StringEnum.Foo,
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'async queryFn returns a numeric enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum Status {
+          Active,
+          Inactive,
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: async () => {
+              return Status.Active
+            },
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'queryFn returns a const enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const enum Direction {
+          Up = 'UP',
+          Down = 'DOWN',
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => Direction.Up,
+          })
+          return null
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -318,6 +501,133 @@ ruleTester.run('no-void-query-fn', rule, {
           })
           return null
         }
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'useInfiniteQuery queryFn returns void',
+      code: normalizeIndent`
+        import { useInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useInfiniteQuery({
+            queryKey: ['test'],
+            queryFn: async ({ pageParam }) => {
+              await fetch('/api/test?page=' + pageParam)
+            },
+            initialPageParam: 0,
+            getNextPageParam: (lastPage) => undefined,
+          })
+          return null
+        }
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'useSuspenseQuery queryFn returns void',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useSuspenseQuery({
+            queryKey: ['test'],
+            queryFn: () => {
+              console.log('fetching')
+            },
+          })
+          return null
+        }
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'queryOptions queryFn returns void',
+      code: normalizeIndent`
+        import { queryOptions } from '@tanstack/react-query'
+
+        const options = queryOptions({
+          queryKey: ['test'],
+          queryFn: async () => {
+            await fetch('/api/test')
+          },
+        })
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'fetchQuery queryFn returns void',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.fetchQuery({
+          queryKey: ['test'],
+          queryFn: async () => {
+            await fetch('/api/test')
+          },
+        })
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'prefetchQuery queryFn returns void',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.prefetchQuery({
+          queryKey: ['test'],
+          queryFn: async () => {
+            await fetch('/api/test')
+          },
+        })
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'prefetchInfiniteQuery queryFn returns void',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.prefetchInfiniteQuery({
+          queryKey: ['test'],
+          queryFn: async ({ pageParam }: { pageParam: number }) => {
+            await fetch(\`/api/test?page=\${pageParam}\`)
+          },
+          initialPageParam: 0,
+        })
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'ensureQueryData queryFn returns void',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.ensureQueryData({
+          queryKey: ['test'],
+          queryFn: async () => {
+            await fetch('/api/test')
+          },
+        })
+      `,
+      errors: [{ messageId: 'noVoidReturn' }],
+    },
+    {
+      name: 'ensureInfiniteQueryData queryFn returns void',
+      code: normalizeIndent`
+        import { QueryClient } from '@tanstack/react-query'
+
+        const queryClient = new QueryClient()
+        queryClient.ensureInfiniteQueryData({
+          queryKey: ['test'],
+          queryFn: async ({ pageParam }: { pageParam: number }) => {
+            await fetch(\`/api/test?page=\${pageParam}\`)
+          },
+          initialPageParam: 0,
+        })
       `,
       errors: [{ messageId: 'noVoidReturn' }],
     },

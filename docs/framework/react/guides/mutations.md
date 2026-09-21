@@ -59,7 +59,7 @@ Beyond those primary states, more information is available depending on the stat
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../../../reference/QueryClient.md#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../../../reference/QueryClient.md#queryclientsetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/classes/QueryClient.md#invalidatequeries) and the [Query Client's `setQueryData` method](../reference/classes/QueryClient.md#setquerydata), mutations become a very powerful tool.
 
 [//]: # 'Info1'
 
@@ -340,10 +340,13 @@ queryClient.resumePausedMutations()
 ```
 
 [//]: # 'Example10'
+[//]: # 'PersistOfflineIntro'
 
 ### Persisting Offline mutations
 
 If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient.md), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+
+[//]: # 'PersistOfflineIntro'
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
@@ -385,8 +388,11 @@ export default function App() {
 ```
 
 [//]: # 'Example11'
+[//]: # 'OfflineExampleLink'
 
 We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+
+[//]: # 'OfflineExampleLink'
 
 ## Mutation Scopes
 

@@ -6,8 +6,11 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  noop,
   useInfiniteQuery,
   useIsFetching,
+  useMutation,
+  useMutationState,
   useQueries,
   useQuery,
 } from '..'
@@ -26,6 +29,7 @@ describe('Server Side Rendering', () => {
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -53,14 +57,12 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
-
-    queryCache.clear()
   })
 
   it('should add prefetched data to cache', async () => {
     const key = queryKey()
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
     })
@@ -70,8 +72,6 @@ describe('Server Side Rendering', () => {
 
     expect(data).toBe('data')
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
-
-    queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
@@ -90,7 +90,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -101,8 +101,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
-
-    queryCache.clear()
   })
 
   it('should add initialData to the cache', () => {
@@ -133,8 +131,6 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
-
-    queryCache.clear()
   })
 
   it('useInfiniteQuery should return the correct state', async () => {
@@ -157,11 +153,13 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn,
-      initialPageParam: 0,
-    })
+    void queryClient
+      .infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -172,8 +170,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
-
-    queryCache.clear()
   })
 
   it('useIsFetching should return 0 after prefetch completes', async () => {
@@ -192,7 +188,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -203,8 +199,6 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('data')
     expect(markup).toContain('isFetching: 0')
-
-    queryCache.clear()
   })
 
   it('useQueries should return existing data from the cache', async () => {
@@ -231,8 +225,8 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    queryClient.prefetchQuery({ queryKey: key1, queryFn: queryFn1 })
-    queryClient.prefetchQuery({ queryKey: key2, queryFn: queryFn2 })
+    void queryClient.query({ queryKey: key1, queryFn: queryFn1 }).catch(noop)
+    void queryClient.query({ queryKey: key2, queryFn: queryFn2 }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -245,7 +239,39 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('status2: success')
     expect(markup).toContain('data1: data1')
     expect(markup).toContain('data2: data2')
+  })
 
-    queryCache.clear()
+  it('useMutation should return idle status', () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return <div>{`status: ${mutation.status}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status: idle')
+  })
+
+  it('useMutationState should return empty array', () => {
+    function Page() {
+      const mutationState = useMutationState()
+
+      return <div>{`mutationState: ${mutationState.length}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('mutationState: 0')
   })
 })

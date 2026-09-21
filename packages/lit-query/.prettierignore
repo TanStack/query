@@ -1,0 +1,10 @@
+dist
+dist-cjs
+node_modules
+coverage
+.claude
+.references
+*.tgz
+package-lock.json
+examples/**/output
+examples/**/dist

@@ -19,9 +19,9 @@ import { ProjectsService } from './projects-service'
   templateUrl: './example.component.html',
 })
 export class Example {
-  projectsService = inject(ProjectsService)
+  readonly projectsService = inject(ProjectsService)
 
-  query = injectInfiniteQuery(() => ({
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: async ({ pageParam }) => {
       return lastValueFrom(this.projectsService.getProjects(pageParam))
@@ -43,26 +43,31 @@ export class Example {
         : 'Nothing more to load',
   )
 
-  #hasNextPage = this.query.hasNextPage
-  #isFetchingNextPage = this.query.isFetchingNextPage
+  #hasNextPage = this.projectsQuery.hasNextPage
+  #isFetchingNextPage = this.projectsQuery.isFetchingNextPage
 }
 ```
 
 ```angular-html
 <div>
-  @if (query.isPending()) {
-  <p>Loading...</p>
-  } @else if (query.isError()) {
-  <span>Error: {{ query?.error().message }}</span>
-  } @else { @for (page of query?.data().pages; track $index) { @for (project of
-  page.data; track project.id) {
-  <p>{{ project.name }} {{ project.id }}</p>
-  } }
-  <div>
-    <button (click)="query.fetchNextPage()" [disabled]="nextButtonDisabled()">
-      {{ nextButtonText() }}
-    </button>
-  </div>
+  @if (projectsQuery.isPending()) {
+    <p>Loading...</p>
+  } @else if (projectsQuery.isError()) {
+    <span>Error: {{ projectsQuery?.error().message }}</span>
+  } @else {
+    @for (page of projectsQuery?.data().pages; track $index) {
+      @for (project of page.data; track project.id) {
+        <p>{{ project.name }} {{ project.id }}</p>
+      }
+    }
+    <div>
+      <button
+        (click)="projectsQuery.fetchNextPage()"
+        [disabled]="nextButtonDisabled()"
+      >
+        {{ nextButtonText() }}
+      </button>
+    </div>
   }
 </div>
 ```
@@ -75,7 +80,7 @@ export class Example {
   template: ` <list-component (endReached)="fetchNextPage()" /> `,
 })
 export class Example {
-  query = injectInfiniteQuery(() => ({
+  readonly projectsQuery = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: async ({ pageParam }) => {
       return lastValueFrom(this.projectsService.getProjects(pageParam))
@@ -84,8 +89,8 @@ export class Example {
 
   fetchNextPage() {
     // Do nothing if already fetching
-    if (this.query.isFetching()) return
-    this.query.fetchNextPage()
+    if (this.projectsQuery.isFetching()) return
+    this.projectsQuery.fetchNextPage()
   }
 }
 ```
@@ -94,7 +99,7 @@ export class Example {
 [//]: # 'Example3'
 
 ```ts
-query = injectInfiniteQuery(() => ({
+projectsQuery = injectInfiniteQuery(() => ({
   queryKey: ['projects'],
   queryFn: fetchProjects,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
@@ -106,7 +111,7 @@ query = injectInfiniteQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
-query = injectInfiniteQuery(() => ({
+projectsQuery = injectInfiniteQuery(() => ({
   queryKey: ['projects'],
   queryFn: fetchProjects,
   select: (data) => ({
