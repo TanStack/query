@@ -11,7 +11,7 @@ function useMutationState<TResult, TMutation>(options: Accessor<MutationStateOpt
 
 Defined in: [packages/solid-query/src/useMutationState.ts:124](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutationState.ts#L124)
 
-`useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
+`useMutationState` is a primitive that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation
 state.
 

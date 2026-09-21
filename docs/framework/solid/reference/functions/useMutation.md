@@ -12,7 +12,7 @@ function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMut
 Defined in: [packages/solid-query/src/useMutation.ts:176](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L176)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
-`useMutation` is the function for that.
+`useMutation` is the primitive for that.
 
 ## Type Parameters
 

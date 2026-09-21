@@ -4,7 +4,7 @@ import type { Accessor } from 'solid-js'
 const IsRestoringContext = createContext<Accessor<boolean>>(() => false)
 
 /**
- * If you are using `PersistQueryClientProvider`, you can also use the `useIsRestoring` function alongside it to
+ * If you are using `PersistQueryClientProvider`, you can also use the `useIsRestoring` primitive alongside it to
  * check if a restore is currently in progress. `useQuery` and friends also check this internally to avoid
  * race conditions between the restore and mounting queries.
  *
