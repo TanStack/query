@@ -383,8 +383,26 @@ export function useBaseQueryLayer<
     })
   }
 
-  const query = (): Query<TQueryFnData, TError, TQueryData, TQueryKey> => {
-    version()
+  /**
+   * The cache entry for the current options, without the `version` read —
+   * for the setup-time snapshots below (`metaProjection`'s seed,
+   * `mountedAt`), which run in whatever computation is instantiating this
+   * component. Under hydration that matters: priming bumps `version`
+   * during setup, and Solid holds a write made during the hydration pass —
+   * a computation in the pass that reads the written signal, tracked or
+   * not, is served the pre-write snapshot and replays at release. For the
+   * hook's own derived nodes that replay is the takeover. For the
+   * instantiating computation (a boundary's children, a `<Show>` branch)
+   * it is a remount: the hydrated component is disposed and re-created as
+   * a client render, and the server value stops holding the DOM. So the
+   * snapshots read the cache, never the signal.
+   */
+  const lookupQuery = (): Query<
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey
+  > => {
     const c = client()
     syncClient(c)
     const cache = c.getQueryCache()
@@ -395,6 +413,10 @@ export function useBaseQueryLayer<
     if (existing) return (lastQuery = existing)
     if (lastQuery?.queryHash === opts.queryHash) return lastQuery
     return (lastQuery = cache.build(c, opts as any) as any)
+  }
+  const query = (): Query<TQueryFnData, TError, TQueryData, TQueryKey> => {
+    version()
+    return lookupQuery()
   }
 
   const isEnabled = () => {
@@ -644,7 +666,7 @@ export function useBaseQueryLayer<
     (draft) => {
       Object.assign(draft, metaFrom(query().state))
     },
-    untrack(() => metaFrom(query().state)),
+    untrack(() => metaFrom(lookupQuery().state)),
   )
   const meta = isServer
     ? new Proxy({} as MetaState, {
@@ -668,7 +690,7 @@ export function useBaseQueryLayer<
         },
       }
     : untrack(() => {
-        const state = query().state
+        const state = lookupQuery().state
         return {
           dataUpdateCount: state.dataUpdateCount,
           errorUpdateCount: state.errorUpdateCount,
