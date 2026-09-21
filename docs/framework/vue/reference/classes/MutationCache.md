@@ -55,22 +55,6 @@ Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/Ta
 MC.config
 ```
 
-***
-
-### listeners
-
-```ts
-protected listeners: Set<MutationCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-MC.listeners
-```
-
 ## Methods
 
 ### clear()
@@ -261,46 +245,6 @@ Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanS
 
 ```ts
 MC.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-MC.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-MC.onUnsubscribe
 ```
 
 ***

@@ -13,12 +13,6 @@ It can be used to change the default event listeners or to manually change the f
 
 - `Subscribable`\<`Listener`\>
 
-## Properties
-
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
-
 ## Methods
 
 ### hasListeners()
@@ -70,46 +64,6 @@ Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/Tan
 #### Returns
 
 `void`
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/focusManager.ts:39](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L39)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/focusManager.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L45)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
 
 ***
 

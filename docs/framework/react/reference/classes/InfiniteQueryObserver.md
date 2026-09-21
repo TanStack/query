@@ -83,22 +83,6 @@ Defined in: [packages/query-core/src/infiniteQueryObserver.ts:83](https://github
 
 ## Properties
 
-### fetch
-
-```ts
-protected fetch: ReplaceReturnType<(fetchOptions: ObserverFetchOptions) => Promise<QueryObserverResult<TData, TError>>, Promise<InfiniteQueryObserverResult<TData, TError>>>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:72](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L72)
-
-#### Overrides
-
-```ts
-QueryObserver.fetch
-```
-
-***
-
 ### getCurrentResult
 
 ```ts
@@ -124,20 +108,6 @@ console.log(result.status, result.data)
 ```ts
 QueryObserver.getCurrentResult
 ```
-
-***
-
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`listeners`](QueryObserver.md#listeners)
 
 ***
 
@@ -186,52 +156,6 @@ QueryObserver.subscribe
 ```
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L96)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`bindMethods`](QueryObserver.md#bindmethods)
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query: Query<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:201](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L201)
-
-#### Parameters
-
-##### query
-
-[`Query`](Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
-
-##### options
-
-[`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
-
-#### Returns
-
-[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`createResult`](QueryObserver.md#createresult)
-
-***
 
 ### destroy()
 
@@ -439,42 +363,6 @@ Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanS
 #### Inherited from
 
 [`QueryObserver`](QueryObserver.md).[`hasListeners`](QueryObserver.md#haslisteners)
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L110)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onSubscribe`](QueryObserver.md#onsubscribe)
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L124)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onUnsubscribe`](QueryObserver.md#onunsubscribe)
 
 ***
 

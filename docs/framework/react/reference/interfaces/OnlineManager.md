@@ -20,12 +20,6 @@ detect changes.
 
 - `Subscribable`\<`Listener`\>
 
-## Properties
-
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
-
 ## Methods
 
 ### hasListeners()
@@ -61,46 +55,6 @@ Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/Ta
 #### Returns
 
 `boolean`
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/onlineManager.ts:44](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L44)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/onlineManager.ts:50](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L50)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
 
 ***
 

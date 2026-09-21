@@ -169,6 +169,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     // both omit the parameter types otherwise.
     expandParameters: true,
     excludePrivate: true,
+    excludeProtected: true,
     excludeInternal: true,
     excludeExternals: pkg.excludeExternals,
     sourceLinkTemplate:
