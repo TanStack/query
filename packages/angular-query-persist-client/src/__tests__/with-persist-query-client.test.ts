@@ -1,7 +1,8 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectQuery,
+  noop,
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
@@ -10,7 +11,7 @@ import {
   effect,
   provideZonelessChangeDetection,
 } from '@angular/core'
-import { render, screen, waitFor } from '@testing-library/angular'
+import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
@@ -26,8 +27,7 @@ const createMockPersister = (): Persister => {
       storedState = persistClient
     },
     async restoreClient() {
-      await sleep(10)
-      return storedState
+      return sleep(10).then(() => storedState)
     },
     removeClient() {
       storedState = undefined
@@ -55,7 +55,15 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
-  test('restores cache from persister', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should restore cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -64,14 +72,18 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
 
-    await persistQueryClientSave({ queryClient, persister })
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
 
     queryClient.clear()
 
@@ -86,21 +98,21 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () => sleep(10).then(() => 'fetched'),
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
-    render(Page, {
+    const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
@@ -110,9 +122,14 @@ describe('withPersistQueryClient', () => {
       ],
     })
 
-    await waitFor(() => screen.getByText('fetchStatus: idle'))
-    await waitFor(() => screen.getByText('hydrated'))
-    await waitFor(() => screen.getByText('fetched'))
+    expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
 
     expect(states).toHaveLength(3)
 
@@ -135,11 +152,11 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test.todo(
+  it.todo(
     '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
   )
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -148,14 +165,18 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
 
-    await persistQueryClientSave({ queryClient, persister })
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
 
     queryClient.clear()
 
@@ -170,25 +191,25 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () => sleep(10).then(() => 'fetched'),
         initialData: 'initial',
         // make sure that initial data is older than the hydration data
         // otherwise initialData would be newer and takes precedence
         initialDataUpdatedAt: 1,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
-    render(Page, {
+    const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
@@ -198,7 +219,14 @@ describe('withPersistQueryClient', () => {
       ],
     })
 
-    await waitFor(() => screen.getByText('fetched'))
+    expect(rendered.getByText('initial')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
 
     expect(states).toHaveLength(3)
 
@@ -221,7 +249,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -230,14 +258,18 @@ describe('withPersistQueryClient', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
 
-    await persistQueryClientSave({ queryClient, persister })
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
 
     queryClient.clear()
 
@@ -254,23 +286,26 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          fetched = true
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetched = true
+            return 'fetched'
+          }),
         staleTime: Infinity,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
-    render(Page, {
+    const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
@@ -280,8 +315,10 @@ describe('withPersistQueryClient', () => {
       ],
     })
 
-    await waitFor(() => screen.getByText('data: null'))
-    await waitFor(() => screen.getByText('data: hydrated'))
+    expect(rendered.getByText('data: null')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('data: hydrated')).toBeInTheDocument()
 
     expect(states).toHaveLength(2)
 
@@ -300,16 +337,20 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
-    await persistQueryClientSave({ queryClient, persister })
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
 
     queryClient.clear()
 
@@ -324,16 +365,13 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () => sleep(10).then(() => 'fetched'),
       }))
     }
 
     const onSuccess = vi.fn()
 
-    render(Page, {
+    const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
@@ -347,11 +385,17 @@ describe('withPersistQueryClient', () => {
     })
 
     expect(onSuccess).toHaveBeenCalledTimes(0)
-    await waitFor(() => screen.getByText('fetched'))
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const onErrorMock = vi
       .spyOn(console, 'error')
@@ -373,14 +417,11 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () => sleep(10).then(() => 'fetched'),
       }))
     }
 
-    render(Page, {
+    const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(
@@ -394,10 +435,15 @@ describe('withPersistQueryClient', () => {
       ],
     })
 
-    await waitFor(() => screen.getByText('fetched'))
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
     expect(onError).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
 
     expect(onErrorMock).toHaveBeenCalledTimes(1)
     expect(onErrorMock).toHaveBeenNthCalledWith(1, error)

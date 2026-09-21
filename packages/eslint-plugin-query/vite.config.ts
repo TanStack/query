@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
-import { tanstackViteConfig } from '@tanstack/config/vite'
+import { tanstackViteConfig } from '@tanstack/vite-config'
 
 import packageJson from './package.json'
 
@@ -20,7 +20,12 @@ const config = defineConfig({
     dir: './src',
     watch: false,
     globals: true,
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: !!process.env.CI,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/__tests__/**'],
+    },
     typecheck: { enabled: true },
     restoreMocks: true,
   },

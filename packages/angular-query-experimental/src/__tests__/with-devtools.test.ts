@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
@@ -17,6 +17,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { DevtoolsOptions } from '../devtools'
 
@@ -28,9 +29,14 @@ const mockDevtoolsInstance = {
   setErrorTypes: vi.fn(),
   setButtonPosition: vi.fn(),
   setInitialIsOpen: vi.fn(),
+  setTheme: vi.fn(),
 }
 
-const mockTanstackQueryDevtools = vi.fn(() => mockDevtoolsInstance)
+function MockTanstackQueryDevtools() {
+  return mockDevtoolsInstance
+}
+
+const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
 
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
@@ -54,11 +60,11 @@ describe('withDevtools feature', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.useRealTimers()
     TestBed.resetTestingModule()
+    vi.useRealTimers()
   })
 
-  test.each([
+  it.each([
     {
       description: 'should load devtools in development mode',
       isDevMode: true,
@@ -140,15 +146,41 @@ describe('withDevtools feature', () => {
       TestBed.tick()
       await vi.dynamicImportSettled()
 
-      if (expectedCalled) {
-        expect(mockTanstackQueryDevtools).toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).toHaveBeenCalled()
-      } else {
-        expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
-      }
+      expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
+      expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
     },
   )
+
+  it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        withDevtools(() => ({
+          loadDevtools: true,
+        })).ɵproviders,
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+      expect.objectContaining({ message: 'No QueryClient found' }),
+    )
+
+    consoleErrorSpy.mockRestore()
+  })
 
   it('should not continue loading devtools after injector is destroyed', async () => {
     TestBed.configureTestingModule({
@@ -187,6 +219,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
 
@@ -248,6 +281,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -288,6 +322,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -320,6 +355,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -351,6 +387,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -384,6 +421,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -395,6 +433,38 @@ describe('withDevtools feature', () => {
 
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledWith(true)
+  })
+
+  it('should update theme', async () => {
+    const theme = signal<Theme>('system')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            theme: theme(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
+
+    TestBed.tick()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set('dark')
+
+    TestBed.tick()
+
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
   })
 
   it('should destroy devtools', async () => {
@@ -414,6 +484,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)

@@ -1,3 +1,20 @@
+<div align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://tanstack.com/api/readme/query.png?framework=vue&theme=dark"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://tanstack.com/api/readme/query.png?framework=vue"
+    />
+    <img
+      src="https://tanstack.com/api/readme/query.png?framework=vue"
+      alt="TanStack Vue Query"
+      width="900"
+    />
+  </picture>
+</div>
 [![Vue Query logo](https://raw.githubusercontent.com/TanStack/query/main/packages/vue-query/media/vue-query.png)](https://github.com/TanStack/query/tree/main/packages/vue-query)
 
 [![npm version](https://img.shields.io/npm/v/@tanstack/vue-query)](https://www.npmjs.com/package/@tanstack/vue-query)

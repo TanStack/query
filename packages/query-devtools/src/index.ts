@@ -2,7 +2,8 @@ export type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
-} from './contexts'
+  Theme,
+} from './contexts/types'
 export {
   TanstackQueryDevtools,
   type TanstackQueryDevtoolsConfig,

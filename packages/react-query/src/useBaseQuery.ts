@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -14,7 +14,6 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
 import type {
   QueryClient,
@@ -54,9 +53,14 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
-    defaultedOptions,
-  )
+  const query = client
+    .getQueryCache()
+    .get<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      TQueryKey
+    >(defaultedOptions.queryHash)
 
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
@@ -66,20 +70,18 @@ export function useBaseQuery<
     }
   }
 
+  const subscribed = options.subscribed !== false
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
-
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
-
-  // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>
@@ -92,7 +94,7 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
@@ -127,40 +129,11 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
-      query: client
-        .getQueryCache()
-        .get<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >(defaultedOptions.queryHash),
+      query,
       suspense: defaultedOptions.suspense,
     })
   ) {
     throw result.error
-  }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
-
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !isServer &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        client.getQueryCache().get(defaultedOptions.queryHash)?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
   }
 
   // Handle result property usage tracking

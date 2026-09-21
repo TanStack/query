@@ -1,10 +1,10 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { reactive, ref } from 'vue-demi'
 import { cloneDeep, cloneDeepUnref, updateState } from '../utils'
 
 describe('utils', () => {
   describe('updateState', () => {
-    test('should update first object with values from the second one', () => {
+    it('should update first object with values from the second one', () => {
       const origin = { option1: 'a', option2: 'b', option3: 'c' }
       const update = { option1: 'x', option2: 'y', option3: 'z' }
       const expected = { option1: 'x', option2: 'y', option3: 'z' }
@@ -13,7 +13,7 @@ describe('utils', () => {
       expect(origin).toEqual(expected)
     })
 
-    test('should update only existing keys', () => {
+    it('should update only existing keys', () => {
       const origin = { option1: 'a', option2: 'b' }
       const update = { option1: 'x', option2: 'y', option3: 'z' }
       const expected = { option1: 'x', option2: 'y' }
@@ -22,7 +22,7 @@ describe('utils', () => {
       expect(origin).toEqual(expected)
     })
 
-    test('should remove non existing keys', () => {
+    it('should remove non existing keys', () => {
       const origin = { option1: 'a', option2: 'b', option3: 'c' }
       const update = { option1: 'x', option2: 'y' }
       const expected = { option1: 'x', option2: 'y' }
@@ -33,13 +33,13 @@ describe('utils', () => {
   })
 
   describe('cloneDeep', () => {
-    test('should copy primitives and functions AS-IS', () => {
+    it('should copy primitives and functions AS-IS', () => {
       expect(cloneDeep(3456)).toBe(3456)
       expect(cloneDeep('theString')).toBe('theString')
       expect(cloneDeep(null)).toBe(null)
     })
 
-    test('should copy Maps and Sets AS-IS', () => {
+    it('should copy Maps and Sets AS-IS', () => {
       const setVal = new Set([3, 4, 5])
       const setValCopy = cloneDeep(setVal)
       expect(setValCopy).toBe(setVal)
@@ -59,7 +59,7 @@ describe('utils', () => {
       )
     })
 
-    test('should deeply copy arrays', () => {
+    it('should deeply copy arrays', () => {
       const val = [
         25,
         'str',
@@ -83,7 +83,7 @@ describe('utils', () => {
       expect((cp[4] as Array<number>)[2]).not.toBe((val[4] as Array<number>)[2]) // { a : 1 }
     })
 
-    test('should deeply copy object', () => {
+    it('should deeply copy object', () => {
       const val = reactive({
         a: 25,
         b: 'str',
@@ -112,18 +112,18 @@ describe('utils', () => {
   })
 
   describe('cloneDeepUnref', () => {
-    test('should unref primitives', () => {
+    it('should unref primitives', () => {
       expect(cloneDeepUnref(ref(34))).toBe(34)
       expect(cloneDeepUnref(ref('myStr'))).toBe('myStr')
     })
 
-    test('should deeply unref arrays', () => {
+    it('should deeply unref arrays', () => {
       const val = ref([2, 3, ref(4), ref('5'), { a: ref(6) }, [ref(7)]])
       const cp = cloneDeepUnref(val)
       expect(cp).toStrictEqual([2, 3, 4, '5', { a: 6 }, [7]])
     })
 
-    test('should deeply unref objects', () => {
+    it('should deeply unref objects', () => {
       const val = ref({
         a: 1,
         b: ref(2),
@@ -142,13 +142,13 @@ describe('utils', () => {
       })
     })
 
-    test('should clone getters returning values in queryKey', () => {
+    it('should clone getters returning values in queryKey', () => {
       const val = ref({ queryKey: [1, 2, () => '3'] })
       const cp = cloneDeepUnref(val)
       expect(cp).toStrictEqual({ queryKey: [1, 2, '3'] })
     })
 
-    test('should unref undefined', () => {
+    it('should unref undefined', () => {
       expect(cloneDeepUnref(ref(undefined))).toBe(undefined)
     })
   })

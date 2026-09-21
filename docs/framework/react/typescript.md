@@ -7,7 +7,7 @@ React Query is now written in **TypeScript** to make sure the library and your p
 
 Things to keep in mind:
 
-- Types currently require using TypeScript **v4.7** or greater
+- TanStack Query follows [DefinitelyTyped's support window](https://github.com/DefinitelyTyped/DefinitelyTyped#support-window) and supports TypeScript versions released within the last 2 years. At the moment, that means TypeScript **5.6** and newer.
 - Changes to types in this repository are considered **non-breaking** and are usually released as **patch** semver changes (otherwise every type enhancement would be a major version!).
 - It is **highly recommended that you lock your react-query package version to a specific patch release and upgrade with the expectation that types may be fixed or upgraded between any release**
 - The non-type-related public API of React Query still follows semver very strictly.
@@ -155,7 +155,7 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 ### Registering global Meta
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery.md) and [mutations](../reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](./reference/functions/useQuery.md) and [mutations](./reference/functions/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/react-query'
@@ -199,7 +199,7 @@ declare module '@tanstack/react-query' {
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `query`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 import { queryOptions } from '@tanstack/react-query'
@@ -213,7 +213,7 @@ function groupOptions() {
 }
 
 useQuery(groupOptions())
-queryClient.prefetchQuery(groupOptions())
+queryClient.query(groupOptions())
 ```
 
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
@@ -269,13 +269,12 @@ queryClient.isMutating(groupMutationOptions())
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
-Read more about it in the [Disabling Queries](../guides/disabling-queries.md) guide.
+Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.
 
 [//]: # 'Materials'
 
 ## Further Reading
 
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog.md#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog.md#19-type-safe-react-query). [The Query Options API](../community/tkdodos-blog.md#24-the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
+For tips and tricks around type inference, see the article [React Query and TypeScript](https://tkdodo.eu/blog/react-query-and-type-script). To find out how to get the best possible type-safety, you can read [Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query). [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
 
 [//]: # 'Materials'

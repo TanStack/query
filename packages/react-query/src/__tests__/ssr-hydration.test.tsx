@@ -2,12 +2,14 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
   dehydrate,
   hydrate,
+  noop,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -50,11 +52,12 @@ describe('Server side rendering with de/rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (
@@ -69,10 +72,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: ['success'],
-      queryFn: () => fetchDataSuccess('success'),
-    })
+    await prefetchClient
+      .query({
+        queryKey: key,
+        queryFn: () => fetchDataSuccess('success'),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -127,11 +132,12 @@ describe('Server side rendering with de/rehydration', () => {
     const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
     })
+    const key = queryKey()
 
     // -- Shared part --
     function ErrorComponent() {
       const result = useQuery({
-        queryKey: ['error'],
+        queryKey: key,
         queryFn: () => fetchDataError(),
         retry: false,
       })
@@ -146,10 +152,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: ['error'],
-      queryFn: () => fetchDataError(),
-    })
+    await prefetchClient
+      .query({
+        queryKey: key,
+        queryFn: () => fetchDataError(),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -204,11 +212,12 @@ describe('Server side rendering with de/rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
+    const key = queryKey()
 
     // -- Shared part --
     function SuccessComponent() {
       const result = useQuery({
-        queryKey: ['success'],
+        queryKey: key,
         queryFn: () => fetchDataSuccess('success!'),
       })
       return (

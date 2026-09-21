@@ -1,0 +1,46 @@
+---
+id: BaseMutationNarrowing
+title: BaseMutationNarrowing
+---
+
+Defined in: [packages/angular-query-experimental/src/types.ts:328](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L328)
+
+The `isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is both a `Signal`
+(its current boolean value is read reactively without calling it) and a type-guard function you can
+call — `if (mutation.isSuccess())` — so that `mutation.data` narrows away `undefined` inside the branch.
+
+## Type Parameters
+
+### TData
+
+`TData` = `unknown`
+
+The type your mutation function resolves to.
+
+### TError
+
+`TError` = [`DefaultError`](../type-aliases/DefaultError.md)
+
+The type of errors your mutation function may throw.
+
+### TVariables
+
+`TVariables` = `unknown`
+
+The type of the variable passed to `mutate`/`mutateAsync`.
+
+### TOnMutateResult
+
+`TOnMutateResult` = `unknown`
+
+The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+their `onMutateResult` parameter — useful for optimistic-update rollback data.
+
+## Properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="iserror"></a> `isError` | `SignalFunction`\<(`this`: [`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverErrorResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>`\> |
+| <a id="isidle"></a> `isIdle` | `SignalFunction`\<(`this`: [`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverIdleResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>`\> |
+| <a id="ispending"></a> `isPending` | `SignalFunction`\<(`this`: [`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverLoadingResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>`\> |
+| <a id="issuccess"></a> `isSuccess` | `SignalFunction`\<(`this`: [`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `this is CreateMutationResult<TData, TError, TVariables, TOnMutateResult, Override<MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>, { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> }>`\> |

@@ -66,7 +66,8 @@ export interface StoragePersisterOptions<TStorageValue = string> {
    * If set to `true`, the query will refetch on successful query restoration if the data is stale.
    * If set to `false`, the query will not refetch on successful query restoration.
    * If set to `'always'`, the query will always refetch on successful query restoration.
-   * Defaults to `true`.
+   *
+   * @defaultValue true
    */
   refetchOnRestore?: boolean | 'always'
   /**
@@ -130,8 +131,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const storageKey = `${prefix}-${queryHash}`
       try {
         const storedData = await storage.getItem(storageKey)
-        if (storedData) {
-          const persistedQuery = await deserialize(storedData)
+        if (storedData != null) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(storedData)
+          } catch {
+            await storage.removeItem(storageKey)
+            return
+          }
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(storageKey)
@@ -241,11 +248,17 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
   async function persisterGc() {
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
-
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
           }
@@ -265,11 +278,17 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const { exact, queryKey } = filters
 
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
-
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
             continue
@@ -301,6 +320,47 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  async function removeQueries(
+    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
+  ): Promise<void> {
+    const { exact, queryKey } = filters
+
+    if (storage?.entries) {
+      const entries = await storage.entries()
+      const storageKeyPrefix = `${prefix}-`
+      for (const [key, value] of entries) {
+        if (key.startsWith(storageKeyPrefix)) {
+          if (!queryKey) {
+            await storage.removeItem(key)
+            continue
+          }
+
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
+
+          if (exact) {
+            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+              continue
+            }
+          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+            continue
+          }
+
+          await storage.removeItem(key)
+        }
+      }
+    } else if (process.env.NODE_ENV === 'development') {
+      throw new Error(
+        'Provided storage does not implement `entries` method. Removal of stored entries is not possible without ability to iterate over storage items.',
+      )
+    }
+  }
+
   return {
     persisterFn,
     persistQuery,
@@ -308,5 +368,6 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     retrieveQuery,
     persisterGc,
     restoreQueries,
+    removeQueries,
   }
 }

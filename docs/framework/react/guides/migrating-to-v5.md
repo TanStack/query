@@ -29,8 +29,6 @@ useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```tsx
 queryClient.isFetching(key, filters) // [!code --]
 queryClient.isFetching({ queryKey, ...filters }) // [!code ++]
-queryClient.ensureQueryData(key, filters) // [!code --]
-queryClient.ensureQueryData({ queryKey, ...filters }) // [!code ++]
 queryClient.getQueriesData(key, filters) // [!code --]
 queryClient.getQueriesData({ queryKey, ...filters }) // [!code ++]
 queryClient.setQueriesData(key, updater, filters, options) // [!code --]
@@ -45,14 +43,6 @@ queryClient.invalidateQueries(key, filters, options) // [!code --]
 queryClient.invalidateQueries({ queryKey, ...filters }, options) // [!code ++]
 queryClient.refetchQueries(key, filters, options) // [!code --]
 queryClient.refetchQueries({ queryKey, ...filters }, options) // [!code ++]
-queryClient.fetchQuery(key, fn, options) // [!code --]
-queryClient.fetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchQuery(key, fn, options) // [!code --]
-queryClient.prefetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
-queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
 ```tsx
@@ -61,6 +51,39 @@ queryCache.find({ queryKey, ...filters }) // [!code ++]
 queryCache.findAll(key, filters) // [!code --]
 queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
+
+### Imperative QueryClient methods
+
+These methods are deprecated with the introduction of `queryClient.query` and `queryClient.infiniteQuery` and will be removed in v6.
+
+If you are coming from v4 or earlier:
+
+```tsx
+queryClient.fetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }) // [!code ++]
+queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.infiniteQuery({
+  queryKey: key,
+  queryFn: fn,
+  ...options,
+}) // [!code ++]
+
+queryClient.prefetchQuery(key, fn, options) // [!code --]
+queryClient.query({ queryKey: key, queryFn: fn, ...options }).catch(noop) // [!code ++]
+
+queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient
+  .infiniteQuery({ queryKey: key, queryFn: fn, ...options })
+  .catch(noop) // [!code ++]
+
+queryClient.ensureQueryData(key, options) // [!code --]
+queryClient.query({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+
+queryClient.ensureInfiniteQueryData(key, options) // [!code --]
+queryClient.infiniteQuery({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
+```
+
+If you are updating older v5 code, It will be the same as the above except for keeping the single options object
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
 
@@ -169,7 +192,7 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 ### Supported Browsers
 
-We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
 ### Private class fields and methods
 
@@ -218,7 +241,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript.md#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../typescript.md#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -228,7 +251,7 @@ Since the only supported syntax now is the object syntax, this rule is no longer
 
 We have removed the `keepPreviousData` option and `isPreviousData` flag as they were doing mostly the same thing as `placeholderData` and `isPlaceholderData` flag.
 
-To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` which accepts an identity function. Therefore you just need to provide an identity function to `placeholderData` or use the included `keepPreviousData` function from Tanstack Query.
+To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` which accepts an identity function. Therefore you just need to provide an identity function to `placeholderData` or use the included `keepPreviousData` function from TanStack Query.
 
 > A note here is that `useQueries` would not receive `previousData` in the `placeholderData` function as argument. This is due to a dynamic nature of queries passed in the array, which may lead to a different shape of result from placeholder and queryFn.
 
@@ -250,7 +273,7 @@ const {
 });
 ```
 
-An identity function, in the context of Tanstack Query, refers to a function that always returns its provided argument (i.e. data) unchanged.
+An identity function, in the context of TanStack Query, refers to a function that always returns its provided argument (i.e. data) unchanged.
 
 ```ts
 useQuery({
@@ -480,7 +503,7 @@ if (queryInfo.data) {
 }
 ```
 
-Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../optimistic-updates.md).
+Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](./optimistic-updates.md).
 
 ### Limited, Infinite Queries with new maxPages option
 
@@ -494,21 +517,21 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Infinite Queries can prefetch multiple pages
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../prefetching.md) for more information.
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](./prefetching.md) for more information.
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../../reference/useQueries.md#combine) for more details.
+See the [useQueries docs](../reference/functions/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../../plugins/createPersister.md) for more details.
+See the [experimental_createPersister docs](../plugins/createPersister.md) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](../../typescript.md#typing-query-options) for more details.
+See the [TypeScript docs](../typescript.md#typing-query-options) for more details.
 
 ### new hooks for suspense
 
@@ -524,6 +547,6 @@ const { data: post } = useSuspenseQuery({
 
 The experimental `suspense: boolean` flag on the query hooks has been removed.
 
-You can read more about them in the [suspense docs](../suspense.md).
+You can read more about them in the [suspense docs](./suspense.md).
 
 [//]: # 'FrameworkSpecificNewFeatures'

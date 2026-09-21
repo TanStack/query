@@ -25,7 +25,7 @@ When a query is invalidated with `invalidateQueries`, two things happen:
 
 ## Query Matching with `invalidateQueries`
 
-When using APIs like `invalidateQueries` and `removeQueries` (and others that support partial query matching), you can match multiple queries by their prefix, or get really specific and match an exact query. For information on the types of filters you can use, please see [Query Filters](../filters.md#query-filters).
+When using APIs like `invalidateQueries` and `removeQueries` (and others that support partial query matching), you can match multiple queries by their prefix, or get really specific and match an exact query. For information on the types of filters you can use, please see [Query Filters](./filters.md#query-filters).
 
 In this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:
 

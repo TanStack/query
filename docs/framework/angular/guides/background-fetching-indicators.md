@@ -2,6 +2,12 @@
 id: background-fetching-indicators
 title: Background Fetching Indicators
 ref: docs/framework/react/guides/background-fetching-indicators.md
+replace:
+  {
+    'useIsFetching': 'injectIsFetching',
+    'hook': 'function',
+    '@tanstack/react-query': '@tanstack/angular-query-experimental',
+  }
 ---
 
 [//]: # 'Example'
@@ -25,7 +31,7 @@ ref: docs/framework/react/guides/background-fetching-indicators.md
   `,
 })
 class TodosComponent {
-  todosQuery = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   }))
@@ -47,7 +53,7 @@ import { injectIsFetching } from '@tanstack/angular-query-experimental'
   `,
 })
 export class GlobalLoadingIndicatorComponent {
-  isFetching = injectIsFetching()
+  readonly isFetching = injectIsFetching()
 }
 ```
 

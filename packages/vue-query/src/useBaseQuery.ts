@@ -20,7 +20,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { UseQueryOptions } from './useQuery'
+import type { UseQueryOptions } from './queryOptions'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
@@ -50,6 +50,14 @@ type UseQueryOptionsGeneric<
   | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
+/**
+ * Base implementation shared by `useQuery` and `useInfiniteQuery`.
+ *
+ * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
+ * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
@@ -82,7 +90,11 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    const clonedOptions = cloneDeepUnref(options as any)
+    let resolvedOptions = options
+    if (typeof resolvedOptions === 'function') {
+      resolvedOptions = resolvedOptions()
+    }
+    const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
     if (typeof clonedOptions.enabled === 'function') {
       clonedOptions.enabled = clonedOptions.enabled()

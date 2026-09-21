@@ -1,19 +1,33 @@
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
 <div align="center">
-  <img src="./media/header_query.png" alt="TanStack Query" />
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://tanstack.com/api/readme/query.png?theme=dark"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://tanstack.com/api/readme/query.png"
+    />
+    <img
+      src="https://tanstack.com/api/readme/query.png"
+      alt="TanStack Query"
+      width="900"
+    />
+  </picture>
 </div>
 
 <br />
 
 <div align="center">
-<a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
+<a href="https://www.npmjs.com/package/@tanstack/query-core" target="_parent">
   <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" alt="npm downloads" />
 </a>
- <a href="https://github.com/TanStack/query/" target="\_parent">
+ <a href="https://github.com/TanStack/query/stargazers" target="_parent">
   <img alt="" src="https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star" alt="GitHub stars" />
 </a>
-<a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
+<a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="_parent">
   <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" alt="Bundle size" />
 </a>
 </div>
@@ -57,18 +71,18 @@ An async state management library built to simplify fetching, caching, synchroni
     <td>
       <a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS" >
         <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/coderabbit-dark-CMcuvjEy.svg" height="40" />
-          <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" />
-          <img src="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" alt="CodeRabbit" />
+          <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/coderabbit-dark-D643Zkrv.svg" />
+          <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/coderabbit-light-CIzGLYU_.svg" />
+          <img src="https://tanstack.com/assets/coderabbit-light-CIzGLYU_.svg" height="40" alt="CodeRabbit" />
         </picture>
       </a>
     </td>
     <td>
       <a href="https://www.cloudflare.com?utm_source=tanstack">
         <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/cloudflare-white-DQDB7UaL.svg" height="60" />
-          <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="60" />
-          <img src="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="60" alt="Cloudflare" />
+          <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/cloudflare-white-Co-Tyjbl.svg" />
+          <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/cloudflare-black-6Ojsn8yh.svg" />
+          <img src="https://tanstack.com/assets/cloudflare-white-Co-Tyjbl.svg" height="60" alt="Cloudflare" />
         </picture>
       </a>
     </td>

@@ -2,11 +2,10 @@
 import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
 import { onlineManager, useQueryClient } from '@tanstack/vue-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { StyleValue } from 'vue'
 import type { DevtoolsPanelOptions } from './types'
 
 const props = defineProps<DevtoolsPanelOptions>()
-const style = computed<StyleValue>(() => {
+const style = computed<any>(() => {
   return {
     height: '500px',
     ...props.style,
@@ -28,22 +27,23 @@ const devtools = new TanstackQueryDevtoolsPanel({
   shadowDOMTarget: props.shadowDOMTarget,
   hideDisabledQueries: props.hideDisabledQueries,
   onClose: props.onClose,
+  theme: props.theme,
 })
 
 watchEffect(() => {
   devtools.setOnClose(props.onClose ?? (() => {}))
   devtools.setErrorTypes(props.errorTypes || [])
+  devtools.setTheme(props.theme)
 })
 
 onMounted(() => {
   devtools.mount(div.value as HTMLElement)
-})
-
-onScopeDispose(() => {
-  devtools.unmount()
+  onScopeDispose(() => {
+    devtools.unmount()
+  })
 })
 </script>
 
 <template>
-  <div :style="style" className="tsqd-parent-container" ref="div"></div>
+  <div :style="style" class="tsqd-parent-container" ref="div"></div>
 </template>

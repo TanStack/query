@@ -12,7 +12,7 @@ import {
   onCleanup,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
-import { useQueryClient } from './QueryClientProvider'
+import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
@@ -115,7 +115,8 @@ export function useBaseQuery<
 ) {
   type ResourceData = QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const resolveClient = useQueryClientResolver(queryClient)
+  const client = createMemo(() => resolveClient())
   const isRestoring = useIsRestoring()
   // There are times when we run a query on the server but the resource is never read
   // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
@@ -156,7 +157,7 @@ export function useBaseQuery<
         const query = observer().getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
-        if (unwrappedResult.isError) {
+        if (result.data !== undefined && unwrappedResult.isError) {
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {

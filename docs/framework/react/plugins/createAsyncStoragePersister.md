@@ -35,7 +35,7 @@ bun add @tanstack/query-async-storage-persister @tanstack/react-query-persist-cl
 - Create a new asyncStoragePersister
   - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native.
   - storages that read and write synchronously, like `window.localstorage`, also adhere to the `AsyncStorage` interface and can therefore also be used with `createAsyncStoragePersister`.
-- Wrap your app by using [`PersistQueryClientProvider`](../persistQueryClient.md#persistqueryclientprovider) component.
+- Wrap your app by using [`PersistQueryClientProvider`](./persistQueryClient.md#persistqueryclientprovider) component.
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -69,7 +69,7 @@ export default Root
 
 ## Retries
 
-Retries work the same as for a [SyncStoragePersister](../createSyncStoragePersister.md), except that they can also be asynchronous. You can also use all the predefined retry handlers.
+Retries work the same as for a [SyncStoragePersister](./createSyncStoragePersister.md), except that they can also be asynchronous. You can also use all the predefined retry handlers.
 
 ## API
 
@@ -93,9 +93,9 @@ interface CreateAsyncStoragePersisterOptions {
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
   /** How to serialize the data to storage */
-  serialize?: (client: PersistedClient) => string
+  serialize?: (client: PersistedClient) => MaybePromise<string>
   /** How to deserialize the data from storage */
-  deserialize?: (cachedString: string) => PersistedClient
+  deserialize?: (cachedString: string) => MaybePromise<PersistedClient>
   /** How to retry persistence on error **/
   retry?: AsyncPersistRetryer
 }
@@ -107,6 +107,8 @@ interface AsyncStorage<TStorageValue = string> {
   entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 ```
+
+The `serialize` and `deserialize` callbacks can return their results synchronously or asynchronously as promises.
 
 The default options are:
 

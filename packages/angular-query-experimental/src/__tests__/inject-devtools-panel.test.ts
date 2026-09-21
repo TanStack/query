@@ -18,8 +18,12 @@ const mockDevtoolsPanelInstance = {
 }
 
 const mocks = vi.hoisted(() => {
+  function MockTanstackQueryDevtoolsPanel() {
+    return mockDevtoolsPanelInstance
+  }
+
   return {
-    mockTanstackQueryDevtoolsPanel: vi.fn(() => mockDevtoolsPanelInstance),
+    mockTanstackQueryDevtoolsPanel: vi.fn(MockTanstackQueryDevtoolsPanel),
   }
 })
 
@@ -38,6 +42,7 @@ describe('injectDevtoolsPanel', () => {
   }
 
   beforeEach(() => {
+    vi.clearAllMocks()
     queryClient = new QueryClient()
     mockElementRef = new ElementRef(document.createElement('div'))
     TestBed.configureTestingModule({

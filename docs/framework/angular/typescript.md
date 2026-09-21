@@ -78,7 +78,7 @@ class MyComponent {
   template: `
     @if (query.isSuccess()) {
       @let data = query.data();
-      //    ^? data: number
+      // ^? data: number
     }
   `,
 })
@@ -104,7 +104,7 @@ class MyComponent {
 class MyComponent {
   query = injectQuery(() => ({
     queryKey: ['groups'],
-    queryFn: fetchGroups
+    queryFn: fetchGroups,
   }))
 }
 ```
@@ -174,9 +174,11 @@ computed(() => {
 
 ## Typing Query Options
 
-If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `prefetchQuery` or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `queryClient.query`, or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
+import { noop } from '@tanstack/angular-query-experimental'
+
 @Injectable({
   providedIn: 'root',
 })
@@ -215,7 +217,7 @@ export class Component {
   postQuery = injectQuery(this.optionsSignal)
 
   someMethod() {
-    this.queryClient.prefetchQuery(this.queries.post(23))
+    void this.queryClient.query(this.queries.post(23)).catch(noop)
   }
 }
 ```

@@ -27,16 +27,34 @@
   "targetDefaults": {
     "compile": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/dist-ts"]
     },
+    "test:docs": {
+      "cache": true,
+      "inputs": ["{workspaceRoot}/docs/**/*"]
+    },
     "test:knip": {
       "cache": true,
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["directory:packages/*"]
+        }
+      ],
       "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:sherif": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/package.json"]
+    },
+    "test:size": {
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/.size-limit.json"
+      ]
     },
     "test:eslint": {
       "cache": true,
@@ -51,6 +69,7 @@
     },
     "test:types": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"]
     },
     "build": {

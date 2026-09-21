@@ -3,7 +3,7 @@ import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
 import packageJson from './package.json'
-import type { Options } from '@tanstack/config/vite'
+import type { Options } from '@tanstack/vite-config'
 
 function ensureImportFileExtension({
   content,
@@ -44,7 +44,12 @@ const config = defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: !!process.env.CI,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/__tests__/**'],
+    },
     typecheck: { enabled: true },
     globals: true,
     restoreMocks: true,

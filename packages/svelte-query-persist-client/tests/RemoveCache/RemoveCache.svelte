@@ -1,9 +1,10 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: () => Promise.resolve('fetched'),
+    queryFn: () => sleep(10).then(() => 'fetched'),
   }))
 </script>
 

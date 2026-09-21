@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsPanelOptions {
@@ -34,11 +34,17 @@ export interface DevtoolsPanelOptions {
   /**
    * Callback function that is called when the devtools panel is closed
    */
-  onClose?: () => unknown
+  onClose?: () => void
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   *
+   * @defaultValue system
+   */
+  theme?: Theme
 }
 
 export function ReactQueryDevtoolsPanel(
@@ -46,7 +52,13 @@ export function ReactQueryDevtoolsPanel(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const { errorTypes, styleNonce, shadowDOMTarget, hideDisabledQueries } = props
+  const {
+    errorTypes,
+    styleNonce,
+    shadowDOMTarget,
+    hideDisabledQueries,
+    theme,
+  } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtoolsPanel({
       client: queryClient,
@@ -61,6 +73,7 @@ export function ReactQueryDevtoolsPanel(
       shadowDOMTarget,
       onClose: props.onClose,
       hideDisabledQueries,
+      theme,
     }),
   )
 
@@ -75,6 +88,10 @@ export function ReactQueryDevtoolsPanel(
   React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
   }, [errorTypes, devtools])
+
+  React.useEffect(() => {
+    devtools.setTheme(theme)
+  }, [theme, devtools])
 
   React.useEffect(() => {
     if (ref.current) {

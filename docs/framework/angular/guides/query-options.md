@@ -7,13 +7,13 @@ ref: docs/framework/react/guides/query-options.md
 [//]: # 'Example1'
 
 ```ts
-import { queryOptions } from '@tanstack/angular-query-experimental'
+import { queryOptions, noop } from '@tanstack/angular-query-experimental'
 
 @Injectable({
   providedIn: 'root',
 })
 export class QueriesService {
-  private http = inject(HttpClient)
+  private readonly http = inject(HttpClient)
 
   post(postId: number) {
     return queryOptions({
@@ -38,7 +38,7 @@ queries = inject(QueriesService)
 
 postQuery = injectQuery(() => this.queries.post(this.postId()))
 
-queryClient.prefetchQuery(this.queries.post(23))
+queryClient.query(this.queries.post(23)).catch(noop)
 queryClient.setQueryData(this.queries.post(42).queryKey, newPost)
 ```
 
@@ -46,10 +46,10 @@ queryClient.setQueryData(this.queries.post(42).queryKey, newPost)
 [//]: # 'Example2'
 
 ```ts
-// Type inference still works, so query.data will be the return type of select instead of queryFn
+// Type inference still works, so groupQuery.data will be the return type of select instead of queryFn
 queries = inject(QueriesService)
 
-query = injectQuery(() => ({
+groupQuery = injectQuery(() => ({
   ...groupOptions(1),
   select: (data) => data.title,
 }))

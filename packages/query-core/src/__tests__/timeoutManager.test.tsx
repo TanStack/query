@@ -5,6 +5,7 @@ import {
   systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
+import type { MockInstance } from 'vitest'
 
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
@@ -17,7 +18,7 @@ describe('timeoutManager', () => {
     }
   }
 
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  let consoleErrorSpy: MockInstance<typeof console.error>
 
   beforeEach(() => {
     consoleErrorSpy = vi.spyOn(console, 'error')
@@ -92,7 +93,7 @@ describe('timeoutManager', () => {
           expect.stringMatching(
             /\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/,
           ),
-          expect.anything(),
+          { previous: customProvider, provider: customProvider2 },
         )
 
         // 3. Switching again with no intermediate calls should not warn

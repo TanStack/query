@@ -1,9 +1,7 @@
 import { vi } from 'vitest'
-import type { Mock } from 'vitest'
+import type * as UseBaseQueryModule from '../useBaseQuery'
 
-const { useBaseQuery: originImpl, unrefQueryArgs: originalParse } =
-  (await vi.importActual('../useBaseQuery')) as any
+const { useBaseQuery: originImpl } =
+  await vi.importActual<typeof UseBaseQueryModule>('../useBaseQuery')
 
-export const useBaseQuery: Mock<(...args: Array<any>) => any> =
-  vi.fn(originImpl)
-export const unrefQueryArgs = originalParse
+export const useBaseQuery = vi.fn(originImpl)
