@@ -10,6 +10,7 @@ import {
   QueryClient,
   QueryClientProvider,
   dehydrate,
+  noop,
   useQuery,
 } from '..'
 
@@ -22,10 +23,12 @@ describe('Preact hydration', () => {
   beforeEach(async () => {
     vi.useFakeTimers()
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: stringKey,
-      queryFn: () => sleep(10).then(() => ['stringCached']),
-    })
+    void queryClient
+      .query({
+        queryKey: stringKey,
+        queryFn: () => sleep(10).then(() => ['stringCached']),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
@@ -132,14 +135,18 @@ describe('Preact hydration', () => {
 
       const intermediateClient = new QueryClient()
 
-      intermediateClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['should change']),
-      })
-      intermediateClient.prefetchQuery({
-        queryKey: addedKey,
-        queryFn: () => sleep(20).then(() => [addedKey[0]]),
-      })
+      void intermediateClient
+        .query({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['should change']),
+        })
+        .catch(noop)
+      void intermediateClient
+        .query({
+          queryKey: addedKey,
+          queryFn: () => sleep(20).then(() => [addedKey[0]]),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(20)
       const dehydrated = dehydrate(intermediateClient)
       intermediateClient.clear()
@@ -202,14 +209,18 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
 
       const intermediateClient = new QueryClient()
-      intermediateClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['should not change']),
-      })
-      intermediateClient.prefetchQuery({
-        queryKey: addedKey,
-        queryFn: () => sleep(20).then(() => [addedKey[0]]),
-      })
+      void intermediateClient
+        .query({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['should not change']),
+        })
+        .catch(noop)
+      void intermediateClient
+        .query({
+          queryKey: addedKey,
+          queryFn: () => sleep(20).then(() => [addedKey[0]]),
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(20)
 
       const newDehydratedState = dehydrate(intermediateClient)
@@ -431,10 +442,12 @@ describe('Preact hydration', () => {
     // For the bug to trigger, there needs to already be a query in the cache,
     // with a dataUpdatedAt earlier than the dehydratedAt of the next query
     const clientQueryClient = new QueryClient()
-    clientQueryClient.prefetchQuery({
-      queryKey: promiseKey,
-      queryFn: () => sleep(20).then(() => 'existing'),
-    })
+    void clientQueryClient
+      .query({
+        queryKey: promiseKey,
+        queryFn: () => sleep(20).then(() => 'existing'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     const prefetchQueryClient = new QueryClient({
@@ -444,11 +457,13 @@ describe('Preact hydration', () => {
         },
       },
     })
-    prefetchQueryClient.prefetchQuery({
-      queryKey: promiseKey,
-      queryFn: () =>
-        sleep(10).then(() => Promise.reject(new Error('Query failed'))),
-    })
+    void prefetchQueryClient
+      .query({
+        queryKey: promiseKey,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Query failed'))),
+      })
+      .catch(noop)
 
     const dehydratedState = dehydrate(prefetchQueryClient)
 

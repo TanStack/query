@@ -7,7 +7,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [preact-query/src/types.ts:499](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L499)
+Defined in: [packages/preact-query/src/types.ts:499](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L499)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](UseBaseMutationResult.md).
 
@@ -21,7 +21,7 @@ The type your mutation function resolves to.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your mutation function may throw.
 

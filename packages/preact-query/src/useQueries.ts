@@ -225,8 +225,9 @@ export type QueriesResults<
 /**
  * The `useQueries` hook can be used to fetch a variable number of queries.
  *
- * The `queries` key accepts an array with query option objects identical to `useQuery` (excluding the
- * `queryClient` option - because the `QueryClient` can be passed in on the top level).
+ * The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see the
+ * `queries` parameter below for the differences. A custom `QueryClient` is supplied once, as `useQueries`' own
+ * top-level second argument, rather than per query.
  *
  * Having the same query key more than once in the array of query objects may cause some data to be shared
  * between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
@@ -244,32 +245,58 @@ export type QueriesResults<
  * ```tsx
  * import { useQueries } from '@tanstack/preact-query'
  *
- * const ids = [1, 2, 3]
- * const results = useQueries({
- *   queries: ids.map((id) => ({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *     staleTime: Infinity,
- *   })),
- * })
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   const postQueries = useQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *       staleTime: Infinity,
+ *     })),
+ *   })
+ *
+ *   return (
+ *     <ul>
+ *       {postQueries.map((query, index) => {
+ *         if (query.isPending) return <li key={ids[index]}>Loading...</li>
+ *         if (query.isError) return <li key={ids[index]}>Error: {query.error.message}</li>
+ *         return <li key={ids[index]}>{query.data.title}</li>
+ *       })}
+ *     </ul>
+ *   )
+ * }
  * ```
  *
  * @example
  * Combining results into a single value:
  * ```tsx
- * const ids = [1, 2, 3]
- * const combinedQueries = useQueries({
- *   queries: ids.map((id) => ({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *   })),
- *   combine: (results) => {
- *     return {
- *       data: results.map((result) => result.data),
- *       pending: results.some((result) => result.isPending),
- *     }
- *   },
- * })
+ * import { useQueries } from '@tanstack/preact-query'
+ *
+ * function Posts({ ids }: { ids: Array<number> }) {
+ *   const { data, isPending, isError } = useQueries({
+ *     queries: ids.map((id) => ({
+ *       queryKey: ['post', id],
+ *       queryFn: () => fetchPost(id),
+ *     })),
+ *     combine: (postQueries) => {
+ *       return {
+ *         data: postQueries.map((query) => query.data),
+ *         isPending: postQueries.some((query) => query.isPending),
+ *         isError: postQueries.some((query) => query.isError),
+ *       }
+ *     },
+ *   })
+ *
+ *   if (isPending) return 'Loading...'
+ *   if (isError) return 'Error loading posts'
+ *
+ *   return (
+ *     <ul>
+ *       {data.map((post) => (
+ *         <li key={post?.id}>{post?.title}</li>
+ *       ))}
+ *     </ul>
+ *   )
+ * }
  * ```
  */
 export function useQueries<

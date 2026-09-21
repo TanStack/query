@@ -6,6 +6,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
@@ -85,7 +86,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.fetchQuery(queryOpts)
+    queryClient.query(queryOpts)
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -130,7 +131,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -220,7 +221,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 

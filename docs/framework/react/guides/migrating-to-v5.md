@@ -521,7 +521,7 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../reference/useQueries.md#combine) for more details.
+See the [useQueries docs](../reference/functions/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 

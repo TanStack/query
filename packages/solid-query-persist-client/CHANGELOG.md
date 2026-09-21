@@ -1,5 +1,37 @@
 # @tanstack/solid-query-persist-client
 
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.2
+  - @tanstack/solid-query@5.103.2
+
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.103.1
+  - @tanstack/solid-query@5.103.1
+
+## 5.103.0
+
+### Patch Changes
+
+- Updated dependencies [[`4c7cdbb`](https://github.com/TanStack/query/commit/4c7cdbb86d8196e646985cd8a3476d3ac8c12ff5)]:
+  - @tanstack/query-persist-client-core@5.103.0
+  - @tanstack/solid-query@5.103.0
+
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.102.8
+  - @tanstack/solid-query@5.102.8
+
 ## 5.102.7
 
 ### Patch Changes

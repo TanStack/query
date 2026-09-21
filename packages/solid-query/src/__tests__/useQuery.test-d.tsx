@@ -69,15 +69,6 @@ describe('useQuery', () => {
   expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
-  const fromGenericOptionsQueryFn = useQuery(() => ({
-    queryKey: key,
-    queryFn: () => queryFn(),
-  }))
-  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-    string | undefined
-  >()
-  expectTypeOf(fromGenericOptionsQueryFn.error).toEqualTypeOf<Error | null>()
-
   type MyData = number
   type MyQueryKey = readonly ['my-data', number]
 
@@ -154,6 +145,24 @@ describe('useQuery', () => {
     Promise.resolve(true),
   )
   expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
+
+  it('should return the correct states for a successful query', () => {
+    const state = useQuery<string, Error>(() => ({
+      queryKey: key,
+      queryFn: () => Promise.resolve('test'),
+    }))
+
+    if (state.isPending) {
+      expectTypeOf(state.data).toEqualTypeOf<undefined>()
+      expectTypeOf(state.error).toEqualTypeOf<null>()
+    } else if (state.isLoadingError) {
+      expectTypeOf(state.data).toEqualTypeOf<undefined>()
+      expectTypeOf(state.error).toEqualTypeOf<Error>()
+    } else {
+      expectTypeOf(state.data).toEqualTypeOf<string>()
+      expectTypeOf(state.error).toEqualTypeOf<Error | null>()
+    }
+  })
 
   describe('initialData', () => {
     describe('Config object overload', () => {
