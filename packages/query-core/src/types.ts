@@ -638,6 +638,10 @@ export interface QueryExecuteOptions<
   'queryKey'
 > {
   initialPageParam?: never
+  /**
+   * This option can be used to transform or select a part of the data returned by the query function. It affects
+   * the value this call resolves with, but does not affect what gets stored in the query cache.
+   */
   select?: (data: TQueryData) => TData
   /**
    * The time in milliseconds after data is considered stale.

@@ -3,7 +3,7 @@ id: InfiniteQueryObserverLoadingErrorResult
 title: InfiniteQueryObserverLoadingErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1136](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1136)
+Defined in: [packages/query-core/src/types.ts:1140](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1140)
 
 ## Extends
 

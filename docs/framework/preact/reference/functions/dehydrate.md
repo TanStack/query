@@ -7,7 +7,7 @@ title: dehydrate
 function dehydrate(client: QueryClient, options: DehydrateOptions): DehydratedState;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:207](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L207)
+Defined in: [packages/query-core/src/hydration.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L208)
 
 Dehydrates a `QueryClient`'s cache (queries and mutations) into a plain, serializable `DehydratedState`,
 typically to embed in server-rendered markup and later restore into a client-side `QueryClient` via `hydrate`.

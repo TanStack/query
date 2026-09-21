@@ -3,7 +3,7 @@ id: InfiniteQueryObserverBaseResult
 title: InfiniteQueryObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1059](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1059)
+Defined in: [packages/query-core/src/types.ts:1063](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1063)
 
 ## Extends
 
