@@ -171,6 +171,14 @@ export interface InfiniteQueryOptions<
   >,
   'queryKey' | 'suspense'
 > {
+  /**
+   * The query key to use for this query. Required here, unlike on the options this type extends.
+   *
+   * The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/solid/guides/query-keys)
+   * for more information.
+   *
+   * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
+   */
   queryKey: TQueryKey
   /**
    * Only applicable while rendering queries on the server with streaming.

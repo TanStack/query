@@ -7,7 +7,7 @@ title: DefinedUseInfiniteQueryResult
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:229](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L229)
+Defined in: [packages/solid-query/src/types.ts:237](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L237)
 
 The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined`.
 
