@@ -63,7 +63,7 @@ QC.config
 protected listeners: Set<QueryCacheListener>;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
+Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
 
 #### Inherited from
 
@@ -379,11 +379,15 @@ QC.getAll
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:42](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L42)
+
+Whether anything is currently subscribed.
 
 #### Returns
 
 `boolean`
+
+`true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Inherited from
 
@@ -399,7 +403,7 @@ QC.hasListeners
 protected onSubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L23)
+Defined in: [packages/query-core/src/subscribable.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L46)
 
 #### Returns
 
@@ -419,7 +423,7 @@ QC.onSubscribe
 protected onUnsubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+Defined in: [packages/query-core/src/subscribable.ts:50](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L50)
 
 #### Returns
 
@@ -481,7 +485,9 @@ QC.remove
 subscribe(listener: QueryCacheListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
+Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+
+Registers a listener to be called on every update this object notifies about.
 
 #### Parameters
 
@@ -489,7 +495,12 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 
 `QueryCacheListener`
 
+Called on each update, with whatever the subclass passes to its subscribers.
+
 #### Returns
+
+A function that removes the listener again. Call it to stop listening; the base class never
+drops a listener on its own, though some subclasses clear all of theirs in `destroy()`.
 
 ```ts
 (): void;
@@ -498,6 +509,16 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Inherited from
 

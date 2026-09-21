@@ -133,7 +133,7 @@ QueryObserver.getCurrentResult
 protected listeners: Set<QueryObserverListener<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
+Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
 
 #### Inherited from
 
@@ -163,13 +163,20 @@ subscribe: (listener: InfiniteQueryObserverListener) => () => void;
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L55)
 
+Registers a listener to be called on every update this object notifies about.
+
 #### Parameters
 
 ##### listener
 
 `InfiniteQueryObserverListener`
 
+Called on each update, with whatever the subclass passes to its subscribers.
+
 #### Returns
+
+A function that removes the listener again. Call it to stop listening; the base class never
+drops a listener on its own, though some subclasses clear all of theirs in `destroy()`.
 
 ```ts
 (): void;
@@ -178,6 +185,16 @@ Defined in: [packages/query-core/src/infiniteQueryObserver.ts:55](https://github
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Overrides
 
@@ -430,11 +447,15 @@ synchronously.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:42](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L42)
+
+Whether anything is currently subscribed.
 
 #### Returns
 
 `boolean`
+
+`true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Inherited from
 
