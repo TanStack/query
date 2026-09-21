@@ -1610,10 +1610,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^5.5.6
@@ -1634,10 +1634,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^2.0.0-rc.9
@@ -1659,10 +1659,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1690,10 +1690,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^2.0.0-rc.9
@@ -1718,13 +1718,13 @@ importers:
         specifier: ^5.101.4
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-query-persist-client':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -1749,10 +1749,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^2.0.0-rc.9
@@ -1786,10 +1786,10 @@ importers:
         specifier: ^2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-rc.4
+        specifier: ^6.0.0-rc.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^2.0.0-rc.9
