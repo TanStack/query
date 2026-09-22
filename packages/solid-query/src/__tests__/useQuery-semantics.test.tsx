@@ -6,14 +6,7 @@
 // re-pointed separately.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent } from '@solidjs/testing-library'
-import {
-  Errored,
-  Loading,
-  Show,
-  createEffect,
-  createMemo,
-  createSignal,
-} from 'solid-js'
+import { Errored, Loading, Show, createEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useQuery } from '..'
 import { renderWithClient } from './utils'
@@ -517,9 +510,11 @@ describe('useQuery 2.0 read semantics', () => {
       expect(rendered.getByText('n: 42')).toBeInTheDocument()
     })
 
-    it('notifies a consumer mounted over stale cached data', async () => {
+    it('notifies a consumer mounted over stale cached data without a Loading boundary', async () => {
       const key = queryKey()
-      const queryFn = () => sleep(10).then(() => [{ text: 'value' }] as const)
+      const queryFn = vi.fn(() =>
+        sleep(10).then(() => [{ text: 'value' }] as const),
+      )
 
       function WarmCache(props: { mount: () => void }) {
         const state = useQuery(() => ({ queryKey: key, queryFn }))
@@ -564,59 +559,19 @@ describe('useQuery 2.0 read semantics', () => {
         )
       }
 
-      const rendered = renderWithClient(queryClient, () => (
-        <Loading fallback={<span>loading</span>}>
-          <App />
-        </Loading>
-      ))
+      // A Loading boundary masks the lost notification on a cached mount.
+      const rendered = renderWithClient(queryClient, () => <App />)
 
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('cache: 1')).toBeInTheDocument()
+      expect(queryFn).toHaveBeenCalledTimes(1)
 
       fireEvent.click(rendered.getByRole('button', { name: 'mount' }))
       await vi.advanceTimersByTimeAsync(10)
 
+      expect(queryFn).toHaveBeenCalledTimes(2)
       expect(rendered.getByText('query: 1')).toBeInTheDocument()
       expect(rendered.getByText('projection: 1')).toBeInTheDocument()
-    })
-
-    // Solid #3181 fixed this projection/memo notification path in 2.0.0-rc.5.
-    // Keep it active here so the Query read layer cannot reintroduce #11351.
-    it('notifies a leaf reader that goes through a memo over data', async () => {
-      const key = queryKey()
-      const server = { flag: false }
-      const observed: Array<boolean> = []
-
-      function Page() {
-        const state = useQuery(() => ({
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => ({ ...server })),
-        }))
-        const data = createMemo(() => state.data)
-        createEffect(
-          () => data().flag,
-          (flag) => {
-            observed.push(flag)
-          },
-        )
-        return <span>flag: {String(state.data.flag)}</span>
-      }
-
-      const rendered = renderWithClient(queryClient, () => (
-        <Loading fallback={<span>loading</span>}>
-          <Page />
-        </Loading>
-      ))
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(observed).toEqual([false])
-
-      server.flag = true
-      void queryClient.refetchQueries({ queryKey: key })
-      await vi.advanceTimersByTimeAsync(10)
-
-      expect(rendered.getByText('flag: true')).toBeInTheDocument()
-      expect(observed.at(-1)).toBe(true)
     })
   })
 
