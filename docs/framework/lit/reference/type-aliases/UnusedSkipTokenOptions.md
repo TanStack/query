@@ -27,7 +27,7 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -35,4 +35,4 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

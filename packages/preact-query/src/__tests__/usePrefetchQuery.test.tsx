@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
@@ -87,7 +88,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.fetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -132,7 +133,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -222,7 +223,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 

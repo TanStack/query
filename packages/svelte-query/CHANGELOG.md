@@ -1,5 +1,102 @@
 # @tanstack/svelte-query
 
+## 6.2.3
+
+### Patch Changes
+
+- [#9810](https://github.com/TanStack/query/pull/9810) [`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99) - fix: support async Svelte
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
+## 6.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`8330b2f`](https://github.com/TanStack/query/commit/8330b2f2d431f226d7bb95eb727c637be9d4c6d8), [`3212966`](https://github.com/TanStack/query/commit/3212966a3681e02d14eb79e9cce0d3265b046877)]:
+  - @tanstack/query-core@5.103.1
+
+## 6.2.0
+
+### Minor Changes
+
+- [#11356](https://github.com/TanStack/query/pull/11356) [`f6ae1cc`](https://github.com/TanStack/query/commit/f6ae1ccdf74a61ea15e845d4643e6d4b0a0b7bdf) - feat(svelte-query): add 'DefinedInitialDataInfiniteOptions' overload for 'createInfiniteQuery'/'infiniteQueryOptions'
+
+### Patch Changes
+
+- Updated dependencies [[`e57f816`](https://github.com/TanStack/query/commit/e57f8163b18ab3abfe52ad69cdbdda4d31453393), [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12), [`a1119e5`](https://github.com/TanStack/query/commit/a1119e5a3ffa52534de7390f17c7183d17658051), [`cbf77bf`](https://github.com/TanStack/query/commit/cbf77bf8e1a9ce09caef0cdd9a8ed10fef57edf0)]:
+  - @tanstack/query-core@5.103.0
+
+## 6.1.48
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.8
+
+## 6.1.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.7
+
+## 6.1.46
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.6
+
+## 6.1.45
+
+### Patch Changes
+
+- Updated dependencies [[`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d)]:
+  - @tanstack/query-core@5.102.5
+
+## 6.1.44
+
+### Patch Changes
+
+- Updated dependencies [[`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec)]:
+  - @tanstack/query-core@5.102.4
+
+## 6.1.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.102.3
+
+## 6.1.42
+
+### Patch Changes
+
+- [#10892](https://github.com/TanStack/query/pull/10892) [`cafd540`](https://github.com/TanStack/query/commit/cafd540c02f78be260198c4e84d054390c02c6b8) - Fix `createQueries` crashing with `TypeError: 'deleteProperty' on proxy: trap returned falsish for property 'N'` when two or more items were removed from its reactive array in the same update.
+
+- [#11127](https://github.com/TanStack/query/pull/11127) [`320ed25`](https://github.com/TanStack/query/commit/320ed25caca4e219b53f778c59cbb380543a21f4) - Fix `createQueries` staying inactive when it is initialized with an empty `queries` array.
+
+- [#11153](https://github.com/TanStack/query/pull/11153) [`250050d`](https://github.com/TanStack/query/commit/250050d863d33fbc881c6e342c104d510403a9e1) - fix(svelte-query): remove mutations that no longer match the filter in `useMutationState`
+
+## 6.1.41
+
+### Patch Changes
+
+- Updated dependencies [[`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc)]:
+  - @tanstack/query-core@5.102.2
+
+## 6.1.40
+
+### Patch Changes
+
+- Updated dependencies [[`134890d`](https://github.com/TanStack/query/commit/134890dbdc60e4fb0313e44b512d29284ca82f96)]:
+  - @tanstack/query-core@5.102.1
+
 ## 6.1.39
 
 ### Patch Changes

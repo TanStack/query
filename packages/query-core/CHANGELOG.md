@@ -1,5 +1,66 @@
 # @tanstack/query-core
 
+## 5.103.2
+
+### Patch Changes
+
+- [#11524](https://github.com/TanStack/query/pull/11524) [`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e) - Ignore removal requests for query instances that are no longer stored in the cache.
+
+## 5.103.1
+
+### Patch Changes
+
+- [#11512](https://github.com/TanStack/query/pull/11512) [`8330b2f`](https://github.com/TanStack/query/commit/8330b2f2d431f226d7bb95eb727c637be9d4c6d8) - Handle plain objects with an own `constructor` data property during structural sharing and query-key hashing.
+
+- [#11510](https://github.com/TanStack/query/pull/11510) [`3212966`](https://github.com/TanStack/query/commit/3212966a3681e02d14eb79e9cce0d3265b046877) - Preserve `null` values returned by custom `streamedQuery` reducers instead of replacing them with `initialValue`.
+
+## 5.103.0
+
+### Minor Changes
+
+- [#11438](https://github.com/TanStack/query/pull/11438) [`e57f816`](https://github.com/TanStack/query/commit/e57f8163b18ab3abfe52ad69cdbdda4d31453393) - Export the `FocusManager`, `OnlineManager`, and `TimeoutManager` types so their methods appear in the generated reference docs.
+
+### Patch Changes
+
+- [#11332](https://github.com/TanStack/query/pull/11332) [`fdae2ce`](https://github.com/TanStack/query/commit/fdae2ce4e5382af7326c7c38ce5d5a12751ada12) - Reuse the shared query option resolver for refetch intervals to reduce bundle size.
+
+- [#11436](https://github.com/TanStack/query/pull/11436) [`a1119e5`](https://github.com/TanStack/query/commit/a1119e5a3ffa52534de7390f17c7183d17658051) - ref(hydration): remove outdated dehydratedAt fallback
+
+- [#11502](https://github.com/TanStack/query/pull/11502) [`cbf77bf`](https://github.com/TanStack/query/commit/cbf77bf8e1a9ce09caef0cdd9a8ed10fef57edf0) - Prevent longer partial query-key filters with trailing undefined values from matching shorter query keys.
+
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- [#11302](https://github.com/TanStack/query/pull/11302) [`578e5c2`](https://github.com/TanStack/query/commit/578e5c26e8ebd0d7351b4b8e2bafba695e672b8d) - Reduce the Query Core bundle size by removing unused symbol descriptions and
+  simplifying internal helpers.
+
+## 5.102.4
+
+### Patch Changes
+
+- [#11293](https://github.com/TanStack/query/pull/11293) [`a05df6a`](https://github.com/TanStack/query/commit/a05df6aefb0e2489ec2c879ae16e2ee7cb3123ec) - Avoid scheduling stale timeouts for disabled query observers.
+
+## 5.102.3
+
+## 5.102.2
+
+### Patch Changes
+
+- [#11263](https://github.com/TanStack/query/pull/11263) [`80fbf73`](https://github.com/TanStack/query/commit/80fbf73e77892d702c107e14a84c219a8ed825dc) - Export MutationCacheConfig and QueryCacheConfig.
+
+## 5.102.1
+
+### Patch Changes
+
+- [#11260](https://github.com/TanStack/query/pull/11260) [`134890d`](https://github.com/TanStack/query/commit/134890dbdc60e4fb0313e44b512d29284ca82f96) - Type hydration input as a partial dehydrated state so omitted mutation and query collections are supported.
+
 ## 5.102.0
 
 ### Minor Changes

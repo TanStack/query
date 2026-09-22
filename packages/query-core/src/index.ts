@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 export { focusManager } from './focusManager'
+export type { FocusManager } from './focusManager'
 export { environmentManager } from './environmentManager'
 export {
   defaultShouldDehydrateMutation,
@@ -15,6 +16,7 @@ export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
 export { defaultScheduler, notifyManager } from './notifyManager'
 export { onlineManager } from './onlineManager'
+export type { OnlineManager } from './onlineManager'
 export { QueriesObserver } from './queriesObserver'
 export { QueryCache } from './queryCache'
 export type { QueryCacheNotifyEvent } from './queryCache'
@@ -25,6 +27,7 @@ export {
   timeoutManager,
   type ManagedTimerId,
   type TimeoutCallback,
+  type TimeoutManager,
   type TimeoutProvider,
 } from './timeoutManager'
 export {
@@ -51,7 +54,9 @@ export type {
 } from './hydration'
 export { Mutation } from './mutation'
 export type { MutationState } from './mutation'
+export type { MutationCacheConfig } from './mutationCache'
 export type { QueriesObserverOptions } from './queriesObserver'
 export { Query } from './query'
 export type { QueryState } from './query'
+export type { QueryCacheConfig } from './queryCache'
 export * from './types'

@@ -1,5 +1,5 @@
-import { describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive } from 'vue-demi'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -134,5 +134,21 @@ describe('Discriminated union return type', () => {
     if (query.isSuccess) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
+  })
+})
+
+describe('queryKey reactivity rules', () => {
+  it('should reject a bare reactive getter for the whole queryKey array', () => {
+    const id = ref(1)
+    assertType(
+      useInfiniteQuery({
+        // @ts-expect-error when passed directly to useInfiniteQuery, queryKey cannot be a bare
+        // reactive getter for the whole array (queryOptions() allows this)
+        queryKey: () => ['post', id.value],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      }),
+    )
   })
 })
