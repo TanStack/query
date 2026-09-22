@@ -78,7 +78,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
+Defined in: [packages/query-core/src/removable.ts:11](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L11)
 
 #### Inherited from
 
@@ -142,7 +142,7 @@ The `meta` object passed in the mutation's options, if any.
 protected clearGcTimeout(): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L32)
+Defined in: [packages/query-core/src/removable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L41)
 
 #### Returns
 
@@ -199,7 +199,11 @@ await mutation?.continue()
 destroy(): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:10](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L10)
+Defined in: [packages/query-core/src/removable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L19)
+
+Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
+A subclass may override this to release what it holds on to as well — `Query` also cancels any
+in-flight fetch.
 
 #### Returns
 
@@ -291,7 +295,7 @@ Removable.optionalRemove
 protected scheduleGc(): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L14)
+Defined in: [packages/query-core/src/removable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L23)
 
 #### Returns
 
@@ -311,7 +315,7 @@ Removable.scheduleGc
 protected updateGcTime(newGcTime: number | undefined): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)
+Defined in: [packages/query-core/src/removable.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L33)
 
 #### Parameters
 

@@ -9,11 +9,15 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L34)
+Defined in: [packages/vue-query/src/mutationOptions.ts:38](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L38)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
 `useMutationState`.
+
+Unlike a `queryKey` property on a query's options (e.g. `queryOptions({ queryKey: [...] })`), `mutationKey`
+entries that are reactive getters (`() => id.value`) are never unwrapped — the getter function itself is
+stored as the entry, rather than its current value. `ref` entries are still unwrapped normally.
 
 ### Type Parameters
 
@@ -79,7 +83,7 @@ const isCreatingPost = computed(() => creatingPosts.value.length > 0)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L80)
+Defined in: [packages/vue-query/src/mutationOptions.ts:84](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L84)
 
 Same as the plain-object overload with a required `mutationKey`, but for options that close over reactive
 state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
@@ -156,7 +160,7 @@ const mutation = useMutation(createPostOptions)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:124](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L124)
+Defined in: [packages/vue-query/src/mutationOptions.ts:128](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L128)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -228,7 +232,7 @@ const mutation = useMutation(createPostOptions)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/vue-query/src/mutationOptions.ts:169](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L169)
+Defined in: [packages/vue-query/src/mutationOptions.ts:173](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationOptions.ts#L173)
 
 Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state
 (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers

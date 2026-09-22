@@ -178,6 +178,7 @@ export class QueryClient {
    * Hint: Do not use this function inside a component, because it won't receive updates.
    * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
    *
+   * @returns The cached data for the query, or `undefined` if no query with this key has been observed yet.
    * @see {@link QueryClient#getQueriesData}
    */
   getQueryData<
@@ -233,6 +234,7 @@ export class QueryClient {
    * every matched query holds the same shape — it is not checked against the actual cache
    * contents.
    *
+   * @returns An array of query key and data pairs. The data is `undefined` for a query with no cached data.
    * @see {@link QueryClient#getQueryData}
    * @example
    * ```ts
@@ -261,6 +263,9 @@ export class QueryClient {
    * @param queryKey - The query key to set data for.
    * @param updater - Either the new data, or a function that receives the current data (which
    * may be `undefined`) and returns the new data.
+   * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
+   * @returns The data that was written, or `undefined` if the updater returned `undefined` — in that case
+   * the write is skipped and the cache is left unchanged.
    *
    * @example
    * ```ts
@@ -311,6 +316,8 @@ export class QueryClient {
    * filters are updated; no new cache entries are created. Internally this calls
    * {@link QueryClient#setQueryData} for each matching query.
    *
+   * @returns One `[queryKey, data]` tuple per matched query, in the same shape and with the same
+   * `undefined` case as {@link QueryClient#setQueryData}.
    * @example
    * ```ts
    * queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
