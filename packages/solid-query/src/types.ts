@@ -124,7 +124,8 @@ export type UseQueryResult<
 > = UseBaseQueryResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -135,7 +136,8 @@ export type DefinedUseBaseQueryResult<
 > = DefinedQueryObserverResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -229,7 +231,8 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
