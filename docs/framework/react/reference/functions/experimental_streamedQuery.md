@@ -9,7 +9,7 @@ redirect_from:
 function experimental_streamedQuery<TQueryFnData, TData, TQueryKey>(streamFn: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): (context: object) => TData | Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/streamedQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L75)
+Defined in: [packages/query-core/src/streamedQuery.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/streamedQuery.ts#L68)
 
 This is a helper function to create a query function that streams data from an AsyncIterable.
 Data will be an Array of all the chunks received.
