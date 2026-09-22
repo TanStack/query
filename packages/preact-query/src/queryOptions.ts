@@ -71,7 +71,7 @@ export type UnusedSkipTokenOptions<
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined`.
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
