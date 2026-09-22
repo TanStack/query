@@ -167,7 +167,7 @@ const query = useQuery(() => ({
 }))
 ```
 
-`deferStream` only affects when the *server* flushes that query's chunk to the client. Setting it on every query on a page makes the server wait for all of them before sending anything.
+`deferStream` only affects when the _server_ flushes that query's chunk to the client. Setting it on every query on a page makes the server wait for all of them before sending anything.
 
 ## Error handling
 
