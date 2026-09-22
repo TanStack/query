@@ -111,7 +111,7 @@ QC.cancelQueries
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1089](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1089)
+Defined in: [packages/query-core/src/queryClient.ts:1096](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1096)
 
 Clears both the query cache and the mutation cache this client is connected to.
 
@@ -142,7 +142,7 @@ QC.clear
 defaultMutationOptions<T>(options?: T): T;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1063](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1063)
+Defined in: [packages/query-core/src/queryClient.ts:1070](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1070)
 
 The mutation counterpart of [QueryClient#defaultQueryOptions](#defaultqueryoptions). Called by framework
 adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
@@ -181,7 +181,7 @@ defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPagePar
 | DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:976](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L976)
+Defined in: [packages/query-core/src/queryClient.ts:983](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L983)
 
 Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
 caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
@@ -238,7 +238,7 @@ QC.defaultQueryOptions
 ensureInfiniteQueryData<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:740](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L740)
+Defined in: [packages/query-core/src/queryClient.ts:747](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L747)
 
 #### Type Parameters
 
@@ -596,7 +596,7 @@ QC.fetchQuery
 getDefaultOptions(): DefaultOptions;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:824](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L824)
+Defined in: [packages/query-core/src/queryClient.ts:831](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L831)
 
 Returns the default options that were set when creating the client, or via
 [QueryClient#setDefaultOptions](#setdefaultoptions).
@@ -628,7 +628,7 @@ QC.getDefaultOptions
 getMutationCache(): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:808](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L808)
+Defined in: [packages/query-core/src/queryClient.ts:815](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L815)
 
 Returns the mutation cache this client is connected to.
 
@@ -724,6 +724,8 @@ contents.
 
 \[readonly `unknown`[], `TData` \| `undefined`\][]
 
+An array of query key and data pairs. The data is `undefined` for a query with no cached data.
+
 #### See
 
 [QueryClient#getQueryData](#getquerydata)
@@ -748,7 +750,7 @@ QC.getQueriesData
 getQueryCache(): QueryCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:792](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L792)
+Defined in: [packages/query-core/src/queryClient.ts:799](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L799)
 
 Returns the query cache this client is connected to.
 
@@ -812,6 +814,8 @@ Use `useQuery` to create a `QueryObserver` that subscribes to changes.
 
   \| [`InferDataFromTag`](../type-aliases/InferDataFromTag.md)\<`TData`, `TTaggedQueryKey`\>
   \| `undefined`
+
+The cached data for the query, or `undefined` if no query with this key has been observed yet.
 
 ##### See
 
@@ -1689,7 +1693,7 @@ QC.resetQueries
 resumePausedMutations(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:773](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L773)
+Defined in: [packages/query-core/src/queryClient.ts:780](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L780)
 
 Resumes mutations that were paused because there was no network connection. Does nothing
 (resolving immediately) if the client is currently offline.
@@ -1863,6 +1867,9 @@ filters are updated; no new cache entries are created. Internally this calls
 
 \[readonly `unknown`[], `TData` \| `undefined`\][]
 
+One `[queryKey, data]` tuple per matched query, in the same shape and with the same
+`undefined` case as [QueryClient#setQueryData](#setquerydata).
+
 #### Example
 
 ```ts
@@ -1933,9 +1940,14 @@ may be `undefined`) and returns the new data.
 
 `MaybeRefDeep`\<[`SetDataOptions`](../interfaces/SetDataOptions.md)\>
 
+Set `updatedAt` to override the timestamp the written data is recorded with.
+
 ##### Returns
 
 `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`
+
+The data that was written, or `undefined` if the updater returned `undefined` — in that case
+the write is skipped and the cache is left unchanged.
 
 ##### Example
 

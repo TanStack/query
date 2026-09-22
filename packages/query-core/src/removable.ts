@@ -3,10 +3,19 @@ import { isServer as isServerEnvironment } from './environmentManager'
 import { isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 
+/**
+ * The base class for cache entries that are garbage collected once nothing is using them —
+ * `Query` and `Mutation` both extend it. `gcTime` controls how long an unused entry is kept.
+ */
 export abstract class Removable {
   gcTime!: number
   #gcTimeout?: ManagedTimerId
 
+  /**
+   * Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
+   * A subclass may override this to release what it holds on to as well — `Query` also cancels any
+   * in-flight fetch.
+   */
   destroy(): void {
     this.clearGcTimeout()
   }

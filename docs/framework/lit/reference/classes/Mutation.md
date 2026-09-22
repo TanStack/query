@@ -78,7 +78,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
+Defined in: [packages/query-core/src/removable.ts:11](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L11)
 
 #### Inherited from
 
@@ -179,7 +179,11 @@ await mutation?.continue()
 destroy(): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:10](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L10)
+Defined in: [packages/query-core/src/removable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L19)
+
+Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
+A subclass may override this to release what it holds on to as well — `Query` also cancels any
+in-flight fetch.
 
 #### Returns
 
