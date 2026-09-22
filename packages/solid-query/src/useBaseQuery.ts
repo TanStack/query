@@ -374,10 +374,17 @@ export function useBaseQueryLayer<
       primeAndAttach()
     }
     if (!hydratedMount) {
+      const restoringOnMount = untrack(isRestoring)
       createRenderEffect(
         () => isRestoring(),
         (restoring) => {
           if (!restoring) {
+            // Restore completion already runs after the subtree is ready.
+            // Keep its attachment in the same commit as the restored read.
+            if (restoringOnMount) {
+              attach()
+              return
+            }
             const currentQuery = observer.getCurrentQuery()
             const state = currentQuery.state
             const optimisticFetchStatus = observer.getOptimisticResult(
