@@ -2057,10 +2057,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2091,13 +2091,13 @@ importers:
         specifier: ^5.103.2
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
       '@tanstack/svelte-query-persist-client':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2125,10 +2125,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2156,10 +2156,10 @@ importers:
   examples/svelte/optimistic-updates:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2187,10 +2187,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2218,10 +2218,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -2246,10 +2246,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2277,10 +2277,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -2317,7 +2317,7 @@ importers:
         specifier: ^5.103.2
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -2389,7 +2389,7 @@ importers:
         specifier: ^5.103.2
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.2.3
+        specifier: ^6.2.4
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27

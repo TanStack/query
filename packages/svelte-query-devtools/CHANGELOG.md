@@ -1,5 +1,14 @@
 # @tanstack/svelte-query-devtools
 
+## 6.2.4
+
+### Patch Changes
+
+- [#11009](https://github.com/TanStack/query/pull/11009) [`535cd61`](https://github.com/TanStack/query/commit/535cd61221bbe9f663a3f9789d175d8c82c7ff68) - fix(svelte-query-devtools): update the devtools instance when options change after mount
+
+- Updated dependencies []:
+  - @tanstack/svelte-query@6.2.4
+
 ## 6.2.3
 
 ### Patch Changes
