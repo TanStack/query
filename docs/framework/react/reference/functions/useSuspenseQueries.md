@@ -11,7 +11,7 @@ redirect_from:
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:352](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L352)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L353)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -221,7 +221,7 @@ function App() {
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:492](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L492)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:493](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L493)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
