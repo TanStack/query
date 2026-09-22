@@ -11,7 +11,7 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:181](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L181)
+Defined in: [packages/solid-query/src/useQuery.ts:185](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L185)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -159,7 +159,9 @@ function Post(props: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 
@@ -173,6 +175,8 @@ function Post(props: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === props.postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   }))
 
   return postQuery.isError ? <span>Error: {postQuery.error.message}</span> : <h1>{postQuery.data?.title}</h1>
@@ -215,7 +219,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:232](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L232)
+Defined in: [packages/solid-query/src/useQuery.ts:236](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L236)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.

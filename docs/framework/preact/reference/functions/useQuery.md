@@ -190,7 +190,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
+Defined in: [packages/preact-query/src/useQuery.ts:285](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L285)
 
 ### Type Parameters
 
@@ -324,7 +324,9 @@ function Post({ postId }: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/preact-query'
 
@@ -338,6 +340,8 @@ function Post({ postId }: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   })
 
   if (isError) return <span>Error: {error.message}</span>

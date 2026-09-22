@@ -127,7 +127,9 @@ import type {
  * ```
  *
  * @example
- * Seeding a detail query from an already-cached list, to skip the loading state:
+ * Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+ * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+ * fetched rather than from now:
  * ```tsx
  * import { useQuery, useQueryClient } from '@tanstack/solid-query'
  *
@@ -141,6 +143,8 @@ import type {
  *       queryClient
  *         .getQueryData<Array<Post>>(['posts'])
  *         ?.find((post) => post.id === props.postId),
+ *     initialDataUpdatedAt: () =>
+ *       queryClient.getQueryState(['posts'])?.dataUpdatedAt,
  *   }))
  *
  *   return postQuery.isError ? <span>Error: {postQuery.error.message}</span> : <h1>{postQuery.data?.title}</h1>
