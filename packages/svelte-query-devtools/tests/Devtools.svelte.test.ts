@@ -9,6 +9,7 @@ const setButtonPositionMock = vi.fn()
 const setPositionMock = vi.fn()
 const setInitialIsOpenMock = vi.fn()
 const setErrorTypesMock = vi.fn()
+const setThemeMock = vi.fn()
 
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: vi.fn(function (this: TanstackQueryDevtools) {
@@ -18,6 +19,7 @@ vi.mock('@tanstack/query-devtools', () => ({
     this.setPosition = setPositionMock
     this.setInitialIsOpen = setInitialIsOpenMock
     this.setErrorTypes = setErrorTypesMock
+    this.setTheme = setThemeMock
   }),
 }))
 
@@ -99,6 +101,16 @@ describe('SvelteQueryDevtools', () => {
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })
 
+  it('should forward the initial "theme" to the devtools instance', async () => {
+    const queryClient = new QueryClient()
+    render(SvelteQueryDevtools, {
+      props: { client: queryClient, theme: 'dark' },
+    })
+    await vi.dynamicImportSettled()
+
+    expect(setThemeMock).toHaveBeenCalledWith('dark')
+  })
+
   it('should forward a "position" change to the devtools instance after mount', async () => {
     const queryClient = new QueryClient()
     const { rerender } = render(SvelteQueryDevtools, {
@@ -150,5 +162,18 @@ describe('SvelteQueryDevtools', () => {
     await rerender({ client: queryClient, errorTypes })
 
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
+  })
+
+  it('should forward a "theme" change to the devtools instance after mount', async () => {
+    const queryClient = new QueryClient()
+    const { rerender } = render(SvelteQueryDevtools, {
+      props: { client: queryClient, theme: 'light' },
+    })
+    await vi.dynamicImportSettled()
+    setThemeMock.mockClear()
+
+    await rerender({ client: queryClient, theme: 'dark' })
+
+    expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 })
