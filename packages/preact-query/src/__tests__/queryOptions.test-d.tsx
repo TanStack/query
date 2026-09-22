@@ -1,22 +1,13 @@
-import {
-  QueriesObserver,
-  QueryClient,
-  dataTagSymbol,
-  skipToken,
-} from '@tanstack/query-core'
-import type {
-  DataTag,
-  InitialDataFunction,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { queryOptions } from '../queryOptions'
-import type { AnyUseQueryOptions } from '../types'
 import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
 import { useSuspenseQuery } from '../useSuspenseQuery'
+import type { AnyUseQueryOptions } from '../types'
+import type { DataTag, InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -109,6 +100,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -236,19 +228,6 @@ describe('queryOptions', () => {
     // @ts-expect-error TS2345
     const { data } = useSuspenseQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
-  })
-
-  it('should return the proper type when passed to QueriesObserver', () => {
-    const options = queryOptions({
-      queryKey: queryKey(),
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const queryClient = new QueryClient()
-    const queriesObserver = new QueriesObserver(queryClient, [options])
-    expectTypeOf(queriesObserver).toEqualTypeOf<
-      QueriesObserver<Array<QueryObserverResult>>
-    >()
   })
 
   it('should allow undefined response in initialData', () => {

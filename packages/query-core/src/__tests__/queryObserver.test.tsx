@@ -1,14 +1,13 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver, focusManager } from '..'
+import {
+  QueryClient,
+  QueryObserver,
+  focusManager,
+  noop,
+  timeoutManager,
+} from '..'
+import { setIsServer } from './utils'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -324,9 +323,6 @@ describe('queryObserver', () => {
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
-      expectTypeOf(result).toEqualTypeOf<
-        QueryObserverResult<{ myCount: number }>
-      >()
       observerResult = result
     })
     await vi.advanceTimersByTimeAsync(0)
@@ -342,9 +338,6 @@ describe('queryObserver', () => {
       select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
-    expectTypeOf(observerResult.data).toEqualTypeOf<
-      { myCount: number } | undefined
-    >()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
   })
 
@@ -814,7 +807,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
     const unsubscribe = observer.subscribe(callback)
-    await queryClient.fetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -835,7 +828,7 @@ describe('queryObserver', () => {
       results.push(x)
     })
     observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
-    await queryClient.fetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -861,7 +854,7 @@ describe('queryObserver', () => {
     const unsubscribe2 = observer.subscribe((x) => {
       results2.push(x)
     })
-    await queryClient.fetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe1()
     unsubscribe2()
@@ -1405,6 +1398,55 @@ describe('queryObserver', () => {
     expect(result.isStale).toBe(false)
   })
 
+  it('should not schedule timers for disabled observers', () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data', {
+      updatedAt: Date.now() - 20,
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      staleTime: 10,
+      refetchInterval: 10,
+    })
+    const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
+    const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
+    expect(setIntervalSpy).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
+  it('should not schedule timers on the server', () => {
+    const resetIsServer = setIsServer(true)
+
+    try {
+      const key = queryKey()
+      queryClient.setQueryData(key, 'data')
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        staleTime: 10,
+        refetchInterval: 10,
+      })
+      const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
+      const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
+
+      const unsubscribe = observer.subscribe(vi.fn())
+
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
+      expect(setIntervalSpy).not.toHaveBeenCalled()
+
+      unsubscribe()
+    } finally {
+      resetIsServer()
+    }
+  })
+
   it('should allow staleTime as a function', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
@@ -1484,10 +1526,12 @@ describe('queryObserver', () => {
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is "always" even if the query is fresh', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const observer = new QueryObserver(queryClient, {
@@ -1536,10 +1580,12 @@ describe('queryObserver', () => {
     const key = queryKey()
     const refetchOnWindowFocus = vi.fn(() => 'always' as const)
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'data'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const observer = new QueryObserver(queryClient, {

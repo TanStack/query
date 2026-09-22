@@ -5,12 +5,12 @@ title: createInfiniteQueryController
 
 ```ts
 function createInfiniteQueryController<TQueryFnData, TError, TData, TQueryKey, TPageParam>(
-   host,
-   options,
-queryClient?): InfiniteQueryResultAccessor<TData, TError>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>,
+queryClient?: QueryClient): InfiniteQueryResultAccessor<TData, TError>;
 ```
 
-Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:403](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L403)
+Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:402](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L402)
 
 Creates a Lit reactive controller that subscribes the host to an infinite
 query.
@@ -35,7 +35,7 @@ nearest connected `QueryClientProvider`.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 ### TQueryKey
 
@@ -63,7 +63,7 @@ options.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

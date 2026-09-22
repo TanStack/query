@@ -7,24 +7,13 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [preact-query/src/QueryClientProvider.tsx:24](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L24)
+Defined in: [packages/preact-query/src/QueryClientProvider.tsx:38](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L38)
+
+The props accepted by `QueryClientProvider`.
 
 ## Properties
 
-### children?
-
-```ts
-optional children: ComponentChildren;
-```
-
-Defined in: [preact-query/src/QueryClientProvider.tsx:26](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L26)
-
-***
-
-### client
-
-```ts
-client: QueryClient;
-```
-
-Defined in: [preact-query/src/QueryClientProvider.tsx:25](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L25)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="children"></a> `children?` | `ComponentChildren` | The components that get access to the provided `QueryClient`. |
+| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |

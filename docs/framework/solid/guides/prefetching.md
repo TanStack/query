@@ -2,6 +2,7 @@
 id: prefetching
 title: Prefetching & Router Integration
 ref: docs/framework/react/guides/prefetching.md
+replace: { 'react-query': 'solid-query', 'React': 'Solid' }
 ---
 
 [//]: # 'ExampleComponent'
@@ -86,17 +87,19 @@ function Comments(props) {
 [//]: # 'ExampleParentComponent'
 [//]: # 'Suspense'
 
-Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.prefetchQuery`:
+Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
 
 ```tsx
 const queryClient = useQueryClient()
 const articleQuery = useQuery(() => ({
   queryKey: ['article', id],
   queryFn: (...args) => {
-    queryClient.prefetchQuery({
-      queryKey: ['article-comments', id],
-      queryFn: getArticleCommentsById,
-    })
+    void queryClient
+      .query({
+        queryKey: ['article-comments', id],
+        queryFn: getArticleCommentsById,
+      })
+      .catch(noop)
 
     return getArticleById(...args)
   },
@@ -111,10 +114,12 @@ import { createEffect } from 'solid-js'
 const queryClient = useQueryClient()
 
 createEffect(() => {
-  queryClient.prefetchQuery({
-    queryKey: ['article-comments', id],
-    queryFn: getArticleCommentsById,
-  })
+  void queryClient
+    .query({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    })
+    .catch(noop)
 })
 ```
 
@@ -185,10 +190,10 @@ function Feed() {
 
       for (const feedItem of feed) {
         if (feedItem.type === 'GRAPH') {
-          queryClient.prefetchQuery({
+          void queryClient.query({
             queryKey: ['graph', feedItem.id],
             queryFn: getGraphDataById,
-          })
+          }).catch(noop)
         }
       }
 
@@ -213,6 +218,8 @@ For now, let's focus on the client side case and look at an example of how you c
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
+Note that many route loaders use error boundaries to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
+
 ```tsx
 const queryClient = new QueryClient()
 const routerContext = new RouterContext()
@@ -233,11 +240,19 @@ const articleRoute = new Route({
     context: { queryClient },
     routeContext: { articleQueryOptions, commentsQueryOptions },
   }) => {
-    // Fetch comments asap, but don't block
-    queryClient.prefetchQuery(commentsQueryOptions)
+    // Fetch comments asap, but don't block or throw errors
+    void queryClient.query(commentsQueryOptions).catch(noop)
 
     // Don't render the route at all until article has been fetched
-    await queryClient.prefetchQuery(articleQueryOptions)
+    // As this is critical data we want the error component to trigger
+    // as soon as possible if something goes wrong
+    await queryClient.query({
+      ...articleQueryOptions,
+      // If we have the article loaded already, we don't want to block on
+      // an extra prefetch; fallback on the default useQuery behavior to
+      // keep the data fresh
+      staleTime: 'static'
+    })
   },
   component: ({ useRouteContext }) => {
     const { articleQueryOptions, commentsQueryOptions } = useRouteContext()

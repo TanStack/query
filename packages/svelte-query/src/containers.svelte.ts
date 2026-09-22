@@ -31,7 +31,22 @@ export function createRawRef<T extends {} | Array<unknown>>(
 ): [T, (newValue: T) => void] {
   const refObj = (Array.isArray(init) ? [] : {}) as T
   const hiddenKeys = new SvelteSet<PropertyKey>()
+  // Absent keys have no `$state.raw` field to subscribe to, and `length` is a
+  // plain array property, so reads of either are tracked through this instead.
+  // Without it, anything observed while the ref is empty never re-runs.
+  let keyVersion = $state.raw(0)
+  const trackKeys = () => keyVersion
   const out = new Proxy(refObj, {
+    get(target, prop, receiver) {
+      if (
+        hiddenKeys.has(prop) ||
+        !(prop in target) ||
+        (Array.isArray(target) && prop === 'length')
+      ) {
+        trackKeys()
+      }
+      return Reflect.get(target, prop, receiver)
+    },
     set(target, prop, value, receiver) {
       hiddenKeys.delete(prop)
       if (prop in target) {
@@ -88,6 +103,14 @@ export function createRawRef<T extends {} | Array<unknown>>(
     const existingKeys = Object.keys(out)
     const newKeys = Object.keys(newValue)
     const keysToRemove = existingKeys.filter((key) => !newKeys.includes(key))
+    // Arrays: delete in descending index order so each `deleteProperty` trap
+    // sees the slot it is removing as the current tail (length-- stays valid).
+    // Forward iteration would shrink the array under our feet and the next
+    // index would no longer be `in target`, tripping the trap.
+    if (Array.isArray(newValue)) {
+      keysToRemove.sort((a, b) => Number(b) - Number(a))
+    }
+    const keysAdded = newKeys.some((key) => !existingKeys.includes(key))
     for (const key of keysToRemove) {
       // @ts-expect-error
       delete out[key]
@@ -99,6 +122,9 @@ export function createRawRef<T extends {} | Array<unknown>>(
       // So we wrap the property access in a special function that we can identify later to lazily access the value.
       // (See above)
       out[key] = brand(() => newValue[key])
+    }
+    if (keysAdded || keysToRemove.length > 0) {
+      keyVersion++
     }
   }
 

@@ -523,6 +523,46 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('Data 1')).toBeInTheDocument()
   })
 
+  it('should throw error when a queryFn rejects with a falsy error', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+            // literal `undefined` error crashes the framework. `0` is just an arbitrary
+            // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+            // crash) — any falsy primitive other than `null`/`undefined` would do.
+            queryFn: () => sleep(10).then(() => Promise.reject(0)),
+            retry: false,
+          },
+        ],
+      })
+
+      return <div>data: {String(query.data)}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleMock.mockRestore()
+  })
+
   it('should throw error when queryKey changes and new query fails', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')

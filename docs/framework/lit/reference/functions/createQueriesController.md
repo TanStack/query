@@ -5,12 +5,12 @@ title: createQueriesController
 
 ```ts
 function createQueriesController<TQueryOptions, TCombinedResult>(
-   host,
-   options,
-queryClient?): QueriesResultAccessor<TCombinedResult>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateQueriesControllerOptions<TQueryOptions, TCombinedResult>>,
+queryClient?: QueryClient): QueriesResultAccessor<TCombinedResult>;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:703](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L703)
+Defined in: [packages/lit-query/src/createQueriesController.ts:701](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L701)
 
 Creates a Lit reactive controller that subscribes the host to multiple
 queries.
@@ -49,7 +49,7 @@ Queries controller options, or a getter that returns options.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

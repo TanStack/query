@@ -54,10 +54,10 @@ async function resolveAuthorForPR(prNumber) {
 }
 
 // Get the previous release commit to diff against.
-// This script runs right after the "ci: changeset release" commit is pushed,
+// This script runs right after the "ci: Version Packages" PR is merged,
 // so HEAD is the release commit.
 const releaseLogs = execSync(
-  'git log --oneline --grep="ci: changeset release" --format=%H',
+  'git log --oneline --grep="^ci: Version Packages" --grep="^ci: changeset release" --format=%H',
 )
   .toString()
   .trim()
@@ -159,7 +159,11 @@ for (const line of commits) {
   const [, hash, email, subject] = match
 
   // Skip release commits
-  if (subject.startsWith('ci: changeset release')) continue
+  if (
+    subject.startsWith('ci: Version Packages') ||
+    subject.startsWith('ci: changeset release')
+  )
+    continue
 
   // Parse conventional commit: type(scope)!: message
   const conventionalMatch = subject.match(/^(\w+)(?:\(([^)]*)\))?(!)?:\s*(.*)$/)
