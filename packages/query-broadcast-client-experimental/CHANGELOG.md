@@ -1,5 +1,14 @@
 # @tanstack/query-broadcast-client-experimental
 
+## 5.103.2
+
+### Patch Changes
+
+- [#11392](https://github.com/TanStack/query/pull/11392) [`3221525`](https://github.com/TanStack/query/commit/322152569e119a72fce5cb205fdb3ea8809552f0) - fix: don't overwrite an existing query's resolved data when another tab broadcasts an `added` event for it
+
+- Updated dependencies [[`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e)]:
+  - @tanstack/query-core@5.103.2
+
 ## 5.103.1
 
 ### Patch Changes

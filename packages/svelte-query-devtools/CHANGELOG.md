@@ -1,5 +1,22 @@
 # @tanstack/svelte-query-devtools
 
+## 6.2.3
+
+### Patch Changes
+
+- [#10636](https://github.com/TanStack/query/pull/10636) [`847f471`](https://github.com/TanStack/query/commit/847f471e37c865a488ba891d9bac7a17af73e918) - Add theme option support to the floating devtools.
+
+- Updated dependencies [[`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99)]:
+  - @tanstack/svelte-query@6.2.3
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/svelte-query@6.2.2
+
 ## 6.2.1
 
 ### Patch Changes
