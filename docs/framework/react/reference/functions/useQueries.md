@@ -9,7 +9,7 @@ redirect_from:
 function useQueries<T, TCombinedResult>(__namedParameters: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:355](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L355)
+Defined in: [packages/react-query/src/useQueries.ts:357](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L357)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 

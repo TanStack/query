@@ -7,12 +7,15 @@ title: SuspenseQueriesOptions
 type SuspenseQueriesOptions<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseSuspenseQueryOptions[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseSuspenseQueryOptions<Head>] : T extends [infer Head, ...(infer Tails)] ? SuspenseQueriesOptions<[...Tails], [...TResults, GetUseSuspenseQueryOptions<Head>], [...TDepth, 1]> : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions[];
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:119](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L119)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:122](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L122)
 
 The `queries` array accepted by `useSuspenseQueries`. Recursively unwraps each tuple element so every
-entry's `queryFn`/`select` are inferred individually, up to 20 elements. An opaque array (e.g. `unknown[]`)
-is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls back to a
-single homogeneous [UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) type.
+entry's `queryFn`/`select` are inferred individually, up to 20 elements — past that, a tuple falls back to
+a single homogeneous [UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) type. An opaque array (e.g. `unknown[]`) is returned
+as-is; a non-tuple array whose element type structurally matches a query options object is mapped
+per-element instead, still inferring each entry individually; any other non-tuple array — one whose
+element type doesn't match the expected options shape — falls back to that same homogeneous options type
+too.
 
 ## Type Parameters
 

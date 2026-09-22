@@ -3,7 +3,7 @@ id: UseMutationOptions
 title: UseMutationOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:412](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L412)
+Defined in: [packages/react-query/src/types.ts:413](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L413)
 
 The options accepted by `useMutation`. Same as [MutationObserverOptions](MutationObserverOptions.md) from `@tanstack/query-core`,
 minus the internal `_defaulted` flag.
