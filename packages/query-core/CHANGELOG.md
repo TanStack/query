@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.103.2
+
+### Patch Changes
+
+- [#11524](https://github.com/TanStack/query/pull/11524) [`8a28904`](https://github.com/TanStack/query/commit/8a28904aaccb6bc26398b751400a181c0f6d7f0e) - Ignore removal requests for query instances that are no longer stored in the cache.
+
 ## 5.103.1
 
 ### Patch Changes

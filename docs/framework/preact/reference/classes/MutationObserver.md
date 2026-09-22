@@ -140,15 +140,13 @@ built yet, e.g. before the first `mutate()` call or after `reset()`).
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:42](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L42)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
 
-Whether anything is currently subscribed.
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
-
-`true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Inherited from
 
@@ -316,7 +314,9 @@ subscribe(listener: MutationObserverListener): () => void;
 
 Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
 
-Registers a listener to be called on every update this object notifies about.
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
@@ -327,9 +327,6 @@ Registers a listener to be called on every update this object notifies about.
 Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
-
-A function that removes the listener again. Call it to stop listening; the base class never
-drops a listener on its own, though some subclasses clear all of theirs in `destroy()`.
 
 ```ts
 (): void;
