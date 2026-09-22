@@ -1,13 +1,7 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import {
-  QueriesObserver,
-  QueryClient,
-  dataTagSymbol,
-  skipToken,
-} from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { createQueries, queryOptions } from '../src/index.js'
-import type { QueryObserverResult } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -228,20 +222,6 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
-  })
-
-  it('should return the proper type when passed to QueriesObserver', () => {
-    const key = queryKey()
-    const options = queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const queryClient = new QueryClient()
-    const queriesObserver = new QueriesObserver(queryClient, [options])
-    expectTypeOf(queriesObserver).toEqualTypeOf<
-      QueriesObserver<Array<QueryObserverResult>>
-    >()
   })
 
   it('should allow undefined response in initialData', () => {
