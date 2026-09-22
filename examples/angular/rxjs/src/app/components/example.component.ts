@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms'
-import {
-  injectQuery,
-  keepPreviousData,
-} from '@tanstack/angular-query'
+import { injectQuery, keepPreviousData } from '@tanstack/angular-query'
 import { debounceTime, distinctUntilChanged, lastValueFrom } from 'rxjs'
 import { AutocompleteService } from '../services/autocomplete-service'
 

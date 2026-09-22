@@ -1,4 +1,9 @@
-import { DestroyRef, NgZone, PendingTasks, runInInjectionContext } from '@angular/core'
+import {
+  DestroyRef,
+  NgZone,
+  PendingTasks,
+  runInInjectionContext,
+} from '@angular/core'
 import { describe, expect, it, vi } from 'vitest'
 import { injectPendingTasksLifecycle } from '../utils/inject-pending-tasks-lifecycle'
 import type { Injector } from '@angular/core'

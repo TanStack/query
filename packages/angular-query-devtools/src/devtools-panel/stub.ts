@@ -10,8 +10,4 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = () => ({
   destroy: noop,
 })
 
-export type {
-  InjectDevtoolsPanel,
-  DevtoolsPanelOptions,
-  DevtoolsPanelRef,
-}
+export type { InjectDevtoolsPanel, DevtoolsPanelOptions, DevtoolsPanelRef }

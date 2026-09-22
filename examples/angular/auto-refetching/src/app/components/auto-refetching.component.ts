@@ -4,10 +4,7 @@ import {
   inject,
   signal,
 } from '@angular/core'
-import {
-  injectMutation,
-  injectQuery,
-} from '@tanstack/angular-query'
+import { injectMutation, injectQuery } from '@tanstack/angular-query'
 import { NgStyle } from '@angular/common'
 import { TasksService } from '../services/tasks.service'
 

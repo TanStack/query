@@ -1351,7 +1351,6 @@ describe('injectQuery', () => {
       }).toThrowError(/NG0203(.*?)injectQuery/)
     })
 
-
     it('should complete queries before whenStable() resolves', async () => {
       const app = TestBed.inject(ApplicationRef)
 

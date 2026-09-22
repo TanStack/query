@@ -170,14 +170,18 @@ describe('withPersistQueryClient', () => {
     > = []
 
     const queryClient = new QueryClient()
-    void queryClient.query({
-      queryKey: key1,
-      queryFn: () => sleep(10).then(() => 'hydrated-1'),
-    }).catch(noop)
-    void queryClient.query({
-      queryKey: key2,
-      queryFn: () => sleep(10).then(() => 'hydrated-2'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 'hydrated-1'),
+      })
+      .catch(noop)
+    void queryClient
+      .query({
+        queryKey: key2,
+        queryFn: () => sleep(10).then(() => 'hydrated-2'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -504,10 +508,12 @@ describe('withPersistQueryClient', () => {
   it('should await onSuccess before refetching or subscribing', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -696,10 +702,12 @@ describe('withPersistQueryClient', () => {
     )
 
     const queryClient = new QueryClient()
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     persistQueryClientSave({ queryClient, persister: holder.persister })
@@ -779,10 +787,12 @@ describe('withPersistQueryClient', () => {
       .spyOn(persistClientCore, 'persistQueryClientSubscribe')
       .mockReturnValue(cleanup)
 
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)

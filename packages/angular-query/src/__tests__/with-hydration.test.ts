@@ -224,10 +224,12 @@ describe('TransferState dehydration (server)', () => {
     const queryClient = new QueryClient()
     const injector = createQueryInjector(queryClient, 'server')
 
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => Promise.resolve('ssr-data'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('ssr-data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
 
     injector.get(TransferState).toJson()
@@ -246,10 +248,12 @@ describe('TransferState dehydration (server)', () => {
     const queryClient = new QueryClient()
     const injector = createQueryInjector(queryClient, 'browser')
 
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => Promise.resolve('data'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
 
     injector.get(TransferState).toJson()
@@ -270,10 +274,12 @@ describe('TransferState dehydration (server)', () => {
       withNoQueryHydration(),
     )
 
-    void queryClient.query({
-      queryKey: key,
-      queryFn: () => Promise.resolve('data'),
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(0)
 
     injector.get(TransferState).toJson()
