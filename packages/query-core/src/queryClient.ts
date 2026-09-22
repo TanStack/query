@@ -263,6 +263,7 @@ export class QueryClient {
    * @param queryKey - The query key to set data for.
    * @param updater - Either the new data, or a function that receives the current data (which
    * may be `undefined`) and returns the new data.
+   * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
    * @returns The data that was written, or `undefined` if the updater returned `undefined` — in that case
    * the write is skipped and the cache is left unchanged.
    *

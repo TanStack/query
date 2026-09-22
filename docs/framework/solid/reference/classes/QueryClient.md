@@ -46,7 +46,7 @@ QueryCoreClient.constructor
 cancelQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, cancelOptions?: CancelOptions): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:440](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L440)
+Defined in: [packages/query-core/src/queryClient.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L441)
 
 Cancels outgoing fetches for queries matching the given filters. Most useful when performing
 optimistic updates, since any outgoing refetch that resolves afterwards would otherwise
@@ -95,7 +95,7 @@ QueryCoreClient.cancelQueries
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1095](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1095)
+Defined in: [packages/query-core/src/queryClient.ts:1096](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1096)
 
 Clears both the query cache and the mutation cache this client is connected to.
 
@@ -126,7 +126,7 @@ QueryCoreClient.clear
 defaultMutationOptions<T>(options?: T): T;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1069](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1069)
+Defined in: [packages/query-core/src/queryClient.ts:1070](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1070)
 
 The mutation counterpart of [QueryClient#defaultQueryOptions](#defaultqueryoptions). Called by framework
 adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
@@ -165,7 +165,7 @@ defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPagePar
 | DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:982](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L982)
+Defined in: [packages/query-core/src/queryClient.ts:983](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L983)
 
 Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
 caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
@@ -222,7 +222,7 @@ QueryCoreClient.defaultQueryOptions
 ensureInfiniteQueryData<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:746](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L746)
+Defined in: [packages/query-core/src/queryClient.ts:747](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L747)
 
 #### Type Parameters
 
@@ -322,7 +322,7 @@ QueryCoreClient.ensureQueryData
 fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:701](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L701)
+Defined in: [packages/query-core/src/queryClient.ts:702](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L702)
 
 #### Type Parameters
 
@@ -374,7 +374,7 @@ QueryCoreClient.fetchInfiniteQuery
 fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:608](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L608)
+Defined in: [packages/query-core/src/queryClient.ts:609](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L609)
 
 #### Type Parameters
 
@@ -426,7 +426,7 @@ QueryCoreClient.fetchQuery
 getDefaultOptions(): DefaultOptions;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:830](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L830)
+Defined in: [packages/query-core/src/queryClient.ts:831](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L831)
 
 Returns the default options that were set when creating the client, or via
 [QueryClient#setDefaultOptions](#setdefaultoptions).
@@ -458,7 +458,7 @@ QueryCoreClient.getDefaultOptions
 getMutationCache(): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:814](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L814)
+Defined in: [packages/query-core/src/queryClient.ts:815](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L815)
 
 Returns the mutation cache this client is connected to.
 
@@ -490,7 +490,7 @@ QueryCoreClient.getMutationCache
 getMutationDefaults(mutationKey: readonly unknown[]): OmitKeyof<MutationObserverOptions<any, any, any, any>, "mutationKey">;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:957](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L957)
+Defined in: [packages/query-core/src/queryClient.ts:958](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L958)
 
 Returns the default options registered for mutations whose mutation key partially matches
 the given `mutationKey`, via [QueryClient#setMutationDefaults](#setmutationdefaults). If multiple registered
@@ -584,7 +584,7 @@ QueryCoreClient.getQueriesData
 getQueryCache(): QueryCache;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:798](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L798)
+Defined in: [packages/query-core/src/queryClient.ts:799](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L799)
 
 Returns the query cache this client is connected to.
 
@@ -668,7 +668,7 @@ QueryCoreClient.getQueryData
 getQueryDefaults(queryKey: readonly unknown[]): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, "queryKey">;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:900](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L900)
+Defined in: [packages/query-core/src/queryClient.ts:901](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L901)
 
 Returns the default options registered for queries whose query key partially matches the
 given `queryKey`, via [QueryClient#setQueryDefaults](#setquerydefaults). If multiple registered defaults
@@ -706,7 +706,7 @@ getQueryState<TQueryFnData, TError, TTaggedQueryKey, TInferredQueryFnData, TInfe
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:358](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L358)
+Defined in: [packages/query-core/src/queryClient.ts:359](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L359)
 
 Imperative (non-reactive) way to retrieve an existing query's state. If the query does not
 exist, `undefined` is returned.
@@ -765,7 +765,7 @@ QueryCoreClient.getQueryState
 infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:675](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L675)
+Defined in: [packages/query-core/src/queryClient.ts:676](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L676)
 
 Asynchronous method to fetch and cache an infinite query, resolving with an
 [InfiniteData](../interfaces/InfiniteData.md) object or throwing with the error.
@@ -834,7 +834,7 @@ QueryCoreClient.infiniteQuery
 invalidateQueries<TTaggedQueryKey>(filters?: InvalidateQueryFilters<TTaggedQueryKey>, options?: InvalidateOptions): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:468](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L468)
+Defined in: [packages/query-core/src/queryClient.ts:469](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L469)
 
 Marks queries matching the given filters as invalidated. Unlike
 [QueryClient#removeQueries](#removequeries), invalidated queries stay in the cache.
@@ -995,7 +995,7 @@ QueryCoreClient.mount
 prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:724](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L724)
+Defined in: [packages/query-core/src/queryClient.ts:725](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L725)
 
 #### Type Parameters
 
@@ -1047,7 +1047,7 @@ QueryCoreClient.prefetchInfiniteQuery
 prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:642](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L642)
+Defined in: [packages/query-core/src/queryClient.ts:643](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L643)
 
 #### Type Parameters
 
@@ -1095,7 +1095,7 @@ QueryCoreClient.prefetchQuery
 query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options: QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:562](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L562)
+Defined in: [packages/query-core/src/queryClient.ts:563](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L563)
 
 Asynchronous method to fetch and cache a query, resolving with the data or throwing with
 the error.
@@ -1178,7 +1178,7 @@ QueryCoreClient.query
 refetchQueries<TTaggedQueryKey>(filters?: RefetchQueryFilters<TTaggedQueryKey>, options?: RefetchOptions): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:505](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L505)
+Defined in: [packages/query-core/src/queryClient.ts:506](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L506)
 
 Refetches queries matching the given filters, regardless of whether they are stale. Without
 filters, every query in the cache is refetched. Queries that are disabled, or static (only
@@ -1229,7 +1229,7 @@ QueryCoreClient.refetchQueries
 removeQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:384](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L384)
+Defined in: [packages/query-core/src/queryClient.ts:385](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L385)
 
 Removes queries from the cache that match the given filters. Unlike
 [QueryClient#invalidateQueries](#invalidatequeries) or [QueryClient#refetchQueries](#refetchqueries), this removes
@@ -1272,7 +1272,7 @@ QueryCoreClient.removeQueries
 resetQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, options?: ResetOptions): Promise<void>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:405](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L405)
+Defined in: [packages/query-core/src/queryClient.ts:406](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L406)
 
 Resets queries matching the given filters back to their initial state (e.g. any
 `initialData`), notifying subscribers rather than removing them. Active queries among the
@@ -1318,7 +1318,7 @@ QueryCoreClient.resetQueries
 resumePausedMutations(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:779](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L779)
+Defined in: [packages/query-core/src/queryClient.ts:780](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L780)
 
 Resumes mutations that were paused because there was no network connection. Does nothing
 (resolving immediately) if the client is currently offline.
@@ -1350,7 +1350,7 @@ QueryCoreClient.resumePausedMutations
 setDefaultOptions(options: DefaultOptions): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:851](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L851)
+Defined in: [packages/query-core/src/queryClient.ts:852](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L852)
 
 Dynamically sets the default options for this client, overwriting any previously defined
 default options.
@@ -1396,7 +1396,7 @@ QueryCoreClient.setDefaultOptions
 setMutationDefaults<TData, TError, TVariables, TOnMutateResult>(mutationKey: readonly unknown[], options: OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:929](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L929)
+Defined in: [packages/query-core/src/queryClient.ts:930](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L930)
 
 Sets default options for mutations whose mutation key partially matches the given
 `mutationKey`. As with [QueryClient#setQueryDefaults](#setquerydefaults), the order of registration
@@ -1461,7 +1461,7 @@ setQueriesData<TQueryFnData, TQueryFilters>(
    options?: SetDataOptions): [readonly unknown[], TQueryFnData | undefined][];
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:327](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L327)
+Defined in: [packages/query-core/src/queryClient.ts:328](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L328)
 
 Synchronous way to immediately update the cached data of multiple queries at once, using
 filters or partial query key matching. Only queries that already exist and match the given
@@ -1524,7 +1524,7 @@ setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
    options?: SetDataOptions): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L277)
+Defined in: [packages/query-core/src/queryClient.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L278)
 
 Synchronous way to immediately update a query's cached data. If the updater (or the value
 passed) resolves to `undefined`, the cache is left untouched and no query is created;
@@ -1567,6 +1567,8 @@ may be `undefined`) and returns the new data.
 
 [`SetDataOptions`](../interfaces/SetDataOptions.md)
 
+Set `updatedAt` to override the timestamp the written data is recorded with.
+
 #### Returns
 
 `NoInfer`\<`TInferredQueryFnData`\> \| `undefined`
@@ -1597,7 +1599,7 @@ QueryCoreClient.setQueryData
 setQueryDefaults<TQueryFnData, TError, TData, TQueryData>(queryKey: readonly unknown[], options: Partial<OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>, "queryKey">>): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:870](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L870)
+Defined in: [packages/query-core/src/queryClient.ts:871](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L871)
 
 Sets default options for queries whose query key partially matches the given `queryKey`.
 
