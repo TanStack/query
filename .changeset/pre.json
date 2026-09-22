@@ -31,5 +31,5 @@
     "@tanstack/vue-query": "5.103.1",
     "@tanstack/vue-query-devtools": "6.2.1"
   },
-  "changesets": []
+  "changesets": ["angular-stable-release"]
 }
