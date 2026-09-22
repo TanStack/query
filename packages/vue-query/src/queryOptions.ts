@@ -217,7 +217,8 @@ export type DefinedInitialQueryOptionsWithDataTag<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
