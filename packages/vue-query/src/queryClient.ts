@@ -39,6 +39,13 @@ import type {
  * `CancelOptions` or `InvalidateOptions`) or filters (such as the `QueryFilters` accepted by
  * `invalidateQueries`) also accept a {@link MaybeRefDeep} version of it, so you can pass `ref`s directly
  * without unwrapping them yourself — e.g. `queryClient.invalidateQueries({ queryKey: ['post', myRef] })`.
+ *
+ * `ref` entries in a `queryKey` are unwrapped this way on every method, but reactive getter entries
+ * (`() => id.value`) are only unwrapped when the `queryKey` is passed as a `queryKey` property of a
+ * filters/options object (e.g. `invalidateQueries({ queryKey: ['post', idGetter] })`) — methods like
+ * `getQueryData` that take the `queryKey` array as their own argument do not unwrap getter entries there,
+ * and the getter function itself ends up in the cache key.
+ *
  * Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClient`.
  */
 export class QueryClient extends QC {
