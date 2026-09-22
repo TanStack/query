@@ -3,7 +3,7 @@ id: MutationCacheConfig
 title: MutationCacheConfig
 ---
 
-Defined in: [packages/query-core/src/mutationCache.ts:26](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L26)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:16
 
 Global callbacks that fire for every mutation handled by a `MutationCache`, regardless of which
 component or observer triggered it. They differ from the `defaultOptions` provided to a

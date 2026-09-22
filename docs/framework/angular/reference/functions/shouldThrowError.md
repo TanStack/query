@@ -7,7 +7,7 @@ title: shouldThrowError
 function shouldThrowError<T>(throwOnError: boolean | T | undefined, params: Parameters<T>): boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:582](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L582)
+Defined in: packages/query-core/dist-ts/src/utils.d.ts:206
 
 Resolves a `throwOnError` option to a boolean.
 If `throwOnError` is a function, it is called with `params` (e.g. the error and, depending on the caller,

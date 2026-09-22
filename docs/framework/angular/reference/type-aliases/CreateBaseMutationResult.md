@@ -9,7 +9,7 @@ type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Over
 }> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:284](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L284)
+Defined in: [packages/angular-query/src/types.ts:355](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L355)
 
 The pre-`Signal` shape [CreateMutationResult](CreateMutationResult.md) is built from — not what `injectMutation` actually
 returns. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with `mutate` narrowed to the

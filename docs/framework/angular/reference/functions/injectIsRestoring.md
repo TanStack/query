@@ -4,26 +4,16 @@ title: injectIsRestoring
 ---
 
 ```ts
-function injectIsRestoring(options?: InjectIsRestoringOptions): Signal<boolean>;
+function injectIsRestoring(): Signal<boolean>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-is-restoring.ts:35](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-restoring.ts#L35)
+Defined in: [packages/angular-query/src/inject-is-restoring.ts:21](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-restoring.ts#L21)
 
-Injects a signal that tracks whether a restore (e.g. from a persisted client, wired up via
-`provideIsRestoring`) is currently in progress. `injectQuery` and friends also check this internally to
-avoid race conditions between the restore and initializing queries.
-
-## Parameters
-
-### options?
-
-`InjectIsRestoringOptions`
-
-Additional configuration
+Injects a readonly signal that is true while the persistence integration restores
+cached query data. Returns false when no restoration is in progress.
 
 ## Returns
 
 `Signal`\<`boolean`\>
 
-A readonly `Signal<boolean>` — `true` while a restore is in progress, `false` otherwise (the
-default when no `provideIsRestoring` provider is registered).
+The current restoration state.

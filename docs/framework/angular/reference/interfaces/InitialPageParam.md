@@ -3,7 +3,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: [packages/query-core/src/types.ts:395](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L395)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:194
 
 ## Extended by
 
@@ -17,6 +17,6 @@ Defined in: [packages/query-core/src/types.ts:395](https://github.com/TanStack/q
 
 ## Properties
 
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="initialpageparam"></a> `initialPageParam` | `TPageParam` | The page param to start from when an infinite query has no pages yet. It is passed to `queryFn` as `pageParam` for the first page; every page after that gets the value returned by `getNextPageParam` or `getPreviousPageParam`. It only applies while the query has no pages: once a first page exists, refetching starts from that page's own param instead. |
+| Property | Type |
+| ------ | ------ |
+| <a id="initialpageparam"></a> `initialPageParam` | `TPageParam` |

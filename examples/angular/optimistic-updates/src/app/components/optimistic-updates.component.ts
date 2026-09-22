@@ -1,8 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import {
-  injectMutation,
-  injectQuery,
-} from '@tanstack/angular-query-experimental'
+import { injectMutation, injectQuery } from '@tanstack/angular-query'
 import { FormsModule } from '@angular/forms'
 import { DatePipe } from '@angular/common'
 import { TasksService } from '../services/tasks.service'

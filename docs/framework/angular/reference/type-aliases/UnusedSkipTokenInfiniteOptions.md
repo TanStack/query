@@ -7,7 +7,7 @@ title: UnusedSkipTokenInfiniteOptions
 type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:64](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L64)
+Defined in: [packages/angular-query/src/infinite-query-options.ts:64](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L64)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
 `queryFn` is not `skipToken` — same as [UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but `queryFn` may not be

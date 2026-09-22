@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1627](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1627)
+Defined in: packages/query-core/dist-ts/src/types.d.ts:923
 
 ## Type Parameters
 
@@ -21,4 +21,4 @@ Defined in: [packages/query-core/src/types.ts:1627](https://github.com/TanStack/
 | `hydrate.mutations?` | [`MutationOptions`](MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
 | `hydrate.queries?` | [`QueryOptions`](QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
 | <a id="mutations"></a> `mutations?` | [`MutationObserverOptions`](MutationObserverOptions.md)\<`unknown`, `TError`, `unknown`, `unknown`\> | Default options applied to every mutation, unless overridden per-mutation. |
-| <a id="queries"></a> `queries?` | [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`QueryObserverOptions`](QueryObserverOptions.md)\<`unknown`, `TError`, `unknown`, `unknown`, readonly `unknown`[], `never`\>, `"queryKey"` \| `"suspense"`, `"strictly"`\> | Default options applied to every query, unless overridden per-query. |
+| <a id="queries"></a> `queries?` | [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`QueryObserverOptions`](QueryObserverOptions.md)\<`unknown`, `TError`, `unknown`, `unknown`, readonly `unknown`[], `never`\>, `"suspense"` \| `"queryKey"`, `"strictly"`\> | Default options applied to every query, unless overridden per-query. |

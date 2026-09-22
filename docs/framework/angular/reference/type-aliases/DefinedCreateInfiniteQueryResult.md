@@ -4,10 +4,10 @@ title: DefinedCreateInfiniteQueryResult
 ---
 
 ```ts
-type DefinedCreateInfiniteQueryResult<TData, TError, TDefinedInfiniteQueryObserver> = MapToSignals<TDefinedInfiniteQueryObserver>;
+type DefinedCreateInfiniteQueryResult<TData, TError, TDefinedInfiniteQueryObserver> = DefinedInfiniteQueryNarrowing<TData, TError> & MapToSignals<TDefinedInfiniteQueryObserver, InfiniteQueryResultFields>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:205](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L205)
+Defined in: [packages/angular-query/src/types.ts:275](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L275)
 
 The result of `injectInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
 [DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md) from `@tanstack/query-core`, but value fields are exposed as a
@@ -29,4 +29,4 @@ The type of errors your `queryFn` may throw.
 
 ### TDefinedInfiniteQueryObserver
 
-`TDefinedInfiniteQueryObserver` = [`DefinedInfiniteQueryObserverResult`](DefinedInfiniteQueryObserverResult.md)\<`TData`, `TError`\>
+`TDefinedInfiniteQueryObserver` *extends* [`DefinedInfiniteQueryObserverResult`](DefinedInfiniteQueryObserverResult.md)\<`TData`, `TError`\> = [`DefinedInfiniteQueryObserverResult`](DefinedInfiniteQueryObserverResult.md)\<`TData`, `TError`\>

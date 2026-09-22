@@ -3,11 +3,7 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:328](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L328)
-
-The `isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is both a `Signal`
-(its current boolean value is read reactively without calling it) and a type-guard function you can
-call — `if (mutation.isSuccess())` — so that `mutation.data` narrows away `undefined` inside the branch.
+Defined in: [packages/angular-query/src/types.ts:386](https://github.com/TanStack/query/blob/main/packages/angular-query/src/types.ts#L386)
 
 ## Type Parameters
 
@@ -15,26 +11,17 @@ call — `if (mutation.isSuccess())` — so that `mutation.data` narrows away `u
 
 `TData` = `unknown`
 
-The type your mutation function resolves to.
-
 ### TError
 
 `TError` = [`DefaultError`](../type-aliases/DefaultError.md)
-
-The type of errors your mutation function may throw.
 
 ### TVariables
 
 `TVariables` = `unknown`
 
-The type of the variable passed to `mutate`/`mutateAsync`.
-
 ### TOnMutateResult
 
 `TOnMutateResult` = `unknown`
-
-The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
-their `onMutateResult` parameter — useful for optimistic-update rollback data.
 
 ## Properties
 

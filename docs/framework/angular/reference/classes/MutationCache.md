@@ -3,7 +3,7 @@ id: MutationCache
 title: MutationCache
 ---
 
-Defined in: [packages/query-core/src/mutationCache.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L124)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:75
 
 The `MutationCache` is the storage for mutations.
 
@@ -28,16 +28,16 @@ const unsubscribe = mutationCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new MutationCache(config: MutationCacheConfig): MutationCache;
+new MutationCache(config?: MutationCacheConfig): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:78
 
 #### Parameters
 
-##### config
+##### config?
 
-[`MutationCacheConfig`](../interfaces/MutationCacheConfig.md) = `{}`
+[`MutationCacheConfig`](../interfaces/MutationCacheConfig.md)
 
 #### Returns
 
@@ -54,10 +54,10 @@ Subscribable<MutationCacheListener>.constructor
 ### config
 
 ```ts
-config: MutationCacheConfig = {};
+config: MutationCacheConfig;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:77
 
 ***
 
@@ -67,7 +67,7 @@ Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/Ta
 protected listeners: Set<MutationCacheListener>;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:2
 
 #### Inherited from
 
@@ -83,7 +83,7 @@ Subscribable.listeners
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L236)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:99
 
 Removes all mutations from the cache.
 
@@ -109,7 +109,7 @@ find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L278)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:129
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -163,10 +163,10 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### findAll()
 
 ```ts
-findAll(filters: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters?: MutationFilters<unknown, Error, unknown, unknown>): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:308](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L308)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:145
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -176,9 +176,9 @@ information about mutations in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
-[`MutationFilters`](../interfaces/MutationFilters.md) = `{}`
+[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 #### Returns
 
@@ -204,7 +204,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:259](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L259)
+Defined in: packages/query-core/dist-ts/src/mutationCache.d.ts:113
 
 Returns all mutations within the cache.
 
@@ -231,9 +231,7 @@ const mutations = mutationCache.getAll()
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
-
-Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:5
 
 #### Returns
 
@@ -253,7 +251,7 @@ Subscribable.hasListeners
 protected onSubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L45)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:6
 
 #### Returns
 
@@ -273,7 +271,7 @@ Subscribable.onSubscribe
 protected onUnsubscribe(): void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L49)
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:7
 
 #### Returns
 
@@ -293,11 +291,7 @@ Subscribable.onUnsubscribe
 subscribe(listener: MutationCacheListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
-
-Registers a listener to be called on every update this object notifies about. Returns a function
-that removes the listener again — call it to stop listening. The base class never drops a listener
-on its own, though some subclasses clear all of theirs in `destroy()`.
+Defined in: packages/query-core/dist-ts/src/subscribable.d.ts:4
 
 #### Parameters
 

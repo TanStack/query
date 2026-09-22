@@ -1,0 +1,109 @@
+{
+  "name": "@tanstack/angular-query",
+  "version": "4.0.0",
+  "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "keywords": [
+    "angular query",
+    "angular",
+    "cache",
+    "performance",
+    "reactive",
+    "signals",
+    "state management",
+    "state",
+    "tanstack"
+  ],
+  "scripts": {
+    "clean": "premove ./dist ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto ./src ./schematics ./schematics-build",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:lib": "vitest",
+    "test:lib:zoneless": "vitest run",
+    "test:lib:zoneful": "vitest run --config vitest.zoneful.config.ts",
+    "test:lib:both": "pnpm run test:lib:zoneless && pnpm run test:lib:zoneful",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "pnpm pack && pnpm run test:schematics && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
+    "test:schematics": "vitest run --config vitest.schematics.config.ts",
+    "build": "vite build && tsc -p tsconfig.schematics.json && node scripts/inject-schematic-package-info.js",
+    "prepack": "node scripts/prepack.js"
+  },
+  "type": "module",
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
+  },
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./internal": {
+      "@tanstack/custom-condition": "./src/internal.ts",
+      "types": "./dist/internal.d.ts",
+      "default": "./dist/internal.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "**/*.d.ts",
+    "**/*.mjs",
+    "**/*.mjs.map"
+  ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.3.1",
+    "@angular-devkit/schematics": "^22.0.0",
+    "@angular/build": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/platform-server": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@schematics/angular": "^22.0.0",
+    "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/angular": "^18.1.1",
+    "npm-run-all2": "^5.0.0",
+    "rxjs": "^7.8.2",
+    "typescript": "6.0.3",
+    "vite-plugin-dts": "4.2.3",
+    "vite-plugin-externalize-deps": "^0.9.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "zone.js": "^0.16.0"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=20.1.0",
+    "@angular/core": ">=20.1.0"
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "linkDirectory": false
+  }
+}

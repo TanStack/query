@@ -3,10 +3,7 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1645](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1645)
-
-Options for cancelling an in-flight fetch, e.g. via `query.cancel()`.
-They are carried on the [CancelledError](../classes/CancelledError.md) that the cancelled fetch rejects with.
+Defined in: packages/query-core/dist-ts/src/types.d.ts:933
 
 ## Properties
 

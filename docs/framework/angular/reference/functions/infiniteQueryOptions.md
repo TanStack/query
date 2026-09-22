@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:181](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L181)
+Defined in: [packages/angular-query/src/infinite-query-options.ts:180](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L180)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
@@ -65,7 +65,7 @@ automatically as the user scrolls.
 ### Example
 
 ```angular-ts
-import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query'
 
 export const projectsOptions = infiniteQueryOptions({
   queryKey: ['projects'],
@@ -100,7 +100,7 @@ export class Projects {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:255](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L255)
+Defined in: [packages/angular-query/src/infinite-query-options.ts:254](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L254)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
@@ -151,7 +151,7 @@ automatically as the user scrolls.
 
 A parameterized factory, so the same options object can be reused per `postId`:
 ```angular-ts
-import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query'
 
 export const commentsOptions = (postId: string) =>
   infiniteQueryOptions({
@@ -195,7 +195,7 @@ export class Comments {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:329](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L329)
+Defined in: [packages/angular-query/src/infinite-query-options.ts:328](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L328)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to
 `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
@@ -246,7 +246,7 @@ automatically as the user scrolls) and that use `skipToken` to disable the query
 
 A parameterized factory, so the same options object can be reused per `postId`:
 ```angular-ts
-import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query-experimental'
+import { infiniteQueryOptions, injectInfiniteQuery } from '@tanstack/angular-query'
 
 export const commentsOptions = (postId: string) =>
   infiniteQueryOptions({

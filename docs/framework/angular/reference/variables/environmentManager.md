@@ -7,7 +7,7 @@ title: environmentManager
 const environmentManager: object;
 ```
 
-Defined in: [packages/query-core/src/environmentManager.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L29)
+Defined in: packages/query-core/dist-ts/src/environmentManager.d.ts:23
 
 Manages how TanStack Query detects whether the current runtime should be treated as
 server-side, which disables scheduling refetch timers and changes the default `retry` count
@@ -25,8 +25,6 @@ behave like a client.
 ```ts
 isServer: () => boolean;
 ```
-
-Returns whether the current runtime should be treated as a server environment.
 
 #### Returns
 

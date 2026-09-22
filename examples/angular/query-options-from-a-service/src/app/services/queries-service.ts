@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'
 import { lastValueFrom } from 'rxjs'
-import { queryOptions } from '@tanstack/angular-query-experimental'
+import { queryOptions } from '@tanstack/angular-query'
 import { HttpClient } from '@angular/common/http'
 
 export interface Post {

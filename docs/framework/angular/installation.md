@@ -3,32 +3,45 @@ id: installation
 title: Installation
 ---
 
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
+_Angular Query is compatible with Angular v20.1 and higher._
 
-### NPM
-
-_Angular Query is compatible with Angular v16 and higher_
+### Angular CLI
 
 ```bash
-npm i @tanstack/angular-query-experimental
+ng add @tanstack/angular-query
+```
+
+This installs the package and devtools, then configures an SSR-safe `QueryClient` factory with
+`withDevtools()`.
+
+### Package managers
+
+```bash
+npm i @tanstack/angular-query
 ```
 
 or
 
 ```bash
-pnpm add @tanstack/angular-query-experimental
+pnpm add @tanstack/angular-query
 ```
 
 or
 
 ```bash
-yarn add @tanstack/angular-query-experimental
+yarn add @tanstack/angular-query
 ```
 
 or
 
 ```bash
-bun add @tanstack/angular-query-experimental
+bun add @tanstack/angular-query
 ```
 
-> Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
+If you want Angular Query devtools, install the standalone devtools package as well:
+
+```bash
+npm i @tanstack/angular-query-devtools
+```
+
+> Want to try it first? See the [simple](./examples/simple) or [basic](./examples/basic) example.

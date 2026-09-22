@@ -4,63 +4,26 @@ title: injectIsFetching
 ---
 
 ```ts
-function injectIsFetching(filters?: QueryFilters<readonly unknown[]>, options?: InjectIsFetchingOptions): Signal<number>;
+function injectIsFetching(filters: () => QueryFilters): Signal<number>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:63](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L63)
+Defined in: [packages/angular-query/src/inject-is-fetching.ts:15](https://github.com/TanStack/query/blob/main/packages/angular-query/src/inject-is-fetching.ts#L15)
 
 Injects a signal that tracks the number of queries that your application is loading or fetching in the
 background (useful for app-wide loading indicators).
 
+Can be used for app-wide loading indicators
+
 ## Parameters
 
-### filters?
+### filters
 
-[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
+() => [`QueryFilters`](../interfaces/QueryFilters.md)
 
-The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
-
-### options?
-
-[`InjectIsFetchingOptions`](../interfaces/InjectIsFetchingOptions.md)
-
-Additional configuration
+A reactive factory for the filters.
 
 ## Returns
 
 `Signal`\<`number`\>
 
-A `Signal` with the number of queries that your application is currently loading or fetching in
-the background.
-
-## Examples
-
-```angular-ts
-@Component({
-  selector: 'posts-fetching-indicator',
-  template: `
-    @if (isFetchingPosts()) {
-      <span>Refreshing posts...</span>
-    }
-  `,
-})
-export class PostsFetchingIndicator {
-  // How many queries matching the posts prefix are fetching?
-  readonly isFetchingPosts = injectIsFetching({ queryKey: ['posts'] })
-}
-```
-
-A global loading indicator for any query fetching in the background, not just the ones on screen:
-```angular-ts
-@Component({
-  selector: 'global-loading-indicator',
-  template: `
-    @if (isFetching()) {
-      <div>Queries are fetching in the background...</div>
-    }
-  `,
-})
-export class GlobalLoadingIndicator {
-  readonly isFetching = injectIsFetching()
-}
-```
+signal with number of loading or fetching queries.

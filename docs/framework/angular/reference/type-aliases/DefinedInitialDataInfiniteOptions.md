@@ -7,7 +7,7 @@ title: DefinedInitialDataInfiniteOptions
 type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:109](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L109)
+Defined in: [packages/angular-query/src/infinite-query-options.ts:109](https://github.com/TanStack/query/blob/main/packages/angular-query/src/infinite-query-options.ts#L109)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
 never `undefined` (unless a `select` changes `TData` to include `undefined`).
@@ -19,8 +19,7 @@ never `undefined` (unless a `select` changes `TData` to include `undefined`).
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-  | undefined;
+| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
