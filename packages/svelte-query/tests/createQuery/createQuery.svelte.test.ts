@@ -1808,7 +1808,7 @@ describe('createQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should refetch and recover after `<svelte:boundary>`\'s reset re-mounts the query', async () => {
+  it("should refetch and recover after `<svelte:boundary>`'s reset re-mounts the query", async () => {
     const key = queryKey()
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -1836,18 +1836,14 @@ describe('createQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
-      'Error 1',
-    )
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 1')
     expect(callCount).toBe(1)
 
     await fireEvent.click(rendered.getByTestId('reset-button'))
     await vi.advanceTimersByTimeAsync(0)
 
     expect(callCount).toBe(2)
-    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
-      'Error 2',
-    )
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 2')
 
     consoleMock.mockRestore()
   })
