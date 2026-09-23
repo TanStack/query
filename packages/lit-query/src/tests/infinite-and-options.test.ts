@@ -118,8 +118,9 @@ describe('createInfiniteQueryController', () => {
     await waitFor(() => consumer.infinite().isSuccess)
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey }),
-    ).toBeDefined()
+      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
+        ?.state.data,
+    ).toEqual({ pages: [0], pageParams: [0] })
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
     ).toBeUndefined()
@@ -364,7 +365,7 @@ describe('createInfiniteQueryController', () => {
 
     const nextPageResult = await infinite.fetchNextPage()
     expect(nextPageResult.isFetchNextPageError).toBe(true)
-    expect(nextPageResult.error).toBeInstanceOf(Error)
+    expect(nextPageResult.error).toEqual(new Error('next-page-failed'))
     await waitFor(() => infinite().isFetchNextPageError)
     expect(infinite().data?.pages).toEqual([0])
   })

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
-import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
+import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createEffect, createSignal, onMount } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -63,10 +63,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -114,19 +116,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -142,10 +144,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -198,19 +202,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -226,10 +230,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -282,19 +288,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'initial',
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -310,10 +316,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -328,11 +336,11 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetched = true
-          return 'fetched'
-        },
+        queryFn: () =>
+          sleep(10).then(() => {
+            fetched = true
+            return 'fetched'
+          }),
         staleTime: Infinity,
       }))
 
@@ -371,13 +379,13 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'hydrated',
@@ -388,10 +396,12 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -494,10 +504,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -580,19 +592,19 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states[1]).toStrictEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states[2]).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'queryFn2',

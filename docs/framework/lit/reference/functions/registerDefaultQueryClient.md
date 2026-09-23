@@ -3,10 +3,8 @@ id: registerDefaultQueryClient
 title: registerDefaultQueryClient
 ---
 
-# Function: registerDefaultQueryClient()
-
 ```ts
-function registerDefaultQueryClient(client): void;
+function registerDefaultQueryClient(client: QueryClient): void;
 ```
 
 Defined in: [packages/lit-query/src/context.ts:32](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L32)
@@ -21,7 +19,7 @@ passing an explicit client or rendering under a provider when possible.
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The query client to register as the current default.
 

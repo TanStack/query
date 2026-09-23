@@ -312,6 +312,22 @@ describe('PiPContext', () => {
 
       expect(fakeWindow.close).toHaveBeenCalledTimes(1)
     })
+
+    it('should reset "pip_open" in "localStore" so the auto-open createEffect does not reopen the window', () => {
+      stubPipWindow()
+
+      renderAndAct(
+        (pip) => {
+          pip().requestPipWindow(640, 480)
+          pip().closePipWindow()
+        },
+        { disabled: true },
+      )
+
+      expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
+        'false',
+      )
+    })
   })
 
   describe('"pip_open" auto-open createEffect', () => {
@@ -351,7 +367,7 @@ describe('PiPContext', () => {
         })
 
         expect(consoleError).toHaveBeenCalledWith(
-          expect.stringContaining('Failed to open popup'),
+          'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
         )
         expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
           'false',
@@ -412,10 +428,11 @@ describe('PiPContext', () => {
           disabled: true,
         })
 
-        expect(observeSpy).toHaveBeenCalledWith(
-          gooberStyle,
-          expect.objectContaining({ childList: true, subtree: true }),
-        )
+        expect(observeSpy).toHaveBeenCalledWith(gooberStyle, {
+          childList: true,
+          subtree: true,
+          characterDataOldValue: true,
+        })
       } finally {
         gooberStyle.remove()
       }

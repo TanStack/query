@@ -3,13 +3,11 @@ id: MutationStateAccessor
 title: MutationStateAccessor
 ---
 
-# Type Alias: MutationStateAccessor\<TResult\>
-
 ```ts
 type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & object;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:32](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L32)
+Defined in: [packages/lit-query/src/useMutationState.ts:33](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L33)
 
 Accessor returned by `useMutationState`.
 

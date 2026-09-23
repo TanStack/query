@@ -232,7 +232,7 @@ describe('Explorer', () => {
       ).toBeInTheDocument()
       expect(consoleError).toHaveBeenCalledWith(
         'Failed to copy: ',
-        expect.any(Error),
+        new Error('denied'),
       )
     })
 

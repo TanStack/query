@@ -47,7 +47,7 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
   it('allows multiple caches to be partitioned', async () => {
@@ -100,10 +100,10 @@ describe('QueryClientProvider', () => {
     expect(rendered.getByText('test1')).toBeInTheDocument()
     expect(rendered.getByText('test2')).toBeInTheDocument()
 
-    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
-    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })?.state.data).toBe('test1')
+    expect(queryCache1.find({ queryKey: key2 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key1 })).toBeUndefined()
+    expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
   it("uses defaultOptions for queries when they don't provide their own config", async () => {
@@ -141,7 +141,6 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
   })
 

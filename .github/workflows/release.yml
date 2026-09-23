@@ -39,7 +39,6 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
           if [[ "$BRANCH" == *-pre ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
-            echo "tag=pre" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" == *-maint ]]; then
             echo "tag=maint" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" =~ ^v[0-9]+$ ]]; then
@@ -49,12 +48,12 @@ jobs:
           fi
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version: pnpm run changeset:version
-          publish: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
-          title: 'ci: Version Packages'
-          commit: 'ci: changeset release'
+          version-script: pnpm run changeset:version
+          publish-script: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
+          pr-title: 'ci: Version Packages'
+          commit-message: 'ci: changeset release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create GitHub Release

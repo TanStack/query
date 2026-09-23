@@ -179,8 +179,9 @@ describe('createQueriesController', () => {
     )
 
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! }),
-    ).toBeDefined()
+      explicitClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
+        ?.state.data,
+    ).toBe('alpha')
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! }),
     ).toBeUndefined()

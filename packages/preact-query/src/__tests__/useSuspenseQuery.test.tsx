@@ -8,6 +8,7 @@ import {
   QueryCache,
   QueryClient,
   QueryErrorResetBoundary,
+  experimental_streamedQuery,
   skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
@@ -206,7 +207,7 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -788,6 +789,7 @@ describe('useSuspenseQuery', () => {
       </Suspense>,
     )
 
+    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
@@ -1043,5 +1045,139 @@ describe('useSuspenseQuery', () => {
 
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
+  })
+
+  it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
+    const key = queryKey()
+
+    function Content() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    function Page() {
+      return (
+        <div>
+          <button onClick={() => queryClient.setQueryData(key, 'manual data')}>
+            set data
+          </button>
+          <Suspense fallback="loading">
+            <Content />
+          </Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('set data'))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('data: manual data')).toBeInTheDocument()
+  })
+
+  it('should release suspense when streamedQuery receives first chunk', async () => {
+    const key = queryKey()
+
+    async function* numberGenerator() {
+      await sleep(10)
+      yield 'chunk1'
+      await sleep(10)
+      yield 'chunk2'
+    }
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: experimental_streamedQuery({
+          streamFn: () => numberGenerator(),
+        }),
+      })
+      return <div>data: {data}</div>
+    }
+
+    const streamedClient = new QueryClient({
+      queryCache,
+    })
+
+    const rendered = renderWithClient(
+      streamedClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('data: chunk1')).toBeInTheDocument()
+  })
+
+  it('should release suspense when setQueryData is called before component mounts', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'preloaded')
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
+  })
+
+  it('should NOT release suspense when setQueryData is called with undefined', async () => {
+    const key = queryKey()
+
+    function Content() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    function Page() {
+      return (
+        <div>
+          <button
+            onClick={() => queryClient.setQueryData(key, undefined as any)}
+          >
+            set undefined
+          </button>
+          <Suspense fallback="loading">
+            <Content />
+          </Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('set undefined'))
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Suspense should NOT release — setQueryData(undefined) doesn't satisfy
+    // the query.state.data !== undefined guard in fetchOptimistic
+    expect(rendered.getByText('loading')).toBeInTheDocument()
   })
 })

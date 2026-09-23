@@ -3,8 +3,6 @@ id: UndefinedInitialDataOptions
 title: UndefinedInitialDataOptions
 ---
 
-# Type Alias: UndefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
-
 ```ts
 type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & object;
 ```
@@ -31,7 +29,7 @@ optional initialData:
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -39,4 +37,4 @@ optional initialData:
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

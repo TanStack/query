@@ -1,4 +1,5 @@
 import type {
+  DataTag,
   DefaultError,
   InfiniteData,
   InfiniteQueryObserverOptions,
@@ -6,10 +7,11 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * Preserves and types infinite query options for reuse across Lit Query APIs.
+ * Brands infinite query options so the `queryKey` carries the infinite query
+ * data and error types across TanStack Query APIs.
  *
- * @param options - Infinite query options to preserve.
- * @returns The same options object.
+ * @param options - Infinite query options to preserve and brand.
+ * @returns The same options object with a typed `queryKey`.
  *
  * @example
  * ```ts
@@ -43,6 +45,10 @@ export function infiniteQueryOptions<
   TData,
   TQueryKey,
   TPageParam
-> {
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+
+export function infiniteQueryOptions(options: unknown) {
   return options
 }

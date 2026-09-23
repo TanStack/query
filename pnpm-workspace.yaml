@@ -1,10 +1,15 @@
 cleanupUnusedCatalogs: true
+minimumReleaseAge: 1440
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
 trustPolicy: 'no-downgrade'
 trustPolicyExclude:
-  - 'vite@6.4.1'
+  - 'vite@6.4.1' # Socket score 94/100; popular and healthy.
+  - 'semver@5.7.2' # Socket score 100/100; popular and healthy.
+  - 'semver@6.3.1' # Socket score 100/100; popular and healthy.
+  - 'ua-parser-js@1.0.41' # Socket score 100/100; popular and healthy.
+  - 'undici-types@6.21.0' # Socket score 100/100; popular and healthy.
 
 packages:
   - 'packages/*'
@@ -64,4 +69,3 @@ allowBuilds:
 
   # nextJs
   sharp: false # not directly required for build
-

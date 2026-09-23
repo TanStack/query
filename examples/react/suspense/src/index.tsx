@@ -5,6 +5,7 @@ import {
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
+  noop,
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -44,10 +45,12 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              queryClient.prefetchQuery({
-                queryKey: ['projects'],
-                queryFn: fetchProjects,
-              })
+              queryClient
+                .query({
+                  queryKey: ['projects'],
+                  queryFn: fetchProjects,
+                })
+                .catch(noop)
             }
             return !old
           })

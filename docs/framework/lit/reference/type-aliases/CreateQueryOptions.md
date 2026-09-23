@@ -3,13 +3,11 @@ id: CreateQueryOptions
 title: CreateQueryOptions
 ---
 
-# Type Alias: CreateQueryOptions\<TQueryFnData, TError, TData, TQueryData, TQueryKey\>
-
 ```ts
 type CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:27](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L27)
+Defined in: [packages/lit-query/src/createQueryController.ts:28](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L28)
 
 Options accepted by `createQueryController`.
 
@@ -25,7 +23,7 @@ options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -37,4 +35,4 @@ options depend on Lit host state.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

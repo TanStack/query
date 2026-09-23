@@ -254,4 +254,173 @@ describe('UseSuspenseQueries config object overload', () => {
       }),
     )
   })
+
+  describe('select', () => {
+    // Inferring the `select` argument of an *inline* query object from its
+    // sibling `queryFn` is a known TypeScript limitation, because
+    // `useSuspenseQueries` infers its array generic from the argument itself.
+    // The two supported workarounds are to annotate the `select` parameter, or
+    // to define the query with the `queryOptions` helper.
+    // https://github.com/TanStack/query/issues/6556
+
+    describe('without queryOptions (inline query object)', () => {
+      it('leaves the select argument as `unknown` without an annotation', () => {
+        useSuspenseQueries({
+          queries: [
+            {
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve(1),
+              select: (data) => {
+                expectTypeOf(data).toBeUnknown()
+                // @ts-expect-error `data` is `unknown`, not the expected `number`
+                return data.toFixed()
+              },
+            },
+          ],
+        })
+      })
+
+      it('infers the result when the select parameter is annotated', () => {
+        const queryResults = useSuspenseQueries({
+          queries: [
+            {
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve(1),
+              select: (data: number) => data.toFixed(),
+            },
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+      })
+    })
+
+    describe('with queryOptions passed directly', () => {
+      it('without select, infers the queryFn data as the result', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useSuspenseQueries({ queries: [options] })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<number>()
+      })
+
+      it('with select, infers the select argument and the result', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => {
+            expectTypeOf(data).toEqualTypeOf<number>()
+            return data.toFixed()
+          },
+        })
+        const queryResults = useSuspenseQueries({ queries: [options] })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+      })
+
+      it('infers select when a base queryOptions is re-wrapped with queryOptions', () => {
+        const baseOptions = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useSuspenseQueries({
+          queries: [
+            queryOptions({
+              ...baseOptions,
+              select: (data) => {
+                expectTypeOf(data).toEqualTypeOf<number>()
+                return data.toFixed()
+              },
+            }),
+            baseOptions,
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+        expectTypeOf(queryResults[1].data).toEqualTypeOf<number>()
+      })
+
+      it('infers an overriding select when a queryOptions with a select is re-wrapped with queryOptions', () => {
+        const baseOptions = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        const queryResults = useSuspenseQueries({
+          queries: [
+            queryOptions({
+              ...baseOptions,
+              select: (data) => {
+                expectTypeOf(data).toEqualTypeOf<number>()
+                return data.toFixed()
+              },
+            }),
+          ],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+      })
+    })
+
+    describe('with queryOptions spread into an inline query object', () => {
+      it('without select in the factory, leaves an unannotated select untyped', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        useSuspenseQueries({
+          queries: [
+            {
+              ...options,
+              // @ts-expect-error Without an annotation the inline `select` parameter `data` implicitly has type `any`
+              select: (data) => {
+                expectTypeOf(data).toBeAny()
+                return data
+              },
+            },
+          ],
+        })
+      })
+
+      it('without select in the factory, an annotated select compiles', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const queryResults = useSuspenseQueries({
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+      })
+
+      it('with select in the factory, leaves an unannotated overriding select untyped', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        useSuspenseQueries({
+          queries: [
+            {
+              ...options,
+              // @ts-expect-error Without an annotation the inline `select` parameter `data` implicitly has type `any`
+              select: (data) => {
+                expectTypeOf(data).toBeAny()
+                return data
+              },
+            },
+          ],
+        })
+      })
+
+      it('with select in the factory, an annotated overriding select compiles', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+          select: (data) => data + 1,
+        })
+        const queryResults = useSuspenseQueries({
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+        })
+        expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
+      })
+    })
+  })
 })

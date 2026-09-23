@@ -3,8 +3,6 @@ id: useQueryClient
 title: useQueryClient
 ---
 
-# Function: useQueryClient()
-
 ```ts
 function useQueryClient(): QueryClient;
 ```
@@ -20,6 +18,6 @@ clients are mounted and the default would be ambiguous.
 
 ## Returns
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The single registered query client.

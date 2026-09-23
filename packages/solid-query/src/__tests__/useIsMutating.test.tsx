@@ -3,13 +3,8 @@ import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-  useMutation,
-} from '..'
-import { setActTimeout } from './utils'
+import { QueryClient, useIsMutating, useMutation } from '..'
+import { renderWithClient, setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
   let queryClient: QueryClient
@@ -68,11 +63,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
 
@@ -112,11 +103,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
@@ -160,11 +147,7 @@ describe('useIsMutating', () => {
       return <IsMutating />
     }
 
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    renderWithClient(queryClient, () => <Page />)
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
@@ -205,6 +188,56 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+  })
+
+  it('should resubscribe when a custom queryClient changes', async () => {
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+    const [client, setClient] = createSignal(queryClient1)
+    const mutationCache1 = queryClient1.getMutationCache()
+    const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
+    const unsubscribe1 = vi.fn()
+
+    vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
+      const cleanup = originalSubscribe1(listener)
+
+      return () => {
+        unsubscribe1()
+        cleanup()
+      }
+    })
+
+    function Page() {
+      const isMutating = useIsMutating(undefined, client)
+
+      return <div>mutating: {isMutating()}</div>
+    }
+
+    const rendered = render(() => <Page />)
+
+    const firstMutation = queryClient1.getMutationCache().build(queryClient1, {
+      mutationFn: () => sleep(20).then(() => 'data1'),
+    })
+    const firstMutationPromise = firstMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    setClient(queryClient2)
+
+    expect(unsubscribe1).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    const secondMutation = queryClient2.getMutationCache().build(queryClient2, {
+      mutationFn: () => sleep(20).then(() => 'data2'),
+    })
+    const secondMutationPromise = secondMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(20)
+    await Promise.all([firstMutationPromise, secondMutationPromise])
+
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
@@ -257,11 +290,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={spiedClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(spiedClient, () => <Page />)
 
     fireEvent.click(rendered.getByText('unmount'))
 

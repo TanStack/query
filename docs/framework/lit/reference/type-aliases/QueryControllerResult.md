@@ -3,8 +3,6 @@ id: QueryControllerResult
 title: QueryControllerResult
 ---
 
-# Type Alias: QueryControllerResult\<TData, TError\>
-
 ```ts
 type QueryControllerResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```
@@ -21,4 +19,4 @@ Result object produced by a Lit query controller.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
