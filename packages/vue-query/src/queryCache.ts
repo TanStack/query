@@ -8,6 +8,11 @@ import type {
 } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 
+/**
+ * Vue-aware subclass of `@tanstack/query-core`'s `QueryCache`. `find`/`findAll` also accept a
+ * {@link MaybeRefDeep} filters object, so `ref`s can be passed directly without unwrapping. Access it via
+ * `queryClient.getQueryCache()` — `QueryClient` constructs one of these by default.
+ */
 export class QueryCache extends QC {
   find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
     filters: MaybeRefDeep<WithRequired<QueryFilters, 'queryKey'>>,

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.20",
+  "version": "0.2.23",
   "description": "Lit adapter for TanStack Query Core",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,11 +15,11 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
-    "compile": "tsc --build",
+    "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto .",
     "lint:fix": "eslint --concurrency=auto . --fix",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc --noEmit --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:watch": "pnpm run test:lib:dev",

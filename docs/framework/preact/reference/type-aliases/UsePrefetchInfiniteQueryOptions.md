@@ -7,7 +7,7 @@ title: UsePrefetchInfiniteQueryOptions
 type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [preact-query/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L117)
+Defined in: [packages/preact-query/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L117)
 
 The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
 except `queryFn` is required unless a default query function has been defined.
@@ -33,7 +33,7 @@ The type of a single page, as your `queryFn` resolves it.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
@@ -47,7 +47,7 @@ elsewhere with `select` applied.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.
 

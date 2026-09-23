@@ -1,13 +1,15 @@
 ---
 id: usePrefetchQuery
 title: usePrefetchQuery
+redirect_from:
+  - framework/react/reference/usePrefetchQuery
 ---
 
 ```ts
-function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
+function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [react-query/src/usePrefetchQuery.tsx:42](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchQuery.tsx#L42)
+Defined in: [packages/react-query/src/usePrefetchQuery.tsx:42](https://github.com/TanStack/query/blob/main/packages/react-query/src/usePrefetchQuery.tsx#L42)
 
 `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
 a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
@@ -50,7 +52,7 @@ The [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to use
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

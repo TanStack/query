@@ -13,7 +13,8 @@ import type {
 } from './queryOptions'
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
@@ -223,7 +224,9 @@ export function useQuery<
  * ```
  *
  * @example
- * Seeding a detail query from an already-cached list, to skip the loading state:
+ * Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+ * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+ * fetched rather than from now:
  * ```tsx
  * import { useQuery, useQueryClient } from '@tanstack/react-query'
  *
@@ -237,6 +240,8 @@ export function useQuery<
  *       queryClient
  *         .getQueryData<Array<Post>>(['posts'])
  *         ?.find((post) => post.id === postId),
+ *     initialDataUpdatedAt: () =>
+ *       queryClient.getQueryState(['posts'])?.dataUpdatedAt,
  *   })
  *
  *   if (isError) return <span>Error: {error.message}</span>

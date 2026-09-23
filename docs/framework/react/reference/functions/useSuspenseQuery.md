@@ -1,13 +1,15 @@
 ---
 id: useSuspenseQuery
 title: useSuspenseQuery
+redirect_from:
+  - framework/react/reference/useSuspenseQuery
 ---
 
 ```ts
-function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
+function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/useSuspenseQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQuery.ts#L75)
+Defined in: [packages/react-query/src/useSuspenseQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQuery.ts#L75)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData` â€” and `queryFn` may not be `skipToken`, since Suspense hooks can't render a "disabled" state.
@@ -42,7 +44,7 @@ The [UseSuspenseQueryOptions](../interfaces/UseSuspenseQueryOptions.md) to use â
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

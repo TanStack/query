@@ -71,7 +71,7 @@ export type UnusedSkipTokenOptions<
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined`.
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -107,9 +107,11 @@ export type DefinedInitialDataOptions<
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -155,6 +157,7 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  *
@@ -195,6 +198,7 @@ export function queryOptions<
  * is the query key to generate options for.
  *
  * @see {@link useQuery} to run a query with these options.
+ * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.

@@ -7,12 +7,16 @@ title: QueriesOptions
 type QueriesOptions<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseQueryOptionsForUseQueries[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseQueryOptionsForUseQueries<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesOptions<[...Tails], [...TResults, GetUseQueryOptionsForUseQueries<Head>], [...TDepth, 1]> : ReadonlyArray<unknown> extends T ? T : T extends UseQueryOptionsForUseQueries<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>[] ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[] : UseQueryOptionsForUseQueries[];
 ```
 
-Defined in: [preact-query/src/useQueries.ts:156](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L156)
+Defined in: [packages/preact-query/src/useQueries.ts:160](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L160)
 
 The `queries` array accepted by `useQueries`. Recursively unwraps each tuple element so every entry's
-`queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
-`unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls
+`queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — past that, a tuple falls
 back to a single homogeneous options type.
+
+An opaque array (e.g. `unknown[]`) is returned as-is; a non-tuple array whose element type structurally
+matches a query options object is mapped per-element instead, still inferring each entry individually; any
+other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
+that same homogeneous options type too.
 
 ## Type Parameters
 

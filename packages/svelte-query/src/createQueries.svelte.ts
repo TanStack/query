@@ -187,6 +187,8 @@ export type QueriesResults<
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 /**
+ * The `createQueries` function can be used to fetch a variable number of queries.
+ *
  * @param createQueriesOptions - The `queries` array to run, and an optional `combine` function, wrapped in an
  * {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context

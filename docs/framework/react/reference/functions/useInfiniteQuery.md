@@ -1,15 +1,17 @@
 ---
 id: useInfiniteQuery
 title: useInfiniteQuery
+redirect_from:
+  - framework/react/reference/useInfiniteQuery
 ---
 
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/useInfiniteQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L65)
+Defined in: [packages/react-query/src/useInfiniteQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L65)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -28,7 +30,7 @@ This overload is selected when `initialData` is set.
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -48,7 +50,7 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -102,10 +104,10 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/useInfiniteQuery.ts:191](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L191)
+Defined in: [packages/react-query/src/useInfiniteQuery.ts:191](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L191)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -122,7 +124,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -142,7 +144,7 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -262,10 +264,10 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L347)
+Defined in: [packages/react-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/react-query/src/useInfiniteQuery.ts#L347)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -282,7 +284,7 @@ The options for `useInfiniteQuery` are identical to `useQuery`, with the additio
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -302,7 +304,7 @@ The [UseInfiniteQueryOptions](../interfaces/UseInfiniteQueryOptions.md) to use â
 
 #### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

@@ -6,10 +6,13 @@ title: createQuery
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L74)
+Defined in: [packages/svelte-query/src/createQuery.ts:77](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L77)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 ### Type Parameters
 
@@ -40,7 +43,7 @@ wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -109,12 +112,16 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>;
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:122](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L122)
+Defined in: [packages/svelte-query/src/createQuery.ts:129](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L129)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -145,7 +152,7 @@ with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -190,10 +197,10 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:248](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L248)
+Defined in: [packages/svelte-query/src/createQuery.ts:255](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L255)
 
 ### Type Parameters
 
@@ -224,7 +231,7 @@ in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

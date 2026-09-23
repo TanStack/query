@@ -2,7 +2,12 @@ import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
 import { provideZonelessChangeDetection } from '@angular/core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
+import {
+  QueryClient,
+  injectInfiniteQuery,
+  provideTanStackQuery,
+  skipToken,
+} from '..'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('injectInfiniteQuery', () => {
@@ -39,5 +44,23 @@ describe('injectInfiniteQuery', () => {
       const data = query.data()
       expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
+  })
+
+  it('should work when queryFn is skipToken', () => {
+    const key = queryKey()
+    const query = TestBed.runInInjectionContext(() => {
+      return injectInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: skipToken,
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+      }))
+    })
+
+    // TPageParam falls back to `unknown` here (unlike `infiniteQueryOptions`, which infers
+    // `number` for the same options) because there's no skipToken-specific overload to carry it.
+    expectTypeOf(query.data()).toEqualTypeOf<
+      InfiniteData<unknown, unknown> | undefined
+    >()
   })
 })
