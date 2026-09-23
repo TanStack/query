@@ -1260,7 +1260,8 @@ describe('createQuery', () => {
       const query = createQuery<string>(
         () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('fail')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('fail'))),
           retry: false,
           // Settles into an error without throwing, so the throw-effect reads `isFetching`.
           throwOnError: false,
@@ -1272,8 +1273,9 @@ describe('createQuery', () => {
         dataOnlyRuns.push(query.data)
       })
 
-      await vi.advanceTimersByTimeAsync(0)
-      await query.refetch()
+      await vi.advanceTimersByTimeAsync(10)
+      query.refetch()
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(dataOnlyRuns).toHaveLength(1)
     }),
@@ -1719,17 +1721,22 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Pre-existing error')),
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
           retry: false,
           throwOnError: false,
         }),
       },
     })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     first.unmount()
 
     // `enabled: false` rules out a fetch, so the throw must come from the cached error.
-    const queryFn = vi.fn(() => Promise.reject(new Error('should not fetch')))
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
+    )
     const rendered = render(ErrorBoundary, {
       props: {
         queryClient,
@@ -1743,7 +1750,7 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Pre-existing error',
     )
@@ -1764,13 +1771,16 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Pre-existing error')),
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
           retry: false,
           throwOnError: false,
         }),
       },
     })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     first.unmount()
 
     // The refetch on remount keeps `isFetching` true, so the cached error must not throw yet.
@@ -1788,11 +1798,11 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByTestId('error-boundary')).toBeNull()
 
     reject(new Error('Refetch failed'))
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Refetch failed',
     )
@@ -1848,13 +1858,13 @@ describe('createQuery', () => {
       const query = createQuery<string>(
         () => ({
           queryKey: key,
-          queryFn: () => Promise.resolve('data'),
+          queryFn: () => sleep(10).then(() => 'data'),
           throwOnError: true,
         }),
         () => queryClient,
       )
 
-      await vi.advanceTimersByTimeAsync(0)
+      await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.isFetching()).toBe(0)
       expect(query.data).toBe('data')
     }),
@@ -1906,17 +1916,22 @@ describe('createQuery', () => {
         queryClient: queryClient2,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Pre-existing error')),
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
           retry: false,
           throwOnError: false,
         }),
       },
     })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     first.unmount()
 
     let currentClient = $state(queryClient1)
-    const queryFn = vi.fn(() => Promise.reject(new Error('should not fetch')))
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
+    )
 
     const rendered = render(ErrorBoundaryChangeClient, {
       props: {
@@ -1931,11 +1946,11 @@ describe('createQuery', () => {
         }),
       },
     })
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
 
     currentClient = queryClient2
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Pre-existing error',
