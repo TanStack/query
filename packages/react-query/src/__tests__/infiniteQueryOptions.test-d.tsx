@@ -327,13 +327,13 @@ describe('infiniteQueryOptions', () => {
   })
 
   it('keeps data possibly undefined when initialData is a ternary that can be undefined', () => {
-    const hasInitialData = false
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
       queryFn: () => Promise.resolve({ example: true }),
-      initialData: hasInitialData
-        ? { pages: [{ example: true }], pageParams: [1] }
-        : undefined,
+      initialData:
+        Math.random() > 0.5
+          ? { pages: [{ example: true }], pageParams: [1] }
+          : undefined,
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
