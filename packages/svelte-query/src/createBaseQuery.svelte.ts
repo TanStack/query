@@ -73,10 +73,13 @@ export function createBaseQuery<
     createResult(),
   )
 
-  // Lets the throw-effect re-run without reading `query.*`, which would track
+  // Untracked result for the throw-effect: reading `query.*` there would track
   // those props and widen `notifyOnChangeProps` for every consumer. Relies on
   // `QueryObserver` always notifying on `error` changes when `throwOnError` is set.
-  let resultVersion = $state(0)
+  let rawResult = $state.raw(getRawResult())
+  function getRawResult() {
+    return observer.getCurrentResult()
+  }
 
   // The following is convoluted but necessary:
   // Call eagerly so subscription happens on the server and on suspended branches in the client...
@@ -85,7 +88,7 @@ export function createBaseQuery<
       ? () => undefined
       : observer.subscribe(() => {
           update(createResult())
-          resultVersion++
+          rawResult = getRawResult()
         })
   // ...but also watch for state changes to resubscribe, and because Svelte right now doesn't
   // run onDestroy on components with pending work that are destroyed again before they are resolved...
@@ -98,7 +101,7 @@ export function createBaseQuery<
         ? () => undefined
         : observer.subscribe(() => {
             update(createResult())
-            resultVersion++
+            rawResult = getRawResult()
           })
       observer.updateResult()
       return unsubscribe
@@ -134,24 +137,21 @@ export function createBaseQuery<
       //
       // this could technically be its own effect but that doesn't seem necessary
       update(createResult())
-      resultVersion++
+      rawResult = getRawResult()
     },
   )
 
   $effect(() => {
     // Throwing from the `subscribe` callback instead never reaches `<svelte:boundary>`.
-    void resultVersion
-    const currentResult = observer.getCurrentResult()
-
     if (
-      currentResult.isError &&
-      !currentResult.isFetching &&
+      rawResult.isError &&
+      !rawResult.isFetching &&
       shouldThrowError(resolvedOptions.throwOnError, [
-        currentResult.error,
+        rawResult.error,
         observer.getCurrentQuery(),
       ])
     ) {
-      throw currentResult.error
+      throw rawResult.error
     }
   })
 
