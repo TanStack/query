@@ -90,7 +90,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:208](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L208)
+Defined in: [packages/vue-query/src/useQuery.ts:212](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L212)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -203,7 +203,9 @@ const { data, isLoading, isError, error } = useQuery({
 </template>
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```vue
 <script setup lang="ts">
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
@@ -218,6 +220,8 @@ const { data, isError, error } = useQuery({
     queryClient
       .getQueryData<Array<Post>>(['posts'])
       ?.find((post) => post.id === props.postId),
+  initialDataUpdatedAt: () =>
+    queryClient.getQueryState(['posts'])?.dataUpdatedAt,
 })
 </script>
 
@@ -259,7 +263,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:284](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L284)
+Defined in: [packages/vue-query/src/useQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L288)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other
