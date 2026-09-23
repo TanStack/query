@@ -6,4 +6,4 @@
 '@tanstack/vue-query': patch
 ---
 
-fix({react,preact,angular,solid,vue}-query): type a ternary 'initialData' in infinite query options as possibly undefined
+fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
