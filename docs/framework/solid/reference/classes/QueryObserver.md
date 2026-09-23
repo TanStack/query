@@ -87,22 +87,6 @@ Subscribable<QueryObserverListener<TData, TError>>.constructor
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
@@ -112,44 +96,6 @@ options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey
 Defined in: [packages/query-core/src/queryObserver.ts:89](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L89)
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L106)
-
-#### Returns
-
-`void`
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query: Query<TQueryFnData, TError, TQueryData, TQueryKey>, options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): QueryObserverResult<TData, TError>;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:559](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L559)
-
-#### Parameters
-
-##### query
-
-[`Query`](Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\>
-
-##### options
-
-`QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
-
-#### Returns
-
-[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>
-
-***
 
 ### destroy()
 
@@ -166,26 +112,6 @@ query it was observing.
 #### Returns
 
 `void`
-
-***
-
-### fetch()
-
-```ts
-protected fetch(fetchOptions: ObserverFetchOptions): Promise<QueryObserverResult<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:448](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L448)
-
-#### Parameters
-
-##### fetchOptions
-
-`ObserverFetchOptions`
-
-#### Returns
-
-`Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\>
 
 ***
 
@@ -310,46 +236,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 
 ```ts
 Subscribable.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L110)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L124)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
