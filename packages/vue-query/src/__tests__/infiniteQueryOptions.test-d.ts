@@ -58,6 +58,18 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+  it('keeps initialData required when it is defined', () => {
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve({ example: true }),
+      initialData: { pages: [{ example: true }], pageParams: [1] },
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf<undefined>().not.toExtend<typeof options.initialData>()
+  })
+
   it('keeps data possibly undefined when initialData is a ternary that can be undefined', () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
