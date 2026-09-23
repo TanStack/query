@@ -3,7 +3,7 @@ id: InfiniteQueryOptions
 title: InfiniteQueryOptions
 ---
 
-Defined in: [packages/solid-query/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L158)
+Defined in: [packages/solid-query/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L160)
 
 The options accepted by `useInfiniteQuery`.
 

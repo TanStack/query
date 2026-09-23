@@ -7,7 +7,7 @@ title: UseInfiniteQueryResult
 type UseInfiniteQueryResult<TData, TError> = InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:226](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L226)
+Defined in: [packages/solid-query/src/types.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L228)
 
 The object `useInfiniteQuery` returns — `data`/`error` may still be `undefined`/`null` while the query is
 `pending`.
