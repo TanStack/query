@@ -41,8 +41,9 @@ export default function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, a default staleTime above 0 avoids an immediate
-        // background refetch as soon as the page hydrates on the client.
+        // staleTime governs refetches from later triggers (a new mount, window
+        // focus, and so on) — see Solid Query's hydration model above for why
+        // the very first mount after SSR doesn't need it to skip a refetch.
         staleTime: 5 * 1000,
       },
     },
