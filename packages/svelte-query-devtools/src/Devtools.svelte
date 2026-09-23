@@ -70,7 +70,7 @@
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
-  let devtools: TanstackQueryDevtools | undefined
+  let devtools = $state<TanstackQueryDevtools | undefined>(undefined)
 
   if (DEV && BROWSER) {
     onMount(() => {

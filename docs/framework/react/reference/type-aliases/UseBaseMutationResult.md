@@ -9,7 +9,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [packages/react-query/src/types.ts:471](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L471)
+Defined in: [packages/react-query/src/types.ts:472](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L472)
 
 The result of `useMutation`. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with
 `mutate` narrowed to the fire-and-forget [UseMutateFunction](UseMutateFunction.md) signature, plus the added `mutateAsync`.

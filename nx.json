@@ -3,6 +3,7 @@
   "defaultBase": "main",
   "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
   "useInferencePlugins": false,
+  "analytics": false,
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [

@@ -106,9 +106,13 @@ type GetUseSuspenseQueryResult<T> =
 
 /**
  * The `queries` array accepted by `useSuspenseQueries`. Recursively unwraps each tuple element so every
- * entry's `queryFn`/`select` are inferred individually, up to 20 elements. An opaque array (e.g. `unknown[]`)
- * is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls back to a
- * single homogeneous {@link UseSuspenseQueryOptions} type.
+ * entry's `queryFn`/`select` are inferred individually, up to 20 elements — past that, a tuple falls back to
+ * a single homogeneous {@link UseSuspenseQueryOptions} type.
+ *
+ * An opaque array (e.g. `unknown[]`) is returned as-is; a non-tuple array whose element type structurally
+ * matches a query options object is mapped per-element instead, still inferring each entry individually; any
+ * other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
+ * that same homogeneous options type too.
  *
  * @template T - The type of the `queries` array as written at the call site.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
