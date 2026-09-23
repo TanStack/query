@@ -194,4 +194,4 @@ A query's staleness is based on `dataUpdatedAt`, which is set to when it resolve
 
 ### High memory consumption on server
 
-Because the `QueryClient` is created fresh for every request, its cache is held in memory for the duration of that request (and briefly after, for `gcTime`). Under high request volume this can add up. `gcTime` defaults to `Infinity` on the server, so unless you configure it lower, memory for a request's cache isn't reclaimed automatically — in most cases this is fine, since the whole `QueryClient` instance becomes eligible for garbage collection once the request finishes and nothing references it anymore.
+Because the `QueryClient` is created fresh for every request, its cache is held in memory for the duration of that request. Under high request volume this can add up. `gcTime` defaults to `Infinity` on the server, so unless you configure it lower, memory for a request's cache isn't reclaimed automatically — in most cases this is fine, since the whole `QueryClient` instance becomes eligible for garbage collection once the request finishes and nothing references it anymore.
