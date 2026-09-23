@@ -14,7 +14,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:36](https://github
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set.
+This overload is selected when `initialData` is known to be defined.
 
 ### Type Parameters
 
@@ -77,7 +77,7 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:70](https://github
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is not set.
+This overload is selected when `initialData` is omitted or may be `undefined`.
 
 ### Type Parameters
 
