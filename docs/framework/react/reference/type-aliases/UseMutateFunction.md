@@ -7,7 +7,7 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/react-query/src/types.ts:433](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L433)
+Defined in: [packages/react-query/src/types.ts:434](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L434)
 
 The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced

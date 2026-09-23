@@ -22,7 +22,7 @@ import type {
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set.
+ * This overload is selected when `initialData` is known to be defined.
  *
  * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
  * like `queryClient.infiniteQuery`.
@@ -56,7 +56,7 @@ export function createInfiniteQuery<
  * The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is not set.
+ * This overload is selected when `initialData` is omitted or may be `undefined`.
  *
  * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
  * like `queryClient.infiniteQuery`.

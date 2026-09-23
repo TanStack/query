@@ -9,9 +9,10 @@ title: useQuery
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L65)
+Defined in: [packages/vue-query/src/useQuery.ts:67](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L67)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -56,8 +57,9 @@ will be used.
 
 [`UseQueryDefinedReturnType`](../type-aliases/UseQueryDefinedReturnType.md)\<`TData`, `TError`\>
 
-The current query result, typed so that `data` is never `undefined` (`status` never resolves to
-`pending` in this overload's type, since `initialData` guarantees data upfront).
+The current query result, typed so that `data` is never `undefined` (unless a `select` changes
+`TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
+`initialData` guarantees data upfront.
 
 ### Example
 
@@ -88,7 +90,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:206](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L206)
+Defined in: [packages/vue-query/src/useQuery.ts:212](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L212)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -201,7 +203,9 @@ const { data, isLoading, isError, error } = useQuery({
 </template>
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```vue
 <script setup lang="ts">
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
@@ -216,6 +220,8 @@ const { data, isError, error } = useQuery({
     queryClient
       .getQueryData<Array<Post>>(['posts'])
       ?.find((post) => post.id === props.postId),
+  initialDataUpdatedAt: () =>
+    queryClient.getQueryState(['posts'])?.dataUpdatedAt,
 })
 </script>
 
@@ -257,7 +263,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:282](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L282)
+Defined in: [packages/vue-query/src/useQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L288)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

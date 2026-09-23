@@ -55,22 +55,6 @@ Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanSt
 QC.config
 ```
 
-***
-
-### listeners
-
-```ts
-protected listeners: Set<QueryCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-QC.listeners
-```
-
 ## Methods
 
 ### build()
@@ -391,46 +375,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 
 ```ts
 QC.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L45)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-QC.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L49)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-QC.onUnsubscribe
 ```
 
 ***

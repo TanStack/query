@@ -207,26 +207,6 @@ await query.cancel()
 
 ***
 
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L41)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
-```
-
-***
-
 ### destroy()
 
 ```ts
@@ -478,26 +458,6 @@ Returns `true` if the query has at least one observer configured with
 
 ***
 
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/query.ts:305](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L305)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
 ### reset()
 
 ```ts
@@ -513,26 +473,6 @@ in-flight fetch.
 #### Returns
 
 `void`
-
-***
-
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
 
 ***
 
@@ -557,29 +497,3 @@ user manually trigger a loading/error state or edit the cached data.
 #### Returns
 
 `void`
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime: number | undefined): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L33)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```

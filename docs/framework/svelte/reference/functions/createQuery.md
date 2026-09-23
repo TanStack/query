@@ -115,12 +115,13 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:128](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L128)
+Defined in: [packages/svelte-query/src/createQuery.ts:129](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L129)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -199,7 +200,7 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:254](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L254)
+Defined in: [packages/svelte-query/src/createQuery.ts:255](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L255)
 
 ### Type Parameters
 

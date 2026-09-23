@@ -76,22 +76,6 @@ Subscribable<
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<MutationObserverListener<TData, TError, TVariables, TOnMutateResult>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
@@ -101,20 +85,6 @@ options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 Defined in: [packages/query-core/src/mutationObserver.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L46)
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L75)
-
-#### Returns
-
-`void`
-
-***
 
 ### getCurrentResult()
 
@@ -194,46 +164,6 @@ await observer.mutate(
   { title: 'New post' },
   { onSuccess: (data) => console.log(data) },
 )
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L127)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L135)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
