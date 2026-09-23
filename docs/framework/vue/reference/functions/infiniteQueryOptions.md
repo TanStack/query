@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:99](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L99)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:105](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L105)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -79,7 +79,7 @@ const { data, isError, error, fetchNextPage } = useInfiniteQuery(projectsOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:154](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L154)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:160](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L160)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.

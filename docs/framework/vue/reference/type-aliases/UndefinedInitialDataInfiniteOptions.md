@@ -7,7 +7,7 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:21](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L21)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L22)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
 may be `undefined` while the query is `pending`.
@@ -17,7 +17,9 @@ may be `undefined` while the query is `pending`.
 ### initialData?
 
 ```ts
-optional initialData: undefined;
+optional initialData: 
+  | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+| InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```
 
 ## Type Parameters

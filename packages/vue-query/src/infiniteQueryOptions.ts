@@ -1,6 +1,7 @@
 import type {
   DefaultError,
   InfiniteData,
+  InitialDataFunction,
   NonUndefinedGuard,
   QueryKey,
   QueryKeyWithDataTag,
@@ -31,7 +32,12 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData?: undefined
+  initialData?:
+    | undefined
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | InitialDataFunction<
+        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      >
 }
 
 /**
