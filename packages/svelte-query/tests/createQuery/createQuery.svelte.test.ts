@@ -1715,7 +1715,6 @@ describe('createQuery', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
-    // Leave an error in the cache with no active observer.
     const first = render(Base, {
       props: {
         queryClient,
@@ -1765,7 +1764,6 @@ describe('createQuery', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
-    // Leave an error in the cache with no active observer.
     const first = render(Base, {
       props: {
         queryClient,
@@ -1824,7 +1822,6 @@ describe('createQuery', () => {
       )
     })
 
-    // `reset()` re-mounts the children, which refetches the errored query.
     const rendered = render(ErrorBoundaryReset, {
       props: {
         queryClient,
@@ -1910,7 +1907,6 @@ describe('createQuery', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    // Leave an error in queryClient2's cache so switching to it needs no fetch.
     const first = render(Base, {
       props: {
         queryClient: queryClient2,
