@@ -73,13 +73,9 @@ export function createBaseQuery<
     createResult(),
   )
 
-  // Separate trigger so the throw-effect below can react to result updates
-  // without reading `query.isError`/`isFetching` there, which would mark them
-  // as tracked on the `trackResult` proxy and permanently widen
-  // `notifyOnChangeProps` for every consumer of this query. Once
-  // `throwOnError` is set, `QueryObserver` force-adds `'error'` to the
-  // notified props (see `queryObserver.ts`), so this still re-runs whenever
-  // `error` changes, regardless of what any consumer has read.
+  // Lets the throw-effect re-run without reading `query.*`, which would track
+  // those props and widen `notifyOnChangeProps` for every consumer. Relies on
+  // `QueryObserver` always notifying on `error` changes when `throwOnError` is set.
   let resultVersion = $state(0)
 
   // The following is convoluted but necessary:
@@ -143,9 +139,7 @@ export function createBaseQuery<
   )
 
   $effect(() => {
-    // Must throw from inside this reaction, not from the `subscribe` callback
-    // above (which runs outside any active Svelte reaction) — otherwise
-    // `<svelte:boundary>` never sees the error.
+    // Throwing from the `subscribe` callback instead never reaches `<svelte:boundary>`.
     void resultVersion
     const currentResult = observer.getCurrentResult()
 

@@ -1262,19 +1262,12 @@ describe('createQuery', () => {
           queryKey: key,
           queryFn: () => Promise.reject(new Error('fail')),
           retry: false,
-          // `false` never satisfies `shouldThrowError`, so the query settles
-          // into an error state without throwing — this is the case where
-          // the throw-effect's `!query.isFetching` check (guarded behind
-          // `query.isError`) reads `isFetching` and, unless read from the
-          // untracked result, would mark it tracked from then on.
+          // Settles into an error without throwing, so the throw-effect reads `isFetching`.
           throwOnError: false,
         }),
         () => queryClient,
       )
 
-      // This effect only ever reads `data`. Once the query above has settled
-      // into an error state, `isFetching` transitions on a later refetch must
-      // not cause this unrelated, data-only effect to re-run.
       $effect(() => {
         dataOnlyRuns.push(query.data)
       })
@@ -1720,7 +1713,7 @@ describe('createQuery', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
-    // Pre-populate the cache with an error result via a first, unmounted subscriber.
+    // Leave an error in the cache with no active observer.
     const first = render(Base, {
       props: {
         queryClient,
@@ -1735,9 +1728,7 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     first.unmount()
 
-    // Now mount a NEW component subscribing to the same key with throwOnError: true.
-    // `enabled: false` guarantees no new fetch happens on mount, so the only way
-    // this passes is if the throw-effect fires off the PRE-EXISTING cached error.
+    // `enabled: false` rules out a fetch, so the throw must come from the cached error.
     const queryFn = vi.fn(() => Promise.reject(new Error('should not fetch')))
     const rendered = render(ErrorBoundary, {
       props: {
@@ -1767,7 +1758,7 @@ describe('createQuery', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
-    // Pre-populate the cache with an error result via a first, unmounted subscriber.
+    // Leave an error in the cache with no active observer.
     const first = render(Base, {
       props: {
         queryClient,
@@ -1782,8 +1773,7 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     first.unmount()
 
-    // While the resulting refetch is in flight, isFetching is true, so the
-    // throw-effect must hold off even though a cached error is already present.
+    // The refetch on remount keeps `isFetching` true, so the cached error must not throw yet.
     const { promise, reject } = promiseWithResolvers<never>()
     const queryFn = vi.fn(() => promise)
     const rendered = render(ErrorBoundary, {
@@ -1824,9 +1814,7 @@ describe('createQuery', () => {
       )
     })
 
-    // Resetting `<svelte:boundary>` re-mounts its children from scratch, which
-    // re-runs `createQuery` and (with the default `retryOnMount: true`)
-    // refetches a query that's cached as an error.
+    // `reset()` re-mounts the children, which refetches the errored query.
     const rendered = render(ErrorBoundaryReset, {
       props: {
         queryClient,
@@ -1912,8 +1900,7 @@ describe('createQuery', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    // Pre-populate queryClient2's cache with an error result via a first,
-    // unmounted subscriber, so switching to it never needs to fetch.
+    // Leave an error in queryClient2's cache so switching to it needs no fetch.
     const first = render(Base, {
       props: {
         queryClient: queryClient2,
