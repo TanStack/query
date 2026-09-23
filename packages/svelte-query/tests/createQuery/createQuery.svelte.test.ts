@@ -11,6 +11,7 @@ import {
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import ErrorBoundary from './ErrorBoundary.svelte'
+import ErrorBoundaryReset from './ErrorBoundaryReset.svelte'
 import ErrorBoundaryChangeClient from './ErrorBoundaryChangeClient.svelte'
 import Counter from './Counter.svelte'
 import IsRestoring from './IsRestoring.svelte'
@@ -1754,6 +1755,99 @@ describe('createQuery', () => {
       'Pre-existing error',
     )
     expect(queryFn).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw while a refetch triggered on remount is in flight, only once it settles', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    // Pre-populate the cache with an error result via a first, unmounted subscriber.
+    const first = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Pre-existing error')),
+          retry: false,
+          throwOnError: false,
+        }),
+      },
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    first.unmount()
+
+    // While the resulting refetch is in flight, isFetching is true, so the
+    // throw-effect must hold off even though a cached error is already present.
+    const { promise, resolve } = promiseWithResolvers<never>()
+    const queryFn = vi.fn(() => promise)
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByTestId('error-boundary')).toBeNull()
+
+    resolve(Promise.reject(new Error('Refetch failed')) as never)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Refetch failed',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should refetch and recover after `<svelte:boundary>`\'s reset re-mounts the query', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    let callCount = 0
+    const queryFn = vi.fn(() => {
+      callCount++
+      return Promise.reject(new Error(`Error ${callCount}`))
+    })
+
+    // Resetting `<svelte:boundary>` re-mounts its children from scratch, which
+    // re-runs `createQuery` and (with the default `retryOnMount: true`)
+    // refetches a query that's cached as an error.
+    const rendered = render(ErrorBoundaryReset, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Error 1',
+    )
+    expect(callCount).toBe(1)
+
+    await fireEvent.click(rendered.getByTestId('reset-button'))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(callCount).toBe(2)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Error 2',
+    )
 
     consoleMock.mockRestore()
   })
