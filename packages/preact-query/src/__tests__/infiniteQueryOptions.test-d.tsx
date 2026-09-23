@@ -131,6 +131,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -228,14 +229,23 @@ describe('infiniteQueryOptions', () => {
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.query(options),
+    )
+
+    // deprecated methods below to be removed next major version
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery(options),
     )
   })

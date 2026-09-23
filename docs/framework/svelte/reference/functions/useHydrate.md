@@ -5,9 +5,9 @@ title: useHydrate
 
 ```ts
 function useHydrate(
-   state?, 
-   options?, 
-   queryClient?): void;
+   state?: unknown, 
+   options?: HydrateOptions, 
+   queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/svelte-query/src/useHydrate.ts:33](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L33)
@@ -27,13 +27,13 @@ The dehydrated state to hydrate into the cache, as produced by `dehydrate`.
 
 ### options?
 
-`HydrateOptions`
+[`HydrateOptions`](../interfaces/HydrateOptions.md)
 
-HydrateOptions to control the hydration.
+[HydrateOptions](../interfaces/HydrateOptions.md) to control the hydration.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

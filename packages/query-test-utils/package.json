@@ -26,16 +26,19 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
+    "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:tscurrent": "tsc --build",
-    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"
   },
   "type": "module",
   "devDependencies": {
     "npm-run-all2": "^5.0.0"
+  },
+  "peerDependencies": {
+    "vitest": "^4.0.18"
   }
 }

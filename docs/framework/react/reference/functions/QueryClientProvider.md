@@ -1,13 +1,15 @@
 ---
 id: QueryClientProvider
 title: QueryClientProvider
+redirect_from:
+  - framework/react/reference/QueryClientProvider
 ---
 
 ```ts
-function QueryClientProvider(__namedParameters): Element;
+function QueryClientProvider(__namedParameters: QueryClientProviderProps): Element;
 ```
 
-Defined in: [react-query/src/QueryClientProvider.tsx:70](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L70)
+Defined in: [packages/react-query/src/QueryClientProvider.tsx:70](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L70)
 
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
 calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to

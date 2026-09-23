@@ -1,13 +1,15 @@
 ---
 id: useQueryErrorResetBoundary
 title: useQueryErrorResetBoundary
+redirect_from:
+  - framework/react/reference/useQueryErrorResetBoundary
 ---
 
 ```ts
 function useQueryErrorResetBoundary(): QueryErrorResetBoundaryValue;
 ```
 
-Defined in: [react-query/src/QueryErrorResetBoundary.tsx:76](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L76)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:76](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L76)
 
 This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
 defined it will reset them globally.

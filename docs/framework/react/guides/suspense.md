@@ -9,7 +9,10 @@ React Query can also be used with React's Suspense for Data Fetching APIs. For t
 - [useSuspenseInfiniteQuery](../reference/functions/useSuspenseInfiniteQuery.md)
 - [useSuspenseQueries](../reference/functions/useSuspenseQueries.md)
 
+[//]: # 'Info'
+
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](../examples/suspense) for more information on how to set up suspense mode.
+[//]: # 'Info'
 
 If you want mutations to propagate errors to the nearest error boundary (similar to queries), you can set the `throwOnError` option to `true` as well.
 
@@ -25,7 +28,10 @@ This works nicely in TypeScript, because `data` is guaranteed to be defined (as 
 
 On the flip side, you therefore can't conditionally enable / disable the Query. This generally shouldn't be necessary for dependent Queries because with suspense, all your Queries inside one component are fetched in serial.
 
+[//]: # 'PlaceholderData'
+
 `placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
+[//]: # 'PlaceholderData'
 
 ### throwOnError default
 
@@ -57,6 +63,8 @@ Query errors can be reset with the `QueryErrorResetBoundary` component or with t
 
 When using the component it will reset any query errors within the boundaries of the component:
 
+[//]: # 'ExampleResetComponent'
+
 ```tsx
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -69,7 +77,7 @@ const App = () => (
         fallbackRender={({ resetErrorBoundary }) => (
           <div>
             There was an error!
-            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+            <button onClick={() => resetErrorBoundary()}>Try again</button>
           </div>
         )}
       >
@@ -80,7 +88,11 @@ const App = () => (
 )
 ```
 
+[//]: # 'ExampleResetComponent'
+
 When using the hook it will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
+
+[//]: # 'ExampleResetHook'
 
 ```tsx
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
@@ -94,7 +106,7 @@ const App = () => {
       fallbackRender={({ resetErrorBoundary }) => (
         <div>
           There was an error!
-          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          <button onClick={() => resetErrorBoundary()}>Try again</button>
         </div>
       )}
     >
@@ -104,9 +116,13 @@ const App = () => {
 }
 ```
 
+[//]: # 'ExampleResetHook'
+
 ## Fetch-on-render vs Render-as-you-fetch
 
 Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](./prefetching.md) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
+
+[//]: # 'Streaming'
 
 ## Suspense on the Server with streaming
 
@@ -172,3 +188,4 @@ export function Providers(props: { children: React.ReactNode }) {
 ```
 
 For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
+[//]: # 'Streaming'

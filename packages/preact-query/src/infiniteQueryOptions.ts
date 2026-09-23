@@ -92,7 +92,7 @@ export type UnusedSkipTokenInfiniteOptions<
 
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
- * never `undefined`.
+ * never `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
