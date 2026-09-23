@@ -6,6 +6,10 @@ import type { MutationOptions } from './types'
  * `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
  * `useMutationState`.
  *
+ * Unlike a `queryKey` property on a query's options (e.g. `queryOptions({ queryKey: [...] })`), `mutationKey`
+ * entries that are reactive getters (`() => id.value`) are never unwrapped — the getter function itself is
+ * stored as the entry, rather than its current value. `ref` entries are still unwrapped normally.
+ *
  * @see {@link useMutation} to run the mutation these options describe.
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, with a
  * required `mutationKey`.

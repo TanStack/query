@@ -26,7 +26,8 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -37,8 +38,9 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, typed so that `data` is never `undefined` (`status` never resolves to
- * `pending` in this overload's type, since `initialData` guarantees data upfront).
+ * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
+ * `initialData` guarantees data upfront.
  *
  * @example
  * ```vue

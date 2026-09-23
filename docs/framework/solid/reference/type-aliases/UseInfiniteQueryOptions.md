@@ -7,7 +7,7 @@ title: UseInfiniteQueryOptions
 type UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:209](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L209)
+Defined in: [packages/solid-query/src/types.ts:211](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L211)
 
 The accessor `useInfiniteQuery` expects as its first argument — Solid re-evaluates it reactively, so
 `queryKey` and other options can depend on signals.
