@@ -36,8 +36,9 @@ export interface InjectInfiniteQueryOptions {
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`. Infinite queries can
  * additively "load more" data onto an existing set of data, or "infinite scroll".
  *
- * This overload is selected when `initialData` is set on the options returned by `injectInfiniteQueryFn`,
- * so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * This overload is selected when `initialData` is known to be defined on the options returned by
+ * `injectInfiniteQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`).
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user

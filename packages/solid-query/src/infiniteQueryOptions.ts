@@ -10,11 +10,11 @@ import type { InfiniteQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
- * may be `undefined` while the query is `pending`. `infiniteQueryOptions` itself accepts and returns a plain
- * object (its parameter type is `ReturnType<UndefinedInitialDataInfiniteOptions<...>>`, i.e. this `Accessor`
- * called); Solid's reactivity applies where the result is consumed instead, e.g.
- * `useInfiniteQuery(() => options)`.
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
+ * be `undefined` — `data` may be `undefined` while the query is `pending`. `infiniteQueryOptions` itself
+ * accepts and returns a plain object (its parameter type is
+ * `ReturnType<UndefinedInitialDataInfiniteOptions<...>>`, i.e. this `Accessor` called); Solid's reactivity
+ * applies where the result is consumed instead, e.g. `useInfiniteQuery(() => options)`.
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -41,8 +41,8 @@ export type UndefinedInitialDataInfiniteOptions<
 >
 
 /**
- * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
- * never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
+ * defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -71,7 +71,7 @@ export type DefinedInitialDataInfiniteOptions<
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set.
+ * This overload is selected when `initialData` is known to be defined.
  *
  * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
