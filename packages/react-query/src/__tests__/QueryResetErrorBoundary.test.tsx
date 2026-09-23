@@ -190,6 +190,112 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
+    it.each([
+      [false, 1],
+      [true, 1],
+      [false, 2],
+      [true, 2],
+    ] as const)(
+      'should preserve a remount reset across renders (StrictMode=%s, observers=%s)',
+      async (strictMode, observerCount) => {
+        const consoleMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const errorKey = queryKey()
+        const otherKey = queryKey()
+
+        let succeed = false
+
+        const queryFn = vi.fn(() =>
+          sleep(10).then(() => {
+            if (!succeed) {
+              throw new Error('Error')
+            }
+            return 'data'
+          }),
+        )
+
+        function ErrorPage() {
+          const { data } = useQuery({
+            queryKey: errorKey,
+            queryFn,
+            retry: false,
+            throwOnError: true,
+            retryOnMount: true,
+          })
+
+          return <div>{data}</div>
+        }
+
+        function OtherPage() {
+          const { data } = useQuery({
+            queryKey: otherKey,
+            queryFn: () => sleep(10).then(() => 'other'),
+          })
+
+          return <div>{data}</div>
+        }
+
+        function App() {
+          const { reset } = useQueryErrorResetBoundary()
+          const [showErrorPage, setShowErrorPage] = React.useState(true)
+
+          return (
+            <div>
+              <button
+                onClick={() => {
+                  if (showErrorPage) reset()
+                  setShowErrorPage((show) => !show)
+                }}
+              >
+                toggle
+              </button>
+              {showErrorPage ? (
+                <ErrorBoundary fallback={<div>error boundary</div>}>
+                  <React.Suspense fallback="loading">
+                    {Array.from({ length: observerCount }, (_, index) => (
+                      <ErrorPage key={index} />
+                    ))}
+                  </React.Suspense>
+                </ErrorBoundary>
+              ) : (
+                <React.Suspense fallback="loading">
+                  <OtherPage />
+                </React.Suspense>
+              )}
+            </div>
+          )
+        }
+
+        const Wrapper = strictMode ? React.StrictMode : React.Fragment
+        const rendered = renderWithClient(
+          queryClient,
+          <Wrapper>
+            <QueryErrorResetBoundary>
+              <App />
+            </QueryErrorResetBoundary>
+          </Wrapper>,
+        )
+
+        await act(() => vi.advanceTimersByTimeAsync(11))
+        expect(rendered.getByText('error boundary')).toBeInTheDocument()
+        expect(queryFn).toHaveBeenCalledTimes(1)
+
+        fireEvent.click(rendered.getByText('toggle'))
+        await act(() => vi.advanceTimersByTimeAsync(11))
+        expect(rendered.getByText('other')).toBeInTheDocument()
+
+        succeed = true
+
+        fireEvent.click(rendered.getByText('toggle'))
+        await act(() => vi.advanceTimersByTimeAsync(11))
+        expect(rendered.getAllByText('data')).toHaveLength(observerCount)
+        expect(queryFn).toHaveBeenCalledTimes(2)
+
+        consoleMock.mockRestore()
+      },
+    )
+
     it('should not throw error if query is disabled', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')

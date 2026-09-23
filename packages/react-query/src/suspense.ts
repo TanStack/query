@@ -1,3 +1,4 @@
+import { markQueryResetCount } from './errorBoundaryUtils'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -69,7 +70,11 @@ export const fetchOptimistic = <
   >,
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
+  query: object | undefined,
+) => {
+  const resetCount = errorResetBoundary.getResetCount?.()
+  return observer.fetchOptimistic(defaultedOptions).catch(() => {
+    markQueryResetCount(errorResetBoundary, query, resetCount)
     errorResetBoundary.clearReset()
   })
+}
