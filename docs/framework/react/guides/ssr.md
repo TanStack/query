@@ -432,9 +432,9 @@ export async function getServerSideProps() {
     queryFn: getUserByEmail,
   })
 
-  if (user?.userId) {
+  if (user?.id) {
     await queryClient.query({
-      queryKey: ['projects', userId],
+      queryKey: ['projects', user.id],
       queryFn: getProjectsByUser,
     })
   }
