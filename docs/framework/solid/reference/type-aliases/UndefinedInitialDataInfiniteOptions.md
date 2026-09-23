@@ -7,7 +7,7 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object>;
 ```
 
-Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:26](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L26)
+Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L25)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
 may be `undefined` while the query is `pending`. `infiniteQueryOptions` itself accepts and returns a plain
