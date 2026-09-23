@@ -1647,14 +1647,15 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Error test')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Error test'))),
           retry: false,
           throwOnError: true,
         }),
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Error test',
     )
@@ -1673,14 +1674,15 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Local Error')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Local Error'))),
           retry: false,
           throwOnError: (err: Error) => err.message === 'Local Error',
         }),
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Local Error',
     )
@@ -1699,14 +1701,14 @@ describe('createQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(),
+          queryFn: () => sleep(10).then(() => Promise.reject()),
           retry: false,
           throwOnError: true,
         }),
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toBeInTheDocument()
 
     consoleMock.mockRestore()
@@ -1782,7 +1784,7 @@ describe('createQuery', () => {
 
     // While the resulting refetch is in flight, isFetching is true, so the
     // throw-effect must hold off even though a cached error is already present.
-    const { promise, resolve } = promiseWithResolvers<never>()
+    const { promise, reject } = promiseWithResolvers<never>()
     const queryFn = vi.fn(() => promise)
     const rendered = render(ErrorBoundary, {
       props: {
@@ -1799,7 +1801,7 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.queryByTestId('error-boundary')).toBeNull()
 
-    resolve(Promise.reject(new Error('Refetch failed')) as never)
+    reject(new Error('Refetch failed'))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Refetch failed',
@@ -1817,7 +1819,9 @@ describe('createQuery', () => {
     let callCount = 0
     const queryFn = vi.fn(() => {
       callCount++
-      return Promise.reject(new Error(`Error ${callCount}`))
+      return sleep(10).then(() =>
+        Promise.reject(new Error(`Error ${callCount}`)),
+      )
     })
 
     // Resetting `<svelte:boundary>` re-mounts its children from scratch, which
@@ -1835,14 +1839,14 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 1')
-    expect(callCount).toBe(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     await fireEvent.click(rendered.getByTestId('reset-button'))
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
-    expect(callCount).toBe(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 2')
 
     consoleMock.mockRestore()

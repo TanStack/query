@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
@@ -185,7 +185,8 @@ describe('createInfiniteQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Error test')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Error test'))),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
           retry: false,
@@ -194,7 +195,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Error test',
     )
@@ -213,7 +214,8 @@ describe('createInfiniteQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Local Error')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Local Error'))),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
           retry: false,
@@ -222,7 +224,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
       'Local Error',
     )
@@ -238,7 +240,8 @@ describe('createInfiniteQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Local Error')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Local Error'))),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
           retry: false,
@@ -247,7 +250,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
@@ -263,7 +266,7 @@ describe('createInfiniteQuery', () => {
         queryClient,
         options: () => ({
           queryKey: key,
-          queryFn: () => Promise.reject(),
+          queryFn: () => sleep(10).then(() => Promise.reject()),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
           retry: false,
@@ -272,7 +275,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('error-boundary')).toBeInTheDocument()
 
     consoleMock.mockRestore()
