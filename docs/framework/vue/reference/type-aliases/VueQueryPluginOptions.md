@@ -7,4 +7,4 @@ title: VueQueryPluginOptions
 type VueQueryPluginOptions = ConfigOptions | ClientOptions;
 ```
 
-Defined in: [vue-query/src/vueQueryPlugin.ts:38](https://github.com/TanStack/query/blob/main/packages/vue-query/src/vueQueryPlugin.ts#L38)
+Defined in: [packages/vue-query/src/vueQueryPlugin.ts:38](https://github.com/TanStack/query/blob/main/packages/vue-query/src/vueQueryPlugin.ts#L38)

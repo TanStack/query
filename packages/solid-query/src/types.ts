@@ -45,7 +45,8 @@ export interface UseBaseQueryOptions<
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
+   *
+   * @defaultValue false
    */
   deferStream?: boolean
   /**
@@ -123,7 +124,8 @@ export type UseQueryResult<
 > = UseBaseQueryResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -134,7 +136,8 @@ export type DefinedUseBaseQueryResult<
 > = DefinedQueryObserverResult<TData, TError>
 
 /**
- * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.
@@ -170,12 +173,21 @@ export interface InfiniteQueryOptions<
   >,
   'queryKey' | 'suspense'
 > {
+  /**
+   * The query key to use for this query. Required here, unlike on the options this type extends.
+   *
+   * The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/solid/guides/query-keys)
+   * for more information.
+   *
+   * The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
+   */
   queryKey: TQueryKey
   /**
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
-   * Defaults to `false`.
+   *
+   * @defaultValue false
    */
   deferStream?: boolean
   /**
@@ -219,7 +231,8 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined`.
+ * The object `useInfiniteQuery` returns when `initialData` guarantees `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`).
  *
  * @template TData - The type `data` ends up as, after `select` runs (if set).
  * @template TError - The type of errors this query may hold.

@@ -13,6 +13,9 @@ import type {
 } from './queryOptions.js'
 
 /**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * wrapped in an {@link Accessor} so options can be reactive.
@@ -84,7 +87,11 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,

@@ -19,7 +19,7 @@ Options for createMutation
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

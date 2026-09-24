@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useIsFetching(fetchingFilters, queryClient?): Ref<number>;
+function useIsFetching(fetchingFilters: UseIsFetchingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
-Defined in: [vue-query/src/useIsFetching.ts:52](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L52)
+Defined in: [packages/vue-query/src/useIsFetching.ts:54](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L54)
 
 The `useIsFetching` composable returns a `ref` to the `number` of the queries that your application is
 loading or fetching in the background (useful for app-wide loading indicators).
@@ -21,9 +21,9 @@ getter if the filters themselves depend on other reactive state.
 
 ### fetchingFilters
 
-[`QueryFilters`](../type-aliases/QueryFilters.md) = `{}`
+[`UseIsFetchingFilters`](../type-aliases/UseIsFetchingFilters.md) = `{}`
 
-The [QueryFilters](../type-aliases/QueryFilters.md) to narrow down the matched queries.
+The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
 ### queryClient?
 

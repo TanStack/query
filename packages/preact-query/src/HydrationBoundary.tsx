@@ -138,7 +138,6 @@ export const HydrationBoundary = ({
             (dehydratedQuery.promise &&
               existingQuery.state.status !== 'pending' &&
               existingQuery.state.fetchStatus !== 'fetching' &&
-              dehydratedQuery.dehydratedAt !== undefined &&
               dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
           if (hydrationIsNewer) {

@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): TCombinedResult;
+function useQueries<T, TCombinedResult>(__namedParameters: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [react-query/src/useQueries.ts:355](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L355)
+Defined in: [packages/react-query/src/useQueries.ts:359](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L359)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -40,7 +40,7 @@ be structurally shared to be as referentially stable as possible.
 
 #### combine?
 
-(`result`) => `TCombinedResult`
+(`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseQueryResult`\<`Head`\>, `GetUseQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \{ \[K in string \| number \| symbol\]: GetUseQueryResult\<T\[K\<K\>\]\> \}) => `TCombinedResult`
 
 Use this to combine the results of the queries into a single value. The result will be structurally
 shared to be as referentially stable as possible.
@@ -52,7 +52,7 @@ shared to be as referentially stable as possible.
 
 An array with query option objects, mostly identical to `useQuery` — except that `queryClient` and
 `subscribed` aren't accepted per-query (`subscribed` is a top-level option here instead), and
-`placeholderData` accepts a QueriesPlaceholderDataFunction, which is called with `previousData`
+`placeholderData` accepts a [QueriesPlaceholderDataFunction](../type-aliases/QueriesPlaceholderDataFunction.md), which is called with `previousData`
 and `previousQuery` always `undefined`, rather than `useQuery`'s placeholder function.
 
 #### subscribed?
@@ -69,7 +69,7 @@ true
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
 will be used.

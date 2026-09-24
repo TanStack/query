@@ -22,7 +22,7 @@ or through an `Accessor` when the options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

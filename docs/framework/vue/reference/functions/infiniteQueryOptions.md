@@ -8,10 +8,10 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [vue-query/src/infiniteQueryOptions.ts:99](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L99)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:99](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L99)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -29,7 +29,7 @@ These options can be shared across hooks and imperative APIs such as `queryClien
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -50,7 +50,7 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 
 ### Returns
 
-[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `QueryKeyWithDataTag`\<`TQueryKey`, `InfiniteData`\<`TQueryFnData`, `unknown`\>, `TError`\>
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
@@ -78,16 +78,17 @@ const { data, isError, error, fetchNextPage } = useInfiniteQuery(projectsOptions
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [vue-query/src/infiniteQueryOptions.ts:153](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L153)
+Defined in: [packages/vue-query/src/infiniteQueryOptions.ts:154](https://github.com/TanStack/query/blob/main/packages/vue-query/src/infiniteQueryOptions.ts#L154)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
 `options.queryKey` is required and is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -101,7 +102,7 @@ This overload is selected when `initialData` is set, so the resulting `data` is 
 
 #### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`, `unknown`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>
 
 #### TQueryKey
 
@@ -122,7 +123,7 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 ### Returns
 
-[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `QueryKeyWithDataTag`\<`TQueryKey`, `InfiniteData`\<`TQueryFnData`, `unknown`\>, `TError`\>
+[`DefinedInitialDataInfiniteOptions`](../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 

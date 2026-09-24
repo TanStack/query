@@ -4,23 +4,26 @@ title: useIsFetching
 ---
 
 ```ts
-function useIsFetching(filters?, queryClient?): ReactiveValue<number>;
+function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): ReactiveValue<number>;
 ```
 
-Defined in: [packages/svelte-query/src/useIsFetching.svelte.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsFetching.svelte.ts#L40)
+Defined in: [packages/svelte-query/src/useIsFetching.svelte.ts:43](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsFetching.svelte.ts#L43)
+
+The `useIsFetching` function returns the `number` of the queries that your application is loading or
+fetching in the background (useful for app-wide loading indicators).
 
 ## Parameters
 
 ### filters?
 
-`QueryFilters`\<readonly `unknown`[]\>
+[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
-QueryFilters to narrow down which queries to count. Omit to count every fetching
+[QueryFilters](../interfaces/QueryFilters.md) to narrow down which queries to count. Omit to count every fetching
 query.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
