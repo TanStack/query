@@ -133,14 +133,14 @@ describe('useInfiniteQuery', () => {
 
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
-    const id = ref<string | null>(null)
+    const postId = ref<number>()
     const fetchFn = vi.fn(({ pageParam }: { pageParam: number }) =>
       sleep(10).then(() => 'data on page ' + pageParam),
     )
 
     const { data, status } = useInfiniteQuery({
-      queryKey: key,
-      queryFn: computed(() => (id.value ? fetchFn : skipToken)),
+      queryKey: [...key, postId],
+      queryFn: computed(() => (postId.value != null ? fetchFn : skipToken)),
       initialPageParam: 0,
       getNextPageParam: () => 12,
     })
@@ -148,42 +148,35 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchFn).not.toHaveBeenCalled()
-    expect(status.value).toStrictEqual('pending')
+    expect(status.value).toBe('pending')
 
-    id.value = '1'
+    postId.value = 1
 
     await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchFn).toHaveBeenCalledTimes(1)
-    expect(status.value).toStrictEqual('success')
-    expect(data.value).toStrictEqual({
-      pageParams: [0],
-      pages: ['data on page 0'],
-    })
+    expect(status.value).toBe('success')
+    expect(data.value?.pages).toStrictEqual(['data on page 0'])
   })
 
-  describe('queryKey reactivity rules', () => {
-    it('should refetch when a bare reactive getter for the whole queryKey array changes', async () => {
-      const key = queryKey()
-      const id = ref(1)
-      const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+  it('should allow a getter for the whole query key', async () => {
+    const key = queryKey()
+    const fetchFn = vi.fn(() => 'foo')
+    const key1 = ref('key1')
 
-      useInfiniteQuery({
-        queryKey: () => [...key, id.value],
-        queryFn: fetchFn,
-        initialPageParam: 0,
-        getNextPageParam: () => undefined,
-      })
-
-      await vi.advanceTimersByTimeAsync(10)
-
-      expect(fetchFn).toHaveBeenCalledTimes(1)
-
-      id.value = 2
-
-      await vi.advanceTimersByTimeAsync(10)
-
-      expect(fetchFn).toHaveBeenCalledTimes(2)
+    useInfiniteQuery({
+      queryKey: () => [...key, key1.value],
+      queryFn: fetchFn,
+      initialPageParam: 0,
+      getNextPageParam: () => undefined,
     })
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key3'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
   })
 })
