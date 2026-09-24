@@ -577,7 +577,7 @@ describe('useMutation', () => {
 
     it.runIf(isVue3)(
       'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
-      async () => {
+      async ({ onTestFinished }) => {
         const throwOnError = vi.fn().mockReturnValue(true)
         const { mutate } = useMutation({
           mutationFn: () =>
@@ -587,9 +587,12 @@ describe('useMutation', () => {
 
         const unhandledRejectionFn = vi.fn()
         process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
         mutate()
         await vi.advanceTimersByTimeAsync(10)
-        process.off('unhandledRejection', unhandledRejectionFn)
         expect(throwOnError).toHaveBeenCalledTimes(1)
         expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
         expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
