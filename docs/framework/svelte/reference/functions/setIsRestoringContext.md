@@ -4,7 +4,7 @@ title: setIsRestoringContext
 ---
 
 ```ts
-function setIsRestoringContext(isRestoring): void;
+function setIsRestoringContext(isRestoring: Box<boolean>): void;
 ```
 
 Defined in: [packages/svelte-query/src/context.ts:64](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/context.ts#L64)

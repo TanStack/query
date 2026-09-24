@@ -7,11 +7,11 @@ title: DefinedUseQueryResult
 type DefinedUseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [react-query/src/types.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L353)
+Defined in: [packages/react-query/src/types.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L353)
 
 The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
-omission — `data` is never `undefined`. Re-exports DefinedQueryObserverResult from
-`@tanstack/query-core`.
+omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+Re-exports [DefinedQueryObserverResult](DefinedQueryObserverResult.md) from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -23,6 +23,6 @@ The type `data` ends up as after `select` runs.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.

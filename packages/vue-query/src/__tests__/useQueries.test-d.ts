@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
-import { computed, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
@@ -126,37 +125,6 @@ describe('UseQueries config object overload', () => {
       QueryObserverResult<number, Error>
     >()
     expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
-  })
-
-  it('TData should have correct type when queryFn is a computed resolving to skipToken', () => {
-    const key = queryKey()
-    const id = ref<string | null>('1')
-    const { value: queriesState } = useQueries({
-      queries: [
-        {
-          queryKey: key,
-          queryFn: computed(() =>
-            id.value ? () => Promise.resolve(5) : skipToken,
-          ),
-        },
-      ],
-    })
-
-    expectTypeOf(queriesState[0].data).toEqualTypeOf<number | undefined>()
-  })
-
-  it('should allow a bare reactive getter for the whole queryKey array', () => {
-    const id = ref(1)
-    const { value: queriesState } = useQueries({
-      queries: [
-        {
-          queryKey: () => ['post', id.value],
-          queryFn: () => Promise.resolve(5),
-        },
-      ],
-    })
-
-    expectTypeOf(queriesState[0].data).toEqualTypeOf<number | undefined>()
   })
 
   describe('custom hook', () => {

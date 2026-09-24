@@ -3,7 +3,7 @@ id: QueryCache
 title: QueryCache
 ---
 
-Defined in: [vue-query/src/queryCache.ts:16](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L16)
+Defined in: [packages/vue-query/src/queryCache.ts:16](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L16)
 
 Vue-aware subclass of `@tanstack/query-core`'s `QueryCache`. `find`/`findAll` also accept a
 MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping. Access it via
@@ -18,16 +18,16 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new QueryCache(config?): QueryCache;
+new QueryCache(config: QueryCacheConfig): QueryCache;
 ```
 
-Defined in: query-core/dist-ts/src/queryCache.d.ts:57
+Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
 
 #### Parameters
 
-##### config?
+##### config
 
-`QueryCacheConfig`
+[`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
 #### Returns
 
@@ -39,17 +39,143 @@ Defined in: query-core/dist-ts/src/queryCache.d.ts:57
 QC.constructor
 ```
 
+## Properties
+
+### config
+
+```ts
+config: QueryCacheConfig = {};
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
+
+#### Inherited from
+
+```ts
+QC.config
+```
+
 ## Methods
+
+### build()
+
+```ts
+build<TQueryFnData, TError, TData, TQueryKey>(
+   client: QueryClient, 
+   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">, 
+state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:147](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L147)
+
+Returns the existing `Query` instance for the given options' `queryKey`/`queryHash`, or
+builds and adds a new one to the cache if none exists yet. Used by framework adapters and
+plugins (e.g. broadcast/persistence) that need to get-or-create a `Query` directly, bypassing
+the reactive `QueryObserver` machinery.
+
+#### Type Parameters
+
+##### TQueryFnData
+
+`TQueryFnData` = `unknown`
+
+##### TError
+
+`TError` = `Error`
+
+##### TData
+
+`TData` = `TQueryFnData`
+
+##### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### Parameters
+
+##### client
+
+`QueryClient`
+
+##### options
+
+[`WithRequired`](../type-aliases/WithRequired.md)\<`QueryOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `never`\>, `"queryKey"`\>
+
+##### state?
+
+[`QueryState`](../interfaces/QueryState.md)\<`TData`, `TError`\>
+
+#### Returns
+
+[`Query`](Query.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+
+const query = queryCache.build(queryClient, {
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+})
+```
+
+#### Inherited from
+
+```ts
+QC.build
+```
+
+***
+
+### clear()
+
+```ts
+clear(): void;
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L228)
+
+Removes all queries from the cache.
+
+#### Returns
+
+`void`
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+
+queryCache.clear()
+```
+
+#### Inherited from
+
+```ts
+QC.clear
+```
+
+***
 
 ### find()
 
 ```ts
-find<TQueryFnData, TError, TData>(filters): 
+find<TQueryFnData, TError, TData>(filters: MaybeRefDeep<WithRequired<QueryFilters<readonly unknown[]>, "queryKey">>): 
   | Query<TQueryFnData, TError, TData, readonly unknown[]>
   | undefined;
 ```
 
-Defined in: [vue-query/src/queryCache.ts:17](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L17)
+Defined in: [packages/vue-query/src/queryCache.ts:17](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L17)
+
+A slightly more advanced method that can be used to get an existing query instance from the
+cache. This instance not only contains all the state for the query, but all of the instances,
+and underlying guts of the query as well. If the query does not exist, `undefined` is
+returned.
+
+This is not typically needed for most applications, but can come in handy when needing more
+information about a query in rare scenarios (e.g. looking at `query.state.dataUpdatedAt` to
+decide whether a query is fresh enough to be used as an initial value).
 
 #### Type Parameters
 
@@ -69,12 +195,24 @@ Defined in: [vue-query/src/queryCache.ts:17](https://github.com/TanStack/query/b
 
 ##### filters
 
-`MaybeRefDeep`\<`WithRequired`\<`QueryFilters`\<readonly `unknown`[]\>, `"queryKey"`\>\>
+`MaybeRefDeep`\<[`WithRequired`](../type-aliases/WithRequired.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>, `"queryKey"`\>\>
 
 #### Returns
 
-  \| `Query`\<`TQueryFnData`, `TError`, `TData`, readonly `unknown`[]\>
+  \| [`Query`](Query.md)\<`TQueryFnData`, `TError`, `TData`, readonly `unknown`[]\>
   \| `undefined`
+
+#### See
+
+[QueryCache#findAll](#findall)
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+
+const query = queryCache.find({ queryKey: ['posts'] })
+```
 
 #### Overrides
 
@@ -87,23 +225,244 @@ QC.find
 ### findAll()
 
 ```ts
-findAll(filters): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
+Defined in: [packages/vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
+
+An even more advanced method that can be used to get existing query instances from the cache
+that partially match a query key. If no queries match, an empty array is returned.
+
+This is not typically needed for most applications, but can come in handy when needing more
+information about queries in rare scenarios.
 
 #### Parameters
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 #### Returns
 
-`Query`\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]
+[`Query`](Query.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]
+
+#### See
+
+[QueryCache#find](#find)
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+
+const queries = queryCache.findAll({ queryKey: ['posts'] })
+```
 
 #### Overrides
 
 ```ts
 QC.findAll
+```
+
+***
+
+### get()
+
+```ts
+get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string): 
+  | Query<TQueryFnData, TError, TData, TQueryKey>
+  | undefined;
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:250](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L250)
+
+Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
+exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
+than by `QueryFilters`. Used by plugins (e.g. broadcast/hydration) that already have a hash
+to look up directly.
+
+#### Type Parameters
+
+##### TQueryFnData
+
+`TQueryFnData` = `unknown`
+
+##### TError
+
+`TError` = `Error`
+
+##### TData
+
+`TData` = `TQueryFnData`
+
+##### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+#### Parameters
+
+##### queryHash
+
+`string`
+
+#### Returns
+
+  \| [`Query`](Query.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+  \| `undefined`
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+const queryHash = hashKey(['posts'])
+
+const query = queryCache.get(queryHash)
+```
+
+#### Inherited from
+
+```ts
+QC.get
+```
+
+***
+
+### getAll()
+
+```ts
+getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
+
+Returns all queries within the cache.
+
+#### Returns
+
+[`Query`](Query.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+
+const queries = queryCache.getAll()
+```
+
+#### Inherited from
+
+```ts
+QC.getAll
+```
+
+***
+
+### hasListeners()
+
+```ts
+hasListeners(): boolean;
+```
+
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
+
+#### Returns
+
+`boolean`
+
+#### Inherited from
+
+```ts
+QC.hasListeners
+```
+
+***
+
+### remove()
+
+```ts
+remove(query: Query<any, any, any, any>): void;
+```
+
+Defined in: [packages/query-core/src/queryCache.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L208)
+
+Destroys the given `Query` and removes it from the cache, notifying subscribers with a
+`'removed'` event. A no-op if the query is no longer the one currently stored under its hash
+(e.g. it was already replaced). Used by plugins (e.g. the broadcast client) that mirror
+removals across `QueryCache` instances.
+
+#### Parameters
+
+##### query
+
+[`Query`](Query.md)\<`any`, `any`, `any`, `any`\>
+
+#### Returns
+
+`void`
+
+#### Example
+
+```ts
+const queryCache = queryClient.getQueryCache()
+const query = queryCache.find({ queryKey: ['posts'] })
+
+if (query) {
+  queryCache.remove(query)
+}
+```
+
+#### Inherited from
+
+```ts
+QC.remove
+```
+
+***
+
+### subscribe()
+
+```ts
+subscribe(listener: QueryCacheListener): () => void;
+```
+
+Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
+
+#### Parameters
+
+##### listener
+
+`QueryCacheListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
+
+#### Returns
+
+```ts
+(): void;
+```
+
+##### Returns
+
+`void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
+
+#### Inherited from
+
+```ts
+QC.subscribe
 ```

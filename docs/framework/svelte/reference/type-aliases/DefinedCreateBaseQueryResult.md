@@ -19,4 +19,4 @@ Options for createBaseQuery with initialData
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

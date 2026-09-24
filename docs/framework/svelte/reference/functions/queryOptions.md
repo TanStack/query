@@ -6,16 +6,17 @@ title: queryOptions
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/queryOptions.ts:68](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L68)
+Defined in: [packages/svelte-query/src/queryOptions.ts:69](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L69)
 
 You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
 can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
 is required and is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -46,7 +47,7 @@ with `initialData` set.
 
 ### Returns
 
-[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
+[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
@@ -84,10 +85,10 @@ The same options object, typed so that `queryKey` carries the inferred data type
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/queryOptions.ts:113](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L113)
+Defined in: [packages/svelte-query/src/queryOptions.ts:114](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L114)
 
 You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
 can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
@@ -121,7 +122,7 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 ### Returns
 
-[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `QueryKeyWithDataTag`\<`TQueryKey`, `TQueryFnData`, `TError`\>
+[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 

@@ -4,20 +4,13 @@ title: UndefinedInitialQueryOptions
 ---
 
 ```ts
-type UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & object;
+type UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithUndefinedInitialData<TQueryFnData>;
 ```
 
-Defined in: [vue-query/src/useQuery.ts:67](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L67)
+Defined in: [packages/vue-query/src/queryOptions.ts:172](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L172)
 
-## Type Declaration
-
-### initialData?
-
-```ts
-optional initialData: 
-  | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-| NonUndefinedGuard<TQueryFnData>;
-```
+The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
+`undefined` while the query is `pending`.
 
 ## Type Parameters
 
@@ -25,14 +18,22 @@ optional initialData:
 
 `TQueryFnData` = `unknown`
 
+The type your `queryFn` resolves to.
+
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
+
+The type of errors your `queryFn` may throw.
 
 ### TData
 
 `TData` = `TQueryFnData`
 
+The type `data` ends up as after `select` runs.
+
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
+
+The type of your `queryKey`.

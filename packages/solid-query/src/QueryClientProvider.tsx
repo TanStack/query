@@ -18,7 +18,7 @@ const queryClientContextError =
   'No QueryClient set, use QueryClientProvider to set one'
 
 /**
- * The `useQueryClient` hook returns the current `QueryClient` instance.
+ * The `useQueryClient` primitive returns the current `QueryClient` instance.
  *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.

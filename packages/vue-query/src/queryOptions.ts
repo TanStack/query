@@ -9,26 +9,16 @@ import type {
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
-  OmitKeyof,
   QueryBooleanOption,
   QueryKey,
   QueryKeyWithDataTag,
   QueryObserverOptions,
 } from '@tanstack/query-core'
 
-// Widen `SkipToken`'s `unique symbol` to `symbol` so it survives a `queryFn: cond ? fn : skipToken`
-// ternary inside a whole-options getter or a `computed` — see `SkipTokenForUseQueries` in `useQueries.ts`.
-// Only `UseQueryOptions` (the *input* type) widens: `QueryOptions` keeps `unique symbol` so the object
-// `queryOptions()` hands back still satisfies `QueryClient` methods like `fetchQuery`/`invalidateQueries`.
-type SkipTokenForUseQuery = symbol
-
 /**
  * The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
- * `queryClient` methods see once `ref`s have been resolved. `enabled` and `queryKey` track reactive
- * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). Every other
- * option — including `queryFn` — is a plain value here; to pass `queryFn` as a `ref`/`computed`, or to close
- * over reactive state in any other option, use {@link UseQueryOptions} directly, or pass a getter for the
- * whole options object instead (`useQuery(() => ({ ... }))`).
+ * `queryClient` methods see once `ref`s have been resolved. To pass options in, use
+ * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -70,13 +60,16 @@ export type QueryOptions<
         >[Property]
 } & ShallowOption
 
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQuery = symbol
+
 /**
  * The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
  * dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
  * through a `ref` or a reactive getter for the array itself, or `ref`s and reactive getters as individual
- * entries. `queryFn` reacts through a `ref` or a `computed`, but never a bare getter, since a function there
- * is the query function itself. Other options are read once when passed as a plain value, and stay reactive
- * when passed as a `ref` or a `computed`.
+ * entries. Other options are read once when passed as a plain value, and stay reactive when passed as a `ref`
+ * or a `computed`. Only `enabled` and `queryKey` read a function as a getter, so `queryFn` reacts through a
+ * `computed`: a function there is the query function itself.
  *
  * If you instead pass a getter for the whole options object (`useQuery(() => ({ ... }))`), every option
  * inside it — including `staleTime`, `retry`, and `select` — is re-evaluated whenever the getter's own
@@ -140,6 +133,33 @@ export type UseQueryOptions<
   } & ShallowOption
 >
 
+type WithUndefinedInitialData<TQueryFnData> = {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
+   */
+  initialData?:
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
+}
+
+type WithDefinedInitialData<TQueryFnData> = {
+  /**
+   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
+   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
+   * query initialization, and be expected to synchronously return the initial data. Initial data is
+   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
+   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
+   */
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
+}
+
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
  * `undefined` while the query is `pending`.
@@ -154,36 +174,12 @@ export type UndefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyof<
-  QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'queryFn'
-> & {
-  queryFn?: MaybeRefDeep<
-    | QueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >['queryFn']
-    | SkipTokenForUseQuery
-  >
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
-   */
-  initialData?:
-    | undefined
-    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-    | NonUndefinedGuard<TQueryFnData>
-}
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithUndefinedInitialData<TQueryFnData>
 
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
- * `undefined`.
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
  *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -195,61 +191,34 @@ export type DefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyof<
-  QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'queryFn'
-> & {
-  queryFn?: MaybeRefDeep<
-    | QueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >['queryFn']
-    | SkipTokenForUseQuery
-  >
-  /**
-   * If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-   * created or cached yet). If set to a function, the function will be called **once** during the shared/root
-   * query initialization, and be expected to synchronously return the initial data. Initial data is
-   * considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the
-   * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
-   */
-  initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
-}
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithDefinedInitialData<TQueryFnData>
 
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?:
-    | undefined
-    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-    | NonUndefinedGuard<TQueryFnData>
-} & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithUndefinedInitialData<TQueryFnData> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 export type DefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
-} & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
+  WithDefinedInitialData<TQueryFnData> &
+  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with

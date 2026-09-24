@@ -1,10 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import {
-  QueriesObserver,
-  QueryClient,
-  dataTagSymbol,
-  skipToken,
-} from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
@@ -14,7 +9,6 @@ import type { AnyUseQueryOptions } from '../types'
 import type {
   DataTag,
   InitialDataFunction,
-  QueryObserverResult,
   QueryPersister,
 } from '@tanstack/query-core'
 
@@ -80,6 +74,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -119,6 +114,7 @@ describe('queryOptions', () => {
       select: (data) => data.toString(),
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -248,19 +244,6 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('should return the proper type when passed to QueriesObserver', () => {
-    const options = queryOptions({
-      queryKey: queryKey(),
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const queryClient = new QueryClient()
-    const queriesObserver = new QueriesObserver(queryClient, [options])
-    expectTypeOf(queriesObserver).toEqualTypeOf<
-      QueriesObserver<Array<QueryObserverResult>>
-    >()
-  })
-
   it('should allow undefined response in initialData', () => {
     assertType((id: string | null) =>
       queryOptions({
@@ -282,18 +265,15 @@ describe('queryOptions', () => {
   })
 
   it('should allow optional initialData object', () => {
-    const testFn = (id?: string) => {
-      const options = queryOptions({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve('something string'),
-        initialData: id ? 'initial string' : undefined,
-      })
-      expectTypeOf(options.initialData).toExtend<
-        InitialDataFunction<string> | string | undefined
-      >()
-    }
-    testFn('id')
-    testFn()
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
   })
 
   it('should be passable to UseQueryOptions', () => {

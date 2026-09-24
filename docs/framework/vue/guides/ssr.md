@@ -1,6 +1,8 @@
 ---
 id: ssr
 title: SSR
+redirect_from:
+  - framework/vue/reference/hydration
 ---
 
 Vue Query supports prefetching multiple queries on the server and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, Vue Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
@@ -42,7 +44,7 @@ export default defineNuxtPlugin((nuxt) => {
     })
   }
 
-  if (import.meta.client) {
+  if (import.meta.client && vueQueryState.value !== null) {
     hydrate(queryClient, vueQueryState.value)
   }
 })
@@ -254,7 +256,7 @@ In case you are creating the `QueryClient` for every request, Vue Query creates 
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 ## `dehydrate`/`hydrate` options
 

@@ -77,7 +77,7 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 }
 
 /**
- * Displays a string regardless the type of the data
+ * Displays a string regardless of the type of the data
  * @param {unknown} value Value to be stringified
  * @param {boolean} beautify Formats json to multiline
  */

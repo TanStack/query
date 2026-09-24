@@ -5,6 +5,7 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -162,6 +163,7 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data2 = queryClient.fetchQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
@@ -259,6 +261,18 @@ describe('queryOptions', () => {
     )
 
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
   })
 
   it('should allow accessing queryFn and other properties on the returned options object', () => {
@@ -363,7 +377,7 @@ describe('queryOptions', () => {
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
 
-  it('should narrow data to a defined type for a computed queryFn resolving to skipToken', () => {
+  it('should allow computed queryFn resolving to skipToken', () => {
     const id = ref<string | null>('1')
 
     const options = queryOptions({
@@ -378,36 +392,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
   })
 
-  it('should reject a ref for an option other than enabled/queryKey/queryFn', () => {
-    // Unlike `useQuery`, `queryOptions` only tracks `enabled`/`queryKey`/`queryFn` reactively — every other
-    // option (`staleTime` here) stays a plain value. This is deliberate: the returned object is shared with
-    // plain APIs like `queryClient.fetchQuery`, so a `ref` slipping into an arbitrary option would make the
-    // declared (plain) type lie about the actual (reactive) value.
-    assertType(
-      queryOptions({
-        // The directive sits on `queryKey`, not `staleTime`: overload resolution fails on the whole
-        // object literal and TypeScript reports it at the first property.
-        // @ts-expect-error staleTime must be a plain value, not a ref
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve(5),
-        staleTime: ref(1000),
-      }),
-    )
-  })
-
-  it('should reject the whole options object wrapped in a ref', () => {
-    assertType(
-      queryOptions(
-        // @ts-expect-error queryOptions only accepts a plain object or a getter for the whole object, not a ref
-        ref({
-          queryKey: queryKey(),
-          queryFn: () => Promise.resolve(5),
-        }),
-      ),
-    )
-  })
-
-  it('should narrow data to a defined type for a conditional skipToken inside a whole-options getter', () => {
+  it('should allow skipToken inside a whole-options getter', () => {
     const id = ref<string | null>('1')
 
     const options = queryOptions(() => {

@@ -7,7 +7,7 @@ title: UseMutationReturnType
 type UseMutationReturnType<TData, TError, TVariables, TOnMutateResult, TResult> = ToRefs<Readonly<TResult>> & object;
 ```
 
-Defined in: [vue-query/src/useMutation.ts:53](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L53)
+Defined in: [packages/vue-query/src/useMutation.ts:53](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L53)
 
 ## Type Declaration
 

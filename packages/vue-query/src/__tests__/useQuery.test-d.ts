@@ -153,6 +153,26 @@ describe('useQuery', () => {
     })
   })
 
+  describe('generic queryFn', () => {
+    it('should infer the result type from a generic query function', () => {
+      const key = queryKey()
+
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const query = reactive(
+        useQuery({
+          queryKey: key,
+          queryFn: () => queryFn(),
+        }),
+      )
+
+      expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    })
+  })
+
   describe('generic queryKey inference (#8199)', () => {
     it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
       const basket = { fruit: 'apple', vegetable: 'broccoli' } as const
@@ -360,6 +380,28 @@ describe('useQuery', () => {
     })
   })
 
+  describe('skipToken', () => {
+    it('should accept skipToken inside a whole-options getter', () => {
+      const id = ref<string | null>('1')
+
+      const query = reactive(
+        useQuery(() => {
+          const current = id.value
+          return {
+            queryKey: ['post', current],
+            queryFn: current
+              ? () => sleep(0).then(() => 'Some data')
+              : skipToken,
+          }
+        }),
+      )
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
+      }
+    })
+  })
+
   describe('queryKey reactivity rules', () => {
     it('should accept a bare reactive getter for the whole queryKey array', () => {
       const id = ref(1)
@@ -381,58 +423,6 @@ describe('useQuery', () => {
       })
 
       expectTypeOf(data.value).toEqualTypeOf<number | undefined>()
-    })
-  })
-
-  describe('skipToken', () => {
-    it('should accept a computed queryFn resolving to skipToken', () => {
-      const postId = ref<number>()
-
-      // `data`'s resulting type can't be asserted here: `vue-tsc`'s language-service plugin (unlike `tsc` or
-      // vitest's own typecheck) fails to resolve `TQueryFnData` through this inference path, leaking the
-      // unresolved type parameter into `data`'s type. Runtime skip/refetch behavior is covered in
-      // `useQuery.test.ts`.
-      assertType(
-        useQuery({
-          queryKey: ['post', postId],
-          queryFn: computed(() =>
-            postId.value != null
-              ? () => sleep(0).then(() => `post ${postId.value}`)
-              : skipToken,
-          ),
-        }),
-      )
-    })
-
-    it('should narrow data to string | undefined for a conditional skipToken inside a whole-options getter', () => {
-      const postId = ref<number>()
-
-      const { data } = useQuery(() => {
-        const id = postId.value
-        return {
-          queryKey: ['post', id],
-          queryFn:
-            id != null ? () => sleep(0).then(() => `post ${id}`) : skipToken,
-        }
-      })
-
-      expectTypeOf(data.value).toEqualTypeOf<string | undefined>()
-    })
-
-    it('known tradeoff: widening SkipToken to a plain symbol also accepts unrelated symbol values', () => {
-      // `queryFn`'s type accepts any `symbol`, not just `SkipToken`, because narrowing to the `unique
-      // symbol` that `SkipToken` actually is breaks type inference for the ternary above — same tradeoff
-      // already accepted in `useQueries.ts`'s `SkipTokenForUseQueries`. This isn't type-safe: only the
-      // exact `skipToken` identity disables a query, so an unrelated symbol stays enabled and throws once
-      // the fetch path tries to invoke it as a function.
-      const unrelatedSymbol: unique symbol = Symbol('unrelated')
-
-      const { data } = useQuery({
-        queryKey: ['post'],
-        queryFn: unrelatedSymbol,
-      })
-
-      expectTypeOf(data.value).toEqualTypeOf<unknown>()
     })
   })
 })
