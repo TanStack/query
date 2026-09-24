@@ -751,7 +751,9 @@ describe('useQuery', () => {
       })
     })
 
-    it('should throw from suspense when throwOnError is true', async () => {
+    it('should throw from suspense when throwOnError is true', async ({
+      onTestFinished,
+    }) => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
@@ -767,12 +769,14 @@ describe('useQuery', () => {
 
       // The error watcher also throws, which Vue 3 surfaces as an unhandled rejection
       process.on('unhandledRejection', noop)
+      onTestFinished(() => {
+        process.off('unhandledRejection', noop)
+      })
+
       await Promise.all([
         expect(query.suspense()).rejects.toThrow('Some error'),
         vi.advanceTimersByTimeAsync(10),
       ])
-      process.off('unhandledRejection', noop)
-
       expect(throwOnError).toHaveBeenCalledTimes(2)
       expect(throwOnError).toHaveBeenNthCalledWith(
         1,
