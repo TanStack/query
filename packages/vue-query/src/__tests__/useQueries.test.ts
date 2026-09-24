@@ -297,7 +297,7 @@ describe('useQueries', () => {
 
   it('should skip a query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
-    const fetchFn = vi.fn(() => 'foo')
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'foo'))
     const checked = ref(false)
 
     useQueries({
@@ -313,7 +313,7 @@ describe('useQueries', () => {
 
     checked.value = true
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchFn).toHaveBeenCalled()
   })
@@ -414,7 +414,7 @@ describe('useQueries', () => {
 
   it('should allow a getter for the whole query key', async () => {
     const key = queryKey()
-    const fetchFn = vi.fn(() => 'foo')
+    const fetchFn = vi.fn(() => sleep(10).then(() => 'foo'))
     const key1 = ref('key1')
 
     useQueries({
@@ -430,7 +430,7 @@ describe('useQueries', () => {
 
     key1.value = 'key3'
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
   })
