@@ -2,7 +2,7 @@ import { onDestroy } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
-import { watchChanges } from './utils.svelte.js'
+import { runEffect, watchChanges } from './utils.svelte.js'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type {
   Accessor,
@@ -100,6 +100,14 @@ export function createBaseQuery<
       unsubscribe()
     })
   } catch (e) {}
+  // Non-component contexts (e.g. an `$effect.root`) have no working `onDestroy`:
+  // register the teardown with the enclosing effect root's disposal instead, so
+  // the eager subscription above is released when the root is disposed (#11587).
+  runEffect('pre', () => {
+    return () => {
+      unsubscribe()
+    }
+  })
 
   watchChanges(
     () => resolvedOptions,
