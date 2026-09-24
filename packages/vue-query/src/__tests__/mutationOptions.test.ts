@@ -720,10 +720,10 @@ describe('mutationOptions', () => {
   it('should reactively update mutationKey when ref changes in getter', async () => {
     const key = queryKey()
     const keyRef = ref('key01')
-    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationFn = vi.fn((params: string) => sleep(10).then(() => params))
     const mutationOpts = mutationOptions(() => ({
       mutationKey: [...key, keyRef.value],
-      mutationFn: fnMock,
+      mutationFn,
     }))
 
     const mutation = useMutation(mutationOpts)
@@ -731,8 +731,8 @@ describe('mutationOptions', () => {
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(fnMock).toHaveBeenCalledTimes(1)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       1,
       'data',
       expect.objectContaining({ mutationKey: [...key, 'key01'] }),
@@ -743,8 +743,8 @@ describe('mutationOptions', () => {
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(fnMock).toHaveBeenCalledTimes(2)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(2)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       2,
       'data',
       expect.objectContaining({ mutationKey: [...key, 'key02'] }),
