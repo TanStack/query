@@ -397,7 +397,7 @@ describe('withPersistQueryClient', () => {
 
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    const onErrorMock = vi
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const queryClient = new QueryClient()
@@ -445,8 +445,8 @@ describe('withPersistQueryClient', () => {
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
-    expect(onErrorMock).toHaveBeenCalledTimes(1)
-    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
-    onErrorMock.mockRestore()
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
+    consoleMock.mockRestore()
   })
 })
