@@ -466,7 +466,7 @@ describe('injectMutation', () => {
 
     it('should fire both onSettled functions', async () => {
       const onSettled = vi.fn()
-      const onSettledOnFunction = vi.fn()
+      const onSettledMutate = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
@@ -474,12 +474,12 @@ describe('injectMutation', () => {
         }))
       })
 
-      mutation.mutate('', { onSettled: onSettledOnFunction })
+      mutation.mutate('', { onSettled: onSettledMutate })
 
       await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
-      expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
+      expect(onSettledMutate).toHaveBeenCalledTimes(1)
     })
 
     it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
@@ -575,19 +575,19 @@ describe('injectMutation', () => {
     })
 
     it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
-      const perCallOnSuccess = vi.fn()
+      const onSuccessMutate = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: (text: string) => sleep(10).then(() => text),
         }))
       })
 
-      mutation.mutate('todo', { onSuccess: perCallOnSuccess })
+      mutation.mutate('todo', { onSuccess: onSuccessMutate })
 
       await vi.advanceTimersByTimeAsync(10)
 
-      expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
-      expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
+      expect(onSuccessMutate).toHaveBeenCalledTimes(1)
+      expect(onSuccessMutate.mock.calls[0]?.[3].client).toBe(queryClient)
     })
   })
 
@@ -685,14 +685,14 @@ describe('injectMutation', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const key = queryKey()
       const err = new Error('Expected mock error. All is well!')
-      const boundaryFn = vi.fn()
+      const throwOnError = vi.fn()
       const { mutate } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: key,
           mutationFn: () => {
             return Promise.reject(err)
           },
-          throwOnError: boundaryFn,
+          throwOnError,
         }))
       })
 
@@ -702,8 +702,8 @@ describe('injectMutation', () => {
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(boundaryFn).toHaveBeenCalledTimes(1)
-      expect(boundaryFn).toHaveBeenCalledWith(err)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(err)
     })
 
     it('should throw when throwOnError is true and mutate is used', async () => {
@@ -1126,7 +1126,7 @@ describe('injectMutation', () => {
     })
 
     it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-      const onSuccessPerCall = vi.fn()
+      const onSuccessMutate = vi.fn()
 
       @Component({
         template: `<div>data: {{ mutation.data() ?? 'none' }}</div>`,
@@ -1140,16 +1140,16 @@ describe('injectMutation', () => {
       const rendered = await render(Page)
 
       rendered.fixture.componentInstance.mutation.mutate('Todo 1', {
-        onSuccess: onSuccessPerCall,
+        onSuccess: onSuccessMutate,
       })
       rendered.fixture.componentInstance.mutation.mutate('Todo 2', {
-        onSuccess: onSuccessPerCall,
+        onSuccess: onSuccessMutate,
       })
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
 
-      expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
-      expect(onSuccessPerCall).toHaveBeenCalledWith(
+      expect(onSuccessMutate).toHaveBeenCalledTimes(1)
+      expect(onSuccessMutate).toHaveBeenCalledWith(
         'Todo 2',
         'Todo 2',
         undefined,
