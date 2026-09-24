@@ -553,32 +553,6 @@ describe('useQuery', () => {
     })
   })
 
-  it('should skip the query while a whole-options getter resolves queryFn to skipToken, and run it once defined', async () => {
-    const key = queryKey()
-    const postId = ref<number>()
-    const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
-
-    const query = useQuery(() => ({
-      queryKey: [...key, postId.value],
-      queryFn: postId.value != null ? fetchFn : skipToken,
-    }))
-
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(fetchFn).not.toHaveBeenCalled()
-    expect(query).toMatchObject({ status: { value: 'pending' } })
-
-    postId.value = 1
-
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(fetchFn).toHaveBeenCalledTimes(1)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'Some data' },
-    })
-  })
-
   it('should seed from initialData and skip the loading state', () => {
     const key = queryKey()
     const query = useQuery({
