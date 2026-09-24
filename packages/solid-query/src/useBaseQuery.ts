@@ -175,8 +175,7 @@ export function useBaseQuery<
     }
   }
 
-  const createClientSubscriber = () => {
-    const obs = observer()
+  const createClientSubscriber = (obs = observer()) => {
     return obs.subscribe((result) => {
       observerResult = result
       queueMicrotask(() => {
@@ -320,7 +319,7 @@ export function useBaseQuery<
           unsubscribe()
         }
         const newObserver = new Observer(c, defaultedOptions())
-        unsubscribe = createClientSubscriber()
+        unsubscribe = createClientSubscriber(newObserver)
         setObserver(newObserver)
       },
       {

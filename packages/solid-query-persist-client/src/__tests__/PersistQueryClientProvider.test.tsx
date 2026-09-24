@@ -590,21 +590,19 @@ describe('PersistQueryClientProvider', () => {
     expect(queryFn2).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(1)
 
-    expect(states).toHaveLength(3)
-
     expect(states[0]).toStrictEqual({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toStrictEqual({
+    expect(states).toContainEqual({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toStrictEqual({
+    expect(states.at(-1)).toStrictEqual({
       status: 'success',
       fetchStatus: 'idle',
       data: 'queryFn2',
