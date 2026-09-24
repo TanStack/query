@@ -598,7 +598,7 @@ describe('useMutation', () => {
         expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
         expect(unhandledRejectionFn).toHaveBeenCalledWith(
           Error('Some error'),
-          expect.anything(),
+          expect.any(Promise),
         )
       },
     )
