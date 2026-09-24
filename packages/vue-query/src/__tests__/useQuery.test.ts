@@ -708,23 +708,22 @@ describe('useQuery', () => {
       expect(afterTimeout).toBe(true)
     })
 
-    it('should resolve immediately when stale without refetching', () => {
+    it('should resolve immediately without refetching when the data is fresh', () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const fetcherSpy = vi.fn(() => sleep(0).then(() => 'Some data'))
+      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
 
-      // let afterTimeout = false;
       const query = useQuery({
         queryKey: key,
-        queryFn: () => sleep(0).then(() => 'Some data'),
+        queryFn,
         staleTime: 10000,
         initialData: 'foo',
       })
 
       return query.suspense().then(() => {
-        expect(fetcherSpy).toHaveBeenCalledTimes(0)
+        expect(queryFn).toHaveBeenCalledTimes(0)
       })
     })
 
