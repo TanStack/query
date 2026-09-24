@@ -1797,7 +1797,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
@@ -1842,7 +1842,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
