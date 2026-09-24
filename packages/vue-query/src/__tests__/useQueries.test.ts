@@ -464,6 +464,7 @@ describe('useQueries', () => {
 
     expect(queriesState.value[0].data).toBe('users-2')
     expect(queriesState.value[1].data).toBe('posts-1')
+    expect(queriesState.value[1].isFetching).toBe(false)
   })
 
   it('should warn when used outside of setup function in development mode', () => {
