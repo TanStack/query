@@ -134,27 +134,27 @@ describe('useInfiniteQuery', () => {
   it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
     const key = queryKey()
     const postId = ref<number>()
-    const fetchFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
       sleep(10).then(() => 'data on page ' + pageParam),
     )
 
     const { data, status } = useInfiniteQuery({
       queryKey: [...key, postId],
-      queryFn: computed(() => (postId.value != null ? fetchFn : skipToken)),
+      queryFn: computed(() => (postId.value != null ? queryFn : skipToken)),
       initialPageParam: 0,
       getNextPageParam: () => 12,
     })
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(fetchFn).not.toHaveBeenCalled()
+    expect(queryFn).not.toHaveBeenCalled()
     expect(status.value).toBe('pending')
 
     postId.value = 1
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
     expect(status.value).toBe('success')
     expect(data.value?.pages).toStrictEqual(['data on page 0'])
   })
