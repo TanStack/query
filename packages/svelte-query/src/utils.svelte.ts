@@ -1,6 +1,6 @@
 import { untrack } from 'svelte'
 // modified from the great https://github.com/svecosystem/runed
-function runEffect(
+export function runEffect(
   flush: 'post' | 'pre',
   effect: () => void | VoidFunction,
 ): void {
