@@ -26,7 +26,7 @@ import SuspendableComponent from './SuspendableComponent.vue'
 </template>
 ```
 
-And change your `setup` function in suspendable component to be `async`. Then you can use async `suspense` function that is provided by `vue-query`.
+And change your `setup` function in suspendable component to be `async`. Then you can use async `suspense` function that is provided by `vue-query` (both `useQuery` and `useInfiniteQuery` return it).
 
 ```vue
 <script>
@@ -58,6 +58,36 @@ export default defineComponent({
 - If the data is fresh, it resolves immediately without refetching.
 - While the query is disabled (`enabled: false`), it waits until the query is enabled. On the server, this means it never resolves for a query that stays disabled, see [SSR](./ssr.md#suspense-of-a-disabled-query-never-resolves-on-the-server).
 - If the fetch fails, it resolves with the query result in the error state. It rejects with the error only when `throwOnError` is (or returns) `true`.
+
+## Error handling
+
+Since `suspense()` resolves with the error result by default, the component still renders after a failed fetch and can read `error` from the query. To let a parent component handle the error instead, set `throwOnError: true`. `await suspense()` then rejects, the error propagates out of the `async` `setup`, and you can catch it with [`onErrorCaptured`](https://vuejs.org/api/composition-api-lifecycle.html#onerrorcaptured) in a parent of `Suspense`:
+
+```vue
+<script setup>
+import { onErrorCaptured, ref } from 'vue'
+import SuspendableComponent from './SuspendableComponent.vue'
+
+const error = ref(null)
+
+onErrorCaptured((err) => {
+  error.value = err
+  return false
+})
+</script>
+
+<template>
+  <div v-if="error">Something went wrong: {{ error.message }}</div>
+  <Suspense v-else>
+    <template #default>
+      <SuspendableComponent />
+    </template>
+    <template #fallback>
+      <div>Loading...</div>
+    </template>
+  </Suspense>
+</template>
+```
 
 ## Fetch-on-render vs Render-as-you-fetch
 
