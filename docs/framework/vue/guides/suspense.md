@@ -52,6 +52,13 @@ export default defineComponent({
 </script>
 ```
 
+## How `suspense()` resolves
+
+- If the query has no data or its data is stale, it fetches the query and resolves with the result once the fetch finishes.
+- If the data is fresh, it resolves immediately without refetching.
+- While the query is disabled (`enabled: false`), it waits until the query is enabled. On the server, this means it never resolves for a query that stays disabled, see [SSR](./ssr.md#suspense-of-a-disabled-query-never-resolves-on-the-server).
+- If the fetch fails, it resolves with the query result in the error state. It rejects with the error only when `throwOnError` is (or returns) `true`.
+
 ## Fetch-on-render vs Render-as-you-fetch
 
 Out of the box, Vue Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](./prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.

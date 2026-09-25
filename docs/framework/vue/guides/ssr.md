@@ -250,6 +250,37 @@ Because `staleTime` defaults to `0`, queries will be refetched in the background
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
 
+### `suspense()` of a disabled query never resolves on the server
+
+`suspense()` waits until the query is enabled. On the client, it continues once `enabled` becomes `true`, but watchers don't run during server-side rendering, so awaiting `suspense()` of a query that stays disabled on the server (for example, a dependent query whose dependency failed) never resolves and blocks the render. Skip it when the query is disabled:
+
+```html
+<script setup>
+  import { computed, onServerPrefetch } from 'vue'
+  import { useQuery } from '@tanstack/vue-query'
+
+  const { data: user, suspense: userSuspense } = useQuery({
+    queryKey: ['user'],
+    queryFn: getUser,
+  })
+
+  const userId = computed(() => user.value?.id)
+  const enabled = computed(() => !!user.value?.id)
+  const { data: projects, suspense: projectsSuspense } = useQuery({
+    queryKey: ['projects', userId],
+    queryFn: () => getProjectsByUser(userId.value),
+    enabled,
+  })
+
+  onServerPrefetch(async () => {
+    await userSuspense()
+    if (enabled.value) {
+      await projectsSuspense()
+    }
+  })
+</script>
+```
+
 ### High memory consumption on server
 
 In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.

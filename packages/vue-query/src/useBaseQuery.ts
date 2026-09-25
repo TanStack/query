@@ -34,6 +34,12 @@ export type UseBaseQueryReturnType<
     ? TResult[K]
     : Ref<Readonly<TResult>[K]>
 } & {
+  /**
+   * Returns a promise for use with Vue's `Suspense` or `onServerPrefetch`. It fetches the query if it has no
+   * data or its data is stale and resolves with the result once the fetch finishes, or resolves immediately if
+   * the data is fresh. While the query is disabled, it waits until the query is enabled. If the fetch fails, it
+   * resolves with the error result, unless `throwOnError` is (or returns) `true`, in which case it rejects.
+   */
   suspense: () => Promise<TResult>
 }
 
