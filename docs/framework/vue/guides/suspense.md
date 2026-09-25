@@ -54,7 +54,7 @@ export default defineComponent({
 
 ## How `suspense()` resolves
 
-- If the query has no data or its data is stale, it fetches the query and resolves with the result once the fetch finishes.
+- If the query has no data or its data is stale, it fetches the query and resolves with the result once that fetch resolves. This is usually when the query function finishes, but can be earlier, such as after the first chunk of an `experimental_streamedQuery` or when `setQueryData` sets data while the fetch is in flight.
 - If the data is fresh, it resolves immediately without refetching.
 - While the query is disabled (`enabled: false`), it waits until the query is enabled. On the server, this means it never resolves for a query that stays disabled, see [SSR](./ssr.md#suspense-of-a-disabled-query-never-resolves-on-the-server).
 - If the fetch fails, it resolves with the query result in the error state. It rejects with the error only when `throwOnError` is (or returns) `true`.
