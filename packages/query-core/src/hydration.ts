@@ -1,4 +1,4 @@
-import { noop } from './utils'
+import { hashQueryKeyByOptions, noop } from './utils'
 import type {
   DefaultError,
   MutationKey,
@@ -273,6 +273,11 @@ export function hydrate(
     options?.defaultOptions?.deserializeData ??
     client.getDefaultOptions().hydrate?.deserializeData
 
+  const queryDefaults = {
+    ...client.getDefaultOptions().hydrate?.queries,
+    ...options?.defaultOptions?.queries,
+  }
+
   dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
     mutationCache.build(
       client,
@@ -286,15 +291,14 @@ export function hydrate(
   })
 
   dehydratedState.queries?.forEach(
-    ({
-      queryKey,
-      state,
-      queryHash,
-      meta,
-      promise,
-      dehydratedAt,
-      queryType,
-    }) => {
+    ({ queryKey, state, meta, promise, dehydratedAt, queryType }) => {
+      // The hash is recomputed rather than read from the payload, so
+      // that payloads written by the old hash implementation still resolve
+      // to the same cache entry
+      const queryHash = hashQueryKeyByOptions(
+        queryKey,
+        client.defaultQueryOptions({ ...queryDefaults, queryKey }),
+      )
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data =
@@ -342,8 +346,7 @@ export function hydrate(
         query = queryCache.build(
           client,
           {
-            ...client.getDefaultOptions().hydrate?.queries,
-            ...options?.defaultOptions?.queries,
+            ...queryDefaults,
             queryKey,
             queryHash,
             meta,
