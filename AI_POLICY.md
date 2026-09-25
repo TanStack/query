@@ -32,4 +32,3 @@ Our aim is ensuring quality and maintaining the joy of collaborating and communi
 - Contribution guidelines must still be followed
 
 Read more about this and other AI contribution policies on [ai-policy.dev](https://ai-policy.dev/)
-

@@ -22,7 +22,6 @@ Every pull request must follow the [TanStack Query pull request template](.githu
 - You may use AI tools to help generate code, but you remain responsible for understanding, testing, and verifying every submitted change. Do not submit unreviewed, low-quality, or irrelevant generated code.
 - Do not mass-submit unrelated or low-quality AI-generated pull requests. We treat that behavior as spam and may close the pull requests, block the contributor, and report the GitHub account.
 
-
 ## AI-Assisted Contributions
 
 All contributors must follow our [AI Policy](./AI_POLICY.md) when using AI tools to assist contributions.
@@ -216,4 +215,3 @@ pnpm nx run @tanstack/react-query:test:lib
 Do not run `pnpm run test:lib` inside individual package folders.
 This can cause test failures due to dependencies between packages.
 Always run tests from the **root folder** using `nx` commands.
-
