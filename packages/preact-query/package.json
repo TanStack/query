@@ -30,7 +30,7 @@
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsdown && pnpm build:codemods",
     "build:tsdown": "tsdown --tsconfig tsconfig.prod.json",
-    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
+    "build:codemods": "rm -rf ./build/codemods && mkdir ./build/codemods && cp -r ../query-codemods/src/* ./build/codemods"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
@@ -68,7 +68,6 @@
     "@tanstack/query-persist-client-core": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "^3.2.4",
-    "cpy-cli": "^5.0.0",
     "eslint-config-preact": "^2.0.0",
     "npm-run-all2": "^9.0.3",
     "preact": "^10.29.8",

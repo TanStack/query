@@ -30,7 +30,7 @@
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsdown && pnpm build:codemods",
     "build:tsdown": "tsdown --tsconfig tsconfig.prod.json",
-    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
+    "build:codemods": "rm -rf ./build/codemods && mkdir ./build/codemods && cp -r ../query-codemods/src/* ./build/codemods"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
@@ -72,7 +72,6 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
-    "cpy-cli": "^5.0.0",
     "npm-run-all2": "^9.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
