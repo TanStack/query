@@ -94,8 +94,7 @@ export type DefinedInitialDataOptions<
    * cache.
    */
   initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
   /**
    * Optional here, but omitting it is only safe when no fetch will be attempted — for example with
    * `enabled: false`, or when a default query function has been defined. Otherwise, an enabled query with no
