@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isVue2, isVue3, onScopeDispose, reactive, ref } from 'vue-demi'
+import {
+  isReactive,
+  isReadonly,
+  isVue2,
+  isVue3,
+  onScopeDispose,
+  reactive,
+  ref,
+} from 'vue-demi'
 import { noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
@@ -542,6 +550,34 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(mutation.status.value).toBe('idle')
+  })
+
+  it.runIf(isVue3)(
+    'should return deeply reactive and readonly data by default',
+    async () => {
+      const { mutate, data } = useMutation({
+        mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      })
+
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(isReactive(data.value?.nested)).toBe(true)
+      expect(isReadonly(data.value?.nested)).toBe(true)
+    },
+  )
+
+  it('should return data in a shallow ref when shallow is true', async () => {
+    const { mutate, data } = useMutation({
+      mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      shallow: true,
+    })
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
   })
 
   it('should warn when used outside of setup function in development mode', () => {
