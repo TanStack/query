@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isVue2, isVue3, reactive, ref } from 'vue-demi'
+import { isVue2, isVue3, onScopeDispose, reactive, ref } from 'vue-demi'
 import { noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
+import type { MockedFunction } from 'vitest'
 import type { MutationFunctionContext } from '@tanstack/query-core'
 
 vi.mock('../useQueryClient')
@@ -516,6 +517,26 @@ describe('useMutation', () => {
         error: { value: Error('Some error') },
       })
     })
+  })
+
+  it('should stop listening to changes on onScopeDispose', async () => {
+    const onScopeDisposeMock = onScopeDispose as MockedFunction<
+      typeof onScopeDispose
+    >
+    onScopeDisposeMock.mockImplementationOnce((fn) => fn())
+
+    const mutation = useMutation({
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    })
+
+    expect(mutation.status.value).toBe('idle')
+
+    mutation.mutate('a')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(mutation.status.value).toBe('idle')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(mutation.status.value).toBe('idle')
   })
 
   it('should warn when used outside of setup function in development mode', () => {
