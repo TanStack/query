@@ -178,6 +178,7 @@ describe('useQueries', () => {
   it('should stop listening to changes on onScopeDispose', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
+    const queryClient = useQueryClient()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
@@ -196,6 +197,8 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
     await vi.advanceTimersByTimeAsync(0)
 
+    expect(queryClient.getQueryData(key1)).toBe('Some data')
+    expect(queryClient.getQueryData(key2)).toBe('Some data')
     expect(queriesState.value).toMatchObject([
       {
         status: 'pending',

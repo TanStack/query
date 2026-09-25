@@ -3,6 +3,7 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
+import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
 import type { MockedFunction } from 'vitest'
 
@@ -46,10 +47,14 @@ describe('useIsMutating', () => {
     >
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
+    const key = queryKey()
+    const queryClient = useQueryClient()
     const mutation = useMutation({
+      mutationKey: key,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation2 = useMutation({
+      mutationKey: key,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const isMutating = useIsMutating()
@@ -59,9 +64,11 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
     await vi.advanceTimersByTimeAsync(0)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(2)
     expect(isMutating.value).toStrictEqual(0)
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(isMutating.value).toStrictEqual(0)
 
     onScopeDisposeMock.mockReset()
