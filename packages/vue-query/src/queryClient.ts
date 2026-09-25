@@ -105,18 +105,29 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData>
+  // A shared UseQueryOptions type widens skipToken to symbol to preserve Vue
+  // queryFn inference. The existing core-shaped overloads remain first so
+  // inline imperative options retain their narrower inference.
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TSelected = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
-      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TSelected,
+      TQueryData,
+      TQueryKey
     >,
-  ): Promise<TData> {
+  ): Promise<TQueryData>
+  ensureQueryData(options: unknown): Promise<unknown> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.ensureQueryData(cloneDeepUnref(options))
+    return super.ensureQueryData(
+      cloneDeepUnref(options as MaybeRefDeep<EnsureQueryDataOptions>),
+    )
   }
 
   getQueriesData<TData = unknown>(
@@ -293,26 +304,28 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<TData>
+  // A shared UseQueryOptions type widens skipToken to symbol to preserve Vue
+  // queryFn inference. The existing core-shaped overloads remain first so
+  // inline imperative options retain their narrower inference.
   query<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      QueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
     >,
-  ): Promise<TData> {
-    return super.query(cloneDeepUnref(options))
+  ): Promise<TData>
+  query(options: unknown): Promise<unknown> {
+    return super.query(
+      cloneDeepUnref(options as MaybeRefDeep<QueryExecuteOptions>),
+    )
   }
 
   /**
@@ -352,19 +365,29 @@ export class QueryClient extends QC {
           TPageParam
         >),
   ): Promise<TData>
+  // A shared UseQueryOptions type widens skipToken to symbol to preserve Vue
+  // queryFn inference. The existing core-shaped overloads remain first so
+  // inline imperative options retain their narrower inference.
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TSelected = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TSelected,
+      TQueryData,
+      TQueryKey
     >,
-  ): Promise<TData> {
+  ): Promise<TQueryData>
+  fetchQuery(options: unknown): Promise<unknown> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchQuery(cloneDeepUnref(options))
+    return super.fetchQuery(
+      cloneDeepUnref(options as MaybeRefDeep<FetchQueryOptions>),
+    )
   }
 
   /**
@@ -388,18 +411,29 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void>
+  // A shared UseQueryOptions type widens skipToken to symbol to preserve Vue
+  // queryFn inference. The existing core-shaped overloads remain first so
+  // inline imperative options retain their narrower inference.
   prefetchQuery<
-    TQueryFnData = unknown,
+    TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TSelected = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TSelected,
+      TQueryData,
+      TQueryKey
     >,
-  ): Promise<void> {
+  ): Promise<void>
+  prefetchQuery(options: unknown): Promise<void> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchQuery(cloneDeepUnref(options))
+    return super.prefetchQuery(
+      cloneDeepUnref(options as MaybeRefDeep<FetchQueryOptions>),
+    )
   }
 
   // These one-shot imperative methods do not resolve top-level option getters.
