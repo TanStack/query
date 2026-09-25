@@ -13,7 +13,7 @@
     "next": "^16.0.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-intersection-observer": "^9.16.0"
+    "react-intersection-observer": "^11.0.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
