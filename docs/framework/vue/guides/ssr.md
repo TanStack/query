@@ -251,7 +251,7 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### `suspense()` of a disabled query never resolves on the server
 
-`suspense()` waits until the query is enabled. On the client, it continues once `enabled` becomes `true`, but watchers don't run during server-side rendering, so awaiting `suspense()` of a query that stays disabled on the server (for example, a dependent query whose dependency failed) never resolves and blocks the render. Skip it when the query is disabled:
+`suspense()` waits until the query is enabled, so it never resolves for a query that stays disabled. On the server, awaiting it in `onServerPrefetch` for such a query (for example, a dependent query whose dependency failed) blocks the render. Skip it when the query is disabled:
 
 ```html
 <script setup>
