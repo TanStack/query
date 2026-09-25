@@ -331,7 +331,7 @@ Defined in: [packages/vue-query/src/queryClient.ts:90](https://github.com/TanSta
 
 ##### Deprecated
 
-Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+Use queryClient.query({ ...unref(options), staleTime: 'static' }) instead, unwrapping any top-level Vue ref before spreading. Omit select if you need this method's cache-data return value. This method will be removed in the next major version.
 
 ##### Overrides
 
@@ -377,7 +377,7 @@ Defined in: [packages/vue-query/src/queryClient.ts:98](https://github.com/TanSta
 
 ##### Deprecated
 
-Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+Use queryClient.query({ ...unref(options), staleTime: 'static' }) instead, unwrapping any top-level Vue ref before spreading. Omit select if you need this method's cache-data return value. This method will be removed in the next major version.
 
 ##### Overrides
 
@@ -427,7 +427,7 @@ Defined in: [packages/vue-query/src/queryClient.ts:111](https://github.com/TanSt
 
 ##### Deprecated
 
-Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+Use queryClient.query({ ...unref(options), staleTime: 'static' }) instead, unwrapping any top-level Vue ref before spreading. Omit select if you need this method's cache-data return value. This method will be removed in the next major version.
 
 ##### Overrides
 
@@ -1591,11 +1591,11 @@ Unlike a reactive observer, retries are disabled by default here (`retry: false`
 explicitly configured, since there is no component to catch a thrown error and retry through
 re-render.
 
-The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
-reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
-`refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
-`notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
-method's options.
+`QueryExecuteOptions` omits observer-only fields such as `enabled`, `refetchInterval`,
+`refetchIntervalInBackground`, `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`,
+`retryOnMount`, `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData`.
+Shared options can still contain these fields; this imperative method ignores them.
+In particular, `enabled: false` does not prevent a fetch.
 
 This method replaces the deprecated `fetchQuery`, and — combined with
 `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
