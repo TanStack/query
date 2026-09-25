@@ -85,7 +85,7 @@ export class QueryClient extends QC {
   }
 
   /**
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * @deprecated Use queryClient.query({ ...unref(options), staleTime: 'static' }) instead, unwrapping any top-level Vue ref before spreading. Omit select if you need this method's cache-data return value. This method will be removed in the next major version.
    */
   ensureQueryData<
     TQueryFnData,
