@@ -13,7 +13,7 @@
     "@tanstack/eslint-plugin-query": "^5.103.2",
     "eslint": "^9.39.0",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.70.1"
   },
   "nx": {
     "targets": {

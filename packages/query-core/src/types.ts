@@ -18,13 +18,12 @@ export type DistributiveOmit<
 
 export type OmitKeyof<
   TObject,
-  TKey extends TStrictly extends 'safely'
-    ?
-        | keyof TObject
-        | (string & Record<never, never>)
-        | (number & Record<never, never>)
-        | (symbol & Record<never, never>)
-    : keyof TObject,
+  TKey extends (TStrictly extends 'safely'
+    ? | keyof TObject
+      | (string & Record<never, never>)
+      | (number & Record<never, never>)
+      | (symbol & Record<never, never>)
+    : keyof TObject),
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
 
@@ -153,8 +152,7 @@ export type QueryBooleanOption<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > =
-  | boolean
-  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+  boolean | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
 
 /** @inline */
 export type QueryPersister<
@@ -375,8 +373,7 @@ export interface QueryOptions<
    * @defaultValue true
    */
   structuralSharing?:
-    | boolean
-    | ((oldData: unknown | undefined, newData: unknown) => unknown)
+    boolean | ((oldData: unknown | undefined, newData: unknown) => unknown)
   /** @internal */
   _defaulted?: boolean
   /** @internal */
@@ -1046,10 +1043,7 @@ export interface QueryObserverPlaceholderResult<
   status: 'success'
 }
 
-export type DefinedQueryObserverResult<
-  TData = unknown,
-  TError = DefaultError,
-> =
+export type DefinedQueryObserverResult<TData = unknown, TError = DefaultError> =
   | QueryObserverRefetchErrorResult<TData, TError>
   | QueryObserverSuccessResult<TData, TError>
 

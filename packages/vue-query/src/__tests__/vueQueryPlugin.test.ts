@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -276,6 +276,40 @@ describe('VueQueryPlugin', () => {
       await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBe(false)
+    })
+
+    it('should call clientPersisterOnSuccess with the client after restoring', async () => {
+      const appMock = getAppMock()
+      const customClient = new QueryClient()
+      const clientPersisterOnSuccess = vi.fn()
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: () => [vi.fn(), sleep(10)],
+        clientPersisterOnSuccess,
+      })
+
+      expect(clientPersisterOnSuccess).not.toHaveBeenCalled()
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(clientPersisterOnSuccess).toHaveBeenCalledTimes(1)
+      expect(clientPersisterOnSuccess).toHaveBeenCalledWith(customClient)
+    })
+
+    it('should call the unmount returned by clientPersister when the app unmounts', () => {
+      const appMock = getAppMock(true)
+      const customClient = new QueryClient()
+      const persisterUnmount = vi.fn()
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: () => [persisterUnmount, sleep(10)],
+      })
+
+      expect(persisterUnmount).not.toHaveBeenCalled()
+
+      appMock._unmount()
+      expect(persisterUnmount).toHaveBeenCalledTimes(1)
     })
 
     it('should delay useQuery subscription and not call fetcher if data is not stale', async () => {

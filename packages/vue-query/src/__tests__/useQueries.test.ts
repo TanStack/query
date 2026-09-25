@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, onScopeDispose, ref } from 'vue-demi'
+import { computed, isReadonly, isVue3, onScopeDispose, ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
@@ -178,6 +178,7 @@ describe('useQueries', () => {
   it('should stop listening to changes on onScopeDispose', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
+    const queryClient = useQueryClient()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
@@ -196,6 +197,8 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
     await vi.advanceTimersByTimeAsync(0)
 
+    expect(queryClient.getQueryData(key1)).toBe('Some data')
+    expect(queryClient.getQueryData(key2)).toBe('Some data')
     expect(queriesState.value).toMatchObject([
       {
         status: 'pending',
@@ -433,6 +436,74 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it.runIf(isVue3)('should return readonly results by default', async () => {
+    const key = queryKey()
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(isReadonly(queriesState.value[0])).toBe(true)
+  })
+
+  it('should return results in a shallow ref when shallow is true', async () => {
+    const key = queryKey()
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+        },
+      ],
+      shallow: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(isReadonly(queriesState.value[0])).toBe(false)
+  })
+
+  it('should use the current value for the queryKey when refetch is called', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
+    const keyRef = ref('key11')
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: [...key, keyRef],
+          queryFn,
+          enabled: false,
+        },
+      ],
+    })
+
+    expect(queryFn).not.toHaveBeenCalled()
+    await queriesState.value[0].refetch()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        queryKey: [...key, 'key11'],
+      }),
+    )
+
+    keyRef.value = 'key12'
+    await queriesState.value[0].refetch()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        queryKey: [...key, 'key12'],
+      }),
+    )
   })
 
   it('should refetch only the specific query without affecting others', async () => {

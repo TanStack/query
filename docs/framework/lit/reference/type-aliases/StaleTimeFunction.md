@@ -9,7 +9,7 @@ type StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey> =
   | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => number | "static";
 ```
 
-Defined in: [packages/query-core/src/types.ts:140](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L140)
+Defined in: [packages/query-core/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L139)
 
 ## Type Parameters
 
