@@ -698,6 +698,12 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     () => Number(props.localStore.sortOrder) || DEFAULT_SORT_ORDER,
   ) as () => 1 | -1
 
+  const hideDisabledQueries = createMemo(() =>
+    props.localStore.hideDisabledQueries == null
+      ? (useQueryDevtoolsContext().hideDisabledQueries ?? false)
+      : props.localStore.hideDisabledQueries === 'true',
+  )
+
   const mutationSort = createMemo(
     () => props.localStore.mutationSort || DEFAULT_MUTATION_SORT_FN_NAME,
   )
@@ -733,7 +739,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         props.localStore.filter,
         sort(),
         sortOrder(),
-        props.localStore.hideDisabledQueries,
+        hideDisabledQueries(),
       ],
       () => {
         const curr = query_cache().getAll()
@@ -746,7 +752,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
           : [...curr]
 
         // Filter out disabled queries if hideDisabledQueries is enabled
-        if (props.localStore.hideDisabledQueries === 'true') {
+        if (hideDisabledQueries()) {
           filtered = filtered.filter((item) => !item.isDisabled())
         }
 
@@ -1286,7 +1292,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         )}
                       >
                         <DropdownMenu.RadioGroup
-                          value={props.localStore.hideDisabledQueries}
+                          value={String(hideDisabledQueries())}
                           aria-label="Hide disabled queries setting"
                           onChange={(value) =>
                             props.setLocalStore('hideDisabledQueries', value)
@@ -1301,11 +1307,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             )}
                           >
                             <span>Show</span>
-                            <Show
-                              when={
-                                props.localStore.hideDisabledQueries !== 'true'
-                              }
-                            >
+                            <Show when={!hideDisabledQueries()}>
                               <CheckCircle />
                             </Show>
                           </DropdownMenu.RadioItem>
@@ -1318,11 +1320,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             )}
                           >
                             <span>Hide</span>
-                            <Show
-                              when={
-                                props.localStore.hideDisabledQueries === 'true'
-                              }
-                            >
+                            <Show when={hideDisabledQueries()}>
                               <CheckCircle />
                             </Show>
                           </DropdownMenu.RadioItem>
