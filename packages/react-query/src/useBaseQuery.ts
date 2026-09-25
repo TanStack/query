@@ -3,6 +3,7 @@ import * as React from 'react'
 
 import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+import { QueryServerSnapshotContext } from './HydrationBoundary'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -89,10 +90,45 @@ export function useBaseQuery<
   )
 
   // note: this must be called before useSyncExternalStore
-  const result = observer.getOptimisticResult(defaultedOptions)
+  // The return value is intentionally discarded: the call's purpose is the side effect of priming
+  // the observer's `#currentResult`, which `getSnapshot` (`observer.getCurrentResult()`) reads. The
+  // rendered value comes from the `useSyncExternalStore` result below.
+  observer.getOptimisticResult(defaultedOptions)
+
+  // Result to replay while React is hydrating, matching what the server rendered. Built once on a
+  // throwaway client so the live cache (which may already have advanced) is untouched. Computed in
+  // a lazy initializer rather than a memo because `defaultedOptions` is intentionally mutated above.
+  const snapshotClient = React.useContext(QueryServerSnapshotContext)
+  const [serverSnapshotResult] = React.useState<
+    QueryObserverResult<TData, TError> | undefined
+  >(() => {
+    if (!snapshotClient) {
+      return undefined
+    }
+
+    const snapshotQuery = snapshotClient
+      .getQueryCache()
+      .get(defaultedOptions.queryHash)
+
+    if (!snapshotQuery) {
+      return undefined
+    }
+
+    const snapshotObserver = new Observer(snapshotClient, defaultedOptions)
+    const snapshotResult =
+      snapshotObserver.getOptimisticResult(defaultedOptions)
+    snapshotObserver.destroy()
+
+    return snapshotResult
+  })
+
+  const serverSnapshot = React.useCallback(
+    () => serverSnapshotResult ?? observer.getCurrentResult(),
+    [serverSnapshotResult, observer],
+  )
 
   const shouldSubscribe = !isRestoring && subscribed
-  React.useSyncExternalStore(
+  const resultToRender = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = shouldSubscribe
@@ -108,7 +144,7 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    serverSnapshot,
   )
 
   React.useEffect(() => {
@@ -116,25 +152,25 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
+  if (shouldSuspend(defaultedOptions, resultToRender)) {
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 
   // Handle error boundary
   if (
     getHasError({
-      result,
+      result: resultToRender,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
       query,
       suspense: defaultedOptions.suspense,
     })
   ) {
-    throw result.error
+    throw resultToRender.error
   }
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
-    ? observer.trackResult(result)
-    : result
+    ? observer.trackResult(resultToRender)
+    : resultToRender
 }
