@@ -145,7 +145,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -158,7 +158,7 @@ describe('QueryClientProvider', () => {
         'No QueryClient set, use QueryClientProvider to set one',
       )
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 })

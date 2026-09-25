@@ -229,7 +229,7 @@ describe('useSuspenseQuery', () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -288,15 +288,15 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -361,7 +361,7 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should set staleTime when having passed a function', async () => {
@@ -447,7 +447,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -512,11 +512,11 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw errors to the error boundary by default', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -553,11 +553,11 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw select errors to the error boundary by default', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -595,11 +595,11 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -670,15 +670,15 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let succeed = true
@@ -752,11 +752,11 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
@@ -802,7 +802,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should not throw background errors to the error boundary', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let succeed = true
@@ -860,7 +860,7 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('rendered data error')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should still suspense if queryClient has placeholderData config', async () => {
@@ -914,7 +914,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const key = queryKey()
@@ -939,10 +939,10 @@ describe('useSuspenseQuery', () => {
 
     renderWithClient(queryClient, <App />)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQuery',
     )
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should properly refresh data when refetchInterval is set', async () => {
@@ -987,7 +987,7 @@ describe('useSuspenseQuery', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -1008,11 +1008,11 @@ describe('useSuspenseQuery', () => {
       </Suspense>,
     )
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQuery',
     )
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -1020,7 +1020,7 @@ describe('useSuspenseQuery', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -1041,9 +1041,9 @@ describe('useSuspenseQuery', () => {
       </Suspense>,
     )
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
