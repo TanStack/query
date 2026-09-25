@@ -417,8 +417,6 @@ export function useQueries<
     ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
-
   const [observer] = React.useState(
     () =>
       new QueriesObserver<TCombinedResult>(
@@ -434,6 +432,13 @@ export function useQueries<
       defaultedQueries,
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
+
+  useClearResetErrorBoundary(
+    errorResetBoundary,
+    defaultedQueries.map((queryOptions) =>
+      client.getQueryCache().get(queryOptions.queryHash),
+    ),
+  )
 
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
@@ -465,7 +470,12 @@ export function useQueries<
 
         if (opts && shouldSuspend(opts, result)) {
           const queryObserver = new QueryObserver(client, opts)
-          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
+          return fetchOptimistic(
+            opts,
+            queryObserver,
+            errorResetBoundary,
+            client.getQueryCache().get(opts.queryHash),
+          )
         }
         return []
       })

@@ -81,7 +81,6 @@ export function useBaseQuery<
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
-  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () =>
@@ -93,6 +92,8 @@ export function useBaseQuery<
 
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
+  const currentQuery = client.getQueryCache().get(defaultedOptions.queryHash)
+  useClearResetErrorBoundary(errorResetBoundary, [currentQuery])
 
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(
@@ -120,7 +121,12 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    throw fetchOptimistic(
+      defaultedOptions,
+      observer,
+      errorResetBoundary,
+      currentQuery,
+    )
   }
 
   // Handle error boundary

@@ -10,6 +10,47 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
+const queryResetCounts = new WeakMap<
+  QueryErrorResetBoundaryValue,
+  WeakMap<object, number>
+>()
+// Track reset generations per live Query instance. If a query is garbage
+// collected between unmount and remount, a future Query instance starts fresh
+// instead of inheriting retry state from a different lifecycle.
+
+export function markQueryResetCount(
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object | undefined,
+  resetCount: number | undefined,
+) {
+  if (!query || resetCount === undefined) return
+
+  let resetCounts = queryResetCounts.get(errorResetBoundary)
+  if (!resetCounts) {
+    resetCounts = new WeakMap()
+    queryResetCounts.set(errorResetBoundary, resetCounts)
+  }
+  resetCounts.set(query, Math.max(resetCounts.get(query) ?? 0, resetCount))
+}
+
+function isResetForQuery(
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object | undefined,
+) {
+  if (errorResetBoundary.isReset()) return true
+
+  const resetCount = errorResetBoundary.getResetCount?.()
+  const queryResetCount = query
+    ? queryResetCounts.get(errorResetBoundary)?.get(query)
+    : undefined
+
+  return (
+    resetCount !== undefined &&
+    queryResetCount !== undefined &&
+    resetCount > queryResetCount
+  )
+}
+
 export const ensurePreventErrorBoundaryRetry = <
   TQueryFnData,
   TError,
@@ -34,7 +75,7 @@ export const ensurePreventErrorBoundaryRetry = <
 
   if (options.suspense || throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
+    if (!isResetForQuery(errorResetBoundary, query)) {
       options.retryOnMount = false
     }
   }
@@ -42,7 +83,14 @@ export const ensurePreventErrorBoundaryRetry = <
 
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  queries: Array<object | undefined>,
 ) => {
+  const resetCount = errorResetBoundary.getResetCount?.()
+  React.useEffect(() => {
+    queries.forEach((query) => {
+      markQueryResetCount(errorResetBoundary, query, resetCount)
+    })
+  }, [errorResetBoundary, queries, resetCount])
   React.useEffect(() => {
     errorResetBoundary.clearReset()
   }, [errorResetBoundary])

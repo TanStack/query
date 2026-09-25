@@ -5,9 +5,11 @@ import * as React from 'react'
 export type QueryErrorResetFunction = () => void
 export type QueryErrorIsResetFunction = () => boolean
 export type QueryErrorClearResetFunction = () => void
+export type QueryErrorResetCountFunction = () => number
 
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
+  getResetCount?: QueryErrorResetCountFunction
   isReset: QueryErrorIsResetFunction
   reset: QueryErrorResetFunction
 }
@@ -17,7 +19,9 @@ export interface QueryErrorResetBoundaryValue {
  */
 function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
+  let resetCount = 0
   return {
+    getResetCount: () => resetCount,
     /**
      * Clears the reset state, so queries know not to try again until the boundary is reset again.
      */
@@ -29,6 +33,7 @@ function createValue(): QueryErrorResetBoundaryValue {
      */
     reset: () => {
       isReset = true
+      resetCount++
     },
     /**
      * Returns whether the boundary has been reset and not yet cleared.
