@@ -110,7 +110,7 @@ describe('persist', () => {
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
-      const consoleWarn = vi
+      const consoleWarnMock = vi
         .spyOn(console, 'warn')
         .mockImplementation(() => undefined)
 
@@ -126,11 +126,11 @@ describe('persist', () => {
       ).rejects.toBe(restoreError)
 
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
-      expect(consoleWarn).toHaveBeenCalledTimes(1)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
 
       consoleErrorMock.mockRestore()
-      consoleWarn.mockRestore()
+      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
@@ -138,7 +138,7 @@ describe('persist', () => {
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
-      const consoleWarn = vi
+      const consoleWarnMock = vi
         .spyOn(console, 'warn')
         .mockImplementation(() => undefined)
 
@@ -156,11 +156,11 @@ describe('persist', () => {
       ).rejects.toBe(removeError)
 
       expect(consoleErrorMock).toHaveBeenCalledTimes(1)
-      expect(consoleWarn).toHaveBeenCalledTimes(1)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       expect(consoleErrorMock).toHaveBeenNthCalledWith(1, restoreError)
 
       consoleErrorMock.mockRestore()
-      consoleWarn.mockRestore()
+      consoleWarnMock.mockRestore()
     })
 
     it('should rethrow error in `removeClient`', async () => {
