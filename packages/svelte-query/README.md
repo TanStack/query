@@ -16,7 +16,7 @@
   />
 </picture>
 
-Primitives for fetching, caching and updating asynchronous data in Svelte
+Functions for fetching, caching and updating asynchronous data in Svelte
 
 <a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
