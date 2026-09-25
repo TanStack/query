@@ -23,7 +23,7 @@ Functions for fetching, caching and updating asynchronous data in Svelte
 </a><a href="https://discord.com/invite/WrRKjPJ" target="\_parent">
   <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
 </a><a href="https://github.com/TanStack/query/actions/workflows/release.yml?query=branch%3Amain">
-<img src="https://github.com/TanStack/query/actions/workflows/release.yml/badge.svg?branch=main" />
+<img alt="Release status" src="https://github.com/TanStack/query/actions/workflows/release.yml/badge.svg?branch=main" />
 </a><a href="https://www.npmjs.com/package/@tanstack/svelte-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/@tanstack/svelte-query.svg" />
 </a><a href="https://bundlejs.com/?q=%40tanstack%2Fsvelte-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22svelte%22%2C%5D%7D%7D&badge=" target="\_parent">
