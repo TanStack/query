@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { queryOptions } from '../queryOptions'
 
@@ -42,6 +44,17 @@ describe('QueryCache', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('constructor', () => {
+    it('should use the queryCache and mutationCache passed in the config', () => {
+      const queryCache = new QueryCache()
+      const mutationCache = new MutationCache()
+      const queryClient = new QueryClient({ queryCache, mutationCache })
+
+      expect(queryClient.getQueryCache()).toBe(queryCache)
+      expect(queryClient.getMutationCache()).toBe(mutationCache)
+    })
   })
 
   describe('isFetching', () => {
@@ -279,7 +292,29 @@ describe('QueryCache', () => {
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(refetchQueries).toHaveBeenCalled()
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, type: 'active' },
+        {},
+      )
+    })
+
+    it('should pass refetchType as type and the options to refetchQueries', async () => {
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries(
+        { queryKey: queryKeyRef, refetchType: 'all', type: 'inactive' },
+        { cancelRefetch: ref(false) },
+      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'all', type: 'all' },
+        { cancelRefetch: false },
+      )
     })
 
     it('should call invalidateQueries immediately and not call refetchQueries', async () => {
