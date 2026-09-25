@@ -26,7 +26,8 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
 >
 
 /**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -37,8 +38,9 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns The current query result, typed so that `data` is never `undefined` (`status` never resolves to
- * `pending` in this overload's type, since `initialData` guarantees data upfront).
+ * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
+ * `initialData` guarantees data upfront.
  *
  * @example
  * ```vue
@@ -152,7 +154,9 @@ export function useQuery<
  * ```
  *
  * @example
- * Seeding a detail query from an already-cached list, to skip the loading state:
+ * Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+ * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+ * fetched rather than from now:
  * ```vue
  * <script setup lang="ts">
  * import { useQuery, useQueryClient } from '@tanstack/vue-query'
@@ -167,6 +171,8 @@ export function useQuery<
  *     queryClient
  *       .getQueryData<Array<Post>>(['posts'])
  *       ?.find((post) => post.id === props.postId),
+ *   initialDataUpdatedAt: () =>
+ *     queryClient.getQueryState(['posts'])?.dataUpdatedAt,
  * })
  * </script>
  *

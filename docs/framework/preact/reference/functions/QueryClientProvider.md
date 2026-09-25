@@ -4,7 +4,7 @@ title: QueryClientProvider
 ---
 
 ```ts
-function QueryClientProvider(__namedParameters): VNode;
+function QueryClientProvider(__namedParameters: QueryClientProviderProps): VNode;
 ```
 
 Defined in: [packages/preact-query/src/QueryClientProvider.tsx:70](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L70)

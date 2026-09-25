@@ -6,10 +6,13 @@ redirect_from:
 ---
 
 ```ts
-function useMutation<TData, TError, TVariables, TOnMutateResult>(options, queryClient?): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: Accessor<QueryClient>): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/solid-query/src/useMutation.ts:173](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L173)
+Defined in: [packages/solid-query/src/useMutation.ts:176](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useMutation.ts#L176)
+
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
+`useMutation` is the primitive for that.
 
 ## Type Parameters
 

@@ -1,10 +1,12 @@
 ---
 id: useIsFetching
 title: useIsFetching
+redirect_from:
+  - framework/vue/reference/useIsFetching
 ---
 
 ```ts
-function useIsFetching(fetchingFilters, queryClient?): Ref<number>;
+function useIsFetching(fetchingFilters: UseIsFetchingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
 Defined in: [packages/vue-query/src/useIsFetching.ts:54](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L54)

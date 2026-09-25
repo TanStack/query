@@ -1,10 +1,12 @@
 ---
 id: usePrefetchQuery
 title: usePrefetchQuery
+redirect_from:
+  - framework/vue/reference/usePrefetchQuery
 ---
 
 ```ts
-function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options, queryClient?): void;
+function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: MaybeRefOrGetter<MaybeRefDeep<UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>>, queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/vue-query/src/usePrefetchQuery.ts:86](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L86)

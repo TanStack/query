@@ -8,6 +8,7 @@ import {
   skipToken,
 } from '..'
 import type { Signal } from '@angular/core'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -56,6 +57,18 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
+  })
 })
 
 it('should work when passed to injectQuery', () => {
@@ -76,8 +89,7 @@ it('should work when passed to fetchQuery', () => {
     queryFn: () => Promise.resolve(5),
   })
 
-  // grandfathered direct test
-  // eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
   const data = new QueryClient().fetchQuery(options)
   assertType<Promise<number>>(data)
 })

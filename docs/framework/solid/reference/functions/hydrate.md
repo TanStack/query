@@ -5,12 +5,12 @@ title: hydrate
 
 ```ts
 function hydrate(
-   client, 
-   dehydratedState, 
-   options?): void;
+   client: QueryClient, 
+   dehydratedState: Partial<DehydratedState>, 
+   options?: HydrateOptions): void;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:264](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L264)
+Defined in: [packages/query-core/src/hydration.ts:265](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L265)
 
 Restores a `DehydratedState` (as produced by `dehydrate`) into a `QueryClient`'s cache, typically to seed the
 client with data already fetched on the server. `mutations` and `queries` are each optional on `dehydratedState`.

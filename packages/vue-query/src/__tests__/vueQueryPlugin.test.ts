@@ -304,12 +304,12 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const fnSpy = vi.fn()
+      const queryFn = vi.fn()
 
       const query = useQuery(
         {
           queryKey: key,
-          queryFn: fnSpy,
+          queryFn,
         },
         customClient,
       )
@@ -317,13 +317,13 @@ describe('VueQueryPlugin', () => {
       expect(customClient.isRestoring?.value).toBe(true)
       expect(query.isFetching.value).toBe(false)
       expect(query.data.value).toStrictEqual(undefined)
-      expect(fnSpy).toHaveBeenCalledTimes(0)
+      expect(queryFn).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
-      expect(fnSpy).toHaveBeenCalledTimes(0)
+      expect(queryFn).toHaveBeenCalledTimes(0)
     })
 
     it('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
@@ -356,12 +356,12 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const fnSpy = vi.fn()
+      const queryFn = vi.fn()
 
       const query = useQuery(
         {
           queryKey: key1,
-          queryFn: fnSpy,
+          queryFn,
         },
         customClient,
       )
@@ -371,7 +371,7 @@ describe('VueQueryPlugin', () => {
           queries: [
             {
               queryKey: key2,
-              queryFn: fnSpy,
+              queryFn,
             },
           ],
         },
@@ -385,14 +385,14 @@ describe('VueQueryPlugin', () => {
 
       expect(queries.value[0].isFetching).toBe(false)
       expect(queries.value[0].data).toStrictEqual(undefined)
-      expect(fnSpy).toHaveBeenCalledTimes(0)
+      expect(queryFn).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
       expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
-      expect(fnSpy).toHaveBeenCalledTimes(0)
+      expect(queryFn).toHaveBeenCalledTimes(0)
     })
   })
 })

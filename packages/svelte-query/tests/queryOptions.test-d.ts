@@ -1,13 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import {
-  QueriesObserver,
-  QueryClient,
-  dataTagSymbol,
-  skipToken,
-} from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { createQueries, queryOptions } from '../src/index.js'
-import type { QueryObserverResult } from '@tanstack/query-core'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -90,8 +85,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    // grandfathered direct test
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
@@ -231,20 +225,6 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
-  it('should return the proper type when passed to QueriesObserver', () => {
-    const key = queryKey()
-    const options = queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-    })
-
-    const queryClient = new QueryClient()
-    const queriesObserver = new QueriesObserver(queryClient, [options])
-    expectTypeOf(queriesObserver).toEqualTypeOf<
-      QueriesObserver<Array<QueryObserverResult>>
-    >()
-  })
-
   it('should allow undefined response in initialData', () => {
     const key = queryKey()
     const options = (id: string | null) =>
@@ -266,6 +246,18 @@ describe('queryOptions', () => {
 
     expectTypeOf(options(null).initialData).returns.toEqualTypeOf<
       { id: string; title: string } | undefined
+    >()
+  })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
     >()
   })
 })

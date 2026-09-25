@@ -121,6 +121,16 @@ You can see the whole process in the screen capture below:
 
 https://github.com/fulopkovacs/form/assets/43729152/9d35a3c3-8153-4e74-9cb2-af275f7a269b
 
+### Reference docs
+
+The pages under `docs/framework/*/reference` are generated from the JSDoc in each package's source by [TypeDoc](https://typedoc.org), so edit the JSDoc rather than the markdown — the next run overwrites anything changed by hand.
+
+```sh
+pnpm run generate-docs
+```
+
+Note that the generated pages link to source with line numbers, so they can fall out of date even when a change leaves the JSDoc alone — adding a line near the top of a file shifts every symbol below it. Re-run the script if you are unsure.
+
 ### Running examples
 
 - Make sure you've installed the dependencies in the repo's root directory.

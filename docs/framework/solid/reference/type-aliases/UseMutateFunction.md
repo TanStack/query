@@ -4,10 +4,10 @@ title: UseMutateFunction
 ---
 
 ```ts
-type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
+type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:267](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L267)
+Defined in: [packages/solid-query/src/types.ts:280](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L280)
 
 ## Type Parameters
 

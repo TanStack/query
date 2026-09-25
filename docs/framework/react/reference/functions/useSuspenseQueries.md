@@ -8,10 +8,10 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:349](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L349)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L353)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -34,7 +34,7 @@ The `queries` array to run in Suspense, and an optional `combine` function.
 
 ##### combine?
 
-(`result`) => `TCombinedResult`
+(`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>, `GetUseSuspenseQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \{ \[K in string \| number \| symbol\]: GetUseSuspenseQueryResult\<T\[K\<K\>\]\> \}) => `TCombinedResult`
 
 Use this to combine the results of the queries into a single value. The result will be structurally
 shared to be as referentially stable as possible.
@@ -218,10 +218,10 @@ function App() {
 ## Call Signature
 
 ```ts
-function useSuspenseQueries<T, TCombinedResult>(options, queryClient?): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:489](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L489)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:493](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L493)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -244,7 +244,7 @@ The `queries` array to run in Suspense, and an optional `combine` function.
 
 ##### combine?
 
-(`result`) => `TCombinedResult`
+(`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>, `GetUseSuspenseQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \{ \[K in string \| number \| symbol\]: GetUseSuspenseQueryResult\<T\[K\<K\>\]\> \}) => `TCombinedResult`
 
 Use this to combine the results of the queries into a single value. The result will be structurally
 shared to be as referentially stable as possible.

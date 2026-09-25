@@ -4,7 +4,7 @@ title: injectMutationState
 ---
 
 ```ts
-function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>;
+function injectMutationState<TResult>(injectMutationStateFn: () => MutationStateOptions<TResult>, options?: InjectMutationStateOptions): Signal<TResult[]>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L106)

@@ -3,24 +3,14 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1521](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1521)
+Defined in: [packages/query-core/src/types.ts:1645](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1645)
+
+Options for cancelling an in-flight fetch, e.g. via `query.cancel()`.
+They are carried on the [CancelledError](../classes/CancelledError.md) that the cancelled fetch rejects with.
 
 ## Properties
 
-### revert?
-
-```ts
-optional revert: boolean;
-```
-
-Defined in: [packages/query-core/src/types.ts:1522](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1522)
-
-***
-
-### silent?
-
-```ts
-optional silent: boolean;
-```
-
-Defined in: [packages/query-core/src/types.ts:1523](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1523)
+| Property | Type |
+| ------ | ------ |
+| <a id="revert"></a> `revert?` | `boolean` |
+| <a id="silent"></a> `silent?` | `boolean` |

@@ -67,6 +67,10 @@ describe('core/utils', () => {
       expect(isPlainObject({})).toBe(true)
     })
 
+    it('should return `true` for a plain object with an own null constructor property', () => {
+      expect(isPlainObject(JSON.parse('{"constructor":null}'))).toBe(true)
+    })
+
     it('should return `false` for an array', () => {
       expect(isPlainObject([])).toBe(false)
     })

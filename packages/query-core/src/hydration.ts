@@ -59,6 +59,7 @@ export interface DehydrateOptions {
  * `DehydratedState`, and how to reverse any transformation applied by `DehydrateOptions.serializeData`.
  */
 export interface HydrateOptions {
+  /** Options applied to the queries and mutations restored from the dehydrated state. */
   defaultOptions?: {
     /** Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. */
     deserializeData?: TransformerFn

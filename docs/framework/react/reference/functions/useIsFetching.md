@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsFetching(filters?, queryClient?): number;
+function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): number;
 ```
 
 Defined in: [packages/react-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/react-query/src/useIsFetching.ts#L44)

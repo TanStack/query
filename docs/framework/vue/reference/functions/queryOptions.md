@@ -1,21 +1,24 @@
 ---
 id: queryOptions
 title: queryOptions
+redirect_from:
+  - framework/vue/reference/queryOptions
 ---
 
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:244](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L244)
+Defined in: [packages/vue-query/src/queryOptions.ts:245](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L245)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -75,10 +78,10 @@ const { data, isError, error } = useQuery(postsOptions)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): () => DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: () => DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:281](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L281)
+Defined in: [packages/vue-query/src/queryOptions.ts:282](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L282)
 
 Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
 function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries`/`fetchQuery` always
@@ -149,10 +152,10 @@ const { data } = useQuery(postOptions)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:326](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L326)
+Defined in: [packages/vue-query/src/queryOptions.ts:327](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L327)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -215,10 +218,10 @@ const { data, isPending, isError, error } = useQuery(postOptions('1'))
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: () => UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:392](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L392)
+Defined in: [packages/vue-query/src/queryOptions.ts:393](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L393)
 
 Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
 function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
