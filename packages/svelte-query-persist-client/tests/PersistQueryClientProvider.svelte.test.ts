@@ -361,7 +361,7 @@ describe('PersistQueryClientProvider', () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
-    const consoleWarn = vi
+    const consoleWarnMock = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
 
@@ -385,6 +385,6 @@ describe('PersistQueryClientProvider', () => {
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()
-    consoleWarn.mockRestore()
+    consoleWarnMock.mockRestore()
   })
 })
