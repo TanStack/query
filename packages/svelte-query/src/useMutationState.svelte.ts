@@ -28,7 +28,7 @@ function getResult<
 
 /**
  * `useMutationState` gives you access to all mutations (matching the given `filters`), including ones that
- * were created by a different component or hook instance, or even ones no longer mounted.
+ * were created by a different component or `createMutation` call, or even ones no longer mounted.
  *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.

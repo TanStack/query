@@ -10,7 +10,7 @@ function useMutationState<TResult, TMutation>(options: MutationStateOptions<TRes
 Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:99](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L99)
 
 `useMutationState` gives you access to all mutations (matching the given `filters`), including ones that
-were created by a different component or hook instance, or even ones no longer mounted.
+were created by a different component or `createMutation` call, or even ones no longer mounted.
 
 ## Type Parameters
 
