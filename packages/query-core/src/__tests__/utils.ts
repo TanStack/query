@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { environmentManager, isServer, onlineManager } from '..'
+import { environmentManager, onlineManager } from '..'
 import type { MockInstance } from 'vitest'
 import type { MutationOptions, QueryClient } from '..'
 
@@ -21,8 +21,9 @@ export function executeMutation<TVariables>(
 }
 
 export function setIsServer(value: boolean) {
+  const original = environmentManager.isServer()
   environmentManager.setIsServer(() => value)
   return () => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => original)
   }
 }
