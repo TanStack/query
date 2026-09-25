@@ -69,9 +69,9 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^9.0.3",
-    "solid-js": "^1.9.7",
+    "solid-js": "^1.9.15",
     "unplugin-solid": "^2.0.0",
-    "vite-plugin-solid": "^2.11.6"
+    "vite-plugin-solid": "^2.11.14"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
