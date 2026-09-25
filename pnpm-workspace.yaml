@@ -3,6 +3,7 @@ minimumReleaseAge: 1440
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
+shellEmulator: true
 trustPolicy: 'no-downgrade'
 trustPolicyExclude:
   - 'vite@6.4.1' # Socket score 94/100; popular and healthy.

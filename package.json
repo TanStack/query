@@ -72,7 +72,7 @@
     "premove": "^4.0.0",
     "prettier": "^3.9.9",
     "prettier-plugin-svelte": "^4.1.1",
-    "publint": "^0.3.13",
+    "publint": "^0.3.24",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "sherif": "^1.13.0",
