@@ -97,7 +97,7 @@ describe('timeoutManager', () => {
         )
 
         // 3. Switching again with no intermediate calls should not warn
-        vi.mocked(consoleErrorSpy).mockClear()
+        consoleErrorSpy.mockClear()
         const customProvider3 = createMockProvider('custom3')
         manager.setTimeoutProvider(customProvider3)
         expect(consoleErrorSpy).not.toHaveBeenCalled()
