@@ -340,7 +340,7 @@ export function useBaseQuery<
   )
 
   onCleanup(() => {
-    if (isServer && queryResource.loading) {
+    if (isServer && queryResource.state === 'pending') {
       unsubscribeQueued = true
       return
     }
