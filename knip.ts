@@ -12,10 +12,6 @@ export default {
       ignoreDependencies: ['react', 'react-dom'],
     },
     'packages/angular-query-experimental': {
-      entry: [
-        'src/devtools/production/index.ts!',
-        'src/devtools-panel/production/index.ts!',
-      ],
       // Strict mode excludes optional dependencies. Read the declared names
       // so removing a declaration still causes an unlisted dependency error.
       ignoreDependencies: Object.keys(
