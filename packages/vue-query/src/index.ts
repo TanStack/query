@@ -39,7 +39,7 @@ export type {
   UseInfiniteQueryReturnType,
 } from './useInfiniteQuery'
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
-export type { MutationOptions } from './types'
+export type { MaybeRefOrGetter, MutationOptions, ShallowOption } from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type {
   MutationStateOptions,
