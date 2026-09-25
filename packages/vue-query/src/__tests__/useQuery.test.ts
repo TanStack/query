@@ -9,6 +9,7 @@ import {
 import {
   QueryObserver,
   experimental_streamedQuery,
+  noop,
   skipToken,
 } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -688,24 +689,27 @@ describe('useQuery', () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      let afterTimeout = false
+      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+      const onResolve = vi.fn()
       const isEnabled = ref(false)
       const query = useQuery({
         queryKey: key,
-        queryFn: () => sleep(0).then(() => 'Some data'),
+        queryFn,
         enabled: isEnabled,
       })
 
-      setTimeout(() => {
-        afterTimeout = true
-        isEnabled.value = true
-      }, 200)
+      query.suspense().then(onResolve)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(onResolve).not.toHaveBeenCalled()
 
-      query.suspense()
-
-      await vi.advanceTimersByTimeAsync(200)
-
-      expect(afterTimeout).toBe(true)
+      isEnabled.value = true
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledWith(
+        expect.objectContaining({ data: 'Some data' }),
+      )
     })
 
     it('should resolve immediately without refetching when the data is fresh', () => {
@@ -735,36 +739,44 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
         staleTime: 10000,
       })
 
-      await vi.advanceTimersByTimeAsync(0)
-
-      expect(query).toMatchObject({
-        status: { value: 'error' },
-        isError: { value: true },
+      const suspensePromise = query.suspense()
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(suspensePromise).resolves.toMatchObject({
+        status: 'error',
+        isError: true,
       })
     })
 
-    it('should throw from suspense when throwOnError is true', async () => {
+    it('should throw from suspense when throwOnError is true', async ({
+      onTestFinished,
+    }) => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const throwOnError = vi.fn()
+      const throwOnError = vi.fn().mockReturnValue(true)
       const query = useQuery({
         queryKey: key,
         queryFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
         staleTime: 10000,
         throwOnError,
       })
 
-      query.suspense()
+      // The error watcher also throws, which Vue 3 surfaces as an unhandled rejection
+      process.on('unhandledRejection', noop)
+      onTestFinished(() => {
+        process.off('unhandledRejection', noop)
+      })
 
-      await vi.advanceTimersByTimeAsync(10000)
-
+      await Promise.all([
+        expect(query.suspense()).rejects.toThrow('Some error'),
+        vi.advanceTimersByTimeAsync(10),
+      ])
       expect(throwOnError).toHaveBeenCalledTimes(2)
       expect(throwOnError).toHaveBeenNthCalledWith(
         1,
