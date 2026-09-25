@@ -1,7 +1,10 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { computed, ref } from 'vue-demi'
+import { skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '@tanstack/query-core'
+import type { UseQueryOptions } from '../queryOptions'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -254,5 +257,71 @@ describe('infiniteQuery', () => {
       initialPageParam: 1,
       getNextPageParam: () => undefined,
     })
+  })
+})
+
+describe('UseQueryOptions', () => {
+  // What `useQuery` accepts: a getter `queryKey`, and a `queryFn` that can resolve to `skipToken`.
+  it('should be accepted by query', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+    const options: UseQueryOptions<string> = {
+      queryKey: () => [...key, id.value],
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve('string') : skipToken,
+      ),
+    }
+
+    expectTypeOf(new QueryClient().query(options)).toEqualTypeOf<
+      Promise<string>
+    >()
+  })
+
+  it('should be accepted by ensureQueryData', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+    const options: UseQueryOptions<string> = {
+      queryKey: () => [...key, id.value],
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve('string') : skipToken,
+      ),
+    }
+
+    // eslint-disable-next-line no-restricted-syntax -- deprecated but still public, and typed separately
+    expectTypeOf(new QueryClient().ensureQueryData(options)).toEqualTypeOf<
+      Promise<string>
+    >()
+  })
+
+  it('should be accepted by fetchQuery', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+    const options: UseQueryOptions<string> = {
+      queryKey: () => [...key, id.value],
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve('string') : skipToken,
+      ),
+    }
+
+    // eslint-disable-next-line no-restricted-syntax -- deprecated but still public, and typed separately
+    expectTypeOf(new QueryClient().fetchQuery(options)).toEqualTypeOf<
+      Promise<string>
+    >()
+  })
+
+  it('should be accepted by prefetchQuery', () => {
+    const key = queryKey()
+    const id = ref<string | null>('1')
+    const options: UseQueryOptions<string> = {
+      queryKey: () => [...key, id.value],
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve('string') : skipToken,
+      ),
+    }
+
+    // eslint-disable-next-line no-restricted-syntax -- deprecated but still public, and typed separately
+    expectTypeOf(new QueryClient().prefetchQuery(options)).toEqualTypeOf<
+      Promise<void>
+    >()
   })
 })

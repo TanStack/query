@@ -105,18 +105,43 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
-      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
     >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options:
+      | MaybeRefDeep<
+          EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
+        >
+      | UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   ): Promise<TData> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.ensureQueryData(cloneDeepUnref(options))
+    return super.ensureQueryData(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
+        >,
+      ),
+    )
   }
 
   getQueriesData<TData = unknown>(
@@ -299,20 +324,50 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      QueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
+    options:
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   ): Promise<TData> {
-    return super.query(cloneDeepUnref(options))
+    return super.query(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >,
+      ),
+    )
   }
 
   /**
@@ -352,6 +407,23 @@ export class QueryClient extends QC {
           TPageParam
         >),
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
+  fetchQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >,
+  ): Promise<TData>
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -359,12 +431,27 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-    >,
+    options:
+      | MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >
+      | (() => FetchQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >)
+      | UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   ): Promise<TData> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.fetchQuery(cloneDeepUnref(options))
+    return super.fetchQuery(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >,
+      ),
+    )
   }
 
   /**
@@ -388,18 +475,41 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void>
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options: UseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
     >,
+  ): Promise<void>
+  prefetchQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options:
+      | MaybeRefDeep<FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
+      | UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   ): Promise<void> {
     // eslint-disable-next-line no-restricted-syntax -- grandfathered deprecated wrapper implementation
-    return super.prefetchQuery(cloneDeepUnref(options))
+    return super.prefetchQuery(
+      cloneDeepUnref(
+        options as MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+        >,
+      ),
+    )
   }
 
   // These one-shot imperative methods do not resolve top-level option getters.
