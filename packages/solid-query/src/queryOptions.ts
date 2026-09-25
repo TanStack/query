@@ -50,8 +50,7 @@ export type DefinedInitialDataOptions<
 > = Accessor<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
     initialData:
-      | NonUndefinedGuard<TQueryFnData>
-      | (() => NonUndefinedGuard<TQueryFnData>)
+      NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
   }
 >
 
