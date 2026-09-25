@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isReactive, isReadonly, ref } from 'vue-demi'
+import { isReactive, isReadonly, isVue3, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
@@ -684,6 +684,25 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(states.value).toEqual(['data1'])
   })
+
+  it.runIf(isVue3)(
+    'should return deeply reactive and readonly data by default',
+    async () => {
+      const mutationOpts = mutationOptions({
+        mutationKey: ['key'],
+        mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      })
+
+      const { mutate, data } = useMutation(mutationOpts)
+
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(isReactive(data.value?.nested)).toBe(true)
+      expect(isReadonly(data.value?.nested)).toBe(true)
+    },
+  )
 
   it('should return data in a shallow ref when shallow is true', async () => {
     const mutationOpts = mutationOptions({
