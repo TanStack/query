@@ -2932,8 +2932,8 @@ importers:
         specifier: ^1.9.15
         version: 1.9.15
       solid-transition-group:
-        specifier: ^0.3.0
-        version: 0.3.0(solid-js@1.9.15)
+        specifier: ^0.2.3
+        version: 0.2.3(solid-js@1.9.15)
       superjson:
         specifier: ^2.2.6
         version: 2.2.6
@@ -3293,8 +3293,8 @@ importers:
   packages/vue-query:
     dependencies:
       '@tanstack/match-sorter-utils':
-        specifier: ^8.19.4
-        version: 8.19.4
+        specifier: ^9.1.2
+        version: 9.1.2
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
@@ -7814,10 +7814,6 @@ packages:
   '@tanstack/eslint-config@0.3.2':
     resolution: {integrity: sha512-2g+PuGR3GuvvCiR3xZs+IMqAvnYU9bvH+jRml0BFBSxHBj22xFCTNvJWhvgj7uICFF9IchDkFUto91xDPMu5cg==}
     engines: {node: '>=18'}
-
-  '@tanstack/match-sorter-utils@8.19.4':
-    resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
-    engines: {node: '>=12'}
 
   '@tanstack/match-sorter-utils@9.1.2':
     resolution: {integrity: sha512-aPkUQctDzpXLSWhlx7jUDi3mInsI18xcnrK1hvIyIa88ab1ax88cACr7xU+BKMCGB4NZYNwh4SoNSEbv3RY2NA==}
@@ -15148,9 +15144,9 @@ packages:
     peerDependencies:
       solid-js: ^1.3
 
-  solid-transition-group@0.3.0:
-    resolution: {integrity: sha512-gzFbtxkEnA8Hgi7UzmEjPPRl4rodoKLs+AGIXA7kJgjOr4j4qFRw39npu+WpdNSDV7aDKr+K0LFcoT9Kbm5PBA==}
-    engines: {node: '>=20.0.0', pnpm: '>=9.0.0'}
+  solid-transition-group@0.2.3:
+    resolution: {integrity: sha512-iB72c9N5Kz9ykRqIXl0lQohOau4t0dhel9kjwFvx81UZJbVwaChMuBuyhiZmK24b8aKEK0w3uFM96ZxzcyZGdg==}
+    engines: {node: '>=18.0.0', pnpm: '>=8.6.0'}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -21865,10 +21861,6 @@ snapshots:
       - eslint-import-resolver-node
       - supports-color
       - typescript
-
-  '@tanstack/match-sorter-utils@8.19.4':
-    dependencies:
-      remove-accents: 0.5.0
 
   '@tanstack/match-sorter-utils@9.1.2':
     dependencies:
@@ -31655,7 +31647,7 @@ snapshots:
       '@babel/types': 7.29.8
       solid-js: 1.9.15
 
-  solid-transition-group@0.3.0(solid-js@1.9.15):
+  solid-transition-group@0.2.3(solid-js@1.9.15):
     dependencies:
       '@solid-primitives/refs': 1.1.3(solid-js@1.9.15)
       '@solid-primitives/transition-group': 1.1.2(solid-js@1.9.15)

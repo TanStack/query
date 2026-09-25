@@ -70,7 +70,7 @@
     "clsx": "^2.1.1",
     "goober": "^2.1.19",
     "solid-js": "^1.9.15",
-    "solid-transition-group": "^0.3.0",
+    "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.6"
   },
   "devDependencies": {
