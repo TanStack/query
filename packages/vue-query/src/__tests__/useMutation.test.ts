@@ -520,12 +520,15 @@ describe('useMutation', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
+    const key = queryKey()
+    const queryClient = useQueryClient()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
     const mutation = useMutation({
+      mutationKey: key,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
 
@@ -533,9 +536,11 @@ describe('useMutation', () => {
 
     mutation.mutate('a')
     await vi.advanceTimersByTimeAsync(0)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(1)
     expect(mutation.status.value).toBe('idle')
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(mutation.status.value).toBe('idle')
   })
 
