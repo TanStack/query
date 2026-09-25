@@ -235,14 +235,18 @@ class TanstackLitQueryDemo extends LitElement {
           </button>
         </section>
 
-        ${query.isError
-          ? html`<div data-testid="query-error">${String(query.error)}</div>`
-          : null}
-        ${mutation.isError
-          ? html`<div data-testid="mutation-error">
-              ${String(mutation.error)}
-            </div>`
-          : null}
+        ${
+          query.isError
+            ? html`<div data-testid="query-error">${String(query.error)}</div>`
+            : null
+        }
+        ${
+          mutation.isError
+            ? html`<div data-testid="mutation-error">
+                ${String(mutation.error)}
+              </div>`
+            : null
+        }
 
         <ul data-testid="todo-list">
           ${todos.map(
