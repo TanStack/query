@@ -609,6 +609,9 @@ describe('injectQuery', () => {
       TestBed.tick()
 
       const stablePromise = app.whenStable()
+      // Let the batched observer notification run so the finished fetch is
+      // reported and the pending task is released
+      await vi.advanceTimersByTimeAsync(10)
       await stablePromise
 
       expect(query.status()).toBe('success')
@@ -677,7 +680,11 @@ describe('injectQuery', () => {
       // Synchronize pending effects
       TestBed.tick()
 
-      await app.whenStable()
+      const stablePromise = app.whenStable()
+      // Let the batched observer notification run so the finished fetch is
+      // reported and the pending task is released
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(callCount).toBe(1)

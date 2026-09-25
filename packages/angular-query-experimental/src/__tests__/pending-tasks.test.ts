@@ -1,6 +1,7 @@
 import {
   ApplicationRef,
   Component,
+  effect,
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -152,6 +153,44 @@ describe('PendingTasks Integration', () => {
 
       expect(mutation.isError()).toBe(true)
       expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
+    })
+  })
+
+  // The observer reports a running fetch through a batched notification that
+  // only lands in a later task. This test uses real timers because it asserts
+  // on what `whenStable()` does before that notification arrives.
+  describe('Task registration timing', () => {
+    it('should let whenStable wait for the fetch a component just started', async () => {
+      vi.useRealTimers()
+
+      const key = queryKey()
+      const seenInEffect: Array<boolean> = []
+
+      @Component({
+        selector: 'app-timing-query',
+        template: `{{ query.isSuccess() }}`,
+        standalone: true,
+      })
+      class TimingQueryComponent {
+        query = injectQuery(() => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('component-data'),
+        }))
+
+        constructor() {
+          effect(() => {
+            seenInEffect.push(this.query.isSuccess())
+          })
+        }
+      }
+
+      const fixture = TestBed.createComponent(TimingQueryComponent)
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(fixture.componentInstance.query.status()).toBe('success')
+      expect(fixture.componentInstance.query.data()).toBe('component-data')
+      expect(seenInEffect).toContain(true)
     })
   })
 
