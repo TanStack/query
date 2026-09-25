@@ -435,6 +435,41 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
+  it('should use the current value for the queryKey when refetch is called', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
+    const keyRef = ref('key11')
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: [...key, keyRef],
+          queryFn,
+          enabled: false,
+        },
+      ],
+    })
+
+    expect(queryFn).not.toHaveBeenCalled()
+    await queriesState.value[0].refetch()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        queryKey: [...key, 'key11'],
+      }),
+    )
+
+    keyRef.value = 'key12'
+    await queriesState.value[0].refetch()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        queryKey: [...key, 'key12'],
+      }),
+    )
+  })
+
   it('should refetch only the specific query without affecting others', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
