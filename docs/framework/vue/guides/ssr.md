@@ -210,7 +210,7 @@ export default viteSSR(App, { routes: [] }, ({ app, initialState }) => {
 
 Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 
-```html
+```vue
 <!-- MyComponent.vue -->
 <template>
   <div>
@@ -220,16 +220,16 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 </template>
 
 <script setup>
-  import { useQuery } from '@tanstack/vue-query'
-  import { onServerPrefetch } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
+import { onServerPrefetch } from 'vue'
 
-  // This will be prefetched and sent from the server
-  const { refetch, data, suspense } = useQuery({
-    queryKey: ['todos'],
-    queryFn: getTodos,
-  })
+// This will be prefetched and sent from the server
+const { refetch, data, suspense } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 
-  onServerPrefetch(suspense)
+onServerPrefetch(suspense)
 </script>
 ```
 
@@ -253,30 +253,30 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 `suspense()` waits until the query is enabled, so it never resolves for a query that stays disabled. On the server, awaiting it in `onServerPrefetch` for such a query (for example, a dependent query whose dependency failed) blocks the render. Skip it when the query is disabled:
 
-```html
+```vue
 <script setup>
-  import { computed, onServerPrefetch } from 'vue'
-  import { useQuery } from '@tanstack/vue-query'
+import { computed, onServerPrefetch } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
 
-  const { data: user, suspense: userSuspense } = useQuery({
-    queryKey: ['user'],
-    queryFn: getUser,
-  })
+const { data: user, suspense: userSuspense } = useQuery({
+  queryKey: ['user'],
+  queryFn: getUser,
+})
 
-  const userId = computed(() => user.value?.id)
-  const enabled = computed(() => !!user.value?.id)
-  const { data: projects, suspense: projectsSuspense } = useQuery({
-    queryKey: ['projects', userId],
-    queryFn: () => getProjectsByUser(userId.value),
-    enabled,
-  })
+const userId = computed(() => user.value?.id)
+const enabled = computed(() => !!user.value?.id)
+const { data: projects, suspense: projectsSuspense } = useQuery({
+  queryKey: ['projects', userId],
+  queryFn: () => getProjectsByUser(userId.value),
+  enabled,
+})
 
-  onServerPrefetch(async () => {
-    await userSuspense()
-    if (enabled.value) {
-      await projectsSuspense()
-    }
-  })
+onServerPrefetch(async () => {
+  await userSuspense()
+  if (enabled.value) {
+    await projectsSuspense()
+  }
+})
 </script>
 ```
 
