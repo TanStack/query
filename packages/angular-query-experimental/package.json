@@ -39,7 +39,6 @@
     "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
     "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",

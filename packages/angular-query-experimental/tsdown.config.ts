@@ -13,4 +13,11 @@ export default defineConfig({
   fixedExtension: true,
   sourcemap: true,
   clean: true,
+  publint: {
+    strict: true,
+  },
+  attw: {
+    profile: 'esm-only',
+    level: 'error',
+  },
 })

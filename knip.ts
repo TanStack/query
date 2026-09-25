@@ -12,6 +12,7 @@ export default {
       ignoreDependencies: ['react', 'react-dom'],
     },
     'packages/angular-query-experimental': {
+      ignore: ['scripts/prepack.js'],
       // Strict mode excludes optional dependencies. Read the declared names
       // so removing a declaration still causes an unlisted dependency error.
       ignoreDependencies: Object.keys(
