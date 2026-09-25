@@ -30,9 +30,7 @@ export type UseBaseQueryReturnType<
   TResult = QueryObserverResult<TData, TError>,
 > = {
   [K in keyof TResult]: K extends
-    | 'fetchNextPage'
-    | 'fetchPreviousPage'
-    | 'refetch'
+    'fetchNextPage' | 'fetchPreviousPage' | 'refetch'
     ? TResult[K]
     : Ref<Readonly<TResult>[K]>
 } & {
