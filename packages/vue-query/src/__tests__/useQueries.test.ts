@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, onScopeDispose, ref } from 'vue-demi'
+import { computed, isReadonly, onScopeDispose, ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
@@ -433,6 +433,23 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should return results in a shallow ref when shallow is true', async () => {
+    const key = queryKey()
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+        },
+      ],
+      shallow: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queriesState.value[0].data).toEqual({ nested: { count: 0 } })
+    expect(isReadonly(queriesState.value[0])).toBe(false)
   })
 
   it('should refetch only the specific query without affecting others', async () => {

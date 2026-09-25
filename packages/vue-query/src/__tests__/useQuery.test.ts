@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
   getCurrentInstance,
+  isReactive,
+  isReadonly,
   onScopeDispose,
   reactive,
   ref,
@@ -355,6 +357,20 @@ describe('useQuery', () => {
         queryKey: [...key, 'key12'],
       }),
     )
+  })
+
+  it('should return data in a shallow ref when shallow is true', async () => {
+    const key = queryKey()
+    const { data } = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      shallow: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
   })
 
   it('should be `enabled` to accept getter function', async () => {

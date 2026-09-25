@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isReactive, ref } from 'vue-demi'
+import { isReactive, isReadonly, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
@@ -699,6 +699,7 @@ describe('mutationOptions', () => {
 
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
   })
 
   it('should return data in a shallow ref when shallow is true (getter)', async () => {
@@ -715,6 +716,7 @@ describe('mutationOptions', () => {
 
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
   })
 
   it('should reactively update mutationKey when ref changes in getter', async () => {
