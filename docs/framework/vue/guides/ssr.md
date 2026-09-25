@@ -249,7 +249,7 @@ Because `staleTime` defaults to `0`, queries will be refetched in the background
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
 
-### `suspense()` of a disabled query never resolves on the server
+### `suspense()` of a query that stays disabled blocks the render on the server
 
 `suspense()` waits until the query is enabled, so it never resolves for a query that stays disabled. On the server, awaiting it in `onServerPrefetch` for such a query (for example, a dependent query whose dependency failed) blocks the render. Skip it when the query is disabled:
 
