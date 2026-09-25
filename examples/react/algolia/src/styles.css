@@ -22,12 +22,21 @@
 }
 
 .search-more {
+  appearance: none;
+  background: none;
+  border: 0;
   color: blue;
+  font: inherit;
   padding-left: 20px;
   padding-top: 20px;
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.search-more:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .product {
