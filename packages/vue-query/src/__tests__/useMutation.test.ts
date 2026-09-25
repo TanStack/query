@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { reactive, ref } from 'vue-demi'
+import { isVue2, isVue3, reactive, ref } from 'vue-demi'
 import { noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
@@ -553,27 +553,55 @@ describe('useMutation', () => {
       expect(throwOnError).toHaveBeenCalledWith(err)
     })
 
-    it('should throw from error watcher when throwOnError returns true', async () => {
-      const throwOnError = vi.fn().mockReturnValue(true)
-      const { mutate } = useMutation({
-        mutationFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Some error'))),
-        throwOnError,
-      })
+    it.runIf(isVue2)(
+      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
+      async () => {
+        const consoleMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const throwOnError = vi.fn().mockReturnValue(true)
+        const { mutate } = useMutation({
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          throwOnError,
+        })
 
-      mutate()
+        mutate()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
+        expect(consoleMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleMock.mockRestore()
+      },
+    )
 
-      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
-      const rejectionHandler = () => {}
-      process.on('unhandledRejection', rejectionHandler)
+    it.runIf(isVue3)(
+      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
+      async ({ onTestFinished }) => {
+        const throwOnError = vi.fn().mockReturnValue(true)
+        const { mutate } = useMutation({
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          throwOnError,
+        })
 
-      await vi.advanceTimersByTimeAsync(10)
+        const unhandledRejectionFn = vi.fn()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
 
-      process.off('unhandledRejection', rejectionHandler)
-
-      expect(throwOnError).toHaveBeenCalledTimes(1)
-      expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
-    })
+        mutate()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
   })
 
   describe('optimistic updates', () => {
