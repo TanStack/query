@@ -7,7 +7,7 @@ title: UseQueryOptions
 type UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = MaybeRef<{ [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" | "queryKey" ? QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] : Property extends "queryFn" ? MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property] | SkipTokenForUseQuery> : MaybeRefDeep<QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>[Property]> } & ShallowOption>;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:91](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L91)
+Defined in: [packages/vue-query/src/queryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L92)
 
 The options accepted by `queryOptions`, `useQuery`, and the other query hooks. `enabled` tracks reactive
 dependencies automatically as a `ref`, a plain value, or a reactive getter (`() => ...`). `queryKey` reacts
