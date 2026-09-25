@@ -3,7 +3,6 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
-import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -40,9 +39,7 @@ describe('useIsFetching', () => {
 
   it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
     const { status } = useQuery({

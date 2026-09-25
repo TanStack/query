@@ -5,7 +5,6 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
-import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -179,9 +178,7 @@ describe('useQueries', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queryClient = useQueryClient()
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
     const queries = [

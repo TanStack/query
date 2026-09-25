@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
-  getCurrentInstance,
   isReactive,
   isReadonly,
   isVue3,
@@ -20,7 +19,6 @@ import { keepPreviousData } from '..'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQueryClient } from '../useQueryClient'
-import type { Mock, MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 vi.mock('../useBaseQuery')
@@ -309,9 +307,7 @@ describe('useQuery', () => {
   it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
     const queryClient = useQueryClient()
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
     const { status } = useQuery({
@@ -707,9 +703,6 @@ describe('useQuery', () => {
   describe('suspense', () => {
     it('should return a Promise', () => {
       const key = queryKey()
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
       const query = useQuery({
         queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
@@ -721,9 +714,6 @@ describe('useQuery', () => {
 
     it('should resolve after being enabled', async () => {
       const key = queryKey()
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
       const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
       const onResolve = vi.fn()
       const isEnabled = ref(false)
@@ -749,9 +739,6 @@ describe('useQuery', () => {
 
     it('should resolve immediately without refetching when the data is fresh', () => {
       const key = queryKey()
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
       const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
 
       const query = useQuery({
@@ -768,9 +755,6 @@ describe('useQuery', () => {
 
     it('should not throw from suspense by default', async () => {
       const key = queryKey()
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
       const query = useQuery({
         queryKey: key,
         queryFn: () =>
@@ -790,9 +774,6 @@ describe('useQuery', () => {
       onTestFinished,
     }) => {
       const key = queryKey()
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
       const throwOnError = vi.fn().mockReturnValue(true)
       const query = useQuery({
         queryKey: key,
