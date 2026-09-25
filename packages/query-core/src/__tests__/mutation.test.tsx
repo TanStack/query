@@ -963,7 +963,7 @@ describe('mutation', () => {
       queryClient.mount()
 
       const unhandledRejectionFn = vi.fn()
-      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
@@ -1015,7 +1015,11 @@ describe('mutation', () => {
       ])
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, newMutationError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        1,
+        newMutationError,
+        expect.any(Promise),
+      )
 
       expect(mutationError).toEqual(newMutationError)
     })
@@ -1024,7 +1028,7 @@ describe('mutation', () => {
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
-      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
@@ -1079,7 +1083,11 @@ describe('mutation', () => {
       ])
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, newMutationError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        1,
+        newMutationError,
+        expect.any(Promise),
+      )
 
       expect(mutationError).toEqual(newMutationError)
     })
@@ -1088,7 +1096,7 @@ describe('mutation', () => {
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
-      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
@@ -1156,13 +1164,26 @@ describe('mutation', () => {
       expect(mutationError).toEqual(newMutationError)
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(4)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, globalErrorError)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, newErrorError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        1,
+        globalErrorError,
+        expect.any(Promise),
+      )
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        2,
+        newErrorError,
+        expect.any(Promise),
+      )
       expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
         3,
         globalSettledError,
+        expect.any(Promise),
       )
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(4, newSettledError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        4,
+        newSettledError,
+        expect.any(Promise),
+      )
     })
   })
 
