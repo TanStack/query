@@ -1,4 +1,4 @@
-import { environmentManager, isServer } from '@tanstack/query-core'
+import { environmentManager } from '@tanstack/query-core'
 import { act, render } from '@testing-library/preact'
 import type { ComponentChildren, VNode } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
@@ -59,8 +59,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 export function setIsServer(value: boolean) {
+  const original = environmentManager.isServer()
   environmentManager.setIsServer(() => value)
   return () => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => original)
   }
 }
