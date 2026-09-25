@@ -57,8 +57,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 ```ts
 export default defineComponent({
   setup() {
-    const queryClient = useQueryClient()
-    const { data } = useQuery({
+    const { data, suspense } = useQuery({
       queryKey: ['test'],
       queryFn: fetcher,
     })
@@ -150,7 +149,7 @@ export default defineComponent({
       queryClient,
     )
     // This won't be prefetched, it will start fetching on client side
-    const { data2 } = useQuery(
+    const { data: data2 } = useQuery(
       {
         queryKey: ['todos2'],
         queryFn: getTodos,
