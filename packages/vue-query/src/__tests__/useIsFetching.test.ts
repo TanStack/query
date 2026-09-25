@@ -103,16 +103,18 @@ describe('useIsFetching', () => {
 
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const consoleMock = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       useIsFetching()
 
-      expect(consoleMock).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      consoleMock.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })

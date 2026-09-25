@@ -568,7 +568,7 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')
-    const consoleWarn = vi
+    const consoleWarnMock = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
@@ -615,7 +615,7 @@ describe('PersistQueryClientProvider', () => {
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()
-    consoleWarn.mockRestore()
+    consoleWarnMock.mockRestore()
   })
 
   it('should be able to persist into multiple clients', async () => {

@@ -239,7 +239,9 @@ describe('broadcastQueryClient', () => {
       const callbackError = new Error('boom')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -254,12 +256,12 @@ describe('broadcastQueryClient', () => {
 
         await sleep(0)
 
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           callbackError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -310,7 +312,9 @@ describe('broadcastQueryClient', () => {
       const asyncError = new Error('async boom')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -323,12 +327,12 @@ describe('broadcastQueryClient', () => {
 
         await sleep(10)
 
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           asyncError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -363,7 +367,9 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -374,12 +380,12 @@ describe('broadcastQueryClient', () => {
         queryClient.setQueryData(key, { value: 1 })
 
         await sleep(0)
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('cross-tab sync for this query was skipped'),
           cloneError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -389,7 +395,9 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -400,9 +408,9 @@ describe('broadcastQueryClient', () => {
         queryClient.setQueryData(key, { value: 1 })
 
         await sleep(0)
-        expect(warnSpy).not.toHaveBeenCalled()
+        expect(consoleWarnMock).not.toHaveBeenCalled()
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
   })
