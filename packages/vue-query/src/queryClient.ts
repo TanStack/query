@@ -112,16 +112,17 @@ export class QueryClient extends QC {
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: UseQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
+      TQueryData,
       TQueryKey
     >,
-  ): Promise<TData>
+  ): Promise<TQueryData>
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -414,16 +415,17 @@ export class QueryClient extends QC {
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: UseQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
+      TQueryData,
       TQueryKey
     >,
-  ): Promise<TData>
+  ): Promise<TQueryData>
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -482,13 +484,14 @@ export class QueryClient extends QC {
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: UseQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
+      TQueryData,
       TQueryKey
     >,
   ): Promise<void>

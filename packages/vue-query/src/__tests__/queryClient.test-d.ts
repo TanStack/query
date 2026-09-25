@@ -324,4 +324,42 @@ describe('UseQueryOptions', () => {
       Promise<void>
     >()
   })
+
+  it('should return the selected data from query', () => {
+    const options: UseQueryOptions<string, Error, number> = {
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    }
+
+    expectTypeOf(new QueryClient().query(options)).toEqualTypeOf<
+      Promise<number>
+    >()
+  })
+
+  it('should return the cached data from ensureQueryData, not the selected data', () => {
+    const options: UseQueryOptions<string, Error, number> = {
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    }
+
+    // eslint-disable-next-line no-restricted-syntax -- deprecated but still public, and typed separately
+    expectTypeOf(new QueryClient().ensureQueryData(options)).toEqualTypeOf<
+      Promise<string>
+    >()
+  })
+
+  it('should return the cached data from fetchQuery, not the selected data', () => {
+    const options: UseQueryOptions<string, Error, number> = {
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    }
+
+    // eslint-disable-next-line no-restricted-syntax -- deprecated but still public, and typed separately
+    expectTypeOf(new QueryClient().fetchQuery(options)).toEqualTypeOf<
+      Promise<string>
+    >()
+  })
 })
