@@ -75,7 +75,7 @@
   },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^9.0.3",
     "unplugin-solid": "^2.0.0",
     "vite-plugin-solid": "^2.11.6"
   }

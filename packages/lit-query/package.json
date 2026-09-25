@@ -57,7 +57,7 @@
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
-    "lit": "^3.3.1"
+    "lit": "^3.3.3"
   },
   "peerDependencies": {
     "@tanstack/query-core": "^5.0.0",
