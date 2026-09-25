@@ -27,8 +27,9 @@ function getResult<
 }
 
 /**
- * `useMutationState` gives you access to all mutations (matching the given `filters`), including ones that
- * were created by a different component or `createMutation` call, or even ones no longer mounted.
+ * `useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
+ * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
+ * state.
  *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
