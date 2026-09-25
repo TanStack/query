@@ -358,7 +358,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   it('should remove cache after non-successful restoring', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const consoleWarn = vi
@@ -382,9 +382,9 @@ describe('PersistQueryClientProvider', () => {
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
     expect(onError).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
-    consoleMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
+    consoleErrorMock.mockRestore()
     consoleWarn.mockRestore()
   })
 })

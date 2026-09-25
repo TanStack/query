@@ -615,7 +615,7 @@ describe('useMutation', () => {
     it.runIf(isVue2)(
       'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
       async () => {
-        const consoleMock = vi
+        const consoleErrorMock = vi
           .spyOn(console, 'error')
           .mockImplementation(() => undefined)
         const throwOnError = vi.fn().mockReturnValue(true)
@@ -629,8 +629,8 @@ describe('useMutation', () => {
         await vi.advanceTimersByTimeAsync(10)
         expect(throwOnError).toHaveBeenCalledTimes(1)
         expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
-        expect(consoleMock).toHaveBeenCalledWith(Error('Some error'))
-        consoleMock.mockRestore()
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
       },
     )
 

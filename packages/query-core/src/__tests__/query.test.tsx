@@ -950,8 +950,8 @@ describe('query', () => {
   })
 
   it('fetch should dispatch an error if the queryFn returns undefined', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -975,11 +975,11 @@ describe('query', () => {
       error,
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["${key}"]`,
     )
     unsubscribe()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not retry on the server', async () => {
@@ -1170,9 +1170,9 @@ describe('query', () => {
   })
 
   it('should have an error log when queryFn data is not serializable', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
+    const consoleErrorMock = vi.spyOn(console, 'error')
 
-    consoleMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const key = queryKey()
 
@@ -1208,13 +1208,13 @@ describe('query', () => {
       'Maximum call stack size exceeded',
     )
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       expect.stringContaining(
         'Structural sharing requires data to be JSON serializable',
       ),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should have an error status when setData has any error inside', async () => {
@@ -1279,7 +1279,7 @@ describe('query', () => {
   })
 
   it('should log error when queryKey is not an array', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
+    const consoleErrorMock = vi.spyOn(console, 'error')
     const key: unknown = 'string-key'
 
     await queryClient
@@ -1289,11 +1289,11 @@ describe('query', () => {
       })
       .catch(noop)
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should call initialData function when it is a function', () => {

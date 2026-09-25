@@ -156,7 +156,7 @@ describe('withDevtools feature', () => {
   )
 
   it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -174,12 +174,12 @@ describe('withDevtools feature', () => {
     await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'Install @tanstack/query-devtools or reinstall without --omit=optional.',
       expect.objectContaining({ message: 'No QueryClient found' }),
     )
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not continue loading devtools after injector is destroyed', async () => {

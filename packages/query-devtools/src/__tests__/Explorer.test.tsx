@@ -210,7 +210,7 @@ describe('Explorer', () => {
     it('should switch the copy button to an error state when clipboard write fails', async () => {
       const writeText = vi.fn().mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
-      const consoleError = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -230,7 +230,7 @@ describe('Explorer', () => {
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
-      expect(consoleError).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         'Failed to copy: ',
         new Error('denied'),
       )

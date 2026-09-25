@@ -1556,7 +1556,7 @@ describe('createQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -1575,7 +1575,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {
