@@ -5,7 +5,6 @@ import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
-import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -42,9 +41,7 @@ describe('useIsMutating', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
     const key = queryKey()

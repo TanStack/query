@@ -8,7 +8,6 @@ import { setupDevtools } from '../devtools/devtools'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import type { App, ComponentOptions } from 'vue'
-import type { Mock } from 'vitest'
 
 vi.mock('../devtools/devtools')
 vi.mock('../useQueryClient')
@@ -54,7 +53,7 @@ describe('VueQueryPlugin', () => {
 
   describe('devtools', () => {
     it('should NOT setup devtools', () => {
-      const setupDevtoolsMock = setupDevtools as Mock
+      const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -64,7 +63,7 @@ describe('VueQueryPlugin', () => {
     itIf(isVue2)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as Mock
+      const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -78,7 +77,7 @@ describe('VueQueryPlugin', () => {
     itIf(isVue2)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as Mock
+      const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { enableDevtoolsV6Plugin: true })
 
@@ -92,7 +91,7 @@ describe('VueQueryPlugin', () => {
     itIf(isVue3)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as Mock
+      const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
       process.env.NODE_ENV = envCopy
@@ -103,7 +102,7 @@ describe('VueQueryPlugin', () => {
     itIf(isVue3)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as Mock
+      const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { enableDevtoolsV6Plugin: true })
       process.env.NODE_ENV = envCopy
@@ -246,7 +245,8 @@ describe('VueQueryPlugin', () => {
         queryClientConfig: config,
       })
 
-      const client = (appMock.provide as Mock).mock.calls[0]?.[1]
+      const client = vi.mocked(appMock.provide).mock
+        .calls[0]?.[1] as QueryClient
       const defaultOptions = client.getDefaultOptions()
 
       expect(defaultOptions).toEqual(config.defaultOptions)

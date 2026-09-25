@@ -12,7 +12,6 @@ import { noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
-import type { MockedFunction } from 'vitest'
 import type { MutationFunctionContext } from '@tanstack/query-core'
 
 vi.mock('../useQueryClient')
@@ -530,9 +529,7 @@ describe('useMutation', () => {
   it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
     const queryClient = useQueryClient()
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
     const mutation = useMutation({
