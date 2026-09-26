@@ -49,7 +49,7 @@ function getResult<
 }
 
 /**
- * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
+ * `useMutationState` is a primitive that gives you access to all mutations in the `MutationCache`. You can pass
  * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
  * state.
  *

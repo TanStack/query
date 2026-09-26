@@ -1,10 +1,12 @@
 ---
 id: usePrefetchInfiniteQuery
 title: usePrefetchInfiniteQuery
+redirect_from:
+  - framework/vue/reference/usePrefetchInfiniteQuery
 ---
 
 ```ts
-function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): void;
+function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<MaybeRefDeep<UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>>, queryClient?: QueryClient): void;
 ```
 
 Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:94](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L94)

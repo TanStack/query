@@ -51,7 +51,7 @@ if (query) {
 ### Constructor
 
 ```ts
-new Query<TQueryFnData, TError, TData, TQueryKey>(config): Query<TQueryFnData, TError, TData, TQueryKey>;
+new Query<TQueryFnData, TError, TData, TQueryKey>(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/query.ts:246](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L246)
@@ -80,7 +80,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
+Defined in: [packages/query-core/src/removable.ts:11](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L11)
 
 #### Inherited from
 
@@ -180,7 +180,7 @@ The promise for the currently in-flight fetch, if the query is fetching.
 ### cancel()
 
 ```ts
-cancel(options?): Promise<void>;
+cancel(options?: CancelOptions): Promise<void>;
 ```
 
 Defined in: [packages/query-core/src/query.ts:348](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L348)
@@ -203,26 +203,6 @@ Cancels the query's currently in-flight fetch, if any.
 
 ```ts
 await query.cancel()
-```
-
-***
-
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L32)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
 ```
 
 ***
@@ -258,7 +238,7 @@ Removable.destroy
 ### fetch()
 
 ```ts
-fetch(options?, fetchOptions?): Promise<TData>;
+fetch(options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, fetchOptions?: FetchOptions<TQueryFnData>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/query.ts:590](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L590)
@@ -427,7 +407,7 @@ if (query.isStale()) {
 ### isStaleByTime()
 
 ```ts
-isStaleByTime(staleTime): boolean;
+isStaleByTime(staleTime: number | "static"): boolean;
 ```
 
 Defined in: [packages/query-core/src/query.ts:473](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L473)
@@ -443,7 +423,7 @@ Returns `true` if the query's data is stale relative to the given
 
 ##### staleTime
 
-[`StaleTime`](../type-aliases/StaleTime.md) = `0`
+`number` | `"static"`
 
 #### Returns
 
@@ -478,26 +458,6 @@ Returns `true` if the query has at least one observer configured with
 
 ***
 
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/query.ts:305](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L305)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
 ### reset()
 
 ```ts
@@ -516,30 +476,10 @@ in-flight fetch.
 
 ***
 
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L14)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
-
-***
-
 ### setState()
 
 ```ts
-setState(state): void;
+setState(state: Partial<QueryState<TData, TError>>): void;
 ```
 
 Defined in: [packages/query-core/src/query.ts:334](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L334)
@@ -557,29 +497,3 @@ user manually trigger a loading/error state or edit the cached data.
 #### Returns
 
 `void`
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```

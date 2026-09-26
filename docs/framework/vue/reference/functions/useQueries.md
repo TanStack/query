@@ -1,10 +1,12 @@
 ---
 id: useQueries
 title: useQueries
+redirect_from:
+  - framework/vue/reference/useQueries
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(__namedParameters, queryClient?): Readonly<Ref<TCombinedResult>>;
+function useQueries<T, TCombinedResult>(__namedParameters: ShallowOption & object, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
 ```
 
 Defined in: [packages/vue-query/src/useQueries.ts:357](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L357)

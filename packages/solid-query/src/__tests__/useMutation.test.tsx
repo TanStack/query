@@ -60,7 +60,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -95,7 +95,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
     expect(rendered.queryByRole('heading')).toBeNull()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should call mutate callbacks when useMutation has no callbacks', async () => {
@@ -1056,7 +1056,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -1093,11 +1093,11 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.queryByText('error')).not.toBeNull()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -1145,7 +1145,7 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.queryByText('error boundary')).not.toBeNull()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should pass meta to mutation on success', async () => {
@@ -1403,7 +1403,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
@@ -1448,7 +1448,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })

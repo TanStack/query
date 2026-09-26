@@ -155,7 +155,21 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     hidePageHeader: true,
     hidePageTitle: true,
     useCodeBlocks: true,
+    // `parametersFormat` and `typeDeclarationFormat` are deliberately left as lists: the first
+    // inlines the huge conditional types of `useQueries` into a single cell and drops `@default`
+    // blocks, and the second collapses `@example` code blocks onto one line, which swallows the
+    // following statement into a `//` comment.
+    interfacePropertiesFormat: 'table',
+    typeAliasPropertiesFormat: 'table',
+    tableColumnSettings: {
+      hideInherited: true,
+      hideSources: true,
+    },
+    // Without this, a function property renders as `(data) => TData` — the table and list formats
+    // both omit the parameter types otherwise.
+    expandParameters: true,
     excludePrivate: true,
+    excludeProtected: true,
     excludeInternal: true,
     excludeExternals: pkg.excludeExternals,
     sourceLinkTemplate:
@@ -169,20 +183,32 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
 
   const project = await app.convert()
 
-  if (project) {
-    if (pkg.simplifyLitQueriesControllerTypes) {
-      simplifyLitQueriesControllerTypes(project)
-    }
+  // `outputDir` was emptied above, so a failed conversion would otherwise leave it that way and
+  // look like every page was intentionally deleted. Fail loudly instead — TypeDoc reports the
+  // underlying diagnostics on stderr.
+  //
+  // The most likely cause is TS6305: `angular-query-experimental` reaches `@tanstack/query-devtools`
+  // through a TypeScript project reference, so it consumes that package's emitted `.d.ts` rather than
+  // its source (which is solid-js JSX and cannot be compiled under Angular's tsconfig). The
+  // `generate-docs` script builds it first, so this should only surface if that build was skipped.
+  if (!project) {
+    throw new Error(
+      `TypeDoc failed to convert ${pkg.entryPoints.join(', ')}. See the diagnostics above.`,
+    )
+  }
 
-    await app.generateOutputs(project)
+  if (pkg.simplifyLitQueriesControllerTypes) {
+    simplifyLitQueriesControllerTypes(project)
+  }
 
-    if (pkg.trimGeneratedMarkdown) {
-      await trimTrailingWhitespaceInMarkdown(outputDir)
-    }
+  await app.generateOutputs(project)
 
-    if (pkg.redirectFrom) {
-      await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
-    }
+  if (pkg.trimGeneratedMarkdown) {
+    await trimTrailingWhitespaceInMarkdown(outputDir)
+  }
+
+  if (pkg.redirectFrom) {
+    await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
   }
 }
 
@@ -231,6 +257,31 @@ const packages: Array<PackageReferenceDocsConfig> = [
     entryPoints: [resolve(__dirname, '../packages/vue-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/vue-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/vue/reference'),
+    redirectFrom: {
+      'functions/infiniteQueryOptions': [
+        'framework/vue/reference/infiniteQueryOptions',
+      ],
+      'functions/mutationOptions': ['framework/vue/reference/mutationOptions'],
+      'functions/queryOptions': ['framework/vue/reference/queryOptions'],
+      'functions/useInfiniteQuery': [
+        'framework/vue/reference/useInfiniteQuery',
+      ],
+      'functions/useIsFetching': ['framework/vue/reference/useIsFetching'],
+      'functions/useIsMutating': ['framework/vue/reference/useIsMutating'],
+      'functions/useMutation': ['framework/vue/reference/useMutation'],
+      'functions/useMutationState': [
+        'framework/vue/reference/useMutationState',
+      ],
+      'functions/usePrefetchInfiniteQuery': [
+        'framework/vue/reference/usePrefetchInfiniteQuery',
+      ],
+      'functions/usePrefetchQuery': [
+        'framework/vue/reference/usePrefetchQuery',
+      ],
+      'functions/useQueries': ['framework/vue/reference/useQueries'],
+      'functions/useQuery': ['framework/vue/reference/useQuery'],
+      'functions/useQueryClient': ['framework/vue/reference/useQueryClient'],
+    },
   },
   {
     entryPoints: [resolve(__dirname, '../packages/react-query/src/index.ts')],

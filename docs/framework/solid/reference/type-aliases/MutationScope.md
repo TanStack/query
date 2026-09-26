@@ -7,14 +7,14 @@ title: MutationScope
 type MutationScope = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1177](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1177)
+Defined in: [packages/query-core/src/types.ts:1243](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1243)
+
+Groups mutations so they run one after another instead of in parallel.
+Mutations that share the same `id` form a queue: while one is running, the others wait in `isPaused: true`
+state and resume automatically when their turn comes. Mutations with no scope always run in parallel.
 
 ## Properties
 
-### id
-
-```ts
-id: string;
-```
-
-Defined in: [packages/query-core/src/types.ts:1178](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1178)
+| Property | Type |
+| ------ | ------ |
+| <a id="id"></a> `id` | `string` |

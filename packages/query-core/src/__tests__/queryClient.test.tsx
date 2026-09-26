@@ -473,6 +473,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], 'bar')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual('bar')
     })
@@ -484,15 +485,17 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], null)
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual(null)
     })
 
-    it('should call fetchQuery and return its results if the query is not found', async () => {
+    it('should call ensureQueryData and return its results if the query is not found', async () => {
       const key = queryKey()
       const queryFn = () => Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key], queryFn }),
       ).resolves.toEqual('data')
     })
@@ -508,6 +511,7 @@ describe('queryClient', () => {
         })
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -516,6 +520,7 @@ describe('queryClient', () => {
       ).resolves.toEqual('old')
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -524,11 +529,12 @@ describe('queryClient', () => {
       ).resolves.toEqual('new')
     })
 
-    it('should not fetch with initialDat', async () => {
+    it('should not fetch with initialData', async () => {
       const key = queryKey()
       const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -642,6 +648,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], { pages: ['bar'], pageParams: [0] })
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -656,6 +663,7 @@ describe('queryClient', () => {
       const queryFn = () => Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -673,6 +681,7 @@ describe('queryClient', () => {
       const queryFn = () => sleep(TIMEOUT).then(() => 'new')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -683,6 +692,7 @@ describe('queryClient', () => {
       ).resolves.toEqual({ pages: ['old'], pageParams: [0] })
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -775,6 +785,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
@@ -787,6 +798,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery({
           queryKey: key,
           queryFn: (): Promise<unknown> => {
@@ -800,10 +812,13 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const fetchFn = () => Promise.resolve('data')
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
       })
+
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -816,6 +831,8 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -830,6 +847,7 @@ describe('queryClient', () => {
         refetchType: 'none',
       })
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -843,6 +861,7 @@ describe('queryClient', () => {
 
     it('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -856,6 +875,7 @@ describe('queryClient', () => {
 
     it('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -869,9 +889,9 @@ describe('queryClient', () => {
 
     it('should not force fetch', async () => {
       const key = queryKey()
-
       queryClient.setQueryData(key, 'og')
       const fetchFn = () => Promise.resolve('new')
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -888,6 +908,7 @@ describe('queryClient', () => {
       const queryFn = () => ++count
 
       queryClient.setQueryData(key, count)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const firstPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -895,12 +916,14 @@ describe('queryClient', () => {
       })
       await expect(firstPromise).resolves.toBe(0)
       await vi.advanceTimersByTimeAsync(10)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const secondPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
         staleTime: 10,
       })
       await expect(secondPromise).resolves.toBe(1)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const thirdPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -908,6 +931,7 @@ describe('queryClient', () => {
       })
       await expect(thirdPromise).resolves.toBe(1)
       await vi.advanceTimersByTimeAsync(10)
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const fourthPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -919,6 +943,7 @@ describe('queryClient', () => {
     it('should allow new meta', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -928,6 +953,7 @@ describe('queryClient', () => {
       })
       expect(first).toStrictEqual({ foo: true })
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -1382,6 +1408,7 @@ describe('queryClient', () => {
         Promise.resolve(data.pages[0])
 
       await expect(
+        // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
         queryClient.fetchInfiniteQuery<
           StrictData,
           any,
@@ -1394,6 +1421,7 @@ describe('queryClient', () => {
 
     it('should return infinite query data', async () => {
       const key = queryKey()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
         initialPageParam: 10,
@@ -1648,6 +1676,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
@@ -1667,6 +1696,7 @@ describe('queryClient', () => {
     it('should return infinite query data', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
@@ -1684,6 +1714,7 @@ describe('queryClient', () => {
     it('should prefetch multiple pages', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -1705,6 +1736,7 @@ describe('queryClient', () => {
       const key = queryKey()
       let count = 0
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -1833,6 +1865,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery<
         StrictData,
         any,
@@ -1848,6 +1881,7 @@ describe('queryClient', () => {
     it('should return undefined when an error is thrown', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: (): Promise<unknown> => {
@@ -1862,6 +1896,7 @@ describe('queryClient', () => {
     it('should be garbage collected after gcTime if unused', async () => {
       const key = queryKey()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: () => 'data',
@@ -2769,8 +2804,8 @@ describe('queryClient', () => {
     })
 
     it('should resume paused mutations when coming online', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+      const consoleErrorMock = vi.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
       const observer1 = new MutationObserver(queryClient, {
@@ -2831,8 +2866,8 @@ describe('queryClient', () => {
     })
 
     it('should resume paused mutations one after the other when in the same scope when invoked manually at the same time', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+      const consoleErrorMock = vi.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
       const orders: Array<string> = []
@@ -2877,8 +2912,8 @@ describe('queryClient', () => {
     })
 
     it('should resumePausedMutations when coming online after having called resumePausedMutations while offline', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+      const consoleErrorMock = vi.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {
@@ -2901,8 +2936,8 @@ describe('queryClient', () => {
     })
 
     it('should resumePausedMutations when coming online after having restored cache (and resumed) while offline', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+      const consoleErrorMock = vi.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {

@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { reactive, ref } from 'vue-demi'
+import {
+  isReactive,
+  isReadonly,
+  isVue2,
+  isVue3,
+  onScopeDispose,
+  reactive,
+  ref,
+} from 'vue-demi'
 import { noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
@@ -36,7 +44,6 @@ describe('useMutation', () => {
     })
 
     mutation.mutate(result)
-
     expect(mutation).toMatchObject({
       isIdle: { value: false },
       isPending: { value: true },
@@ -71,9 +78,7 @@ describe('useMutation', () => {
     })
 
     mutation.mutate(result)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutation).toMatchObject({
       isIdle: { value: false },
       isPending: { value: false },
@@ -88,18 +93,16 @@ describe('useMutation', () => {
     const key = queryKey()
     const result = 'Mock data'
     const keyRef = ref('key01')
-    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationFn = vi.fn((params: string) => sleep(10).then(() => params))
     const mutation = useMutation(() => ({
       mutationKey: [...key, keyRef.value],
-      mutationFn: fnMock,
+      mutationFn,
     }))
 
     mutation.mutate(result)
-
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fnMock).toHaveBeenCalledTimes(1)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       1,
       result,
       expect.objectContaining({ mutationKey: [...key, 'key01'] }),
@@ -109,9 +112,8 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate(result)
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(fnMock).toHaveBeenCalledTimes(2)
-    expect(fnMock).toHaveBeenNthCalledWith(
+    expect(mutationFn).toHaveBeenCalledTimes(2)
+    expect(mutationFn).toHaveBeenNthCalledWith(
       2,
       result,
       expect.objectContaining({ mutationKey: [...key, 'key02'] }),
@@ -132,7 +134,6 @@ describe('useMutation', () => {
     options.mutationKey = key2
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
-
     await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.find({ mutationKey: key2 })
@@ -164,7 +165,6 @@ describe('useMutation', () => {
     mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
-
     await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.getAll()
@@ -213,11 +213,9 @@ describe('useMutation', () => {
     })
 
     mutation.mutate()
-
     await vi.advanceTimersByTimeAsync(10)
 
     mutation.reset()
-
     expect(mutation).toMatchObject({
       isIdle: { value: true },
       isPending: { value: false },
@@ -241,9 +239,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('')
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onMutate).toHaveBeenCalledTimes(1)
     })
 
@@ -256,9 +252,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('')
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
@@ -270,9 +264,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('')
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
@@ -284,9 +276,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('')
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
@@ -298,9 +288,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate(undefined, { onError })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
@@ -311,9 +299,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('', { onSuccess })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
@@ -324,9 +310,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('', { onSettled })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
@@ -340,9 +324,7 @@ describe('useMutation', () => {
         onSuccess: () => callbacks.push('mutate.onSuccess'),
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
     })
 
@@ -357,9 +339,7 @@ describe('useMutation', () => {
         onError: () => callbacks.push('mutate.onError'),
         onSettled: () => callbacks.push('mutate.onSettled'),
       })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
     })
 
@@ -373,9 +353,7 @@ describe('useMutation', () => {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual([
         'mutateAsync.onSuccess',
         'mutateAsync.onSettled',
@@ -395,9 +373,7 @@ describe('useMutation', () => {
           onSettled: () => callbacks.push('mutateAsync.onSettled'),
         })
         .catch(noop)
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual([
         'mutateAsync.onError',
         'mutateAsync.onSettled',
@@ -413,9 +389,7 @@ describe('useMutation', () => {
       mutation.mutateAsync('', {
         onSuccess: () => callbacks.push('mutateAsync.onSuccess'),
       })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual(['mutateAsync.onSuccess'])
     })
 
@@ -431,9 +405,7 @@ describe('useMutation', () => {
           onError: () => callbacks.push('mutateAsync.onError'),
         })
         .catch(noop)
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual(['mutateAsync.onError'])
     })
 
@@ -446,26 +418,22 @@ describe('useMutation', () => {
       mutation.mutateAsync('', {
         onSettled: () => callbacks.push('mutateAsync.onSettled'),
       })
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(callbacks).toEqual(['mutateAsync.onSettled'])
     })
 
     it('should fire both onSettled functions', async () => {
       const onSettled = vi.fn()
-      const onSettledOnFunction = vi.fn()
+      const onSettledMutate = vi.fn()
       const mutation = useMutation({
         mutationFn: (params: string) => sleep(10).then(() => params),
         onSettled,
       })
 
-      mutation.mutate('', { onSettled: onSettledOnFunction })
-
+      mutation.mutate('', { onSettled: onSettledMutate })
       await vi.advanceTimersByTimeAsync(10)
-
       expect(onSettled).toHaveBeenCalledTimes(1)
-      expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
+      expect(onSettledMutate).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -483,7 +451,6 @@ describe('useMutation', () => {
       const promise = mutation.mutateAsync(result)
 
       await vi.advanceTimersByTimeAsync(10)
-
       await expect(promise).resolves.toBe(result)
 
       expect(mutation).toMatchObject({
@@ -518,20 +485,73 @@ describe('useMutation', () => {
     })
   })
 
+  it('should stop listening to changes on onScopeDispose', async () => {
+    const key = queryKey()
+    const queryClient = useQueryClient()
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
+    onScopeDisposeMock.mockImplementationOnce((fn) => fn())
+
+    const mutation = useMutation({
+      mutationKey: key,
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    })
+
+    expect(mutation.status.value).toBe('idle')
+
+    mutation.mutate('a')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(1)
+    expect(mutation.status.value).toBe('idle')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
+    expect(mutation.status.value).toBe('idle')
+  })
+
+  it.runIf(isVue3)(
+    'should return deeply reactive and readonly data by default',
+    async () => {
+      const { mutate, data } = useMutation({
+        mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      })
+
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(isReactive(data.value?.nested)).toBe(true)
+      expect(isReadonly(data.value?.nested)).toBe(true)
+    },
+  )
+
+  it('should return data in a shallow ref when shallow is true', async () => {
+    const { mutate, data } = useMutation({
+      mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      shallow: true,
+    })
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
+  })
+
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       useMutation({
         mutationFn: (params: string) => sleep(0).then(() => params),
       })
 
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      warnSpy.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })
@@ -539,41 +559,67 @@ describe('useMutation', () => {
   describe('throwOnError', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
-      const boundaryFn = vi.fn()
+      const throwOnError = vi.fn()
       const { mutate } = useMutation({
         mutationFn: () => sleep(10).then(() => Promise.reject(err)),
-        throwOnError: boundaryFn,
+        throwOnError,
       })
 
       mutate()
-
       await vi.advanceTimersByTimeAsync(10)
-
-      expect(boundaryFn).toHaveBeenCalledTimes(1)
-      expect(boundaryFn).toHaveBeenCalledWith(err)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(err)
     })
 
-    it('should throw from error watcher when throwOnError returns true', async () => {
-      const throwOnErrorFn = vi.fn().mockReturnValue(true)
-      const { mutate } = useMutation({
-        mutationFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Some error'))),
-        throwOnError: throwOnErrorFn,
-      })
+    it.runIf(isVue2)(
+      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
+      async () => {
+        const consoleErrorMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const throwOnError = vi.fn().mockReturnValue(true)
+        const { mutate } = useMutation({
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          throwOnError,
+        })
 
-      mutate()
+        mutate()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
+      },
+    )
 
-      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
-      const rejectionHandler = () => {}
-      process.on('unhandledRejection', rejectionHandler)
+    it.runIf(isVue3)(
+      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
+      async ({ onTestFinished }) => {
+        const throwOnError = vi.fn().mockReturnValue(true)
+        const { mutate } = useMutation({
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          throwOnError,
+        })
 
-      await vi.advanceTimersByTimeAsync(10)
+        const unhandledRejectionFn = vi.fn()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
 
-      process.off('unhandledRejection', rejectionHandler)
-
-      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
-      expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
-    })
+        mutate()
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
   })
 
   describe('optimistic updates', () => {
@@ -609,7 +655,6 @@ describe('useMutation', () => {
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
 
       await vi.advanceTimersByTimeAsync(10)
-
       expect(mutation).toMatchObject({ isError: { value: true } })
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
     })
@@ -638,9 +683,7 @@ describe('useMutation', () => {
       })
 
       mutation.mutate('Todo 2')
-
       await vi.advanceTimersByTimeAsync(10)
-
       expect(mutation).toMatchObject({ isSuccess: { value: true } })
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
     })
@@ -673,19 +716,17 @@ describe('useMutation', () => {
     })
 
     it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-      const onSuccessPerCall = vi.fn()
+      const onSuccessMutate = vi.fn()
       const mutation = useMutation({
         mutationFn: (todo: string) => sleep(10).then(() => todo),
       })
 
-      mutation.mutate('Todo 1', { onSuccess: onSuccessPerCall })
-      mutation.mutate('Todo 2', { onSuccess: onSuccessPerCall })
-
+      mutation.mutate('Todo 1', { onSuccess: onSuccessMutate })
+      mutation.mutate('Todo 2', { onSuccess: onSuccessMutate })
       await vi.advanceTimersByTimeAsync(10)
-
-      expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
+      expect(onSuccessMutate).toHaveBeenCalledTimes(1)
       const [data, variables, onMutateResult, context] =
-        onSuccessPerCall.mock.calls[0]!
+        onSuccessMutate.mock.calls[0]!
       expect(data).toBe('Todo 2')
       expect(variables).toBe('Todo 2')
       expect(onMutateResult).toBeUndefined()
@@ -702,9 +743,7 @@ describe('useMutation', () => {
     })
 
     mutation.mutate('todo')
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(onSuccess).toHaveBeenCalledTimes(1)
     const [data, variables, onMutateResult, context] = onSuccess.mock.calls[0]!
     expect(data).toBe('TODO')
@@ -726,9 +765,7 @@ describe('useMutation', () => {
     })
 
     mutation.mutate('todo')
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutation.data.value).toBe('tag-from-this-client')
   })
 
@@ -741,9 +778,7 @@ describe('useMutation', () => {
     })
 
     mutation.mutate('todo')
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
   })
@@ -763,9 +798,7 @@ describe('useMutation', () => {
     expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
 
     mutation.mutate()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
   })
 })

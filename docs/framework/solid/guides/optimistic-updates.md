@@ -2,7 +2,7 @@
 id: optimistic-updates
 title: Optimistic Updates
 ref: docs/framework/react/guides/optimistic-updates.md
-replace: { 'React Query': 'Solid Query', 'hook': 'function' }
+replace: { 'React Query': 'Solid Query', 'hook': 'primitive' }
 ---
 
 [//]: # 'ExampleUI1'

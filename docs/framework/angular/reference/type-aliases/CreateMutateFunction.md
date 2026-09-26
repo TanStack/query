@@ -4,7 +4,7 @@ title: CreateMutateFunction
 ---
 
 ```ts
-type CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args) => void;
+type CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
 Defined in: [packages/angular-query-experimental/src/types.ts:245](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L245)

@@ -2726,7 +2726,7 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -2753,11 +2753,11 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -2787,11 +2787,11 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -2820,7 +2820,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
@@ -2883,7 +2883,7 @@ describe('useQuery', () => {
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2923,7 +2923,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('Remote Error')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
@@ -6441,7 +6441,7 @@ describe('useQuery', () => {
   // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
   it('should throw in case of bad arguments to enhance DevX', () => {
     // Mock console error to avoid noise when test is run
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -6456,7 +6456,7 @@ describe('useQuery', () => {
     }
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should respect skipToken and refetch when skipToken is taken away', async () => {
@@ -6504,7 +6504,7 @@ describe('useQuery', () => {
   })
 
   it('should allow enabled: true and queryFn: skipToken', () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -6530,8 +6530,8 @@ describe('useQuery', () => {
     rendered.getByText('status: pending, fetchStatus: idle')
 
     // no warnings expected about skipToken / missing queryFn
-    expect(consoleMock).toHaveBeenCalledTimes(0)
-    consoleMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
+    consoleErrorMock.mockRestore()
   })
 
   it('should return correct optimistic result when fetching after error', async () => {
@@ -6686,7 +6686,7 @@ describe('useQuery', () => {
   })
 
   it('should retry failed initialPromise on the client', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -6742,12 +6742,12 @@ describe('useQuery', () => {
 
     const query = clientQueryClient.getQueryCache().find({ queryKey: key })
 
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should console.error when there is no queryFn', () => {

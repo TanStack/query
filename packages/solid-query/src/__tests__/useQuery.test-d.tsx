@@ -146,6 +146,24 @@ describe('useQuery', () => {
   )
   expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
 
+  it('should return the correct states for a successful query', () => {
+    const state = useQuery<string, Error>(() => ({
+      queryKey: key,
+      queryFn: () => Promise.resolve('test'),
+    }))
+
+    if (state.isPending) {
+      expectTypeOf(state.data).toEqualTypeOf<undefined>()
+      expectTypeOf(state.error).toEqualTypeOf<null>()
+    } else if (state.isLoadingError) {
+      expectTypeOf(state.data).toEqualTypeOf<undefined>()
+      expectTypeOf(state.error).toEqualTypeOf<Error>()
+    } else {
+      expectTypeOf(state.data).toEqualTypeOf<string>()
+      expectTypeOf(state.error).toEqualTypeOf<Error | null>()
+    }
+  })
+
   describe('initialData', () => {
     describe('Config object overload', () => {
       it('TData should always be defined when initialData is provided as an object', () => {

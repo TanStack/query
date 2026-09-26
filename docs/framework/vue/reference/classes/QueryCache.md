@@ -18,7 +18,7 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new QueryCache(config): QueryCache;
+new QueryCache(config: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
@@ -55,31 +55,15 @@ Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanSt
 QC.config
 ```
 
-***
-
-### listeners
-
-```ts
-protected listeners: Set<QueryCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-QC.listeners
-```
-
 ## Methods
 
 ### build()
 
 ```ts
 build<TQueryFnData, TError, TData, TQueryKey>(
-   client, 
-   options, 
-state?): Query<TQueryFnData, TError, TData, TQueryKey>;
+   client: QueryClient, 
+   options: WithRequired<QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, "queryKey">, 
+state?: QueryState<TData, TError>): Query<TQueryFnData, TError, TData, TQueryKey>;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:147](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L147)
@@ -150,7 +134,7 @@ QC.build
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L232)
+Defined in: [packages/query-core/src/queryCache.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L228)
 
 Removes all queries from the cache.
 
@@ -177,7 +161,7 @@ QC.clear
 ### find()
 
 ```ts
-find<TQueryFnData, TError, TData>(filters): 
+find<TQueryFnData, TError, TData>(filters: MaybeRefDeep<WithRequired<QueryFilters<readonly unknown[]>, "queryKey">>): 
   | Query<TQueryFnData, TError, TData, readonly unknown[]>
   | undefined;
 ```
@@ -211,7 +195,7 @@ decide whether a query is fresh enough to be used as an initial value).
 
 ##### filters
 
-`MaybeRefDeep`\<[`WithRequired`](../type-aliases/WithRequired.md)\<`QueryFilters`\<readonly `unknown`[]\>, `"queryKey"`\>\>
+`MaybeRefDeep`\<[`WithRequired`](../type-aliases/WithRequired.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>, `"queryKey"`\>\>
 
 #### Returns
 
@@ -241,7 +225,7 @@ QC.find
 ### findAll()
 
 ```ts
-findAll(filters): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
@@ -256,7 +240,7 @@ information about queries in rare scenarios.
 
 ##### filters
 
-`MaybeRefDeep`\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+`MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 #### Returns
 
@@ -285,12 +269,12 @@ QC.findAll
 ### get()
 
 ```ts
-get<TQueryFnData, TError, TData, TQueryKey>(queryHash): 
+get<TQueryFnData, TError, TData, TQueryKey>(queryHash: string): 
   | Query<TQueryFnData, TError, TData, TQueryKey>
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:254](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L254)
+Defined in: [packages/query-core/src/queryCache.ts:250](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L250)
 
 Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
 exists. Unlike [QueryCache#find](#find), this looks up by the already-computed hash rather
@@ -349,7 +333,7 @@ QC.get
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:277](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L277)
+Defined in: [packages/query-core/src/queryCache.ts:272](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L272)
 
 Returns all queries within the cache.
 
@@ -379,7 +363,9 @@ QC.getAll
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
@@ -393,50 +379,10 @@ QC.hasListeners
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-QC.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-QC.onUnsubscribe
-```
-
-***
-
 ### remove()
 
 ```ts
-remove(query): void;
+remove(query: Query<any, any, any, any>): void;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L208)
@@ -478,16 +424,22 @@ QC.remove
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: QueryCacheListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
+Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
 ##### listener
 
 `QueryCacheListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
@@ -498,6 +450,16 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Inherited from
 

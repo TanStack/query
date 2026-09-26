@@ -6,10 +6,10 @@ title: queryOptions
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:94](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L94)
+Defined in: [packages/lit-query/src/queryOptions.ts:93](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L93)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -61,10 +61,10 @@ const todosOptions = queryOptions({
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:112](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L112)
+Defined in: [packages/lit-query/src/queryOptions.ts:111](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L111)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.
@@ -104,10 +104,10 @@ The same options object with a typed `queryKey`.
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never> & object & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:130](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L130)
+Defined in: [packages/lit-query/src/queryOptions.ts:129](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L129)
 
 Brands query options so the `queryKey` carries the query function data and
 error types across TanStack Query APIs.

@@ -1323,7 +1323,7 @@ describe('useMutation', () => {
     const err = new Error('Expected mock error. All is well!')
     err.stack = ''
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     function Page() {
@@ -1359,13 +1359,13 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('error')).not.toBeNull()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toBe(err)
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let boundary = false
@@ -1412,7 +1412,7 @@ describe('useMutation', () => {
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('error boundary')).not.toBeNull()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw an error when throwOnError is set to false', async () => {
@@ -1798,7 +1798,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
@@ -1843,7 +1843,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })

@@ -55,7 +55,7 @@ const unsubscribe = observer.subscribe((result) => console.log(result))
 ### Constructor
 
 ```ts
-new InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>(client, options): InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
+new InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>(client: QueryClient, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserver<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L83)
@@ -79,22 +79,6 @@ Defined in: [packages/query-core/src/infiniteQueryObserver.ts:83](https://github
 [`QueryObserver`](QueryObserver.md).[`constructor`](QueryObserver.md#constructor)
 
 ## Properties
-
-### fetch
-
-```ts
-protected fetch: ReplaceReturnType<(fetchOptions) => Promise<QueryObserverResult<TData, TError>>, Promise<InfiniteQueryObserverResult<TData, TError>>>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:72](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L72)
-
-#### Overrides
-
-```ts
-QueryObserver.fetch
-```
-
-***
 
 ### getCurrentResult
 
@@ -124,20 +108,6 @@ QueryObserver.getCurrentResult
 
 ***
 
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`listeners`](QueryObserver.md#listeners)
-
-***
-
 ### options
 
 ```ts
@@ -155,16 +125,22 @@ Defined in: [packages/query-core/src/queryObserver.ts:89](https://github.com/Tan
 ### subscribe()
 
 ```ts
-subscribe: (listener) => () => void;
+subscribe: (listener: InfiniteQueryObserverListener) => () => void;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L55)
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
 ##### listener
 
 `InfiniteQueryObserverListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
@@ -176,6 +152,16 @@ Defined in: [packages/query-core/src/infiniteQueryObserver.ts:55](https://github
 
 `void`
 
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
+
 #### Overrides
 
 ```ts
@@ -183,52 +169,6 @@ QueryObserver.subscribe
 ```
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L96)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`bindMethods`](QueryObserver.md#bindmethods)
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query, options): InfiniteQueryObserverResult<TData, TError>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:201](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L201)
-
-#### Parameters
-
-##### query
-
-[`Query`](Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
-
-##### options
-
-[`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
-
-#### Returns
-
-[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
-
-#### Overrides
-
-[`QueryObserver`](QueryObserver.md).[`createResult`](QueryObserver.md#createresult)
-
-***
 
 ### destroy()
 
@@ -255,7 +195,7 @@ query it was observing.
 ### fetchNextPage()
 
 ```ts
-fetchNextPage(options?): Promise<InfiniteQueryObserverResult<TData, TError>>;
+fetchNextPage(options?: FetchNextPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:161](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L161)
@@ -295,7 +235,7 @@ if (hasNextPage) {
 ### fetchOptimistic()
 
 ```ts
-fetchOptimistic(options): Promise<QueryObserverResult<TData, TError>>;
+fetchOptimistic(options: QueryObserverOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>): Promise<QueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:395](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L395)
@@ -335,7 +275,7 @@ console.log(result.data)
 ### fetchPreviousPage()
 
 ```ts
-fetchPreviousPage(options?): Promise<InfiniteQueryObserverResult<TData, TError>>;
+fetchPreviousPage(options?: FetchPreviousPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:190](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L190)
@@ -395,7 +335,7 @@ Returns the `Query` instance this observer is currently observing.
 ### getOptimisticResult()
 
 ```ts
-getOptimisticResult(options): InfiniteQueryObserverResult<TData, TError>;
+getOptimisticResult(options: DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L127)
@@ -427,7 +367,9 @@ synchronously.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
@@ -439,46 +381,10 @@ Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanS
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L110)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onSubscribe`](QueryObserver.md#onsubscribe)
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L124)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](QueryObserver.md).[`onUnsubscribe`](QueryObserver.md#onunsubscribe)
-
-***
-
 ### refetch()
 
 ```ts
-refetch(__namedParameters): Promise<QueryObserverResult<TData, TError>>;
+refetch(__namedParameters: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:371](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L371)
@@ -512,7 +418,7 @@ console.log(result.data)
 ### setOptions()
 
 ```ts
-setOptions(options): void;
+setOptions(options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): void;
 ```
 
 Defined in: [packages/query-core/src/infiniteQueryObserver.ts:108](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L108)
@@ -585,7 +491,32 @@ regains focus.
 ### trackProp()
 
 ```ts
-trackProp(key): void;
+trackProp(key:
+  | "error"
+  | "data"
+  | "isError"
+  | "isPending"
+  | "isLoading"
+  | "isLoadingError"
+  | "isRefetchError"
+  | "isSuccess"
+  | "isPlaceholderData"
+  | "status"
+  | "dataUpdatedAt"
+  | "errorUpdatedAt"
+  | "failureCount"
+  | "failureReason"
+  | "errorUpdateCount"
+  | "isFetched"
+  | "isFetchedAfterMount"
+  | "isFetching"
+  | "isInitialLoading"
+  | "isPaused"
+  | "isRefetching"
+  | "isStale"
+  | "isEnabled"
+  | "refetch"
+  | "fetchStatus"): void;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L350)
@@ -614,7 +545,32 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 ### trackResult()
 
 ```ts
-trackResult(result, onPropTracked?): QueryObserverResult<TData, TError>;
+trackResult(result: QueryObserverResult<TData, TError>, onPropTracked?: (key:
+  | "error"
+  | "data"
+  | "isError"
+  | "isPending"
+  | "isLoading"
+  | "isLoadingError"
+  | "isRefetchError"
+  | "isSuccess"
+  | "isPlaceholderData"
+  | "status"
+  | "dataUpdatedAt"
+  | "errorUpdatedAt"
+  | "failureCount"
+  | "failureReason"
+  | "errorUpdateCount"
+  | "isFetched"
+  | "isFetchedAfterMount"
+  | "isFetching"
+  | "isInitialLoading"
+  | "isPaused"
+  | "isRefetching"
+  | "isStale"
+  | "isEnabled"
+  | "refetch"
+| "fetchStatus") => void): QueryObserverResult<TData, TError>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:331](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L331)
@@ -632,7 +588,32 @@ properties you actually read" behavior.
 
 ##### onPropTracked?
 
-(`key`) => `void`
+(`key`:
+  \| `"error"`
+  \| `"data"`
+  \| `"isError"`
+  \| `"isPending"`
+  \| `"isLoading"`
+  \| `"isLoadingError"`
+  \| `"isRefetchError"`
+  \| `"isSuccess"`
+  \| `"isPlaceholderData"`
+  \| `"status"`
+  \| `"dataUpdatedAt"`
+  \| `"errorUpdatedAt"`
+  \| `"failureCount"`
+  \| `"failureReason"`
+  \| `"errorUpdateCount"`
+  \| `"isFetched"`
+  \| `"isFetchedAfterMount"`
+  \| `"isFetching"`
+  \| `"isInitialLoading"`
+  \| `"isPaused"`
+  \| `"isRefetching"`
+  \| `"isStale"`
+  \| `"isEnabled"`
+  \| `"refetch"`
+  \| `"fetchStatus"`) => `void`
 
 #### Returns
 
@@ -650,7 +631,7 @@ properties you actually read" behavior.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:735](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L735)
+Defined in: [packages/query-core/src/queryObserver.ts:733](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L733)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

@@ -10,7 +10,7 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<Us
 Defined in: [packages/preact-query/src/queryOptions.ts:81](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L81)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined`.
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 

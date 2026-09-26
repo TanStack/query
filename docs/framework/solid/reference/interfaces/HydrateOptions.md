@@ -10,34 +10,9 @@ Options for `hydrate`, controlling the default options applied to queries/mutati
 
 ## Properties
 
-### defaultOptions?
-
-```ts
-optional defaultOptions: object;
-```
-
-Defined in: [packages/query-core/src/hydration.ts:62](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L62)
-
-#### deserializeData?
-
-```ts
-optional deserializeData: TransformerFn;
-```
-
-Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`.
-
-#### mutations?
-
-```ts
-optional mutations: MutationOptions<unknown, Error, unknown, unknown>;
-```
-
-Default options merged into every mutation restored from the dehydrated state.
-
-#### queries?
-
-```ts
-optional queries: QueryOptions<unknown, Error, unknown, readonly unknown[], never>;
-```
-
-Default options merged into every query restored from the dehydrated state.
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | `MutationOptions`\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | `QueryOptions`\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.20",
+  "version": "0.2.25",
   "description": "Lit adapter for TanStack Query Core",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,11 +15,11 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
-    "compile": "tsc --build",
+    "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto .",
     "lint:fix": "eslint --concurrency=auto . --fix",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc --noEmit --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:watch": "pnpm run test:lib:dev",
@@ -57,16 +57,16 @@
   "dependencies": {
     "@lit/context": "^1.1.6",
     "@tanstack/query-core": "workspace:*",
-    "lit": "^3.3.1"
+    "lit": "^3.3.3"
   },
   "peerDependencies": {
-    "@tanstack/query-core": "^5.0.0",
+    "@tanstack/query-core": "^5.104.0",
     "lit": ">=2.8.0 <4"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@tanstack/query-test-utils": "workspace:*",
-    "globals": "^17.4.0",
+    "globals": "^17.12.0",
     "typescript-eslint": "^8.54.0"
   }
 }

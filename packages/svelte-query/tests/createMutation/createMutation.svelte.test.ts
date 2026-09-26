@@ -41,7 +41,7 @@ describe('createMutation', () => {
     expect(rendered.getByText('Error: Expected mock error')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Reset/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
 
@@ -290,7 +290,7 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
@@ -533,7 +533,7 @@ describe('createMutation', () => {
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
   })
@@ -547,7 +547,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
   })
@@ -621,17 +621,17 @@ describe('createMutation', () => {
   })
 
   it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
-    const perCallOnSuccess = vi.fn()
+    const onSuccessMutate = vi.fn()
 
     const rendered = render(PerCallSuccess, {
-      props: { queryClient, perCallOnSuccess },
+      props: { queryClient, onSuccessMutate },
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(perCallOnSuccess).toHaveBeenCalledTimes(1)
-    expect(perCallOnSuccess.mock.calls[0]?.[3].client).toBe(queryClient)
+    expect(onSuccessMutate).toHaveBeenCalledTimes(1)
+    expect(onSuccessMutate.mock.calls[0]?.[3].client).toBe(queryClient)
   })
 
   it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
@@ -640,7 +640,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText(
@@ -655,7 +655,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText('result: error: upload failed'),
@@ -668,7 +668,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText(
@@ -678,10 +678,10 @@ describe('createMutation', () => {
   })
 
   it('should only fire the per-call onSuccess for the last mutate() call', async () => {
-    const onSuccessPerCall = vi.fn()
+    const onSuccessMutate = vi.fn()
 
     const rendered = render(ConcurrentMutate, {
-      props: { queryClient, onSuccessPerCall },
+      props: { queryClient, onSuccessMutate },
     })
 
     expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
@@ -695,8 +695,8 @@ describe('createMutation', () => {
       rendered.getByText('data: Todo 2, status: success'),
     ).toBeInTheDocument()
 
-    expect(onSuccessPerCall).toHaveBeenCalledTimes(1)
-    expect(onSuccessPerCall).toHaveBeenCalledWith(
+    expect(onSuccessMutate).toHaveBeenCalledTimes(1)
+    expect(onSuccessMutate).toHaveBeenCalledWith(
       'Todo 2',
       'Todo 2',
       undefined,

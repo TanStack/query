@@ -1,10 +1,12 @@
 ---
 id: useQueryClient
 title: useQueryClient
+redirect_from:
+  - framework/vue/reference/useQueryClient
 ---
 
 ```ts
-function useQueryClient(id): QueryClient;
+function useQueryClient(id: string): QueryClient;
 ```
 
 Defined in: [packages/vue-query/src/useQueryClient.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueryClient.ts#L27)

@@ -3,7 +3,6 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
-import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -33,16 +32,13 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(2)
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
     const { status } = useQuery({
@@ -55,12 +51,10 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
@@ -80,7 +74,6 @@ describe('useIsFetching', () => {
 
     filter.stale = true
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetching.value).toStrictEqual(1)
   })
 
@@ -100,22 +93,22 @@ describe('useIsFetching', () => {
 
     staleRef.value = true
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetching.value).toStrictEqual(1)
   })
 
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       useIsFetching()
-
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      warnSpy.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })

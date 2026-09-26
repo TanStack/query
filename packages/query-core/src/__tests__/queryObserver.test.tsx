@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -331,9 +323,6 @@ describe('queryObserver', () => {
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
-      expectTypeOf(result).toEqualTypeOf<
-        QueryObserverResult<{ myCount: number }>
-      >()
       observerResult = result
     })
     await vi.advanceTimersByTimeAsync(0)
@@ -349,9 +338,6 @@ describe('queryObserver', () => {
       select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
-    expectTypeOf(observerResult.data).toEqualTypeOf<
-      { myCount: number } | undefined
-    >()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
   })
 

@@ -4,7 +4,7 @@ title: partialMatchKey
 ---
 
 ```ts
-function partialMatchKey(a, b): boolean;
+function partialMatchKey(a: readonly unknown[], b: readonly unknown[]): boolean;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:300](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L300)

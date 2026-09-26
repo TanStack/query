@@ -409,8 +409,7 @@ export class QueryObserver<
 
     let unsubscribe = () => {}
     let resolveEarly:
-      | ((result: QueryObserverResult<TData, TError>) => void)
-      | undefined
+      ((result: QueryObserverResult<TData, TError>) => void) | undefined
 
     const cachePromise = new Promise<QueryObserverResult<TData, TError>>(
       (resolve) => {
@@ -569,8 +568,7 @@ export class QueryObserver<
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
     const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
-      | undefined
+      QueryObserverResult<TData, TError> | undefined
     const prevResultState = this.#currentResultState
     const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
@@ -734,8 +732,7 @@ export class QueryObserver<
    */
   updateResult(): void {
     const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
-      | undefined
+      QueryObserverResult<TData, TError> | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
@@ -813,8 +810,7 @@ export class QueryObserver<
     }
 
     const prevQuery = this.#currentQuery as
-      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
-      | undefined
+      Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
 

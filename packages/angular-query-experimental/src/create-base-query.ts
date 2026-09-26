@@ -193,6 +193,7 @@ export function createBaseQuery<
       const originalRefetch = result.refetch
       return {
         ...result,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         refetch: ((...args: Parameters<typeof originalRefetch>) => {
           observer.setOptions(defaultedOptionsSignal())
           const refetchResult = originalRefetch(...args)
