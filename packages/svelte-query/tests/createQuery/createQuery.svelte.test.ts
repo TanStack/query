@@ -72,6 +72,7 @@ describe('createQuery', () => {
         status: 'pending',
         fetchStatus: 'fetching',
       })
+
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
       expect(query).toEqual({
