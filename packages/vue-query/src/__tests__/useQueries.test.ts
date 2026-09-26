@@ -456,6 +456,7 @@ describe('useQueries', () => {
     })
 
     expect(queryFn).not.toHaveBeenCalled()
+
     await queriesState.value[0].refetch()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenNthCalledWith(

@@ -215,7 +215,6 @@ describe('useQuery', () => {
       status: { value: 'pending' },
       data: { value: undefined },
     })
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query).toMatchObject({
       status: { value: 'success' },
@@ -243,7 +242,6 @@ describe('useQuery', () => {
       fetchStatus: { value: 'fetching' },
       data: { value: undefined },
     })
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query).toMatchObject({
       status: { value: 'success' },
@@ -274,11 +272,9 @@ describe('useQuery', () => {
     expect(data.value).toStrictEqual(undefined)
     expect(fetchStatus.value).toStrictEqual('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual('Some data')
     expect(fetchStatus.value).toStrictEqual('fetching')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(fetchStatus.value).toStrictEqual('idle')
     expect(status.value).toStrictEqual('success')
@@ -300,11 +296,9 @@ describe('useQuery', () => {
     })
 
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.getQueryData(key)).toBe('Some data')
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(status.value).toStrictEqual('pending')
   })
@@ -320,6 +314,7 @@ describe('useQuery', () => {
     })
 
     expect(queryFn).not.toHaveBeenCalled()
+
     await query.refetch()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenNthCalledWith(
@@ -590,7 +585,6 @@ describe('useQuery', () => {
       data: { value: 'initial' },
       isError: { value: false },
     })
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query).toMatchObject({
       status: { value: 'error' },
@@ -624,7 +618,6 @@ describe('useQuery', () => {
       data: { value: 'page-0' },
       isPlaceholderData: { value: true },
     })
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query).toMatchObject({
       data: { value: 'page-1' },
@@ -800,6 +793,7 @@ describe('useQuery', () => {
 
       const queryClient = useQueryClient()
       queryClient.setQueryData(key, 'manual data')
+
       await vi.advanceTimersByTimeAsync(0)
 
       const result = await suspensePromise
