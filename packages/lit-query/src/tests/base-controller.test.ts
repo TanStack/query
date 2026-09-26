@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
@@ -80,7 +80,15 @@ if (!customElements.get(hostTagName)) {
 }
 
 describe('BaseController', () => {
-  it('defers provider resolution on already-connected hosts until after onConnected', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should defer provider resolution on already-connected hosts until after onConnected', async () => {
     const client = new QueryClient()
     const provider = document.createElement(
       providerTagName,
