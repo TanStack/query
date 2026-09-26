@@ -357,7 +357,7 @@ describe('PiPContext', () => {
         'open',
         vi.fn(() => null),
       )
-      const consoleError = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
 
@@ -366,7 +366,7 @@ describe('PiPContext', () => {
           initialStorage: { 'TanstackQueryDevtools.pip_open': 'true' },
         })
 
-        expect(consoleError).toHaveBeenCalledWith(
+        expect(consoleErrorMock).toHaveBeenCalledWith(
           'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
         )
         expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
@@ -374,7 +374,7 @@ describe('PiPContext', () => {
         )
         expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
       } finally {
-        consoleError.mockRestore()
+        consoleErrorMock.mockRestore()
       }
     })
 

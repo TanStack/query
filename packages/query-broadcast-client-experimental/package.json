@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "5.103.2",
+  "version": "5.103.3",
   "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -56,12 +56,12 @@
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "broadcast-channel": "^7.0.0"
+    "broadcast-channel": "^7.4.0"
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/react": "^16.1.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "npm-run-all2": "^5.0.0"
+    "@vitejs/plugin-react": "^6.1.1",
+    "npm-run-all2": "^9.0.3"
   }
 }

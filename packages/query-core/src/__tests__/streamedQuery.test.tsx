@@ -472,6 +472,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {} as Record<number, boolean>,
       }),
     })
@@ -508,6 +509,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,

@@ -6,14 +6,14 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.103.2",
+    "@tanstack/react-query": "^5.103.3",
     "react": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.103.2",
+    "@tanstack/eslint-plugin-query": "^5.103.3",
     "eslint": "^9.39.0",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.70.1"
   },
   "nx": {
     "targets": {

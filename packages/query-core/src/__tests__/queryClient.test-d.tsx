@@ -74,10 +74,12 @@ const typedFilterKey = typedQueryFilters.queryKey!
 const typedMutationKey = typedMutationOptions.mutationKey!
 
 const untypedQueryOptions: EnsureQueryDataOptions = {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   queryKey: ['key'] as any,
 }
 
 const untypedFetchInfiniteQueryOptions: FetchInfiniteQueryOptions = {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   queryKey: ['key'] as any,
   pages: 5,
   getNextPageParam: (lastPage) => {
@@ -547,6 +549,7 @@ describe('queryClient', () => {
         getNextPageParam: () => 2,
         select: (data) => ({
           pages: data.pages.map(
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             (x) => `count: ${(x as { count: number }).count}`,
           ),
         }),
