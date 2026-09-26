@@ -1,5 +1,7 @@
 import type {
   DefaultError,
+  InitialDataFunction,
+  NonUndefinedGuard,
   QueryKey,
   QueryKeyWithDataTag,
 } from '@tanstack/query-core'
@@ -24,7 +26,10 @@ export type UndefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData?: undefined
+    initialData?:
+      | undefined
+      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+      | NonUndefinedGuard<TQueryFnData>
   }
 >
 
@@ -44,7 +49,8 @@ export type DefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData: TQueryFnData | (() => TQueryFnData)
+    initialData:
+      NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
   }
 >
 
