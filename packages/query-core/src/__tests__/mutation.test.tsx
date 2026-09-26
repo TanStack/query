@@ -1,6 +1,6 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MutationCache, QueryClient } from '..'
+import { MutationCache, QueryClient, focusManager } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
@@ -465,6 +465,69 @@ describe('mutation', () => {
         'start-B',
         'finish-B',
       ])
+    })
+
+    it('should start the next mutation in the same scope while the window is not focused', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const results: Array<string> = []
+
+      focusManager.setFocused(false)
+
+      try {
+        executeMutation(
+          queryClient,
+          {
+            mutationKey: key1,
+            scope: {
+              id: 'scope',
+            },
+            networkMode: 'always',
+            mutationFn: async () => {
+              results.push('start-A')
+              await sleep(10)
+              results.push('finish-A')
+              return 'a'
+            },
+          },
+          'vars1',
+        )
+
+        executeMutation(
+          queryClient,
+          {
+            mutationKey: key2,
+            scope: {
+              id: 'scope',
+            },
+            networkMode: 'always',
+            mutationFn: async () => {
+              results.push('start-B')
+              await sleep(10)
+              results.push('finish-B')
+              return 'b'
+            },
+          },
+          'vars2',
+        )
+
+        await vi.advanceTimersByTimeAsync(20)
+        expect(results).toStrictEqual([
+          'start-A',
+          'finish-A',
+          'start-B',
+          'finish-B',
+        ])
+        expect(
+          queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+        ).toMatchObject({
+          status: 'success',
+          isPaused: false,
+        })
+      } finally {
+        focusManager.setFocused(undefined)
+      }
     })
   })
 
