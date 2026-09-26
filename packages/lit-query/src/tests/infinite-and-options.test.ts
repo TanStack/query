@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
@@ -8,12 +9,7 @@ import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
-import {
-  TestControllerHost,
-  TestElementHost,
-  waitFor,
-  waitForMissingQueryClient,
-} from './testHost.js'
+import { TestControllerHost, TestElementHost } from './testHost.js'
 
 const providerTagName = 'test-query-client-provider-infinite'
 if (!customElements.get(providerTagName)) {
@@ -22,15 +18,17 @@ if (!customElements.get(providerTagName)) {
 
 let explicitInfiniteClient: QueryClient | undefined
 
+const contextInfiniteKey = queryKey()
+
 class ContextInfiniteHostElement extends TestElementHost {
-  readonly queryKey = ['context-infinite'] as const
+  readonly queryKey = contextInfiniteKey
 
   readonly infinite = createInfiniteQueryController(
     this,
     {
       queryKey: this.queryKey,
       initialPageParam: 0,
-      queryFn: async ({ pageParam }) => Number(pageParam),
+      queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
       getNextPageParam: (lastPage) => (lastPage < 1 ? lastPage + 1 : undefined),
       getPreviousPageParam: (firstPage) =>
         firstPage > -1 ? firstPage - 1 : undefined,
@@ -46,7 +44,15 @@ if (!customElements.get(contextInfiniteTagName)) {
 }
 
 describe('createInfiniteQueryController', () => {
-  it('LC-INF-01: first provider connection resolves from the pre-connect placeholder state', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
     const consumer = document.createElement(
       contextInfiniteTagName,
     ) as ContextInfiniteHostElement
@@ -76,7 +82,8 @@ describe('createInfiniteQueryController', () => {
     await provider.updateComplete
     await consumer.updateComplete
 
-    await waitFor(() => consumer.infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
 
     consumer.infinite.destroy()
@@ -84,7 +91,7 @@ describe('createInfiniteQueryController', () => {
     await Promise.resolve()
   })
 
-  it('LC-INF-02: explicit client takes precedence over provider context', async () => {
+  it('should prefer an explicit client over the provider context', async () => {
     const explicitClient = new QueryClient({
       defaultOptions: {
         queries: {
@@ -115,7 +122,8 @@ describe('createInfiniteQueryController', () => {
     await provider.updateComplete
     await consumer.updateComplete
 
-    await waitFor(() => consumer.infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(
       explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
@@ -131,7 +139,7 @@ describe('createInfiniteQueryController', () => {
     await Promise.resolve()
   })
 
-  it('M14: supports initial page, fetchNextPage, and fetchPreviousPage', async () => {
+  it('should support initial page, fetchNextPage, and fetchPreviousPage', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -140,13 +148,14 @@ describe('createInfiniteQueryController', () => {
       },
     })
 
+    const key = queryKey()
     const host = new TestControllerHost()
     const infinite = createInfiniteQueryController(
       host,
       {
-        queryKey: ['m14', 'infinite'],
+        queryKey: key,
         initialPageParam: 0,
-        queryFn: async ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
         getPreviousPageParam: (firstPage) =>
@@ -158,19 +167,22 @@ describe('createInfiniteQueryController', () => {
     host.connect()
     host.update()
 
-    await waitFor(() => infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
 
-    await infinite.fetchNextPage()
-    await waitFor(() => (infinite().data?.pages.length ?? 0) === 2)
+    const fetchNextPagePromise = infinite.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    await fetchNextPagePromise
     expect(infinite().data?.pages).toEqual([0, 1])
 
-    await infinite.fetchPreviousPage()
-    await waitFor(() => (infinite().data?.pages.length ?? 0) === 3)
+    const fetchPreviousPagePromise = infinite.fetchPreviousPage()
+    await vi.advanceTimersByTimeAsync(10)
+    await fetchPreviousPagePromise
     expect(infinite().data?.pages).toEqual([-1, 0, 1])
   })
 
-  it('does not request another update when stable function options refresh during host update', async () => {
+  it('should not request another update when stable function options refresh during host update', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -179,15 +191,17 @@ describe('createInfiniteQueryController', () => {
       },
     })
 
+    const key = queryKey()
     const host = new TestControllerHost()
     let callCount = 0
 
     const infinite = createInfiniteQueryController(
       host,
       () => ({
-        queryKey: ['infinite-controller', 'stable-function-options'],
+        queryKey: key,
         initialPageParam: 0,
         queryFn: async ({ pageParam }) => {
+          await sleep(10)
           callCount += 1
           return Number(pageParam)
         },
@@ -201,7 +215,8 @@ describe('createInfiniteQueryController', () => {
       host.connect()
       host.update()
 
-      await waitFor(() => infinite().isSuccess)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(infinite().isSuccess).toBe(true)
 
       host.updatesRequested = 0
 
@@ -218,7 +233,7 @@ describe('createInfiniteQueryController', () => {
     }
   })
 
-  it('does not request an update for refetch-only state changes when only data was read', async () => {
+  it('should not request an update for refetch-only state changes when only data was read', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -227,13 +242,14 @@ describe('createInfiniteQueryController', () => {
       },
     })
 
+    const key = queryKey()
     const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
 
     const infinite = createInfiniteQueryController(
       host,
       {
-        queryKey: ['infinite-controller', 'tracked-data-only'],
+        queryKey: key,
         initialPageParam: 0,
         initialData: {
           pages: ['stable-page'],
@@ -260,7 +276,7 @@ describe('createInfiniteQueryController', () => {
       host.updatesRequested = 0
 
       const refetch = infinite.refetch()
-      await waitFor(() => resolveRefetch !== undefined)
+      expect(resolveRefetch).toBeDefined()
       await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
 
@@ -273,7 +289,7 @@ describe('createInfiniteQueryController', () => {
     }
   })
 
-  it('refreshes a suppressed result on the next accessor read when a newly read property changed', async () => {
+  it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -282,13 +298,13 @@ describe('createInfiniteQueryController', () => {
       },
     })
 
-    const queryKey = ['infinite-controller', 'late-read-freshness'] as const
+    const key = queryKey()
     const host = new TestControllerHost()
 
     const infinite = createInfiniteQueryController(
       host,
       {
-        queryKey,
+        queryKey: key,
         initialPageParam: 0,
         initialData: {
           pages: ['initial-page'],
@@ -311,7 +327,7 @@ describe('createInfiniteQueryController', () => {
 
       host.updatesRequested = 0
 
-      client.setQueryData(queryKey, {
+      client.setQueryData(key, {
         pages: ['updated-page'],
         pageParams: [0],
       })
@@ -324,7 +340,7 @@ describe('createInfiniteQueryController', () => {
     }
   })
 
-  it('INFEDGE-01: next-page failure preserves prior pages consistently', async () => {
+  it('should preserve prior pages consistently when fetching the next page fails', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -333,13 +349,15 @@ describe('createInfiniteQueryController', () => {
       },
     })
 
+    const key = queryKey()
     const host = new TestControllerHost()
     const infinite = createInfiniteQueryController(
       host,
       {
-        queryKey: ['infedge-01'],
+        queryKey: key,
         initialPageParam: 0,
         queryFn: async ({ pageParam }) => {
+          await sleep(10)
           const page = Number(pageParam)
           if (page === 1) {
             throw new Error('next-page-failed')
@@ -355,17 +373,20 @@ describe('createInfiniteQueryController', () => {
     host.connect()
     host.update()
 
-    await waitFor(() => infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
 
-    const nextPageResult = await infinite.fetchNextPage()
+    const nextPagePromise = infinite.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    const nextPageResult = await nextPagePromise
     expect(nextPageResult.isFetchNextPageError).toBe(true)
     expect(nextPageResult.error).toEqual(new Error('next-page-failed'))
-    await waitFor(() => infinite().isFetchNextPageError)
+    expect(infinite().isFetchNextPageError).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
   })
 
-  it('LC-INF-03: missing provider fails deterministically and imperative methods align', async () => {
+  it('should fail deterministically and align imperative methods when the provider is missing', async () => {
     const consumer = document.createElement(
       contextInfiniteTagName,
     ) as ContextInfiniteHostElement
@@ -376,7 +397,8 @@ describe('createInfiniteQueryController', () => {
     document.body.append(consumer)
 
     expect(() => consumer.infinite()).not.toThrow()
-    await waitForMissingQueryClient(() => consumer.infinite())
+    await vi.advanceTimersByTimeAsync(0)
+    expect(() => consumer.infinite()).toThrow(/No QueryClient available/)
     await expect(consumer.infinite.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
@@ -398,7 +420,7 @@ describe('createInfiniteQueryController', () => {
     await Promise.resolve()
   })
 
-  it('ALREADYCONN-INF-01: infinite query controller on already-connected host with explicit client does not throw', async () => {
+  it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -406,7 +428,8 @@ describe('createInfiniteQueryController', () => {
         },
       },
     })
-    client.setQueryData(['already-connected-infinite'], {
+    const key = queryKey()
+    client.setQueryData(key, {
       pages: [0],
       pageParams: [0],
     })
@@ -437,7 +460,7 @@ describe('createInfiniteQueryController', () => {
     const infinite = createInfiniteQueryController(
       host,
       {
-        queryKey: ['already-connected-infinite'],
+        queryKey: key,
         initialPageParam: 0,
         queryFn: async ({ pageParam }) => Number(pageParam),
         getNextPageParam: (lastPage) =>
@@ -455,8 +478,9 @@ describe('createInfiniteQueryController', () => {
     infinite.destroy()
   })
 
-  it('LC-INF-04: explicit-client infinite accessors defer until host fields are initialized', () => {
+  it('should defer explicit-client infinite accessors until host fields are initialized', () => {
     const client = new QueryClient()
+    const key = queryKey()
 
     class DeferredExplicitInfiniteHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -467,7 +491,7 @@ describe('createInfiniteQueryController', () => {
       readonly infinite = createInfiniteQueryController(
         this,
         () => ({
-          queryKey: ['deferred-explicit-infinite', this.id] as const,
+          queryKey: [...key, this.id],
           initialPageParam: 0,
           queryFn: async ({ pageParam }) => Number(pageParam),
           getNextPageParam: (lastPage) =>
@@ -503,7 +527,15 @@ describe('createInfiniteQueryController', () => {
 })
 
 describe('options helpers integration', () => {
-  it('OPT-01: queryOptions integrates with createQueryController', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should integrate queryOptions with createQueryController', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -511,13 +543,14 @@ describe('options helpers integration', () => {
         },
       },
     })
+    const key = queryKey()
     const host = new TestControllerHost()
 
     const query = createQueryController(
       host,
       queryOptions({
-        queryKey: ['opt-01', 'query'] as const,
-        queryFn: async () => 'query-ok',
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'query-ok'),
       }),
       client,
     )
@@ -525,18 +558,19 @@ describe('options helpers integration', () => {
     host.connect()
     host.update()
 
-    await waitFor(() => query().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('query-ok')
   })
 
-  it('OPT-01: mutationOptions integrates with createMutationController', async () => {
+  it('should integrate mutationOptions with createMutationController', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
       host,
       mutationOptions({
-        mutationFn: async (value: number) => value + 10,
+        mutationFn: (value: number) => sleep(10).then(() => value + 10),
       }),
       client,
     )
@@ -544,11 +578,13 @@ describe('options helpers integration', () => {
     host.connect()
     host.update()
 
-    await expect(mutation.mutateAsync(5)).resolves.toBe(15)
+    const mutatePromise = mutation.mutateAsync(5)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(15)
     expect(mutation().isSuccess).toBe(true)
   })
 
-  it('OPT-01: infiniteQueryOptions integrates with createInfiniteQueryController', async () => {
+  it('should integrate infiniteQueryOptions with createInfiniteQueryController', async () => {
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -556,14 +592,15 @@ describe('options helpers integration', () => {
         },
       },
     })
+    const key = queryKey()
     const host = new TestControllerHost()
 
     const infinite = createInfiniteQueryController(
       host,
       infiniteQueryOptions({
-        queryKey: ['opt-01', 'infinite'],
+        queryKey: key,
         initialPageParam: 0,
-        queryFn: async ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
       }),
@@ -573,7 +610,8 @@ describe('options helpers integration', () => {
     host.connect()
     host.update()
 
-    await waitFor(() => infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
   })
 })
