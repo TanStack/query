@@ -41,7 +41,7 @@ describe('createMutation', () => {
     expect(rendered.getByText('Error: Expected mock error')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Reset/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
 
@@ -290,7 +290,7 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
@@ -533,7 +533,7 @@ describe('createMutation', () => {
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
   })
@@ -547,7 +547,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
   })
@@ -640,7 +640,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText(
@@ -655,7 +655,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText('result: error: upload failed'),
@@ -668,7 +668,7 @@ describe('createMutation', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(
       rendered.getByText(

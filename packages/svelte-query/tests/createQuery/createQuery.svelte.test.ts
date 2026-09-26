@@ -271,7 +271,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
@@ -872,7 +872,7 @@ describe('createQuery', () => {
     queryClient.invalidateQueries({ queryKey: key })
 
     // Wait long enough for the invalidation and potential refetch
-    await vi.advanceTimersByTimeAsync(100)
+    await vi.advanceTimersByTimeAsync(10)
 
     // Disabled query does not fetch on invalidation
     expect(queryFn).not.toHaveBeenCalled()
