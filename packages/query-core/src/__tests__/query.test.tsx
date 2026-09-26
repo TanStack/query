@@ -13,6 +13,7 @@ import {
   dehydrate,
   hydrate,
   noop,
+  timeoutManager,
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
@@ -1014,6 +1015,25 @@ describe('query', () => {
 
       expect(query.gcTime).toBe(Infinity)
     } finally {
+      resetIsServer()
+    }
+  })
+
+  it('should not schedule garbage collection on the server, even with an explicit gcTime', () => {
+    const resetIsServer = setIsServer(true)
+    const scheduled = vi.spyOn(timeoutManager, 'setTimeout')
+
+    try {
+      const query = queryCache.build(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => 'data',
+        gcTime: 1000,
+      })
+
+      expect(query.gcTime).toBe(1000)
+      expect(scheduled).not.toHaveBeenCalled()
+    } finally {
+      scheduled.mockRestore()
       resetIsServer()
     }
   })
