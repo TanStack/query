@@ -188,6 +188,7 @@ describe('useQueries', () => {
       },
     ]
     const queriesState = useQueries({ queries })
+
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.getQueryData(key1)).toBe('Some data')
     expect(queryClient.getQueryData(key2)).toBe('Some data')
@@ -223,6 +224,7 @@ describe('useQueries', () => {
     ]
 
     useQueries({ queries }, queryClient)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
@@ -257,6 +259,7 @@ describe('useQueries', () => {
       },
       queryClient,
     )
+
     await vi.advanceTimersByTimeAsync(0)
     expect(queriesResult.value).toEqual({
       combined: true,

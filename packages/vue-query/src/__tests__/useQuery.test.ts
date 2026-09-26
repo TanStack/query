@@ -487,6 +487,7 @@ describe('useQuery', () => {
     })
 
     const queryClient = useQueryClient()
+
     expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
   })
 
