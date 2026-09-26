@@ -472,6 +472,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {} as Record<number, boolean>,
       }),
     })
@@ -508,6 +509,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,
@@ -537,6 +539,24 @@ describe('streamedQuery', () => {
     })
 
     unsubscribe()
+  })
+
+  it('should preserve null returned by a custom reducer', async () => {
+    const key = queryKey()
+    const data = await queryClient.query({
+      queryKey: key,
+      queryFn: streamedQuery<number, string | null>({
+        initialValue: 'initial',
+        reducer: () => null,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        streamFn: async function* () {
+          yield 1
+        },
+      }),
+    })
+
+    expect(data).toBeNull()
+    expect(queryClient.getQueryData(key)).toBeNull()
   })
 
   it('should keep error state on reset refetch when initialData is defined', async () => {

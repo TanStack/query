@@ -7,7 +7,7 @@ title: DefinedInitialDataOptions
 type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/svelte-query/src/queryOptions.ts:19](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L19)
+Defined in: [packages/svelte-query/src/queryOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L22)
 
 ## Type Declaration
 
@@ -27,7 +27,7 @@ initialData:
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -35,4 +35,4 @@ initialData:
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

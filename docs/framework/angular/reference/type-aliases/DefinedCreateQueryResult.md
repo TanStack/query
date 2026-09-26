@@ -7,10 +7,10 @@ title: DefinedCreateQueryResult
 type DefinedCreateQueryResult<TData, TError, TState> = BaseQueryNarrowing<TData, TError> & MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, "safely">>;
 ```
 
-Defined in: [types.ts:175](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L175)
+Defined in: [packages/angular-query-experimental/src/types.ts:175](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L175)
 
 The result of `injectQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
-DefinedQueryObserverResult from `@tanstack/query-core`, but value fields are exposed as a
+[DefinedQueryObserverResult](DefinedQueryObserverResult.md) from `@tanstack/query-core`, but value fields are exposed as a
 `Signal` while function fields are called directly, unchanged.
 
 ## Type Parameters
@@ -23,10 +23,10 @@ The type `data` ends up as after `select` runs.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
 ### TState
 
-`TState` = `DefinedQueryObserverResult`\<`TData`, `TError`\>
+`TState` = [`DefinedQueryObserverResult`](DefinedQueryObserverResult.md)\<`TData`, `TError`\>

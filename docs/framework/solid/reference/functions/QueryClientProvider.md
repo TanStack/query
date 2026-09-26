@@ -4,10 +4,10 @@ title: QueryClientProvider
 ---
 
 ```ts
-function QueryClientProvider(props): Element;
+function QueryClientProvider(props: QueryClientProviderProps): Element;
 ```
 
-Defined in: [QueryClientProvider.tsx:95](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L95)
+Defined in: [packages/solid-query/src/QueryClientProvider.tsx:95](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L95)
 
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
 calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to

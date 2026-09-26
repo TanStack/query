@@ -46,7 +46,7 @@ export interface DevtoolsPanelOptions {
 
   /**
    * Element where to render the devtools panel. When set to undefined or null, the devtools panel will not be created, or destroyed if existing.
-   * If changed from undefined to a ElementRef, the devtools panel will be created.
+   * If changed from undefined to an ElementRef, the devtools panel will be created.
    */
   hostElement?: ElementRef
 }

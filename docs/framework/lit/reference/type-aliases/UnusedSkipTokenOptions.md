@@ -7,7 +7,7 @@ title: UnusedSkipTokenOptions
 type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>, "queryFn"> & object;
 ```
 
-Defined in: [packages/lit-query/src/queryOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L34)
+Defined in: [packages/lit-query/src/queryOptions.ts:33](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L33)
 
 Query options where `queryFn` is present and not a `skipToken`.
 
@@ -27,7 +27,7 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -35,4 +35,4 @@ optional queryFn: Exclude<QueryObserverOptions<TQueryFnData, TError, TData, TQue
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -30,6 +22,7 @@ import {
   QueryClient,
   keepPreviousData,
   noop,
+  skipToken,
   useQuery,
 } from '..'
 import {
@@ -94,17 +87,6 @@ describe('useQuery', () => {
       createRenderEffect(() => {
         states.push({ ...state })
       })
-
-      if (state.isPending) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<null>()
-      } else if (state.isLoadingError) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(state.data).toEqualTypeOf<string>()
-        expectTypeOf(state.error).toEqualTypeOf<Error | null>()
-      }
 
       return (
         <Switch fallback={<span>{state.data}</span>}>
@@ -2082,7 +2064,7 @@ describe('useQuery', () => {
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2108,13 +2090,13 @@ describe('useQuery', () => {
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2145,13 +2127,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2180,13 +2162,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and show the correct error message', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2217,13 +2199,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should show the correct error message on the error property when accessed outside error boundary', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2257,7 +2239,7 @@ describe('useQuery', () => {
     ).toBeInTheDocument()
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
@@ -2579,6 +2561,33 @@ describe('useQuery', () => {
       isStale: true,
       isFetching: false,
     })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      }))
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+      return null
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
 
   it('should not fetch if initial data is set with a stale time', async () => {
@@ -5769,5 +5778,39 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once postId is set', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'post 1'))
+
+    function Page() {
+      const [postId, setPostId] = createSignal<number>()
+
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: postId() != null ? queryFn : skipToken,
+      }))
+
+      return (
+        <div>
+          <div>data: {state.data ?? 'none'}</div>
+          <button onClick={() => setPostId(1)}>set postId</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('data: post 1')).toBeInTheDocument()
   })
 })

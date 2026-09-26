@@ -122,6 +122,63 @@ describe('broadcastQueryClient', () => {
 
       expect(mockPostMessage).toHaveBeenCalled()
     })
+
+    it('should not overwrite an existing query with data when an "added" message arrives for it', () => {
+      const existingKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // A query that already resolved in this tab (e.g. it fetched before
+      // another tab mounted the same key).
+      queryClient.setQueryData(existingKey, { value: 'resolved' })
+      const existingQuery = queryCache.find({ queryKey: existingKey })!
+
+      // Another tab just mounted the same key for the first time, so its
+      // `build()` broadcasts an `added` message with a pending state and
+      // no data.
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: { status: 'pending', data: undefined },
+      })
+
+      expect(queryClient.getQueryData(existingKey)).toEqual({
+        value: 'resolved',
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
+    })
+
+    it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
+      const existingKey = queryKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // This tab has already built the query (e.g. an observer mounted it)
+      // but hasn't fetched it yet.
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+
+      // Another tab already had this key resolved (e.g. via `initialData`)
+      // when it mounted, so its `added` message carries real data.
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: { status: 'success', data: { value: 'from other tab' } },
+      })
+
+      expect(queryClient.getQueryData(existingKey)).toEqual({
+        value: 'from other tab',
+      })
+    })
   })
 
   describe('postMessage error handling', () => {
@@ -182,7 +239,9 @@ describe('broadcastQueryClient', () => {
       const callbackError = new Error('boom')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -197,12 +256,12 @@ describe('broadcastQueryClient', () => {
 
         await sleep(0)
 
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           callbackError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -253,7 +312,9 @@ describe('broadcastQueryClient', () => {
       const asyncError = new Error('async boom')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -266,12 +327,12 @@ describe('broadcastQueryClient', () => {
 
         await sleep(10)
 
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           asyncError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -306,7 +367,9 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -317,12 +380,12 @@ describe('broadcastQueryClient', () => {
         queryClient.setQueryData(key, { value: 1 })
 
         await sleep(0)
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('cross-tab sync for this query was skipped'),
           cloneError,
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
 
@@ -332,7 +395,9 @@ describe('broadcastQueryClient', () => {
       const cloneError = new DOMException('DataCloneError', 'DataCloneError')
       mockPostMessage.mockRejectedValueOnce(cloneError)
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         broadcastQueryClient({
@@ -343,9 +408,9 @@ describe('broadcastQueryClient', () => {
         queryClient.setQueryData(key, { value: 1 })
 
         await sleep(0)
-        expect(warnSpy).not.toHaveBeenCalled()
+        expect(consoleWarnMock).not.toHaveBeenCalled()
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
       }
     })
   })

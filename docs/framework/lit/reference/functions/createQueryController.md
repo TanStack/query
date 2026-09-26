@@ -5,9 +5,9 @@ title: createQueryController
 
 ```ts
 function createQueryController<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-   host,
-   options,
-queryClient?): QueryResultAccessor<TData, TError>;
+   host: ReactiveControllerHost,
+   options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>,
+queryClient?: QueryClient): QueryResultAccessor<TData, TError>;
 ```
 
 Defined in: [packages/lit-query/src/createQueryController.ts:355](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L355)
@@ -60,7 +60,7 @@ Query observer options, or a getter that returns options.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

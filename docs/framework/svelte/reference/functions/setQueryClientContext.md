@@ -4,7 +4,7 @@ title: setQueryClientContext
 ---
 
 ```ts
-function setQueryClientContext(client): void;
+function setQueryClientContext(client: QueryClient): void;
 ```
 
 Defined in: [packages/svelte-query/src/context.ts:45](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/context.ts#L45)
@@ -17,7 +17,7 @@ only if you need to set the client from your own component instead.
 
 ### client
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The `QueryClient` to make available to descendant components.
 
