@@ -796,7 +796,6 @@ describe('useQuery', () => {
       queryClient.setQueryData(key, 'manual data')
 
       await vi.advanceTimersByTimeAsync(0)
-
       const result = await suspensePromise
       expect(result.data).toBe('manual data')
     })
@@ -819,9 +818,7 @@ describe('useQuery', () => {
       })
 
       const suspensePromise = query.suspense()
-
       await vi.advanceTimersByTimeAsync(10)
-
       const result = await suspensePromise
       expect(result.data).toStrictEqual(['chunk1'])
     })

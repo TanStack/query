@@ -135,9 +135,7 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
     await vi.advanceTimersByTimeAsync(10)
-
     const mutations = mutationCache.find({ mutationKey: key2 })
-
     expect(mutations?.options.mutationKey).toEqual(key2)
   })
 
@@ -700,11 +698,8 @@ describe('useMutation', () => {
       const settledPromise = Promise.allSettled(
         todos.map((todo) => mutation.mutateAsync(todo)),
       )
-
       await vi.advanceTimersByTimeAsync(10)
-
       const results = await settledPromise
-
       expect(results).toEqual([
         { status: 'fulfilled', value: 'Todo 1' },
         { status: 'rejected', reason: Error('Some error') },
