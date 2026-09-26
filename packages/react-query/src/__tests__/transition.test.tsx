@@ -46,9 +46,7 @@ describe('react transitions', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
     await act(() =>
@@ -57,9 +55,7 @@ describe('react transitions', () => {
 
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 
@@ -91,9 +87,7 @@ describe('react transitions', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test0')).toBeInTheDocument()
 
     await act(() =>
@@ -102,9 +96,7 @@ describe('react transitions', () => {
 
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
-
     expect(rendered.getByText('data: test1')).toBeInTheDocument()
   })
 })

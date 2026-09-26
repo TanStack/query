@@ -165,7 +165,6 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       // New query data should be available immediately
       expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
       expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()
