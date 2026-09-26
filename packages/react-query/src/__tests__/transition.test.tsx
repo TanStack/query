@@ -52,7 +52,6 @@ describe('react transitions', () => {
     await act(() =>
       fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
     )
-
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -93,7 +92,6 @@ describe('react transitions', () => {
     await act(() =>
       fireEvent.click(rendered.getByRole('button', { name: 'increment' })),
     )
-
     expect(rendered.getByText('data: test0')).toBeVisible()
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
