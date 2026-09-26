@@ -271,7 +271,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
