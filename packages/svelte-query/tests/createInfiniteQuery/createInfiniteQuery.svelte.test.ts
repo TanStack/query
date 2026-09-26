@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, skipToken } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { ref } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Select from './Select.svelte'
 import ChangeClient from './ChangeClient.svelte'
 import InitialData from './InitialData.svelte'
+import Options from './Options.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -125,6 +127,66 @@ describe('createInfiniteQuery', () => {
 
     expect(states.value.every((state) => state.status === 'success')).toBe(true)
     expect(states.value[0]?.data).toEqual({ pages: [0], pageParams: [0] })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const rendered = render(Options, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialData: { pages: [1], pageParams: [1] },
+          getNextPageParam: (lastPage: number) => lastPage + 1,
+          initialPageParam: 0,
+          retry: false,
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('pages')).toHaveTextContent('1')
+    expect(rendered.getByTestId('isError')).toHaveTextContent('false')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByTestId('pages')).toHaveTextContent('1')
+    expect(rendered.getByTestId('isError')).toHaveTextContent('true')
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+    const key = queryKey()
+    const postId = ref<string | undefined>(undefined)
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    )
+
+    const rendered = render(Options, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: postId.value != null ? queryFn : skipToken,
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
+    expect(rendered.getByTestId('pages')).toHaveTextContent('none')
+
+    postId.value = '1'
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('pages')).toHaveTextContent(
+      'comments for 1 page 0',
+    )
   })
 
   it('should be able to select a part of the data', async () => {
