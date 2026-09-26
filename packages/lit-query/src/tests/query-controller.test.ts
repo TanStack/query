@@ -87,10 +87,8 @@ describe('createQueryController', () => {
 
     host.connect()
     query.destroy()
-
     await Promise.resolve()
     await Promise.resolve()
-
     expect(host.updatesRequested).toBe(0)
   })
 
@@ -156,7 +154,6 @@ describe('createQueryController', () => {
     host.update()
 
     await waitFor(() => query().isSuccess)
-
     expect(query().data).toEqual({ id: 1, name: 'Ada' })
     expect(callCount).toBe(1)
     expect(host.updatesRequested).toBeGreaterThan(0)
@@ -240,23 +237,19 @@ describe('createQueryController', () => {
       host.update()
 
       expect(query().data).toBe('stable-data')
-
       await Promise.resolve()
       await Promise.resolve()
 
       host.updatesRequested = 0
 
       const refetch = query.refetch()
-
       await waitFor(() => resolveRefetch !== undefined)
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
     } finally {
       query.destroy()
@@ -291,15 +284,14 @@ describe('createQueryController', () => {
       host.update()
 
       expect(query().status).toBe('success')
-
       await Promise.resolve()
       await Promise.resolve()
 
       host.updatesRequested = 0
 
       client.setQueryData(queryKey, 'updated-data')
-      await Promise.resolve()
 
+      await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
 
       expect(query().data).toBe('updated-data')
@@ -377,8 +369,8 @@ describe('createQueryController', () => {
 
     enabled = true
     host.update()
-    await waitFor(() => query().isSuccess)
 
+    await waitFor(() => query().isSuccess)
     expect(callCount).toBe(1)
     expect(query().data).toBe('enabled-result')
   })
@@ -411,6 +403,7 @@ describe('createQueryController', () => {
 
     firstHost.connect()
     firstHost.update()
+
     await waitFor(() => firstQuery().isSuccess)
 
     const firstCacheEntry = client.getQueryCache().find({ queryKey })
@@ -419,7 +412,6 @@ describe('createQueryController', () => {
 
     firstHost.disconnect()
     firstQuery.destroy()
-
     await waitFor(() => {
       // With gcTime:0, cache entry may be immediately removed after last observer unmounts.
       const entry = client.getQueryCache().find({ queryKey })
@@ -442,6 +434,7 @@ describe('createQueryController', () => {
 
     secondHost.connect()
     secondHost.update()
+
     await waitFor(() => secondQuery().isSuccess)
     await waitFor(() => secondQuery().data === 'value-2')
 
@@ -479,11 +472,13 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe('user-1')
 
     keyId = 2
     host.update()
+
     await waitFor(() => query().isSuccess && query().data === 'user-2')
 
     await query.refetch()
@@ -519,16 +514,16 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
-    await waitFor(() => query().isSuccess)
 
+    await waitFor(() => query().isSuccess)
     await Promise.resolve()
     await Promise.resolve()
     const updatesAfterSuccess = host.updatesRequested
 
     host.update()
-    await Promise.resolve()
-    await Promise.resolve()
 
+    await Promise.resolve()
+    await Promise.resolve()
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
     expect(host.updatesRequested).toBe(updatesAfterSuccess)
@@ -563,8 +558,10 @@ describe('createQueryController', () => {
 
     staleHostA.connect()
     staleHostA.update()
+
     await waitFor(() => staleQueryA().isSuccess)
     expect(staleCalls).toBe(1)
+
     staleHostA.disconnect()
     staleQueryA.destroy()
 
@@ -585,8 +582,10 @@ describe('createQueryController', () => {
 
     staleHostB.connect()
     staleHostB.update()
+
     await waitFor(() => staleCalls >= 2)
     expect(staleQueryB().isSuccess).toBe(true)
+
     staleHostB.disconnect()
     staleQueryB.destroy()
 
@@ -610,8 +609,10 @@ describe('createQueryController', () => {
 
     freshHostA.connect()
     freshHostA.update()
+
     await waitFor(() => freshQueryA().isSuccess)
     expect(freshCalls).toBe(1)
+
     freshHostA.disconnect()
     freshQueryA.destroy()
 
@@ -632,6 +633,7 @@ describe('createQueryController', () => {
 
     freshHostB.connect()
     freshHostB.update()
+
     await waitFor(() => freshQueryB().isSuccess)
     await sleep(25)
     expect(freshCalls).toBe(1)
@@ -668,6 +670,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe(20)
 
@@ -712,6 +715,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess && query().data === 'value-1')
 
     keyId = 2
@@ -753,6 +757,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe('v1')
     expect(callCount).toBe(1)
@@ -797,10 +802,12 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => typeof resolveOld === 'function')
 
     keyId = 'new'
     host.update()
+
     await waitFor(() => typeof resolveNew === 'function')
 
     resolveNew?.('new-value')
@@ -808,7 +815,6 @@ describe('createQueryController', () => {
 
     resolveOld?.('old-value')
     await sleep(20)
-
     expect(query().data).toBe('new-value')
     expect(query().isSuccess).toBe(true)
   })
@@ -851,15 +857,15 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
-    await waitFor(() => typeof oldSignal !== 'undefined')
 
+    await waitFor(() => typeof oldSignal !== 'undefined')
     expect(oldSignal).toBeInstanceOf(AbortSignal)
     expect(oldSignal?.aborted).toBe(false)
 
     keyId = 'new'
     host.update()
-    await waitFor(() => query().data === 'new-success')
 
+    await waitFor(() => query().data === 'new-success')
     expect(oldSignal?.aborted).toBe(true)
     resolveOld?.('old-late')
     await sleep(20)
@@ -933,6 +939,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isFetching)
 
     host.disconnect()
@@ -941,7 +948,6 @@ describe('createQueryController', () => {
 
     resolveFetch?.('late-value')
     await sleep(20)
-
     expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
 
@@ -971,6 +977,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isFetching)
 
     host.disconnect()
@@ -979,6 +986,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe('reconnected-value')
   })
@@ -1007,11 +1015,13 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe(2)
 
     multiplier = 3
     host.update()
+
     await waitFor(() => query().data === 6)
 
     multiplier = 4
@@ -1059,7 +1069,6 @@ describe('createQueryController', () => {
 
     provider.client = clientB
     await provider.updateComplete
-
     await waitFor(() => {
       const newCacheQuery = clientB
         .getQueryCache()
@@ -1121,7 +1130,6 @@ describe('createQueryController', () => {
     await waitFor(() => query().failureCount >= 1)
     expect(query().failureReason).toBeInstanceOf(Error)
     expect(query().isPending || query().isError).toBe(true)
-
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe('success')
     expect(attempts).toBe(3)
@@ -1150,6 +1158,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
 
     const cacheQuery = client.getQueryCache().find({ queryKey })
@@ -1161,6 +1170,7 @@ describe('createQueryController', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => cacheQuery?.getObserversCount() === 1)
 
     host.connect()
@@ -1226,11 +1236,9 @@ describe('createQueryController', () => {
     document.body.append(provider)
 
     expect(() => consumer.query()).not.toThrow()
-
     await provider.updateComplete
     await consumer.updateComplete
     await waitFor(() => consumer.query().isSuccess)
-
     expect(consumer.query().data).toBe('value-1')
 
     consumer.query.destroy()
@@ -1249,7 +1257,6 @@ describe('createQueryController', () => {
 
     expect(() => consumer.query()).not.toThrow()
     await waitForMissingQueryClient(() => consumer.query())
-
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
@@ -1269,8 +1276,8 @@ describe('createQueryController', () => {
     const placeholderResult = consumer.query()
 
     document.body.append(consumer)
-    await waitForMissingQueryClient(() => consumer.query())
 
+    await waitForMissingQueryClient(() => consumer.query())
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
@@ -1305,7 +1312,6 @@ describe('createQueryController', () => {
     await provider.updateComplete
     await consumer.updateComplete
     await waitFor(() => consumer.query().isSuccess)
-
     expect(
       client
         .getQueryCache()
@@ -1386,8 +1392,8 @@ describe('createQueryController', () => {
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
-    await waitFor(() => consumer.query().isSuccess && consumer.queryCalls >= 2)
 
+    await waitFor(() => consumer.query().isSuccess && consumer.queryCalls >= 2)
     expect(
       clientA
         .getQueryCache()
@@ -1456,7 +1462,6 @@ describe('createQueryController', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-
     expect(query().data).toBe('hydrated-value')
     expect(query().isSuccess).toBe(true)
     await sleep(50)

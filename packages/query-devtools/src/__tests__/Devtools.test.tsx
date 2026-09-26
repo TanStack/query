@@ -189,7 +189,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools()
 
       fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
-
       expect(
         rendered.getByLabelText('Tanstack query devtools'),
       ).toBeInTheDocument()
@@ -199,7 +198,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools()
 
       fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
-
       expect(
         rendered.queryByLabelText('Open Tanstack query devtools'),
       ).not.toBeInTheDocument()
@@ -209,7 +207,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
-
       expect(
         rendered.queryByLabelText('Tanstack query devtools'),
       ).not.toBeInTheDocument()
@@ -219,7 +216,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
-
       expect(
         rendered.getByLabelText('Open Tanstack query devtools'),
       ).toBeInTheDocument()
@@ -229,7 +225,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools()
 
       fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
-
       expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('true')
     })
 
@@ -237,7 +232,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
-
       expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
     })
   })
@@ -276,7 +270,6 @@ describe('Devtools', () => {
       fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
         target: { value: 'posts' },
       })
-
       expect(
         rendered.getByLabelText(/Query key \["posts"\]/),
       ).toBeInTheDocument()
@@ -291,7 +284,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
-
       expect(
         rendered.queryByLabelText(/Query key \["posts"\]/),
       ).not.toBeInTheDocument()
@@ -344,7 +336,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByText('Mutations'))
-
       expect(
         rendered.container.querySelector('.tsqd-mutations-container'),
       ).not.toBeNull()
@@ -361,7 +352,6 @@ describe('Devtools', () => {
       })
       mutation.execute({})
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
@@ -377,7 +367,6 @@ describe('Devtools', () => {
         mutationFn: () => Promise.resolve('ok'),
       })
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
       ).toBeInTheDocument()
@@ -481,7 +470,6 @@ describe('Devtools', () => {
       fireEvent.click(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       )
-
       expect(open).toHaveBeenCalledWith(
         '',
         'TSQD-Devtools-Panel',
@@ -499,7 +487,6 @@ describe('Devtools', () => {
       fireEvent.click(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       )
-
       expect(
         rendered.container.querySelector('.tsqd-main-panel-container'),
       ).toBeNull()
@@ -513,7 +500,6 @@ describe('Devtools', () => {
         rendered.getByLabelText('Open in picture-in-picture mode'),
       )
       fire('pagehide')
-
       expect(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       ).toBeInTheDocument()
@@ -529,7 +515,6 @@ describe('Devtools', () => {
       fireEvent.click(
         rendered.getByLabelText('Open in picture-in-picture mode'),
       )
-
       expect(
         pipDocument.querySelector(
           '[aria-label="Close Tanstack query devtools"]',
@@ -648,7 +633,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["posts"\]/))
-
       expect(rendered.getByText('Query Details')).toBeInTheDocument()
     })
 
@@ -658,7 +642,6 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["details-toggle"\]/))
       fireEvent.click(rendered.getByLabelText(/Query key \["details-toggle"\]/))
-
       expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
     })
   })
@@ -670,7 +653,6 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-remove"\]/))
       fireEvent.click(rendered.getByText('Remove'))
-
       expect(
         rendered.queryByLabelText(/Query key \["action-remove"\]/),
       ).not.toBeInTheDocument()
@@ -682,7 +664,6 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-reset"\]/))
       fireEvent.click(rendered.getByText('Reset'))
-
       expect(queryClient.getQueryData(['action-reset'])).toBeUndefined()
     })
 
@@ -694,7 +675,6 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Query key \["action-invalidate"\]/),
       )
       fireEvent.click(rendered.getByText('Invalidate'))
-
       expect(
         queryClient.getQueryState(['action-invalidate'])?.isInvalidated,
       ).toBe(true)
@@ -728,7 +708,6 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-error"\]/))
       fireEvent.click(rendered.getByText('Trigger Error'))
-
       expect(queryClient.getQueryState(['action-error'])?.status).toBe('error')
     })
 
@@ -741,7 +720,6 @@ describe('Devtools', () => {
       )
       fireEvent.click(rendered.getByText('Trigger Error'))
       fireEvent.click(rendered.getByText('Restore Error'))
-
       expect(queryClient.getQueryState(['action-restore-error'])?.status).toBe(
         'pending',
       )
@@ -775,7 +753,6 @@ describe('Devtools', () => {
       // never-resolving fetch and refetches with the stashed options.
       fireEvent.click(rendered.getByText('Restore Loading'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(queryFn).toHaveBeenCalledTimes(2)
       expect(queryClient.getQueryData(['action-restore-loading'])).toBe(
         'original',
@@ -797,7 +774,6 @@ describe('Devtools', () => {
       await vi.advanceTimersByTimeAsync(0)
 
       fireEvent.click(rendered.getByLabelText(/Mutation submitted at/))
-
       expect(rendered.getByText('Mutation Details')).toBeInTheDocument()
     })
   })
@@ -837,7 +813,6 @@ describe('Devtools', () => {
       matching.execute({})
       other.execute({})
       await vi.advanceTimersByTimeAsync(0)
-
       expect(rendered.getAllByLabelText(/Mutation submitted at/)).toHaveLength(
         2,
       )
@@ -845,7 +820,6 @@ describe('Devtools', () => {
       fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
         target: { value: 'filter-match' },
       })
-
       expect(rendered.getAllByLabelText(/Mutation submitted at/)).toHaveLength(
         1,
       )
@@ -859,7 +833,6 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-data"\]/))
       fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
-
       expect(
         rendered.getByLabelText('Edit query data as JSON'),
       ).toBeInTheDocument()
@@ -877,7 +850,6 @@ describe('Devtools', () => {
         target: { value: JSON.stringify({ name: 'b' }) },
       })
       fireEvent.submit(textarea.closest('form')!)
-
       expect(queryClient.getQueryData(['edit-save'])).toEqual({ name: 'b' })
     })
 
@@ -891,7 +863,6 @@ describe('Devtools', () => {
       const textarea = rendered.getByLabelText('Edit query data as JSON')
       fireEvent.input(textarea, { target: { value: 'not json' } })
       fireEvent.submit(textarea.closest('form')!)
-
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
     })
 
@@ -905,11 +876,9 @@ describe('Devtools', () => {
       const textarea = rendered.getByLabelText('Edit query data as JSON')
       fireEvent.input(textarea, { target: { value: 'not json' } })
       fireEvent.submit(textarea.closest('form')!)
-
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
 
       fireEvent.focus(textarea)
-
       expect(rendered.queryByText('Invalid Value')).toBeNull()
     })
 
@@ -919,13 +888,11 @@ describe('Devtools', () => {
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-cancel"\]/))
       fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
-
       expect(
         rendered.getByLabelText('Edit query data as JSON'),
       ).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('Cancel'))
-
       expect(rendered.queryByLabelText('Edit query data as JSON')).toBeNull()
       expect(rendered.getByLabelText('Bulk Edit Data')).toBeInTheDocument()
     })
@@ -945,7 +912,6 @@ describe('Devtools', () => {
       })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["error-select"\]/))
-
       expect(
         rendered.getByLabelText('Select error type to trigger'),
       ).toBeInTheDocument()
@@ -968,7 +934,6 @@ describe('Devtools', () => {
       )
       const select = rendered.getByLabelText('Select error type to trigger')
       fireEvent.change(select, { target: { value: 'NetworkError' } })
-
       expect(queryClient.getQueryState(['error-select-trigger'])?.status).toBe(
         'error',
       )
@@ -982,7 +947,6 @@ describe('Devtools', () => {
       fireEvent.change(rendered.getByLabelText('Sort queries by'), {
         target: { value: 'last updated' },
       })
-
       expect(localStorage.getItem('TanstackQueryDevtools.sort')).toBe(
         'last updated',
       )
@@ -995,7 +959,6 @@ describe('Devtools', () => {
       fireEvent.change(rendered.getByLabelText('Sort mutations by'), {
         target: { value: 'last updated' },
       })
-
       expect(localStorage.getItem('TanstackQueryDevtools.mutationSort')).toBe(
         'last updated',
       )
@@ -1123,7 +1086,6 @@ describe('Devtools', () => {
       )
       expect(subTrigger).not.toBeNull()
       fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
-
       expect(
         document.querySelector('[aria-label="Position settings"]'),
       ).not.toBeNull()
@@ -1147,7 +1109,6 @@ describe('Devtools', () => {
       )
       expect(topItem).not.toBeNull()
       fireEvent.keyDown(topItem!, { key: 'Enter' })
-
       expect(localStorage.getItem('TanstackQueryDevtools.position')).toBe('top')
     })
 
@@ -1166,7 +1127,6 @@ describe('Devtools', () => {
         document.querySelector('.tsqd-settings-menu-sub-trigger-position'),
       )
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
-
       expect(
         document.querySelector('[aria-label="Theme preference"]'),
       ).not.toBeNull()
@@ -1194,7 +1154,6 @@ describe('Devtools', () => {
       ).find((el) => String(el.textContent).includes('Light'))
       expect(lightItem).not.toBeUndefined()
       fireEvent.keyDown(lightItem!, { key: 'Enter' })
-
       expect(
         localStorage.getItem('TanstackQueryDevtools.theme_preference'),
       ).toBe('light')
@@ -1212,7 +1171,6 @@ describe('Devtools', () => {
       )
       expect(hideTrigger).not.toBeNull()
       fireEvent.keyDown(hideTrigger!, { key: 'ArrowRight' })
-
       expect(
         document.querySelector('[aria-label="Hide disabled queries setting"]'),
       ).not.toBeNull()
@@ -1236,7 +1194,6 @@ describe('Devtools', () => {
       )
       expect(hideItem).not.toBeNull()
       fireEvent.keyDown(hideItem!, { key: 'Enter' })
-
       expect(
         localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
       ).toBe('true')
@@ -1252,7 +1209,6 @@ describe('Devtools', () => {
 
       const handle = rendered.getByLabelText('Resize devtools panel')
       fireEvent.keyDown(handle, { key: 'ArrowUp' })
-
       expect(
         Number(localStorage.getItem('TanstackQueryDevtools.height')),
       ).toBeGreaterThan(500)
@@ -1282,7 +1238,6 @@ describe('Devtools', () => {
 
       const handle = rendered.getByLabelText('Resize devtools panel')
       fireEvent.keyDown(handle, { key: 'ArrowLeft' })
-
       expect(
         Number(localStorage.getItem('TanstackQueryDevtools.width')),
       ).toBeGreaterThan(500)
@@ -1335,7 +1290,6 @@ describe('Devtools', () => {
         new MouseEvent('mousemove', { clientX: 0, clientY: 50 }),
       )
       fireEvent(document, new MouseEvent('mouseup'))
-
       expect(
         Number(localStorage.getItem('TanstackQueryDevtools.height')),
       ).toBeGreaterThan(initialHeight)
@@ -1374,7 +1328,6 @@ describe('Devtools', () => {
         new MouseEvent('mousemove', { clientX: 50, clientY: 0 }),
       )
       fireEvent(document, new MouseEvent('mouseup'))
-
       expect(
         Number(localStorage.getItem('TanstackQueryDevtools.width')),
       ).toBeGreaterThan(initialWidth)
@@ -1428,7 +1381,6 @@ describe('Devtools', () => {
         new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
       )
       fireEvent(document, new MouseEvent('mouseup'))
-
       expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
         192,
       )
@@ -1482,7 +1434,6 @@ describe('Devtools', () => {
         new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
       )
       fireEvent(document, new MouseEvent('mouseup'))
-
       expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
         renderedMinWidth,
       )
@@ -1527,7 +1478,6 @@ describe('Devtools', () => {
         new MouseEvent('mousemove', { clientX: 0, clientY: 200 }),
       )
       fireEvent(document, new MouseEvent('mouseup'))
-
       expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
     })
   })
@@ -1537,7 +1487,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Mock offline behavior'))
-
       expect(
         rendered.getByLabelText('Unset offline mocking behavior'),
       ).toBeInTheDocument()
@@ -1549,7 +1498,6 @@ describe('Devtools', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Close Tanstack query devtools'))
-
       expect(
         rendered.queryByLabelText('Tanstack query devtools'),
       ).not.toBeInTheDocument()

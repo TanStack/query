@@ -1077,7 +1077,6 @@ describe('useSuspenseQuery', () => {
 
     fireEvent.click(rendered.getByText('set data'))
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('data: manual data')).toBeInTheDocument()
   })
 
@@ -1113,9 +1112,7 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data: chunk1')).toBeInTheDocument()
   })
 
@@ -1139,7 +1136,6 @@ describe('useSuspenseQuery', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
   })
 

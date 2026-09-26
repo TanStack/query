@@ -50,7 +50,6 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-
     expect(result?.clientState.queries.map((query) => query.queryKey)).toEqual([
       ['a'],
       ['c'],
@@ -68,7 +67,6 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-
     expect(result?.clientState.queries.map((query) => query.queryKey)).toEqual([
       ['b'],
     ])
@@ -82,7 +80,6 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-
     expect(result).toBeUndefined()
   })
 
@@ -104,7 +101,6 @@ describe('removeOldestQuery', () => {
       error: new Error('full'),
       errorCount: 1,
     })
-
     expect(result?.clientState.queries).toEqual([])
     expect(result?.clientState.mutations).toEqual(mutations)
   })

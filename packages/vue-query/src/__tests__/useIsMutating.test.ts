@@ -30,13 +30,9 @@ describe('useIsMutating', () => {
 
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isMutating.value).toStrictEqual(2)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(isMutating.value).toStrictEqual(0)
   })
 
@@ -63,7 +59,6 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(2)
     expect(isMutating.value).toStrictEqual(0)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(isMutating.value).toStrictEqual(0)
@@ -86,9 +81,7 @@ describe('useIsMutating', () => {
     expect(isMutating.value).toStrictEqual(0)
 
     filter.mutationKey = key
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isMutating.value).toStrictEqual(1)
   })
 
@@ -108,9 +101,7 @@ describe('useIsMutating', () => {
     expect(isMutating.value).toStrictEqual(0)
 
     keyRef.value = key[0]!
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isMutating.value).toStrictEqual(1)
   })
 
@@ -131,7 +122,6 @@ describe('useIsMutating', () => {
     mutation2.mutate('b')
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutating.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating.value).toStrictEqual(0)
   })
@@ -151,7 +141,6 @@ describe('useIsMutating', () => {
     mutation.mutate('a')
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutating.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating.value).toStrictEqual(0)
   })

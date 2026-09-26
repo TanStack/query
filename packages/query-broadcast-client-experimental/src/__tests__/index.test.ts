@@ -84,7 +84,6 @@ describe('broadcastQueryClient', () => {
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
       queryClient.setQueryData(localKey, { value: 1 })
-
       expect(mockPostMessage).toHaveBeenCalled()
     })
 
@@ -119,7 +118,6 @@ describe('broadcastQueryClient', () => {
       mockPostMessage.mockClear()
 
       queryClient.setQueryData(localKey, { value: 1 })
-
       expect(mockPostMessage).toHaveBeenCalled()
     })
 
@@ -145,7 +143,6 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'pending', data: undefined },
       })
-
       expect(queryClient.getQueryData(existingKey)).toEqual({
         value: 'resolved',
       })
@@ -174,7 +171,6 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'success', data: { value: 'from other tab' } },
       })
-
       expect(queryClient.getQueryData(existingKey)).toEqual({
         value: 'from other tab',
       })
@@ -215,9 +211,7 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(0)
-
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
           expect.objectContaining<BroadcastErrorEvent>({
@@ -253,9 +247,7 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(0)
-
         expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           callbackError,
@@ -288,9 +280,7 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(10)
-
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
           expect.objectContaining<BroadcastErrorEvent>({
@@ -324,9 +314,7 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(10)
-
         expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('onBroadcastError threw while handling'),
           asyncError,
@@ -349,7 +337,6 @@ describe('broadcastQueryClient', () => {
       })
 
       queryClient.setQueryData(key, { value: 1 })
-
       await sleep(0)
       expect(onBroadcastError).toHaveBeenCalledWith(
         cloneError,
@@ -378,7 +365,6 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(0)
         expect(consoleWarnMock).toHaveBeenCalledWith(
           expect.stringContaining('cross-tab sync for this query was skipped'),
@@ -406,7 +392,6 @@ describe('broadcastQueryClient', () => {
         })
 
         queryClient.setQueryData(key, { value: 1 })
-
         await sleep(0)
         expect(consoleWarnMock).not.toHaveBeenCalled()
       } finally {
