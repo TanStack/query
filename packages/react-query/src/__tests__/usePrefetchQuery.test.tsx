@@ -86,7 +86,6 @@ describe('usePrefetchQuery', () => {
     }
 
     queryClient.query(queryOpts)
-
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)

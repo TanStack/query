@@ -1596,6 +1596,7 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: null, status: idle, isPaused: false'),
     ).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await vi.advanceTimersByTimeAsync(10)

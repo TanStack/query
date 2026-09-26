@@ -78,6 +78,7 @@ describe('usePrefetchInfiniteQuery', () => {
     expect(
       rendered.getByText('data: Or do you render as you fetch?'),
     ).toBeInTheDocument()
+
     fireEvent.click(rendered.getByText('Next Page'))
     expect(
       rendered.getByText('data: Either way, Tanstack Query helps you!'),

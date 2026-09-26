@@ -1044,6 +1044,7 @@ describe('useQuery', () => {
     expect(
       rendered.getByText('data: 1, isStale: false, isFetching: false'),
     ).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(
@@ -3844,6 +3845,7 @@ describe('useQuery', () => {
     expect(
       rendered.getByText('Current Todos, filter: high'),
     ).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /all/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('todo B - medium')).toBeInTheDocument()
