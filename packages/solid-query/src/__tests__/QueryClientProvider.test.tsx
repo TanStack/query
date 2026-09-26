@@ -171,6 +171,7 @@ describe('QueryClientProvider', () => {
     }
 
     render(() => <Page />)
+
     expect(consoleErrorMock).not.toHaveBeenCalled()
 
     consoleErrorMock.mockRestore()
