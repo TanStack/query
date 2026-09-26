@@ -199,8 +199,8 @@ type QueriesResults<
  *
  * Inside a `<Suspense>` boundary, reading `data` of a query that has no data yet suspends until none of the
  * queries are loading, so the boundary waits for all of them. When `throwOnError` asks to throw, reading
- * `data` throws the error to the nearest `<ErrorBoundary>`. A value that `combine` returns other than an array
- * is returned as is and does not suspend.
+ * `data` throws the error to the nearest `<ErrorBoundary>`. With `combine`, reading any value of the combined
+ * result does the same instead, since the result can have any shape.
  *
  * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
  * previously rendered queries, because the number of queries can differ between renders.
@@ -531,10 +531,19 @@ export function useQueries<
   // Cache one proxy per store node so a result keeps its identity across reads
   const proxies = new WeakMap<object, QueryObserverResult>()
 
-  // The returned array reads each query's `data` through `handler`. A result
-  // that `combine` turns into anything but an array is returned as is
-  if (!Array.isArray(state)) return state
+  // With `combine`, the result can have any shape, so reading any of its
+  // values suspends while any query is loading, and throws an error that
+  // `throwOnError` asks to throw
+  if (getObserverOptions()) {
+    return new Proxy(state, {
+      get(target, prop, receiver) {
+        if (typeof prop === 'string') queryResource()
+        return Reflect.get(target, prop, receiver)
+      },
+    })
+  }
 
+  // Without `combine`, each query's `data` is read through `handler`
   return new Proxy(state, {
     get(target, prop, receiver) {
       const value: unknown = Reflect.get(target, prop, receiver)

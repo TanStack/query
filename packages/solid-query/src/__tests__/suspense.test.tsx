@@ -2357,6 +2357,100 @@ describe("useQueries's in Suspense mode", () => {
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
+  it('should suspend when reading an object that combine returns', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const combined = useQueries(() => ({
+        queries: [1, 2].map((id) => ({
+          queryKey: [...key, id],
+          queryFn: () => sleep(10 * id).then(() => `post ${id}`),
+        })),
+        combine: (results) => ({
+          data: results.map((result) => result.data),
+        }),
+      }))
+
+      return <div>data: {combined.data.join(',')}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
+    ))
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: post 1,post 2')).toBeInTheDocument()
+  })
+
+  it('should suspend when reading the data that combine returns', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const data = useQueries(() => ({
+        queries: [1, 2].map((id) => ({
+          queryKey: [...key, id],
+          queryFn: () => sleep(10).then(() => `post ${id}`),
+        })),
+        combine: (results) => results.map((result) => result.data),
+      }))
+
+      return <div>data: {data.join(',')}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
+    ))
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: post 1,post 2')).toBeInTheDocument()
+  })
+
+  it('should throw to the error boundary when reading an object that combine returns with throwOnError: true', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const combined = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('combine error'))),
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+        combine: ([result]) => ({ data: result.data }),
+      }))
+
+      return <div>data: {String(combined.data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary fallback={(error) => <div>error: {error.message}</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>
+    ))
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error: combine error')).toBeInTheDocument()
+
+    consoleErrorMock.mockRestore()
+  })
+
   it('should keep updating a destructured result after resolving', async () => {
     const key = queryKey()
 
