@@ -589,24 +589,24 @@ describe('useQuery', () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'fetched data'),
-      initialData: 'seeded data',
+      queryFn: () => sleep(10).then(() => 'data'),
+      initialData: 'initial',
     })
 
     expect(query).toMatchObject({
       status: { value: 'success' },
-      data: { value: 'seeded data' },
+      data: { value: 'initial' },
     })
   })
 
   it('should still fetch in the background and replace initialData with the fetched value', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'fetched data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     const query = useQuery({
       queryKey: key,
       queryFn,
-      initialData: 'seeded data',
+      initialData: 'initial',
     })
 
     await vi.advanceTimersByTimeAsync(10)
@@ -614,7 +614,7 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query).toMatchObject({
       status: { value: 'success' },
-      data: { value: 'fetched data' },
+      data: { value: 'data' },
     })
   })
 
@@ -625,13 +625,13 @@ describe('useQuery', () => {
       queryKey: key,
       queryFn: () =>
         sleep(10).then(() => Promise.reject(new Error('Some error'))),
-      initialData: 'seeded data',
+      initialData: 'initial',
       retry: false,
     })
 
     expect(query).toMatchObject({
       status: { value: 'success' },
-      data: { value: 'seeded data' },
+      data: { value: 'initial' },
       isError: { value: false },
     })
 
@@ -639,7 +639,7 @@ describe('useQuery', () => {
 
     expect(query).toMatchObject({
       status: { value: 'error' },
-      data: { value: 'seeded data' },
+      data: { value: 'initial' },
       isError: { value: true },
     })
   })
