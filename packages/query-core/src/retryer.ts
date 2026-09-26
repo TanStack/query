@@ -152,10 +152,10 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     }
   }
 
-  const pause = () => {
+  const pause = (canResume: () => boolean) => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved() || canContinue()) {
+        if (isResolved() || canResume()) {
           continueResolve(value)
         }
       }
@@ -223,7 +223,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         sleep(delay)
           // Pause if the document is not visible or when the device is offline
           .then(() => {
-            return canContinue() ? undefined : pause()
+            return canContinue() ? undefined : pause(canContinue)
           })
           .then(() => {
             if (isRetryCancelled) {
@@ -251,7 +251,9 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       if (canStart()) {
         run()
       } else {
-        pause().then(run)
+        // Waiting to start (e.g. queued behind a scope) does not depend on focus,
+        // only on the same conditions that allow starting in the first place
+        pause(canStart).then(run)
       }
       return promise
     },
