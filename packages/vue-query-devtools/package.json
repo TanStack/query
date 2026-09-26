@@ -19,29 +19,23 @@
     "compile": "vue-tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "vite build"
+    "build": "tsdown"
   },
   "type": "module",
-  "types": "dist/esm/index.d.ts",
-  "module": "dist/esm/index.js",
-  "main": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./dist/esm/index.d.ts",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "development": "./dist/index.js",
+      "default": "./dist/stub.js"
     },
     "./production": {
-      "@tanstack/custom-condition": "./src/production.ts",
-      "types": "./dist/esm/production.d.ts",
-      "default": "./dist/esm/production.js"
-    },
-    "./dist/production.js": {
-      "types": "./dist/esm/production.d.ts",
-      "default": "./dist/esm/production.js"
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
