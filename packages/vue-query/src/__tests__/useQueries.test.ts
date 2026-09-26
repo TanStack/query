@@ -65,7 +65,6 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queriesState.value).toMatchObject([
       {
         status: 'success',
@@ -99,7 +98,6 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queriesState.value).toMatchObject([
       {
         status: 'error',
@@ -151,10 +149,8 @@ describe('useQueries', () => {
         queryFn: () => sleep(0).then(() => 'value34'),
       },
     )
-
     await vi.advanceTimersByTimeAsync(0)
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queriesState.value.length).toEqual(2)
     expect(queriesState.value).toMatchObject([
       {
@@ -193,7 +189,6 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryClient.getQueryData(key1)).toBe('Some data')
     expect(queryClient.getQueryData(key2)).toBe('Some data')
     expect(queriesState.value).toMatchObject([
@@ -229,7 +224,6 @@ describe('useQueries', () => {
 
     useQueries({ queries }, queryClient)
     await vi.advanceTimersByTimeAsync(0)
-
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
 
@@ -264,7 +258,6 @@ describe('useQueries', () => {
       queryClient,
     )
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queriesResult.value).toEqual({
       combined: true,
       res: [firstResult, secondResult],
@@ -289,9 +282,7 @@ describe('useQueries', () => {
     expect(queryFn).not.toHaveBeenCalled()
 
     checked.value = true
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalled()
   })
 
@@ -312,9 +303,7 @@ describe('useQueries', () => {
     expect(queryFn).not.toHaveBeenCalled()
 
     checked.value = true
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalled()
   })
 
@@ -336,15 +325,11 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key3'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(3)
   })
 
@@ -382,33 +367,23 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key1-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(6)
   })
 
@@ -429,9 +404,7 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key3'
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
@@ -523,13 +496,11 @@ describe('useQueries', () => {
     })
 
     await vi.advanceTimersByTimeAsync(20)
-
     expect(queriesState.value[0].data).toBe('users-1')
     expect(queriesState.value[1].data).toBe('posts-1')
 
     queriesState.value[0].refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queriesState.value[0].data).toBe('users-2')
     expect(queriesState.value[1].data).toBe('posts-1')
     expect(queriesState.value[1].isFetching).toBe(false)
@@ -594,33 +565,23 @@ describe('useQueries', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key1-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(6)
   })
 })
