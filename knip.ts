@@ -5,7 +5,11 @@ export default {
   ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: ['@types/react', '@types/react-dom'],
+  ignoreDependencies: [
+    '@oxc-project/runtime',
+    '@types/react',
+    '@types/react-dom',
+  ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
   workspaces: {
     '.': {
