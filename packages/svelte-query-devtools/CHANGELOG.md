@@ -1,5 +1,55 @@
 # @tanstack/svelte-query-devtools
 
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb), [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/svelte-query@6.2.5
+  - @tanstack/query-devtools@5.103.3
+
+## 6.2.4
+
+### Patch Changes
+
+- [#11009](https://github.com/TanStack/query/pull/11009) [`535cd61`](https://github.com/TanStack/query/commit/535cd61221bbe9f663a3f9789d175d8c82c7ff68) - fix(svelte-query-devtools): update the devtools instance when options change after mount
+
+- Updated dependencies []:
+  - @tanstack/svelte-query@6.2.4
+
+## 6.2.3
+
+### Patch Changes
+
+- [#10636](https://github.com/TanStack/query/pull/10636) [`847f471`](https://github.com/TanStack/query/commit/847f471e37c865a488ba891d9bac7a17af73e918) - Add theme option support to the floating devtools.
+
+- Updated dependencies [[`1490a4b`](https://github.com/TanStack/query/commit/1490a4b2aef372bff00af88c31ab896646ce1e99)]:
+  - @tanstack/svelte-query@6.2.3
+
+## 6.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/svelte-query@6.2.2
+
+## 6.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.1
+  - @tanstack/svelte-query@6.2.1
+
+## 6.2.0
+
+### Patch Changes
+
+- Updated dependencies [[`9567367`](https://github.com/TanStack/query/commit/9567367dd916fda01fc0d491348827225a011c49), [`f6ae1cc`](https://github.com/TanStack/query/commit/f6ae1ccdf74a61ea15e845d4643e6d4b0a0b7bdf)]:
+  - @tanstack/query-devtools@5.103.0
+  - @tanstack/svelte-query@6.2.0
+
 ## 6.1.48
 
 ### Patch Changes

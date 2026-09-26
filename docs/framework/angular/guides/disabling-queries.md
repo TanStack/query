@@ -11,29 +11,29 @@ replace: { 'useQuery': 'injectQuery' }
 @Component({
   selector: 'todos',
   template: `<div>
-    <button (click)="query.refetch()">Fetch Todos</button>
+    <button (click)="todosQuery.refetch()">Fetch Todos</button>
 
-    @if (query.data()) {
+    @if (todosQuery.data()) {
       <ul>
-        @for (todo of query.data(); track todo.id) {
+        @for (todo of todosQuery.data(); track todo.id) {
           <li>{{ todo.title }}</li>
         }
       </ul>
     } @else {
-      @if (query.isError()) {
-        <span>Error: {{ query.error().message }}</span>
-      } @else if (query.isLoading()) {
+      @if (todosQuery.isError()) {
+        <span>Error: {{ todosQuery.error().message }}</span>
+      } @else if (todosQuery.isLoading()) {
         <span>Loading...</span>
-      } @else if (!query.isLoading() && !query.isError()) {
+      } @else if (!todosQuery.isLoading() && !todosQuery.isError()) {
         <span>Not ready ...</span>
       }
     }
 
-    <div>{{ query.isLoading() ? 'Fetching...' : '' }}</div>
+    <div>{{ todosQuery.isLoading() ? 'Fetching...' : '' }}</div>
   </div>`,
 })
 export class TodosComponent {
-  query = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
     enabled: false,
@@ -51,14 +51,14 @@ export class TodosComponent {
     <div>
       // 🚀 applying the filter will enable and execute the query
       <filters-form onApply="filter.set" />
-      <todos-table data="query.data()" />
+      <todos-table data="todosQuery.data()" />
     </div>
   `,
 })
 export class TodosComponent {
   filter = signal('')
 
-  todosQuery = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos', this.filter()],
     queryFn: () => fetchTodos(this.filter()),
     enabled: !!this.filter(),
@@ -78,14 +78,14 @@ import { skipToken, injectQuery } from '@tanstack/angular-query-experimental'
     <div>
       // 🚀 applying the filter will enable and execute the query
       <filters-form onApply="filter.set" />
-      <todos-table data="query.data()" />
+      <todos-table data="todosQuery.data()" />
     </div>
   `,
 })
 export class TodosComponent {
   filter = signal('')
 
-  todosQuery = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos', this.filter()],
     queryFn: this.filter() ? () => fetchTodos(this.filter()) : skipToken,
   }))

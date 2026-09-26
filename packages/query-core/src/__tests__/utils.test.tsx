@@ -67,6 +67,10 @@ describe('core/utils', () => {
       expect(isPlainObject({})).toBe(true)
     })
 
+    it('should return `true` for a plain object with an own null constructor property', () => {
+      expect(isPlainObject(JSON.parse('{"constructor":null}'))).toBe(true)
+    })
+
     it('should return `false` for an array', () => {
       expect(isPlainObject([])).toBe(false)
     })
@@ -142,6 +146,12 @@ describe('core/utils', () => {
       const a = [1, 2, 3]
       const b = [1, 2]
       expect(partialMatchKey(a, b)).toBe(true)
+    })
+
+    it('should return `false` if a is shorter and b has a trailing undefined', () => {
+      const a = [1]
+      const b = [1, undefined]
+      expect(partialMatchKey(a, b)).toBe(false)
     })
 
     it('should return `false` if a is null and b is not', () => {
@@ -635,7 +645,7 @@ describe('core/utils', () => {
     })
 
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
-      const consoleErrorSpy = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -644,7 +654,7 @@ describe('core/utils', () => {
         queryHash: '["skip"]',
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         expect.stringContaining(
           'Attempted to invoke queryFn when set to skipToken',
         ),
@@ -653,7 +663,7 @@ describe('core/utils', () => {
         'Missing queryFn: \'["skip"]\'',
       )
 
-      consoleErrorSpy.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 

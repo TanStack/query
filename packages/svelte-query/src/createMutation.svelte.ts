@@ -109,7 +109,7 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
- * promise per call instead, so you can wait for all of them:
+ * promise per call instead, so you can wait for all of them when they succeed:
  * ```svelte
  * <script lang="ts">
  *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'

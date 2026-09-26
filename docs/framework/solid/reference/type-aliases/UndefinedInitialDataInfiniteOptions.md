@@ -7,7 +7,7 @@ title: UndefinedInitialDataInfiniteOptions
 type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Accessor<InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object>;
 ```
 
-Defined in: [infiniteQueryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L25)
+Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:25](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L25)
 
 The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
 may be `undefined` while the query is `pending`. `infiniteQueryOptions` itself accepts and returns a plain
@@ -25,20 +25,20 @@ The type of a single page, as your `queryFn` resolves it.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 The type of errors your `queryFn` may throw.
 
 ### TData
 
-`TData` = `InfiniteData`\<`TQueryFnData`\>
+`TData` = [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`\>
 
 The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
 the shape of all fetched pages plus their page params.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 The type of your `queryKey`.
 

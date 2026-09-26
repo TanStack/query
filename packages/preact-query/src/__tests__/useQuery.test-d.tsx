@@ -69,15 +69,6 @@ describe('useQuery', () => {
   expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
-  const fromGenericOptionsQueryFn = useQuery({
-    queryKey: key,
-    queryFn: () => queryFn(),
-  })
-  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-    string | undefined
-  >()
-  expectTypeOf(fromGenericOptionsQueryFn.error).toEqualTypeOf<Error | null>()
-
   type MyData = number
   type MyQueryKey = readonly ['my-data', number]
 
@@ -290,8 +281,7 @@ describe('useQuery', () => {
 
     it('should preserve discriminated-union narrowing', () => {
       type Result =
-        | { type: 'first'; first: string }
-        | { type: 'second'; second: string }
+        { type: 'first'; first: string } | { type: 'second'; second: string }
 
       const query = useQuery({
         queryKey: queryKey(),

@@ -1,5 +1,41 @@
 # @tanstack/react-query-devtools
 
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies [[`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978), [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/react-query@5.103.3
+  - @tanstack/query-devtools@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/react-query@5.103.2
+
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.1
+  - @tanstack/react-query@5.103.1
+
+## 5.103.0
+
+### Patch Changes
+
+- [#11501](https://github.com/TanStack/query/pull/11501) [`9567367`](https://github.com/TanStack/query/commit/9567367dd916fda01fc0d491348827225a011c49) - Declare dependencies used by the published devtools source and type declarations so they resolve with strict package managers. Keep runtime dependencies bundled in the compiled devtools.
+
+  Declare the React types used by React Query Devtools as a peer dependency, compatible with React 18 and 19.
+
+- Updated dependencies [[`9567367`](https://github.com/TanStack/query/commit/9567367dd916fda01fc0d491348827225a011c49)]:
+  - @tanstack/query-devtools@5.103.0
+  - @tanstack/react-query@5.103.0
+
 ## 5.102.8
 
 ### Patch Changes

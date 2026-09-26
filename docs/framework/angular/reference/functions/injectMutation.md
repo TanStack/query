@@ -4,10 +4,10 @@ title: injectMutation
 ---
 
 ```ts
-function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn, options?): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn: () => CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, options?: InjectMutationOptions): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [inject-mutation.ts:174](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L174)
+Defined in: [packages/angular-query-experimental/src/inject-mutation.ts:174](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L174)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `injectMutation` is the function for that. Unlike queries, mutations are not run automatically.
@@ -125,7 +125,7 @@ export class Todos {
 ```
 
 Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a promise per
-call instead, so you can wait for all of them:
+call instead, so you can wait for all of them when they succeed:
 ```angular-ts
 @Component({
   selector: 'todos',

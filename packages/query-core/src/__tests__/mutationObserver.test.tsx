@@ -431,7 +431,7 @@ describe('mutationObserver', () => {
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
-      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
@@ -463,8 +463,16 @@ describe('mutationObserver', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onSuccessError)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        1,
+        onSuccessError,
+        expect.any(Promise),
+      )
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        2,
+        onSettledError,
+        expect.any(Promise),
+      )
 
       expect(subscriptionHandler).toHaveBeenCalledTimes(2)
 
@@ -475,7 +483,7 @@ describe('mutationObserver', () => {
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
-      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
         process.off('unhandledRejection', unhandledRejectionFn)
       })
@@ -510,8 +518,16 @@ describe('mutationObserver', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
 
       expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onErrorError)
-      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        1,
+        onErrorError,
+        expect.any(Promise),
+      )
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        2,
+        onSettledError,
+        expect.any(Promise),
+      )
 
       expect(subscriptionHandler).toHaveBeenCalledTimes(2)
 

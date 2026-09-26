@@ -6,10 +6,98 @@ title: createQuery
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:74](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L74)
+Defined in: [packages/svelte-query/src/createQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L55)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
+
+### Type Parameters
+
+#### TQueryFnData
+
+`TQueryFnData` = `unknown`
+
+#### TError
+
+`TError` = `Error`
+
+#### TData
+
+`TData` = `TQueryFnData`
+
+#### TQueryKey
+
+`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
+
+### Parameters
+
+#### options
+
+[`Accessor`](../type-aliases/Accessor.md)\<[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+
+The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`,
+with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
+
+#### queryClient?
+
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
+
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
+### Returns
+
+[`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
+
+The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+
+### See
+
+[queryOptions](queryOptions.md) to share these options between `createQuery` and imperative APIs like `queryClient.query`.
+
+### Example
+
+```svelte
+<script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
+
+  // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+  // so the list stays visible alongside the error.
+  const query = createQuery(() => ({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialData: [],
+  }))
+</script>
+
+{#if query.isError}
+  <span>Error: {query.error.message}</span>
+{/if}
+<ul>
+  {#each query.data as post (post.id)}
+    <li>{post.title}</li>
+  {/each}
+</ul>
+```
+
+## Call Signature
+
+```ts
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
+```
+
+Defined in: [packages/svelte-query/src/createQuery.ts:129](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L129)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 ### Type Parameters
 
@@ -40,7 +128,7 @@ wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.
@@ -109,91 +197,10 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>;
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:122](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L122)
-
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
-
-### Type Parameters
-
-#### TQueryFnData
-
-`TQueryFnData` = `unknown`
-
-#### TError
-
-`TError` = `Error`
-
-#### TData
-
-`TData` = `TQueryFnData`
-
-#### TQueryKey
-
-`TQueryKey` *extends* readonly `unknown`[] = readonly `unknown`[]
-
-### Parameters
-
-#### options
-
-[`Accessor`](../type-aliases/Accessor.md)\<[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
-
-The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`,
-with `initialData` set, wrapped in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
-
-#### queryClient?
-
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
-
-Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
-be used.
-
-### Returns
-
-[`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
-
-The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
-fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
-since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
-
-### See
-
-[queryOptions](queryOptions.md) to share these options between `createQuery` and imperative APIs like `queryClient.query`.
-
-### Example
-
-```svelte
-<script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-
-  // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
-  // so the list stays visible alongside the error.
-  const query = createQuery(() => ({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
-    initialData: [],
-  }))
-</script>
-
-{#if query.isError}
-  <span>Error: {query.error.message}</span>
-{/if}
-<ul>
-  {#each query.data as post (post.id)}
-    <li>{post.title}</li>
-  {/each}
-</ul>
-```
-
-## Call Signature
-
-```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>;
-```
-
-Defined in: [packages/svelte-query/src/createQuery.ts:248](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L248)
+Defined in: [packages/svelte-query/src/createQuery.ts:255](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L255)
 
 ### Type Parameters
 
@@ -224,7 +231,7 @@ in an [Accessor](../type-aliases/Accessor.md) so options can be reactive.
 
 #### queryClient?
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryClient`](../classes/QueryClient.md)\>
 
 Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
 be used.

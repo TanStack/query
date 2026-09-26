@@ -35,7 +35,7 @@ optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -43,4 +43,4 @@ optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
