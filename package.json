@@ -56,12 +56,11 @@
     "@size-limit/preset-small-lib": "^14.0.0",
     "@tanstack/eslint-config": "0.3.2",
     "@tanstack/typedoc-config": "0.3.1",
-    "@tanstack/vite-config": "0.4.3",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitest/coverage-istanbul": "4.0.6",
+    "@vitest/coverage-istanbul": "4.1.11",
     "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^6.1.1",
@@ -78,14 +77,14 @@
     "sherif": "^1.13.0",
     "size-limit": "^14.0.0",
     "tinyglobby": "^0.2.15",
-    "tsdown": "^0.22.14",
+    "tsdown": "^0.23.0",
+    "typescript": "6.0.3",
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
     "typescript58": "npm:typescript@5.8",
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
-    "typescript": "6.0.3",
-    "vite": "^6.4.1",
-    "vitest": "^4.0.18"
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11"
   }
 }

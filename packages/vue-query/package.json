@@ -65,9 +65,9 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.4",
     "@vue/composition-api": "1.7.2",
     "eslint-plugin-vue": "^10.11.1",
+    "unplugin-vue": "^8.0.0",
     "vue": "^3.5.43",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"

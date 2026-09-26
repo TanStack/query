@@ -71,7 +71,7 @@
     "@testing-library/react-render-stream": "^2.0.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "npm-run-all2": "^9.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",

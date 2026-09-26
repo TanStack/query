@@ -5,12 +5,16 @@ export default {
   ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: ['@types/react', '@types/react-dom'],
+  ignoreDependencies: [
+    '@oxc-project/runtime',
+    '@types/react',
+    '@types/react-dom',
+    'react',
+    'react-dom',
+  ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
+  rules: { duplicates: 'warn' },
   workspaces: {
-    '.': {
-      ignoreDependencies: ['react', 'react-dom'],
-    },
     'packages/angular-query-experimental': {
       ignore: ['scripts/prepack.js'],
       // Strict mode excludes optional dependencies. Read the declared names

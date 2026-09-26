@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config'
+import angular from '@analogjs/vite-plugin-angular'
 import packageJson from './package.json'
 
 const config = defineConfig({
+  plugins: [angular()],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],

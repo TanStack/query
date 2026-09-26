@@ -61,7 +61,7 @@
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/react": "^16.1.0",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "npm-run-all2": "^9.0.3"
   }
 }

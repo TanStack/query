@@ -54,11 +54,13 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.5",
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
+    "@oxc-project/runtime": "^0.151.0",
     "@tanstack/angular-query-experimental": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.0.0",

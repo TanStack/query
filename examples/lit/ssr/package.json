@@ -16,6 +16,6 @@
     "@lit-labs/ssr-client": "^1.1.7",
     "tsx": "^4.19.0",
     "typescript": "5.8.3",
-    "vite": "^6.4.1"
+    "vite": "^8.3.1"
   }
 }
