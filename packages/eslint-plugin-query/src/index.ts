@@ -29,7 +29,7 @@ const recommendedStrictRules = {
   '@tanstack/query/prefer-query-options': 'error',
 } as const
 
-export const plugin = {
+const plugin = {
   meta: {
     name: '@tanstack/eslint-plugin-query',
   },
