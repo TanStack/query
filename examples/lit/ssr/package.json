@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.3.0",
-    "@tanstack/lit-query": "^0.2.24",
-    "@tanstack/query-core": "^5.103.3",
+    "@tanstack/lit-query": "^0.2.25",
+    "@tanstack/query-core": "^5.104.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {
