@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { MutationCache as MutationCacheOrigin } from '@tanstack/query-core'
 import { MutationCache } from '../mutationCache'
@@ -10,28 +10,28 @@ describe('MutationCache', () => {
   })
 
   describe('find', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.find({
         mutationKey: ref(['baz']),
       })
 
-      expect(MutationCacheOrigin.prototype.find).toBeCalledWith({
+      expect(MutationCacheOrigin.prototype.find).toHaveBeenCalledWith({
         mutationKey: ['baz'],
       })
     })
   })
 
   describe('findAll', () => {
-    test('should properly unwrap parameters', () => {
+    it('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.findAll({
         mutationKey: ref(['baz']),
       })
 
-      expect(MutationCacheOrigin.prototype.findAll).toBeCalledWith({
+      expect(MutationCacheOrigin.prototype.findAll).toHaveBeenCalledWith({
         mutationKey: ['baz'],
       })
     })

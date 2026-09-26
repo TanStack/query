@@ -1,8 +1,10 @@
 import { defineConfig } from 'vitest/config'
-
+import angular from '@analogjs/vite-plugin-angular'
 import packageJson from './package.json'
 
 export default defineConfig({
+  plugins: [angular()],
+
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
@@ -21,7 +23,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
       exclude: ['src/__tests__/**'],

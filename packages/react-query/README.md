@@ -1,6 +1,20 @@
 <img src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
-![TanStack Query Header](https://github.com/TanStack/query/raw/main/media/repo-header.png)
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://tanstack.com/api/readme/query.png?framework=react&theme=dark"
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="https://tanstack.com/api/readme/query.png?framework=react"
+  />
+  <img
+    src="https://tanstack.com/api/readme/query.png?framework=react"
+    alt="TanStack React Query"
+    width="900"
+  />
+</picture>
 
 Hooks for fetching, caching and updating asynchronous data in React
 
@@ -8,8 +22,8 @@ Hooks for fetching, caching and updating asynchronous data in React
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
 </a><a href="https://discord.com/invite/WrRKjPJ" target="\_parent">
   <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
-</a><a href="https://github.com/TanStack/query/actions?query=workflow%3A%22react-query+tests%22">
-<img src="https://github.com/TanStack/query/workflows/react-query%20tests/badge.svg" />
+</a><a href="https://github.com/TanStack/query/actions/workflows/release.yml?query=branch%3Amain">
+<img alt="Release status" src="https://github.com/TanStack/query/actions/workflows/release.yml/badge.svg?branch=main" />
 </a><a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" />
 </a><a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">

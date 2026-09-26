@@ -3,11 +3,18 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
+    "experimentalDecorators": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
   },
-  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.ts",
+    "*.config.js",
+    "package.json"
+  ],
   "references": [
     { "path": "../angular-query-experimental" },
     { "path": "../query-persist-client-core" }

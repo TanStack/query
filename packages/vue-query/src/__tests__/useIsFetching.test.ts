@@ -1,9 +1,8 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
-import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -16,13 +15,15 @@ describe('useIsFetching', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isFetching state', async () => {
+  it('should properly return isFetching state', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const { isFetching: isFetchingQuery } = useQuery({
-      queryKey: ['isFetching1'],
+      queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
     useQuery({
-      queryKey: ['isFetching2'],
+      queryKey: key2,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
     const isFetching = useIsFetching()
@@ -36,14 +37,13 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(0)
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+  it('should stop listening to changes on onScopeDispose', async () => {
+    const key = queryKey()
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
     const { status } = useQuery({
-      queryKey: ['onScopeDispose'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
     const isFetching = useIsFetching()
@@ -64,10 +64,11 @@ describe('useIsFetching', () => {
     onScopeDisposeMock.mockReset()
   })
 
-  test('should properly update filters', async () => {
-    const filter = reactive({ stale: false, queryKey: ['isFetchingFilter'] })
+  it('should properly update filters', async () => {
+    const key = queryKey()
+    const filter = reactive({ stale: false, queryKey: key })
     useQuery({
-      queryKey: ['isFetchingFilter'],
+      queryKey: key,
       queryFn: () => sleep(10).then(() => 'Some data'),
     })
     const isFetching = useIsFetching(filter)
@@ -80,15 +81,16 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const staleRef = ref(false)
     useQuery({
-      queryKey: ['isFetchingGetter'],
+      queryKey: key,
       queryFn: () => sleep(10).then(() => 'Some data'),
     })
     const isFetching = useIsFetching(() => ({
       stale: staleRef.value,
-      queryKey: ['isFetchingGetter'],
+      queryKey: key,
     }))
 
     expect(isFetching.value).toStrictEqual(0)
@@ -99,18 +101,20 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
   })
 
-  test('should warn when used outside of setup function in development mode', () => {
+  it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       useIsFetching()
 
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      warnSpy.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })

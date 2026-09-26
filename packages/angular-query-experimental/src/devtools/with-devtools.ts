@@ -126,6 +126,7 @@ export const withDevtools: WithDevtools = (
                 errorTypes,
                 buttonPosition,
                 initialIsOpen,
+                theme,
               } = devtoolsOptions()
 
               if (!shouldLoadTools) {
@@ -142,6 +143,7 @@ export const withDevtools: WithDevtools = (
                 buttonPosition && devtools.setButtonPosition(buttonPosition)
                 typeof initialIsOpen === 'boolean' &&
                   devtools.setInitialIsOpen(initialIsOpen)
+                theme && devtools.setTheme(theme)
                 return
               }
 

@@ -9,13 +9,15 @@ React Query is designed to work out of the box with React Native.
 
 There are several options available for React Native DevTools integration:
 
-1. **Native macOS App**: A 3rd party app for debugging React Query in any js-based application:
+1. **Rozenite Plugin**: A 3rd party plugin for [React Native DevTools](https://reactnative.dev/docs/react-native-devtools) users: https://www.rozenite.dev/docs/official-plugins/tanstack-query
+
+2. **Native macOS App**: A 3rd party app for debugging React Query in any js-based application:
    https://github.com/LovesWorking/rn-better-dev-tools
 
-2. **Flipper Plugin**: A 3rd party plugin for Flipper users:
+3. **Flipper Plugin**: A 3rd party plugin for Flipper users:
    https://github.com/bgaleotti/react-query-native-devtools
 
-3. **Reactotron Plugin**: A 3rd party plugin for Reactotron users:
+4. **Reactotron Plugin**: A 3rd party plugin for Reactotron users:
    https://github.com/hsndmr/reactotron-react-query
 
 ## Online status management

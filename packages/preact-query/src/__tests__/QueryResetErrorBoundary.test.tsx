@@ -17,20 +17,23 @@ import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
-
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
       const key = queryKey()
@@ -87,11 +90,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should not throw error if query is disabled', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
       const key = queryKey()
@@ -154,11 +157,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('status: error')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should not throw error if query is disabled, and refetch if query becomes enabled again', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -222,11 +225,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should throw error if query is disabled and manually refetch', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -290,11 +293,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should not retry fetch if the reset error boundary has not been reset', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -351,11 +354,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -415,11 +418,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -497,11 +500,11 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should throw again on error after the reset error boundary has been reset', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -563,11 +566,11 @@ describe('QueryErrorResetBoundary', () => {
 
       expect(fetchCount).toBe(3)
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should never render the component while the query is in error state', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -638,11 +641,11 @@ describe('QueryErrorResetBoundary', () => {
       expect(fetchCount).toBe(3)
       expect(renders).toBe(1)
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should render children', () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -663,11 +666,11 @@ describe('QueryErrorResetBoundary', () => {
 
       expect(rendered.queryByText('page')).not.toBeNull()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('should show error boundary when using tracked queries even though we do not track the error field', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -725,13 +728,13 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 
   describe('useQueries', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
       const key = queryKey()
@@ -750,7 +753,7 @@ describe('QueryErrorResetBoundary', () => {
                 }),
               retry: false,
               throwOnError: true,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -793,12 +796,12 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
       const key = queryKey()
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -815,7 +818,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -862,7 +865,7 @@ describe('QueryErrorResetBoundary', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 })

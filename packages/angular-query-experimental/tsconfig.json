@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
+    "experimentalDecorators": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
@@ -14,6 +15,13 @@
     "strictStandalone": true,
     "strictTemplates": true
   },
-  "include": ["src", "scripts", "test-setup.ts", "*.config.*", "package.json"],
-  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
+  "include": [
+    "src",
+    "scripts",
+    "test-setup.ts",
+    "*.config.ts",
+    "*.config.js",
+    "package.json"
+  ],
+  "references": [{ "path": "../query-devtools" }]
 }

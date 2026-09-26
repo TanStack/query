@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "6.1.5",
+  "version": "6.2.5",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,31 +15,27 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
-    "compile": "vue-tsc --build",
+    "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "vue-tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
-    "test:types": "vue-tsc --build",
+    "test:types": "vue-tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:build": "publint --strict && attw --pack",
-    "build": "pnpm run compile && vite build"
+    "build": "tsdown"
   },
   "type": "module",
-  "types": "dist/esm/index.d.ts",
-  "module": "dist/esm/index.js",
-  "main": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./dist/esm/index.d.ts",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "development": "./dist/index.js",
+      "default": "./dist/stub.js"
     },
     "./production": {
-      "@tanstack/custom-condition": "./src/production.ts",
-      "types": "./dist/esm/production.d.ts",
-      "default": "./dist/esm/production.js"
-    },
-    "./dist/production.js": {
-      "types": "./dist/esm/production.d.ts",
-      "default": "./dist/esm/production.js"
+      "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -54,15 +50,24 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.4",
-    "eslint-plugin-vue": "^10.5.0",
+    "eslint-plugin-vue": "^10.11.1",
     "typescript": "5.8.3",
-    "vite": "^6.4.1",
-    "vue": "^3.4.27",
+    "unplugin-vue": "^8.0.0",
+    "vue": "^3.5.43",
     "vue-tsc": "^2.2.8"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
     "vue": "^3.3.0"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          "^build",
+          "compile"
+        ]
+      }
+    }
   }
 }

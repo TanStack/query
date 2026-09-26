@@ -67,7 +67,8 @@ const router = createBrowserRouter([
 ])
 
 const rootElement = document.getElementById('root')
-ReactDOM.createRoot(rootElement!).render(
+if (!rootElement) throw new Error('Missing #root element')
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

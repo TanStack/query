@@ -14,6 +14,8 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
   - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).
   - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).
 
+> `'static'` and `Infinity` both prevent staleness-based refetches, but `'static'` is stricter: `queryClient.invalidateQueries()` can invalidate a query with `staleTime: Infinity`, but has no effect on `staleTime: 'static'`. `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `"always"` are also blocked by `'static'`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work.
+
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
   - The window is refocused
@@ -21,7 +23,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 > Setting `staleTime` is the recommended way to avoid excessive refetches, but you can also customize the points in time for refetches by setting options like `refetchOnMount`, `refetchOnWindowFocus` and `refetchOnReconnect`.
 
-- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting.
+- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting. See [Polling](./polling.md) for details.
 
 - Query results that have no more active instances of `useQuery`, `useInfiniteQuery` or query observers are labeled as "inactive" and remain in the cache in case they are used again at a later time.
 - By default, "inactive" queries are garbage collected after **5 minutes**.

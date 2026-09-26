@@ -1,13 +1,15 @@
 import { skipToken } from '@tanstack/query-core'
 import type { InfiniteData } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
+import type { UseSuspenseInfiniteQueryOptions } from '../types'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
     const { data } = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -19,7 +21,7 @@ describe('useSuspenseInfiniteQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: skipToken,
       }),
@@ -27,7 +29,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
@@ -36,7 +38,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should not have pending status', () => {
     const { status } = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -48,7 +50,7 @@ describe('useSuspenseInfiniteQuery', () => {
   it('should not allow placeholderData, enabled or throwOnError props', () => {
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -60,7 +62,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -71,7 +73,7 @@ describe('useSuspenseInfiniteQuery', () => {
 
     assertType(
       useSuspenseInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -81,9 +83,21 @@ describe('useSuspenseInfiniteQuery', () => {
     )
   })
 
+  it('should default TData of UseSuspenseInfiniteQueryOptions to InfiniteData<TQueryFnData>', () => {
+    const options: UseSuspenseInfiniteQueryOptions<number, Error> = {
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(5),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+    }
+    const { data } = useSuspenseInfiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+  })
+
   it('should not return isPlaceholderData', () => {
     const query = useSuspenseInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,

@@ -1,5 +1,149 @@
 # @tanstack/eslint-plugin-query
 
+## 5.103.3
+
+No changes in this release.
+
+## 5.103.2
+
+## 5.103.1
+
+## 5.103.0
+
+## 5.102.8
+
+## 5.102.7
+
+## 5.102.6
+
+## 5.102.5
+
+## 5.102.4
+
+## 5.102.3
+
+## 5.102.2
+
+## 5.102.1
+
+## 5.102.0
+
+### Patch Changes
+
+- [#11212](https://github.com/TanStack/query/pull/11212) [`279bb55`](https://github.com/TanStack/query/commit/279bb5508b81ce0d88b8f0f72441d96abf7ca03c) - TypeScript 7 compatibility
+
+- [#11188](https://github.com/TanStack/query/pull/11188) [`3bc8edf`](https://github.com/TanStack/query/commit/3bc8edfa0199e6467458084e8802a99bce11b958) - Fix false-positive warnings in `no-unstable-deps` rule caused by `Object.prototype` property lookups (`toString`, `valueOf`, etc.).
+
+- [#11115](https://github.com/TanStack/query/pull/11115) [`8582702`](https://github.com/TanStack/query/commit/858270215247d1dbdbe9d9a00068b4ffa5218da6) - Remove unused helper functions from the internal `ASTUtils` object (`getNestedIdentifiers`, `getNestedReturnStatements`, `getClosestVariableDeclarator`, `mapKeyNodeToText`, and `mapKeyNodeToBaseText`). They were not referenced by any rule and are not part of the public API.
+
+## 5.101.4
+
+### Patch Changes
+
+- [#11067](https://github.com/TanStack/query/pull/11067) [`7ac45ed`](https://github.com/TanStack/query/commit/7ac45ed45cbc28a54ac2fcfb1faccfcd87fb7b75) - Relax `exhaustive-deps` so function call targets are not required in query keys while values referenced in nested callbacks are still checked.
+
+## 5.101.3
+
+## 5.101.2
+
+## 5.101.1
+
+## 5.101.0
+
+### Minor Changes
+
+- [#10775](https://github.com/TanStack/query/pull/10775) [`dc54932`](https://github.com/TanStack/query/commit/dc549328642e3d5b7417c0ad070d9fbf38c195a4) - `no-rest-destructuring` now also flags rest destructuring on custom hooks that return a TanStack Query result. Detection uses the TypeScript type checker and runs only when typed linting is enabled, so untyped projects are unaffected. Closes [#8951](https://github.com/TanStack/query/issues/8951).
+
+## 5.100.14
+
+## 5.100.13
+
+## 5.100.12
+
+### Patch Changes
+
+- fix(no-unstable-deps): handle array-destructured useQueries and useSuspenseQueries results ([#10747](https://github.com/TanStack/query/pull/10747))
+
+- Fix `no-unstable-deps` false positives for `useSuspenseQueries` results returned from `combine`. ([#10642](https://github.com/TanStack/query/pull/10642))
+
+## 5.100.11
+
+## 5.100.10
+
+## 5.100.9
+
+## 5.100.8
+
+## 5.100.7
+
+## 5.100.6
+
+## 5.100.5
+
+## 5.100.4
+
+## 5.100.3
+
+## 5.100.2
+
+## 5.100.1
+
+## 5.100.0
+
+## 5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- fix(eslint-plugin-query): fix `no-void-query-fn` false positive on enum returns for typescript 6. ([#10460](https://github.com/TanStack/query/pull/10460))
+
+## 5.99.0
+
+## 5.98.0
+
+## 5.97.0
+
+### Minor Changes
+
+- feat(eslint): support eslint v10 and typescript v6 ([#10182](https://github.com/TanStack/query/pull/10182))
+
+## 5.96.2
+
+### Patch Changes
+
+- fix(eslint-plugin): normalize whitespace in allowList variable matching for multiline expressions ([#10337](https://github.com/TanStack/query/pull/10337))
+
+## 5.96.1
+
+## 5.96.0
+
+### Minor Changes
+
+- Add `prefer-query-options` rule and `recommendedStrict` config ([#10359](https://github.com/TanStack/query/pull/10359))
+
+## 5.95.2
+
+## 5.95.1
+
+## 5.95.0
+
+### Minor Changes
+
+- BREAKING (eslint-plugin): The `exhaustive-deps` rule now reports member expression dependencies more granularly for call expressions (e.g. `a.b.foo()` suggests `a.b`), which may cause existing code that previously passed the rule to now report missing dependencies. To accommodate stable variables and types, the rule now accepts an `allowlist` option with `variables` and `types` arrays to exclude specific dependencies from enforcement. ([#10295](https://github.com/TanStack/query/pull/10295))
+
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
 ## 5.91.5
 
 ### Patch Changes

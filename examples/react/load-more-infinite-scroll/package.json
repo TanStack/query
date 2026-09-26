@@ -3,17 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.91.0",
-    "@tanstack/react-query-devtools": "^5.91.3",
+    "@tanstack/react-query": "^5.103.3",
+    "@tanstack/react-query-devtools": "^5.103.3",
     "next": "^16.0.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-intersection-observer": "^9.16.0"
+    "react-intersection-observer": "^11.0.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",

@@ -89,7 +89,7 @@ interface ContentViewProps {
   localStore: StorageObject<string>
   setLocalStore: StorageSetter<string, unknown>
   showPanelViewOnly?: boolean
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 interface QueryStatusProps {
@@ -213,9 +213,11 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
             & .tsqd-panel-transition-exit-to,
             & .tsqd-panel-transition-enter {
-              ${position() === 'top' || position() === 'bottom'
-                ? `transform: translateY(var(--tsqd-panel-height));`
-                : `transform: translateX(var(--tsqd-panel-width));`}
+              ${
+                position() === 'top' || position() === 'bottom'
+                  ? `transform: translateY(var(--tsqd-panel-height));`
+                  : `transform: translateX(var(--tsqd-panel-width));`
+              }
             }
 
             & .tsqd-button-transition-exit-active,
@@ -228,13 +230,15 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
             & .tsqd-button-transition-exit-to,
             & .tsqd-button-transition-enter {
-              transform: ${buttonPosition() === 'relative'
-                ? `none;`
-                : buttonPosition() === 'top-left'
-                  ? `translateX(-72px);`
-                  : buttonPosition() === 'top-right'
-                    ? `translateX(72px);`
-                    : `translateY(72px);`};
+              transform: ${
+                buttonPosition() === 'relative'
+                  ? `none;`
+                  : buttonPosition() === 'top-left'
+                    ? `translateX(-72px);`
+                    : buttonPosition() === 'top-right'
+                      ? `translateX(72px);`
+                      : `translateY(72px);`
+              };
               opacity: 0;
             }
           `,
@@ -1192,7 +1196,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       class={cx(
                         styles().settingsSubTrigger,
                         'tsqd-settings-menu-sub-trigger',
-                        'tsqd-settings-menu-sub-trigger-position',
+                        'tsqd-settings-menu-sub-trigger-theme',
                       )}
                     >
                       <span>Theme</span>
@@ -1384,61 +1388,41 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   const queryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().find({
-        queryKey: props.query.queryKey,
-      })?.state,
+    (queryCache) => queryCache().get(props.query.queryHash)?.state,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isDisabled = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isDisabled() ?? false,
+      queryCache().get(props.query.queryHash)?.isDisabled() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStatic = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isStatic() ?? false,
+      queryCache().get(props.query.queryHash)?.isStatic() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isStale() ?? false,
+    (queryCache) => queryCache().get(props.query.queryHash)?.isStale() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const observers = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.getObserversCount() ?? 0,
+      queryCache().get(props.query.queryHash)?.getObserversCount() ?? 0,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const color = createMemo(() =>
     getQueryStatusColor({
-      queryState: queryState()!,
+      queryState: queryState(),
       observerCount: observers(),
       isStale: isStale(),
     }),
@@ -2098,7 +2082,10 @@ const QueryDetails = () => {
                 type: 'INVALIDATE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.invalidateQueries(activeQuery())
+              queryClient.invalidateQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
             }}
             disabled={queryStatus() === 'pending'}
           >
@@ -2123,7 +2110,10 @@ const QueryDetails = () => {
                 type: 'RESET',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.resetQueries(activeQuery())
+              queryClient.resetQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
             }}
             disabled={queryStatus() === 'pending'}
           >
@@ -2148,7 +2138,10 @@ const QueryDetails = () => {
                 type: 'REMOVE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.removeQueries(activeQuery())
+              queryClient.removeQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
               setSelectedQueryHash(null)
             }}
             disabled={statusLabel() === 'fetching'}
@@ -2228,7 +2221,9 @@ const QueryDetails = () => {
                     type: 'RESTORE_ERROR',
                     queryHash: activeQuery()?.queryHash,
                   })
-                  queryClient.resetQueries(activeQuery())
+                  queryClient.resetQueries({
+                    queryKey: activeQuery()?.queryKey,
+                  })
                 }
               }}
               disabled={queryStatus() === 'pending'}
@@ -2754,6 +2749,8 @@ const stylesFactory = (
         right: -8px;
         bottom: -8px;
         border-radius: 9999px;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
 
         & svg {
           position: absolute;

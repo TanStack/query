@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.90.26",
+  "version": "5.103.3",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,78 +27,71 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./dist ./coverage ./dist-ts",
-    "compile": "tsc --build",
+    "clean": "premove ./dist ./coverage ./dist-ts ./.cache/test-types",
+    "compile": "tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
-    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
-    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
-    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build",
-    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build",
-    "test:types:tscurrent": "tsc --build",
-    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
-    "build": "vite build",
-    "prepack": "node scripts/prepack.js"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "dist/index.d.mts",
   "module": "dist/index.mjs",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
-    "./package.json": "./package.json",
     "./inject-queries-experimental": {
-      "types": "./dist/inject-queries-experimental/index.d.ts",
+      "types": "./dist/inject-queries-experimental/index.d.mts",
       "default": "./dist/inject-queries-experimental/index.mjs"
     },
     "./devtools": {
-      "types": "./dist/devtools/index.d.ts",
+      "types": "./dist/devtools/index.d.mts",
       "development": "./dist/devtools/index.mjs",
       "default": "./dist/devtools/stub.mjs"
     },
     "./devtools/production": {
-      "types": "./dist/devtools/production/index.d.ts",
+      "types": "./dist/devtools/production/index.d.mts",
       "default": "./dist/devtools/index.mjs"
     },
     "./devtools-panel": {
-      "types": "./dist/devtools-panel/index.d.ts",
+      "types": "./dist/devtools-panel/index.d.mts",
       "development": "./dist/devtools-panel/index.mjs",
       "default": "./dist/devtools-panel/stub.mjs"
     },
     "./devtools-panel/production": {
-      "types": "./dist/devtools-panel/production/index.d.ts",
+      "types": "./dist/devtools-panel/production/index.d.mts",
       "default": "./dist/devtools-panel/index.mjs"
     }
   },
   "sideEffects": false,
   "files": [
-    "**/*.d.ts",
-    "**/*.mjs",
-    "**/*.mjs.map"
+    "dist",
+    "src"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.5",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
+    "@oxc-project/runtime": "^0.151.0",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.0.0",
-    "npm-run-all2": "^5.0.0",
-    "rxjs": "^7.8.2",
-    "vite-plugin-dts": "4.2.3",
-    "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "npm-run-all2": "^9.0.3",
+    "rxjs": "^7.8.2"
   },
   "optionalDependencies": {
     "@tanstack/query-devtools": "workspace:*"
@@ -106,9 +99,5 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
-  },
-  "publishConfig": {
-    "directory": "dist",
-    "linkDirectory": false
   }
 }

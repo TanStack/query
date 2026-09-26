@@ -17,12 +17,16 @@ export interface DevtoolsOptions {
   initialIsOpen?: boolean
   /**
    * The position of the TanStack logo to open and close the devtools panel.
-   * Defaults to 'bottom-right'.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+   *
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Preact Query devtools panel.
-   * Defaults to 'bottom'.
+   * 'top' | 'bottom' | 'left' | 'right'
+   *
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -50,7 +54,8 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
-   * Defaults to 'system'.
+   *
+   * @defaultValue system
    */
   theme?: Theme
 }

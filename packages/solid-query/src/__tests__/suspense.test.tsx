@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent } from '@solidjs/testing-library'
 import {
   ErrorBoundary,
   Show,
@@ -13,24 +13,27 @@ import { onlineManager } from '@tanstack/query-core'
 import {
   QueryCache,
   QueryClient,
-  QueryClientProvider,
   useInfiniteQuery,
   useQueries,
   useQuery,
 } from '..'
+import { renderWithClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
@@ -65,12 +68,10 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -115,12 +116,10 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -163,12 +162,10 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -203,14 +200,10 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await vi.advanceTimersByTimeAsync(10)
@@ -250,28 +243,26 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
-          fallback={(_err, resetSolid) => (
-            <div>
-              <div>error boundary</div>
-              <button
-                onClick={() => {
-                  succeed = true
-                  resetSolid()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )}
-        >
-          <Suspense fallback="loading">
-            <Page />
-          </Suspense>
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary
+        fallback={(_err, resetSolid) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                succeed = true
+                resetSolid()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -310,27 +301,25 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
-          fallback={(_err, resetSolid) => (
-            <div>
-              <div>error boundary</div>
-              <button
-                onClick={() => {
-                  resetSolid()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )}
-        >
-          <Suspense fallback="loading">
-            <Page />
-          </Suspense>
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary
+        fallback={(_err, resetSolid) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                resetSolid()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -389,11 +378,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(100)
@@ -447,11 +432,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(100)
@@ -466,7 +447,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -503,17 +484,13 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
@@ -552,11 +529,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -566,7 +539,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -603,17 +576,13 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
@@ -653,11 +622,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -687,12 +652,10 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -709,7 +672,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error caught in error boundary without infinite loop', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -750,11 +713,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // render suspense fallback (Loading...)
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -771,13 +730,13 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -815,11 +774,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     // render suspense fallback (Loading...)
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -837,11 +792,11 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -885,11 +840,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -904,7 +855,7 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
@@ -934,12 +885,10 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -956,16 +905,19 @@ describe("useQuery's in Suspense mode", () => {
 })
 
 describe("useQueries's in Suspense mode", () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should suspend when data is accessed in JSX', async () => {
     const key1 = queryKey()
@@ -992,12 +944,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1025,12 +975,10 @@ describe("useQueries's in Suspense mode", () => {
       return <div>data: {String(queries[0].data)}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1069,11 +1017,7 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('data:')).not.toBeInTheDocument()
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
@@ -1114,12 +1058,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1158,12 +1100,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1195,12 +1135,10 @@ describe("useQueries's in Suspense mode", () => {
       return <div>data: {String(queries[0].data)}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
@@ -1241,12 +1179,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1277,12 +1213,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1338,12 +1272,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1382,11 +1314,7 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -1432,11 +1360,7 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -1489,12 +1413,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<Fallback />}>
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback={<Fallback />}>
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1507,7 +1429,7 @@ describe("useQueries's in Suspense mode", () => {
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -1537,14 +1459,12 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Suspense fallback="loading">
-            <Page />
-          </Suspense>
-        </ErrorBoundary>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary fallback={() => <div>error boundary</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1556,11 +1476,11 @@ describe("useQueries's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should show error boundary even with gcTime:0', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -1586,14 +1506,12 @@ describe("useQueries's in Suspense mode", () => {
       return <div>data: {String(queries[0].data)}</div>
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <ErrorBoundary fallback={() => <div>There was an error!</div>}>
-            <Page />
-          </ErrorBoundary>
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <ErrorBoundary fallback={() => <div>There was an error!</div>}>
+          <Page />
+        </ErrorBoundary>
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1602,7 +1520,7 @@ describe("useQueries's in Suspense mode", () => {
 
     expect(count).toBe(1)
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should gc when unmounted while fetching with low gcTime', async () => {
@@ -1637,11 +1555,7 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
+    const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
@@ -1678,12 +1592,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1742,12 +1654,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClientWithPlaceholder}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClientWithPlaceholder, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1794,12 +1704,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     // key2 and key3 are pending, so should suspend
@@ -1835,12 +1743,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1879,12 +1785,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1918,12 +1822,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -1963,12 +1865,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -2012,12 +1912,10 @@ describe("useQueries's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
     ))
 
     // Should not suspend because data is cached and not stale

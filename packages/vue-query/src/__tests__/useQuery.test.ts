@@ -1,16 +1,24 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
-  getCurrentInstance,
+  isReactive,
+  isReadonly,
+  isVue3,
   onScopeDispose,
   reactive,
   ref,
 } from 'vue-demi'
-import { QueryObserver } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import {
+  QueryObserver,
+  experimental_streamedQuery,
+  noop,
+  skipToken,
+} from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { keepPreviousData } from '..'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
-import type { Mock, MockedFunction } from 'vitest'
+import { useQueryClient } from '../useQueryClient'
 
 vi.mock('../useQueryClient')
 vi.mock('../useBaseQuery')
@@ -24,19 +32,20 @@ describe('useQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute query', () => {
+  it('should properly execute query', () => {
+    const key = queryKey()
     const queryFn = () => sleep(0).then(() => 'Some data')
 
     useQuery({
-      queryKey: ['key0'],
+      queryKey: key,
       queryFn,
       staleTime: 1000,
     })
 
-    expect(useBaseQuery).toBeCalledWith(
+    expect(useBaseQuery).toHaveBeenCalledWith(
       QueryObserver,
       {
-        queryKey: ['key0'],
+        queryKey: key,
         queryFn,
         staleTime: 1000,
       },
@@ -44,9 +53,10 @@ describe('useQuery', () => {
     )
   })
 
-  test('should work with options getter', async () => {
+  it('should work with options getter', async () => {
+    const key = queryKey()
     const query = useQuery(() => ({
-      queryKey: ['key01'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'result01'),
     }))
 
@@ -62,11 +72,12 @@ describe('useQuery', () => {
     })
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const keyRef = ref('key011')
     const resultRef = ref('result02')
     const query = useQuery(() => ({
-      queryKey: [keyRef.value],
+      queryKey: [...key, keyRef.value],
       queryFn: () => sleep(0).then(() => resultRef.value),
     }))
 
@@ -95,9 +106,10 @@ describe('useQuery', () => {
     })
   })
 
-  test('should return pending status initially', () => {
+  it('should return pending status initially', () => {
+    const key = queryKey()
     const query = useQuery({
-      queryKey: ['key1'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
@@ -109,9 +121,10 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
+  it('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
+    const key = queryKey()
     const query = useQuery({
-      queryKey: ['key2'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'result2'),
     })
 
@@ -127,9 +140,10 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(optionsObj)', async () => {
+  it('should resolve to success and update reactive state: useQuery(optionsObj)', async () => {
+    const key = queryKey()
     const query = useQuery({
-      queryKey: ['key31'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'result31'),
       enabled: true,
     })
@@ -146,9 +160,10 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
+  it('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
+    const key = queryKey()
     const query = useQuery({
-      queryKey: ['key32'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'result32'),
       enabled: true,
     })
@@ -165,9 +180,10 @@ describe('useQuery', () => {
     })
   })
 
-  test('should reject and update reactive state', async () => {
+  it('should reject and update reactive state', async () => {
+    const key = queryKey()
     const query = useQuery({
-      queryKey: ['key3'],
+      queryKey: key,
       queryFn: () =>
         sleep(0).then(() => Promise.reject(new Error('Some error'))),
     })
@@ -187,10 +203,11 @@ describe('useQuery', () => {
     })
   })
 
-  test('should update query on reactive (Ref) key change', async () => {
+  it('should update query on reactive (Ref) key change', async () => {
+    const key = queryKey()
     const secondKeyRef = ref('key7')
     const query = useQuery({
-      queryKey: ['key6', secondKeyRef],
+      queryKey: [...key, secondKeyRef],
       queryFn: () => sleep(10).then(() => 'Some data'),
     })
 
@@ -215,10 +232,11 @@ describe('useQuery', () => {
     })
   })
 
-  test("should update query when an option is passed as Ref and it's changed", async () => {
+  it("should update query when an option is passed as Ref and it's changed", async () => {
+    const key = queryKey()
     const enabled = ref(false)
     const query = useQuery({
-      queryKey: ['key9'],
+      queryKey: key,
       queryFn: () => sleep(10).then(() => 'Some data'),
       enabled,
     })
@@ -246,9 +264,11 @@ describe('useQuery', () => {
     })
   })
 
-  test('should properly execute dependent queries', async () => {
+  it('should properly execute dependent queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const { data } = useQuery({
-      queryKey: ['dependent1'],
+      queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
@@ -259,7 +279,7 @@ describe('useQuery', () => {
       .mockImplementation(() => sleep(10).then(() => 'Some data'))
     const { fetchStatus, status } = useQuery(
       reactive({
-        queryKey: ['dependent2'],
+        queryKey: key2,
         queryFn: dependentQueryFn,
         enabled,
       }),
@@ -280,18 +300,18 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependent2'] }),
+      expect.objectContaining({ queryKey: key2 }),
     )
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+  it('should stop listening to changes on onScopeDispose', async () => {
+    const key = queryKey()
+    const queryClient = useQueryClient()
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
     const { status } = useQuery({
-      queryKey: ['onScopeDispose'],
+      queryKey: key,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
@@ -299,6 +319,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
+    expect(queryClient.getQueryData(key)).toBe('Some data')
     expect(status.value).toStrictEqual('pending')
 
     await vi.advanceTimersByTimeAsync(0)
@@ -306,80 +327,116 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('pending')
   })
 
-  test('should use the current value for the queryKey when refetch is called', async () => {
-    const fetchFn = vi.fn(() => 'foo')
+  it('should use the current value for the queryKey when refetch is called', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
     const keyRef = ref('key11')
     const query = useQuery({
-      queryKey: ['key10', keyRef],
-      queryFn: fetchFn,
+      queryKey: [...key, keyRef],
+      queryFn,
       enabled: false,
     })
 
-    expect(fetchFn).not.toHaveBeenCalled()
+    expect(queryFn).not.toHaveBeenCalled()
     await query.refetch()
-    expect(fetchFn).toHaveBeenCalledTimes(1)
-    expect(fetchFn).toHaveBeenCalledWith(
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
-        queryKey: ['key10', 'key11'],
+        queryKey: [...key, 'key11'],
       }),
     )
 
     keyRef.value = 'key12'
     await query.refetch()
-    expect(fetchFn).toHaveBeenCalledTimes(2)
-    expect(fetchFn).toHaveBeenCalledWith(
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenNthCalledWith(
+      2,
       expect.objectContaining({
-        queryKey: ['key10', 'key12'],
+        queryKey: [...key, 'key12'],
       }),
     )
   })
 
-  test('should be `enabled` to accept getter function', async () => {
-    const fetchFn = vi.fn(() => 'foo')
+  it.runIf(isVue3)(
+    'should return deeply reactive and readonly data by default',
+    async () => {
+      const key = queryKey()
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(data.value).toEqual({ nested: { count: 0 } })
+      expect(isReactive(data.value?.nested)).toBe(true)
+      expect(isReadonly(data.value?.nested)).toBe(true)
+    },
+  )
+
+  it('should return data in a shallow ref when shallow is true', async () => {
+    const key = queryKey()
+    const { data } = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      shallow: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(false)
+    expect(isReadonly(data.value?.nested)).toBe(false)
+  })
+
+  it('should be `enabled` to accept getter function', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
     const checked = ref(false)
 
     useQuery({
-      queryKey: ['enabled'],
-      queryFn: fetchFn,
+      queryKey: key,
+      queryFn,
       enabled: () => checked.value,
     })
 
-    expect(fetchFn).not.toHaveBeenCalled()
+    expect(queryFn).not.toHaveBeenCalled()
 
     checked.value = true
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalled()
+    expect(queryFn).toHaveBeenCalled()
   })
 
-  test('should allow getters for query keys', async () => {
-    const fetchFn = vi.fn(() => 'foo')
+  it('should allow getters for query keys', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
     useQuery({
-      queryKey: ['key', () => key1.value, () => key2.value],
-      queryFn: fetchFn,
+      queryKey: [...key, () => key1.value, () => key2.value],
+      queryFn,
     })
 
-    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key3'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
   })
 
-  test('should allow arbitrarily nested getters for query keys', async () => {
-    const fetchFn = vi.fn(() => 'foo')
+  it('should allow arbitrarily nested getters for query keys', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -388,7 +445,7 @@ describe('useQuery', () => {
 
     useQuery({
       queryKey: [
-        'key',
+        ...key,
         key1,
         () => key2.value,
         { key: () => key3.value },
@@ -401,57 +458,219 @@ describe('useQuery', () => {
           },
         }),
       ],
-      queryFn: fetchFn,
+      queryFn,
     })
 
-    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key1-updated'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(4)
+    expect(queryFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(5)
+    expect(queryFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fetchFn).toHaveBeenCalledTimes(6)
+    expect(queryFn).toHaveBeenCalledTimes(6)
+  })
+
+  it('should allow a getter for the whole query key', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'foo'))
+    const key1 = ref('key1')
+
+    useQuery({
+      queryKey: () => [...key, key1.value],
+      queryFn,
+    })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key3'
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should derive data via select without changing what is cached', async () => {
+    const key = queryKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => ['a', 'b', 'c']),
+      select: (posts) => posts.length,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 3 },
+    })
+
+    const queryClient = useQueryClient()
+    expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('should stay disabled until the dependent value is set', async () => {
+    const key = queryKey()
+    const postId = ref<number>()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    const query = useQuery({
+      queryKey: [...key, postId],
+      queryFn,
+      enabled: () => postId.value != null,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(query).toMatchObject({ status: { value: 'pending' } })
+
+    postId.value = 1
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'Some data' },
+    })
+  })
+
+  it('should skip the query while a computed queryFn resolves to skipToken, and run it once defined', async () => {
+    const key = queryKey()
+    const postId = ref<number>()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+
+    const query = useQuery({
+      queryKey: [...key, postId],
+      queryFn: computed(() => (postId.value != null ? queryFn : skipToken)),
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(query).toMatchObject({ status: { value: 'pending' } })
+
+    postId.value = 1
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'Some data' },
+    })
+  })
+
+  it('should seed from initialData and skip the loading state', () => {
+    const key = queryKey()
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'fetched data'),
+      initialData: 'seeded data',
+    })
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'seeded data' },
+    })
+  })
+
+  it('should still fetch in the background and replace initialData with the fetched value', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'fetched data'))
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn,
+      initialData: 'seeded data',
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'fetched data' },
+    })
+  })
+
+  it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
+    const key = queryKey()
+    const page = ref(0)
+    const queryFn = vi.fn((pageParam: number) =>
+      sleep(10).then(() => `page-${pageParam}`),
+    )
+
+    const query = useQuery({
+      queryKey: [...key, page],
+      queryFn: () => queryFn(page.value),
+      placeholderData: keepPreviousData,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-0' },
+      isPlaceholderData: { value: false },
+    })
+
+    page.value = 1
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-0' },
+      isPlaceholderData: { value: true },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(query).toMatchObject({
+      data: { value: 'page-1' },
+      isPlaceholderData: { value: false },
+    })
   })
 
   describe('throwOnError', () => {
-    test('should evaluate throwOnError when query is expected to throw', async () => {
-      const boundaryFn = vi.fn()
+    it('should evaluate throwOnError when query is expected to throw', async () => {
+      const key = queryKey()
+      const throwOnError = vi.fn()
       useQuery({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () =>
           sleep(0).then(() => Promise.reject(new Error('Some error'))),
         retry: false,
-        throwOnError: boundaryFn,
+        throwOnError,
       })
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(boundaryFn).toHaveBeenCalledTimes(1)
-      expect(boundaryFn).toHaveBeenCalledWith(
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(
         Error('Some error'),
         expect.objectContaining({
           state: expect.objectContaining({ status: 'error' }),
@@ -461,33 +680,33 @@ describe('useQuery', () => {
   })
 
   describe('outside scope warning', () => {
-    test('should warn when used outside of setup function in development mode', () => {
+    it('should warn when used outside of setup function in development mode', () => {
       vi.stubEnv('NODE_ENV', 'development')
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleWarnMock = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       try {
         useQuery({
-          queryKey: ['outsideScope'],
+          queryKey: queryKey(),
           queryFn: () => sleep(0).then(() => 'data'),
         })
 
-        expect(warnSpy).toHaveBeenCalledWith(
+        expect(consoleWarnMock).toHaveBeenCalledWith(
           'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
         )
       } finally {
-        warnSpy.mockRestore()
+        consoleWarnMock.mockRestore()
         vi.unstubAllEnvs()
       }
     })
   })
 
   describe('suspense', () => {
-    test('should return a Promise', () => {
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
+    it('should return a Promise', () => {
+      const key = queryKey()
       const query = useQuery({
-        queryKey: ['suspense'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       })
       const result = query.suspense()
@@ -495,100 +714,146 @@ describe('useQuery', () => {
       expect(result).toBeInstanceOf(Promise)
     })
 
-    test('should resolve after being enabled', async () => {
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
-      let afterTimeout = false
+    it('should resolve after being enabled', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
+      const onResolve = vi.fn()
       const isEnabled = ref(false)
       const query = useQuery({
-        queryKey: ['suspense2'],
-        queryFn: () => sleep(0).then(() => 'Some data'),
+        queryKey: key,
+        queryFn,
         enabled: isEnabled,
       })
 
-      setTimeout(() => {
-        afterTimeout = true
-        isEnabled.value = true
-      }, 200)
+      query.suspense().then(onResolve)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).not.toHaveBeenCalled()
+      expect(onResolve).not.toHaveBeenCalled()
 
-      query.suspense()
-
-      await vi.advanceTimersByTimeAsync(200)
-
-      expect(afterTimeout).toBe(true)
+      isEnabled.value = true
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledTimes(1)
+      expect(onResolve).toHaveBeenCalledWith(
+        expect.objectContaining({ data: 'Some data' }),
+      )
     })
 
-    test('should resolve immediately when stale without refetching', () => {
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+    it('should resolve immediately without refetching when the data is fresh', () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'Some data'))
 
-      const fetcherSpy = vi.fn(() => sleep(0).then(() => 'Some data'))
-
-      // let afterTimeout = false;
       const query = useQuery({
-        queryKey: ['suspense3'],
-        queryFn: () => sleep(0).then(() => 'Some data'),
+        queryKey: key,
+        queryFn,
         staleTime: 10000,
         initialData: 'foo',
       })
 
       return query.suspense().then(() => {
-        expect(fetcherSpy).toHaveBeenCalledTimes(0)
+        expect(queryFn).toHaveBeenCalledTimes(0)
       })
     })
 
-    test('should not throw from suspense by default', async () => {
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
+    it('should not throw from suspense by default', async () => {
+      const key = queryKey()
       const query = useQuery({
-        queryKey: ['suspense4'],
+        queryKey: key,
         queryFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
         staleTime: 10000,
       })
 
-      await vi.advanceTimersByTimeAsync(0)
-
-      expect(query).toMatchObject({
-        status: { value: 'error' },
-        isError: { value: true },
+      const suspensePromise = query.suspense()
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(suspensePromise).resolves.toMatchObject({
+        status: 'error',
+        isError: true,
       })
     })
 
-    test('should throw from suspense when throwOnError is true', async () => {
-      const getCurrentInstanceSpy = getCurrentInstance as Mock
-      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
-
-      const boundaryFn = vi.fn()
+    it('should throw from suspense when throwOnError is true', async ({
+      onTestFinished,
+    }) => {
+      const key = queryKey()
+      const throwOnError = vi.fn().mockReturnValue(true)
       const query = useQuery({
-        queryKey: ['suspense5'],
+        queryKey: key,
         queryFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
         staleTime: 10000,
-        throwOnError: boundaryFn,
+        throwOnError,
       })
 
-      query.suspense()
+      // The error watcher also throws, which Vue 3 surfaces as an unhandled rejection
+      process.on('unhandledRejection', noop)
+      onTestFinished(() => {
+        process.off('unhandledRejection', noop)
+      })
 
-      await vi.advanceTimersByTimeAsync(10000)
-
-      expect(boundaryFn).toHaveBeenCalledTimes(2)
-      expect(boundaryFn).toHaveBeenNthCalledWith(
+      await Promise.all([
+        expect(query.suspense()).rejects.toThrow('Some error'),
+        vi.advanceTimersByTimeAsync(10),
+      ])
+      expect(throwOnError).toHaveBeenCalledTimes(2)
+      expect(throwOnError).toHaveBeenNthCalledWith(
         1,
         Error('Some error'),
         expect.objectContaining({
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
-      expect(boundaryFn).toHaveBeenNthCalledWith(
+      expect(throwOnError).toHaveBeenNthCalledWith(
         2,
         Error('Some error'),
         expect.objectContaining({
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
+    })
+
+    it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+
+      const suspensePromise = query.suspense()
+
+      const queryClient = useQueryClient()
+      queryClient.setQueryData(key, 'manual data')
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      const result = await suspensePromise
+      expect(result.data).toBe('manual data')
+    })
+
+    it('should release suspense when streamedQuery receives first chunk', async () => {
+      const key = queryKey()
+
+      async function* numberGenerator() {
+        await sleep(10)
+        yield 'chunk1'
+        await sleep(10)
+        yield 'chunk2'
+      }
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: experimental_streamedQuery({
+          streamFn: () => numberGenerator(),
+        }),
+      })
+
+      const suspensePromise = query.suspense()
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      const result = await suspensePromise
+      expect(result.data).toStrictEqual(['chunk1'])
     })
   })
 })
