@@ -177,7 +177,6 @@ describe('createQueriesController', () => {
         consumer.queries()[0]?.status === 'success' &&
         consumer.queries()[1]?.status === 'success',
     )
-
     expect(
       explicitClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
         ?.state.data,
@@ -317,7 +316,6 @@ describe('createQueriesController', () => {
       host.update()
 
       expect(queries()[0]?.data).toBe('stable-data')
-
       await Promise.resolve()
       await Promise.resolve()
 
@@ -327,13 +325,11 @@ describe('createQueriesController', () => {
 
       await waitFor(() => resolveRefetch !== undefined)
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
     } finally {
       queries.destroy()
@@ -383,7 +379,6 @@ describe('createQueriesController', () => {
       host.update()
 
       expect(queries()[0]?.isFetching).toBe(false)
-
       await Promise.resolve()
       await Promise.resolve()
 
@@ -393,14 +388,12 @@ describe('createQueriesController', () => {
 
       await waitFor(() => resolveRefetch !== undefined)
       await Promise.resolve()
-
       expect(queries()[0]?.isFetching).toBe(true)
       expect(defaultQueryOptionsCalls).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
-
       expect(queries()[0]?.isFetching).toBe(false)
       expect(defaultQueryOptionsCalls).toBe(0)
     } finally {
@@ -440,15 +433,14 @@ describe('createQueriesController', () => {
       host.update()
 
       expect(queries()[0]?.status).toBe('success')
-
       await Promise.resolve()
       await Promise.resolve()
 
       host.updatesRequested = 0
 
       client.setQueryData(queryKey, 'updated-data')
-      await Promise.resolve()
 
+      await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
 
       expect(queries()[0]?.data).toBe('updated-data')
@@ -521,6 +513,7 @@ describe('createQueriesController', () => {
 
     includeThird = true
     host.update()
+
     await waitFor(() => queries().length === 3)
     await waitFor(
       () =>
@@ -532,6 +525,7 @@ describe('createQueriesController', () => {
 
     includeFailing = false
     host.update()
+
     await waitFor(() => queries().length === 2)
     await waitFor(
       () =>
@@ -573,6 +567,7 @@ describe('createQueriesController', () => {
 
     order = ['second', 'first']
     host.update()
+
     await waitFor(() => queries()[0] === 'second' && queries()[1] === 'first')
     expect(queries()).toEqual(['second', 'first'])
   })
@@ -861,7 +856,6 @@ describe('createQueriesController', () => {
 
     const host = new InvalidExplicitCombineQueriesHost()
     await Promise.resolve()
-
     expect(() => host.queries()).toThrow('invalid combine')
   })
 
@@ -925,7 +919,6 @@ describe('createQueriesController', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-
     expect(queries()).toEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },

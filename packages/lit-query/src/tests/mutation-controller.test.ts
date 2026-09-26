@@ -59,8 +59,8 @@ describe('createMutationController', () => {
 
     document.body.append(provider)
     await provider.updateComplete
-    await Promise.resolve()
 
+    await Promise.resolve()
     await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
 
@@ -86,8 +86,8 @@ describe('createMutationController', () => {
 
     document.body.append(provider)
     await provider.updateComplete
-    await Promise.resolve()
 
+    await Promise.resolve()
     await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
 
     expect(
@@ -327,7 +327,6 @@ describe('createMutationController', () => {
 
     expect(() => consumer.mutation()).not.toThrow()
     await waitForMissingQueryClient(() => consumer.mutation())
-
     expect(() => consumer.mutation.mutate(1)).toThrow(
       /No QueryClient available/,
     )
@@ -352,6 +351,7 @@ describe('createMutationController', () => {
     ) as ContextMutationHostElement
 
     document.body.append(consumer)
+
     await waitForMissingQueryClient(() => consumer.mutation())
 
     const client = new QueryClient()
@@ -363,8 +363,8 @@ describe('createMutationController', () => {
 
     document.body.append(provider)
     await provider.updateComplete
-    await Promise.resolve()
 
+    await Promise.resolve()
     await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
 

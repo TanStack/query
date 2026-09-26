@@ -45,7 +45,6 @@ describe('QueryClientProvider/context', () => {
 
     provider.remove()
     await Promise.resolve()
-
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -70,12 +69,10 @@ describe('QueryClientProvider/context', () => {
 
     providerB.remove()
     await Promise.resolve()
-
     expect(useQueryClient()).toBe(client)
 
     providerA.remove()
     await Promise.resolve()
-
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -100,7 +97,6 @@ describe('QueryClientProvider/context', () => {
 
     providerB.remove()
     await Promise.resolve()
-
     expect(getDefaultQueryClient()).toBe(clientA)
     expect(useQueryClient()).toBe(clientA)
 
@@ -110,6 +106,7 @@ describe('QueryClientProvider/context', () => {
 
   it('requires an explicit client before connect', () => {
     const provider = document.createElement(tagName) as QueryClientProvider
+
     expect(() => provider.connectedCallback()).toThrow(
       /No QueryClient available/,
     )
@@ -137,13 +134,11 @@ describe('QueryClientProvider/context', () => {
 
     provider.remove()
     await Promise.resolve()
-
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
     provider.client = clientB
     await provider.updateComplete
-
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
@@ -157,7 +152,6 @@ describe('QueryClientProvider/context', () => {
 
     provider.remove()
     await Promise.resolve()
-
     expect(unmountB).toHaveBeenCalledTimes(1)
 
     mountA.mockRestore()
@@ -181,8 +175,8 @@ describe('QueryClientProvider/context', () => {
     document.body.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-    await waitFor(() => consumer.query().isSuccess)
 
+    await waitFor(() => consumer.query().isSuccess)
     expect(mount).toHaveBeenCalledTimes(1)
     expect(unmount).toHaveBeenCalledTimes(0)
     expect(consumer.query().data).toBe('ok')
@@ -202,7 +196,6 @@ describe('QueryClientProvider/context', () => {
     consumer.query.destroy()
     provider.remove()
     await Promise.resolve()
-
     expect(unmount).toHaveBeenCalledTimes(1)
 
     mount.mockRestore()

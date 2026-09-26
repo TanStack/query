@@ -110,8 +110,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     try {
       host.connect()
-      await Promise.resolve()
 
+      await Promise.resolve()
       expect(mutationStates()).toEqual([])
 
       host.updatesRequested = 0
@@ -154,8 +154,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     try {
       host.connect()
-      await Promise.resolve()
 
+      await Promise.resolve()
       expect(mutationStates()).toEqual(['idle'])
 
       host.updatesRequested = 0
@@ -271,7 +271,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await waitFor(() => consumer.isMutating() === 1)
     consumer.resolvePendingMutation()
     await waitFor(() => consumer.isMutating() === 0)
-
     expect(
       explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
         ?.state.data,
@@ -408,6 +407,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     activeFilter = { queryKey: ['fetch-b'] }
     host.update()
+
     await waitFor(() => isFetchingFiltered() === 1)
 
     resolveA?.()
@@ -460,12 +460,12 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     mutationA.mutate()
     mutationB.mutate()
-
     await waitFor(() => isMutatingAll() === 2)
     await waitFor(() => isMutatingFiltered() === 1)
 
     activeFilter = { mutationKey: ['mut-b'] }
     host.update()
+
     await waitFor(() => isMutatingFiltered() === 1)
 
     resolveA?.()
@@ -520,7 +520,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await expect(mutationB.mutateAsync(undefined)).rejects.toThrow(
       'state-b-failure',
     )
-
     await waitFor(
       () =>
         mutationStatuses().length === 1 && mutationStatuses()[0] === 'success',
@@ -590,8 +589,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     expect(consumer.mutationStatuses()).toEqual([])
 
     document.body.append(consumer)
-    await waitForMissingQueryClient(() => consumer.query())
 
+    await waitForMissingQueryClient(() => consumer.query())
     expect(() => consumer.isFetching()).toThrow(/No QueryClient available/)
     expect(() => consumer.isMutating()).toThrow(/No QueryClient available/)
     expect(() => consumer.mutationStatuses()).toThrow(
@@ -675,6 +674,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     producerHost.connect()
     producerHost.update()
+
     await waitFor(() => client.isFetching() === 1)
 
     producerMutation.mutate()
@@ -716,7 +716,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-
     await waitFor(() => isFetching() === 1)
     await waitFor(() => isMutating() === 1)
     await waitFor(() => mutationStatuses().includes('pending'))
