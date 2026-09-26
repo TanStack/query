@@ -214,7 +214,6 @@ describe('query', () => {
     })
 
     unsubscribe()
-
     expect(query.state).toMatchObject({
       fetchStatus: 'idle',
       status: 'pending',
@@ -224,7 +223,6 @@ describe('query', () => {
     queryClient.getQueryCache().onOnline()
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(query.state).toMatchObject({
       fetchStatus: 'idle',
       status: 'pending',
@@ -244,7 +242,6 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(100)
-
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
     const promise = queryClient.query({
@@ -279,7 +276,6 @@ describe('query', () => {
       .mockResolvedValue('data')
 
     void queryClient.query({ queryKey: key, queryFn }).catch(noop)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
     expect(args.pageParam).toBeUndefined()
@@ -297,7 +293,6 @@ describe('query', () => {
         queryFn: () => sleep(100).then(() => 'data'),
       })
       .catch(noop)
-
     await vi.advanceTimersByTimeAsync(10)
 
     // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
@@ -307,7 +302,6 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     unsubscribe()
-
     await vi.advanceTimersByTimeAsync(90)
 
     const query = queryCache.find({ queryKey: key })!
@@ -329,7 +323,6 @@ describe('query', () => {
           sleep(100).then(() => (signal.aborted ? 'aborted' : 'data')),
       })
       .catch(noop)
-
     await vi.advanceTimersByTimeAsync(10)
 
     // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
@@ -339,7 +332,6 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     unsubscribe()
-
     await vi.advanceTimersByTimeAsync(90)
 
     const query = queryCache.find({ queryKey: key })!
@@ -394,9 +386,7 @@ describe('query', () => {
     expect(abortListener).not.toHaveBeenCalled()
 
     query.cancel()
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(signal.aborted).toBe(true)
     expect(onAbort).toHaveBeenCalledTimes(1)
     expect(abortListener).toHaveBeenCalledTimes(1)
@@ -428,9 +418,7 @@ describe('query', () => {
 
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(error).toBeInstanceOf(CancelledError)
   })
@@ -464,7 +452,6 @@ describe('query', () => {
 
     // Reset the query while it is pending
     query.reset()
-
     await vi.advanceTimersByTimeAsync(100)
 
     // The query should
@@ -493,7 +480,6 @@ describe('query', () => {
 
     const hydrationClient = new QueryClient()
     hydrate(hydrationClient, dehydrated)
-
     expect(hydrationClient.getQueryData(key)).toBe('string')
 
     const query = hydrationClient.getQueryCache().find({ queryKey: key })
@@ -514,9 +500,9 @@ describe('query', () => {
     await vi.advanceTimersByTimeAsync(10)
     query.cancel()
     await vi.advanceTimersByTimeAsync(100)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.state.error).toBeInstanceOf(CancelledError)
+
     const result = query.fetch()
     await vi.advanceTimersByTimeAsync(50)
     await expect(result).resolves.toBe('data')
@@ -551,7 +537,6 @@ describe('query', () => {
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query.state.error).toBe(error)
     expect(query.state.error).not.toBeInstanceOf(CancelledError)
   })
@@ -575,12 +560,10 @@ describe('query', () => {
     const query = testCache.find({ queryKey: key })!
     const firstPromise = query.promise
     expect(firstPromise).toBeDefined()
-
     await vi.advanceTimersByTimeAsync(10)
     await prefetch
     expect(query.promise).toBeDefined()
     expect(query.promise).not.toBe(firstPromise)
-
     await vi.advanceTimersByTimeAsync(10)
     await refetch
     expect(query.state.data).toBe('data')
@@ -613,7 +596,6 @@ describe('query', () => {
       })
       .catch(noop)
     expect(query.state.status).toBe('error')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query.state.status).toBe('error')
   })
@@ -632,12 +614,11 @@ describe('query', () => {
     })
     const unsubscribe1 = observer.subscribe(() => undefined)
     unsubscribe1()
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
+
     const unsubscribe2 = observer.subscribe(() => undefined)
     unsubscribe2()
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
     expect(count).toBe(1)
@@ -650,11 +631,13 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
+
     expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
+
     const unsubscribe = observer.subscribe(() => undefined)
     expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
-    unsubscribe()
 
+    unsubscribe()
     await vi.advanceTimersByTimeAsync(0)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
   })
@@ -669,6 +652,7 @@ describe('query', () => {
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(20)
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+
     observer.refetch()
     unsubscribe()
     // unsubscribe should not remove even though gcTime has elapsed b/c query is still fetching
@@ -685,13 +669,17 @@ describe('query', () => {
       queryFn: () => 'data',
       gcTime: 0,
     })
+
     expect(queryCache.find({ queryKey: key })?.state.status).toBe('pending')
+
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(100)
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+
     unsubscribe()
     await vi.advanceTimersByTimeAsync(100)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
+
     queryClient.setQueryData(key, 'data')
     await vi.advanceTimersByTimeAsync(100)
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
@@ -790,7 +778,6 @@ describe('query', () => {
     const key = queryKey()
 
     await queryClient.query({ queryKey: key, queryFn, meta }).catch(noop)
-
     expect(queryFn).toHaveBeenCalledWith(
       expect.objectContaining({
         meta,
@@ -829,6 +816,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
     })
+
     expect(query.getObserversCount()).toEqual(0)
 
     query.addObserver(observer)
@@ -848,6 +836,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
     })
+
     expect(query.getObserversCount()).toEqual(0)
 
     const notifySpy = vi.spyOn(queryCache, 'notify')
@@ -871,7 +860,6 @@ describe('query', () => {
     const unsubscribeSecond = secondObserver.subscribe(secondListener)
 
     queryClient.setQueryData(key, 'data')
-
     expect(secondListener).toHaveBeenCalledTimes(1)
     expect(secondObserver.getCurrentResult().data).toBe('data')
 
@@ -921,11 +909,11 @@ describe('query', () => {
       queryFn,
     })
     await vi.advanceTimersByTimeAsync(10)
-
     expect(updates).toEqual([
       'updated', // type: 'fetch'
       'updated', // type: 'success'
     ])
+
     unsubscribe()
   })
 
@@ -939,13 +927,13 @@ describe('query', () => {
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
-
     await vi.advanceTimersByTimeAsync(10)
     const query = queryCache.find({ queryKey: key })!
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
       error: new Error(`Missing queryFn: '${query.queryHash}'`),
     })
+
     unsubscribe()
   })
 
@@ -965,7 +953,6 @@ describe('query', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(10)
 
     const error = new Error(`${JSON.stringify(key)} data is undefined`)
@@ -978,6 +965,7 @@ describe('query', () => {
     expect(consoleErrorMock).toHaveBeenCalledWith(
       `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["${key}"]`,
     )
+
     unsubscribe()
     consoleErrorMock.mockRestore()
   })
@@ -997,7 +985,6 @@ describe('query', () => {
     })
 
     await observer.refetch()
-
     expect(count).toBe(1)
 
     resetIsServer()
@@ -1031,7 +1018,6 @@ describe('query', () => {
         initialDataUpdatedAt: initialDataUpdatedAtSpy,
       })
       .catch(noop)
-
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
   })
 
@@ -1047,7 +1033,6 @@ describe('query', () => {
         initialDataUpdatedAt: 0,
       })
       .catch(noop)
-
     expect(queryCache.find({ queryKey: key })?.state).toMatchObject({
       data: 'initial',
       status: 'success',
@@ -1108,7 +1093,6 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(50) // let it resolve
-
     expect(observer.getCurrentResult().data).toBe('1')
     expect(observer.getCurrentResult().fetchStatus).toBe('idle')
 
@@ -1153,7 +1137,6 @@ describe('query', () => {
       queryKey: key,
       queryFn,
     })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -1288,7 +1271,6 @@ describe('query', () => {
         queryFn: () => 'data',
       })
       .catch(noop)
-
     expect(consoleErrorMock).toHaveBeenCalledWith(
       "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
@@ -1325,9 +1307,7 @@ describe('query', () => {
         staleTime: 1000,
       })
       .catch(noop)
-
     vi.advanceTimersByTime(50)
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       data: undefined,
       status: 'pending',
@@ -1343,18 +1323,14 @@ describe('query', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       data: 'initialData',
       dataUpdatedAt: 10,
       status: 'success',
       fetchStatus: 'fetching',
     })
-
     vi.advanceTimersByTime(50)
-
     await promise
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       data: 'data',
       status: 'success',
@@ -1399,7 +1375,6 @@ describe('query', () => {
 
     query.addObserver(observer1)
     const promise1 = query.fetch()
-
     await vi.advanceTimersByTimeAsync(10)
 
     query.removeObserver(observer1)
@@ -1412,7 +1387,6 @@ describe('query', () => {
     query.addObserver(observer2)
 
     query.fetch()
-
     await expect(promise1).rejects.toBeInstanceOf(CancelledError)
     await vi.advanceTimersByTimeAsync(50)
     expect(query.state.fetchStatus).toBe('idle')

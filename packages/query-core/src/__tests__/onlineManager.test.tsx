@@ -19,6 +19,7 @@ describe('onlineManager', () => {
     // Force navigator to be undefined
     // @ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
+
     expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
@@ -73,7 +74,6 @@ describe('onlineManager', () => {
     expect(unsubscribe).toBeInstanceOf(Function)
 
     unsubscribe()
-
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
     windowSpy.mockRestore()
@@ -90,7 +90,6 @@ describe('onlineManager', () => {
     const unsubscribe = onlineManager.subscribe(() => undefined)
 
     unsubscribe()
-
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
     globalThis.window.addEventListener = addEventListener
@@ -135,6 +134,7 @@ describe('onlineManager', () => {
 
     unsubscribe1()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+
     unsubscribe2()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
   })
@@ -145,13 +145,11 @@ describe('onlineManager', () => {
     onlineManager.setEventListener(setupSpy)
 
     const unsubscribe1 = onlineManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe1()
 
     const unsubscribe2 = onlineManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
@@ -159,7 +157,6 @@ describe('onlineManager', () => {
 
   it('should update online status from window online and offline events', () => {
     const unsubscribe = onlineManager.subscribe(() => undefined)
-
     expect(onlineManager.isOnline()).toBe(true)
 
     window.dispatchEvent(new Event('offline'))
@@ -178,12 +175,10 @@ describe('onlineManager', () => {
 
     onlineManager.setOnline(false)
     onlineManager.setOnline(false)
-
     expect(listener).toHaveBeenNthCalledWith(1, false)
 
     onlineManager.setOnline(true)
     onlineManager.setOnline(true)
-
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenNthCalledWith(2, true)
   })

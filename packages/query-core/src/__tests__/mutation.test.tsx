@@ -31,7 +31,6 @@ describe('mutation', () => {
 
     mutation.mutate(null)
     await vi.advanceTimersByTimeAsync(0)
-
     expect(variables).toBe(null)
   })
 
@@ -50,7 +49,6 @@ describe('mutation', () => {
       },
       'vars',
     )
-
     await vi.advanceTimersByTimeAsync(0)
     expect(fn).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledWith('vars', {
@@ -91,9 +89,7 @@ describe('mutation', () => {
     })
 
     mutation.mutate('todo')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(states[0]).toEqual({
       context: undefined,
       data: undefined,
@@ -111,9 +107,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: expect.any(Number),
     })
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(states[1]).toEqual({
       context: 'todo',
       data: undefined,
@@ -131,9 +125,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: expect.any(Number),
     })
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(states[2]).toEqual({
       context: 'todo',
       data: 'todo',
@@ -169,9 +161,7 @@ describe('mutation', () => {
     })
 
     mutation.mutate('todo').catch(() => undefined)
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(states[0]).toEqual({
       context: undefined,
       data: undefined,
@@ -189,9 +179,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: expect.any(Number),
     })
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(states[1]).toEqual({
       context: 'todo',
       data: undefined,
@@ -209,9 +197,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: expect.any(Number),
     })
-
     await vi.advanceTimersByTimeAsync(20)
-
     expect(states[2]).toEqual({
       context: 'todo',
       data: undefined,
@@ -229,9 +215,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: expect.any(Number),
     })
-
     await vi.advanceTimersByTimeAsync(30)
-
     expect(states[3]).toEqual({
       context: 'todo',
       data: undefined,
@@ -311,9 +295,7 @@ describe('mutation', () => {
       variables: 'todo',
       submittedAt: 1,
     })
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutation.state).toEqual({
       context: 'todo',
       data: 'todo',
@@ -377,7 +359,6 @@ describe('mutation', () => {
     })
 
     mutation.mutate(undefined, { onSuccess, onSettled })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
@@ -395,7 +376,6 @@ describe('mutation', () => {
     })
 
     mutation.mutate(undefined, { onSuccess, onSettled })
-
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
@@ -420,7 +400,6 @@ describe('mutation', () => {
         onSuccess(2)
       },
     })
-
     await vi.advanceTimersByTimeAsync(100)
     expect(onSuccess).toHaveBeenCalledTimes(1)
 
@@ -450,7 +429,6 @@ describe('mutation', () => {
         },
         'vars1',
       )
-
       expect(
         queryClient.getMutationCache().find({ mutationKey: key1 })?.state,
       ).toMatchObject({
@@ -474,16 +452,13 @@ describe('mutation', () => {
         },
         'vars2',
       )
-
       expect(
         queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
       ).toMatchObject({
         status: 'pending',
         isPaused: true,
       })
-
       await vi.advanceTimersByTimeAsync(20)
-
       expect(results).toStrictEqual([
         'start-A',
         'finish-A',
@@ -526,9 +501,7 @@ describe('mutation', () => {
       },
       'vars2',
     )
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(results).toStrictEqual([
       'start-A',
       'start-B',
@@ -603,9 +576,7 @@ describe('mutation', () => {
       },
       'vars2',
     )
-
     await vi.advanceTimersByTimeAsync(20)
-
     expect(results).toStrictEqual([
       'start-A1',
       'start-A2',
@@ -647,9 +618,7 @@ describe('mutation', () => {
         },
         'vars',
       )
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(results).toEqual([
         'onMutate-sync',
         'onSuccess-implicit-void',
@@ -684,9 +653,7 @@ describe('mutation', () => {
         },
         'vars',
       )
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onMutate-async',
         'onSuccess-async-start',
@@ -723,9 +690,7 @@ describe('mutation', () => {
         },
         'vars',
       )
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onSuccess-start',
         'track-analytics',
@@ -768,7 +733,6 @@ describe('mutation', () => {
         },
         'vars',
       )
-
       await vi.advanceTimersByTimeAsync(10)
 
       const mutationResult = await mutationPromise
@@ -822,9 +786,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onMutate',
         'onError-async',
@@ -883,9 +845,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onMutate-async',
         'onError-async-start',
@@ -932,9 +892,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onMutate-async',
         'onSuccess-async-start',
@@ -1000,9 +958,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(50)
-
       expect(results).toEqual([
         'onMutate-async',
         'onSuccess-async-start',
@@ -1069,9 +1025,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(50)
-
       expect(results).toEqual([
         'onMutate-async',
         'onSuccess-async-start',
@@ -1152,9 +1106,7 @@ describe('mutation', () => {
       ).catch((error) => {
         mutationError = error
       })
-
       await vi.advanceTimersByTimeAsync(30)
-
       expect(results).toEqual([
         'onMutate-async',
         'onError-async-start',
@@ -1196,7 +1148,6 @@ describe('mutation', () => {
 
     observer1.mutate()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
 
     const mutation = queryClient.getMutationCache().getAll()[0]!
@@ -1207,9 +1158,7 @@ describe('mutation', () => {
     mutation.addObserver(observer2)
 
     unsubscribe1()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
   })
 
@@ -1258,7 +1207,6 @@ describe('mutation', () => {
 
     await mutation.continue()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutationFn).toHaveBeenCalledTimes(1)
     expect(mutation.state.status).toBe('success')
   })
@@ -1285,7 +1233,6 @@ describe('mutation', () => {
     const continued = mutation.continue()
     await vi.advanceTimersByTimeAsync(10)
     await continued
-
     expect(mutationFn).toHaveBeenCalledTimes(1)
     expect(mutation.state.status).toBe('success')
   })

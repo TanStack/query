@@ -47,7 +47,6 @@ describe('notifyManager', () => {
     notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
 
     expect(customCallback).toHaveBeenCalledOnce()
-
     await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
@@ -66,7 +65,6 @@ describe('notifyManager', () => {
     } catch {}
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
@@ -84,7 +82,6 @@ describe('notifyManager', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(batchNotifySpy).toHaveBeenCalled()
     expect(callbackSpy1).toHaveBeenCalled()
     expect(callbackSpy2).toHaveBeenCalled()
@@ -100,7 +97,6 @@ describe('notifyManager', () => {
 
     batchedFn(1, 'test')
     await vi.advanceTimersByTimeAsync(0)
-
     expect(callbackSpy).toHaveBeenCalledWith(1, 'test')
   })
 })
