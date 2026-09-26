@@ -41,9 +41,8 @@ type UseQueryOptionsForUseQueries<
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQueries is a plain object and not a SolidJS Resource.
-   * It will not suspend when the data is loading.
-   * Setting `suspense` to `true` will be a no-op.
+   * Setting it has no effect: reading `data` of a query that has no data yet suspends the nearest `<Suspense>`
+   * boundary until none of the queries are loading, whether or not this option is set.
    */
   suspense?: boolean
 }
