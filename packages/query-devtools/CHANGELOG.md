@@ -1,5 +1,13 @@
 # @tanstack/query-devtools
 
+## 5.103.3
+
+### Patch Changes
+
+- [#11648](https://github.com/TanStack/query/pull/11648) [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d) - chore: update dependencies
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
 ## 5.103.2
 
 ### Patch Changes

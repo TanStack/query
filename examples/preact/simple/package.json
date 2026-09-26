@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/preact-query": "^5.103.2",
+    "@tanstack/preact-query": "^5.103.3",
     "preact": "^10.29.8"
   },
   "devDependencies": {
