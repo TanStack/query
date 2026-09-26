@@ -4874,7 +4874,9 @@ describe('useQuery', () => {
       expect(
         rendered.getByText('status: success, fetchStatus: paused'),
       ).toBeInTheDocument()
+
       window.dispatchEvent(new Event('visibilitychange'))
+
       await vi.advanceTimersByTimeAsync(10)
       expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
       expect(count).toBe(1)
