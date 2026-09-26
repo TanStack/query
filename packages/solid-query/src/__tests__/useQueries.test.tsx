@@ -262,6 +262,38 @@ describe('useQueries', () => {
     ).toBeInTheDocument()
   })
 
+  it('should drop the results of removed queries', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = createSignal(2)
+      const queries = useQueries(() => ({
+        queries: Array.from({ length: count() }, (_, index) => ({
+          queryKey: [...key, index],
+          queryFn: () => sleep(10).then(() => `data ${index}`),
+        })),
+      }))
+
+      return (
+        <div>
+          <div>{`length: ${queries.length}, data: ${queries.map((query) => String(query.data)).join(',')}`}</div>
+          <button onClick={() => setCount(1)}>remove</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('length: 2, data: data 0,data 1'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('remove'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('length: 1, data: data 0')).toBeInTheDocument()
+  })
+
   it('should report the paused fetchStatus while offline', async ({
     onTestFinished,
   }) => {
