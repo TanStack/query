@@ -1569,7 +1569,9 @@ describe("useQueries's in Suspense mode", () => {
     expect(queryClient.getQueryData(key)).toBe(undefined)
   })
 
-  it('should suspend on offline when query changes, and data should not be undefined', async () => {
+  it('should report the paused query while offline, and suspend again once a query changes online', async ({
+    onTestFinished,
+  }) => {
     const key = queryKey()
 
     function Page() {
@@ -1586,7 +1588,9 @@ describe("useQueries's in Suspense mode", () => {
 
       return (
         <div>
-          <div>{String(queries[0].data)}</div>
+          <div>
+            {`data: ${String(queries[0].data)}, fetchStatus: ${queries[0].fetchStatus}`}
+          </div>
           <button onClick={() => setId((prev) => prev + 1)}>fetch</button>
         </div>
       )
@@ -1600,28 +1604,35 @@ describe("useQueries's in Suspense mode", () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('Data 0')).toBeInTheDocument()
+    expect(
+      rendered.getByText('data: Data 0, fetchStatus: idle'),
+    ).toBeInTheDocument()
 
-    // go offline
     onlineManager.setOnline(false)
+    onTestFinished(() => {
+      onlineManager.setOnline(true)
+    })
 
-    // click changes id to 1, but query is paused so previous data should be kept
+    // The query for id 1 is paused instead of fetching, so there is nothing to suspend on
     fireEvent.click(rendered.getByText('fetch'))
-    expect(rendered.getByText('Data 0')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('data: undefined, fetchStatus: paused'),
+    ).toBeInTheDocument()
 
-    // go back online
+    // Going back online resumes the paused query
     onlineManager.setOnline(true)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('data: Data 1, fetchStatus: idle'),
+    ).toBeInTheDocument()
 
-    // click changes id to 2, which triggers a new fetch
     fireEvent.click(rendered.getByText('fetch'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
-    // Solid signals update immediately (unlike React useState which preserves
-    // the previous render tree during suspense), so id is 2 after two clicks
-    expect(rendered.getByText('Data 2')).toBeInTheDocument()
-
-    // restore online state for subsequent tests
-    onlineManager.setOnline(true)
+    expect(
+      rendered.getByText('data: Data 2, fetchStatus: idle'),
+    ).toBeInTheDocument()
   })
 
   it('should still suspense if queryClient has placeholderData config', async () => {
@@ -1921,5 +1932,101 @@ describe("useQueries's in Suspense mode", () => {
     // Should not suspend because data is cached and not stale
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.getByText('q1: cached1, q2: cached2')).toBeInTheDocument()
+  })
+  it('should keep updating a destructured result after resolving', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useQueries(() => ({
+        queries: [
+          { queryKey: key, queryFn: () => sleep(10).then(() => 'data') },
+        ],
+      }))
+
+      return <div>{`status: ${query.status}, data: ${String(query.data)}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
+    ))
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('status: success, data: data'),
+    ).toBeInTheDocument()
+  })
+
+  it('should suspend again when a resolved query is reset', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      const queries = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => `data ${++count}`),
+          },
+        ],
+      }))
+
+      return <div>{String(queries[0].data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data 1')).toBeInTheDocument()
+
+    void queryClient.resetQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data 2')).toBeInTheDocument()
+  })
+
+  it('should throw to the error boundary when a refetch of cached data fails with throwOnError: true', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    queryClient.setQueryData(key, 'cached')
+
+    function Page() {
+      const queries = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('refetch error'))),
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+      }))
+
+      return <div>data: {String(queries[0].data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <ErrorBoundary fallback={(error) => <div>error: {error.message}</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>
+    ))
+
+    expect(rendered.getByText('data: cached')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error: refetch error')).toBeInTheDocument()
+
+    consoleErrorMock.mockRestore()
   })
 })

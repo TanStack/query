@@ -310,142 +310,121 @@ export function useQueries<
       : undefined,
   )
 
+  const getCombine = () =>
+    (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine
+
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+    observer.getOptimisticResult(defaultedQueries(), getCombine())[1](),
   )
 
+  // Merges each result into its existing store node instead of replacing the
+  // whole array, so a result read once (e.g. `const [query] = useQueries(...)`)
+  // keeps tracking later updates
+  const updateState = (results: Array<QueryObserverResult>) => {
+    const combine = getCombine()
+    const nextState: unknown = combine
+      ? observer.getOptimisticResult(defaultedQueries(), combine)[1]()
+      : results
+    if (
+      !Array.isArray(nextState) ||
+      !Array.isArray(state) ||
+      nextState.length !== state.length
+    ) {
+      setState(nextState as TCombinedResult)
+      return
+    }
+    batch(() => {
+      for (let index = 0; index < nextState.length; index++) {
+        const value: unknown = unwrap(nextState[index])
+        setState(
+          // @ts-expect-error typescript pedantry regarding the possible range of index
+          index,
+          typeof value === 'object' && value !== null ? { ...value } : value,
+        )
+      }
+    })
+  }
+
+  // Memoized so that changing a query's options without changing the number
+  // of queries does not replace every result in the store
+  const queriesLength = createMemo(() => queriesOptions().queries.length)
+
   createRenderEffect(
-    on(
-      () => queriesOptions().queries.length,
-      () => {
-        const optimisticResult = observer.getOptimisticResult(
-          defaultedQueries(),
-          (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-        // When queries are paused (e.g. offline), skip state update to
-        // keep showing previous data instead of showing undefined.
-        const hasPaused = optimisticResult[0].some(
-          (r) => r.fetchStatus === 'paused',
-        )
-        if (!hasPaused) {
-          setState(optimisticResult[1]())
-        }
-      },
+    on(queriesLength, () =>
+      setState(
+        observer.getOptimisticResult(defaultedQueries(), getCombine())[1](),
+      ),
     ),
   )
 
   let observerResults = observer.getOptimisticResult(
     defaultedQueries(),
-    (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+    getCombine(),
   )[0]
 
-  // Single resolver for the unified suspense resource.
-  // Modeled after useBaseQuery: one resource, re-triggered via refetch().
+  const needsSuspend = () =>
+    observerResults.some((result) => result.isFetching && result.isLoading)
+
+  const getThrowableError = () => {
+    const queries = observer.getQueries()
+    for (let index = 0; index < observerResults.length; index++) {
+      const result = observerResults[index]!
+      if (
+        result.isError &&
+        !result.isFetching &&
+        shouldThrowError(defaultedQueries()[index]?.throwOnError, [
+          result.error,
+          queries[index]!,
+        ])
+      ) {
+        return { error: result.error }
+      }
+    }
+    return undefined
+  }
+
+  // A single resource suspends until every query has loaded, and rejects with
+  // the first error that `throwOnError` asks to throw, like `useBaseQuery`
   let resolver: {
-    resolve: (value: any) => void
-    reject: (reason: any) => void
+    resolve: (value: Array<QueryObserverResult>) => void
+    reject: (reason: unknown) => void
   } | null = null
 
-  const needsSuspend = () =>
-    observerResults.some((r) => r.isFetching && r.isLoading)
+  const settle = () => {
+    if (!resolver || needsSuspend()) return
+    const { resolve, reject } = resolver
+    resolver = null
+    const throwable = getThrowableError()
+    if (throwable) {
+      reject(throwable.error)
+    } else {
+      resolve(observerResults)
+    }
+  }
 
-  // Single resource created once. Re-triggered via refetch() on query changes.
-  // Follows the same pattern as useBaseQuery's createResource.
   const [queryResource, { refetch }] = createResource<
     Array<QueryObserverResult> | undefined
   >(
-    () => {
-      return new Promise((resolve, reject) => {
-        if (needsSuspend()) {
-          resolver = { resolve, reject }
-          return
-        }
-        // Check if any query has a throwable error
-        for (let i = 0; i < observerResults.length; i++) {
-          const result = observerResults[i]!
-          if (
-            result.isError &&
-            !result.isFetching &&
-            shouldThrowError(defaultedQueries()[i]?.throwOnError, [
-              result.error,
-              observer.getQueries()[i]!,
-            ])
-          ) {
-            resolver = null
-            reject(result.error)
-            return
-          }
-        }
-        resolver = null
-        resolve(observerResults)
-      })
-    },
+    () =>
+      new Promise((resolve, reject) => {
+        resolver = { resolve, reject }
+        settle()
+      }),
     needsSuspend() ? {} : { initialValue: observerResults },
   )
 
   let taskQueue: Array<() => void> = []
   const subscribeToObserver = () =>
     observer.subscribe((result) => {
-      const allFinished = result.every((r) => !(r.isFetching && r.isLoading))
-
-      if (allFinished) {
-        observerResults = [...result]
-      }
-
+      observerResults = result
       taskQueue.push(() => {
-        if (allFinished) {
-          // When queries are paused (e.g. offline), skip state update to
-          // keep showing previous data instead of showing undefined.
-          const hasPaused = result.some((r) => r.fetchStatus === 'paused')
-          if (!hasPaused) {
-            // Update with combine-aware result when all queries are done
-            const optimisticResult = observer.getOptimisticResult(
-              defaultedQueries(),
-              (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-                .combine,
-            )
-            setState(optimisticResult[1]())
-          }
-        } else {
-          // Intermediate update for non-Suspense usage
-          batch(() => {
-            for (let index = 0; index < result.length; index++) {
-              const queryResult = result[index]!
-              const unwrappedResult = { ...unwrap(queryResult) }
-              // @ts-expect-error typescript pedantry regarding the possible range of index
-              setState(index, unwrap(unwrappedResult))
-            }
-          })
-          return
-        }
-
-        // Resolve or reject the single suspense resource
+        updateState(result)
         if (resolver) {
-          // Check for throwable errors first
-          for (let i = 0; i < result.length; i++) {
-            const queryResult = result[i]!
-            if (
-              queryResult.isError &&
-              shouldThrowError(defaultedQueries()[i]?.throwOnError, [
-                queryResult.error,
-                observer.getQueries()[i]!,
-              ])
-            ) {
-              resolver.reject(queryResult.error)
-              resolver = null
-              return
-            }
-          }
-          resolver.resolve(observerResults)
-          resolver = null
-        } else {
-          // No resolver means resource was already resolved (e.g. cached data).
-          // Schedule refetch to update the resource value, following
-          // the same pattern as useBaseQuery's subscriber.
-          queueMicrotask(() => refetch())
+          settle()
+        } else if (needsSuspend() || getThrowableError()) {
+          // Re-run the resource when a query falls back into a hard loading
+          // state (e.g. after `resetQueries`) or has an error to throw
+          refetch()
         }
       })
 
@@ -465,7 +444,7 @@ export function useQueries<
   })
   onCleanup(() => {
     unsubscribe()
-    // Resolve pending resource on unmount to prevent Suspense hanging
+    // Resolve a pending resource on unmount so Suspense does not hang
     if (resolver) {
       resolver.resolve(observerResults)
       resolver = null
@@ -475,11 +454,7 @@ export function useQueries<
   onMount(() => {
     observer.setQueries(
       defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+      getCombine() ? { combine: getCombine() } : undefined,
     )
   })
 
@@ -489,31 +464,13 @@ export function useQueries<
       () => {
         observer.setQueries(
           defaultedQueries(),
-          queriesOptions().combine
-            ? ({
-                combine: queriesOptions().combine,
-              } as QueriesObserverOptions<TCombinedResult>)
-            : undefined,
+          getCombine() ? { combine: getCombine() } : undefined,
         )
-
-        const optimisticResult = observer.getOptimisticResult(
+        observerResults = observer.getOptimisticResult(
           defaultedQueries(),
-          (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-        observerResults = optimisticResult[0]
-
-        // When queries are paused (e.g. offline), skip state update to
-        // keep showing previous data instead of showing undefined.
-        const hasPaused = observerResults.some(
-          (r) => r.fetchStatus === 'paused',
-        )
-        if (!hasPaused) {
-          setState(optimisticResult[1]())
-        }
-
-        // Only refetch (re-trigger Suspense) if queries actually need to suspend.
-        // This prevents unnecessary Suspense fallback when offline or when
-        // queries don't need fetching.
+          getCombine(),
+        )[0]
+        updateState(observerResults)
         if (needsSuspend()) {
           refetch()
         }
@@ -522,33 +479,45 @@ export function useQueries<
     ),
   )
 
-  const handler = (index: number) => ({
-    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+  const handler: ProxyHandler<QueryObserverResult> = {
+    get(target, prop) {
       if (prop === 'data') {
-        // If data exists in state, return it directly (no Suspense trigger)
         if (target.data !== undefined) {
+          // Rethrow an error the resource rejected with, without subscribing
+          // to its loading state
+          const error: unknown = queryResource.error
+          if (error !== undefined) throw error
           return target.data
         }
-        // When query is paused (e.g. offline), don't suspend - return undefined
-        // to keep showing previous content without triggering Suspense fallback
-        if (observerResults[index]?.fetchStatus === 'paused') {
-          return undefined
-        }
-        // Reading queryResource() triggers Suspense when pending
+        // Reading the resource suspends while any query is loading
         queryResource()
-        return undefined
+        return target.data
       }
       return Reflect.get(target, prop)
     },
-  })
+  }
+
+  // Cache one proxy per store node so a result keeps its identity across reads
+  const proxies = new WeakMap<object, QueryObserverResult>()
 
   return new Proxy(state, {
     get(target, prop, receiver) {
-      const index = typeof prop === 'string' ? Number(prop) : NaN
-      if (!Number.isNaN(index) && index >= 0 && index < target.length) {
-        return new Proxy(target[index]!, handler(index))
+      const value: unknown = Reflect.get(target, prop, receiver)
+      if (
+        Array.isArray(target) &&
+        typeof prop === 'string' &&
+        /^\d+$/.test(prop) &&
+        typeof value === 'object' &&
+        value !== null
+      ) {
+        let proxy = proxies.get(value)
+        if (!proxy) {
+          proxy = new Proxy(value as QueryObserverResult, handler)
+          proxies.set(value, proxy)
+        }
+        return proxy
       }
-      return Reflect.get(target, prop, receiver)
+      return value
     },
   })
 }

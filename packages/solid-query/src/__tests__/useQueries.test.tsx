@@ -213,4 +213,103 @@ describe('useQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })
+  it('should keep updating a destructured result', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useQueries(() => ({
+        queries: [
+          { queryKey: key, queryFn: () => sleep(10).then(() => 'data') },
+        ],
+      }))
+
+      return <div>{`status: ${query.status}, data: ${String(query.data)}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(
+      rendered.getByText('status: pending, data: undefined'),
+    ).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('status: success, data: data'),
+    ).toBeInTheDocument()
+  })
+
+  it('should keep updating a destructured result when combine returns the results', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useQueries(() => ({
+        queries: [
+          { queryKey: key, queryFn: () => sleep(10).then(() => 'data') },
+        ],
+        combine: (results) => results,
+      }))
+
+      return <div>{`status: ${query.status}, data: ${String(query.data)}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(
+      rendered.getByText('status: pending, data: undefined'),
+    ).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('status: success, data: data'),
+    ).toBeInTheDocument()
+  })
+
+  it('should report the paused fetchStatus while offline', async ({
+    onTestFinished,
+  }) => {
+    const key = queryKey()
+
+    function Page() {
+      const [id, setId] = createSignal(0)
+      const queries = useQueries(() => ({
+        queries: [
+          {
+            queryKey: [...key, id()],
+            queryFn: () => sleep(10).then(() => `data ${id()}`),
+          },
+        ],
+      }))
+
+      return (
+        <div>
+          <div>
+            {`data: ${String(queries[0].data)}, fetchStatus: ${queries[0].fetchStatus}`}
+          </div>
+          <button onClick={() => setId((prev) => prev + 1)}>next</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('data: data 0, fetchStatus: idle'),
+    ).toBeInTheDocument()
+
+    QueryCore.onlineManager.setOnline(false)
+    onTestFinished(() => {
+      QueryCore.onlineManager.setOnline(true)
+    })
+
+    void queryClient.refetchQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('data: data 0, fetchStatus: paused'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('next'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('data: undefined, fetchStatus: paused'),
+    ).toBeInTheDocument()
+  })
 })
