@@ -150,7 +150,7 @@ describe('createInfiniteQuery', () => {
     expect(rendered.getByTestId('pages')).toHaveTextContent('1')
     expect(rendered.getByTestId('isError')).toHaveTextContent('false')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('pages')).toHaveTextContent('1')
     expect(rendered.getByTestId('isError')).toHaveTextContent('true')
   })
@@ -176,13 +176,13 @@ describe('createInfiniteQuery', () => {
 
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
     expect(rendered.getByTestId('pages')).toHaveTextContent('none')
 
     postId.value = '1'
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByTestId('pages')).toHaveTextContent(
       'comments for 1 page 0',
