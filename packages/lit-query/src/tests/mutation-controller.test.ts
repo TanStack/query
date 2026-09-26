@@ -1,15 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
-import {
-  TestControllerHost,
-  TestElementHost,
-  waitFor,
-  waitForMissingQueryClient,
-} from './testHost.js'
+import { TestControllerHost, TestElementHost } from './testHost.js'
 
 const providerTagName = 'test-query-client-provider-mutation'
 if (!customElements.get(providerTagName)) {
@@ -18,14 +13,16 @@ if (!customElements.get(providerTagName)) {
 
 let explicitMutationClient: QueryClient | undefined
 
+const contextMutationKey = queryKey()
+
 class ContextMutationHostElement extends TestElementHost {
-  readonly mutationKey = ['context-mutation'] as const
+  readonly mutationKey = contextMutationKey
 
   readonly mutation = createMutationController(
     this,
     {
       mutationKey: this.mutationKey,
-      mutationFn: async (value: number) => value + 1,
+      mutationFn: (value: number) => sleep(10).then(() => value + 1),
     },
     explicitMutationClient,
   )
@@ -37,7 +34,15 @@ if (!customElements.get(contextMutationTagName)) {
 }
 
 describe('createMutationController', () => {
-  it('LC-MUT-01: first provider connection resolves from the pre-connect placeholder state', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
     const consumer = document.createElement(
       contextMutationTagName,
     ) as ContextMutationHostElement
@@ -61,7 +66,9 @@ describe('createMutationController', () => {
     await provider.updateComplete
 
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
+    const mutatePromise = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
 
     consumer.mutation.destroy()
@@ -69,7 +76,7 @@ describe('createMutationController', () => {
     await Promise.resolve()
   })
 
-  it('LC-MUT-02: explicit client takes precedence over provider context', async () => {
+  it('should prefer an explicit client over the provider context', async () => {
     const explicitClient = new QueryClient()
     const providerClient = new QueryClient()
     explicitMutationClient = explicitClient
@@ -88,7 +95,9 @@ describe('createMutationController', () => {
     await provider.updateComplete
 
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
+    const mutatePromise = consumer.mutation.mutateAsync(2)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(3)
 
     expect(
       explicitClient
@@ -107,14 +116,14 @@ describe('createMutationController', () => {
     await Promise.resolve()
   })
 
-  it('supports mutate and mutateAsync paths', async () => {
+  it('should support mutate and mutateAsync paths', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
       host,
       {
-        mutationFn: async (value: number) => value + 1,
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
       },
       client,
     )
@@ -122,17 +131,19 @@ describe('createMutationController', () => {
     host.connect()
     host.update()
 
-    const result = await mutation.mutateAsync(1)
-    expect(result).toBe(2)
+    const resultPromise = mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(resultPromise).resolves.toBe(2)
     expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(2)
 
     mutation.mutate(2)
-    await waitFor(() => mutation().data === 3)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(mutation().data).toBe(3)
     expect(mutation().isSuccess).toBe(true)
   })
 
-  it('M9: mutation state transitions cover idle/pending/success/error', async () => {
+  it('should cover idle/pending/success/error mutation state transitions', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
@@ -156,28 +167,32 @@ describe('createMutationController', () => {
     expect(mutation().isIdle).toBe(true)
 
     const successPromise = mutation.mutateAsync(10)
-    await waitFor(() => mutation().isPending)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(mutation().isPending).toBe(true)
+    await vi.advanceTimersByTimeAsync(10)
     await expect(successPromise).resolves.toBe(11)
-    await waitFor(() => mutation().isSuccess)
+    expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(11)
 
-    const errorPromise = mutation.mutateAsync(-1)
-    await waitFor(() => mutation().isPending)
-    await expect(errorPromise).rejects.toThrow('negative-not-allowed')
-    await waitFor(() => mutation().isError)
+    const errorPromise = mutation
+      .mutateAsync(-1)
+      .catch((error: unknown) => error)
+    expect(mutation().isPending).toBe(true)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(await errorPromise).toEqual(new Error('negative-not-allowed'))
+    expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('negative-not-allowed'))
   })
 
-  it('M10: reset clears mutation state back to idle baseline', async () => {
+  it('should reset mutation state back to the idle baseline', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
       host,
       {
-        mutationFn: async () => {
-          throw new Error('reset-target')
-        },
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('reset-target'))),
       },
       client,
     )
@@ -185,10 +200,11 @@ describe('createMutationController', () => {
     host.connect()
     host.update()
 
-    await expect(mutation.mutateAsync(undefined)).rejects.toThrow(
-      'reset-target',
-    )
-    await waitFor(() => mutation().isError)
+    await Promise.all([
+      expect(mutation.mutateAsync(undefined)).rejects.toThrow('reset-target'),
+      vi.advanceTimersByTimeAsync(10),
+    ])
+    expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('reset-target'))
 
     mutation.reset()
@@ -199,7 +215,7 @@ describe('createMutationController', () => {
     expect(mutation().data).toBeUndefined()
   })
 
-  it('M11: mutate is non-throwing while mutateAsync rejects on error', async () => {
+  it('should not throw from mutate while mutateAsync rejects on error', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
@@ -207,6 +223,7 @@ describe('createMutationController', () => {
       host,
       {
         mutationFn: async (value: number) => {
+          await sleep(10)
           if (value < 0) {
             throw new Error('negative-not-allowed')
           }
@@ -221,15 +238,17 @@ describe('createMutationController', () => {
     host.update()
 
     expect(() => mutation.mutate(-1)).not.toThrow()
-    await waitFor(() => mutation().isError)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('negative-not-allowed'))
 
-    await expect(mutation.mutateAsync(-1)).rejects.toThrow(
-      'negative-not-allowed',
-    )
+    await Promise.all([
+      expect(mutation.mutateAsync(-1)).rejects.toThrow('negative-not-allowed'),
+      vi.advanceTimersByTimeAsync(10),
+    ])
   })
 
-  it('M12: mutation callback order and call counts are deterministic', async () => {
+  it('should call mutation callbacks in a deterministic order and count', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
     const callbackEvents: string[] = []
@@ -238,7 +257,7 @@ describe('createMutationController', () => {
       host,
       {
         mutationFn: async (value: number) => {
-          await sleep(5)
+          await sleep(10)
           if (value < 0) {
             throw new Error('callback-order-failure')
           }
@@ -260,10 +279,16 @@ describe('createMutationController', () => {
     host.connect()
     host.update()
 
-    await expect(mutation.mutateAsync(1)).resolves.toBe(2)
-    await expect(mutation.mutateAsync(-1)).rejects.toThrow(
-      'callback-order-failure',
-    )
+    const successPromise = mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(successPromise).resolves.toBe(2)
+
+    await Promise.all([
+      expect(mutation.mutateAsync(-1)).rejects.toThrow(
+        'callback-order-failure',
+      ),
+      vi.advanceTimersByTimeAsync(10),
+    ])
 
     expect(callbackEvents).toEqual([
       'success:1',
@@ -273,7 +298,7 @@ describe('createMutationController', () => {
     ])
   })
 
-  it('AREACT-02: refreshed mutation callbacks use latest closures', async () => {
+  it('should use the latest closures for refreshed mutation callbacks', async () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
     const callbackEvents: string[] = []
@@ -283,6 +308,7 @@ describe('createMutationController', () => {
       host,
       () => ({
         mutationFn: async (value: number) => {
+          await sleep(10)
           if (value < 0) {
             throw new Error('freshness-failure')
           }
@@ -304,17 +330,22 @@ describe('createMutationController', () => {
     host.connect()
     host.update()
 
-    await expect(mutation.mutateAsync(1)).resolves.toBe(2)
+    const successPromise = mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(successPromise).resolves.toBe(2)
     expect(callbackEvents.slice(0, 2)).toEqual(['success:v1', 'settled:v1'])
 
     version = 'v2'
     host.update()
 
-    await expect(mutation.mutateAsync(-1)).rejects.toThrow('freshness-failure')
+    await Promise.all([
+      expect(mutation.mutateAsync(-1)).rejects.toThrow('freshness-failure'),
+      vi.advanceTimersByTimeAsync(10),
+    ])
     expect(callbackEvents.slice(2)).toEqual(['error:v2', 'settled:v2'])
   })
 
-  it('LC-MUT-03: missing provider becomes a deterministic missing-client state', async () => {
+  it('should become a deterministic missing-client state when the provider is missing', async () => {
     const consumer = document.createElement(
       contextMutationTagName,
     ) as ContextMutationHostElement
@@ -326,7 +357,8 @@ describe('createMutationController', () => {
     document.body.append(consumer)
 
     expect(() => consumer.mutation()).not.toThrow()
-    await waitForMissingQueryClient(() => consumer.mutation())
+    await vi.advanceTimersByTimeAsync(0)
+    expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
     expect(() => consumer.mutation.mutate(1)).toThrow(
       /No QueryClient available/,
     )
@@ -345,14 +377,15 @@ describe('createMutationController', () => {
     await Promise.resolve()
   })
 
-  it('LC-MUT-04: later valid provider adoption recovers without reconstruction', async () => {
+  it('should recover without reconstruction when a valid provider is adopted later', async () => {
     const consumer = document.createElement(
       contextMutationTagName,
     ) as ContextMutationHostElement
 
     document.body.append(consumer)
 
-    await waitForMissingQueryClient(() => consumer.mutation())
+    await vi.advanceTimersByTimeAsync(0)
+    expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
 
     const client = new QueryClient()
     const provider = document.createElement(
@@ -365,7 +398,9 @@ describe('createMutationController', () => {
     await provider.updateComplete
 
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
+    const mutatePromise = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
 
     consumer.mutation.destroy()
@@ -373,7 +408,7 @@ describe('createMutationController', () => {
     await Promise.resolve()
   })
 
-  it('ALREADYCONN-MUT-01: mutation controller on already-connected host with explicit client does not throw', async () => {
+  it('should not throw for a mutation controller on an already-connected host with an explicit client', async () => {
     // Regression test for SSR hydration scenario where controller is created
     // during willUpdate on an already-connected host.
     const client = new QueryClient()
@@ -410,8 +445,8 @@ describe('createMutationController', () => {
     const mutation = createMutationController(
       host,
       {
-        mutationKey: ['already-connected-mutation-test'],
-        mutationFn: async (value: number) => value * 2,
+        mutationKey: queryKey(),
+        mutationFn: (value: number) => sleep(10).then(() => value * 2),
       },
       client,
     )
@@ -422,14 +457,18 @@ describe('createMutationController', () => {
 
     // Mutation controller should work correctly
     expect(mutation().isIdle).toBe(true)
-    await expect(mutation.mutateAsync(5)).resolves.toBe(10)
+
+    const mutatePromise = mutation.mutateAsync(5)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(10)
     expect(mutation().isSuccess).toBe(true)
 
     mutation.destroy()
   })
 
-  it('LC-MUT-05: explicit-client mutation accessors defer until host fields are initialized', () => {
+  it('should defer explicit-client mutation accessors until host fields are initialized', () => {
     const client = new QueryClient()
+    const key = queryKey()
 
     class DeferredExplicitMutationHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -440,7 +479,7 @@ describe('createMutationController', () => {
       readonly mutation = createMutationController(
         this,
         () => ({
-          mutationKey: ['deferred-explicit-mutation', this.id] as const,
+          mutationKey: [...key, this.id],
           mutationFn: async (value: number) => value + this.offset,
         }),
         client,
