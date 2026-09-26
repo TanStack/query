@@ -473,7 +473,6 @@ describe('useMutation', () => {
         expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
         vi.advanceTimersByTimeAsync(10),
       ])
-
       expect(mutation).toMatchObject({
         isIdle: { value: false },
         isPending: { value: false },
