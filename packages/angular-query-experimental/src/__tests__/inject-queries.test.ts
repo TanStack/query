@@ -123,7 +123,6 @@ describe('injectQueries', () => {
       data: [undefined, undefined],
       isPending: true,
     })
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
 
@@ -224,7 +223,6 @@ describe('injectQueries', () => {
       ).toBeInTheDocument()
       expect(queryFn1).toHaveBeenCalledTimes(0)
       expect(queryFn2).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(

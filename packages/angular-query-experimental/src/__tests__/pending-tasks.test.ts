@@ -116,7 +116,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('test')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -142,7 +141,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate()
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -241,7 +239,6 @@ describe('PendingTasks Integration', () => {
       // Wait for the first attempt to complete and start retry delay
       await vi.advanceTimersByTimeAsync(10)
       await Promise.resolve()
-
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('fetching')
 
@@ -251,7 +248,6 @@ describe('PendingTasks Integration', () => {
       // Advance past the retry delay to trigger the pause
       await vi.advanceTimersByTimeAsync(50)
       await Promise.resolve()
-
       expect(query.fetchStatus()).toBe('paused')
 
       const stablePromise = app.whenStable()
@@ -310,7 +306,6 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
       await expect(stablePromise).resolves.toEqual(undefined)
     })
 
@@ -326,7 +321,6 @@ describe('PendingTasks Integration', () => {
       // Angular should become stable even though component was destroyed
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
       await expect(stablePromise).resolves.toEqual(undefined)
     })
   })
@@ -407,7 +401,6 @@ describe('PendingTasks Integration', () => {
       mutation1.mutate('test1')
       mutation2.mutate('test2')
       mutation3.mutate('test3')
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -626,7 +619,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate('optimistic-data')
-
       await Promise.resolve()
 
       // Data should be optimistically updated immediately

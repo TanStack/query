@@ -151,7 +151,6 @@ describe('injectQuery', () => {
     const rendered = await render(Page)
 
     expect(rendered.getByText('data: none')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
 
@@ -181,7 +180,6 @@ describe('injectQuery', () => {
     expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
     expect(rendered.getByText('isPlaceholderData: true')).toBeInTheDocument()
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
 
@@ -205,13 +203,11 @@ describe('injectQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(query.status()).toBe('success')
 
     key.set(key2)
     TestBed.tick()
-
     expect(queryFn).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
     expect(queryFn).toHaveBeenNthCalledWith(2, {
@@ -239,7 +235,6 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('pending')
 
     enabled.set(true)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
@@ -263,13 +258,11 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
 
     filter.set('')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.isFetching()).toBe(false)
 
     filter.set('b')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
@@ -302,14 +295,10 @@ describe('injectQuery', () => {
     expect(query1.data()).toStrictEqual(undefined)
     expect(query2.fetchStatus()).toStrictEqual('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(query1.data()).toStrictEqual('Some data')
     expect(query2.fetchStatus()).toStrictEqual('fetching')
-
     await vi.advanceTimersByTimeAsync(1002)
-
     expect(query2.fetchStatus()).toStrictEqual('idle')
     expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
@@ -335,7 +324,6 @@ describe('injectQuery', () => {
 
     void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenNthCalledWith(
       1,
@@ -348,7 +336,6 @@ describe('injectQuery', () => {
 
     void query.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(queryFn).toHaveBeenNthCalledWith(
       2,
@@ -382,7 +369,6 @@ describe('injectQuery', () => {
 
     expect(rendered.getByText('data: initial')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('data: initial')).toBeInTheDocument()
@@ -463,7 +449,6 @@ describe('injectQuery', () => {
 
     fixture.detectChanges()
     await vi.advanceTimersByTimeAsync(0)
-
     expect(fixture.componentInstance.query.data()).toEqual(
       'signal-input-required-test',
     )
@@ -492,7 +477,6 @@ describe('injectQuery', () => {
       expect(query.fetchStatus()).toBe('idle')
       expect(query.data()).toBeUndefined()
       expect(queryFn).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(query.status()).toBe('pending')
       expect(query.fetchStatus()).toBe('idle')
@@ -619,7 +603,6 @@ describe('injectQuery', () => {
       await Promise.resolve()
       await vi.runAllTimersAsync()
       await app.whenStable()
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')
       expect(callCount).toBe(2)

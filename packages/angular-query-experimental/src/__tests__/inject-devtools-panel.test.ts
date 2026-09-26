@@ -80,7 +80,6 @@ describe('injectDevtoolsPanel', () => {
     TestBed.tick()
 
     await waitForDevtoolsToBeCreated()
-
     expect(mockDevtoolsPanelInstance.mount).toHaveBeenCalledTimes(1)
   })
 
@@ -112,13 +111,10 @@ describe('injectDevtoolsPanel', () => {
     TestBed.tick()
 
     await waitForDevtoolsToBeCreated()
-
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(0)
 
     hostElement.set(null as unknown as ElementRef)
-
     TestBed.tick()
-
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
   })
 
@@ -135,13 +131,10 @@ describe('injectDevtoolsPanel', () => {
     TestBed.tick()
 
     await waitForDevtoolsToBeCreated()
-
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(0)
 
     client.set(new QueryClient())
-
     TestBed.tick()
-
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(1)
   })
 
@@ -158,13 +151,10 @@ describe('injectDevtoolsPanel', () => {
     TestBed.tick()
 
     await waitForDevtoolsToBeCreated()
-
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(0)
 
     errorTypes.set([])
-
     TestBed.tick()
-
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
   })
 
@@ -184,13 +174,10 @@ describe('injectDevtoolsPanel', () => {
     TestBed.tick()
 
     await waitForDevtoolsToBeCreated()
-
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(0)
 
     onClose.set(functionB)
-
     TestBed.tick()
-
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
   })
 })

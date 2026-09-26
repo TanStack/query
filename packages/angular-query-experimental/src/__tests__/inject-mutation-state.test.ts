@@ -167,7 +167,6 @@ describe('injectMutationState', () => {
         .map((span) => span.nativeNode.textContent)
 
       expect(spans).toEqual(['pending', 'pending'])
-
       await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
 
