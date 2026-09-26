@@ -69,8 +69,7 @@ export type CreateQueryOptions<
   'suspense' | 'queryFn'
 > & {
   queryFn?:
-    | QueryFunction<TQueryFnData, TQueryKey>
-    | SkipTokenForCreateQueryOptions
+    QueryFunction<TQueryFnData, TQueryKey> | SkipTokenForCreateQueryOptions
 }
 
 type CreateStatusBasedQueryResult<
