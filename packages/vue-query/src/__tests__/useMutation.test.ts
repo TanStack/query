@@ -135,9 +135,7 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
     await vi.advanceTimersByTimeAsync(10)
-
     const mutations = mutationCache.find({ mutationKey: key2 })
-
     expect(mutations?.options.mutationKey).toEqual(key2)
   })
 
@@ -473,7 +471,6 @@ describe('useMutation', () => {
         expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
         vi.advanceTimersByTimeAsync(10),
       ])
-
       expect(mutation).toMatchObject({
         isIdle: { value: false },
         isPending: { value: false },
@@ -502,7 +499,6 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(1)
     expect(mutation.status.value).toBe('idle')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(mutation.status.value).toBe('idle')
@@ -653,7 +649,6 @@ describe('useMutation', () => {
       // value is visible immediately, before the mutationFn settles.
       await vi.advanceTimersByTimeAsync(0)
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
-
       await vi.advanceTimersByTimeAsync(10)
       expect(mutation).toMatchObject({ isError: { value: true } })
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
@@ -703,11 +698,8 @@ describe('useMutation', () => {
       const settledPromise = Promise.allSettled(
         todos.map((todo) => mutation.mutateAsync(todo)),
       )
-
       await vi.advanceTimersByTimeAsync(10)
-
       const results = await settledPromise
-
       expect(results).toEqual([
         { status: 'fulfilled', value: 'Todo 1' },
         { status: 'rejected', reason: Error('Some error') },
