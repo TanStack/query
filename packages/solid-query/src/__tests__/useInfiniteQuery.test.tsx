@@ -17,6 +17,7 @@ import {
   QueryClient,
   infiniteQueryOptions,
   keepPreviousData,
+  skipToken,
   useInfiniteQuery,
 } from '..'
 import { Blink, renderWithClient, setActTimeout } from './utils'
@@ -1390,6 +1391,48 @@ describe('useInfiniteQuery', () => {
       data: { pages: [1] },
       isError: true,
     })
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    )
+
+    function Page() {
+      const [postId, setPostId] = createSignal<string>()
+
+      const state = useInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: postId() != null ? queryFn : skipToken,
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      }))
+
+      return (
+        <div>
+          <div>isFetching: {String(state.isFetching)}</div>
+          <div>pages: {state.data?.pages.join(', ') ?? 'none'}</div>
+          <button onClick={() => setPostId('1')}>set postId</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('pages: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'set postId' }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(
+      rendered.getByText('pages: comments for 1 page 0'),
+    ).toBeInTheDocument()
   })
 
   it('should only refetch the first page when initialData is provided', async () => {
