@@ -16,6 +16,60 @@ describe('mutationObserver', () => {
     vi.useRealTimers()
   })
 
+  it.each([undefined, { id: 'changed' }])(
+    'should preserve the running mutation scope when observer scope becomes %j',
+    async (scope) => {
+      const calls: Array<string> = []
+      const mutationFn = (value: string) => {
+        calls.push(value)
+        return value === 'first'
+          ? sleep(10).then(() => value)
+          : Promise.resolve(value)
+      }
+      const observer = new MutationObserver(queryClient, {
+        scope: { id: 'original' },
+        mutationFn,
+      })
+      const queued = new MutationObserver(queryClient, {
+        scope: { id: 'original' },
+        mutationFn,
+      })
+      const first = observer.mutate('first')
+      const second = queued.mutate('second')
+      await vi.advanceTimersByTimeAsync(0)
+      expect(calls).toEqual(['first'])
+      expect(queued.getCurrentResult().isPaused).toBe(true)
+
+      const onSuccess = vi.fn()
+      observer.setOptions({ scope, mutationFn, onSuccess })
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(calls).toEqual(['first', 'second'])
+      expect(queued.getCurrentResult().isPaused).toBe(false)
+      await expect(first).resolves.toBe('first')
+      await expect(second).resolves.toBe('second')
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+
+      await observer.mutate('future')
+      expect(
+        queryClient.getMutationCache().getAll().at(-1)?.options.scope,
+      ).toEqual(scope)
+    },
+  )
+
+  it('should keep a running unscoped mutation unscoped when options change', async () => {
+    const mutationFn = () => sleep(10).then(() => 'done')
+    const observer = new MutationObserver(queryClient, { mutationFn })
+    const result = observer.mutate()
+    observer.setOptions({ mutationFn, scope: { id: 'new-scope' } })
+
+    expect(
+      queryClient.getMutationCache().getAll()[0]?.options.scope,
+    ).toBeUndefined()
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(result).resolves.toBe('done')
+  })
+
   it('onUnsubscribe should not remove the current mutation observer if there is still a subscription', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(20).then(() => text),
