@@ -86,7 +86,6 @@ describe('injectQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(rendered.getByText('data: result2')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
@@ -123,7 +122,6 @@ describe('injectQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: error')).toBeInTheDocument()
     expect(rendered.getByText('data: none')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
@@ -153,7 +151,6 @@ describe('injectQuery', () => {
     expect(rendered.getByText('data: none')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data: test')).toBeInTheDocument()
   })
 
@@ -182,7 +179,6 @@ describe('injectQuery', () => {
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('data: real-data')).toBeInTheDocument()
     expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
     expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()

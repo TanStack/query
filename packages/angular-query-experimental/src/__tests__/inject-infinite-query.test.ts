@@ -62,7 +62,6 @@ describe('injectInfiniteQuery', () => {
     expect(rendered.getByText('pages: data on page 0')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.query.fetchNextPage()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('status: success')).toBeInTheDocument()
@@ -100,7 +99,6 @@ describe('injectInfiniteQuery', () => {
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('status: error')).toBeInTheDocument()
     expect(rendered.getByText('pages: none')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()

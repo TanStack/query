@@ -72,7 +72,6 @@ describe('injectMutation', () => {
     rendered.fixture.componentInstance.mutation.mutate(result)
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('isIdle: false')).toBeInTheDocument()
     expect(rendered.getByText('isPending: true')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
@@ -102,10 +101,8 @@ describe('injectMutation', () => {
     const rendered = await render(Page)
 
     rendered.fixture.componentInstance.mutation.mutate()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('isIdle: false')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
     expect(rendered.getByText('isError: true')).toBeInTheDocument()
@@ -136,10 +133,8 @@ describe('injectMutation', () => {
     const rendered = await render(Page)
 
     rendered.fixture.componentInstance.mutation.mutate(result)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('isIdle: false')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
@@ -192,18 +187,14 @@ describe('injectMutation', () => {
     const rendered = await render(Page)
 
     rendered.fixture.componentInstance.mutation.mutate()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('isError: true')).toBeInTheDocument()
     expect(rendered.getByText('error: Some error')).toBeInTheDocument()
 
     rendered.fixture.componentInstance.mutation.reset()
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
-
     expect(rendered.getByText('isIdle: true')).toBeInTheDocument()
     expect(rendered.getByText('isPending: false')).toBeInTheDocument()
     expect(rendered.getByText('isError: false')).toBeInTheDocument()
@@ -381,7 +372,6 @@ describe('injectMutation', () => {
           onSettled: () => callbacks.push('mutateAsync.onSettled'),
         })
         .catch(noop)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(callbacks).toEqual([
         'mutateAsync.onError',
@@ -418,7 +408,6 @@ describe('injectMutation', () => {
           onError: () => callbacks.push('mutateAsync.onError'),
         })
         .catch(noop)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(callbacks).toEqual(['mutateAsync.onError'])
     })
@@ -495,10 +484,8 @@ describe('injectMutation', () => {
       const rendered = await render(Page)
 
       rendered.fixture.componentInstance.mutation.mutate('todo')
-
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
-
       expect(
         rendered.getByText('data: tag-from-this-client'),
       ).toBeInTheDocument()
@@ -584,7 +571,6 @@ describe('injectMutation', () => {
 
     const button = debugElement.query(By.css('button'))
     button.triggerEventHandler('click')
-
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
@@ -661,7 +647,6 @@ describe('injectMutation', () => {
       TestBed.tick()
 
       mutate()
-
       await vi.advanceTimersByTimeAsync(0)
       expect(throwOnError).toHaveBeenCalledTimes(1)
       expect(throwOnError).toHaveBeenCalledWith(err)
@@ -684,7 +669,6 @@ describe('injectMutation', () => {
       TestBed.tick()
 
       mutate()
-
       await expect(vi.advanceTimersByTimeAsync(0)).rejects.toThrow(
         'Expected mock error. All is well!',
       )
@@ -994,7 +978,6 @@ describe('injectMutation', () => {
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
-
       expect(rendered.getByText('isError: true')).toBeInTheDocument()
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
     })
@@ -1031,7 +1014,6 @@ describe('injectMutation', () => {
       rendered.fixture.componentInstance.mutation.mutate('Todo 2')
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
-
       expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
       expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
     })
@@ -1063,7 +1045,6 @@ describe('injectMutation', () => {
       )
       await vi.advanceTimersByTimeAsync(0)
       rendered.fixture.detectChanges()
-
       expect(rendered.getByText('isPending: true')).toBeInTheDocument()
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
@@ -1099,7 +1080,6 @@ describe('injectMutation', () => {
       })
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
-
       expect(onSuccessMutate).toHaveBeenCalledTimes(1)
       expect(onSuccessMutate).toHaveBeenCalledWith(
         'Todo 2',
