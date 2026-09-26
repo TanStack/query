@@ -2064,7 +2064,7 @@ describe('useQuery', () => {
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2090,13 +2090,13 @@ describe('useQuery', () => {
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2127,13 +2127,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2162,13 +2162,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error inside the same component if queryFn throws and show the correct error message', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2199,13 +2199,13 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should show the correct error message on the error property when accessed outside error boundary', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2239,7 +2239,7 @@ describe('useQuery', () => {
     ).toBeInTheDocument()
     expect(rendered.getByText('Fallback error: Error test')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {

@@ -579,18 +579,20 @@ describe('useMutation', () => {
 
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const consoleMock = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       useMutation({
         mutationFn: (params: string) => sleep(0).then(() => params),
       })
 
-      expect(consoleMock).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      consoleMock.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })
@@ -615,7 +617,7 @@ describe('useMutation', () => {
     it.runIf(isVue2)(
       'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
       async () => {
-        const consoleMock = vi
+        const consoleErrorMock = vi
           .spyOn(console, 'error')
           .mockImplementation(() => undefined)
         const throwOnError = vi.fn().mockReturnValue(true)
@@ -629,8 +631,8 @@ describe('useMutation', () => {
         await vi.advanceTimersByTimeAsync(10)
         expect(throwOnError).toHaveBeenCalledTimes(1)
         expect(throwOnError).toHaveBeenCalledWith(Error('Some error'))
-        expect(consoleMock).toHaveBeenCalledWith(Error('Some error'))
-        consoleMock.mockRestore()
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
       },
     )
 

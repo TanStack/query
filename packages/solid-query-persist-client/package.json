@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-persist-client",
-  "version": "5.103.2",
+  "version": "5.104.0",
   "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -68,10 +68,10 @@
     "@solidjs/testing-library": "^0.8.10",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
-    "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.7",
+    "npm-run-all2": "^9.0.3",
+    "solid-js": "^1.9.15",
     "unplugin-solid": "^2.0.0",
-    "vite-plugin-solid": "^2.11.6"
+    "vite-plugin-solid": "^2.11.14"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",

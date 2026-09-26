@@ -630,6 +630,7 @@ describe('matchMutation', () => {
 
 describe('replaceEqualDeep', () => {
   it('should return the type of b and not relate it to a', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const result = replaceEqualDeep({ a: 1 } as unknown, { b: '1' })
     expectTypeOf(result).toEqualTypeOf<{ b: string }>()
 
@@ -642,7 +643,9 @@ describe('replaceEqualDeep', () => {
   })
 
   it('should accept the depth argument optionally', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     expectTypeOf(replaceEqualDeep(1 as unknown, 2)).toEqualTypeOf<number>()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     expectTypeOf(replaceEqualDeep(1 as unknown, 2, 0)).toEqualTypeOf<number>()
   })
 })

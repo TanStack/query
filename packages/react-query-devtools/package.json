@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.103.2",
+  "version": "5.104.0",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -82,8 +82,8 @@
     "@tanstack/react-query": "workspace:*",
     "@testing-library/react": "^16.1.0",
     "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^4.3.4",
-    "npm-run-all2": "^5.0.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "npm-run-all2": "^9.0.3",
     "react": "^19.2.1"
   },
   "peerDependencies": {

@@ -1,5 +1,20 @@
 # @tanstack/preact-query
 
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- [#11647](https://github.com/TanStack/query/pull/11647) [`1c9693e`](https://github.com/TanStack/query/commit/1c9693eac75495a04ae4328a35818b1fdf264978) - fix(codemods): avoid copying unnecessary files from codemods project
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
 ## 5.103.2
 
 ### Patch Changes

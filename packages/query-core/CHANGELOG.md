@@ -1,5 +1,15 @@
 # @tanstack/query-core
 
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+## 5.103.3
+
+No changes in this release.
+
 ## 5.103.2
 
 ### Patch Changes

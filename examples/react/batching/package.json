@@ -9,19 +9,19 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/react-pacer": "^0.22.1",
-    "@tanstack/react-query": "^5.103.2",
-    "@tanstack/react-query-devtools": "^5.103.2",
+    "@tanstack/react-pacer": "^0.23.0",
+    "@tanstack/react-query": "^5.104.0",
+    "@tanstack/react-query-devtools": "^5.104.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.103.2",
+    "@tanstack/eslint-plugin-query": "^5.104.0",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "typescript": "5.8.3",
-    "vite": "^6.4.1"
+    "vite": "^8.3.1"
   },
   "nx": {
     "targets": {

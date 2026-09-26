@@ -1,5 +1,25 @@
 # @tanstack/svelte-query-devtools
 
+## 6.3.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-devtools@5.104.0
+  - @tanstack/svelte-query@6.3.0
+
+## 6.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb), [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/svelte-query@6.2.5
+  - @tanstack/query-devtools@5.103.3
+
 ## 6.2.4
 
 ### Patch Changes
