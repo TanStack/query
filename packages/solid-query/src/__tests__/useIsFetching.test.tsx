@@ -283,7 +283,6 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
     await Promise.all([firstQuery, secondQuery])
-
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 })

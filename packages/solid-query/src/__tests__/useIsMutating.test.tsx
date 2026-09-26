@@ -232,7 +232,6 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
     await Promise.all([firstMutationPromise, secondMutationPromise])
-
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
