@@ -30,6 +30,7 @@ overrides:
   '@types/react': '^19.2.7'
   '@types/react-dom': '^19.2.3'
   '@types/node': '^22.15.3'
+  esbuild: '^0.28.2'
 
 allowBuilds:
   # root dependency

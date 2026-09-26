@@ -9,12 +9,12 @@ export default {
     '@oxc-project/runtime',
     '@types/react',
     '@types/react-dom',
+    'react',
+    'react-dom',
   ],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
+  rules: { duplicates: 'warn' },
   workspaces: {
-    '.': {
-      ignoreDependencies: ['react', 'react-dom'],
-    },
     'packages/angular-query-experimental': {
       ignore: ['scripts/prepack.js'],
       // Strict mode excludes optional dependencies. Read the declared names
