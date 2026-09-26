@@ -645,7 +645,7 @@ describe('core/utils', () => {
     })
 
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
-      const consoleErrorSpy = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -654,7 +654,7 @@ describe('core/utils', () => {
         queryHash: '["skip"]',
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         expect.stringContaining(
           'Attempted to invoke queryFn when set to skipToken',
         ),
@@ -663,7 +663,7 @@ describe('core/utils', () => {
         'Missing queryFn: \'["skip"]\'',
       )
 
-      consoleErrorSpy.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 

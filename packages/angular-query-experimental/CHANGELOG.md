@@ -1,5 +1,13 @@
 # @tanstack/angular-query-experimental
 
+## 5.103.3
+
+### Patch Changes
+
+- [#11649](https://github.com/TanStack/query/pull/11649) [`a0ee654`](https://github.com/TanStack/query/commit/a0ee654cd8d60773abf47beef177c3f0f1b3a0e4) - build: switch to tsdown
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
 ## 5.103.2
 
 ### Patch Changes

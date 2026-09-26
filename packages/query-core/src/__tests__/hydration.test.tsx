@@ -401,8 +401,8 @@ describe('dehydration and rehydration', () => {
     const loadingKey = queryKey()
     const errorKey = queryKey()
 
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
@@ -446,7 +446,7 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
     hydrationClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should filter queries via dehydrateQuery', async () => {
@@ -573,8 +573,8 @@ describe('dehydration and rehydration', () => {
 
   it('should be able to dehydrate mutations and continue on hydration', async () => {
     const key = queryKey()
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     const serverAddTodo = vi
@@ -656,14 +656,14 @@ describe('dehydration and rehydration', () => {
     )
 
     client.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
     onlineMock.mockRestore()
   })
 
   it('should not dehydrate mutations if dehydrateMutations is set to false', async () => {
     const key = queryKey()
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const serverAddTodo = vi
       .fn()
@@ -692,13 +692,13 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated.mutations.length).toBe(0)
 
     queryClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not dehydrate mutation if mutation state is set to pause', async () => {
     const key = queryKey()
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const serverAddTodo = vi
       .fn()
@@ -728,7 +728,7 @@ describe('dehydration and rehydration', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     queryClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should support hydratedState with undefined queries and mutations', () => {
@@ -1409,8 +1409,8 @@ describe('dehydration and rehydration', () => {
 
   it('should redact errors by default when shouldRedactErrors is not set', async () => {
     const key = queryKey()
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({
@@ -1436,7 +1436,7 @@ describe('dehydration and rehydration', () => {
 
     await expect(dehydrated.queries[0]?.promise).rejects.toThrow('redacted')
     await promise
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should log error in development environment when redacting errors', async () => {
@@ -1444,8 +1444,8 @@ describe('dehydration and rehydration', () => {
     const originalNodeEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({
@@ -1471,13 +1471,13 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     await expect(dehydrated.queries[0]?.promise).rejects.toThrow('redacted')
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       expect.stringContaining('test error'),
     )
     await promise
 
     process.env.NODE_ENV = originalNodeEnv
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   // When React hydrates promises across RSC/client boundaries, it passes
