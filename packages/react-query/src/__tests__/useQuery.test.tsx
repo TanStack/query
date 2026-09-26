@@ -1470,10 +1470,14 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('data: 0')
+
     rendered.rerender(<Page count={1} />)
+
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('data: 1')
+
     rendered.rerender(<Page count={2} />)
+
     await vi.advanceTimersByTimeAsync(11)
     rendered.getByText('error: Error test')
 
@@ -2191,6 +2195,7 @@ describe('useQuery', () => {
         }
 
         const rendered = renderWithClient(queryClient, <Page />)
+
         await vi.advanceTimersByTimeAsync(6)
         rendered.getByText('fetch counter: 1')
 
@@ -4205,6 +4210,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     expect(queryFn).toHaveBeenCalledTimes(0)
 
     fireEvent.click(rendered.getByText('enable'))
@@ -4236,6 +4242,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: data')
 
@@ -4283,6 +4290,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: data')
 
@@ -4338,6 +4346,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: 2')
 
@@ -4383,6 +4392,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: 2')
 
@@ -4439,6 +4449,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     rendered.getByText('Data: selected 101') // 99 + 2
     expect(selectRun).toBe(1)
     await vi.advanceTimersByTimeAsync(11)
@@ -5885,6 +5896,7 @@ describe('useQuery', () => {
       }
 
       const rendered = renderWithClient(queryClient, <Page />)
+
       await vi.advanceTimersByTimeAsync(0)
       rendered.getByText('data: data')
 
@@ -5931,6 +5943,7 @@ describe('useQuery', () => {
       }
 
       const rendered = renderWithClient(queryClient, <Page />)
+
       await vi.advanceTimersByTimeAsync(0)
       rendered.getByText('isFetching: false')
       rendered.getByText('fetchStatus: idle')
@@ -6207,6 +6220,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Test />)
+
     expect(spy).toHaveBeenCalledTimes(1)
 
     spy.mockClear()
@@ -6274,6 +6288,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Test />)
+
     expect(spy).toHaveBeenCalledTimes(1)
 
     spy.mockClear()
@@ -6772,6 +6787,7 @@ describe('useQuery', () => {
     }
 
     const rendered1 = renderWithClient(queryClient, <Component />)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered1.getByTestId('status')).toHaveTextContent('error')
     expect(rendered1.getByTestId('error')).toHaveTextContent(
@@ -6783,6 +6799,7 @@ describe('useQuery', () => {
     const initialFetchCount = fetchCount
 
     const rendered2 = renderWithClient(queryClient, <Component />)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
@@ -6830,6 +6847,7 @@ describe('useQuery', () => {
         <Component />
       </ErrorBoundary>,
     )
+
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered1.getByTestId('status')).toHaveTextContent('error')
     expect(rendered1.getByTestId('error')).toHaveTextContent(
@@ -6854,6 +6872,7 @@ describe('useQuery', () => {
         <Component />
       </ErrorBoundary>,
     )
+
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
@@ -6929,11 +6948,13 @@ describe('useQuery', () => {
     }
 
     const rendered1 = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered1.getByText('error')).toBeInTheDocument()
     rendered1.unmount()
 
     renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(retryOnMount).toHaveBeenCalled()
     const query = retryOnMount.mock.calls.at(-1)![0]
@@ -6975,6 +6996,7 @@ describe('useQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data')).toBeInTheDocument()
 
@@ -6986,6 +7008,7 @@ describe('useQuery', () => {
     rendered.unmount()
 
     renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(11)
     expect(retryOnMount).not.toHaveBeenCalled()
     expect(queryFn).toHaveBeenCalledTimes(3)

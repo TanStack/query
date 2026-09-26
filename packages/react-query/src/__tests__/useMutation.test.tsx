@@ -1131,6 +1131,7 @@ describe('useMutation', () => {
 
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
+
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
