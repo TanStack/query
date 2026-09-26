@@ -1,4 +1,3 @@
-import { sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 export class TestControllerHost implements ReactiveControllerHost {
@@ -82,37 +81,4 @@ export class TestElementHost
       controller.hostUpdated?.()
     }
   }
-}
-
-export async function waitFor(
-  assertion: () => boolean,
-  timeoutMs = 2000,
-): Promise<void> {
-  const startedAt = Date.now()
-  while (!assertion()) {
-    if (Date.now() - startedAt > timeoutMs) {
-      throw new Error(`Timed out waiting for assertion after ${timeoutMs}ms`)
-    }
-    await sleep(10)
-  }
-}
-
-function isMissingQueryClientError(error: unknown): boolean {
-  return (
-    error instanceof Error && /No QueryClient available/.test(error.message)
-  )
-}
-
-export async function waitForMissingQueryClient(
-  read: () => unknown,
-  timeoutMs = 2000,
-): Promise<void> {
-  await waitFor(() => {
-    try {
-      read()
-      return false
-    } catch (error) {
-      return isMissingQueryClientError(error)
-    }
-  }, timeoutMs)
 }
