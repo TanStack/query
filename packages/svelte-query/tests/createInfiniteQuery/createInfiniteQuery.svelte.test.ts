@@ -122,9 +122,7 @@ describe('createInfiniteQuery', () => {
     })
 
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(states.value.every((state) => state.status === 'success')).toBe(true)
     expect(states.value[0]?.data).toEqual({ pages: [0], pageParams: [0] })
   })
@@ -149,7 +147,6 @@ describe('createInfiniteQuery', () => {
 
     expect(rendered.getByTestId('pages')).toHaveTextContent('1')
     expect(rendered.getByTestId('isError')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('pages')).toHaveTextContent('1')
     expect(rendered.getByTestId('isError')).toHaveTextContent('true')
@@ -175,7 +172,6 @@ describe('createInfiniteQuery', () => {
     })
 
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
