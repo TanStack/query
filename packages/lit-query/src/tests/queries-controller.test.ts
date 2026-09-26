@@ -99,11 +99,15 @@ class DeferredFieldsQueriesHost implements ReactiveControllerHost {
 }
 
 describe('createQueriesController', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -117,17 +121,10 @@ describe('createQueriesController', () => {
       { status: 'pending', data: undefined },
     ])
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -148,21 +145,8 @@ describe('createQueriesController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const explicitClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const providerClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    explicitQueriesClient = explicitClient
+    const providerClient = new QueryClient()
+    explicitQueriesClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
@@ -182,7 +166,7 @@ describe('createQueriesController', () => {
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
+      queryClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
         ?.state.data,
     ).toBe('alpha')
     expect(
@@ -196,14 +180,6 @@ describe('createQueriesController', () => {
   })
 
   it('should combine multiple query results', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key1 = queryKey()
     const key2 = queryKey()
     const host = new TestControllerHost()
@@ -223,7 +199,7 @@ describe('createQueriesController', () => {
         ] as const,
         combine: (results) => results.map((result) => result.data),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -234,14 +210,6 @@ describe('createQueriesController', () => {
   })
 
   it('should not request another update when stable function query options refresh during host update', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let callCount = 0
@@ -261,7 +229,7 @@ describe('createQueriesController', () => {
           },
         ] as const,
       }),
-      client,
+      queryClient,
     )
 
     try {
@@ -287,14 +255,6 @@ describe('createQueriesController', () => {
   })
 
   it('should not request an update for refetch-only state changes when data was read and result refetch is invoked', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
@@ -314,7 +274,7 @@ describe('createQueriesController', () => {
           },
         ] as const,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -343,20 +303,12 @@ describe('createQueriesController', () => {
   })
 
   it('should not re-default query options when subscribed queries emit', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
-    const originalDefaultQueryOptions = client.defaultQueryOptions
+    const originalDefaultQueryOptions = queryClient.defaultQueryOptions
     let defaultQueryOptionsCalls = 0
-    client.defaultQueryOptions = ((options) => {
+    queryClient.defaultQueryOptions = ((options) => {
       defaultQueryOptionsCalls += 1
-      return originalDefaultQueryOptions.call(client, options as never)
-    }) as typeof client.defaultQueryOptions
+      return originalDefaultQueryOptions.call(queryClient, options as never)
+    }) as typeof queryClient.defaultQueryOptions
 
     const key = queryKey()
     const host = new TestControllerHost()
@@ -377,7 +329,7 @@ describe('createQueriesController', () => {
           },
         ] as const,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -408,14 +360,6 @@ describe('createQueriesController', () => {
   })
 
   it('should refresh suppressed query results on the next accessor read when a newly read property changed', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
 
@@ -431,7 +375,7 @@ describe('createQueriesController', () => {
           },
         ] as const,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -444,7 +388,7 @@ describe('createQueriesController', () => {
 
       host.updatesRequested = 0
 
-      client.setQueryData(key, 'updated-data')
+      queryClient.setQueryData(key, 'updated-data')
 
       await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
@@ -457,14 +401,6 @@ describe('createQueriesController', () => {
   })
 
   it('should support dynamic add/remove and keep partial failure stability', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -486,6 +422,7 @@ describe('createQueriesController', () => {
                   queryKey: key2,
                   queryFn: () =>
                     sleep(10).then(() => Promise.reject(new Error('m13-fail'))),
+                  retry: false,
                 },
               ]
             : []),
@@ -505,7 +442,7 @@ describe('createQueriesController', () => {
             error: result.error instanceof Error ? result.error.message : null,
           })),
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -535,14 +472,6 @@ describe('createQueriesController', () => {
   })
 
   it('should preserve the documented result order mapping when queries are reordered', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let order: Array<'first' | 'second'> = ['first', 'second']
@@ -556,7 +485,7 @@ describe('createQueriesController', () => {
         })),
         combine: (results) => results.map((result) => result.data),
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -572,14 +501,6 @@ describe('createQueriesController', () => {
   })
 
   it('should return stable per-index results for duplicate query keys', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let callCount = 0
@@ -611,7 +532,7 @@ describe('createQueriesController', () => {
             data: result.data,
           })),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -642,17 +563,10 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.queries()).toThrow(/No QueryClient available/)
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -721,7 +635,6 @@ describe('createQueriesController', () => {
 
   it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', () => {
     const key = queryKey()
-    const client = new QueryClient()
 
     class DeferredExplicitQueriesHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -739,7 +652,7 @@ describe('createQueriesController', () => {
           })),
           combine: (results) => results.map((result) => result.status),
         }),
-        client,
+        queryClient,
       )
 
       readonly firstRead = this.queries()
@@ -768,7 +681,6 @@ describe('createQueriesController', () => {
 
   it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', () => {
     const key = queryKey()
-    const client = new QueryClient()
 
     class DeferredExplicitCombineQueriesHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -789,7 +701,7 @@ describe('createQueriesController', () => {
           combine: (results) =>
             this.ids.map((id, index) => `${id}:${results[index]?.status}`),
         },
-        client,
+        queryClient,
       )
 
       readonly firstRead = this.queries()
@@ -818,7 +730,6 @@ describe('createQueriesController', () => {
 
   it('should re-surface permanent static combine errors in the explicit-client constructor after initialization', async () => {
     const key = queryKey()
-    const client = new QueryClient()
 
     class InvalidExplicitCombineQueriesHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -840,7 +751,7 @@ describe('createQueriesController', () => {
             throw new Error('invalid combine')
           },
         },
-        client,
+        queryClient,
       )
 
       addController(controller: ReactiveController): void {
@@ -864,17 +775,10 @@ describe('createQueriesController', () => {
   })
 
   it('should not throw for a queries controller on an already-connected host with an explicit client', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const key1 = queryKey()
     const key2 = queryKey()
-    client.setQueryData(key1, 'alpha')
-    client.setQueryData(key2, 'beta')
+    queryClient.setQueryData(key1, 'alpha')
+    queryClient.setQueryData(key2, 'beta')
 
     class AlreadyConnectedHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -920,7 +824,7 @@ describe('createQueriesController', () => {
             data: result.data,
           })),
       },
-      client,
+      queryClient,
     )
 
     await Promise.resolve()

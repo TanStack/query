@@ -44,11 +44,15 @@ if (!customElements.get(contextInfiniteTagName)) {
 }
 
 describe('createInfiniteQueryController', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -65,17 +69,10 @@ describe('createInfiniteQueryController', () => {
       /No QueryClient available/,
     )
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -92,21 +89,8 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const explicitClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const providerClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    explicitInfiniteClient = explicitClient
+    const providerClient = new QueryClient()
+    explicitInfiniteClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
@@ -126,8 +110,8 @@ describe('createInfiniteQueryController', () => {
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
-        ?.state.data,
+      queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
+        .data,
     ).toEqual({ pages: [0], pageParams: [0] })
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
@@ -140,14 +124,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should support initial page, fetchNextPage, and fetchPreviousPage', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     const infinite = createInfiniteQueryController(
@@ -161,7 +137,7 @@ describe('createInfiniteQueryController', () => {
         getPreviousPageParam: (firstPage) =>
           firstPage > -1 ? firstPage - 1 : undefined,
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -183,14 +159,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let callCount = 0
@@ -208,7 +176,7 @@ describe('createInfiniteQueryController', () => {
         getNextPageParam: () => undefined,
         staleTime: Infinity,
       }),
-      client,
+      queryClient,
     )
 
     try {
@@ -234,14 +202,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
@@ -262,7 +222,7 @@ describe('createInfiniteQueryController', () => {
           }),
         getNextPageParam: () => undefined,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -290,14 +250,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
 
@@ -314,7 +266,7 @@ describe('createInfiniteQueryController', () => {
         queryFn: async () => 'unused',
         getNextPageParam: () => undefined,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -327,7 +279,7 @@ describe('createInfiniteQueryController', () => {
 
       host.updatesRequested = 0
 
-      client.setQueryData(key, {
+      queryClient.setQueryData(key, {
         pages: ['updated-page'],
         pageParams: [0],
       })
@@ -341,14 +293,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should preserve prior pages consistently when fetching the next page fails', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     const infinite = createInfiniteQueryController(
@@ -366,8 +310,9 @@ describe('createInfiniteQueryController', () => {
         },
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
+        retry: false,
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -421,15 +366,8 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const key = queryKey()
-    client.setQueryData(key, {
+    queryClient.setQueryData(key, {
       pages: [0],
       pageParams: [0],
     })
@@ -467,7 +405,7 @@ describe('createInfiniteQueryController', () => {
           lastPage < 1 ? lastPage + 1 : undefined,
         staleTime: 30_000,
       },
-      client,
+      queryClient,
     )
 
     await Promise.resolve()
@@ -479,7 +417,6 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should defer explicit-client infinite accessors until host fields are initialized', () => {
-    const client = new QueryClient()
     const key = queryKey()
 
     class DeferredExplicitInfiniteHost implements ReactiveControllerHost {
@@ -498,7 +435,7 @@ describe('createInfiniteQueryController', () => {
             lastPage < 1 ? lastPage + 1 : undefined,
           retry: false,
         }),
-        client,
+        queryClient,
       )
 
       readonly firstRead = this.infinite()
@@ -527,22 +464,19 @@ describe('createInfiniteQueryController', () => {
 })
 
 describe('options helpers integration', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should integrate queryOptions with createQueryController', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const key = queryKey()
     const host = new TestControllerHost()
 
@@ -552,7 +486,7 @@ describe('options helpers integration', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'query-ok'),
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -564,7 +498,6 @@ describe('options helpers integration', () => {
   })
 
   it('should integrate mutationOptions with createMutationController', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
@@ -572,7 +505,7 @@ describe('options helpers integration', () => {
       mutationOptions({
         mutationFn: (value: number) => sleep(10).then(() => value + 10),
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -585,13 +518,6 @@ describe('options helpers integration', () => {
   })
 
   it('should integrate infiniteQueryOptions with createInfiniteQueryController', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const key = queryKey()
     const host = new TestControllerHost()
 
@@ -604,7 +530,7 @@ describe('options helpers integration', () => {
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
       }),
-      client,
+      queryClient,
     )
 
     host.connect()

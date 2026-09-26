@@ -64,23 +64,20 @@ if (!customElements.get(consumerTagName)) {
 }
 
 describe('createQueryController', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should not request update after destroy when microtask flushes', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     const query = createQueryController(
@@ -89,7 +86,7 @@ describe('createQueryController', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'done'),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -101,13 +98,6 @@ describe('createQueryController', () => {
 
   it('should return observer count to baseline after 100 lifecycle cycles', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     for (let cycle = 0; cycle < 100; cycle += 1) {
       const host = new TestControllerHost()
@@ -117,7 +107,7 @@ describe('createQueryController', () => {
           queryKey: key,
           queryFn: () => sleep(10).then(() => cycle),
         },
-        client,
+        queryClient,
       )
 
       host.connect()
@@ -125,7 +115,7 @@ describe('createQueryController', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(query().isSuccess).toBe(true)
 
-      const cacheQuery = client.getQueryCache().find({ queryKey: key })
+      const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
       expect(cacheQuery?.getObserversCount()).toBe(1)
 
       host.disconnect()
@@ -136,13 +126,6 @@ describe('createQueryController', () => {
 
   it('should fetch and update query state', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let callCount = 0
@@ -156,7 +139,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => ({ id: 1, name: 'Ada' }))
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -171,13 +154,6 @@ describe('createQueryController', () => {
 
   it('should not request another update when stable function options refresh during host update', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let callCount = 0
@@ -192,7 +168,7 @@ describe('createQueryController', () => {
         },
         staleTime: Infinity,
       }),
-      client,
+      queryClient,
     )
 
     try {
@@ -218,14 +194,6 @@ describe('createQueryController', () => {
   })
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
@@ -241,7 +209,7 @@ describe('createQueryController', () => {
             resolveRefetch = () => resolve('stable-data')
           }),
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -269,14 +237,6 @@ describe('createQueryController', () => {
   })
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     const host = new TestControllerHost()
 
@@ -288,7 +248,7 @@ describe('createQueryController', () => {
         staleTime: Infinity,
         queryFn: async () => 'unused',
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -301,7 +261,7 @@ describe('createQueryController', () => {
 
       host.updatesRequested = 0
 
-      client.setQueryData(key, 'updated-data')
+      queryClient.setQueryData(key, 'updated-data')
 
       await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
@@ -315,13 +275,6 @@ describe('createQueryController', () => {
 
   it('should transition from pending to success with expected contract', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     const query = createQueryController(
@@ -330,7 +283,7 @@ describe('createQueryController', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'ok'),
       },
-      client,
+      queryClient,
     )
 
     expect(query().status).toBe('pending')
@@ -347,13 +300,6 @@ describe('createQueryController', () => {
 
   it('should not fetch when enabled=false and fetch after enabling', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let callCount = 0
@@ -369,7 +315,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => 'enabled-result')
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -389,14 +335,6 @@ describe('createQueryController', () => {
   })
 
   it('should not leak observers and should refetch on remount with gcTime=0', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const key = queryKey()
     let callCount = 0
 
@@ -411,7 +349,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `value-${callCount}`)
         },
       },
-      client,
+      queryClient,
     )
 
     firstHost.connect()
@@ -420,7 +358,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(firstQuery().isSuccess).toBe(true)
 
-    const firstCacheEntry = client.getQueryCache().find({ queryKey: key })
+    const firstCacheEntry = queryClient.getQueryCache().find({ queryKey: key })
     expect(firstCacheEntry?.getObserversCount()).toBe(1)
     expect(callCount).toBe(1)
 
@@ -428,7 +366,10 @@ describe('createQueryController', () => {
     firstQuery.destroy()
     // With gcTime:0, cache entry may be immediately removed after last observer unmounts.
     expect(
-      client.getQueryCache().find({ queryKey: key })?.getObserversCount() ?? 0,
+      queryClient
+        .getQueryCache()
+        .find({ queryKey: key })
+        ?.getObserversCount() ?? 0,
     ).toBe(0)
 
     const secondHost = new TestControllerHost()
@@ -442,7 +383,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `value-${callCount}`)
         },
       },
-      client,
+      queryClient,
     )
 
     secondHost.connect()
@@ -452,7 +393,7 @@ describe('createQueryController', () => {
     expect(secondQuery().isSuccess).toBe(true)
     expect(secondQuery().data).toBe('value-2')
 
-    const secondCacheEntry = client.getQueryCache().find({ queryKey: key })
+    const secondCacheEntry = queryClient.getQueryCache().find({ queryKey: key })
     expect(secondCacheEntry?.getObserversCount()).toBe(1)
     expect(callCount).toBe(2)
     expect(secondQuery().data).toBe('value-2')
@@ -460,13 +401,6 @@ describe('createQueryController', () => {
 
   it('should apply latest accessor key/options on updates and refetch', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let keyId = 1
@@ -482,7 +416,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `user-${id}`)
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -509,13 +443,6 @@ describe('createQueryController', () => {
 
   it('should not request a host update when function options resolve to an unchanged result', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let callCount = 0
@@ -530,7 +457,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => 'stable')
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -552,14 +479,6 @@ describe('createQueryController', () => {
   })
 
   it('should follow the stale-vs-fresh policy for refetchOnMount', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     let staleCalls = 0
     const staleKey = queryKey()
 
@@ -575,7 +494,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `stale-${staleCalls}`)
         },
       },
-      client,
+      queryClient,
     )
 
     staleHostA.connect()
@@ -600,7 +519,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `stale-${staleCalls}`)
         },
       },
-      client,
+      queryClient,
     )
 
     staleHostB.connect()
@@ -628,7 +547,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `fresh-${freshCalls}`)
         },
       },
-      client,
+      queryClient,
     )
 
     freshHostA.connect()
@@ -653,7 +572,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `fresh-${freshCalls}`)
         },
       },
-      client,
+      queryClient,
     )
 
     freshHostB.connect()
@@ -667,13 +586,6 @@ describe('createQueryController', () => {
 
   it('should transform data with select and surface a throwing select as an error', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let shouldThrow = false
@@ -691,7 +603,7 @@ describe('createQueryController', () => {
           return payload.value * 10
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -712,13 +624,6 @@ describe('createQueryController', () => {
 
   it('should preserve prior data during key transitions with keepPreviousData', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let keyId = 1
@@ -740,7 +645,7 @@ describe('createQueryController', () => {
         },
         placeholderData: keepPreviousData,
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -765,14 +670,6 @@ describe('createQueryController', () => {
   })
 
   it('should refetch and update result state on invalidation', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const host = new TestControllerHost()
     const key = queryKey()
     let callCount = 0
@@ -786,7 +683,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => `v${callCount}`)
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -797,7 +694,7 @@ describe('createQueryController', () => {
     expect(query().data).toBe('v1')
     expect(callCount).toBe(1)
 
-    void client.invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(10)
     expect(callCount).toBe(2)
     expect(query().data).toBe('v2')
@@ -806,13 +703,6 @@ describe('createQueryController', () => {
 
   it('should not overwrite a newer key result with a stale older response', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let keyId = 'old'
@@ -834,7 +724,7 @@ describe('createQueryController', () => {
           })
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -860,13 +750,6 @@ describe('createQueryController', () => {
 
   it('should pass an AbortSignal to queryFn and abort the prior request on key switch', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let keyId: 'old' | 'new' = 'old'
@@ -892,7 +775,7 @@ describe('createQueryController', () => {
           return sleep(10).then(() => 'new-success')
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -916,13 +799,6 @@ describe('createQueryController', () => {
 
   it('should maintain a stable final state without duplicate observers under rapid key churn', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let keyId = 0
@@ -937,7 +813,7 @@ describe('createQueryController', () => {
           return `result-${id}`
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -952,7 +828,7 @@ describe('createQueryController', () => {
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('result-20')
 
-    const latestCacheEntry = client
+    const latestCacheEntry = queryClient
       .getQueryCache()
       .find({ queryKey: [...key, 20] })
     expect(latestCacheEntry?.getObserversCount()).toBe(1)
@@ -960,13 +836,6 @@ describe('createQueryController', () => {
 
   it('should not process detached updates when disconnected while in-flight', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let resolveFetch: ((value: string) => void) | undefined
@@ -980,7 +849,7 @@ describe('createQueryController', () => {
             resolveFetch = resolve
           }),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -999,13 +868,6 @@ describe('createQueryController', () => {
 
   it('should yield a correct snapshot when reconnecting after an in-flight request settles', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let resolveFetch: ((value: string) => void) | undefined
@@ -1019,7 +881,7 @@ describe('createQueryController', () => {
             resolveFetch = resolve
           }),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -1042,13 +904,6 @@ describe('createQueryController', () => {
 
   it('should use the latest select closure after host updates', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let multiplier = 1
@@ -1060,7 +915,7 @@ describe('createQueryController', () => {
         queryFn: () => sleep(10).then(() => 2),
         select: (value: number) => value * multiplier,
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -1084,21 +939,9 @@ describe('createQueryController', () => {
   })
 
   it('should switch provider client while connected with a single active observer', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
 
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientB = new QueryClient()
 
     const provider = document.createElement(
       providerTagName,
@@ -1146,13 +989,6 @@ describe('createQueryController', () => {
 
   it('should track retry failure metadata before eventual success', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let attempts = 0
@@ -1172,7 +1008,7 @@ describe('createQueryController', () => {
           return 'success'
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -1189,14 +1025,6 @@ describe('createQueryController', () => {
   })
 
   it('should be reconnect-idempotent without duplicate subscriptions', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const host = new TestControllerHost()
     const key = queryKey()
 
@@ -1206,7 +1034,7 @@ describe('createQueryController', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => ['a', 'b']),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -1215,7 +1043,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
 
-    const cacheQuery = client.getQueryCache().find({ queryKey: key })
+    const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
     expect(cacheQuery?.state.data).toEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
@@ -1241,18 +1069,10 @@ describe('createQueryController', () => {
 
     expect(consumer.query().status).toBe('pending')
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -1270,17 +1090,10 @@ describe('createQueryController', () => {
   })
 
   it('should not spuriously throw during the handshake on the first provider-backed connection', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
 
     const consumer = document.createElement(
       consumerTagName,
@@ -1350,17 +1163,10 @@ describe('createQueryController', () => {
   })
 
   it('should clear stale provider-derived client state when reconnecting outside any provider', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
 
     const consumer = document.createElement(
       consumerTagName,
@@ -1373,7 +1179,7 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(
-      client
+      queryClient
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
         ?.getObserversCount(),
@@ -1381,7 +1187,7 @@ describe('createQueryController', () => {
 
     provider.removeChild(consumer)
     expect(
-      client
+      queryClient
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
         ?.getObserversCount() ?? 0,
@@ -1400,20 +1206,8 @@ describe('createQueryController', () => {
   })
 
   it('should rebind cleanly with later recovery when reconnecting under a different provider', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
     const providerA = document.createElement(
       providerTagName,
     ) as QueryClientProvider
@@ -1478,12 +1272,9 @@ describe('createQueryController', () => {
 
   it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: { queries: { retry: false, staleTime: 30_000 } },
-    })
     let queryFnCalls = 0
 
-    client.setQueryData(key, 'hydrated-value')
+    queryClient.setQueryData(key, 'hydrated-value')
 
     // Simulate Lit's synchronous hostConnected call on already-connected hosts.
     class AlreadyConnectedHost implements ReactiveControllerHost {
@@ -1520,7 +1311,7 @@ describe('createQueryController', () => {
         },
         staleTime: 30_000,
       },
-      client,
+      queryClient,
     )
 
     await Promise.resolve()
@@ -1542,7 +1333,6 @@ describe('createQueryController', () => {
 
   it('should defer explicit-client query accessors until host fields are initialized', () => {
     const key = queryKey()
-    const client = new QueryClient()
 
     class DeferredExplicitQueryHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -1557,7 +1347,7 @@ describe('createQueryController', () => {
           queryFn: async () => this.id,
           retry: false,
         }),
-        client,
+        queryClient,
       )
 
       readonly firstRead = this.query()

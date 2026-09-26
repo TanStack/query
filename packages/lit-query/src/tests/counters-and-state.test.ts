@@ -71,30 +71,26 @@ if (!customElements.get(contextCountersTagName)) {
 }
 
 describe('useIsFetching/useIsMutating/useMutationState', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should not request another update when stable mutation state selectors refresh during host update', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        mutations: {
-          retry: false,
-        },
-      },
-    })
-
     const host = new TestControllerHost()
     const mutationStates = useMutationState<string>(
       host,
       {
         select: (mutation) => mutation.state.status,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -118,16 +114,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   })
 
   it('should not request another update when mutation cache emits with unchanged selected state', async () => {
-    const client = new QueryClient({
-      defaultOptions: {
-        mutations: {
-          retry: false,
-        },
-      },
-    })
-
     const mutationKey = queryKey()
-    const mutation = client.getMutationCache().build(client, {
+    const mutation = queryClient.getMutationCache().build(queryClient, {
       mutationKey,
     })
 
@@ -138,7 +126,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         filters: { mutationKey },
         select: (mutation) => mutation.state.status,
       },
-      client,
+      queryClient,
     )
 
     try {
@@ -150,7 +138,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        client.getMutationCache().notify({
+        queryClient.getMutationCache().notify({
           type: 'updated',
           mutation,
           action: { type: 'pause' } as never,
@@ -175,20 +163,10 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     expect(consumer.isMutating()).toBe(0)
     expect(consumer.mutationStatuses()).toEqual([])
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-        mutations: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -216,27 +194,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const explicitClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-        mutations: {
-          retry: false,
-        },
-      },
-    })
-    const providerClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-        mutations: {
-          retry: false,
-        },
-      },
-    })
-    explicitCountersClient = explicitClient
+    const providerClient = new QueryClient()
+    explicitCountersClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
@@ -261,14 +220,14 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.isMutating()).toBe(0)
     expect(
-      explicitClient.getQueryCache().find({ queryKey: consumer.queryKey })
-        ?.state.data,
+      queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
+        .data,
     ).toBe('query-ok')
     expect(
       providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
     ).toBeUndefined()
     expect(
-      explicitClient
+      queryClient
         .getMutationCache()
         .findAll({ mutationKey: consumer.mutationKey }).length,
     ).toBeGreaterThan(0)
@@ -290,13 +249,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
   it('should track fetch/mutate counters and mutation state', async () => {
     const key = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
 
@@ -309,7 +261,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
           return 'done'
         },
       },
-      client,
+      queryClient,
     )
 
     const mutation = createMutationController(
@@ -320,17 +272,17 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
           return value + 10
         },
       },
-      client,
+      queryClient,
     )
 
-    const isFetching = useIsFetching(host, {}, client)
-    const isMutating = useIsMutating(host, {}, client)
+    const isFetching = useIsFetching(host, {}, queryClient)
+    const isMutating = useIsMutating(host, {}, queryClient)
     const mutationStatuses = useMutationState<string>(
       host,
       {
         select: (item) => item.state.status,
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -352,13 +304,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should track filters and filter reactivity in useIsFetching', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
 
     const host = new TestControllerHost()
     let activeFilter: { queryKey?: readonly string[] } = {
@@ -371,7 +316,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 'a'),
       },
-      client,
+      queryClient,
     )
 
     createQueryController(
@@ -380,11 +325,15 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         queryKey: key2,
         queryFn: () => sleep(20).then(() => 'b'),
       },
-      client,
+      queryClient,
     )
 
-    const isFetchingAll = useIsFetching(host, {}, client)
-    const isFetchingFiltered = useIsFetching(host, () => activeFilter, client)
+    const isFetchingAll = useIsFetching(host, {}, queryClient)
+    const isFetchingFiltered = useIsFetching(
+      host,
+      () => activeFilter,
+      queryClient,
+    )
 
     host.connect()
     host.update()
@@ -408,7 +357,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should track mutation filters and reactivity in useIsMutating', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
-    const client = new QueryClient()
     const host = new TestControllerHost()
     let activeFilter: { mutationKey?: readonly string[] } = {
       mutationKey: mutationKey1,
@@ -420,7 +368,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationKey: mutationKey1,
         mutationFn: () => sleep(10).then(() => 1),
       },
-      client,
+      queryClient,
     )
 
     const mutationB = createMutationController(
@@ -429,11 +377,15 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationKey: mutationKey2,
         mutationFn: () => sleep(20).then(() => 2),
       },
-      client,
+      queryClient,
     )
 
-    const isMutatingAll = useIsMutating(host, {}, client)
-    const isMutatingFiltered = useIsMutating(host, () => activeFilter, client)
+    const isMutatingAll = useIsMutating(host, {}, queryClient)
+    const isMutatingFiltered = useIsMutating(
+      host,
+      () => activeFilter,
+      queryClient,
+    )
 
     host.connect()
     host.update()
@@ -459,7 +411,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should select and filter by mutation key/status in useMutationState', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
-    const client = new QueryClient()
     const host = new TestControllerHost()
     let activeFilter: { mutationKey?: readonly string[] } = {
       mutationKey: mutationKey1,
@@ -471,7 +422,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationKey: mutationKey1,
         mutationFn: () => sleep(10).then(() => 'ok'),
       },
-      client,
+      queryClient,
     )
 
     const mutationB = createMutationController(
@@ -481,7 +432,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('state-b-failure'))),
       },
-      client,
+      queryClient,
     )
 
     const mutationStatuses = useMutationState<string>(
@@ -490,7 +441,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         filters: () => activeFilter,
         select: (item) => item.state.status,
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -515,7 +466,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
   it('should refresh useMutationState when the select closure changes on host update', async () => {
     const mutationKey = queryKey()
-    const client = new QueryClient()
     const host = new TestControllerHost()
     let label = 'before'
 
@@ -525,7 +475,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationKey,
         mutationFn: () => sleep(10).then(() => 'ok'),
       },
-      client,
+      queryClient,
     )
 
     const mutationLabels = useMutationState<string>(
@@ -536,7 +486,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         },
         select: () => label,
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -576,20 +526,10 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       /No QueryClient available/,
     )
 
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-        mutations: {
-          retry: false,
-        },
-      },
-    })
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -613,16 +553,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should not throw for read-only helpers on an already-connected host with an explicit client', async () => {
     const key = queryKey()
     const mutationKey = queryKey()
-    const client = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-        mutations: {
-          retry: false,
-        },
-      },
-    })
 
     const producerHost = new TestControllerHost()
 
@@ -633,7 +563,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         queryFn: () => sleep(10).then(() => 'query-ok'),
         retry: false,
       },
-      client,
+      queryClient,
     )
 
     const producerMutation = createMutationController(
@@ -642,17 +572,17 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         mutationKey,
         mutationFn: () => sleep(10).then(() => 'mutation-ok'),
       },
-      client,
+      queryClient,
     )
 
     producerHost.connect()
     producerHost.update()
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(client.isFetching()).toBe(1)
+    expect(queryClient.isFetching()).toBe(1)
 
     producerMutation.mutate()
-    expect(client.isMutating()).toBe(1)
+    expect(queryClient.isMutating()).toBe(1)
 
     class AlreadyConnectedHost implements ReactiveControllerHost {
       private readonly controllers = new Set<ReactiveController>()
@@ -677,15 +607,15 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     }
 
     const host = new AlreadyConnectedHost()
-    const isFetching = useIsFetching(host, {}, client)
-    const isMutating = useIsMutating(host, {}, client)
+    const isFetching = useIsFetching(host, {}, queryClient)
+    const isMutating = useIsMutating(host, {}, queryClient)
     const mutationStatuses = useMutationState<string>(
       host,
       {
         filters: { mutationKey },
         select: (mutation) => mutation.state.status,
       },
-      client,
+      queryClient,
     )
 
     await Promise.resolve()
