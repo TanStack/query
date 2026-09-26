@@ -213,9 +213,11 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
             & .tsqd-panel-transition-exit-to,
             & .tsqd-panel-transition-enter {
-              ${position() === 'top' || position() === 'bottom'
-                ? `transform: translateY(var(--tsqd-panel-height));`
-                : `transform: translateX(var(--tsqd-panel-width));`}
+              ${
+                position() === 'top' || position() === 'bottom'
+                  ? `transform: translateY(var(--tsqd-panel-height));`
+                  : `transform: translateX(var(--tsqd-panel-width));`
+              }
             }
 
             & .tsqd-button-transition-exit-active,
@@ -228,13 +230,15 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
             & .tsqd-button-transition-exit-to,
             & .tsqd-button-transition-enter {
-              transform: ${buttonPosition() === 'relative'
-                ? `none;`
-                : buttonPosition() === 'top-left'
-                  ? `translateX(-72px);`
-                  : buttonPosition() === 'top-right'
-                    ? `translateX(72px);`
-                    : `translateY(72px);`};
+              transform: ${
+                buttonPosition() === 'relative'
+                  ? `none;`
+                  : buttonPosition() === 'top-left'
+                    ? `translateX(-72px);`
+                    : buttonPosition() === 'top-right'
+                      ? `translateX(72px);`
+                      : `translateY(72px);`
+              };
               opacity: 0;
             }
           `,

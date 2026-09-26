@@ -1,10 +1,22 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { InitialDataFunction } from '@tanstack/query-core'
+
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
+
+export const exportedQueryOptionsGetter = queryOptions(() => ({
+  queryKey: ['invalid'],
+}))
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -38,6 +50,25 @@ describe('queryOptions', () => {
 
     const { data } = reactive(useQuery(options))
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+  it('should work when passed to query', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+  it('should work when passed to query with select', async () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      select: (data) => data.toString(),
+    })
+
+    const data = await new QueryClient().query(options)
+    expectTypeOf(data).toEqualTypeOf<string>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
     const key = queryKey()
@@ -132,6 +163,7 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data2 = queryClient.fetchQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
@@ -229,6 +261,18 @@ describe('queryOptions', () => {
     )
 
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
   })
 
   it('should allow accessing queryFn and other properties on the returned options object', () => {
@@ -331,5 +375,36 @@ describe('queryOptions', () => {
     })
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow computed queryFn resolving to skipToken', () => {
+    const id = ref<string | null>('1')
+
+    const options = queryOptions({
+      queryKey: computed(() => ['foo', id.value]),
+      queryFn: computed(() =>
+        id.value ? () => Promise.resolve({ id: '1' }) : skipToken,
+      ),
+    })
+
+    const { data } = reactive(useQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
+  })
+
+  it('should allow skipToken inside a whole-options getter', () => {
+    const id = ref<string | null>('1')
+
+    const options = queryOptions(() => {
+      const current = id.value
+      return {
+        queryKey: ['foo', current],
+        queryFn: current ? () => Promise.resolve({ id: current }) : skipToken,
+      }
+    })
+
+    const { data } = reactive(useQuery(options))
+
+    expectTypeOf(data).toEqualTypeOf<{ id: string } | undefined>()
   })
 })

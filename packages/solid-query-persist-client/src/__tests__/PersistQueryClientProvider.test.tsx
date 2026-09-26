@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
-import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
+import { QueryClient, noop, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createEffect, createSignal, onMount } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -63,10 +63,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -142,10 +144,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -226,10 +230,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -310,10 +316,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -388,10 +396,12 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -438,7 +448,7 @@ describe('PersistQueryClientProvider', () => {
   it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
 
-    const onErrorMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const queryClient = new QueryClient()
@@ -480,9 +490,9 @@ describe('PersistQueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('fetched')).toBeInTheDocument()
 
-    expect(onErrorMock).toHaveBeenCalledTimes(1)
-    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
-    onErrorMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenNthCalledWith(1, error)
+    consoleErrorMock.mockRestore()
   })
 
   it('should be able to persist into multiple clients', async () => {
@@ -494,10 +504,12 @@ describe('PersistQueryClientProvider', () => {
     }> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()

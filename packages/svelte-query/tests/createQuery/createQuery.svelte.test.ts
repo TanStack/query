@@ -1,16 +1,13 @@
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
+import {
+  QueryClient,
+  createQuery,
+  keepPreviousData,
+  noop,
+} from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Counter from './Counter.svelte'
@@ -48,19 +45,6 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      if (query.isPending) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<null>()
-      } else if (query.isLoadingError) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(query.data).toEqualTypeOf<string>()
-        expectTypeOf(query.error).toEqualTypeOf<Error | null>()
-      }
-
-      const promise1 = query.promise
-
       expect(query).toEqual({
         data: undefined,
         dataUpdatedAt: 0,
@@ -87,7 +71,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
@@ -117,10 +100,7 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'success',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
-
-      expect(promise1).toBe(query.promise)
     }),
   )
 
@@ -175,7 +155,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[1]).toEqual({
@@ -204,7 +183,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[2]).toEqual({
@@ -233,7 +211,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'error',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
     }),
   )
@@ -241,10 +218,12 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('prefetched'),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('prefetched'),
+      })
+      .catch(noop)
 
     const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -271,6 +250,30 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetchedAfterMount')).toHaveTextContent(
       'true',
     )
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialData: 'initial',
+          retry: false,
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -1081,10 +1084,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    const prefetchPromise = queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    const prefetchPromise = queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
 
@@ -1483,10 +1488,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1516,10 +1523,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1547,7 +1556,7 @@ describe('createQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -1566,7 +1575,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {

@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
@@ -107,7 +108,7 @@ describe('usePrefetchInfiniteQuery', () => {
         allPages.length < data.length ? allPages.length : undefined,
     }
 
-    queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
+    void queryClient.infiniteQuery({ ...queryOpts, pages: 3 }).catch(noop)
     await vi.advanceTimersByTimeAsync(30)
     queryOpts.queryFn.mockClear()
 

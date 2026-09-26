@@ -193,6 +193,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -210,7 +211,7 @@ describe('Explorer', () => {
     it('should switch the copy button to an error state when clipboard write fails', async () => {
       const writeText = vi.fn().mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
-      const consoleError = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
       queryClient.setQueryData(['data'], { name: 'Anna' })
@@ -219,6 +220,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -230,7 +232,7 @@ describe('Explorer', () => {
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
-      expect(consoleError).toHaveBeenCalledWith(
+      expect(consoleErrorMock).toHaveBeenCalledWith(
         'Failed to copy: ',
         new Error('denied'),
       )
@@ -245,6 +247,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -274,6 +277,7 @@ describe('Explorer', () => {
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -300,6 +304,7 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -318,6 +323,7 @@ describe('Explorer', () => {
         value: ['a', 'b', 'c'],
         editable: true,
         itemsDeletable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -336,6 +342,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: true,
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -354,6 +361,7 @@ describe('Explorer', () => {
         label: 'list',
         value: ['a'],
         editable: false,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -370,6 +378,7 @@ describe('Explorer', () => {
         label: 'user',
         value: { name: 'Anna' },
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -450,6 +459,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -471,6 +481,7 @@ describe('Explorer', () => {
         label: 'name',
         value: 'Anna',
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -492,6 +503,7 @@ describe('Explorer', () => {
         label: 'count',
         value: 1,
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -515,6 +527,7 @@ describe('Explorer', () => {
         label: 'flag',
         value: false,
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -532,6 +545,7 @@ describe('Explorer', () => {
         value: 'Anna',
         editable: true,
         itemsDeletable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -550,6 +564,7 @@ describe('Explorer', () => {
         value,
         defaultExpanded: ['Data'],
         editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         activeQuery: queryClient
           .getQueryCache()
           .find({ queryKey: ['data'] }) as Query,
@@ -579,6 +594,7 @@ describe('Explorer', () => {
             value,
             defaultExpanded: ['Data'],
             editable: true,
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             activeQuery: queryClient
               .getQueryCache()
               .find({ queryKey: ['data'] }) as Query,
@@ -616,6 +632,7 @@ describe('Explorer', () => {
                   defaultExpanded={['Data']}
                   editable={true}
                   activeQuery={
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                     queryClient
                       .getQueryCache()
                       .find({ queryKey: ['data'] }) as Query

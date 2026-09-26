@@ -12,7 +12,7 @@ import type {
   DevtoolsPosition,
   QueryDevtoolsProps,
   Theme,
-} from './contexts'
+} from './contexts/types'
 import type { Signal } from 'solid-js'
 
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {

@@ -7,6 +7,7 @@ import {
   QueryCache,
   QueryClient,
   QueryErrorResetBoundary,
+  experimental_streamedQuery,
   skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
@@ -210,7 +211,7 @@ describe('useSuspenseQuery', () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -269,15 +270,15 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -342,7 +343,7 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should set staleTime when having passed a function', async () => {
@@ -426,7 +427,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -491,11 +492,11 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw errors to the error boundary by default', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -532,11 +533,11 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw select errors to the error boundary by default', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -574,11 +575,11 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -638,15 +639,15 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let succeed = true
@@ -711,11 +712,11 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
@@ -760,7 +761,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should not throw background errors to the error boundary', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let succeed = true
@@ -818,7 +819,7 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('rendered data error')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should still suspense if queryClient has placeholderData config', async () => {
@@ -870,7 +871,7 @@ describe('useSuspenseQuery', () => {
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const key = queryKey()
@@ -896,10 +897,10 @@ describe('useSuspenseQuery', () => {
 
     renderWithClient(queryClient, <App />)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQuery',
     )
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should properly refresh data when refetchInterval is set', async () => {
@@ -938,7 +939,7 @@ describe('useSuspenseQuery', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -959,11 +960,11 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQuery',
     )
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -971,7 +972,7 @@ describe('useSuspenseQuery', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -992,9 +993,141 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
+  })
+
+  it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
+    const key = queryKey()
+
+    function Content() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    function Page() {
+      return (
+        <div>
+          <button onClick={() => queryClient.setQueryData(key, 'manual data')}>
+            set data
+          </button>
+          <React.Suspense fallback="loading">
+            <Content />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('set data'))
+    await act(() => vi.advanceTimersByTimeAsync(0))
+
+    expect(rendered.getByText('data: manual data')).toBeInTheDocument()
+  })
+
+  it('should release suspense when streamedQuery receives first chunk', async () => {
+    const key = queryKey()
+
+    async function* numberGenerator() {
+      await sleep(10)
+      yield 'chunk1'
+      await sleep(10)
+      yield 'chunk2'
+    }
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: experimental_streamedQuery({
+          streamFn: () => numberGenerator(),
+        }),
+      })
+      return <div>data: {data}</div>
+    }
+
+    const streamedClient = new QueryClient({
+      queryCache,
+    })
+
+    const rendered = renderWithClient(
+      streamedClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+
+    expect(rendered.getByText('data: chunk1')).toBeInTheDocument()
+  })
+
+  it('should release suspense when setQueryData is called before component mounts', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'preloaded')
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(0))
+
+    expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
+  })
+
+  it('should NOT release suspense when setQueryData is called with undefined', async () => {
+    const key = queryKey()
+
+    function Content() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10000).then(() => 'fetched'),
+      })
+      return <div>data: {data}</div>
+    }
+
+    function Page() {
+      return (
+        <div>
+          <button onClick={() => queryClient.setQueryData(key, undefined)}>
+            set undefined
+          </button>
+          <React.Suspense fallback="loading">
+            <Content />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('set undefined'))
+    await act(() => vi.advanceTimersByTimeAsync(0))
+
+    // Suspense should NOT release — setQueryData(undefined) doesn't satisfy
+    // the query.state.data !== undefined guard in fetchOptimistic
+    expect(rendered.getByText('loading')).toBeInTheDocument()
   })
 })

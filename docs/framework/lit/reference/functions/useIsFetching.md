@@ -3,13 +3,11 @@ id: useIsFetching
 title: useIsFetching
 ---
 
-# Function: useIsFetching()
-
 ```ts
 function useIsFetching(
-   host,
-   filters,
-   queryClient?): IsFetchingAccessor;
+   host: ReactiveControllerHost,
+   filters: Accessor<QueryFilters<readonly unknown[]>>,
+   queryClient?: QueryClient): IsFetchingAccessor;
 ```
 
 Defined in: [packages/lit-query/src/useIsFetching.ts:147](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L147)
@@ -32,13 +30,13 @@ subscription.
 
 ### filters
 
-[`Accessor`](../type-aliases/Accessor.md)\<`QueryFilters`\<readonly `unknown`[]\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
 Query filters, or a getter that returns query filters.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

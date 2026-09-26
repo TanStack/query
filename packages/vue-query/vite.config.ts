@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
+import vue from 'unplugin-vue/vite'
 
 import packageJson from './package.json'
 
@@ -28,7 +28,10 @@ export default defineConfig({
       include: ['src/**/*'],
       exclude: ['src/__tests__/**'],
     },
-    typecheck: { enabled: true },
+    typecheck: {
+      enabled: true,
+      checker: '../../node_modules/typescript/bin/tsc',
+    },
     onConsoleLog: function (log) {
       if (log.includes('Download the Vue Devtools extension')) {
         return false

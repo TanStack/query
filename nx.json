@@ -3,6 +3,7 @@
   "defaultBase": "main",
   "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
   "useInferencePlugins": false,
+  "analytics": false,
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [
@@ -27,6 +28,7 @@
   "targetDefaults": {
     "compile": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/dist-ts"]
     },
@@ -36,6 +38,12 @@
     },
     "test:knip": {
       "cache": true,
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["directory:packages/*"]
+        }
+      ],
       "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:sherif": {
@@ -69,11 +77,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
-      "outputs": [
-        "{projectRoot}/build",
-        "{projectRoot}/dist",
-        "{projectRoot}/dist-cjs"
-      ]
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
     },
     "test:build": {
       "cache": true,

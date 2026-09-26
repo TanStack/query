@@ -3,13 +3,13 @@ id: QueryErrorResetFunction
 title: QueryErrorResetFunction
 ---
 
-# Type Alias: QueryErrorResetFunction()
-
 ```ts
 type QueryErrorResetFunction = () => void;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:5](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L5)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:10](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L10)
+
+Resets any query errors within the boundary, so queries know they can try again.
 
 ## Returns
 

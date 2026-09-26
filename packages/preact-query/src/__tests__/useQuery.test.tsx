@@ -22,6 +22,7 @@ import {
   dehydrate,
   hydrate,
   keepPreviousData,
+  noop,
   skipToken,
   useQuery,
 } from '..'
@@ -132,7 +133,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -161,10 +161,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
@@ -224,7 +221,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -253,7 +249,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -282,20 +277,18 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
-
-    expect(states[0]!.promise).toEqual(states[1]!.promise)
-    expect(states[1]!.promise).toEqual(states[2]!.promise)
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const result = useQuery({ queryKey: key, queryFn: () => 'new data' })
@@ -1855,10 +1848,12 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(20)
 
@@ -2654,10 +2649,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -2691,10 +2688,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -2727,7 +2726,7 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -2754,11 +2753,11 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error')).toBeInTheDocument()
     expect(rendered.getByText('Error test')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -2788,7 +2787,40 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
+  })
+
+  it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const { status } = useQuery({
+        queryKey: key,
+        // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+        // literal `undefined` error crashes the framework. `0` is just an arbitrary
+        // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+        // crash) — any falsy primitive other than `null`/`undefined` would do.
+        queryFn: () => Promise.reject(0),
+        retry: false,
+        throwOnError: true,
+      })
+
+      return <h1>{status}</h1>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleErrorMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
@@ -2851,7 +2883,7 @@ describe('useQuery', () => {
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -2891,7 +2923,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('Remote Error')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
@@ -3012,10 +3044,12 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     function Page() {
       const state = useQuery({
@@ -3227,6 +3261,31 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({ data: { count: 0 } })
     // Set state
     expect(states[1]).toMatchObject({ data: { count: 1 } })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: 'initial',
+        retry: false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
   })
 
   it('should retry specified number of times', async () => {
@@ -3526,11 +3585,13 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 10,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 10,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -3559,11 +3620,13 @@ describe('useQuery', () => {
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: prefetchQueryFn,
-      staleTime: 1000,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: prefetchQueryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(0)
 
@@ -3639,10 +3702,12 @@ describe('useQuery', () => {
 
       useEffect(() => {
         async function prefetch() {
-          await queryClient.prefetchQuery({
-            queryKey: key,
-            queryFn: () => Promise.resolve('prefetched data'),
-          })
+          await queryClient
+            .query({
+              queryKey: key,
+              queryFn: () => Promise.resolve('prefetched data'),
+            })
+            .catch(noop)
           act(() => setPrefetched(true))
         }
 
@@ -5991,7 +6056,7 @@ describe('useQuery', () => {
       return <></>
     }
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn }).catch(noop)
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(0)
@@ -6376,7 +6441,7 @@ describe('useQuery', () => {
   // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
   it('should throw in case of bad arguments to enhance DevX', () => {
     // Mock console error to avoid noise when test is run
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -6391,7 +6456,7 @@ describe('useQuery', () => {
     }
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should respect skipToken and refetch when skipToken is taken away', async () => {
@@ -6439,7 +6504,7 @@ describe('useQuery', () => {
   })
 
   it('should allow enabled: true and queryFn: skipToken', () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -6465,8 +6530,8 @@ describe('useQuery', () => {
     rendered.getByText('status: pending, fetchStatus: idle')
 
     // no warnings expected about skipToken / missing queryFn
-    expect(consoleMock).toHaveBeenCalledTimes(0)
-    consoleMock.mockRestore()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
+    consoleErrorMock.mockRestore()
   })
 
   it('should return correct optimistic result when fetching after error', async () => {
@@ -6575,10 +6640,12 @@ describe('useQuery', () => {
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => Promise.resolve('server')),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.resolve('server')),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 
@@ -6619,7 +6686,7 @@ describe('useQuery', () => {
   })
 
   it('should retry failed initialPromise on the client', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -6630,11 +6697,13 @@ describe('useQuery', () => {
       },
     })
 
-    void serverQueryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () =>
-        sleep(10).then(() => Promise.reject(new Error('server error'))),
-    })
+    void serverQueryClient
+      .query({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('server error'))),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(serverQueryClient)
 
@@ -6673,12 +6742,12 @@ describe('useQuery', () => {
 
     const query = clientQueryClient.getQueryCache().find({ queryKey: key })
 
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should console.error when there is no queryFn', () => {
@@ -6739,5 +6808,172 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+  it('should retry on mount when throwOnError returns false', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => false,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not retry on mount when throwOnError function returns true', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => true,
+        retryOnMount: () => true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>,
+    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>,
+    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    // Should not retry because throwOnError returns true
+    expect(fetchCount).toBe(initialFetchCount)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should handle throwOnError function based on actual error state', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: (error) => error.message.includes('404'),
+        retryOnMount: true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const rendered1 = renderWithClient(queryClient, <Component />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
+    )
+    expect(fetchCount).toBe(1)
+
+    rendered1.unmount()
+
+    const initialFetchCount = fetchCount
+
+    const rendered2 = renderWithClient(queryClient, <Component />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
+
+    // Should retry because throwOnError returns false (500 error doesn't include '404')
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })

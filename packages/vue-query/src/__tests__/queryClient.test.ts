@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue-demi'
+import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
+import { QueryCache } from '../queryCache'
+import { MutationCache } from '../mutationCache'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { queryOptions } from '../queryOptions'
 
 vi.mock('@tanstack/query-core', async () => {
   const actual = await vi.importActual<{
@@ -41,6 +44,17 @@ describe('QueryCache', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  describe('constructor', () => {
+    it('should use the queryCache and mutationCache passed in the config', () => {
+      const queryCache = new QueryCache()
+      const mutationCache = new MutationCache()
+      const queryClient = new QueryClient({ queryCache, mutationCache })
+
+      expect(queryClient.getQueryCache()).toBe(queryCache)
+      expect(queryClient.getMutationCache()).toBe(mutationCache)
+    })
   })
 
   describe('isFetching', () => {
@@ -87,6 +101,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData({
         queryKey: queryKeyRef,
         queryFn: fn,
@@ -277,7 +292,29 @@ describe('QueryCache', () => {
 
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(refetchQueries).toHaveBeenCalled()
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, type: 'active' },
+        {},
+      )
+    })
+
+    it('should pass refetchType as type and the options to refetchQueries', async () => {
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries(
+        { queryKey: queryKeyRef, refetchType: 'all', type: 'inactive' },
+        { cancelRefetch: ref(false) },
+      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(refetchQueries).toHaveBeenCalledWith(
+        { queryKey: queryKeyUnref, refetchType: 'all', type: 'all' },
+        { cancelRefetch: false },
+      )
     })
 
     it('should call invalidateQueries immediately and not call refetchQueries', async () => {
@@ -330,6 +367,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery({
         queryKey: queryKeyRef,
       })
@@ -340,10 +378,56 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('query', () => {
+    it('should properly unwrap queryKey', () => {
+      const queryClient = new QueryClient()
+
+      queryClient.query({
+        queryKey: queryKeyRef,
+      })
+
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+        queryKey: queryKeyUnref,
+      })
+    })
+
+    it('should properly unwrap staleTime, and select', () => {
+      const queryClient = new QueryClient()
+      const staleTime = () => 1000
+      const select = (data: string) => data.length
+
+      queryClient.query({
+        queryKey: queryKeyRef,
+        staleTime: ref(staleTime),
+        select: ref(select),
+      })
+
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+        queryKey: queryKeyUnref,
+        staleTime,
+        select,
+      })
+    })
+
+    it('should accept explicitly resolved getter options and unwrap queryKey', () => {
+      const queryClient = new QueryClient()
+      const options = queryOptions(() => ({
+        queryKey: queryKeyRef,
+      }))
+
+      queryClient.query(options())
+
+      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+        queryKey: queryKeyUnref,
+      })
+    })
+  })
+
   describe('prefetchQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
 
       expect(QueryClientOrigin.prototype.prefetchQuery).toHaveBeenCalledWith({
@@ -357,6 +441,7 @@ describe('QueryCache', () => {
     it('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
         initialPageParam: 0,
@@ -380,6 +465,7 @@ describe('QueryCache', () => {
         getNextPageParam: () => 12,
       })
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery(options)
 
       expect(
@@ -393,10 +479,63 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('infiniteQuery', () => {
+    it('should properly unwrap queryKey, initialPageParam, pages, and select', () => {
+      const queryClient = new QueryClient()
+      const getNextPageParam = () => 1
+      const select = (data: { pages: Array<string> }) => data.pages.length
+
+      queryClient.infiniteQuery({
+        queryKey: queryKeyRef,
+        initialPageParam: ref(0),
+        pages: ref(2),
+        getNextPageParam: ref(getNextPageParam),
+        select: ref(select),
+      })
+
+      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+        expect.objectContaining({
+          queryKey: queryKeyUnref,
+          initialPageParam: 0,
+          pages: 2,
+          getNextPageParam,
+          select,
+        }),
+      )
+    })
+
+    it('should properly unwrap getNextPageParam when using infiniteQueryOptions', () => {
+      const queryClient = new QueryClient()
+      const getNextPageParam = () => 12
+
+      const options = infiniteQueryOptions({
+        queryKey: queryKeyRef,
+        initialPageParam: ref(0),
+        getNextPageParam: ref(getNextPageParam),
+      })
+
+      queryClient.infiniteQuery({
+        ...unref(options),
+        staleTime: 0,
+        pages: 1,
+      })
+
+      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryKey: queryKeyUnref,
+          initialPageParam: 0,
+          pages: 1,
+          getNextPageParam,
+        }),
+      )
+    })
+  })
+
   describe('prefetchInfiniteQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,

@@ -12,6 +12,15 @@ import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useQuery } from '../useQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 
+// Regression test for exported infiniteQueryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['invalid'],
+  getNextPageParam: () => 1,
+  initialPageParam: 1,
+})
+
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     assertType(
@@ -64,6 +73,56 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
+  it('should work when passed to infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+  it('should work when passed to infiniteQuery with enabled: false', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      enabled: false,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should work when passed to infiniteQuery with skipToken', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+  })
   it('should work when passed to fetchInfiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -72,6 +131,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -169,14 +229,23 @@ describe('infiniteQueryOptions', () => {
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.query(options),
+    )
+
+    // deprecated methods below to be removed next major version
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery(options),
     )
   })

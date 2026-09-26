@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
+  noop,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
@@ -87,7 +88,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.fetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -100,8 +101,8 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should let errors fall through and not refetch failed queries', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
     const queryFn = vi.fn(() => sleep(10).then(() => 'Not an error'))
 
     const queryOpts = {
@@ -132,7 +133,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
@@ -141,7 +142,7 @@ describe('usePrefetchQuery', () => {
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not create an endless loop when using inside a suspense boundary', async () => {
@@ -179,8 +180,8 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should be able to recover from errors and try fetching again', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
     const queryFn = vi.fn(() =>
       sleep(10).then(() => 'This is fine :dog: :fire:'),
     )
@@ -222,7 +223,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.prefetchQuery(queryOpts)
+    void queryClient.query(queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 
@@ -235,7 +236,7 @@ describe('usePrefetchQuery', () => {
       rendered.getByText('data: This is fine :dog: :fire:'),
     ).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {

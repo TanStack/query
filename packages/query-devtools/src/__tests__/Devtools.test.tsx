@@ -4,6 +4,7 @@ import {
   QueryObserver,
   dehydrate,
   hydrate,
+  noop,
   onlineManager,
 } from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
@@ -83,6 +84,7 @@ describe('Devtools', () => {
                 contentRect: { width: 1000, height: 500 } as DOMRectReadOnly,
               } as ResizeObserverEntry,
             ],
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             this as unknown as ResizeObserver,
           )
         })
@@ -318,7 +320,7 @@ describe('Devtools', () => {
     })
 
     it('should render a query row when a hydrated query uses a custom hash function', async () => {
-      queryClient.fetchQuery({
+      queryClient.query({
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
         queryKeyHashFn: () => 'custom-posts-hash',
@@ -581,6 +583,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })
@@ -617,6 +620,7 @@ describe('Devtools', () => {
                   contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
                 } as ResizeObserverEntry,
               ],
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
               this as unknown as ResizeObserver,
             )
           })
@@ -745,10 +749,12 @@ describe('Devtools', () => {
 
     it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
       const queryFn = vi.fn(() => Promise.resolve('original'))
-      queryClient.prefetchQuery({
-        queryKey: ['action-restore-loading'],
-        queryFn,
-      })
+      void queryClient
+        .query({
+          queryKey: ['action-restore-loading'],
+          queryFn,
+        })
+        .catch(noop)
       await vi.advanceTimersByTimeAsync(0)
       expect(queryFn).toHaveBeenCalledTimes(1)
 

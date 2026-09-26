@@ -3,13 +3,11 @@ id: useIsMutating
 title: useIsMutating
 ---
 
-# Function: useIsMutating()
-
 ```ts
 function useIsMutating(
-   host,
-   filters,
-   queryClient?): IsMutatingAccessor;
+   host: ReactiveControllerHost,
+   filters: Accessor<MutationFilters<unknown, Error, unknown, unknown>>,
+   queryClient?: QueryClient): IsMutatingAccessor;
 ```
 
 Defined in: [packages/lit-query/src/useIsMutating.ts:147](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L147)
@@ -32,13 +30,13 @@ subscription.
 
 ### filters
 
-[`Accessor`](../type-aliases/Accessor.md)\<`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
+[`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
 Mutation filters, or a getter that returns mutation filters.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

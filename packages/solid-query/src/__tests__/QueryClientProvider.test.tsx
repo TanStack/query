@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createMemo, createRoot } from 'solid-js'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
+import { useQueryClientResolver } from '../QueryClientProvider'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {
@@ -140,7 +142,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleMock = vi
+      const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -153,12 +155,12 @@ describe('QueryClientProvider', () => {
         'No QueryClient set, use QueryClientProvider to set one',
       )
 
-      consoleMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 
   it('should not throw an error if user provides custom query client', () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -169,8 +171,55 @@ describe('QueryClientProvider', () => {
     }
 
     render(() => <Page />)
-    expect(consoleMock).not.toHaveBeenCalled()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
+  })
+
+  it('creates a query client resolver that is safe to call in reactive callbacks', () => {
+    const queryClient = new QueryClient()
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    createRoot((dispose) => {
+      const client = createMemo(() => resolveClient())
+
+      expect(client()).toBe(queryClient)
+      dispose()
+    })
+  })
+
+  it('defers missing provider errors until a resolver is called', () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    expect(() => render(() => <Page />)).not.toThrow()
+
+    expect(() =>
+      createRoot((dispose) => {
+        const client = createMemo(() => resolveClient())
+        client()
+        dispose()
+      }),
+    ).toThrow('No QueryClient set, use QueryClientProvider to set one')
+
+    consoleErrorMock.mockRestore()
   })
 })

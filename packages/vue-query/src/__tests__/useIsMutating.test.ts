@@ -3,7 +3,8 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
-import type { MockedFunction } from 'vitest'
+import { useQueryClient } from '../useQueryClient'
+import { QueryClient } from '../queryClient'
 
 vi.mock('../useQueryClient')
 
@@ -40,16 +41,18 @@ describe('useIsMutating', () => {
   })
 
   it('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as MockedFunction<
-      typeof onScopeDispose
-    >
+    const onScopeDisposeMock = vi.mocked(onScopeDispose)
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
+    const key = queryKey()
+    const queryClient = useQueryClient()
     const mutation = useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationKey: key,
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation2 = useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationKey: key,
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const isMutating = useIsMutating()
 
@@ -57,13 +60,12 @@ describe('useIsMutating', () => {
 
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
-
     await vi.advanceTimersByTimeAsync(0)
-
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(2)
     expect(isMutating.value).toStrictEqual(0)
 
-    await vi.advanceTimersByTimeAsync(0)
-
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
     expect(isMutating.value).toStrictEqual(0)
 
     onScopeDisposeMock.mockReset()
@@ -110,5 +112,47 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(1)
+  })
+
+  it('should accept filters wrapped in a ref', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const mutation1 = useMutation({
+      mutationKey: key1,
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    })
+    const mutation2 = useMutation({
+      mutationKey: key2,
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    })
+    const isMutating = useIsMutating(ref({ mutationKey: key1 }))
+
+    mutation1.mutate('a')
+    mutation2.mutate('b')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating.value).toStrictEqual(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutating.value).toStrictEqual(0)
+  })
+
+  it('should use the queryClient passed as the second argument', async () => {
+    const queryClient = new QueryClient()
+    const mutation = useMutation(
+      {
+        mutationFn: (params: string) => sleep(10).then(() => params),
+      },
+      queryClient,
+    )
+    const isMutating = useIsMutating({}, queryClient)
+
+    expect(isMutating.value).toStrictEqual(0)
+
+    mutation.mutate('a')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating.value).toStrictEqual(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutating.value).toStrictEqual(0)
   })
 })

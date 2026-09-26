@@ -7,19 +7,16 @@ import {
 import {
   CancelledError,
   Query,
+  QueryCache,
   QueryClient,
   QueryObserver,
   dehydrate,
   hydrate,
+  noop,
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
-import type {
-  QueryCache,
-  QueryFunctionContext,
-  QueryKey,
-  QueryObserverResult,
-} from '..'
+import type { QueryFunctionContext, QueryKey, QueryObserverResult } from '..'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -39,21 +36,27 @@ describe('query', () => {
 
   it('should use the longest garbage collection time it has seen', async () => {
     const key = queryKey()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      gcTime: 100,
-    })
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      gcTime: 200,
-    })
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      gcTime: 10,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        gcTime: 100,
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        gcTime: 200,
+      })
+      .catch(noop)
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        gcTime: 10,
+      })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     expect(query.gcTime).toBe(200)
   })
@@ -67,7 +70,7 @@ describe('query', () => {
     let count = 0
     let result
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => {
         count++
@@ -113,7 +116,7 @@ describe('query', () => {
     let count = 0
     let result
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: () => {
         count++
@@ -160,7 +163,7 @@ describe('query', () => {
     const visibilityMock = mockVisibilityState('hidden')
     let count = 0
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: (): Promise<unknown> => {
         count++
@@ -244,7 +247,7 @@ describe('query', () => {
 
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn: ({ signal }) => sleep(100).then(() => 'data2' + String(signal)),
     })
@@ -275,7 +278,7 @@ describe('query', () => {
       >()
       .mockResolvedValue('data')
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
@@ -288,10 +291,12 @@ describe('query', () => {
   it('should continue if cancellation is not supported and signal is not consumed', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(100).then(() => 'data'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data'),
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -317,11 +322,13 @@ describe('query', () => {
   it('should not continue when last observer unsubscribed if the signal was consumed', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: ({ signal }) =>
-        sleep(100).then(() => (signal.aborted ? 'aborted' : 'data')),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: ({ signal }) =>
+          sleep(100).then(() => (signal.aborted ? 'aborted' : 'data')),
+      })
+      .catch(noop)
 
     await vi.advanceTimersByTimeAsync(10)
 
@@ -366,7 +373,7 @@ describe('query', () => {
       throw new Error()
     })
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn,
       retry: 3,
@@ -408,7 +415,7 @@ describe('query', () => {
 
     let error
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn,
       retry: 3,
@@ -441,7 +448,7 @@ describe('query', () => {
     let error
 
     queryClient
-      .fetchQuery({
+      .query({
         queryKey: key,
         queryFn,
         retry: 3,
@@ -475,10 +482,12 @@ describe('query', () => {
   it('should reset to default state when created from hydration', async () => {
     const key = queryKey()
     const client = new QueryClient()
-    await client.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('string'),
-    })
+    await client
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('string'),
+      })
+      .catch(noop)
 
     const dehydrated = dehydrate(client)
 
@@ -500,7 +509,7 @@ describe('query', () => {
 
     queryFn.mockImplementation(() => sleep(50).then(() => 'data'))
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     const query = queryCache.find({ queryKey: key })!
     await vi.advanceTimersByTimeAsync(10)
     query.cancel()
@@ -517,10 +526,12 @@ describe('query', () => {
 
   it('cancelling a resolved query should not have any effect', async () => {
     const key = queryKey()
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+      })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await vi.advanceTimersByTimeAsync(10)
@@ -531,10 +542,12 @@ describe('query', () => {
     const key = queryKey()
     const error = new Error('error')
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.reject(error),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.reject(error),
+      })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await vi.advanceTimersByTimeAsync(10)
@@ -543,25 +556,62 @@ describe('query', () => {
     expect(query.state.error).not.toBeInstanceOf(CancelledError)
   })
 
+  it('should release the retryer once its fetch has settled', async () => {
+    const key = queryKey()
+    let refetch: Promise<unknown> | undefined
+    const testCache = new QueryCache({
+      onSuccess: (_data, query) => {
+        refetch ??= query.fetch()
+      },
+    })
+    const testClient = new QueryClient({ queryCache: testCache })
+
+    const prefetch = testClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      })
+      .catch(noop)
+    const query = testCache.find({ queryKey: key })!
+    const firstPromise = query.promise
+    expect(firstPromise).toBeDefined()
+
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetch
+    expect(query.promise).toBeDefined()
+    expect(query.promise).not.toBe(firstPromise)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await refetch
+    expect(query.state.data).toBe('data')
+    expect(query.promise).toBeUndefined()
+  })
+
   it('the previous query status should be kept when refetching', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    await queryClient
+      .query({ queryKey: key, queryFn: () => 'data' })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     expect(query.state.status).toBe('success')
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.reject<string>('reject'),
-      retry: false,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.reject<string>('reject'),
+        retry: false,
+      })
+      .catch(noop)
     expect(query.state.status).toBe('error')
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => Promise.reject<unknown>('reject')),
-      retry: false,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => Promise.reject<unknown>('reject')),
+        retry: false,
+      })
+      .catch(noop)
     expect(query.state.status).toBe('error')
 
     await vi.advanceTimersByTimeAsync(10)
@@ -679,11 +729,13 @@ describe('query', () => {
 
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      meta,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        meta,
+      })
+      .catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
 
@@ -699,9 +751,11 @@ describe('query', () => {
     const key = queryKey()
     const queryFn = () => 'data'
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta })
+    await queryClient.query({ queryKey: key, queryFn, meta }).catch(noop)
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta: undefined })
+    await queryClient
+      .query({ queryKey: key, queryFn, meta: undefined })
+      .catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
 
@@ -719,7 +773,7 @@ describe('query', () => {
 
     queryClient.setQueryDefaults(key, { meta })
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await queryClient.query({ queryKey: key, queryFn }).catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
 
@@ -735,7 +789,7 @@ describe('query', () => {
 
     const key = queryKey()
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta })
+    await queryClient.query({ queryKey: key, queryFn, meta }).catch(noop)
 
     expect(queryFn).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -766,7 +820,9 @@ describe('query', () => {
   it('should not add an existing observer', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    await queryClient
+      .query({ queryKey: key, queryFn: () => 'data' })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     expect(query.getObserversCount()).toEqual(0)
 
@@ -785,7 +841,9 @@ describe('query', () => {
   it('should not try to remove an observer that does not exist', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    await queryClient
+      .query({ queryKey: key, queryFn: () => 'data' })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -799,10 +857,33 @@ describe('query', () => {
     notifySpy.mockRestore()
   })
 
+  it('should notify remaining observers when one unsubscribes during an update', () => {
+    const key = queryKey()
+    const options = { queryKey: key, enabled: false }
+    const firstObserver = new QueryObserver(queryClient, options)
+    const secondObserver = new QueryObserver(queryClient, options)
+    const secondListener = vi.fn()
+
+    let unsubscribeFirst: () => void = () => undefined
+    unsubscribeFirst = firstObserver.subscribe(() => {
+      unsubscribeFirst()
+    })
+    const unsubscribeSecond = secondObserver.subscribe(secondListener)
+
+    queryClient.setQueryData(key, 'data')
+
+    expect(secondListener).toHaveBeenCalledTimes(1)
+    expect(secondObserver.getCurrentResult().data).toBe('data')
+
+    unsubscribeSecond()
+  })
+
   it('should not change state on invalidate() if already invalidated', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    await queryClient
+      .query({ queryKey: key, queryFn: () => 'data' })
+      .catch(noop)
     const query = queryCache.find({ queryKey: key })!
 
     query.invalidate()
@@ -822,7 +903,7 @@ describe('query', () => {
 
     const updates: Array<string> = []
 
-    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const query = queryCache.find({ queryKey: key })!
 
@@ -869,8 +950,8 @@ describe('query', () => {
   })
 
   it('fetch should dispatch an error if the queryFn returns undefined', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -894,11 +975,11 @@ describe('query', () => {
       error,
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["${key}"]`,
     )
     unsubscribe()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not retry on the server', async () => {
@@ -922,17 +1003,34 @@ describe('query', () => {
     resetIsServer()
   })
 
+  it('should use an infinite garbage collection time on the server', () => {
+    const resetIsServer = setIsServer(true)
+
+    try {
+      const query = queryCache.build(queryClient, {
+        queryKey: queryKey(),
+        queryFn: () => 'data',
+      })
+
+      expect(query.gcTime).toBe(Infinity)
+    } finally {
+      resetIsServer()
+    }
+  })
+
   it('constructor should call initialDataUpdatedAt if defined as a function', async () => {
     const key = queryKey()
 
     const initialDataUpdatedAtSpy = vi.fn()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      initialData: 'initial',
-      initialDataUpdatedAt: initialDataUpdatedAtSpy,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        initialData: 'initial',
+        initialDataUpdatedAt: initialDataUpdatedAtSpy,
+      })
+      .catch(noop)
 
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
   })
@@ -940,13 +1038,15 @@ describe('query', () => {
   it('should work with initialDataUpdatedAt set to zero', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      staleTime: Infinity,
-      initialData: 'initial',
-      initialDataUpdatedAt: 0,
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        staleTime: Infinity,
+        initialData: 'initial',
+        initialDataUpdatedAt: 0,
+      })
+      .catch(noop)
 
     expect(queryCache.find({ queryKey: key })?.state).toMatchObject({
       data: 'initial',
@@ -1049,7 +1149,7 @@ describe('query', () => {
       .fn()
       .mockImplementation(() => sleep(100).then(() => 'data' + x))
 
-    const promise = queryClient.fetchQuery({
+    const promise = queryClient.query({
       queryKey: key,
       queryFn,
     })
@@ -1070,9 +1170,9 @@ describe('query', () => {
   })
 
   it('should have an error log when queryFn data is not serializable', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
+    const consoleErrorMock = vi.spyOn(console, 'error')
 
-    consoleMock.mockImplementation(() => undefined)
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const key = queryKey()
 
@@ -1090,11 +1190,13 @@ describe('query', () => {
 
     queryFn.mockImplementation(() => sleep(10).then(() => data))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn,
-      initialData,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn,
+        initialData,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const query = queryCache.find({ queryKey: key })!
@@ -1106,13 +1208,13 @@ describe('query', () => {
       'Maximum call stack size exceeded',
     )
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       expect.stringContaining(
         'Structural sharing requires data to be JSON serializable',
       ),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should have an error status when setData has any error inside', async () => {
@@ -1122,13 +1224,15 @@ describe('query', () => {
       .fn<() => Promise<string>>()
       .mockImplementation(() => sleep(10).then(() => 'data'))
 
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn,
-      structuralSharing: () => {
-        throw Error('Any error')
-      },
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn,
+        structuralSharing: () => {
+          throw Error('Any error')
+        },
+      })
+      .catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
 
@@ -1140,11 +1244,13 @@ describe('query', () => {
   it('should use persister if provided', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'data',
-      persister: () => Promise.resolve('persisted data'),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'data',
+        persister: () => Promise.resolve('persisted data'),
+      })
+      .catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
     expect(query.state.data).toBe('persisted data')
@@ -1173,19 +1279,21 @@ describe('query', () => {
   })
 
   it('should log error when queryKey is not an array', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
+    const consoleErrorMock = vi.spyOn(console, 'error')
     const key: unknown = 'string-key'
 
-    await queryClient.prefetchQuery({
-      queryKey: key as QueryKey,
-      queryFn: () => 'data',
-    })
+    await queryClient
+      .query({
+        queryKey: key as QueryKey,
+        queryFn: () => 'data',
+      })
+      .catch(noop)
 
-    expect(consoleMock).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should call initialData function when it is a function', () => {
@@ -1210,11 +1318,13 @@ describe('query', () => {
     const key = queryKey()
     const queryFn = vi.fn(() => sleep(100).then(() => 'data'))
 
-    const promise = queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn,
-      staleTime: 1000,
-    })
+    const promise = queryClient
+      .query({
+        queryKey: key,
+        queryFn,
+        staleTime: 1000,
+      })
+      .catch(noop)
 
     vi.advanceTimersByTime(50)
 
@@ -1321,10 +1431,12 @@ describe('query', () => {
     const queryFn = vi.fn().mockImplementation(() => 'fetched-data')
 
     // First prefetch the query (creates query without data)
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn,
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn,
+      })
+      .catch(noop)
 
     const query = queryCache.find({ queryKey: key })!
     expect(query.state.data).toBeUndefined()

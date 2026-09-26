@@ -73,6 +73,7 @@ describe('useQueries with persist and memoized combine', () => {
         queries: [1, 2, 3].map((id) => ({
           queryHash: `["post",${id}]`,
           queryKey: ['post', id],
+          dehydratedAt: Date.now(),
           state: {
             data: id,
             dataUpdateCount: 1,

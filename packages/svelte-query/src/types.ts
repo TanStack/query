@@ -1,6 +1,7 @@
 import type { Snippet } from 'svelte'
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -70,6 +71,12 @@ export type CreateInfiniteQueryResult<
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
 
+/** Result from createInfiniteQuery with initialData */
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
+
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
@@ -136,12 +143,25 @@ export type CreateMutationResult<
   TOnMutateResult = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
 
+export type MutationTypeFromResult<TResult> = [TResult] extends [
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
+]
+  ? Mutation<TData, TError, TVariables, TOnMutateResult>
+  : Mutation
+
 /** Options for useMutationState */
-export type MutationStateOptions<TResult = MutationState> = {
+export type MutationStateOptions<
+  TResult = MutationState,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
+> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: TMutation) => TResult
 }
 
 export type QueryClientProviderProps = {

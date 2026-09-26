@@ -10,7 +10,6 @@ yarn.lock
 build
 coverage
 dist
-dist-cjs
 dist-ts
 
 # misc
@@ -42,10 +41,12 @@ stats.html
 .cache
 .idea
 .nx/cache
+.nx/migrate-runs
+.nx/polygraph
+.nx/self-healing
 .nx/workspace-data
 .pnpm-store
 .svelte-kit
-.tsup
 .vinxi
 temp
 

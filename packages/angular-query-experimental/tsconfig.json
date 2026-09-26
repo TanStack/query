@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
+    "experimentalDecorators": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
@@ -22,5 +23,5 @@
     "*.config.js",
     "package.json"
   ],
-  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
+  "references": [{ "path": "../query-devtools" }]
 }

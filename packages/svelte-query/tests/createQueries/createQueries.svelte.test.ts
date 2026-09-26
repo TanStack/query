@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
+import { promiseWithResolvers, ref, withEffectRoot } from '../utils.svelte.js'
 import IsRestoring from './IsRestoring.svelte'
 import type { CreateQueryResult } from '../../src/index.js'
 
@@ -105,6 +105,39 @@ describe('createQueries', () => {
       // Only one render for data update, no render for isFetching transition
       expect(results.length).toBe(3)
       expect(results[2]).toMatchObject([{ data: 2 }])
+    }),
+  )
+
+  it(
+    'should track queries added to an initially empty array',
+    withEffectRoot(async () => {
+      const key1 = queryKey()
+      const queries = ref<
+        Array<{ queryKey: Array<string>; queryFn: () => Promise<string> }>
+      >([])
+      const results: Array<Array<CreateQueryResult>> = []
+
+      const result = createQueries(
+        () => ({ queries: queries.value }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        results.push(result.map((res) => ({ ...res })))
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results).toMatchObject([[]])
+
+      queries.value = [
+        { queryKey: key1, queryFn: () => sleep(10).then(() => 'data1') },
+      ]
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(result[0]?.data).toBe('data1')
+      expect(results.at(-1)).toMatchObject([
+        { status: 'success', data: 'data1' },
+      ])
     }),
   )
 

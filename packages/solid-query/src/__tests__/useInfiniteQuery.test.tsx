@@ -109,7 +109,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
-      promise: expect.any(Promise),
     })
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
@@ -145,7 +144,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
-      promise: expect.any(Promise),
     })
   })
 
@@ -1350,6 +1348,47 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
+    })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
+      []
+
+    function Page() {
+      const state = useInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialData: { pages: [1], pageParams: [1] },
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+        initialPageParam: 0,
+        retry: false,
+      }))
+
+      createRenderEffect(() => {
+        states.push({
+          data: JSON.parse(JSON.stringify(state.data)),
+          isError: state.isError,
+        })
+      })
+
+      return null
+    }
+
+    renderWithClient(queryClient, () => <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1] },
+      isError: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [1] },
+      isError: true,
     })
   })
 
