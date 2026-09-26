@@ -784,7 +784,9 @@ describe('createQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('set')
+
     queryClient.refetchQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('fetched')
   })
@@ -810,6 +812,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
     queryClient.invalidateQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
