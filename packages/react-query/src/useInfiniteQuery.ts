@@ -22,7 +22,7 @@ import type {
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set.
+ * This overload is selected when `initialData` is known to be defined.
  *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
