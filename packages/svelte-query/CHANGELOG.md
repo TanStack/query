@@ -1,5 +1,13 @@
 # @tanstack/svelte-query
 
+## 6.2.5
+
+### Patch Changes
+
+- [#11592](https://github.com/TanStack/query/pull/11592) [`d038065`](https://github.com/TanStack/query/commit/d03806572aea427e34acc4cf53779942962874cb) - fix(svelte-query/{createQuery,queryOptions}): correct the overload selected for 'initialData'
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
 ## 6.2.4
 
 ## 6.2.3
