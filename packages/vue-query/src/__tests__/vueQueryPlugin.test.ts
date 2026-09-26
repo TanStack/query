@@ -57,7 +57,6 @@ describe('VueQueryPlugin', () => {
       const setupDevtoolsMock = vi.mocked(setupDevtools)
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
-
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
@@ -125,7 +124,6 @@ describe('VueQueryPlugin', () => {
       })
 
       appMock.unmount()
-
       expect(appMock.unmount).not.toEqual(originalUnmount)
       expect(customClient.unmount).toHaveBeenCalledTimes(1)
       expect(originalUnmount).toHaveBeenCalledTimes(1)
@@ -141,7 +139,6 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
       appMock._unmount()
-
       expect(appMock.unmount).toEqual(originalUnmount)
       expect(customClient.unmount).toHaveBeenCalledTimes(1)
     })
@@ -162,7 +159,6 @@ describe('VueQueryPlugin', () => {
     itIf(isVue3)('should provide a client with default clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
-
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT,
         expect.any(QueryClient),
@@ -185,7 +181,6 @@ describe('VueQueryPlugin', () => {
     itIf(isVue3)('should provide a client with customized clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
-
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT + ':CUSTOM',
         expect.any(QueryClient),
@@ -211,7 +206,6 @@ describe('VueQueryPlugin', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
-
       expect(customClient.mount).toHaveBeenCalled()
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT,
@@ -289,11 +283,9 @@ describe('VueQueryPlugin', () => {
           }),
         ],
       })
-
       expect(customClient.isRestoring?.value).toBe(true)
 
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
     })
 
@@ -307,7 +299,6 @@ describe('VueQueryPlugin', () => {
         clientPersister: () => [vi.fn(), sleep(10)],
         clientPersisterOnSuccess,
       })
-
       expect(clientPersisterOnSuccess).not.toHaveBeenCalled()
 
       await vi.advanceTimersByTimeAsync(10)
@@ -324,7 +315,6 @@ describe('VueQueryPlugin', () => {
         queryClient: customClient,
         clientPersister: () => [persisterUnmount, sleep(10)],
       })
-
       expect(persisterUnmount).not.toHaveBeenCalled()
 
       appMock._unmount()
@@ -373,7 +363,6 @@ describe('VueQueryPlugin', () => {
       expect(queryFn).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
       expect(queryFn).toHaveBeenCalledTimes(0)
@@ -441,7 +430,6 @@ describe('VueQueryPlugin', () => {
       expect(queryFn).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
       expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
