@@ -34,11 +34,15 @@ if (!customElements.get(contextMutationTagName)) {
 }
 
 describe('createMutationController', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -55,11 +59,10 @@ describe('createMutationController', () => {
       /No QueryClient available/,
     )
 
-    const client = new QueryClient()
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -77,9 +80,8 @@ describe('createMutationController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const explicitClient = new QueryClient()
     const providerClient = new QueryClient()
-    explicitMutationClient = explicitClient
+    explicitMutationClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
@@ -100,7 +102,7 @@ describe('createMutationController', () => {
     await expect(mutatePromise).resolves.toBe(3)
 
     expect(
-      explicitClient
+      queryClient
         .getMutationCache()
         .findAll({ mutationKey: consumer.mutationKey }).length,
     ).toBeGreaterThan(0)
@@ -117,7 +119,6 @@ describe('createMutationController', () => {
   })
 
   it('should support mutate and mutateAsync paths', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
@@ -125,7 +126,7 @@ describe('createMutationController', () => {
       {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -144,7 +145,6 @@ describe('createMutationController', () => {
   })
 
   it('should cover idle/pending/success/error mutation state transitions', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
@@ -158,7 +158,7 @@ describe('createMutationController', () => {
           return value + 1
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -185,7 +185,6 @@ describe('createMutationController', () => {
   })
 
   it('should reset mutation state back to the idle baseline', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
@@ -194,7 +193,7 @@ describe('createMutationController', () => {
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('reset-target'))),
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -216,7 +215,6 @@ describe('createMutationController', () => {
   })
 
   it('should not throw from mutate while mutateAsync rejects on error', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
 
     const mutation = createMutationController(
@@ -231,7 +229,7 @@ describe('createMutationController', () => {
           return value + 1
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -249,7 +247,6 @@ describe('createMutationController', () => {
   })
 
   it('should call mutation callbacks in a deterministic order and count', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
     const callbackEvents: string[] = []
 
@@ -273,7 +270,7 @@ describe('createMutationController', () => {
           callbackEvents.push(`settled:${value}`)
         },
       },
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -299,7 +296,6 @@ describe('createMutationController', () => {
   })
 
   it('should use the latest closures for refreshed mutation callbacks', async () => {
-    const client = new QueryClient()
     const host = new TestControllerHost()
     const callbackEvents: string[] = []
     let version = 'v1'
@@ -324,7 +320,7 @@ describe('createMutationController', () => {
           callbackEvents.push(`settled:${version}`)
         },
       }),
-      client,
+      queryClient,
     )
 
     host.connect()
@@ -387,11 +383,10 @@ describe('createMutationController', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
 
-    const client = new QueryClient()
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
@@ -411,7 +406,6 @@ describe('createMutationController', () => {
   it('should not throw for a mutation controller on an already-connected host with an explicit client', async () => {
     // Regression test for SSR hydration scenario where controller is created
     // during willUpdate on an already-connected host.
-    const client = new QueryClient()
 
     // Create a host that simulates Lit's behavior: addController calls
     // hostConnected immediately if the host is already connected
@@ -448,7 +442,7 @@ describe('createMutationController', () => {
         mutationKey: queryKey(),
         mutationFn: (value: number) => sleep(10).then(() => value * 2),
       },
-      client,
+      queryClient,
     )
 
     // Wait for the deferred onConnected to complete
@@ -467,7 +461,6 @@ describe('createMutationController', () => {
   })
 
   it('should defer explicit-client mutation accessors until host fields are initialized', () => {
-    const client = new QueryClient()
     const key = queryKey()
 
     class DeferredExplicitMutationHost implements ReactiveControllerHost {
@@ -482,7 +475,7 @@ describe('createMutationController', () => {
           mutationKey: [...key, this.id],
           mutationFn: async (value: number) => value + this.offset,
         }),
-        client,
+        queryClient,
       )
 
       readonly firstRead = this.mutation()

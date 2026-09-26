@@ -176,20 +176,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should switch queries controller to new provider client while connected', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
 
     const provider = document.createElement(
       providerTagName,
@@ -238,20 +226,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should switch infinite query controller to new provider client while connected', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
 
     const provider = document.createElement(
       providerTagName,
@@ -356,20 +332,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
 
     const providerA = document.createElement(
       providerTagName,
@@ -428,20 +392,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
-    const clientA = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
-    const clientB = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    })
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
 
     const providerA = document.createElement(
       providerTagName,

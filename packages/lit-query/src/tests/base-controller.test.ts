@@ -80,20 +80,23 @@ if (!customElements.get(hostTagName)) {
 }
 
 describe('BaseController', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should defer provider resolution on already-connected hosts until after onConnected', async () => {
-    const client = new QueryClient()
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
 
     const host = document.createElement(
       hostTagName,

@@ -31,24 +31,27 @@ if (!customElements.get(consumerTagName)) {
 }
 
 describe('QueryClientProvider/context', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should register and unregister the default query client for public helpers', async () => {
-    const client = new QueryClient()
     const provider = document.createElement(tagName) as QueryClientProvider
-    provider.client = client
+    provider.client = queryClient
 
     document.body.append(provider)
     await provider.updateComplete
 
-    expect(useQueryClient()).toBe(client)
-    expect(resolveQueryClient()).toBe(client)
+    expect(useQueryClient()).toBe(queryClient)
+    expect(resolveQueryClient()).toBe(queryClient)
 
     provider.remove()
     await Promise.resolve()
@@ -56,27 +59,25 @@ describe('QueryClientProvider/context', () => {
   })
 
   it('should prefer an explicit client in resolveQueryClient', () => {
-    const explicit = new QueryClient()
-    expect(resolveQueryClient(explicit)).toBe(explicit)
+    expect(resolveQueryClient(queryClient)).toBe(queryClient)
   })
 
   it('should keep the default client registered until the last provider using it disconnects', async () => {
-    const client = new QueryClient()
     const providerA = document.createElement(tagName) as QueryClientProvider
     const providerB = document.createElement(tagName) as QueryClientProvider
-    providerA.client = client
-    providerB.client = client
+    providerA.client = queryClient
+    providerB.client = queryClient
 
     document.body.append(providerA)
     document.body.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
 
-    expect(useQueryClient()).toBe(client)
+    expect(useQueryClient()).toBe(queryClient)
 
     providerB.remove()
     await Promise.resolve()
-    expect(useQueryClient()).toBe(client)
+    expect(useQueryClient()).toBe(queryClient)
 
     providerA.remove()
     await Promise.resolve()
@@ -168,15 +169,14 @@ describe('QueryClientProvider/context', () => {
   })
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
-    const client = new QueryClient()
-    const mount = vi.spyOn(client, 'mount')
-    const unmount = vi.spyOn(client, 'unmount')
+    const mount = vi.spyOn(queryClient, 'mount')
+    const unmount = vi.spyOn(queryClient, 'unmount')
 
     const provider = document.createElement(tagName) as QueryClientProvider
     const consumer = document.createElement(
       consumerTagName,
     ) as ProviderContextConsumerElement
-    provider.client = client
+    provider.client = queryClient
     provider.append(consumer)
 
     document.body.append(provider)
