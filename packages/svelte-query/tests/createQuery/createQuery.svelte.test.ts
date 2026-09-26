@@ -872,7 +872,7 @@ describe('createQuery', () => {
     queryClient.invalidateQueries({ queryKey: key })
 
     // Wait long enough for the invalidation and potential refetch
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(100)
 
     // Disabled query does not fetch on invalidation
     expect(queryFn).not.toHaveBeenCalled()
