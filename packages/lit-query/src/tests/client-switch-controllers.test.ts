@@ -1,12 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
-import { waitFor } from './testHost.js'
 
 const providerTagName = 'test-query-client-provider-switch'
 if (!customElements.get(providerTagName)) {
@@ -47,14 +46,17 @@ class BaseControllerHostElement
   }
 }
 
+const switchMutationKey = queryKey()
+
 class MutationSwitchHostElement extends BaseControllerHostElement {
   mutationCalls = 0
-  readonly mutationKey = ['switch-mutation'] as const
+  readonly mutationKey = switchMutationKey
 
   readonly mutation = createMutationController(this, () => ({
     mutationKey: this.mutationKey,
     mutationFn: async (value: number) => {
       this.mutationCalls += 1
+      await sleep(10)
       return value + 1
     },
   }))
@@ -65,17 +67,19 @@ if (!customElements.get(mutationHostTagName)) {
   customElements.define(mutationHostTagName, MutationSwitchHostElement)
 }
 
+const switchQueriesKey = queryKey()
+
 class QueriesSwitchHostElement extends BaseControllerHostElement {
   queryCalls = 0
-  readonly queryKey = ['switch-queries'] as const
+  readonly queryKey = switchQueriesKey
 
   readonly queries = createQueriesController(this, () => ({
     queries: [
       {
         queryKey: this.queryKey,
-        queryFn: async () => {
+        queryFn: () => {
           this.queryCalls += 1
-          return `q-${this.queryCalls}`
+          return sleep(10).then(() => `q-${this.queryCalls}`)
         },
         retry: false,
       },
@@ -89,16 +93,18 @@ if (!customElements.get(queriesHostTagName)) {
   customElements.define(queriesHostTagName, QueriesSwitchHostElement)
 }
 
+const switchInfiniteKey = queryKey()
+
 class InfiniteSwitchHostElement extends BaseControllerHostElement {
   pageCalls = 0
-  readonly queryKey = ['switch-infinite'] as const
+  readonly queryKey = switchInfiniteKey
 
   readonly infinite = createInfiniteQueryController(this, () => ({
     queryKey: this.queryKey,
     initialPageParam: 0,
-    queryFn: async ({ pageParam }) => {
+    queryFn: ({ pageParam }) => {
       this.pageCalls += 1
-      return Number(pageParam)
+      return sleep(10).then(() => Number(pageParam))
     },
     getNextPageParam: (lastPage: number) =>
       lastPage < 1 ? lastPage + 1 : undefined,
@@ -112,7 +118,15 @@ if (!customElements.get(infiniteHostTagName)) {
 }
 
 describe('LQ-003 client-switch coverage across controllers', () => {
-  it('switches mutation controller to new provider client while connected', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should switch mutation controller to new provider client while connected', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -130,7 +144,9 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
+    const firstMutation = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(firstMutation).resolves.toBe(2)
 
     const countAAfterFirst = clientA
       .getMutationCache()
@@ -140,7 +156,9 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     provider.client = clientB
     await provider.updateComplete
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
+    const secondMutation = consumer.mutation.mutateAsync(2)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(secondMutation).resolves.toBe(3)
 
     const countAAfterSecond = clientA
       .getMutationCache()
@@ -157,7 +175,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await Promise.resolve()
   })
 
-  it('switches queries controller to new provider client while connected', async () => {
+  it('should switch queries controller to new provider client while connected', async () => {
     const clientA = new QueryClient({
       defaultOptions: {
         queries: {
@@ -186,7 +204,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     provider.append(consumer)
 
     await Promise.resolve()
-    await waitFor(() => typeof consumer.queries()[0] === 'string')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-1')
 
     const cacheAEntryBeforeSwitch = clientA
       .getQueryCache()
@@ -195,12 +214,13 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     provider.client = clientB
     await provider.updateComplete
-    await waitFor(() => {
-      const cacheBEntry = clientB
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      clientB
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-      return Boolean(cacheBEntry && cacheBEntry.getObserversCount() === 1)
-    })
+        ?.getObserversCount(),
+    ).toBe(1)
 
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
@@ -208,14 +228,14 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
 
     void clientB.invalidateQueries({ queryKey: consumer.queryKey })
-    await waitFor(() => consumer.queryCalls >= 2)
+    expect(consumer.queryCalls).toBe(3)
 
     consumer.queries.destroy()
     provider.remove()
     await Promise.resolve()
   })
 
-  it('switches infinite query controller to new provider client while connected', async () => {
+  it('should switch infinite query controller to new provider client while connected', async () => {
     const clientA = new QueryClient({
       defaultOptions: {
         queries: {
@@ -244,7 +264,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     provider.append(consumer)
 
     await Promise.resolve()
-    await waitFor(() => consumer.infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
 
     const cacheAEntryBeforeSwitch = clientA
@@ -254,27 +275,24 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     provider.client = clientB
     await provider.updateComplete
-    await waitFor(() => {
-      const cacheBEntry = clientB
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      clientB
         .getQueryCache()
         .find({ queryKey: consumer.queryKey })
-      return Boolean(cacheBEntry && cacheBEntry.getObserversCount() === 1)
-    })
-    await waitFor(
-      () =>
-        consumer.infinite().isSuccess &&
-        (consumer.infinite().data?.pages.length ?? 0) >= 1,
-      4000,
-    )
-    await waitFor(() => consumer.infinite().hasNextPage === true, 4000)
+        ?.getObserversCount(),
+    ).toBe(1)
+    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().hasNextPage).toBe(true)
 
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
     expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
 
-    await consumer.infinite.fetchNextPage()
-    await waitFor(() => consumer.infinite().data?.pages.length === 2, 4000)
+    void consumer.infinite.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().data?.pages).toEqual([0, 1])
 
     consumer.infinite.destroy()
@@ -282,7 +300,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await Promise.resolve()
   })
 
-  it('reparents mutation controller under a different provider and binds the new nearest client', async () => {
+  it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -305,10 +323,11 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
+    const firstMutation = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(firstMutation).resolves.toBe(2)
 
     consumer.remove()
-    await sleep(0)
     providerA.remove()
 
     providerB.append(consumer)
@@ -317,7 +336,9 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-    await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
+    const secondMutation = consumer.mutation.mutateAsync(2)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(secondMutation).resolves.toBe(3)
     expect(
       clientA.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
         .length,
@@ -332,7 +353,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await Promise.resolve()
   })
 
-  it('reparents queries controller under a different provider without cross-tree leakage', async () => {
+  it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
     const clientA = new QueryClient({
       defaultOptions: {
         queries: {
@@ -365,26 +386,26 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     document.body.append(providerA)
     await providerA.updateComplete
 
-    await waitFor(() => typeof consumer.queries()[0] === 'string')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-1')
 
     consumer.remove()
-    await waitFor(
-      () =>
-        (clientA
-          .getQueryCache()
-          .find({ queryKey: consumer.queryKey })
-          ?.getObserversCount() ?? 0) === 0,
-    )
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+
     providerA.remove()
 
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
 
-    await waitFor(
-      () =>
-        typeof consumer.queries()[0] === 'string' && consumer.queryCalls >= 2,
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-2')
+    expect(consumer.queryCalls).toBe(2)
     expect(
       clientA
         .getQueryCache()
@@ -404,7 +425,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await Promise.resolve()
   })
 
-  it('reparents infinite query controller under a different provider and binds the new nearest client', async () => {
+  it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
     const clientA = new QueryClient({
       defaultOptions: {
         queries: {
@@ -437,28 +458,27 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     document.body.append(providerA)
     await providerA.updateComplete
 
-    await waitFor(() => consumer.infinite().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
 
     consumer.remove()
-    await waitFor(
-      () =>
-        (clientA
-          .getQueryCache()
-          .find({ queryKey: consumer.queryKey })
-          ?.getObserversCount() ?? 0) === 0,
-    )
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+
     providerA.remove()
 
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
 
-    await waitFor(
-      () =>
-        consumer.infinite().isSuccess &&
-        (consumer.infinite().data?.pages.length ?? 0) >= 1 &&
-        consumer.pageCalls >= 2,
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.pageCalls).toBe(2)
     expect(
       clientA
         .getQueryCache()
