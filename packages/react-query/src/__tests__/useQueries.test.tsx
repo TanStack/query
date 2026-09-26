@@ -129,7 +129,6 @@ describe('useQueries', () => {
     expect(results[1]).toMatchObject([{ data: 1 }])
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
@@ -424,7 +423,6 @@ describe('useQueries', () => {
     expect(resultChanged).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
     // there should be no further effect calls because the returned object is structurally shared
@@ -563,7 +561,6 @@ describe('useQueries', () => {
     count++
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(51)
     expect(
       rendered.getByText('data: true first result 1,second result 1'),
@@ -580,7 +577,6 @@ describe('useQueries', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
@@ -622,7 +618,6 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('Loading Status: Loading...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument()
   })
@@ -666,7 +661,6 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: 0 result')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: 1 result')).toBeInTheDocument()
   })
@@ -981,7 +975,6 @@ describe('useQueries', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /update/i }))
-
     await vi.advanceTimersByTimeAsync(21)
     expect(
       rendered.getByText(
@@ -1049,18 +1042,14 @@ describe('useQueries', () => {
     expect(spy).toHaveBeenCalledTimes(3)
 
     fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('unrelated: 1')).toBeInTheDocument()
 
     // combine should NOT re-run for unrelated re-render with stable reference
     expect(spy).toHaveBeenCalledTimes(3)
 
     fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('unrelated: 2')).toBeInTheDocument()
 
     // still no extra calls to combine
@@ -1126,7 +1115,6 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
     await vi.advanceTimersByTimeAsync(100)
-
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
 
@@ -1134,7 +1122,6 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
     await vi.advanceTimersByTimeAsync(100)
-
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
   })
@@ -1177,13 +1164,11 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('n').textContent).toBe('1')
     expect(rendered.getByTestId('length').textContent).toBe('1')
 
     fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('n').textContent).toBe('2')
     expect(rendered.getByTestId('length').textContent).toBe('2')
 
@@ -1226,7 +1211,6 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1235,9 +1219,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1282,7 +1264,6 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1291,9 +1272,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1302,9 +1281,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
