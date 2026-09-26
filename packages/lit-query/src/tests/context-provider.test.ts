@@ -1,5 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { createQueryController } from '../createQueryController.js'
 import {
   getDefaultQueryClient,
@@ -7,21 +8,19 @@ import {
   useQueryClient,
 } from '../index.js'
 import { QueryClientProvider } from '../QueryClientProvider.js'
-import {
-  TestElementHost,
-  waitFor,
-  waitForMissingQueryClient,
-} from './testHost.js'
+import { TestElementHost } from './testHost.js'
 
 const tagName = 'test-query-client-provider'
 if (!customElements.get(tagName)) {
   customElements.define(tagName, QueryClientProvider)
 }
 
+const providerContextConsumerKey = queryKey()
+
 class ProviderContextConsumerElement extends TestElementHost {
   readonly query = createQueryController(this, {
-    queryKey: ['provider-context-consumer'] as const,
-    queryFn: async () => 'ok',
+    queryKey: providerContextConsumerKey,
+    queryFn: () => sleep(10).then(() => 'ok'),
     retry: false,
   })
 }
@@ -32,7 +31,15 @@ if (!customElements.get(consumerTagName)) {
 }
 
 describe('QueryClientProvider/context', () => {
-  it('registers and unregisters the default query client for public helpers', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should register and unregister the default query client for public helpers', async () => {
     const client = new QueryClient()
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = client
@@ -48,12 +55,12 @@ describe('QueryClientProvider/context', () => {
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
-  it('prefers an explicit client in resolveQueryClient', () => {
+  it('should prefer an explicit client in resolveQueryClient', () => {
     const explicit = new QueryClient()
     expect(resolveQueryClient(explicit)).toBe(explicit)
   })
 
-  it('keeps the default client registered until the last provider using it disconnects', async () => {
+  it('should keep the default client registered until the last provider using it disconnects', async () => {
     const client = new QueryClient()
     const providerA = document.createElement(tagName) as QueryClientProvider
     const providerB = document.createElement(tagName) as QueryClientProvider
@@ -76,7 +83,7 @@ describe('QueryClientProvider/context', () => {
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
-  it('throws when multiple different providers make global lookup ambiguous', async () => {
+  it('should throw when multiple different providers make global lookup ambiguous', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
     const providerA = document.createElement(tagName) as QueryClientProvider
@@ -104,7 +111,7 @@ describe('QueryClientProvider/context', () => {
     await Promise.resolve()
   })
 
-  it('requires an explicit client before connect', () => {
+  it('should require an explicit client before connect', () => {
     const provider = document.createElement(tagName) as QueryClientProvider
 
     expect(() => provider.connectedCallback()).toThrow(
@@ -112,7 +119,7 @@ describe('QueryClientProvider/context', () => {
     )
   })
 
-  it('S8: provider swap while disconnected preserves mount/unmount contract', async () => {
+  it('should preserve the mount/unmount contract when the provider is swapped while disconnected', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -160,7 +167,7 @@ describe('QueryClientProvider/context', () => {
     unmountB.mockRestore()
   })
 
-  it('LC-PROVIDER-01: invalid connected client updates tear down the mounted client before surfacing the error', async () => {
+  it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
     const client = new QueryClient()
     const mount = vi.spyOn(client, 'mount')
     const unmount = vi.spyOn(client, 'unmount')
@@ -176,7 +183,8 @@ describe('QueryClientProvider/context', () => {
     await provider.updateComplete
     await consumer.updateComplete
 
-    await waitFor(() => consumer.query().isSuccess)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.query().isSuccess).toBe(true)
     expect(mount).toHaveBeenCalledTimes(1)
     expect(unmount).toHaveBeenCalledTimes(0)
     expect(consumer.query().data).toBe('ok')
@@ -188,7 +196,7 @@ describe('QueryClientProvider/context', () => {
     expect(unmount).toHaveBeenCalledTimes(1)
     expect(getDefaultQueryClient()).toBeUndefined()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
-    await waitForMissingQueryClient(() => consumer.query())
+    expect(() => consumer.query()).toThrow(/No QueryClient available/)
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
