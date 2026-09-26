@@ -825,18 +825,15 @@ describe('injectMutation', () => {
       TestBed.tick()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
-
       TestBed.tick()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('processed: retry-test')
       expect(attemptCount).toBe(3) // Initial + 2 retries
@@ -880,7 +877,6 @@ describe('injectMutation', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(1)
       await stablePromise
-
       expect(mutation1.isSuccess()).toBe(true)
       expect(mutation1.data()).toBe('mutation1: test1')
       expect(mutation2.isSuccess()).toBe(true)
@@ -924,7 +920,6 @@ describe('injectMutation', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(1)
       await stablePromise
-
       expect(onMutateCalled).toBe(true)
       expect(onSuccessCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)

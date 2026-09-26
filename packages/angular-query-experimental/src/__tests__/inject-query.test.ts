@@ -528,7 +528,6 @@ describe('injectQuery', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('test data')
     })
@@ -594,7 +593,6 @@ describe('injectQuery', () => {
 
       const stablePromise = app.whenStable()
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(callCount).toBe(1)

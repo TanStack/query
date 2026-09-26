@@ -96,7 +96,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('error')
       expect(query.error()).toEqual(new Error('instant-error'))
     })
@@ -122,7 +121,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutationFnCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('processed: test')
@@ -147,7 +145,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(mutation.isError()).toBe(true)
       expect(mutation.error()).toEqual(new Error('sync-mutation-error'))
     })
@@ -177,7 +174,6 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('race-data')
     })
@@ -206,7 +202,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toMatch(/^data-\d+$/)
     })
@@ -269,7 +264,6 @@ describe('PendingTasks Integration', () => {
       await vi.advanceTimersByTimeAsync(20)
       await Promise.resolve()
       await stablePromise
-
       expect(stableResolved).toBe(true)
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('final-data')
@@ -491,7 +485,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query1.status()).toBe('success')
       expect(query1.data()).toEqual({ id: 1 })
       expect(query2.status()).toBe('success')
@@ -526,7 +519,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
       await stablePromise
-
       expect(query.status()).toBe('error')
 
       httpTestingController.verify()
@@ -586,7 +578,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(50)
       await stablePromise
-
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('success-data')
       expect(attemptCount).toBe(3) // Initial + 2 retries
@@ -625,7 +616,6 @@ describe('PendingTasks Integration', () => {
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
-
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('optimistic-data')
       expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')
