@@ -229,6 +229,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     void clientB.invalidateQueries({ queryKey: consumer.queryKey })
     expect(consumer.queryCalls).toBe(3)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-3')
 
     consumer.queries.destroy()
     provider.remove()
