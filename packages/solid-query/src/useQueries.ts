@@ -41,8 +41,9 @@ type UseQueryOptionsForUseQueries<
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * Setting it has no effect: reading `data` of a query that has no data yet suspends the nearest `<Suspense>`
-   * boundary until none of the queries are loading, whether or not this option is set.
+   * It does not control suspending: reading `data` of a query that has no data yet suspends the nearest
+   * `<Suspense>` boundary until none of the queries are loading, whether or not this option is set. Setting it
+   * to `true` still makes `throwOnError` default to `true`.
    */
   suspense?: boolean
 }
