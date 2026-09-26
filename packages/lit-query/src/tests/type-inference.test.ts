@@ -6,6 +6,7 @@ import {
   type InfiniteData,
   type QueryObserverResult,
 } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
@@ -17,7 +18,7 @@ import { queryOptions } from '../queryOptions.js'
 import { TestControllerHost } from './testHost.js'
 
 describe('type inference', () => {
-  it('L1: createQueriesController preserves tuple/combine inference', () => {
+  it('should preserve tuple/combine inference in createQueriesController', () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
     const expectTupleResult = (
@@ -38,11 +39,11 @@ describe('type inference', () => {
       {
         queries: [
           {
-            queryKey: ['type-inference', 'tuple-number'] as const,
+            queryKey: queryKey(),
             queryFn: async () => 1,
           },
           {
-            queryKey: ['type-inference', 'tuple-string'] as const,
+            queryKey: queryKey(),
             queryFn: async () => 'x',
           },
         ] as const,
@@ -59,11 +60,11 @@ describe('type inference', () => {
       {
         queries: [
           {
-            queryKey: ['type-inference', 'combined-number'] as const,
+            queryKey: queryKey(),
             queryFn: async () => 7,
           },
           {
-            queryKey: ['type-inference', 'combined-string'] as const,
+            queryKey: queryKey(),
             queryFn: async () => 'ok',
           },
         ] as const,
@@ -83,7 +84,7 @@ describe('type inference', () => {
       {
         queries: [
           queryOptions({
-            queryKey: ['type-inference', 'defined-initial-data'] as const,
+            queryKey: queryKey(),
             queryFn: async () => ({ id: 4, name: 'Marie' }),
             initialData: { id: 0, name: 'Seed' },
           }),
@@ -105,10 +106,7 @@ describe('type inference', () => {
       {
         queries: [
           queryOptions({
-            queryKey: [
-              'type-inference',
-              'defined-initial-data-combine',
-            ] as const,
+            queryKey: queryKey(),
             queryFn: async () => ({ id: 5, name: 'Katherine' }),
             initialData: { id: 1, name: 'Init' },
           }),
@@ -123,7 +121,7 @@ describe('type inference', () => {
 
     const numberQueries = [1, 2, 3].map((value) =>
       queryOptions({
-        queryKey: ['type-inference', 'mapped-number', value] as const,
+        queryKey: queryKey(),
         queryFn: async () => value,
       }),
     )
@@ -133,7 +131,7 @@ describe('type inference', () => {
         queries: [
           ...numberQueries,
           queryOptions({
-            queryKey: ['type-inference', 'mapped-boolean'] as const,
+            queryKey: queryKey(),
             queryFn: async () => true,
           }),
         ],
@@ -147,14 +145,14 @@ describe('type inference', () => {
     >()
   })
 
-  it('L2: helper option generics preserve controller inference', () => {
+  it('should preserve controller inference with helper option generics', () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
 
     const query = createQueryController(
       host,
       queryOptions({
-        queryKey: ['type-inference', 'query'] as const,
+        queryKey: queryKey(),
         queryFn: async () => ({ id: 1, name: 'Ada' }),
       }),
       client,
@@ -176,7 +174,7 @@ describe('type inference', () => {
     >()
 
     const queryOpts = queryOptions({
-      queryKey: ['type-inference', 'query-options'] as const,
+      queryKey: queryKey(),
       queryFn: async () => ({ id: 2, name: 'Grace' }),
     })
     expectTypeOf(queryOpts.queryKey[dataTagSymbol]).toEqualTypeOf<{
@@ -198,7 +196,7 @@ describe('type inference', () => {
     const infinite = createInfiniteQueryController(
       host,
       infiniteQueryOptions({
-        queryKey: ['type-inference', 'infinite'] as const,
+        queryKey: queryKey(),
         initialPageParam: 0,
         queryFn: async () => ({ page: 1 }),
         getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -210,7 +208,7 @@ describe('type inference', () => {
     >()
 
     const infiniteQueryOpts = infiniteQueryOptions({
-      queryKey: ['type-inference', 'infinite-query-options'] as const,
+      queryKey: queryKey(),
       initialPageParam: 0,
       queryFn: async () => ({ page: 3 }),
       getNextPageParam: (lastPage) => lastPage.page + 1,
@@ -246,9 +244,9 @@ describe('type inference', () => {
     >()
   })
 
-  it('L3: queryOptions integrates with queryClient.query', async () => {
+  it('should integrate queryOptions with queryClient.query', async () => {
     const options = queryOptions({
-      queryKey: ['type-inference', 'query'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -256,9 +254,9 @@ describe('type inference', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('L4: queryOptions with select integrates with queryClient.query', async () => {
+  it('should integrate queryOptions with select with queryClient.query', async () => {
     const options = queryOptions({
-      queryKey: ['type-inference', 'query-select'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       select: (data) => data.toString(),
     })
@@ -267,9 +265,9 @@ describe('type inference', () => {
     expectTypeOf(data).toEqualTypeOf<string>()
   })
 
-  it('L5: queryOptions with enabled: false integrates with queryClient.query', async () => {
+  it('should integrate queryOptions with enabled: false with queryClient.query', async () => {
     const options = queryOptions({
-      queryKey: ['type-inference', 'query-enabled-false'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       enabled: false,
     })
@@ -282,9 +280,9 @@ describe('type inference', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('L7: infiniteQueryOptions integrates with queryClient.infiniteQuery', async () => {
+  it('should integrate infiniteQueryOptions with queryClient.infiniteQuery', async () => {
     const options = infiniteQueryOptions({
-      queryKey: ['type-inference', 'infinite-query'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -294,9 +292,9 @@ describe('type inference', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
-  it('L8: infiniteQueryOptions with select integrates with queryClient.infiniteQuery', async () => {
+  it('should integrate infiniteQueryOptions with select with queryClient.infiniteQuery', async () => {
     const options = infiniteQueryOptions({
-      queryKey: ['type-inference', 'infinite-query-select'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -307,9 +305,9 @@ describe('type inference', () => {
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
 
-  it('L9: infiniteQueryOptions with enabled: false integrates with queryClient.infiniteQuery', async () => {
+  it('should integrate infiniteQueryOptions with enabled: false with queryClient.infiniteQuery', async () => {
     const options = infiniteQueryOptions({
-      queryKey: ['type-inference', 'infinite-query-enabled-false'] as const,
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
