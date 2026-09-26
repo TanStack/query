@@ -477,15 +477,33 @@ export function useQueries<
     observer.setQueries(defaultedQueries(), getObserverOptions())
   })
 
+  // Applies the optimistic results right away, and suspends again when a query
+  // starts loading without data, instead of waiting for the observer to notify
+  const commitOptimisticResult = () => {
+    const [results, getCombinedResult] = getOptimisticResult()
+    commit(results, getCombinedResult())
+    if (needsSuspend()) {
+      refetch()
+    }
+  }
+
   createComputed(
     on(
       defaultedQueries,
       () => {
         observer.setQueries(defaultedQueries(), getObserverOptions())
-        const [results, getCombinedResult] = getOptimisticResult()
-        commit(results, getCombinedResult())
-        if (needsSuspend()) {
-          refetch()
+        commitOptimisticResult()
+      },
+      { defer: true },
+    ),
+  )
+
+  createComputed(
+    on(
+      isRestoring,
+      (restoring) => {
+        if (!restoring) {
+          commitOptimisticResult()
         }
       },
       { defer: true },

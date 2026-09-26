@@ -12,6 +12,7 @@ import {
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { onlineManager } from '@tanstack/query-core'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   useInfiniteQuery,
@@ -2291,6 +2292,69 @@ describe("useQueries's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+  })
+
+  it('should suspend as soon as restoring finishes when a query has no data', async () => {
+    const key = queryKey()
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const queries = useQueries(() => ({
+        queries: [
+          { queryKey: key, queryFn: () => sleep(10).then(() => 'data') },
+        ],
+      }))
+
+      return <div>{`data: ${String(queries[0].data)}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <IsRestoringProvider value={isRestoring}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </IsRestoringProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+
+    setIsRestoring(false)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: data')).toBeInTheDocument()
+  })
+
+  it('should show restored data as soon as restoring finishes', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'fetched'))
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const queries = useQueries(() => ({
+        queries: [{ queryKey: key, queryFn, staleTime: Infinity }],
+      }))
+
+      return <div>{`data: ${String(queries[0].data)}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => (
+      <IsRestoringProvider value={isRestoring}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </IsRestoringProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+
+    queryClient.setQueryData(key, 'restored')
+    setIsRestoring(false)
+    expect(rendered.getByText('data: restored')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: restored')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
   it('should keep updating a destructured result after resolving', async () => {
