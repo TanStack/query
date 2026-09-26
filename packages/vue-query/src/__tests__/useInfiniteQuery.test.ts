@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, ref } from 'vue-demi'
+import { computed, isVue2, isVue3, ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -157,5 +157,114 @@ describe('useInfiniteQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(status.value).toBe('success')
     expect(data.value?.pages).toStrictEqual(['data on page 0'])
+  })
+
+  describe('throwOnError', () => {
+    it.runIf(isVue2)(
+      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
+      async () => {
+        const consoleErrorMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const key = queryKey()
+        const throwOnError = vi.fn().mockReturnValue(true)
+        useInfiniteQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+          retry: false,
+          throwOnError,
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
+      async ({ onTestFinished }) => {
+        const key = queryKey()
+        const throwOnError = vi.fn().mockReturnValue(true)
+        useInfiniteQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+          retry: false,
+          throwOnError,
+        })
+
+        const unhandledRejectionFn = vi.fn()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
+  })
+
+  describe('suspense', () => {
+    it('should throw from suspense without rethrowing from the error watcher when throwOnError is true', async ({
+      onTestFinished,
+    }) => {
+      const key = queryKey()
+      const throwOnError = vi.fn().mockReturnValue(true)
+      const query = useInfiniteQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+        retry: false,
+        throwOnError,
+      })
+
+      // A rethrow from the error watcher would be logged via console.error on
+      // Vue 2 and surface as an unhandled rejection on Vue 3
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', unhandledRejectionFn)
+      onTestFinished(() => {
+        consoleErrorMock.mockRestore()
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      await Promise.all([
+        expect(query.suspense()).rejects.toThrow('Some error'),
+        vi.advanceTimersByTimeAsync(10),
+      ])
+      expect(throwOnError).toHaveBeenCalledTimes(2)
+      expect(query.status.value).toBe('error')
+      expect(consoleErrorMock).not.toHaveBeenCalled()
+      expect(unhandledRejectionFn).not.toHaveBeenCalled()
+    })
   })
 })

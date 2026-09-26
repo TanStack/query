@@ -3,6 +3,7 @@ import {
   computed,
   isReactive,
   isReadonly,
+  isVue2,
   isVue3,
   onScopeDispose,
   reactive,
@@ -11,7 +12,6 @@ import {
 import {
   QueryObserver,
   experimental_streamedQuery,
-  noop,
   skipToken,
 } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -677,6 +677,70 @@ describe('useQuery', () => {
         }),
       )
     })
+
+    it.runIf(isVue2)(
+      'should throw from error watcher when throwOnError returns true, which Vue 2 logs via console.error',
+      async () => {
+        const consoleErrorMock = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => undefined)
+        const key = queryKey()
+        const throwOnError = vi.fn().mockReturnValue(true)
+        useQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          retry: false,
+          throwOnError,
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(consoleErrorMock).toHaveBeenCalledWith(Error('Some error'))
+        consoleErrorMock.mockRestore()
+      },
+    )
+
+    it.runIf(isVue3)(
+      'should throw from error watcher when throwOnError returns true, which Vue 3 surfaces as an unhandled rejection',
+      async ({ onTestFinished }) => {
+        const key = queryKey()
+        const throwOnError = vi.fn().mockReturnValue(true)
+        useQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          retry: false,
+          throwOnError,
+        })
+
+        const unhandledRejectionFn = vi.fn()
+        process.on('unhandledRejection', unhandledRejectionFn)
+        onTestFinished(() => {
+          process.off('unhandledRejection', unhandledRejectionFn)
+        })
+
+        await vi.advanceTimersByTimeAsync(10)
+        expect(throwOnError).toHaveBeenCalledTimes(1)
+        expect(throwOnError).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.objectContaining({
+            state: expect.objectContaining({ status: 'error' }),
+          }),
+        )
+        expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+        expect(unhandledRejectionFn).toHaveBeenCalledWith(
+          Error('Some error'),
+          expect.any(Promise),
+        )
+      },
+    )
   })
 
   describe('outside scope warning', () => {
@@ -772,7 +836,7 @@ describe('useQuery', () => {
       })
     })
 
-    it('should throw from suspense when throwOnError is true', async ({
+    it('should throw from suspense without rethrowing from the error watcher when throwOnError is true', async ({
       onTestFinished,
     }) => {
       const key = queryKey()
@@ -785,10 +849,16 @@ describe('useQuery', () => {
         throwOnError,
       })
 
-      // The error watcher also throws, which Vue 3 surfaces as an unhandled rejection
-      process.on('unhandledRejection', noop)
+      // A rethrow from the error watcher would be logged via console.error on
+      // Vue 2 and surface as an unhandled rejection on Vue 3
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', unhandledRejectionFn)
       onTestFinished(() => {
-        process.off('unhandledRejection', noop)
+        consoleErrorMock.mockRestore()
+        process.off('unhandledRejection', unhandledRejectionFn)
       })
 
       await Promise.all([
@@ -810,6 +880,8 @@ describe('useQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
+      expect(consoleErrorMock).not.toHaveBeenCalled()
+      expect(unhandledRejectionFn).not.toHaveBeenCalled()
     })
 
     it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
