@@ -10,6 +10,9 @@ import {
 } from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
+import ErrorBoundary from './ErrorBoundary.svelte'
+import ErrorBoundaryReset from './ErrorBoundaryReset.svelte'
+import ErrorBoundaryChangeClient from './ErrorBoundaryChangeClient.svelte'
 import Counter from './Counter.svelte'
 import IsRestoring from './IsRestoring.svelte'
 import Select from './Select.svelte'
@@ -1249,6 +1252,36 @@ describe('createQuery', () => {
   )
 
   it(
+    'should not widen tracked props for unrelated data-only consumers after an error occurs',
+    withEffectRoot(async () => {
+      const key = queryKey()
+      const dataOnlyRuns: Array<string | undefined> = []
+
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('fail'))),
+          retry: false,
+          // Settles into an error without throwing, so the throw-effect reads `isFetching`.
+          throwOnError: false,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        dataOnlyRuns.push(query.data)
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+      query.refetch()
+      await vi.advanceTimersByTimeAsync(10)
+
+      expect(dataOnlyRuns).toHaveLength(1)
+    }),
+  )
+
+  it(
     'should always re-render if we are tracking props but not using any',
     withEffectRoot(async () => {
       const key = queryKey()
@@ -1598,6 +1631,242 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('error')).toHaveTextContent('Local Error')
   })
 
+  it('should throw error to the nearest svelte:boundary when throwOnError is true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Error test'))),
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Error test',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error to the nearest svelte:boundary when throwOnError function returns true', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Local Error'))),
+          retry: false,
+          throwOnError: (err: Error) => err.message === 'Local Error',
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Local Error',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error to the nearest svelte:boundary when queryFn rejects with a falsy error and throwOnError is in use', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => Promise.reject()),
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw a cached error to the nearest svelte:boundary without refetching', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const first = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
+          retry: false,
+          throwOnError: false,
+        }),
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    first.unmount()
+
+    // `enabled: false` rules out a fetch, so the throw must come from the cached error.
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
+    )
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          enabled: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Pre-existing error',
+    )
+    expect(queryFn).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw while a refetch triggered on remount is in flight, only once it settles', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const first = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
+          retry: false,
+          throwOnError: false,
+        }),
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    first.unmount()
+
+    // The refetch on remount keeps `isFetching` true, so the cached error must not throw yet.
+    const { promise, reject } = promiseWithResolvers<never>()
+    const queryFn = vi.fn(() => promise)
+    const rendered = render(ErrorBoundary, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.queryByTestId('error-boundary')).toBeNull()
+
+    reject(new Error('Refetch failed'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Refetch failed',
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it("should refetch and recover after `<svelte:boundary>`'s reset re-mounts the query", async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    let callCount = 0
+    const queryFn = vi.fn(() => {
+      callCount++
+      return sleep(10).then(() =>
+        Promise.reject(new Error(`Error ${callCount}`)),
+      )
+    })
+
+    const rendered = render(ErrorBoundaryReset, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          throwOnError: true,
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 1')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await fireEvent.click(rendered.getByTestId('reset-button'))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent('Error 2')
+
+    consoleMock.mockRestore()
+  })
+
+  it(
+    'should update with data if we observe no properties and throwOnError',
+    withEffectRoot(async () => {
+      const key = queryKey()
+
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          throwOnError: true,
+        }),
+        () => queryClient,
+      )
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.isFetching()).toBe(0)
+      expect(query.data).toBe('data')
+    }),
+  )
+
   it(
     'should support changing provided query client',
     withEffectRoot(() => {
@@ -1628,6 +1897,64 @@ describe('createQuery', () => {
       ).toEqual(key)
     }),
   )
+
+  it('should throw a cached error to the nearest svelte:boundary when the query client changes', async () => {
+    const key = queryKey()
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const first = render(Base, {
+      props: {
+        queryClient: queryClient2,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Pre-existing error')),
+            ),
+          retry: false,
+          throwOnError: false,
+        }),
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    first.unmount()
+
+    let currentClient = $state(queryClient1)
+    const queryFn = vi.fn(() =>
+      sleep(10).then(() => Promise.reject(new Error('should not fetch'))),
+    )
+
+    const rendered = render(ErrorBoundaryChangeClient, {
+      props: {
+        queryClient: queryClient1,
+        currentClient: () => currentClient,
+        options: () => ({
+          queryKey: key,
+          queryFn,
+          retry: false,
+          enabled: false,
+          throwOnError: true,
+        }),
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.queryByTestId('error-boundary')).not.toBeInTheDocument()
+
+    currentClient = queryClient2
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('error-boundary')).toHaveTextContent(
+      'Pre-existing error',
+    )
+    expect(queryFn).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const queryFn = vi.fn(() => sleep(10).then(() => 'data'))

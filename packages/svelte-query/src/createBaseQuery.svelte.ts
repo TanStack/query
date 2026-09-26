@@ -1,4 +1,5 @@
 import { onDestroy } from 'svelte'
+import { shouldThrowError } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -72,12 +73,23 @@ export function createBaseQuery<
     createResult(),
   )
 
+  // Untracked result for the throw-effect: reading `query.*` there would track
+  // those props and widen `notifyOnChangeProps` for every consumer. Relies on
+  // `QueryObserver` always notifying on `error` changes when `throwOnError` is set.
+  let rawResult = $state.raw(getRawResult())
+  function getRawResult() {
+    return observer.getCurrentResult()
+  }
+
   // The following is convoluted but necessary:
   // Call eagerly so subscription happens on the server and on suspended branches in the client...
   let unsubscribe =
     isRestoring.current && typeof window !== 'undefined'
       ? () => undefined
-      : observer.subscribe(() => update(createResult()))
+      : observer.subscribe(() => {
+          update(createResult())
+          rawResult = getRawResult()
+        })
   // ...but also watch for state changes to resubscribe, and because Svelte right now doesn't
   // run onDestroy on components with pending work that are destroyed again before they are resolved...
   watchChanges(
@@ -87,7 +99,10 @@ export function createBaseQuery<
       unsubscribe()
       unsubscribe = isRestoring.current
         ? () => undefined
-        : observer.subscribe(() => update(createResult()))
+        : observer.subscribe(() => {
+            update(createResult())
+            rawResult = getRawResult()
+          })
       observer.updateResult()
       return unsubscribe
     },
@@ -122,8 +137,23 @@ export function createBaseQuery<
       //
       // this could technically be its own effect but that doesn't seem necessary
       update(createResult())
+      rawResult = getRawResult()
     },
   )
+
+  $effect(() => {
+    // Throwing from the `subscribe` callback instead never reaches `<svelte:boundary>`.
+    if (
+      rawResult.isError &&
+      !rawResult.isFetching &&
+      shouldThrowError(resolvedOptions.throwOnError, [
+        rawResult.error,
+        observer.getCurrentQuery(),
+      ])
+    ) {
+      throw rawResult.error
+    }
+  })
 
   return query
 }
