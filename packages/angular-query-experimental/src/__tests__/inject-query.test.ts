@@ -667,6 +667,7 @@ describe('injectQuery', () => {
 
       // Invalidate the query
       queryClient.invalidateQueries({ queryKey: testKey })
+
       TestBed.tick()
 
       // Wait for the invalidation to trigger a refetch
