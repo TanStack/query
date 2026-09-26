@@ -242,11 +242,13 @@ export class Query<
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
+  #invalidatedDuringFetch: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
     this.#abortSignalConsumed = false
+    this.#invalidatedDuringFetch = false
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -566,12 +568,20 @@ export class Query<
    * updates `state.isInvalidated` and notifies observers, but does not by
    * itself trigger a refetch.
    *
+   * A fetch that is already in flight started before this invalidation, so its
+   * result cannot satisfy it. That is remembered here so the next refetch runs
+   * once more after the in-flight fetch settles instead of just reusing it.
+   *
    * @example
    * ```ts
    * query.invalidate()
    * ```
    */
   invalidate(): void {
+    if (this.state.fetchStatus !== 'idle') {
+      this.#invalidatedDuringFetch = true
+    }
+
     if (!this.state.isInvalidated) {
       this.#dispatch({ type: 'invalidate' })
     }
@@ -604,10 +614,22 @@ export class Query<
       } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
         this.#retryer.continueRetry()
+        if (this.#invalidatedDuringFetch) {
+          // The in-flight fetch predates the invalidation, so its result would
+          // drop the refetch intent. Let it settle to provide a first result,
+          // then fetch once more. Further callers coalesce onto that fetch,
+          // because starting it clears the flag below.
+          return this.#retryer.promise.then(() =>
+            this.fetch(options, { ...fetchOptions, cancelRefetch: false }),
+          )
+        }
         // Return current promise if we are already fetching
         return this.#retryer.promise
       }
     }
+
+    // A fetch starting now runs after any invalidation, so it can satisfy it
+    this.#invalidatedDuringFetch = false
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {

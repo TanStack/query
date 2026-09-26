@@ -2558,6 +2558,93 @@ describe('queryClient', () => {
 
       unsubscribe()
     })
+
+    it('should refetch once more when invalidated during the initial fetch', async () => {
+      const key = queryKey()
+      let serverState = 'before'
+      const queryFn = vi.fn(() => sleep(10).then(() => serverState))
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+      const unsubscribe = observer.subscribe(noop)
+
+      // the initial fetch is still in flight and knows nothing about this data
+      serverState = 'after'
+      const invalidated = queryClient.invalidateQueries({ queryKey: key })
+
+      await vi.advanceTimersByTimeAsync(20)
+      await invalidated
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('after')
+      unsubscribe()
+    })
+
+    it('should coalesce invalidations during the initial fetch into one refetch', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+      const unsubscribe = observer.subscribe(noop)
+
+      const invalidated = Promise.all([
+        queryClient.invalidateQueries({ queryKey: key }),
+        queryClient.invalidateQueries({ queryKey: key }),
+        queryClient.invalidateQueries({ queryKey: key }),
+      ])
+
+      await vi.advanceTimersByTimeAsync(20)
+      await invalidated
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      unsubscribe()
+    })
+
+    it('should not refetch after the initial fetch when "refetchType" is "none"', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+      const unsubscribe = observer.subscribe(noop)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+      await vi.advanceTimersByTimeAsync(20)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      unsubscribe()
+    })
+
+    it('should not refetch once more when the invalidation starts the fetch', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+      const unsubscribe = observer.subscribe(noop)
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      const invalidated = queryClient.invalidateQueries({ queryKey: key })
+      await vi.advanceTimersByTimeAsync(20)
+      await invalidated
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      unsubscribe()
+    })
   })
 
   describe('resetQueries', () => {
