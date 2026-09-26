@@ -490,7 +490,6 @@ describe('PersistQueryClientProvider', () => {
     )
 
     expect(onSuccess).toHaveBeenCalledTimes(0)
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)

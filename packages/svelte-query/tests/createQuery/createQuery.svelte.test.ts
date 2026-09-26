@@ -72,6 +72,7 @@ describe('createQuery', () => {
         status: 'pending',
         fetchStatus: 'fetching',
       })
+
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
       expect(query).toEqual({
@@ -270,8 +271,7 @@ describe('createQuery', () => {
 
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
-
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('initial')
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
@@ -304,7 +304,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(1)
   })
 
@@ -335,7 +334,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(2)
   })
 
@@ -365,7 +363,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(1)
   })
 
@@ -384,7 +381,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('data')
   })
@@ -545,7 +541,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('test')
     // queryFn should be called since nothing has been fetched yet
@@ -590,7 +585,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('test')
   })
@@ -613,7 +607,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Select Error')
@@ -637,7 +630,6 @@ describe('createQuery', () => {
     // Initial: pending
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
@@ -648,7 +640,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
@@ -672,7 +663,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
@@ -683,7 +673,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
@@ -706,7 +695,6 @@ describe('createQuery', () => {
 
     // Initial
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
 
@@ -715,7 +703,6 @@ describe('createQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /^refetch$/i }))
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
   })
@@ -756,6 +743,7 @@ describe('createQuery', () => {
 
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(false)
+
       query.refetch()
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(true)
@@ -797,7 +785,9 @@ describe('createQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('set')
+
     queryClient.refetchQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('fetched')
   })
@@ -823,6 +813,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
     queryClient.invalidateQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
@@ -899,7 +890,6 @@ describe('createQuery', () => {
     // Enabled query fetches
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -931,7 +921,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -973,7 +962,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -1092,7 +1080,6 @@ describe('createQuery', () => {
       .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
-
     expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
     // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
     await vi.advanceTimersByTimeAsync(10)
@@ -1241,7 +1228,6 @@ describe('createQuery', () => {
 
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
-
       expect(states.length).toBe(2)
       expect(states[0]).toBe(undefined)
       expect(states[1]).toBe('test')
@@ -1622,7 +1608,6 @@ describe('createQuery', () => {
 
       currentClient = queryClient2
       flushSync()
-
       expect(
         queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
       ).toEqual(key)
@@ -1637,14 +1622,11 @@ describe('createQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')

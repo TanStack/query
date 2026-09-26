@@ -126,7 +126,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -223,7 +222,6 @@ describe('withPersistQueryClient', () => {
     await vi.advanceTimersByTimeAsync(10)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -389,7 +387,6 @@ describe('withPersistQueryClient', () => {
     rendered.fixture.detectChanges()
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()
@@ -440,7 +437,6 @@ describe('withPersistQueryClient', () => {
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
     expect(onError).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetched')).toBeInTheDocument()

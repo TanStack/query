@@ -61,7 +61,6 @@ describe('useQuery', () => {
     }))
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result01' },
@@ -82,7 +81,6 @@ describe('useQuery', () => {
     }))
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result02' },
@@ -95,7 +93,6 @@ describe('useQuery', () => {
     resultRef.value = 'result021'
     keyRef.value = 'key012'
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result021' },
@@ -129,7 +126,6 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result2' },
@@ -149,7 +145,6 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result31' },
@@ -169,7 +164,6 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result32' },
@@ -189,7 +183,6 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'error' },
       data: { value: undefined },
@@ -212,21 +205,17 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
     })
 
     secondKeyRef.value = 'key8'
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       status: { value: 'pending' },
       data: { value: undefined },
     })
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
     })
@@ -242,23 +231,18 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       fetchStatus: { value: 'idle' },
       data: { value: undefined },
     })
 
     enabled.value = true
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       fetchStatus: { value: 'fetching' },
       data: { value: undefined },
     })
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
     })
@@ -288,14 +272,10 @@ describe('useQuery', () => {
     expect(data.value).toStrictEqual(undefined)
     expect(fetchStatus.value).toStrictEqual('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(data.value).toStrictEqual('Some data')
     expect(fetchStatus.value).toStrictEqual('fetching')
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(fetchStatus.value).toStrictEqual('idle')
     expect(status.value).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
@@ -316,14 +296,10 @@ describe('useQuery', () => {
     })
 
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryClient.getQueryData(key)).toBe('Some data')
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(status.value).toStrictEqual('pending')
   })
 
@@ -338,6 +314,7 @@ describe('useQuery', () => {
     })
 
     expect(queryFn).not.toHaveBeenCalled()
+
     await query.refetch()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenNthCalledWith(
@@ -402,9 +379,7 @@ describe('useQuery', () => {
     expect(queryFn).not.toHaveBeenCalled()
 
     checked.value = true
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalled()
   })
 
@@ -422,15 +397,11 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key3'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(3)
   })
 
@@ -464,33 +435,23 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key1-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryFn).toHaveBeenCalledTimes(6)
   })
 
@@ -507,9 +468,7 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     key1.value = 'key3'
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
@@ -522,13 +481,13 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 3 },
     })
 
     const queryClient = useQueryClient()
+
     expect(queryClient.getQueryData(key)).toEqual(['a', 'b', 'c'])
   })
 
@@ -544,14 +503,11 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).not.toHaveBeenCalled()
     expect(query).toMatchObject({ status: { value: 'pending' } })
 
     postId.value = 1
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query).toMatchObject({
       status: { value: 'success' },
@@ -570,14 +526,11 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).not.toHaveBeenCalled()
     expect(query).toMatchObject({ status: { value: 'pending' } })
 
     postId.value = 1
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query).toMatchObject({
       status: { value: 'success' },
@@ -589,32 +542,55 @@ describe('useQuery', () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
-      queryFn: () => sleep(10).then(() => 'fetched data'),
-      initialData: 'seeded data',
+      queryFn: () => sleep(10).then(() => 'data'),
+      initialData: 'initial',
     })
 
     expect(query).toMatchObject({
       status: { value: 'success' },
-      data: { value: 'seeded data' },
+      data: { value: 'initial' },
     })
   })
 
   it('should still fetch in the background and replace initialData with the fetched value', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(() => sleep(10).then(() => 'fetched data'))
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     const query = useQuery({
       queryKey: key,
       queryFn,
-      initialData: 'seeded data',
+      initialData: 'initial',
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query).toMatchObject({
       status: { value: 'success' },
-      data: { value: 'fetched data' },
+      data: { value: 'data' },
+    })
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () =>
+        sleep(10).then(() => Promise.reject(new Error('Some error'))),
+      initialData: 'initial',
+      retry: false,
+    })
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'initial' },
+      isError: { value: false },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(query).toMatchObject({
+      status: { value: 'error' },
+      data: { value: 'initial' },
+      isError: { value: true },
     })
   })
 
@@ -632,23 +608,18 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       data: { value: 'page-0' },
       isPlaceholderData: { value: false },
     })
 
     page.value = 1
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(query).toMatchObject({
       data: { value: 'page-0' },
       isPlaceholderData: { value: true },
     })
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(query).toMatchObject({
       data: { value: 'page-1' },
       isPlaceholderData: { value: false },
@@ -668,7 +639,6 @@ describe('useQuery', () => {
       })
 
       await vi.advanceTimersByTimeAsync(0)
-
       expect(throwOnError).toHaveBeenCalledTimes(1)
       expect(throwOnError).toHaveBeenCalledWith(
         Error('Some error'),
@@ -826,7 +796,6 @@ describe('useQuery', () => {
       queryClient.setQueryData(key, 'manual data')
 
       await vi.advanceTimersByTimeAsync(0)
-
       const result = await suspensePromise
       expect(result.data).toBe('manual data')
     })
@@ -849,9 +818,7 @@ describe('useQuery', () => {
       })
 
       const suspensePromise = query.suspense()
-
       await vi.advanceTimersByTimeAsync(10)
-
       const result = await suspensePromise
       expect(result.data).toStrictEqual(['chunk1'])
     })

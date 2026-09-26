@@ -254,23 +254,19 @@ describe('createInfiniteQueryController', () => {
       host.update()
 
       expect(infinite().data?.pages).toEqual(['stable-page'])
-
       await Promise.resolve()
       await Promise.resolve()
 
       host.updatesRequested = 0
 
       const refetch = infinite.refetch()
-
       await waitFor(() => resolveRefetch !== undefined)
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
-
       expect(host.updatesRequested).toBe(0)
     } finally {
       infinite.destroy()
@@ -310,7 +306,6 @@ describe('createInfiniteQueryController', () => {
       host.update()
 
       expect(infinite().status).toBe('success')
-
       await Promise.resolve()
       await Promise.resolve()
 
@@ -320,8 +315,8 @@ describe('createInfiniteQueryController', () => {
         pages: ['updated-page'],
         pageParams: [0],
       })
-      await Promise.resolve()
 
+      await Promise.resolve()
       expect(infinite().data?.pages).toEqual(['updated-page'])
       expect(host.updatesRequested).toBe(0)
     } finally {
@@ -382,7 +377,6 @@ describe('createInfiniteQueryController', () => {
 
     expect(() => consumer.infinite()).not.toThrow()
     await waitForMissingQueryClient(() => consumer.infinite())
-
     await expect(consumer.infinite.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
@@ -455,7 +449,6 @@ describe('createInfiniteQueryController', () => {
 
     await Promise.resolve()
     await Promise.resolve()
-
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
 
@@ -531,6 +524,7 @@ describe('options helpers integration', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => query().isSuccess)
     expect(query().data).toBe('query-ok')
   })
@@ -549,6 +543,7 @@ describe('options helpers integration', () => {
 
     host.connect()
     host.update()
+
     await expect(mutation.mutateAsync(5)).resolves.toBe(15)
     expect(mutation().isSuccess).toBe(true)
   })
@@ -577,6 +572,7 @@ describe('options helpers integration', () => {
 
     host.connect()
     host.update()
+
     await waitFor(() => infinite().isSuccess)
     expect(infinite().data?.pages).toEqual([0])
   })

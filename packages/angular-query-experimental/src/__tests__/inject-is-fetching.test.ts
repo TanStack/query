@@ -50,11 +50,9 @@ describe('injectIsFetching', () => {
     const rendered = await render(Page)
 
     expect(rendered.getByText('fetching: 0')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetching: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(101)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetching: 0')).toBeInTheDocument()
@@ -84,7 +82,6 @@ describe('injectIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetching: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     rendered.fixture.detectChanges()
     expect(rendered.getByText('fetching: 0')).toBeInTheDocument()

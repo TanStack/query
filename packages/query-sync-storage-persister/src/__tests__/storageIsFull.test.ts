@@ -135,7 +135,6 @@ describe('create persister', () => {
         queryFn: () => Promise.resolve('D'.repeat(N)),
       })
       .catch(noop)
-
     await sleep(1)
     await queryClient
       .query({

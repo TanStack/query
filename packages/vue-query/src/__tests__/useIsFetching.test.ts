@@ -30,9 +30,7 @@ describe('useIsFetching', () => {
 
     expect(isFetchingQuery.value).toStrictEqual(true)
     expect(isFetching.value).toStrictEqual(2)
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
   })
@@ -50,14 +48,10 @@ describe('useIsFetching', () => {
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
@@ -77,7 +71,6 @@ describe('useIsFetching', () => {
 
     filter.stale = true
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetching.value).toStrictEqual(1)
   })
 
@@ -97,7 +90,6 @@ describe('useIsFetching', () => {
 
     staleRef.value = true
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isFetching.value).toStrictEqual(1)
   })
 
