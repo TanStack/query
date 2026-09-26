@@ -326,7 +326,6 @@ describe('useSuspenseQueries', () => {
     expect(() => {
       fireEvent.click(rendered.getByText('reset'))
     }).not.toThrow()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
