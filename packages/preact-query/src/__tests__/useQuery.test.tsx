@@ -4495,7 +4495,6 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('Data: selected 101')).toBeInTheDocument() // 99 + 2
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Data: selected 2')).toBeInTheDocument() // 0 + 2
 

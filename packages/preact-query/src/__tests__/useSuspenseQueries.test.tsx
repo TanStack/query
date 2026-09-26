@@ -106,7 +106,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
   })
@@ -187,7 +186,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onSuspend).toHaveBeenCalled()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
@@ -241,7 +239,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
