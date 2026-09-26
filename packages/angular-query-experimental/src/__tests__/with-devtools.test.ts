@@ -276,7 +276,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(0)
 
@@ -314,7 +313,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(0)
 
@@ -344,7 +342,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(0)
 
@@ -373,7 +370,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(0)
 
@@ -404,7 +400,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(0)
 
@@ -433,7 +428,6 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
     await vi.dynamicImportSettled()
-
     TestBed.tick()
     expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
 

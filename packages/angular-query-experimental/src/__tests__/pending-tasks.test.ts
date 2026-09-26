@@ -268,7 +268,6 @@ describe('PendingTasks Integration', () => {
       // Give time for the retry to resume and complete
       await vi.advanceTimersByTimeAsync(20)
       await Promise.resolve()
-
       await stablePromise
 
       expect(stableResolved).toBe(true)
@@ -553,7 +552,6 @@ describe('PendingTasks Integration', () => {
 
       // Advance to the cancellation point
       await vi.advanceTimersByTimeAsync(20)
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
