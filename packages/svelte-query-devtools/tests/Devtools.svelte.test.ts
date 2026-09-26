@@ -66,7 +66,6 @@ describe('SvelteQueryDevtools', () => {
       props: { client: queryClient, position: 'left' },
     })
     await vi.dynamicImportSettled()
-
     expect(setPositionMock).toHaveBeenCalledWith('left')
   })
 
@@ -76,7 +75,6 @@ describe('SvelteQueryDevtools', () => {
       props: { client: queryClient, buttonPosition: 'top-left' },
     })
     await vi.dynamicImportSettled()
-
     expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
   })
 
@@ -86,7 +84,6 @@ describe('SvelteQueryDevtools', () => {
       props: { client: queryClient, initialIsOpen: true },
     })
     await vi.dynamicImportSettled()
-
     expect(setInitialIsOpenMock).toHaveBeenCalledWith(true)
   })
 
@@ -97,7 +94,6 @@ describe('SvelteQueryDevtools', () => {
       props: { client: queryClient, errorTypes },
     })
     await vi.dynamicImportSettled()
-
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })
 
@@ -107,7 +103,6 @@ describe('SvelteQueryDevtools', () => {
       props: { client: queryClient, theme: 'dark' },
     })
     await vi.dynamicImportSettled()
-
     expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 
