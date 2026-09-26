@@ -245,7 +245,10 @@ try {
 
 if (!tagExists) {
   execSync(`git tag -a -m "${tagName}" ${tagName}`)
-  execSync('git push --tags')
+  // Push only the release tag: the package tags that `changeset publish` creates
+  // locally are annotated, while `changesets/action` creates them on the remote
+  // as lightweight tags, so pushing every tag gets them rejected
+  execSync(`git push origin ${tagName}`)
 }
 
 const prereleaseFlag = isPrerelease ? '--prerelease' : ''
