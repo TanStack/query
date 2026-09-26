@@ -245,7 +245,7 @@ try {
 
 if (!tagExists) {
   execSync(`git tag -a -m "${tagName}" ${tagName}`)
-  execSync('git push --tags')
+  execSync(`git push origin ${tagName}`)
 }
 
 const prereleaseFlag = isPrerelease ? '--prerelease' : ''
