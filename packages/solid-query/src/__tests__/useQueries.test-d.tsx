@@ -296,6 +296,26 @@ describe('useQueries', () => {
     }))
   })
 
+  it('should infer the type that combine returns', () => {
+    const combined = useQueries(() => ({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        },
+      ],
+      combine: (results) => ({
+        data: results.map((result) => result.data),
+        isPending: results.some((result) => result.isPending),
+      }),
+    }))
+
+    expectTypeOf(combined).toEqualTypeOf<{
+      data: Array<number | undefined>
+      isPending: boolean
+    }>()
+  })
+
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
       const key1 = queryKey()

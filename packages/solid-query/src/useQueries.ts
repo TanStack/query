@@ -271,7 +271,7 @@ type QueriesResults<
  */
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult extends object = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -327,21 +327,50 @@ export function useQueries<
     getInitialCombinedResult(),
   )
 
-  // Merges each result into its existing store node instead of replacing it,
-  // so a result read once (e.g. `const [query] = useQueries(...)`) keeps
-  // tracking later updates
+  const setStore = setState as (...args: Array<unknown>) => void
+
+  const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+    if (typeof value !== 'object' || value === null) return false
+    const prototype: unknown = Object.getPrototypeOf(value)
+    return prototype === Object.prototype || prototype === null
+  }
+
+  // Merges `next` into the store node `current` and drops the keys that `next`
+  // no longer has (setting a store key to `undefined` deletes it)
+  const toMerge = (current: unknown, next: Record<string, unknown>) => {
+    if (!isPlainObject(current)) return next
+    const merged = { ...next }
+    for (const key of Object.keys(current)) {
+      if (!(key in merged)) merged[key] = undefined
+    }
+    return merged
+  }
+
+  // Merges the next state into the existing store nodes instead of replacing
+  // them, so a result read once (e.g. `const [query] = useQueries(...)`) keeps
+  // tracking later updates. `combine` may return any object, not only an array
+  // of results
   const commit = (
     results: Array<QueryObserverResult>,
     nextState: TCombinedResult,
   ) => {
     observerResults = results
+    const current: unknown = unwrap(state)
     batch(() => {
-      nextState.forEach((result, index) => {
-        // @ts-expect-error typescript pedantry regarding the possible range of index
-        setState(index, { ...unwrap(result) })
+      if (!Array.isArray(nextState) || !Array.isArray(current)) {
+        setStore(
+          isPlainObject(nextState) ? toMerge(current, nextState) : nextState,
+        )
+        return
+      }
+      nextState.forEach((item: unknown, index) => {
+        setStore(
+          index,
+          isPlainObject(item) ? toMerge(current[index], item) : item,
+        )
       })
-      if (state.length > nextState.length) {
-        setState((items) => items.slice(0, nextState.length) as TCombinedResult)
+      if (current.length > nextState.length) {
+        setStore((items: Array<unknown>) => items.slice(0, nextState.length))
       }
     })
   }
@@ -477,6 +506,10 @@ export function useQueries<
 
   // Cache one proxy per store node so a result keeps its identity across reads
   const proxies = new WeakMap<object, QueryObserverResult>()
+
+  // The returned array reads each query's `data` through `handler`. A result
+  // that `combine` turns into anything but an array is returned as is
+  if (!Array.isArray(state)) return state
 
   return new Proxy(state, {
     get(target, prop, receiver) {

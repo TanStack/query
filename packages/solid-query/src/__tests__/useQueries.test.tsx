@@ -294,6 +294,59 @@ describe('useQueries', () => {
     expect(rendered.getByText('length: 1, data: data 0')).toBeInTheDocument()
   })
 
+  it('should return the object that combine returns', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const combined = useQueries(() => ({
+        queries: [1, 2].map((id) => ({
+          queryKey: [...key, id],
+          queryFn: () => sleep(10).then(() => `post ${id}`),
+        })),
+        combine: (results) => ({
+          data: results.map((result) => result.data),
+          isPending: results.some((result) => result.isPending),
+        }),
+      }))
+
+      return (
+        <div>{`isPending: ${combined.isPending}, data: ${combined.data.join(',')}`}</div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('isPending: true, data: ,')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText('isPending: false, data: post 1,post 2'),
+    ).toBeInTheDocument()
+  })
+
+  it('should drop the keys that combine no longer returns', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const combined = useQueries(() => ({
+        queries: [
+          { queryKey: key, queryFn: () => sleep(10).then(() => 'data') },
+        ],
+        combine: ([result]): Record<string, string> =>
+          result.data === undefined
+            ? { pending: 'yes' }
+            : { data: result.data },
+      }))
+
+      return <div>{`keys: ${Object.keys(combined).join(',')}`}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('keys: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('keys: data')).toBeInTheDocument()
+  })
+
   it('should report the paused fetchStatus while offline', async ({
     onTestFinished,
   }) => {
