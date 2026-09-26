@@ -106,7 +106,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('1:')).toBeInTheDocument()
       expect(rendered.getByText('"a"')).toBeInTheDocument()
@@ -120,7 +119,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('name:')).toBeInTheDocument()
       expect(rendered.getByText('"Anna"')).toBeInTheDocument()
       expect(rendered.getByText('age:')).toBeInTheDocument()
@@ -139,7 +137,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('first:')).toBeInTheDocument()
       expect(rendered.getByText('second:')).toBeInTheDocument()
     })
@@ -162,7 +159,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('1:')).toBeInTheDocument()
     })
@@ -200,7 +196,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
-
       expect(writeText).toHaveBeenCalledTimes(1)
       const [arg] = writeText.mock.calls[0]!
       expect(JSON.parse(arg as string)).toMatchObject({
@@ -228,7 +223,6 @@ describe('Explorer', () => {
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
@@ -255,13 +249,10 @@ describe('Explorer', () => {
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Object copied to clipboard'),
       ).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(1500)
-
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -285,13 +276,10 @@ describe('Explorer', () => {
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
       await vi.advanceTimersByTimeAsync(0)
-
       expect(
         rendered.getByLabelText('Error copying object to clipboard'),
       ).toBeInTheDocument()
-
       await vi.advanceTimersByTimeAsync(1500)
-
       expect(
         rendered.getByLabelText('Copy object to clipboard'),
       ).toBeInTheDocument()
@@ -311,7 +299,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-
       expect(queryClient.getQueryData(['data'])).toEqual([])
     })
 
@@ -331,7 +318,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-
       expect(queryClient.getQueryData(['data'])).toEqual(['a', 'c'])
     })
 
@@ -350,7 +336,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-
       expect(queryClient.getQueryData(['data'])).toEqual({ flag: false })
     })
 
@@ -399,7 +384,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.getByText('[0...99]')).toBeInTheDocument()
       expect(rendered.getByText('[100...199]')).toBeInTheDocument()
     })
@@ -411,7 +395,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
-
       expect(rendered.queryByText('0:')).toBeNull()
     })
 
@@ -423,7 +406,6 @@ describe('Explorer', () => {
 
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
       fireEvent.click(rendered.getByText('[0...99]'))
-
       expect(rendered.getByText('0:')).toBeInTheDocument()
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
     })
@@ -437,12 +419,10 @@ describe('Explorer', () => {
       fireEvent.click(rendered.getByRole('button', { expanded: false }))
       fireEvent.click(rendered.getByText('[0...99]'))
       fireEvent.click(rendered.getByText('[100...199]'))
-
       expect(rendered.getByText('"item-0"')).toBeInTheDocument()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('[0...99]'))
-
       expect(rendered.queryByText('"item-0"')).toBeNull()
       expect(rendered.getByText('"item-100"')).toBeInTheDocument()
     })
@@ -466,7 +446,6 @@ describe('Explorer', () => {
       })
 
       fireEvent.click(rendered.getByText('[0...99]'))
-
       expect(
         rendered.getAllByLabelText('Remove all items').length,
       ).toBeGreaterThan(1)
@@ -492,7 +471,6 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-
       expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Bob' })
     })
 
@@ -516,7 +494,6 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-
       expect(queryClient.getQueryData(['data'])).toEqual({ count: 42 })
     })
 
@@ -572,12 +549,10 @@ describe('Explorer', () => {
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-
       expect(queryClient.getQueryData(['data'])).toEqual({ name: 'Anna' })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
-
       expect(queryClient.getQueryData(['data'])).toEqual({})
     })
   })
