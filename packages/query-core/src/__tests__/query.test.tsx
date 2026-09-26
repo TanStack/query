@@ -11,6 +11,7 @@ import {
   QueryClient,
   QueryObserver,
   dehydrate,
+  focusManager,
   hydrate,
   noop,
 } from '..'
@@ -32,6 +33,54 @@ describe('query', () => {
   afterEach(() => {
     queryClient.clear()
     vi.useRealTimers()
+  })
+
+  it('should not let a cancelled retry pause its replacement fetch', async () => {
+    const key = queryKey()
+    const initial = queryClient.query({
+      queryKey: key,
+      queryFn: () => Promise.reject(new Error('synthetic failure')),
+      retry: 1,
+      retryDelay: 100,
+    })
+    initial.catch(noop)
+    await vi.advanceTimersByTimeAsync(0)
+    await queryClient.cancelQueries({ queryKey: key })
+    focusManager.setFocused(false)
+    try {
+      const replacement = queryClient.query({
+        queryKey: key,
+        queryFn: () => sleep(200).then(() => 'fresh'),
+      })
+      await vi.advanceTimersByTimeAsync(100)
+      const fetchStatus = queryClient.getQueryState(key)?.fetchStatus
+      await vi.advanceTimersByTimeAsync(100)
+      await expect(replacement).resolves.toBe('fresh')
+      expect(fetchStatus).toBe('fetching')
+    } finally {
+      focusManager.setFocused(undefined)
+    }
+  })
+
+  it('should collect a cancelled query after its retry delay expires', async () => {
+    const key = queryKey()
+    const initial = queryClient.query({
+      queryKey: key,
+      queryFn: () => Promise.reject(new Error('synthetic failure')),
+      retry: 1,
+      retryDelay: 100,
+      gcTime: 200,
+    })
+    initial.catch(noop)
+    await vi.advanceTimersByTimeAsync(0)
+    await queryClient.cancelQueries({ queryKey: key })
+    focusManager.setFocused(false)
+    try {
+      await vi.advanceTimersByTimeAsync(250)
+      expect(queryClient.getQueryState(key)).toBeUndefined()
+    } finally {
+      focusManager.setFocused(undefined)
+    }
   })
 
   it('should use the longest garbage collection time it has seen', async () => {

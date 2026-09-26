@@ -16,6 +16,31 @@ describe('createRetryer', () => {
     vi.useRealTimers()
   })
 
+  it.each(['offline', 'unfocused'])(
+    'should not pause a cancelled retry after its delay expires (%s)',
+    async (condition) => {
+      const onPause = vi.fn()
+      const fn = vi.fn().mockRejectedValue(new Error('synthetic failure'))
+      const retryer = createRetryer({
+        fn,
+        retry: 1,
+        retryDelay: 100,
+        onPause,
+        networkMode: 'online',
+        canRun: () => true,
+      })
+      const promise = retryer.start()
+      await vi.advanceTimersByTimeAsync(0)
+      retryer.cancel()
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
+      if (condition === 'offline') onlineManager.setOnline(false)
+      else focusManager.setFocused(false)
+      await vi.advanceTimersByTimeAsync(100)
+      expect(onPause).not.toHaveBeenCalled()
+      expect(fn).toHaveBeenCalledTimes(1)
+    },
+  )
+
   it('should resolve with the result of fn and set status to resolved', async () => {
     const fn = vi.fn().mockResolvedValue('success')
     const retryer = createRetryer<string>({
