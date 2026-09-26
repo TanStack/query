@@ -140,7 +140,6 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     provider.client = clientB
     await provider.updateComplete
     await Promise.resolve()
-
     await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
 
     const countAAfterSecond = clientA
@@ -196,7 +195,6 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     provider.client = clientB
     await provider.updateComplete
-
     await waitFor(() => {
       const cacheBEntry = clientB
         .getQueryCache()
@@ -256,7 +254,6 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     provider.client = clientB
     await provider.updateComplete
-
     await waitFor(() => {
       const cacheBEntry = clientB
         .getQueryCache()
@@ -305,9 +302,9 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     document.body.append(providerA)
     await providerA.updateComplete
-    await Promise.resolve()
-    await Promise.resolve()
 
+    await Promise.resolve()
+    await Promise.resolve()
     await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
 
     consumer.remove()
@@ -317,9 +314,9 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
-    await Promise.resolve()
-    await Promise.resolve()
 
+    await Promise.resolve()
+    await Promise.resolve()
     await expect(consumer.mutation.mutateAsync(2)).resolves.toBe(3)
     expect(
       clientA.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
@@ -383,11 +380,11 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
+
     await waitFor(
       () =>
         typeof consumer.queries()[0] === 'string' && consumer.queryCalls >= 2,
     )
-
     expect(
       clientA
         .getQueryCache()
@@ -455,13 +452,13 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
+
     await waitFor(
       () =>
         consumer.infinite().isSuccess &&
         (consumer.infinite().data?.pages.length ?? 0) >= 1 &&
         consumer.pageCalls >= 2,
     )
-
     expect(
       clientA
         .getQueryCache()
