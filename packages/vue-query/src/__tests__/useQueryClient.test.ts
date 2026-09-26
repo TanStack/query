@@ -57,7 +57,6 @@ describe('useQueryClient', () => {
     injectSpy.mockReturnValueOnce(queryClientMock)
 
     useQueryClient(queryClientKey)
-
     expect(injectSpy).toHaveBeenCalledWith(expectedKeyParameter)
   })
 })
