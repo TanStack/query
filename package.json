@@ -56,12 +56,12 @@
     "@size-limit/preset-small-lib": "^14.0.0",
     "@tanstack/eslint-config": "0.3.2",
     "@tanstack/typedoc-config": "0.3.1",
-    "@tanstack/vite-config": "0.4.3",
+    "@tanstack/vite-config": "0.6.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitest/coverage-istanbul": "4.0.6",
+    "@vitest/coverage-istanbul": "4.1.11",
     "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^6.1.1",
@@ -85,7 +85,7 @@
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
     "typescript": "6.0.3",
-    "vite": "^6.4.1",
-    "vitest": "^4.0.18"
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11"
   }
 }

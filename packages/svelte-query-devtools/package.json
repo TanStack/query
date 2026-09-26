@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.8",
-    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^5.2.8",
     "@typescript-eslint/parser": "^8.70.1",
