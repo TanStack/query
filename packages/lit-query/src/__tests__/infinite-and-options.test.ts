@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import type { InfiniteData } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
-import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './test-utils.js'
+import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
+import type { InfiniteData } from '@tanstack/query-core'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)

@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
-import type { QueryStatus } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueriesController } from '../createQueriesController.js'
-import type { QueriesResultAccessor } from '../createQueriesController.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './test-utils.js'
+import type { QueriesResultAccessor } from '../createQueriesController.js'
+import type { QueryStatus } from '@tanstack/query-core'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -286,7 +286,7 @@ describe('createQueriesController', () => {
 
       host.updatesRequested = 0
 
-      const refetch = queries()[0]!.refetch()
+      const refetch = queries()[0].refetch()
 
       expect(resolveRefetch).toBeDefined()
       await Promise.resolve()
@@ -345,7 +345,7 @@ describe('createQueriesController', () => {
 
       defaultQueryOptionsCalls = 0
 
-      const refetch = queries()[0]!.refetch()
+      const refetch = queries()[0].refetch()
 
       expect(resolveRefetch).toBeDefined()
       await Promise.resolve()

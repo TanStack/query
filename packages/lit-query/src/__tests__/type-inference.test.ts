@@ -1,10 +1,7 @@
 import {
+  QueryClient,
   dataTagErrorSymbol,
   dataTagSymbol,
-  QueryClient,
-  type DefinedQueryObserverResult,
-  type InfiniteData,
-  type QueryObserverResult,
 } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
@@ -17,6 +14,11 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './test-utils.js'
+import type {
+  DefinedQueryObserverResult,
+  InfiniteData,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 describe('type inference', () => {
   let queryClient: QueryClient

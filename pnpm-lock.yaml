@@ -2713,18 +2713,9 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
-      '@eslint/js':
-        specifier: ^9.36.0
-        version: 9.39.4
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      globals:
-        specifier: ^17.12.0
-        version: 17.12.0
-      typescript-eslint:
-        specifier: ^8.54.0
-        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/preact-query:
     dependencies:
@@ -11787,10 +11778,6 @@ packages:
 
   globals@16.5.0:
     resolution: {integrity: sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==}
-    engines: {node: '>=18'}
-
-  globals@17.12.0:
-    resolution: {integrity: sha512-cezEd/DTyyht9cvSSURyygXPfy04GtWO/5e6ZPvH7fCtjKz9PYOmuawphw1Ctd1f6C+5JypXfGD7ahNMXvevBA==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -26995,8 +26982,6 @@ snapshots:
   globals@15.15.0: {}
 
   globals@16.5.0: {}
-
-  globals@17.12.0: {}
 
   globalthis@1.0.4:
     dependencies:
