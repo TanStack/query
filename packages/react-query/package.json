@@ -75,7 +75,8 @@
     "npm-run-all2": "^9.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-error-boundary": "^4.1.2"
+    "react-error-boundary": "^4.1.2",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "^18 || ^19"

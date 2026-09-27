@@ -36,7 +36,8 @@
   },
   "type": "module",
   "devDependencies": {
-    "npm-run-all2": "^9.0.3"
+    "npm-run-all2": "^9.0.3",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "vitest": "^4.1.11"

@@ -91,7 +91,8 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.0.0",
     "npm-run-all2": "^9.0.3",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "typescript": "catalog:"
   },
   "optionalDependencies": {
     "@tanstack/query-devtools": "workspace:*"

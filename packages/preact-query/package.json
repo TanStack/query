@@ -72,7 +72,7 @@
     "npm-run-all2": "^9.0.3",
     "preact": "^10.29.8",
     "preact-render-to-string": "^6.6.4",
-    "typescript": "6.0.3",
+    "typescript": "catalog:",
     "typescript-eslint": "^8.54.0"
   },
   "peerDependencies": {
