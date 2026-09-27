@@ -315,24 +315,28 @@ describe('createMutationController', () => {
     class Host extends LitElement {
       readonly mutation = createMutationController(
         this,
-        () => ({
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            if (value < 0) {
-              throw new Error('freshness-failure')
-            }
-            return value + 1
-          },
-          onSuccess: () => {
-            callbackEvents.push(`success:${version}`)
-          },
-          onError: () => {
-            callbackEvents.push(`error:${version}`)
-          },
-          onSettled: () => {
-            callbackEvents.push(`settled:${version}`)
-          },
-        }),
+        () => {
+          const callbackVersion = version
+
+          return {
+            mutationFn: async (value: number) => {
+              await sleep(10)
+              if (value < 0) {
+                throw new Error('freshness-failure')
+              }
+              return value + 1
+            },
+            onSuccess: () => {
+              callbackEvents.push(`success:${callbackVersion}`)
+            },
+            onError: () => {
+              callbackEvents.push(`error:${callbackVersion}`)
+            },
+            onSettled: () => {
+              callbackEvents.push(`settled:${callbackVersion}`)
+            },
+          }
+        },
         queryClient,
       )
     }
