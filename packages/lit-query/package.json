@@ -52,7 +52,7 @@
   "files": [
     "build",
     "src",
-    "!src/tests"
+    "!src/__tests__"
   ],
   "dependencies": {
     "@lit/context": "^1.1.6",
