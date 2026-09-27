@@ -59,12 +59,12 @@
     "@tanstack/query-core": "workspace:*",
     "lit": "^3.3.3"
   },
-  "peerDependencies": {
-    "@tanstack/query-core": "^5.104.0",
-    "lit": ">=2.8.0 <4"
-  },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "npm-run-all2": "^9.0.3"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "^5.104.0",
+    "lit": ">=2.8.0 <4"
   }
 }
