@@ -172,10 +172,10 @@ describe('createQueriesController', () => {
     const queries = host.queries
     await host.updateComplete
 
-    expect(host.shadowRoot?.textContent).toContain('data: none, none')
+    expect(host.shadowRoot).toHaveTextContent('data: none, none')
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['alpha', 'beta'])
-    expect(host.shadowRoot?.textContent).toContain('data: alpha, beta')
+    expect(host.shadowRoot).toHaveTextContent('data: alpha, beta')
   })
 
   it('should not request another update when stable function query options refresh during host update', async () => {

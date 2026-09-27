@@ -138,20 +138,20 @@ describe('createMutationController', () => {
     const mutation = host.mutation
     await host.updateComplete
 
-    expect(host.shadowRoot?.textContent).toContain('data: none')
+    expect(host.shadowRoot).toHaveTextContent('data: none')
 
     const resultPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(resultPromise).resolves.toBe(2)
     expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(2)
-    expect(host.shadowRoot?.textContent).toContain('data: 2')
+    expect(host.shadowRoot).toHaveTextContent('data: 2')
 
     mutation.mutate(2)
     await vi.advanceTimersByTimeAsync(10)
     expect(mutation().data).toBe(3)
     expect(mutation().isSuccess).toBe(true)
-    expect(host.shadowRoot?.textContent).toContain('data: 3')
+    expect(host.shadowRoot).toHaveTextContent('data: 3')
   })
 
   it('should cover idle/pending/success/error mutation state transitions', async () => {

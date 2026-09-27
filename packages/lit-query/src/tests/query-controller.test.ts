@@ -120,13 +120,13 @@ describe('createQueryController', () => {
     container.append(host)
     await host.updateComplete
 
-    expect(host.shadowRoot?.textContent).toContain('name: none')
+    expect(host.shadowRoot).toHaveTextContent('name: none')
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toEqual({ id: 1, name: 'Ada' })
     expect(callCount).toBe(1)
-    expect(host.shadowRoot?.textContent).toContain('name: Ada')
+    expect(host.shadowRoot).toHaveTextContent('name: Ada')
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
@@ -695,8 +695,8 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('value-1')
-    expect(host.shadowRoot?.textContent).toContain('data: value-1')
-    expect(host.shadowRoot?.textContent).toContain('placeholder: false')
+    expect(host.shadowRoot).toHaveTextContent('data: value-1')
+    expect(host.shadowRoot).toHaveTextContent('placeholder: false')
 
     keyId = 2
     host.requestUpdate()
@@ -705,16 +705,16 @@ describe('createQueryController', () => {
     expect(query().isFetching).toBe(true)
     expect(query().isPlaceholderData).toBe(true)
     expect(query().data).toBe('value-1')
-    expect(host.shadowRoot?.textContent).toContain('data: value-1')
-    expect(host.shadowRoot?.textContent).toContain('placeholder: true')
+    expect(host.shadowRoot).toHaveTextContent('data: value-1')
+    expect(host.shadowRoot).toHaveTextContent('placeholder: true')
 
     resolveSecond?.('value-2')
     await vi.advanceTimersByTimeAsync(0)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('value-2')
     expect(query().isPlaceholderData).toBe(false)
-    expect(host.shadowRoot?.textContent).toContain('data: value-2')
-    expect(host.shadowRoot?.textContent).toContain('placeholder: false')
+    expect(host.shadowRoot).toHaveTextContent('data: value-2')
+    expect(host.shadowRoot).toHaveTextContent('placeholder: false')
   })
 
   it('should refetch and update result state on invalidation', async () => {
