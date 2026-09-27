@@ -1,132 +1,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
+import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
+import { generateElementName } from './test-utils.js'
 
-const providerTagName = 'test-query-client-provider-switch'
-if (!customElements.get(providerTagName)) {
-  customElements.define(providerTagName, QueryClientProvider)
-}
+const providerTagName = generateElementName()
+customElements.define(providerTagName, QueryClientProvider)
 
-class BaseControllerHostElement
-  extends HTMLElement
-  implements ReactiveControllerHost
-{
-  private readonly controllers = new Set<ReactiveController>()
+describe('client switching across controllers', () => {
+  let container: HTMLElement
 
-  updatesRequested = 0
-  readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
-  addController(controller: ReactiveController): void {
-    this.controllers.add(controller)
-  }
-
-  removeController(controller: ReactiveController): void {
-    this.controllers.delete(controller)
-  }
-
-  requestUpdate(): void {
-    this.updatesRequested += 1
-  }
-
-  connectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostConnected?.()
-    }
-  }
-
-  disconnectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostDisconnected?.()
-    }
-  }
-}
-
-const switchMutationKey = queryKey()
-
-class MutationSwitchHostElement extends BaseControllerHostElement {
-  mutationCalls = 0
-  readonly mutationKey = switchMutationKey
-
-  readonly mutation = createMutationController(this, () => ({
-    mutationKey: this.mutationKey,
-    mutationFn: async (value: number) => {
-      this.mutationCalls += 1
-      await sleep(10)
-      return value + 1
-    },
-  }))
-}
-
-const mutationHostTagName = 'test-mutation-switch-host'
-if (!customElements.get(mutationHostTagName)) {
-  customElements.define(mutationHostTagName, MutationSwitchHostElement)
-}
-
-const switchQueriesKey = queryKey()
-
-class QueriesSwitchHostElement extends BaseControllerHostElement {
-  queryCalls = 0
-  readonly queryKey = switchQueriesKey
-
-  readonly queries = createQueriesController(this, () => ({
-    queries: [
-      {
-        queryKey: this.queryKey,
-        queryFn: () => {
-          this.queryCalls += 1
-          return sleep(10).then(() => `q-${this.queryCalls}`)
-        },
-        retry: false,
-      },
-    ] as const,
-    combine: (results) => results.map((result) => result.data),
-  }))
-}
-
-const queriesHostTagName = 'test-queries-switch-host'
-if (!customElements.get(queriesHostTagName)) {
-  customElements.define(queriesHostTagName, QueriesSwitchHostElement)
-}
-
-const switchInfiniteKey = queryKey()
-
-class InfiniteSwitchHostElement extends BaseControllerHostElement {
-  pageCalls = 0
-  readonly queryKey = switchInfiniteKey
-
-  readonly infinite = createInfiniteQueryController(this, () => ({
-    queryKey: this.queryKey,
-    initialPageParam: 0,
-    queryFn: ({ pageParam }) => {
-      this.pageCalls += 1
-      return sleep(10).then(() => Number(pageParam))
-    },
-    getNextPageParam: (lastPage: number) =>
-      lastPage < 1 ? lastPage + 1 : undefined,
-    retry: false,
-  }))
-}
-
-const infiniteHostTagName = 'test-infinite-switch-host'
-if (!customElements.get(infiniteHostTagName)) {
-  customElements.define(infiniteHostTagName, InfiniteSwitchHostElement)
-}
-
-describe('LQ-003 client-switch coverage across controllers', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     vi.useRealTimers()
   })
 
   it('should switch mutation controller to new provider client while connected', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -134,12 +34,22 @@ describe('LQ-003 client-switch coverage across controllers', () => {
       providerTagName,
     ) as QueryClientProvider
     provider.client = clientA
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
-    const consumer = document.createElement(
-      mutationHostTagName,
-    ) as MutationSwitchHostElement
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, () => ({
+        mutationKey: this.mutationKey,
+        mutationFn: async (value: number) => {
+          await sleep(10)
+          return value + 1
+        },
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
     await Promise.resolve()
@@ -176,6 +86,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should switch queries controller to new provider client while connected', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -183,17 +94,39 @@ describe('LQ-003 client-switch coverage across controllers', () => {
       providerTagName,
     ) as QueryClientProvider
     provider.client = clientA
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
-    const consumer = document.createElement(
-      queriesHostTagName,
-    ) as QueriesSwitchHostElement
+    class Consumer extends LitElement {
+      queryCalls = 0
+      readonly queryKey = key
+
+      readonly queries = createQueriesController(this, () => ({
+        queries: [
+          {
+            queryKey: this.queryKey,
+            queryFn: () => {
+              this.queryCalls += 1
+              return sleep(10).then(() => `q-${this.queryCalls}`)
+            },
+            retry: false,
+          },
+        ] as const,
+        combine: (results) => results.map((result) => result.data),
+      }))
+
+      override render() {
+        return html`data: ${this.queries()[0] ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
     await Promise.resolve()
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
+    expect(consumer.shadowRoot?.textContent).toContain('data: q-1')
 
     const cacheAEntryBeforeSwitch = clientA
       .getQueryCache()
@@ -209,6 +142,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
         .find({ queryKey: consumer.queryKey })
         ?.getObserversCount(),
     ).toBe(1)
+    expect(consumer.shadowRoot?.textContent).toContain('data: q-2')
 
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
@@ -219,6 +153,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     expect(consumer.queryCalls).toBe(3)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-3')
+    expect(consumer.shadowRoot?.textContent).toContain('data: q-3')
 
     consumer.queries.destroy()
     provider.remove()
@@ -226,6 +161,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should switch infinite query controller to new provider client while connected', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -233,12 +169,27 @@ describe('LQ-003 client-switch coverage across controllers', () => {
       providerTagName,
     ) as QueryClientProvider
     provider.client = clientA
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
-    const consumer = document.createElement(
-      infiniteHostTagName,
-    ) as InfiniteSwitchHostElement
+    class Consumer extends LitElement {
+      pageCalls = 0
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, () => ({
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => {
+          this.pageCalls += 1
+          return sleep(10).then(() => Number(pageParam))
+        },
+        getNextPageParam: (lastPage: number) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
     await Promise.resolve()
@@ -279,6 +230,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -291,12 +243,22 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     ) as QueryClientProvider
     providerB.client = clientB
 
-    const consumer = document.createElement(
-      mutationHostTagName,
-    ) as MutationSwitchHostElement
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, () => ({
+        mutationKey: this.mutationKey,
+        mutationFn: async (value: number) => {
+          await sleep(10)
+          return value + 1
+        },
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     providerA.append(consumer)
 
-    document.body.append(providerA)
+    container.append(providerA)
     await providerA.updateComplete
 
     await Promise.resolve()
@@ -309,7 +271,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerA.remove()
 
     providerB.append(consumer)
-    document.body.append(providerB)
+    container.append(providerB)
     await providerB.updateComplete
 
     await Promise.resolve()
@@ -332,6 +294,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -344,12 +307,29 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     ) as QueryClientProvider
     providerB.client = clientB
 
-    const consumer = document.createElement(
-      queriesHostTagName,
-    ) as QueriesSwitchHostElement
+    class Consumer extends LitElement {
+      queryCalls = 0
+      readonly queryKey = key
+
+      readonly queries = createQueriesController(this, () => ({
+        queries: [
+          {
+            queryKey: this.queryKey,
+            queryFn: () => {
+              this.queryCalls += 1
+              return sleep(10).then(() => `q-${this.queryCalls}`)
+            },
+            retry: false,
+          },
+        ] as const,
+        combine: (results) => results.map((result) => result.data),
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     providerA.append(consumer)
 
-    document.body.append(providerA)
+    container.append(providerA)
     await providerA.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
@@ -366,7 +346,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerA.remove()
 
     providerB.append(consumer)
-    document.body.append(providerB)
+    container.append(providerB)
     await providerB.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
@@ -392,6 +372,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
   })
 
   it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -404,12 +385,27 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     ) as QueryClientProvider
     providerB.client = clientB
 
-    const consumer = document.createElement(
-      infiniteHostTagName,
-    ) as InfiniteSwitchHostElement
+    class Consumer extends LitElement {
+      pageCalls = 0
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, () => ({
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => {
+          this.pageCalls += 1
+          return sleep(10).then(() => Number(pageParam))
+        },
+        getNextPageParam: (lastPage: number) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     providerA.append(consumer)
 
-    document.body.append(providerA)
+    container.append(providerA)
     await providerA.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
@@ -426,7 +422,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     providerA.remove()
 
     providerB.append(consumer)
-    document.body.append(providerB)
+    container.append(providerB)
     await providerB.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)

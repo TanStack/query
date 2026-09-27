@@ -1,77 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { keepPreviousData, QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
+import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueryController } from '../createQueryController.js'
-import { TestControllerHost } from './testHost.js'
+import type { QueryResultAccessor } from '../createQueryController.js'
+import { generateElementName } from './test-utils.js'
 
-const providerTagName = 'test-query-client-provider-query'
-if (!customElements.get(providerTagName)) {
-  customElements.define(providerTagName, QueryClientProvider)
-}
-
-const consumerKey = queryKey()
-
-class QueryConsumerHostElement
-  extends HTMLElement
-  implements ReactiveControllerHost
-{
-  private readonly controllers = new Set<ReactiveController>()
-
-  updatesRequested = 0
-  readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-  readonly queryKey = consumerKey
-  queryCalls = 0
-
-  readonly query = createQueryController(this, () => ({
-    queryKey: this.queryKey,
-    queryFn: () => {
-      this.queryCalls += 1
-      return sleep(10).then(() => `value-${this.queryCalls}`)
-    },
-    retry: false,
-  }))
-
-  addController(controller: ReactiveController): void {
-    this.controllers.add(controller)
-  }
-
-  removeController(controller: ReactiveController): void {
-    this.controllers.delete(controller)
-  }
-
-  requestUpdate(): void {
-    this.updatesRequested += 1
-  }
-
-  connectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostConnected?.()
-    }
-  }
-
-  disconnectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostDisconnected?.()
-    }
-  }
-}
-
-const consumerTagName = 'test-query-consumer-host'
-if (!customElements.get(consumerTagName)) {
-  customElements.define(consumerTagName, QueryConsumerHostElement)
-}
+const providerTagName = generateElementName()
+customElements.define(providerTagName, QueryClientProvider)
 
 describe('createQueryController', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
@@ -79,17 +30,30 @@ describe('createQueryController', () => {
   it('should not request update after destroy when microtask flushes', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'done'),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
 
-    host.connect()
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'done'),
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
     query.destroy()
     await Promise.resolve()
     await Promise.resolve()
@@ -100,25 +64,28 @@ describe('createQueryController', () => {
     const key = queryKey()
 
     for (let cycle = 0; cycle < 100; cycle += 1) {
-      const host = new TestControllerHost()
-      const query = createQueryController(
-        host,
-        {
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => cycle),
-        },
-        queryClient,
-      )
+      class Host extends LitElement {
+        readonly query = createQueryController(
+          this,
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => cycle),
+          },
+          queryClient,
+        )
+      }
+      customElements.define(generateElementName(), Host)
+      const host = new Host()
+      const query = host.query
 
-      host.connect()
-      host.update()
+      container.append(host)
       await vi.advanceTimersByTimeAsync(10)
       expect(query().isSuccess).toBe(true)
 
       const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
       expect(cacheQuery?.getObserversCount()).toBe(1)
 
-      host.disconnect()
+      host.remove()
       query.destroy()
       expect(cacheQuery?.getObserversCount() ?? 0).toBe(0)
     }
@@ -127,64 +94,91 @@ describe('createQueryController', () => {
   it('should fetch and update query state', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let callCount = 0
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => ({ id: 1, name: 'Ada' }))
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => ({ id: 1, name: 'Ada' }))
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
 
-    host.connect()
-    host.update()
+      override render() {
+        return html`name: ${this.query().data?.name ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot?.textContent).toContain('name: none')
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toEqual({ id: 1, name: 'Ada' })
     expect(callCount).toBe(1)
-    expect(host.updatesRequested).toBeGreaterThan(0)
+    expect(host.shadowRoot?.textContent).toContain('name: Ada')
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let callCount = 0
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => 'stable-result')
-        },
-        staleTime: Infinity,
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => 'stable-result')
+          },
+          staleTime: Infinity,
+        }),
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+
+      forceUpdate(): void {
+        super.requestUpdate()
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
     try {
-      host.connect()
-      host.update()
-
+      container.append(host)
       await vi.advanceTimersByTimeAsync(10)
       expect(query().isSuccess).toBe(true)
 
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.update()
+        host.forceUpdate()
+        await host.updateComplete
         await Promise.resolve()
       }
 
+      await host.updateComplete
       expect(host.updatesRequested).toBe(0)
       expect(query().data).toBe('stable-result')
       expect(callCount).toBe(1)
@@ -195,41 +189,57 @@ describe('createQueryController', () => {
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        initialData: 'stable-data',
-        staleTime: Infinity,
-        queryFn: () =>
-          new Promise<string>((resolve) => {
-            resolveRefetch = () => resolve('stable-data')
-          }),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          initialData: 'stable-data',
+          staleTime: Infinity,
+          queryFn: () =>
+            new Promise<string>((resolve) => {
+              resolveRefetch = () => resolve('stable-data')
+            }),
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
     try {
-      host.connect()
-      host.update()
+      container.append(host)
+      await host.updateComplete
 
       expect(query().data).toBe('stable-data')
       await Promise.resolve()
       await Promise.resolve()
+      await host.updateComplete
 
       host.updatesRequested = 0
 
       const refetch = query.refetch()
       expect(resolveRefetch).toBeDefined()
       await Promise.resolve()
+      await host.updateComplete
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
+      await host.updateComplete
       expect(host.updatesRequested).toBe(0)
     } finally {
       query.destroy()
@@ -238,32 +248,47 @@ describe('createQueryController', () => {
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        initialData: 'initial-data',
-        staleTime: Infinity,
-        queryFn: async () => 'unused',
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          initialData: 'initial-data',
+          staleTime: Infinity,
+          queryFn: async () => 'unused',
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
     try {
-      host.connect()
-      host.update()
+      container.append(host)
+      await host.updateComplete
 
       expect(query().status).toBe('success')
       await Promise.resolve()
       await Promise.resolve()
+      await host.updateComplete
 
       host.updatesRequested = 0
 
       queryClient.setQueryData(key, 'updated-data')
 
       await Promise.resolve()
+      await host.updateComplete
       expect(host.updatesRequested).toBe(0)
 
       expect(query().data).toBe('updated-data')
@@ -276,21 +301,24 @@ describe('createQueryController', () => {
   it('should transition from pending to success with expected contract', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'ok'),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'ok'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
     expect(query().status).toBe('pending')
     expect(query().isSuccess).toBe(false)
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -301,32 +329,35 @@ describe('createQueryController', () => {
   it('should not fetch when enabled=false and fetch after enabling', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let callCount = 0
     let enabled = false
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        enabled,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => 'enabled-result')
-        },
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          enabled,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => 'enabled-result')
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(callCount).toBe(0)
     expect(query().isSuccess).toBe(false)
 
     enabled = true
-    host.update()
+    host.requestUpdate()
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -338,22 +369,26 @@ describe('createQueryController', () => {
     const key = queryKey()
     let callCount = 0
 
-    const firstHost = new TestControllerHost()
-    const firstQuery = createQueryController(
-      firstHost,
-      {
-        queryKey: key,
-        gcTime: 0,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => `value-${callCount}`)
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          gcTime: 0,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => `value-${callCount}`)
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
 
-    firstHost.connect()
-    firstHost.update()
+    const firstHost = new Host()
+    const firstQuery = firstHost.query
+
+    container.append(firstHost)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(firstQuery().isSuccess).toBe(true)
@@ -362,7 +397,7 @@ describe('createQueryController', () => {
     expect(firstCacheEntry?.getObserversCount()).toBe(1)
     expect(callCount).toBe(1)
 
-    firstHost.disconnect()
+    firstHost.remove()
     firstQuery.destroy()
     // With gcTime:0, cache entry may be immediately removed after last observer unmounts.
     expect(
@@ -372,22 +407,10 @@ describe('createQueryController', () => {
         ?.getObserversCount() ?? 0,
     ).toBe(0)
 
-    const secondHost = new TestControllerHost()
-    const secondQuery = createQueryController(
-      secondHost,
-      {
-        queryKey: key,
-        gcTime: 0,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => `value-${callCount}`)
-        },
-      },
-      queryClient,
-    )
+    const secondHost = new Host()
+    const secondQuery = secondHost.query
 
-    secondHost.connect()
-    secondHost.update()
+    container.append(secondHost)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(secondQuery().isSuccess).toBe(true)
@@ -402,32 +425,35 @@ describe('createQueryController', () => {
   it('should apply latest accessor key/options on updates and refetch', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let keyId = 1
     const seenKeys: number[] = []
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: [...key, keyId],
-        queryFn: ({ queryKey }) => {
-          const id = queryKey[1] as number
-          seenKeys.push(id)
-          return sleep(10).then(() => `user-${id}`)
-        },
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: [...key, keyId],
+          queryFn: ({ queryKey }) => {
+            const id = queryKey[1] as number
+            seenKeys.push(id)
+            return sleep(10).then(() => `user-${id}`)
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('user-1')
 
     keyId = 2
-    host.update()
+    host.requestUpdate()
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -444,35 +470,54 @@ describe('createQueryController', () => {
   it('should not request a host update when function options resolve to an unchanged result', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let callCount = 0
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        staleTime: Infinity,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => 'stable')
-        },
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
 
-    host.connect()
-    host.update()
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          staleTime: Infinity,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => 'stable')
+          },
+        }),
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+
+      forceUpdate(): void {
+        super.requestUpdate()
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     await Promise.resolve()
     await Promise.resolve()
+    await host.updateComplete
     const updatesAfterSuccess = host.updatesRequested
 
-    host.update()
+    host.forceUpdate()
+    await host.updateComplete
 
     await Promise.resolve()
     await Promise.resolve()
+    await host.updateComplete
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
     expect(host.updatesRequested).toBe(updatesAfterSuccess)
@@ -482,101 +527,83 @@ describe('createQueryController', () => {
     let staleCalls = 0
     const staleKey = queryKey()
 
-    const staleHostA = new TestControllerHost()
-    const staleQueryA = createQueryController(
-      staleHostA,
-      {
-        queryKey: staleKey,
-        staleTime: 0,
-        refetchOnMount: true,
-        queryFn: () => {
-          staleCalls += 1
-          return sleep(10).then(() => `stale-${staleCalls}`)
+    class StaleHost extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: staleKey,
+          staleTime: 0,
+          refetchOnMount: true,
+          queryFn: () => {
+            staleCalls += 1
+            return sleep(10).then(() => `stale-${staleCalls}`)
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), StaleHost)
 
-    staleHostA.connect()
-    staleHostA.update()
+    const staleHostA = new StaleHost()
+    const staleQueryA = staleHostA.query
+
+    container.append(staleHostA)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(staleQueryA().isSuccess).toBe(true)
     expect(staleCalls).toBe(1)
 
-    staleHostA.disconnect()
+    staleHostA.remove()
     staleQueryA.destroy()
 
-    const staleHostB = new TestControllerHost()
-    const staleQueryB = createQueryController(
-      staleHostB,
-      {
-        queryKey: staleKey,
-        staleTime: 0,
-        refetchOnMount: true,
-        queryFn: () => {
-          staleCalls += 1
-          return sleep(10).then(() => `stale-${staleCalls}`)
-        },
-      },
-      queryClient,
-    )
+    const staleHostB = new StaleHost()
+    const staleQueryB = staleHostB.query
 
-    staleHostB.connect()
-    staleHostB.update()
+    container.append(staleHostB)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(staleCalls).toBe(2)
     expect(staleQueryB().isSuccess).toBe(true)
 
-    staleHostB.disconnect()
+    staleHostB.remove()
     staleQueryB.destroy()
 
     let freshCalls = 0
     const freshKey = queryKey()
 
-    const freshHostA = new TestControllerHost()
-    const freshQueryA = createQueryController(
-      freshHostA,
-      {
-        queryKey: freshKey,
-        staleTime: Number.POSITIVE_INFINITY,
-        refetchOnMount: true,
-        queryFn: () => {
-          freshCalls += 1
-          return sleep(10).then(() => `fresh-${freshCalls}`)
+    class FreshHost extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: freshKey,
+          staleTime: Number.POSITIVE_INFINITY,
+          refetchOnMount: true,
+          queryFn: () => {
+            freshCalls += 1
+            return sleep(10).then(() => `fresh-${freshCalls}`)
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), FreshHost)
 
-    freshHostA.connect()
-    freshHostA.update()
+    const freshHostA = new FreshHost()
+    const freshQueryA = freshHostA.query
+
+    container.append(freshHostA)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(freshQueryA().isSuccess).toBe(true)
     expect(freshCalls).toBe(1)
 
-    freshHostA.disconnect()
+    freshHostA.remove()
     freshQueryA.destroy()
 
-    const freshHostB = new TestControllerHost()
-    const freshQueryB = createQueryController(
-      freshHostB,
-      {
-        queryKey: freshKey,
-        staleTime: Number.POSITIVE_INFINITY,
-        refetchOnMount: true,
-        queryFn: () => {
-          freshCalls += 1
-          return sleep(10).then(() => `fresh-${freshCalls}`)
-        },
-      },
-      queryClient,
-    )
+    const freshHostB = new FreshHost()
+    const freshQueryB = freshHostB.query
 
-    freshHostB.connect()
-    freshHostB.update()
+    container.append(freshHostB)
 
     expect(freshQueryB().isSuccess).toBe(true)
     await vi.advanceTimersByTimeAsync(10)
@@ -587,27 +614,30 @@ describe('createQueryController', () => {
   it('should transform data with select and surface a throwing select as an error', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let shouldThrow = false
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ value: 2 })),
-        select: (payload: { value: number }) => {
-          if (shouldThrow) {
-            throw new Error('select-failed')
-          }
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ value: 2 })),
+          select: (payload: { value: number }) => {
+            if (shouldThrow) {
+              throw new Error('select-failed')
+            }
 
-          return payload.value * 10
-        },
-      }),
-      queryClient,
-    )
+            return payload.value * 10
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -625,69 +655,90 @@ describe('createQueryController', () => {
   it('should preserve prior data during key transitions with keepPreviousData', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let keyId = 1
     let resolveSecond: ((value: string) => void) | undefined
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: [...key, keyId],
-        queryFn: async ({ queryKey }) => {
-          const id = queryKey[1] as number
-          if (id === 1) {
-            return sleep(10).then(() => 'value-1')
-          }
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: [...key, keyId],
+          queryFn: async ({ queryKey }) => {
+            const id = queryKey[1] as number
+            if (id === 1) {
+              return sleep(10).then(() => 'value-1')
+            }
 
-          return new Promise<string>((resolve) => {
-            resolveSecond = resolve
-          })
-        },
-        placeholderData: keepPreviousData,
-      }),
-      queryClient,
-    )
+            return new Promise<string>((resolve) => {
+              resolveSecond = resolve
+            })
+          },
+          placeholderData: keepPreviousData,
+        }),
+        queryClient,
+      )
 
-    host.connect()
-    host.update()
+      override render() {
+        const result = this.query()
+        return html`
+          <p>data: ${result.data ?? 'none'}</p>
+          <p>placeholder: ${result.isPlaceholderData}</p>
+        `
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('value-1')
+    expect(host.shadowRoot?.textContent).toContain('data: value-1')
+    expect(host.shadowRoot?.textContent).toContain('placeholder: false')
 
     keyId = 2
-    host.update()
+    host.requestUpdate()
+    await host.updateComplete
 
     expect(query().isFetching).toBe(true)
     expect(query().isPlaceholderData).toBe(true)
     expect(query().data).toBe('value-1')
+    expect(host.shadowRoot?.textContent).toContain('data: value-1')
+    expect(host.shadowRoot?.textContent).toContain('placeholder: true')
 
     resolveSecond?.('value-2')
     await vi.advanceTimersByTimeAsync(0)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('value-2')
     expect(query().isPlaceholderData).toBe(false)
+    expect(host.shadowRoot?.textContent).toContain('data: value-2')
+    expect(host.shadowRoot?.textContent).toContain('placeholder: false')
   })
 
   it('should refetch and update result state on invalidation', async () => {
-    const host = new TestControllerHost()
     const key = queryKey()
     let callCount = 0
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () => {
-          callCount += 1
-          return sleep(10).then(() => `v${callCount}`)
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => `v${callCount}`)
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -704,37 +755,41 @@ describe('createQueryController', () => {
   it('should not overwrite a newer key result with a stale older response', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let keyId = 'old'
     let resolveOld: ((value: string) => void) | undefined
     let resolveNew: ((value: string) => void) | undefined
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: [...key, keyId],
-        queryFn: async ({ queryKey }) => {
-          const id = queryKey[1] as string
-          return new Promise<string>((resolve) => {
-            if (id === 'old') {
-              resolveOld = resolve
-            } else {
-              resolveNew = resolve
-            }
-          })
-        },
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: [...key, keyId],
+          queryFn: async ({ queryKey }) => {
+            const id = queryKey[1] as string
+            return new Promise<string>((resolve) => {
+              if (id === 'old') {
+                resolveOld = resolve
+              } else {
+                resolveNew = resolve
+              }
+            })
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(resolveOld).toBeTypeOf('function')
 
     keyId = 'new'
-    host.update()
+    host.requestUpdate()
+    await host.updateComplete
 
     expect(resolveNew).toBeTypeOf('function')
 
@@ -751,42 +806,45 @@ describe('createQueryController', () => {
   it('should pass an AbortSignal to queryFn and abort the prior request on key switch', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let keyId: 'old' | 'new' = 'old'
     let oldSignal: AbortSignal | undefined
     let resolveOld: ((value: string) => void) | undefined
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: [...key, keyId],
-        queryFn: async ({ signal, queryKey }) => {
-          const id = queryKey[1] as 'old' | 'new'
-          if (id === 'old') {
-            oldSignal = signal
-            return new Promise<string>((resolve) => {
-              resolveOld = resolve
-              signal.addEventListener('abort', () => resolve('old-aborted'), {
-                once: true,
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: [...key, keyId],
+          queryFn: async ({ signal, queryKey }) => {
+            const id = queryKey[1] as 'old' | 'new'
+            if (id === 'old') {
+              oldSignal = signal
+              return new Promise<string>((resolve) => {
+                resolveOld = resolve
+                signal.addEventListener('abort', () => resolve('old-aborted'), {
+                  once: true,
+                })
               })
-            })
-          }
+            }
 
-          return sleep(10).then(() => 'new-success')
-        },
-      }),
-      queryClient,
-    )
+            return sleep(10).then(() => 'new-success')
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(oldSignal).toBeInstanceOf(AbortSignal)
     expect(oldSignal?.aborted).toBe(false)
 
     keyId = 'new'
-    host.update()
+    host.requestUpdate()
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().data).toBe('new-success')
@@ -800,28 +858,33 @@ describe('createQueryController', () => {
   it('should maintain a stable final state without duplicate observers under rapid key churn', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let keyId = 0
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: [...key, keyId],
-        queryFn: async ({ queryKey }) => {
-          const id = queryKey[1] as number
-          await sleep(Math.max(1, 20 - id))
-          return `result-${id}`
-        },
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: [...key, keyId],
+          queryFn: async ({ queryKey }) => {
+            const id = queryKey[1] as number
+            await sleep(Math.max(1, 20 - id))
+            return `result-${id}`
+          },
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
+    await host.updateComplete
 
     for (let i = 1; i <= 20; i += 1) {
       keyId = i
-      host.update()
+      host.requestUpdate()
+      await host.updateComplete
     }
 
     await vi.advanceTimersByTimeAsync(1)
@@ -837,28 +900,42 @@ describe('createQueryController', () => {
   it('should not process detached updates when disconnected while in-flight', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let resolveFetch: ((value: string) => void) | undefined
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () =>
-          new Promise<string>((resolve) => {
-            resolveFetch = resolve
-          }),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
 
-    host.connect()
-    host.update()
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () =>
+            new Promise<string>((resolve) => {
+              resolveFetch = resolve
+            }),
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
+    await host.updateComplete
 
     expect(query().isFetching).toBe(true)
 
-    host.disconnect()
+    host.remove()
     await Promise.resolve()
+    await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
 
     resolveFetch?.('late-value')
@@ -869,33 +946,35 @@ describe('createQueryController', () => {
   it('should yield a correct snapshot when reconnecting after an in-flight request settles', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let resolveFetch: ((value: string) => void) | undefined
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () =>
-          new Promise<string>((resolve) => {
-            resolveFetch = resolve
-          }),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () =>
+            new Promise<string>((resolve) => {
+              resolveFetch = resolve
+            }),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(query().isFetching).toBe(true)
 
-    host.disconnect()
+    host.remove()
     resolveFetch?.('reconnected-value')
     await vi.advanceTimersByTimeAsync(0)
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(query().isSuccess).toBe(true)
@@ -905,33 +984,38 @@ describe('createQueryController', () => {
   it('should use the latest select closure after host updates', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let multiplier = 1
 
-    const query = createQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 2),
-        select: (value: number) => value * multiplier,
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 2),
+          select: (value: number) => value * multiplier,
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe(2)
 
     multiplier = 3
-    host.update()
+    host.requestUpdate()
+    await host.updateComplete
 
     expect(query().data).toBe(6)
 
     multiplier = 4
-    host.update()
+    host.requestUpdate()
+    await host.updateComplete
     const refetchPromise = query.refetch()
     await vi.advanceTimersByTimeAsync(10)
     await expect(refetchPromise).resolves.toMatchObject({ data: 8 })
@@ -939,6 +1023,7 @@ describe('createQueryController', () => {
   })
 
   it('should switch provider client while connected with a single active observer', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
 
     const clientB = new QueryClient()
@@ -948,11 +1033,23 @@ describe('createQueryController', () => {
     ) as QueryClientProvider
     provider.client = clientA
 
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
-    document.body.append(provider)
+    container.append(provider)
 
     await provider.updateComplete
     await consumer.updateComplete
@@ -990,29 +1087,32 @@ describe('createQueryController', () => {
   it('should track retry failure metadata before eventual success', async () => {
     const key = queryKey()
 
-    const host = new TestControllerHost()
     let attempts = 0
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        retry: 2,
-        retryDelay: 30,
-        queryFn: async () => {
-          attempts += 1
-          await sleep(10)
-          if (attempts < 3) {
-            throw new Error(`attempt-${attempts}`)
-          }
-          return 'success'
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          retry: 2,
+          retryDelay: 30,
+          queryFn: async () => {
+            attempts += 1
+            await sleep(10)
+            if (attempts < 3) {
+              throw new Error(`attempt-${attempts}`)
+            }
+            return 'success'
+          },
         },
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().failureCount).toBe(1)
@@ -1025,20 +1125,23 @@ describe('createQueryController', () => {
   })
 
   it('should be reconnect-idempotent without duplicate subscriptions', async () => {
-    const host = new TestControllerHost()
     const key = queryKey()
 
-    const query = createQueryController(
-      host,
-      {
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ['a', 'b']),
-      },
-      queryClient,
-    )
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ['a', 'b']),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -1047,25 +1150,39 @@ describe('createQueryController', () => {
     expect(cacheQuery?.state.data).toEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
-    host.disconnect()
+    host.remove()
     expect(cacheQuery?.getObserversCount()).toBe(0)
 
-    host.connect()
-    host.update()
+    container.append(host)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(cacheQuery?.getObserversCount()).toBe(1)
 
-    host.connect()
-    host.update()
+    host.connectedCallback()
+    host.requestUpdate()
+    await host.updateComplete
 
     expect(cacheQuery?.getObserversCount()).toBe(1)
   })
 
   it('should be safe before provider resolution in the no-explicit-client constructor path', async () => {
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
 
     expect(consumer.query().status).toBe('pending')
 
@@ -1075,7 +1192,7 @@ describe('createQueryController', () => {
     provider.client = queryClient
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
@@ -1090,19 +1207,33 @@ describe('createQueryController', () => {
   })
 
   it('should not spuriously throw during the handshake on the first provider-backed connection', async () => {
+    const key = queryKey()
+
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
     provider.client = queryClient
 
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
     expect(() => consumer.query()).not.toThrow()
 
-    document.body.append(provider)
+    container.append(provider)
 
     expect(() => consumer.query()).not.toThrow()
     await provider.updateComplete
@@ -1117,13 +1248,27 @@ describe('createQueryController', () => {
   })
 
   it('should throw after the initial placeholder phase when no provider is available', async () => {
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
 
     expect(consumer.query().status).toBe('pending')
 
-    document.body.append(consumer)
+    container.append(consumer)
 
     expect(() => consumer.query()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -1141,12 +1286,26 @@ describe('createQueryController', () => {
   })
 
   it('should share the missing-client contract between wrapper and result-object imperative methods', async () => {
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     const placeholderResult = consumer.query()
 
-    document.body.append(consumer)
+    container.append(consumer)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.query()).toThrow(/No QueryClient available/)
@@ -1163,16 +1322,30 @@ describe('createQueryController', () => {
   })
 
   it('should clear stale provider-derived client state when reconnecting outside any provider', async () => {
+    const key = queryKey()
+
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
     provider.client = queryClient
 
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
-    document.body.append(provider)
+    container.append(provider)
 
     await provider.updateComplete
     await consumer.updateComplete
@@ -1193,7 +1366,7 @@ describe('createQueryController', () => {
         ?.getObserversCount() ?? 0,
     ).toBe(0)
 
-    consumer.connectedCallback()
+    container.append(consumer)
 
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
@@ -1206,6 +1379,7 @@ describe('createQueryController', () => {
   })
 
   it('should rebind cleanly with later recovery when reconnecting under a different provider', async () => {
+    const key = queryKey()
     const clientA = new QueryClient()
     const clientB = new QueryClient()
     const providerA = document.createElement(
@@ -1217,12 +1391,24 @@ describe('createQueryController', () => {
     ) as QueryClientProvider
     providerB.client = clientB
 
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as QueryConsumerHostElement
+    class Consumer extends LitElement {
+      readonly queryKey = key
+      queryCalls = 0
+
+      readonly query = createQueryController(this, () => ({
+        queryKey: this.queryKey,
+        queryFn: () => {
+          this.queryCalls += 1
+          return sleep(10).then(() => `value-${this.queryCalls}`)
+        },
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     providerA.append(consumer)
 
-    document.body.append(providerA)
+    container.append(providerA)
 
     await providerA.updateComplete
     await consumer.updateComplete
@@ -1237,14 +1423,14 @@ describe('createQueryController', () => {
         ?.getObserversCount() ?? 0,
     ).toBe(0)
 
-    consumer.connectedCallback()
+    container.append(consumer)
     await expect(consumer.query.refetch()).rejects.toThrow(
       /No QueryClient available/,
     )
 
-    consumer.disconnectedCallback()
+    consumer.remove()
     providerB.append(consumer)
-    document.body.append(providerB)
+    container.append(providerB)
     await providerB.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1276,32 +1462,17 @@ describe('createQueryController', () => {
 
     queryClient.setQueryData(key, 'hydrated-value')
 
-    // Simulate Lit's synchronous hostConnected call on already-connected hosts.
-    class AlreadyConnectedHost implements ReactiveControllerHost {
-      private readonly controllers = new Set<ReactiveController>()
-      private isConnected = true
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
-      addController(controller: ReactiveController): void {
-        this.controllers.add(controller)
-        if (this.isConnected) {
-          controller.hostConnected?.()
-        }
-      }
-
-      removeController(controller: ReactiveController): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
+    class Host extends LitElement {
+      query?: QueryResultAccessor<string, Error>
     }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
 
-    const host = new AlreadyConnectedHost()
-
-    const query = createQueryController(
+    // Lit calls hostConnected immediately when a controller is added to an
+    // already-connected host
+    host.query = createQueryController(
       host,
       {
         queryKey: key,
@@ -1313,6 +1484,7 @@ describe('createQueryController', () => {
       },
       queryClient,
     )
+    const query = host.query
 
     await Promise.resolve()
     await Promise.resolve()
@@ -1334,12 +1506,7 @@ describe('createQueryController', () => {
   it('should defer explicit-client query accessors until host fields are initialized', () => {
     const key = queryKey()
 
-    class DeferredExplicitQueryHost implements ReactiveControllerHost {
-      private readonly controllers = new Set<ReactiveController>()
-
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
+    class DeferredExplicitQueryHost extends LitElement {
       readonly query = createQueryController(
         this,
         () => ({
@@ -1352,19 +1519,8 @@ describe('createQueryController', () => {
 
       readonly firstRead = this.query()
       readonly id = 'alpha'
-
-      addController(controller: ReactiveController): void {
-        this.controllers.add(controller)
-      }
-
-      removeController(controller: ReactiveController): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
     }
+    customElements.define(generateElementName(), DeferredExplicitQueryHost)
 
     expect(() => new DeferredExplicitQueryHost()).not.toThrow()
 
