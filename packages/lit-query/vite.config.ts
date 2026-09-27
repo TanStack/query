@@ -20,7 +20,6 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    include: ['__tests__/**/*.test.ts'],
     coverage: {
       enabled: !!process.env.CI,
       provider: 'istanbul',
