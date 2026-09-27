@@ -21,7 +21,6 @@ describe('Subscribable', () => {
     const subscribable = new SubscribableTest()
 
     subscribable.subscribe(() => undefined)
-
     expect(subscribable.onSubscribeSpy).toHaveBeenCalledTimes(1)
     expect(subscribable.onUnsubscribeSpy).toHaveBeenCalledTimes(0)
   })
@@ -31,7 +30,6 @@ describe('Subscribable', () => {
 
     subscribable.subscribe(() => undefined)
     subscribable.subscribe(() => undefined)
-
     expect(subscribable.onSubscribeSpy).toHaveBeenCalledTimes(2)
   })
 
@@ -40,7 +38,6 @@ describe('Subscribable', () => {
 
     const unsubscribe = subscribable.subscribe(() => undefined)
     unsubscribe()
-
     expect(subscribable.onUnsubscribeSpy).toHaveBeenCalledTimes(1)
   })
 
@@ -54,7 +51,6 @@ describe('Subscribable', () => {
     const subscribable = new SubscribableTest()
 
     subscribable.subscribe(() => undefined)
-
     expect(subscribable.hasListeners()).toBe(true)
   })
 
@@ -63,7 +59,6 @@ describe('Subscribable', () => {
 
     const unsubscribe = subscribable.subscribe(() => undefined)
     unsubscribe()
-
     expect(subscribable.hasListeners()).toBe(false)
   })
 
@@ -74,7 +69,6 @@ describe('Subscribable', () => {
     subscribable.subscribe(() => undefined)
 
     unsubscribe1()
-
     expect(subscribable.hasListeners()).toBe(true)
   })
 
@@ -84,12 +78,10 @@ describe('Subscribable', () => {
 
     subscribable.subscribe(listener)
     subscribable.subscribe(listener)
-
     expect(subscribable.hasListeners()).toBe(true)
 
     const unsubscribe = subscribable.subscribe(listener)
     unsubscribe()
-
     expect(subscribable.hasListeners()).toBe(false)
   })
 
@@ -103,7 +95,6 @@ describe('Subscribable', () => {
     expect(subscribable.hasListeners()).toBe(true)
 
     unsubscribe()
-
     expect(subscribable.hasListeners()).toBe(false)
   })
 })

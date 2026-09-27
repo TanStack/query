@@ -38,7 +38,6 @@ describe('persist', () => {
       })
 
       const result = await persister.restoreClient()
-
       expect(result?.clientState.mutations).toHaveLength(1)
 
       unsubscribe()
@@ -201,7 +200,6 @@ describe('persist', () => {
         queryClient,
         persister,
       })
-
       expect(persister.removeClient).not.toHaveBeenCalled()
       expect(queryClient.getQueryData(['key'])).toBe('data')
     })
@@ -219,7 +217,6 @@ describe('persist', () => {
         persister,
         maxAge: 100,
       })
-
       expect(persister.removeClient).toHaveBeenCalledTimes(1)
     })
 
@@ -236,7 +233,6 @@ describe('persist', () => {
         persister,
         buster: 'new-buster',
       })
-
       expect(persister.removeClient).toHaveBeenCalledTimes(1)
     })
 
@@ -252,7 +248,6 @@ describe('persist', () => {
         queryClient,
         persister,
       })
-
       expect(persister.removeClient).toHaveBeenCalledTimes(1)
     })
   })
@@ -269,7 +264,6 @@ describe('persist', () => {
       await restorePromise
 
       queryClient.setQueryData(['key'], 'data')
-
       expect(persister.persistClient).toHaveBeenCalled()
 
       unsubscribe()
@@ -293,7 +287,6 @@ describe('persist', () => {
       await restorePromise
 
       queryClient.setQueryData(['key'], 'data')
-
       expect(persister.persistClient).not.toHaveBeenCalled()
     })
   })

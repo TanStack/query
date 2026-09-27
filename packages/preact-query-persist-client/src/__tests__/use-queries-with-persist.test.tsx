@@ -149,7 +149,6 @@ describe('useQueries with persist and memoized combine (preact)', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(0)
     })
-
     expect(rendered.getByTestId('pending').textContent).toBe('false')
     expect(rendered.getByTestId('data').textContent).toBe('1,2,3')
   })
