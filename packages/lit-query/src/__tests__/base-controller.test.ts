@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LitElement } from 'lit'
-import type { ReactiveControllerHost } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
 import { generateElementName } from './test-utils.js'
+import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
 
 class RecordingController extends BaseController<string> {
-  readonly lifecycle: string[] = []
+  readonly lifecycle: Array<string> = []
 
   constructor(host: ReactiveControllerHost) {
     super(host, 'pending')

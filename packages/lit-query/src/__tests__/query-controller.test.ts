@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { keepPreviousData, QueryClient } from '@tanstack/query-core'
+import { QueryClient, keepPreviousData } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueryController } from '../createQueryController.js'
-import type { QueryResultAccessor } from '../createQueryController.js'
 import { generateElementName } from './test-utils.js'
+import type { QueryResultAccessor } from '../createQueryController.js'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -426,7 +426,7 @@ describe('createQueryController', () => {
     const key = queryKey()
 
     let keyId = 1
-    const seenKeys: number[] = []
+    const seenKeys: Array<number> = []
 
     class Host extends LitElement {
       readonly query = createQueryController(

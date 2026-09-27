@@ -1,6 +1,4 @@
 import { ContextProvider } from '@lit/context'
-import type { QueryClient } from '@tanstack/query-core'
-import type { TemplateResult } from 'lit'
 import { LitElement, html } from 'lit'
 import {
   createMissingQueryClientError,
@@ -8,6 +6,8 @@ import {
   registerDefaultQueryClient,
   unregisterDefaultQueryClient,
 } from './context.js'
+import type { QueryClient } from '@tanstack/query-core'
+import type { TemplateResult } from 'lit'
 
 /**
  * Lit element that provides a `QueryClient` to descendant Lit Query

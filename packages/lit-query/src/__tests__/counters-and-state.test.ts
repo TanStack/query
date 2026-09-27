@@ -8,10 +8,10 @@ import { createQueryController } from '../createQueryController.js'
 import { useIsFetching } from '../useIsFetching.js'
 import { useIsMutating } from '../useIsMutating.js'
 import { useMutationState } from '../useMutationState.js'
+import { generateElementName } from './test-utils.js'
 import type { IsFetchingAccessor } from '../useIsFetching.js'
 import type { IsMutatingAccessor } from '../useIsMutating.js'
 import type { MutationStateAccessor } from '../useMutationState.js'
-import { generateElementName } from './test-utils.js'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -376,7 +376,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    let activeFilter: { queryKey?: readonly string[] } = {
+    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
       queryKey: key1,
     }
 
@@ -431,7 +431,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should track mutation filters and reactivity in useIsMutating', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
-    let activeFilter: { mutationKey?: readonly string[] } = {
+    let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
       mutationKey: mutationKey1,
     }
 
@@ -488,7 +488,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
   it('should select and filter by mutation key/status in useMutationState', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
-    let activeFilter: { mutationKey?: readonly string[] } = {
+    let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
       mutationKey: mutationKey1,
     }
 

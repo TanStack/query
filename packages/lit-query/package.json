@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "tsc --project tsconfig.json",
-    "test:eslint": "eslint --concurrency=auto .",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "lint:fix": "eslint --concurrency=auto . --fix",
     "test:types": "tsc --noEmit --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:lib": "vitest",
@@ -64,9 +64,6 @@
     "lit": ">=2.8.0 <4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
-    "@tanstack/query-test-utils": "workspace:*",
-    "globals": "^17.12.0",
-    "typescript-eslint": "^8.54.0"
+    "@tanstack/query-test-utils": "workspace:*"
   }
 }

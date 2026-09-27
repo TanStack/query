@@ -1,10 +1,10 @@
 import { ContextEvent } from '@lit/context'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import {
   createMissingQueryClientError,
   queryClientContext,
 } from '../context.js'
+import type { QueryClient } from '@tanstack/query-core'
+import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 type QueryClientResolutionState =
   'pre-connect' | 'awaiting-context' | 'bound' | 'missing'

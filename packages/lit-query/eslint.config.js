@@ -1,51 +1,13 @@
 // @ts-check
 
-import js from '@eslint/js'
-import vitest from '@vitest/eslint-plugin'
-import globals from 'globals'
-import tseslint from 'typescript-eslint'
+import rootConfig from './root.eslint.config.js'
 
-export default tseslint.config(
+export default [
+  ...rootConfig,
   {
-    ignores: [
-      'build/**',
-      'coverage/**',
-      'node_modules/**',
-      '.claude/**',
-      '.references/**',
-      '**/build/**',
-      'examples/**/output/**',
-      '**/*.d.ts',
-    ],
-  },
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
-  {
-    files: ['**/*.{ts,js,mjs,cjs}'],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/require-await': 'off',
     },
   },
-  {
-    files: ['src/__tests__/**/*.{ts,js,mjs}', 'examples/**/e2e/**/*.{js,mjs}'],
-    plugins: {
-      vitest,
-    },
-    languageOptions: {
-      globals: {
-        ...vitest.environments.env.globals,
-      },
-    },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'off',
-    },
-  },
-)
+]

@@ -4,8 +4,8 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
-import type { MutationResultAccessor } from '../createMutationController.js'
 import { generateElementName } from './test-utils.js'
+import type { MutationResultAccessor } from '../createMutationController.js'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -260,7 +260,7 @@ describe('createMutationController', () => {
   })
 
   it('should call mutation callbacks in a deterministic order and count', async () => {
-    const callbackEvents: string[] = []
+    const callbackEvents: Array<string> = []
     class Host extends LitElement {
       readonly mutation = createMutationController(
         this,
@@ -310,7 +310,7 @@ describe('createMutationController', () => {
   })
 
   it('should use the latest closures for refreshed mutation callbacks', async () => {
-    const callbackEvents: string[] = []
+    const callbackEvents: Array<string> = []
     let version = 'v1'
     class Host extends LitElement {
       readonly mutation = createMutationController(
