@@ -10,7 +10,7 @@ function useMutationState<TResult>(
 queryClient?: QueryClient): MutationStateAccessor<TResult>;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:192](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L192)
+Defined in: [packages/lit-query/src/useMutationState.ts:188](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L188)
 
 Creates a Lit reactive controller that selects state from matching mutations
 in the mutation cache.

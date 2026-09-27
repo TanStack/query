@@ -1,10 +1,10 @@
 import { ContextEvent } from '@lit/context'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import {
   createMissingQueryClientError,
   queryClientContext,
 } from '../context.js'
+import type { QueryClient } from '@tanstack/query-core'
+import type { ReactiveController, ReactiveControllerHost } from 'lit'
 
 type QueryClientResolutionState =
   'pre-connect' | 'awaiting-context' | 'bound' | 'missing'
@@ -230,6 +230,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
           }
 
           const resolutionChanged = this.updateQueryClientResolutionState(
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             value === undefined ? 'missing' : 'bound',
           )
           const clientChanged = this.contextClient !== value

@@ -1,12 +1,8 @@
+import { createValueAccessor, readAccessor } from './accessor.js'
+import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
-import { BaseController } from './controllers/BaseController.js'
 
 /**
  * Accessor returned by `useIsMutating`.

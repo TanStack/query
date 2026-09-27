@@ -7,7 +7,7 @@ title: IsFetchingAccessor
 type IsFetchingAccessor = ValueAccessor<number> & object;
 ```
 
-Defined in: [packages/lit-query/src/useIsFetching.ts:17](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L17)
+Defined in: [packages/lit-query/src/useIsFetching.ts:13](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L13)
 
 Accessor returned by `useIsFetching`.
 

@@ -1,6 +1,4 @@
 import { ContextProvider } from '@lit/context'
-import type { QueryClient } from '@tanstack/query-core'
-import type { TemplateResult } from 'lit'
 import { LitElement, html } from 'lit'
 import {
   createMissingQueryClientError,
@@ -8,6 +6,8 @@ import {
   registerDefaultQueryClient,
   unregisterDefaultQueryClient,
 } from './context.js'
+import type { QueryClient } from '@tanstack/query-core'
+import type { TemplateResult } from 'lit'
 
 /**
  * Lit element that provides a `QueryClient` to descendant Lit Query
@@ -107,6 +107,7 @@ export class QueryClientProvider extends LitElement {
     }
 
     const nextClient = this.client
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!nextClient) {
       if (this.isConnected) {
         this.unmountClient(this.mountedClient)
@@ -164,6 +165,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   private requireClient(): QueryClient {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!this.client) {
       throw createMissingQueryClientError()
     }
