@@ -1,65 +1,57 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import type { InfiniteData } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
+import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
+import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
-import { TestControllerHost, TestElementHost } from './testHost.js'
+import { generateElementName } from './test-utils.js'
 
-const providerTagName = 'test-query-client-provider-infinite'
-if (!customElements.get(providerTagName)) {
-  customElements.define(providerTagName, QueryClientProvider)
-}
-
-let explicitInfiniteClient: QueryClient | undefined
-
-const contextInfiniteKey = queryKey()
-
-class ContextInfiniteHostElement extends TestElementHost {
-  readonly queryKey = contextInfiniteKey
-
-  readonly infinite = createInfiniteQueryController(
-    this,
-    {
-      queryKey: this.queryKey,
-      initialPageParam: 0,
-      queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
-      getNextPageParam: (lastPage) => (lastPage < 1 ? lastPage + 1 : undefined),
-      getPreviousPageParam: (firstPage) =>
-        firstPage > -1 ? firstPage - 1 : undefined,
-      retry: false,
-    },
-    explicitInfiniteClient,
-  )
-}
-
-const contextInfiniteTagName = 'test-context-infinite-host'
-if (!customElements.get(contextInfiniteTagName)) {
-  customElements.define(contextInfiniteTagName, ContextInfiniteHostElement)
-}
+const providerTagName = generateElementName()
+customElements.define(providerTagName, QueryClientProvider)
 
 describe('createInfiniteQueryController', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const consumer = document.createElement(
-      contextInfiniteTagName,
-    ) as ContextInfiniteHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, {
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+        getNextPageParam: (lastPage) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        getPreviousPageParam: (firstPage) =>
+          firstPage > -1 ? firstPage - 1 : undefined,
+        retry: false,
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
 
     expect(consumer.infinite().status).toBe('pending')
     await expect(consumer.infinite.refetch()).rejects.toThrow(
@@ -75,7 +67,7 @@ describe('createInfiniteQueryController', () => {
     provider.client = queryClient
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
@@ -89,20 +81,37 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
+    const key = queryKey()
     const providerClient = new QueryClient()
-    explicitInfiniteClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
     provider.client = providerClient
 
-    const consumer = document.createElement(
-      contextInfiniteTagName,
-    ) as ContextInfiniteHostElement
+    class Consumer extends LitElement {
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: this.queryKey,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          getPreviousPageParam: (firstPage) =>
+            firstPage > -1 ? firstPage - 1 : undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
@@ -119,69 +128,96 @@ describe('createInfiniteQueryController', () => {
 
     consumer.infinite.destroy()
     provider.remove()
-    explicitInfiniteClient = undefined
     await Promise.resolve()
   })
 
   it('should support initial page, fetchNextPage, and fetchPreviousPage', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
-    const infinite = createInfiniteQueryController(
-      host,
-      {
-        queryKey: key,
-        initialPageParam: 0,
-        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
-        getNextPageParam: (lastPage) =>
-          lastPage < 1 ? lastPage + 1 : undefined,
-        getPreviousPageParam: (firstPage) =>
-          firstPage > -1 ? firstPage - 1 : undefined,
-      },
-      queryClient,
-    )
 
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          getPreviousPageParam: (firstPage) =>
+            firstPage > -1 ? firstPage - 1 : undefined,
+        },
+        queryClient,
+      )
 
+      override render() {
+        return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
+    await host.updateComplete
+
+    expect(host.shadowRoot?.textContent).toContain('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
+    expect(host.shadowRoot?.textContent).toContain('pages: 0')
 
     const fetchNextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchNextPagePromise
     expect(infinite().data?.pages).toEqual([0, 1])
+    expect(host.shadowRoot?.textContent).toContain('pages: 0, 1')
 
     const fetchPreviousPagePromise = infinite.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchPreviousPagePromise
     expect(infinite().data?.pages).toEqual([-1, 0, 1])
+    expect(host.shadowRoot?.textContent).toContain('pages: -1, 0, 1')
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
     let callCount = 0
 
-    const infinite = createInfiniteQueryController(
-      host,
-      () => ({
-        queryKey: key,
-        initialPageParam: 0,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          callCount += 1
-          return Number(pageParam)
-        },
-        getNextPageParam: () => undefined,
-        staleTime: Infinity,
-      }),
-      queryClient,
-    )
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: async ({ pageParam }) => {
+            await sleep(10)
+            callCount += 1
+            return Number(pageParam)
+          },
+          getNextPageParam: () => undefined,
+          staleTime: Infinity,
+        }),
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+
+      forceUpdate(): void {
+        super.requestUpdate()
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const infinite = host.infinite
 
     try {
-      host.connect()
-      host.update()
+      container.append(host)
 
       await vi.advanceTimersByTimeAsync(10)
       expect(infinite().isSuccess).toBe(true)
@@ -189,7 +225,8 @@ describe('createInfiniteQueryController', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.update()
+        host.forceUpdate()
+        await host.updateComplete
         await Promise.resolve()
       }
 
@@ -203,31 +240,44 @@ describe('createInfiniteQueryController', () => {
 
   it('should not request an update for refetch-only state changes when only data was read', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
     let resolveRefetch: (() => void) | undefined
 
-    const infinite = createInfiniteQueryController(
-      host,
-      {
-        queryKey: key,
-        initialPageParam: 0,
-        initialData: {
-          pages: ['stable-page'],
-          pageParams: [0],
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          initialData: {
+            pages: ['stable-page'],
+            pageParams: [0],
+          },
+          staleTime: Infinity,
+          queryFn: () =>
+            new Promise<string>((resolve) => {
+              resolveRefetch = () => resolve('stable-page')
+            }),
+          getNextPageParam: () => undefined,
         },
-        staleTime: Infinity,
-        queryFn: () =>
-          new Promise<string>((resolve) => {
-            resolveRefetch = () => resolve('stable-page')
-          }),
-        getNextPageParam: () => undefined,
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const infinite = host.infinite
 
     try {
-      host.connect()
-      host.update()
+      container.append(host)
+      await host.updateComplete
 
       expect(infinite().data?.pages).toEqual(['stable-page'])
       await Promise.resolve()
@@ -251,27 +301,40 @@ describe('createInfiniteQueryController', () => {
 
   it('should refresh a suppressed result on the next accessor read when a newly read property changed', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
 
-    const infinite = createInfiniteQueryController(
-      host,
-      {
-        queryKey: key,
-        initialPageParam: 0,
-        initialData: {
-          pages: ['initial-page'],
-          pageParams: [0],
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          initialData: {
+            pages: ['initial-page'],
+            pageParams: [0],
+          },
+          staleTime: Infinity,
+          queryFn: async () => 'unused',
+          getNextPageParam: () => undefined,
         },
-        staleTime: Infinity,
-        queryFn: async () => 'unused',
-        getNextPageParam: () => undefined,
-      },
-      queryClient,
-    )
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const infinite = host.infinite
 
     try {
-      host.connect()
-      host.update()
+      container.append(host)
+      await host.updateComplete
 
       expect(infinite().status).toBe('success')
       await Promise.resolve()
@@ -294,29 +357,32 @@ describe('createInfiniteQueryController', () => {
 
   it('should preserve prior pages consistently when fetching the next page fails', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
-    const infinite = createInfiniteQueryController(
-      host,
-      {
-        queryKey: key,
-        initialPageParam: 0,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          const page = Number(pageParam)
-          if (page === 1) {
-            throw new Error('next-page-failed')
-          }
-          return page
-        },
-        getNextPageParam: (lastPage) =>
-          lastPage < 1 ? lastPage + 1 : undefined,
-        retry: false,
-      },
-      queryClient,
-    )
 
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: async ({ pageParam }) => {
+            await sleep(10)
+            const page = Number(pageParam)
+            if (page === 1) {
+              throw new Error('next-page-failed')
+            }
+            return page
+          },
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          retry: false,
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
 
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
@@ -332,14 +398,29 @@ describe('createInfiniteQueryController', () => {
   })
 
   it('should fail deterministically and align imperative methods when the provider is missing', async () => {
-    const consumer = document.createElement(
-      contextInfiniteTagName,
-    ) as ContextInfiniteHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, {
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+        getNextPageParam: (lastPage) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        getPreviousPageParam: (firstPage) =>
+          firstPage > -1 ? firstPage - 1 : undefined,
+        retry: false,
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     const placeholderResult = consumer.infinite()
 
     expect(placeholderResult.status).toBe('pending')
 
-    document.body.append(consumer)
+    container.append(consumer)
 
     expect(() => consumer.infinite()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -372,30 +453,15 @@ describe('createInfiniteQueryController', () => {
       pageParams: [0],
     })
 
-    class AlreadyConnectedHost implements ReactiveControllerHost {
-      private readonly controllers = new Set<ReactiveController>()
-      private isConnected = true
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
-      addController(controller: ReactiveController): void {
-        this.controllers.add(controller)
-        if (this.isConnected) {
-          controller.hostConnected?.()
-        }
-      }
-
-      removeController(controller: ReactiveController): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
+    class Host extends LitElement {
+      infinite?: InfiniteQueryResultAccessor<InfiniteData<number>, Error>
     }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
 
-    const host = new AlreadyConnectedHost()
-    const infinite = createInfiniteQueryController(
+    host.infinite = createInfiniteQueryController(
       host,
       {
         queryKey: key,
@@ -407,6 +473,7 @@ describe('createInfiniteQueryController', () => {
       },
       queryClient,
     )
+    const infinite = host.infinite
 
     await Promise.resolve()
     await Promise.resolve()
@@ -419,12 +486,7 @@ describe('createInfiniteQueryController', () => {
   it('should defer explicit-client infinite accessors until host fields are initialized', () => {
     const key = queryKey()
 
-    class DeferredExplicitInfiniteHost implements ReactiveControllerHost {
-      private readonly controllers = new Set<ReactiveController>()
-
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
+    class DeferredExplicitInfiniteHost extends LitElement {
       readonly infinite = createInfiniteQueryController(
         this,
         () => ({
@@ -440,19 +502,8 @@ describe('createInfiniteQueryController', () => {
 
       readonly firstRead = this.infinite()
       readonly id = 'alpha'
-
-      addController(controller: ReactiveController): void {
-        this.controllers.add(controller)
-      }
-
-      removeController(controller: ReactiveController): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
     }
+    customElements.define(generateElementName(), DeferredExplicitInfiniteHost)
 
     expect(() => new DeferredExplicitInfiniteHost()).not.toThrow()
 
@@ -465,32 +516,38 @@ describe('createInfiniteQueryController', () => {
 
 describe('options helpers integration', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should integrate queryOptions with createQueryController', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
 
-    const query = createQueryController(
-      host,
-      queryOptions({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'query-ok'),
-      }),
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'query-ok'),
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const query = host.query
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -498,18 +555,19 @@ describe('options helpers integration', () => {
   })
 
   it('should integrate mutationOptions with createMutationController', async () => {
-    const host = new TestControllerHost()
-
-    const mutation = createMutationController(
-      host,
-      mutationOptions({
-        mutationFn: (value: number) => sleep(10).then(() => value + 10),
-      }),
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        mutationOptions({
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     const mutatePromise = mutation.mutateAsync(5)
     await vi.advanceTimersByTimeAsync(10)
@@ -519,22 +577,24 @@ describe('options helpers integration', () => {
 
   it('should integrate infiniteQueryOptions with createInfiniteQueryController', async () => {
     const key = queryKey()
-    const host = new TestControllerHost()
 
-    const infinite = createInfiniteQueryController(
-      host,
-      infiniteQueryOptions({
-        queryKey: key,
-        initialPageParam: 0,
-        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
-        getNextPageParam: (lastPage) =>
-          lastPage < 1 ? lastPage + 1 : undefined,
-      }),
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        infiniteQueryOptions({
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+        }),
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
 
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
