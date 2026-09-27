@@ -54,11 +54,11 @@ describe('type inference', () => {
         queries: [
           {
             queryKey: queryKey(),
-            queryFn: async () => 1,
+            queryFn: () => Promise.resolve(1),
           },
           {
             queryKey: queryKey(),
-            queryFn: async () => 'x',
+            queryFn: () => Promise.resolve('x'),
           },
         ] as const,
       },
@@ -75,11 +75,11 @@ describe('type inference', () => {
         queries: [
           {
             queryKey: queryKey(),
-            queryFn: async () => 7,
+            queryFn: () => Promise.resolve(7),
           },
           {
             queryKey: queryKey(),
-            queryFn: async () => 'ok',
+            queryFn: () => Promise.resolve('ok'),
           },
         ] as const,
         combine: (result) => ({
@@ -99,7 +99,7 @@ describe('type inference', () => {
         queries: [
           queryOptions({
             queryKey: queryKey(),
-            queryFn: async () => ({ id: 4, name: 'Marie' }),
+            queryFn: () => Promise.resolve({ id: 4, name: 'Marie' }),
             initialData: { id: 0, name: 'Seed' },
           }),
         ] as const,
@@ -121,7 +121,7 @@ describe('type inference', () => {
         queries: [
           queryOptions({
             queryKey: queryKey(),
-            queryFn: async () => ({ id: 5, name: 'Katherine' }),
+            queryFn: () => Promise.resolve({ id: 5, name: 'Katherine' }),
             initialData: { id: 1, name: 'Init' },
           }),
         ] as const,
@@ -136,7 +136,7 @@ describe('type inference', () => {
     const numberQueries = [1, 2, 3].map((value) =>
       queryOptions({
         queryKey: queryKey(),
-        queryFn: async () => value,
+        queryFn: () => Promise.resolve(value),
       }),
     )
     const mappedQueriesResult = createQueriesController(
@@ -146,7 +146,7 @@ describe('type inference', () => {
           ...numberQueries,
           queryOptions({
             queryKey: queryKey(),
-            queryFn: async () => true,
+            queryFn: () => Promise.resolve(true),
           }),
         ],
       },
@@ -168,7 +168,7 @@ describe('type inference', () => {
       host,
       queryOptions({
         queryKey: queryKey(),
-        queryFn: async () => ({ id: 1, name: 'Ada' }),
+        queryFn: () => Promise.resolve({ id: 1, name: 'Ada' }),
       }),
       queryClient,
     )
@@ -179,7 +179,8 @@ describe('type inference', () => {
     const mutation = createMutationController(
       host,
       mutationOptions({
-        mutationFn: async (input: { id: number }) => input.id.toString(),
+        mutationFn: (input: { id: number }) =>
+          Promise.resolve(input.id.toString()),
       }),
       queryClient,
     )
@@ -190,7 +191,7 @@ describe('type inference', () => {
 
     const queryOpts = queryOptions({
       queryKey: queryKey(),
-      queryFn: async () => ({ id: 2, name: 'Grace' }),
+      queryFn: () => Promise.resolve({ id: 2, name: 'Grace' }),
     })
     expectTypeOf(queryOpts.queryKey[dataTagSymbol]).toEqualTypeOf<{
       id: number
@@ -213,7 +214,7 @@ describe('type inference', () => {
       infiniteQueryOptions({
         queryKey: queryKey(),
         initialPageParam: 0,
-        queryFn: async () => ({ page: 1 }),
+        queryFn: () => Promise.resolve({ page: 1 }),
         getNextPageParam: (lastPage) => lastPage.page + 1,
       }),
       queryClient,
@@ -225,7 +226,7 @@ describe('type inference', () => {
     const infiniteQueryOpts = infiniteQueryOptions({
       queryKey: queryKey(),
       initialPageParam: 0,
-      queryFn: async () => ({ page: 3 }),
+      queryFn: () => Promise.resolve({ page: 3 }),
       getNextPageParam: (lastPage) => lastPage.page + 1,
     })
     expectTypeOf(infiniteQueryOpts.queryKey[dataTagSymbol]).toEqualTypeOf<
