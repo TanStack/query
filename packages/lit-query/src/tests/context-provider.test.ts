@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { LitElement } from 'lit'
 import { createQueryController } from '../createQueryController.js'
 import {
   getDefaultQueryClient,
@@ -8,37 +9,24 @@ import {
   useQueryClient,
 } from '../index.js'
 import { QueryClientProvider } from '../QueryClientProvider.js'
-import { TestElementHost } from './testHost.js'
+import { generateElementName } from './test-utils.js'
 
-const tagName = 'test-query-client-provider'
-if (!customElements.get(tagName)) {
-  customElements.define(tagName, QueryClientProvider)
-}
-
-const providerContextConsumerKey = queryKey()
-
-class ProviderContextConsumerElement extends TestElementHost {
-  readonly query = createQueryController(this, {
-    queryKey: providerContextConsumerKey,
-    queryFn: () => sleep(10).then(() => 'ok'),
-    retry: false,
-  })
-}
-
-const consumerTagName = 'test-query-client-provider-consumer'
-if (!customElements.get(consumerTagName)) {
-  customElements.define(consumerTagName, ProviderContextConsumerElement)
-}
+const tagName = generateElementName()
+customElements.define(tagName, QueryClientProvider)
 
 describe('QueryClientProvider/context', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
@@ -47,7 +35,7 @@ describe('QueryClientProvider/context', () => {
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = queryClient
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     expect(useQueryClient()).toBe(queryClient)
@@ -68,8 +56,8 @@ describe('QueryClientProvider/context', () => {
     providerA.client = queryClient
     providerB.client = queryClient
 
-    document.body.append(providerA)
-    document.body.append(providerB)
+    container.append(providerA)
+    container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
 
@@ -92,8 +80,8 @@ describe('QueryClientProvider/context', () => {
     providerA.client = clientA
     providerB.client = clientB
 
-    document.body.append(providerA)
-    document.body.append(providerB)
+    container.append(providerA)
+    container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
 
@@ -132,7 +120,7 @@ describe('QueryClientProvider/context', () => {
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     expect(mountA).toHaveBeenCalledTimes(1)
@@ -150,7 +138,7 @@ describe('QueryClientProvider/context', () => {
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     expect(mountA).toHaveBeenCalledTimes(1)
@@ -169,17 +157,25 @@ describe('QueryClientProvider/context', () => {
   })
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
+    const key = queryKey()
     const mount = vi.spyOn(queryClient, 'mount')
     const unmount = vi.spyOn(queryClient, 'unmount')
 
+    class Consumer extends LitElement {
+      readonly query = createQueryController(this, {
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'ok'),
+        retry: false,
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+
     const provider = document.createElement(tagName) as QueryClientProvider
-    const consumer = document.createElement(
-      consumerTagName,
-    ) as ProviderContextConsumerElement
+    const consumer = new Consumer()
     provider.client = queryClient
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
