@@ -159,23 +159,23 @@ describe('createInfiniteQueryController', () => {
     const infinite = host.infinite
     await host.updateComplete
 
-    expect(host.shadowRoot?.textContent).toContain('pages: none')
+    expect(host.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
-    expect(host.shadowRoot?.textContent).toContain('pages: 0')
+    expect(host.shadowRoot).toHaveTextContent('pages: 0')
 
     const fetchNextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchNextPagePromise
     expect(infinite().data?.pages).toEqual([0, 1])
-    expect(host.shadowRoot?.textContent).toContain('pages: 0, 1')
+    expect(host.shadowRoot).toHaveTextContent('pages: 0, 1')
 
     const fetchPreviousPagePromise = infinite.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchPreviousPagePromise
     expect(infinite().data?.pages).toEqual([-1, 0, 1])
-    expect(host.shadowRoot?.textContent).toContain('pages: -1, 0, 1')
+    expect(host.shadowRoot).toHaveTextContent('pages: -1, 0, 1')
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {

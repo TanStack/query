@@ -126,7 +126,7 @@ describe('client switching across controllers', () => {
     await Promise.resolve()
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
-    expect(consumer.shadowRoot?.textContent).toContain('data: q-1')
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-1')
 
     const cacheAEntryBeforeSwitch = clientA
       .getQueryCache()
@@ -142,7 +142,7 @@ describe('client switching across controllers', () => {
         .find({ queryKey: consumer.queryKey })
         ?.getObserversCount(),
     ).toBe(1)
-    expect(consumer.shadowRoot?.textContent).toContain('data: q-2')
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-2')
 
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
@@ -153,7 +153,7 @@ describe('client switching across controllers', () => {
     expect(consumer.queryCalls).toBe(3)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-3')
-    expect(consumer.shadowRoot?.textContent).toContain('data: q-3')
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-3')
 
     consumer.queries.destroy()
     provider.remove()

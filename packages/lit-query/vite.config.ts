@@ -19,6 +19,7 @@ export default defineConfig({
     dir: './src',
     watch: false,
     environment: 'jsdom',
+    setupFiles: ['test-setup.ts'],
     include: ['tests/**/*.test.ts'],
     coverage: {
       enabled: !!process.env.CI,

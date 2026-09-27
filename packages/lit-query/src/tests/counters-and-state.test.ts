@@ -354,22 +354,22 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetching()).toBe(1)
-    expect(host.shadowRoot?.textContent).toContain('fetching: 1')
+    expect(host.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(isFetching()).toBe(0)
-    expect(host.shadowRoot?.textContent).toContain('fetching: 0')
+    expect(host.shadowRoot).toHaveTextContent('fetching: 0')
 
     mutation.mutate(1)
     expect(isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(host.shadowRoot?.textContent).toContain('mutating: 1')
-    expect(host.shadowRoot?.textContent).toContain('statuses: pending')
+    expect(host.shadowRoot).toHaveTextContent('mutating: 1')
+    expect(host.shadowRoot).toHaveTextContent('statuses: pending')
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating()).toBe(0)
     expect(mutationStatuses()).toContain('success')
-    expect(host.shadowRoot?.textContent).toContain('mutating: 0')
-    expect(host.shadowRoot?.textContent).toContain('statuses: success')
+    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
+    expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
   it('should track filters and filter reactivity in useIsFetching', async () => {
