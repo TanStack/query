@@ -107,6 +107,7 @@ export class QueryClientProvider extends LitElement {
     }
 
     const nextClient = this.client
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!nextClient) {
       if (this.isConnected) {
         this.unmountClient(this.mountedClient)
@@ -164,6 +165,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   private requireClient(): QueryClient {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!this.client) {
       throw createMissingQueryClientError()
     }
