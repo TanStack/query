@@ -222,7 +222,7 @@ describe('createQueriesController', () => {
       container.append(host)
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(queries()[0]?.isSuccess).toBe(true)
+      expect(queries()[0].isSuccess).toBe(true)
 
       host.updatesRequested = 0
 
@@ -233,7 +233,7 @@ describe('createQueriesController', () => {
       }
 
       expect(host.updatesRequested).toBe(0)
-      expect(queries()[0]?.data).toBe('stable-result')
+      expect(queries()[0].data).toBe('stable-result')
       expect(callCount).toBe(1)
     } finally {
       queries.destroy()
@@ -280,7 +280,7 @@ describe('createQueriesController', () => {
       container.append(host)
       await host.updateComplete
 
-      expect(queries()[0]?.data).toBe('stable-data')
+      expect(queries()[0].data).toBe('stable-data')
       await Promise.resolve()
       await Promise.resolve()
 
@@ -339,7 +339,7 @@ describe('createQueriesController', () => {
       container.append(host)
       await host.updateComplete
 
-      expect(queries()[0]?.isFetching).toBe(false)
+      expect(queries()[0].isFetching).toBe(false)
       await Promise.resolve()
       await Promise.resolve()
 
@@ -349,13 +349,13 @@ describe('createQueriesController', () => {
 
       expect(resolveRefetch).toBeDefined()
       await Promise.resolve()
-      expect(queries()[0]?.isFetching).toBe(true)
+      expect(queries()[0].isFetching).toBe(true)
       expect(defaultQueryOptionsCalls).toBe(0)
 
       resolveRefetch!()
       await refetch
       await Promise.resolve()
-      expect(queries()[0]?.isFetching).toBe(false)
+      expect(queries()[0].isFetching).toBe(false)
       expect(defaultQueryOptionsCalls).toBe(0)
     } finally {
       queries.destroy()
@@ -398,7 +398,7 @@ describe('createQueriesController', () => {
       container.append(host)
       await host.updateComplete
 
-      expect(queries()[0]?.status).toBe('success')
+      expect(queries()[0].status).toBe('success')
       await Promise.resolve()
       await Promise.resolve()
 
@@ -409,7 +409,7 @@ describe('createQueriesController', () => {
       await Promise.resolve()
       expect(host.updatesRequested).toBe(0)
 
-      expect(queries()[0]?.data).toBe('updated-data')
+      expect(queries()[0].data).toBe('updated-data')
       expect(host.updatesRequested).toBe(0)
     } finally {
       queries.destroy()

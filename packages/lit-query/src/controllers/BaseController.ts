@@ -230,6 +230,7 @@ export abstract class BaseController<TResult> implements ReactiveController {
           }
 
           const resolutionChanged = this.updateQueryClientResolutionState(
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             value === undefined ? 'missing' : 'bound',
           )
           const clientChanged = this.contextClient !== value
