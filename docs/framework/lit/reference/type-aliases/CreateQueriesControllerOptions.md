@@ -7,7 +7,7 @@ title: CreateQueriesControllerOptions
 type CreateQueriesControllerOptions<TQueryOptions, TCombinedResult> = object;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:195](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L195)
+Defined in: [packages/lit-query/src/createQueriesController.ts:190](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L190)
 
 Options accepted by `createQueriesController`.
 
