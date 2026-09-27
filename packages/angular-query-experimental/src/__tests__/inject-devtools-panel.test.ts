@@ -8,12 +8,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { provideTanStackQuery } from '../providers'
 import { injectDevtoolsPanel } from '../devtools-panel'
+import type { Theme } from '@tanstack/query-devtools'
 
 const mockDevtoolsPanelInstance = {
   mount: vi.fn(),
   unmount: vi.fn(),
   setClient: vi.fn(),
   setErrorTypes: vi.fn(),
+  setTheme: vi.fn(),
   setOnClose: vi.fn(),
 }
 
@@ -151,6 +153,41 @@ describe('injectDevtoolsPanel', () => {
     errorTypes.set([])
     TestBed.tick()
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
+  })
+
+  it('should pass theme to TanstackQueryDevtoolsPanel', async () => {
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        theme: 'dark',
+      }))
+    })
+
+    TestBed.tick()
+    await waitForDevtoolsToBeCreated()
+    expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
+      expect.objectContaining({ theme: 'dark' }),
+    )
+  })
+
+  it('should update theme', async () => {
+    const theme = signal<Theme>('system')
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        theme: theme(),
+      }))
+    })
+
+    TestBed.tick()
+    await waitForDevtoolsToBeCreated()
+    expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenCalledTimes(0)
+
+    theme.set('dark')
+    TestBed.tick()
+    expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsPanelInstance.setTheme).toHaveBeenCalledWith('dark')
   })
 
   it('should update onclose', async () => {

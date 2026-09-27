@@ -1,4 +1,4 @@
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { ElementRef, Injector } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -38,6 +38,12 @@ export interface DevtoolsPanelOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   *
+   * @defaultValue system
+   */
+  theme?: Theme
 
   /**
    * Callback function that is called when the devtools panel is closed
