@@ -34,7 +34,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/tests/**/*.{ts,js,mjs}', 'examples/**/e2e/**/*.{js,mjs}'],
+    files: ['src/__tests__/**/*.{ts,js,mjs}', 'examples/**/e2e/**/*.{js,mjs}'],
     plugins: {
       vitest,
     },
