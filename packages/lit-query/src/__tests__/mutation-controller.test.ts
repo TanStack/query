@@ -487,7 +487,7 @@ describe('createMutationController', () => {
         this,
         () => ({
           mutationKey: [...key, this.id],
-          mutationFn: async (value: number) => value + this.offset,
+          mutationFn: (value: number) => Promise.resolve(value + this.offset),
         }),
         queryClient,
       )
