@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
+import { LitElement } from 'lit'
+import type { ReactiveControllerHost } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
+import { generateElementName } from './test-utils.js'
 
-const providerTagName = 'test-query-client-provider-base-controller'
-if (!customElements.get(providerTagName)) {
-  customElements.define(providerTagName, QueryClientProvider)
-}
+const providerTagName = generateElementName()
+customElements.define(providerTagName, QueryClientProvider)
 
 class RecordingController extends BaseController<string> {
   readonly lifecycle: string[] = []
@@ -33,61 +33,19 @@ class RecordingController extends BaseController<string> {
   }
 }
 
-class AlreadyConnectedContextHost
-  extends HTMLElement
-  implements ReactiveControllerHost
-{
-  private readonly controllers = new Set<ReactiveController>()
-
-  updatesRequested = 0
-  readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
-  addController(controller: ReactiveController): void {
-    this.controllers.add(controller)
-    if (this.isConnected) {
-      controller.hostConnected?.()
-    }
-  }
-
-  removeController(controller: ReactiveController): void {
-    this.controllers.delete(controller)
-  }
-
-  requestUpdate(): void {
-    this.updatesRequested += 1
-  }
-
-  connectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostConnected?.()
-    }
-  }
-
-  disconnectedCallback(): void {
-    for (const controller of this.controllers) {
-      controller.hostDisconnected?.()
-    }
-  }
-
-  attachController(): RecordingController {
-    return new RecordingController(this)
-  }
-}
-
-const hostTagName = 'test-base-controller-context-host'
-if (!customElements.get(hostTagName)) {
-  customElements.define(hostTagName, AlreadyConnectedContextHost)
-}
-
 describe('BaseController', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
@@ -98,15 +56,16 @@ describe('BaseController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
 
-    const host = document.createElement(
-      hostTagName,
-    ) as AlreadyConnectedContextHost
+    class Host extends LitElement {}
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
     provider.append(host)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
+    await host.updateComplete
 
-    const controller = host.attachController()
+    const controller = new RecordingController(host)
     await Promise.resolve()
     await Promise.resolve()
     expect(controller.lifecycle).toEqual([
