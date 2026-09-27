@@ -7,6 +7,7 @@ import {
   type QueryObserverResult,
 } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
+import { LitElement } from 'lit'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
@@ -15,7 +16,7 @@ import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
-import { TestControllerHost } from './testHost.js'
+import { generateElementName } from './test-utils.js'
 
 describe('type inference', () => {
   let queryClient: QueryClient
@@ -29,7 +30,9 @@ describe('type inference', () => {
   })
 
   it('should preserve tuple/combine inference in createQueriesController', () => {
-    const host = new TestControllerHost()
+    class Host extends LitElement {}
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
     const expectTupleResult = (
       value: [QueryObserverResult<number>, QueryObserverResult<string>],
     ) => value
@@ -155,7 +158,9 @@ describe('type inference', () => {
   })
 
   it('should preserve controller inference with helper option generics', () => {
-    const host = new TestControllerHost()
+    class Host extends LitElement {}
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
 
     const query = createQueryController(
       host,
