@@ -1,55 +1,45 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { ReactiveController, ReactiveControllerHost } from 'lit'
+import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
-import { TestControllerHost, TestElementHost } from './testHost.js'
+import type { MutationResultAccessor } from '../createMutationController.js'
+import { generateElementName } from './test-utils.js'
 
-const providerTagName = 'test-query-client-provider-mutation'
-if (!customElements.get(providerTagName)) {
-  customElements.define(providerTagName, QueryClientProvider)
-}
-
-let explicitMutationClient: QueryClient | undefined
-
-const contextMutationKey = queryKey()
-
-class ContextMutationHostElement extends TestElementHost {
-  readonly mutationKey = contextMutationKey
-
-  readonly mutation = createMutationController(
-    this,
-    {
-      mutationKey: this.mutationKey,
-      mutationFn: (value: number) => sleep(10).then(() => value + 1),
-    },
-    explicitMutationClient,
-  )
-}
-
-const contextMutationTagName = 'test-context-mutation-host'
-if (!customElements.get(contextMutationTagName)) {
-  customElements.define(contextMutationTagName, ContextMutationHostElement)
-}
+const providerTagName = generateElementName()
+customElements.define(providerTagName, QueryClientProvider)
 
 describe('createMutationController', () => {
   let queryClient: QueryClient
+  let container: HTMLElement
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
+    container = document.createElement('div')
+    document.body.append(container)
   })
 
   afterEach(() => {
+    container.remove()
     queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should resolve from the pre-connect placeholder state on the first provider connection', async () => {
-    const consumer = document.createElement(
-      contextMutationTagName,
-    ) as ContextMutationHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, {
+        mutationKey: this.mutationKey,
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
 
     expect(consumer.mutation().isIdle).toBe(true)
     expect(() => consumer.mutation.mutate(1)).toThrow(
@@ -65,7 +55,7 @@ describe('createMutationController', () => {
     provider.client = queryClient
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     await Promise.resolve()
@@ -80,20 +70,31 @@ describe('createMutationController', () => {
   })
 
   it('should prefer an explicit client over the provider context', async () => {
+    const key = queryKey()
     const providerClient = new QueryClient()
-    explicitMutationClient = queryClient
 
     const provider = document.createElement(
       providerTagName,
     ) as QueryClientProvider
     provider.client = providerClient
 
-    const consumer = document.createElement(
-      contextMutationTagName,
-    ) as ContextMutationHostElement
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationKey: this.mutationKey,
+          mutationFn: (value: number) => sleep(10).then(() => value + 1),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     await Promise.resolve()
@@ -114,55 +115,65 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     provider.remove()
-    explicitMutationClient = undefined
     await Promise.resolve()
   })
 
   it('should support mutate and mutateAsync paths', async () => {
-    const host = new TestControllerHost()
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 1),
+        },
+        queryClient,
+      )
 
-    const mutation = createMutationController(
-      host,
-      {
-        mutationFn: (value: number) => sleep(10).then(() => value + 1),
-      },
-      queryClient,
-    )
+      override render() {
+        return html`data: ${this.mutation().data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
+    await host.updateComplete
 
-    host.connect()
-    host.update()
+    expect(host.shadowRoot?.textContent).toContain('data: none')
 
     const resultPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(resultPromise).resolves.toBe(2)
     expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(2)
+    expect(host.shadowRoot?.textContent).toContain('data: 2')
 
     mutation.mutate(2)
     await vi.advanceTimersByTimeAsync(10)
     expect(mutation().data).toBe(3)
     expect(mutation().isSuccess).toBe(true)
+    expect(host.shadowRoot?.textContent).toContain('data: 3')
   })
 
   it('should cover idle/pending/success/error mutation state transitions', async () => {
-    const host = new TestControllerHost()
-
-    const mutation = createMutationController(
-      host,
-      {
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          if (value < 0) {
-            throw new Error('negative-not-allowed')
-          }
-          return value + 1
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: async (value: number) => {
+            await sleep(10)
+            if (value < 0) {
+              throw new Error('negative-not-allowed')
+            }
+            return value + 1
+          },
         },
-      },
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     expect(mutation().isIdle).toBe(true)
 
@@ -185,19 +196,20 @@ describe('createMutationController', () => {
   })
 
   it('should reset mutation state back to the idle baseline', async () => {
-    const host = new TestControllerHost()
-
-    const mutation = createMutationController(
-      host,
-      {
-        mutationFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('reset-target'))),
-      },
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('reset-target'))),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     await Promise.all([
       expect(mutation.mutateAsync(undefined)).rejects.toThrow('reset-target'),
@@ -215,25 +227,26 @@ describe('createMutationController', () => {
   })
 
   it('should not throw from mutate while mutateAsync rejects on error', async () => {
-    const host = new TestControllerHost()
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: async (value: number) => {
+            await sleep(10)
+            if (value < 0) {
+              throw new Error('negative-not-allowed')
+            }
 
-    const mutation = createMutationController(
-      host,
-      {
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          if (value < 0) {
-            throw new Error('negative-not-allowed')
-          }
-
-          return value + 1
+            return value + 1
+          },
         },
-      },
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     expect(() => mutation.mutate(-1)).not.toThrow()
     await vi.advanceTimersByTimeAsync(10)
@@ -247,34 +260,35 @@ describe('createMutationController', () => {
   })
 
   it('should call mutation callbacks in a deterministic order and count', async () => {
-    const host = new TestControllerHost()
     const callbackEvents: string[] = []
-
-    const mutation = createMutationController(
-      host,
-      {
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          if (value < 0) {
-            throw new Error('callback-order-failure')
-          }
-          return value + 1
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: async (value: number) => {
+            await sleep(10)
+            if (value < 0) {
+              throw new Error('callback-order-failure')
+            }
+            return value + 1
+          },
+          onSuccess: (_data, value) => {
+            callbackEvents.push(`success:${value}`)
+          },
+          onError: (_error, value) => {
+            callbackEvents.push(`error:${value}`)
+          },
+          onSettled: (_data, _error, value) => {
+            callbackEvents.push(`settled:${value}`)
+          },
         },
-        onSuccess: (_data, value) => {
-          callbackEvents.push(`success:${value}`)
-        },
-        onError: (_error, value) => {
-          callbackEvents.push(`error:${value}`)
-        },
-        onSettled: (_data, _error, value) => {
-          callbackEvents.push(`settled:${value}`)
-        },
-      },
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     const successPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
@@ -296,35 +310,40 @@ describe('createMutationController', () => {
   })
 
   it('should use the latest closures for refreshed mutation callbacks', async () => {
-    const host = new TestControllerHost()
     const callbackEvents: string[] = []
     let version = 'v1'
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        () => {
+          const callbackVersion = version
 
-    const mutation = createMutationController(
-      host,
-      () => ({
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          if (value < 0) {
-            throw new Error('freshness-failure')
+          return {
+            mutationFn: async (value: number) => {
+              await sleep(10)
+              if (value < 0) {
+                throw new Error('freshness-failure')
+              }
+              return value + 1
+            },
+            onSuccess: () => {
+              callbackEvents.push(`success:${callbackVersion}`)
+            },
+            onError: () => {
+              callbackEvents.push(`error:${callbackVersion}`)
+            },
+            onSettled: () => {
+              callbackEvents.push(`settled:${callbackVersion}`)
+            },
           }
-          return value + 1
         },
-        onSuccess: () => {
-          callbackEvents.push(`success:${version}`)
-        },
-        onError: () => {
-          callbackEvents.push(`error:${version}`)
-        },
-        onSettled: () => {
-          callbackEvents.push(`settled:${version}`)
-        },
-      }),
-      queryClient,
-    )
-
-    host.connect()
-    host.update()
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
 
     const successPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
@@ -332,7 +351,8 @@ describe('createMutationController', () => {
     expect(callbackEvents.slice(0, 2)).toEqual(['success:v1', 'settled:v1'])
 
     version = 'v2'
-    host.update()
+    host.requestUpdate()
+    await host.updateComplete
 
     await Promise.all([
       expect(mutation.mutateAsync(-1)).rejects.toThrow('freshness-failure'),
@@ -342,15 +362,24 @@ describe('createMutationController', () => {
   })
 
   it('should become a deterministic missing-client state when the provider is missing', async () => {
-    const consumer = document.createElement(
-      contextMutationTagName,
-    ) as ContextMutationHostElement
+    const key = queryKey()
+
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, {
+        mutationKey: this.mutationKey,
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
     const placeholderResult = consumer.mutation()
 
     expect(placeholderResult.isIdle).toBe(true)
     expect(placeholderResult.isPaused).toBe(false)
 
-    document.body.append(consumer)
+    container.append(consumer)
 
     expect(() => consumer.mutation()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -374,11 +403,20 @@ describe('createMutationController', () => {
   })
 
   it('should recover without reconstruction when a valid provider is adopted later', async () => {
-    const consumer = document.createElement(
-      contextMutationTagName,
-    ) as ContextMutationHostElement
+    const key = queryKey()
 
-    document.body.append(consumer)
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, {
+        mutationKey: this.mutationKey,
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
+      })
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+
+    container.append(consumer)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
@@ -389,7 +427,7 @@ describe('createMutationController', () => {
     provider.client = queryClient
     provider.append(consumer)
 
-    document.body.append(provider)
+    container.append(provider)
     await provider.updateComplete
 
     await Promise.resolve()
@@ -406,37 +444,17 @@ describe('createMutationController', () => {
   it('should not throw for a mutation controller on an already-connected host with an explicit client', async () => {
     // Regression test for SSR hydration scenario where controller is created
     // during willUpdate on an already-connected host.
-
-    // Create a host that simulates Lit's behavior: addController calls
-    // hostConnected immediately if the host is already connected
-    class AlreadyConnectedHost {
-      private readonly controllers = new Set<{
-        hostConnected?: () => void
-      }>()
-      private isConnected = true
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
-      addController(controller: { hostConnected?: () => void }): void {
-        this.controllers.add(controller)
-        if (this.isConnected) {
-          controller.hostConnected?.()
-        }
-      }
-
-      removeController(controller: { hostConnected?: () => void }): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
+    class Host extends LitElement {
+      mutation?: MutationResultAccessor<number, Error, number, unknown>
     }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
 
-    const host = new AlreadyConnectedHost()
-
-    // This should NOT throw even though hostConnected runs during construction
-    const mutation = createMutationController(
+    // Lit calls hostConnected immediately when a controller is added to an
+    // already-connected host
+    host.mutation = createMutationController(
       host,
       {
         mutationKey: queryKey(),
@@ -444,6 +462,7 @@ describe('createMutationController', () => {
       },
       queryClient,
     )
+    const mutation = host.mutation
 
     // Wait for the deferred onConnected to complete
     await Promise.resolve()
@@ -463,12 +482,7 @@ describe('createMutationController', () => {
   it('should defer explicit-client mutation accessors until host fields are initialized', () => {
     const key = queryKey()
 
-    class DeferredExplicitMutationHost implements ReactiveControllerHost {
-      private readonly controllers = new Set<ReactiveController>()
-
-      updatesRequested = 0
-      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
-
+    class DeferredExplicitMutationHost extends LitElement {
       readonly mutation = createMutationController(
         this,
         () => ({
@@ -481,19 +495,8 @@ describe('createMutationController', () => {
       readonly firstRead = this.mutation()
       readonly id = 'alpha'
       readonly offset = 1
-
-      addController(controller: ReactiveController): void {
-        this.controllers.add(controller)
-      }
-
-      removeController(controller: ReactiveController): void {
-        this.controllers.delete(controller)
-      }
-
-      requestUpdate(): void {
-        this.updatesRequested += 1
-      }
     }
+    customElements.define(generateElementName(), DeferredExplicitMutationHost)
 
     expect(() => new DeferredExplicitMutationHost()).not.toThrow()
 
