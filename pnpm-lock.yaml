@@ -2716,6 +2716,9 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
+      npm-run-all2:
+        specifier: ^9.0.3
+        version: 9.0.3
 
   packages/preact-query:
     dependencies:
