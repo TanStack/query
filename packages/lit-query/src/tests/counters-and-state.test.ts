@@ -651,6 +651,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(consumer.isFetching()).toBe(0)
+    expect(consumer.isMutating()).toBe(0)
+    expect(consumer.mutationStatuses()).toEqual([])
 
     consumer.query.destroy()
     consumer.mutation.destroy()
