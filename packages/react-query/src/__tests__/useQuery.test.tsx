@@ -4606,7 +4606,6 @@ describe('useQuery', () => {
 
     function Page(props: { limit: number }) {
       const state = useQuery({ queryKey: [key, props.limit], queryFn })
-      // eslint-disable-next-line react-hooks/immutability
       states[props.limit] = state
       return (
         <div>
