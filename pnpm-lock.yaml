@@ -164,6 +164,18 @@ settings:
 
 catalogs:
   default:
+    '@testing-library/react':
+      specifier: ^16.1.0
+      version: 16.3.2
+    '@vitejs/plugin-react':
+      specifier: ^6.1.1
+      version: 6.1.1
+    react:
+      specifier: ^19.2.1
+      version: 19.2.4
+    react-dom:
+      specifier: ^19.2.1
+      version: 19.2.4
     typescript:
       specifier: 6.0.3
       version: 6.0.3
@@ -255,10 +267,10 @@ importers:
         specifier: ^0.3.24
         version: 0.3.24
       react:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       sherif:
         specifier: ^1.13.0
@@ -2848,10 +2860,10 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/react':
-        specifier: ^16.1.0
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@vitejs/plugin-react':
-        specifier: ^6.1.1
+        specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       typescript:
         specifier: 'catalog:'
@@ -2976,7 +2988,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/react':
-        specifier: ^16.1.0
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@testing-library/react-render-stream':
         specifier: ^2.0.2
@@ -2988,13 +3000,13 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: ^6.1.1
+        specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       react:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       react-error-boundary:
         specifier: ^4.1.2
@@ -3013,16 +3025,16 @@ importers:
         specifier: workspace:*
         version: link:../react-query
       '@testing-library/react':
-        specifier: ^16.1.0
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
       '@vitejs/plugin-react':
-        specifier: ^6.1.1
+        specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       react:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4
       typescript:
         specifier: 'catalog:'
@@ -3037,13 +3049,13 @@ importers:
         specifier: ^19.2.7
         version: 19.2.14
       '@vitejs/plugin-react':
-        specifier: ^6.1.1
+        specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       next:
         specifier: ^16.0.1
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0)
       react:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4
       typescript:
         specifier: 'catalog:'
@@ -3062,16 +3074,16 @@ importers:
         specifier: workspace:*
         version: link:../react-query
       '@testing-library/react':
-        specifier: ^16.1.0
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
       '@vitejs/plugin-react':
-        specifier: ^6.1.1
+        specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       react:
-        specifier: ^19.2.1
+        specifier: 'catalog:'
         version: 19.2.4
       typescript:
         specifier: 'catalog:'

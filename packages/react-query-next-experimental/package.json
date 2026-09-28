@@ -54,10 +54,10 @@
   ],
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "next": "^16.0.1",
-    "react": "^19.2.1",
+    "react": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
