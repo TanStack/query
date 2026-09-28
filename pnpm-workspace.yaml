@@ -23,6 +23,11 @@ catalog:
   react: ^19.2.1
   react-dom: ^19.2.1
 
+  # preact
+  '@preact/preset-vite': ^2.10.6
+  '@testing-library/preact': ^3.2.4
+  preact: ^10.29.8
+
 packages:
   - 'packages/*'
   - 'integrations/*'
