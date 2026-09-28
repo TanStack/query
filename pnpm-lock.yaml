@@ -167,6 +167,9 @@ catalogs:
     '@preact/preset-vite':
       specifier: ^2.10.6
       version: 2.10.6
+    '@solidjs/testing-library':
+      specifier: ^0.8.10
+      version: 0.8.10
     '@testing-library/preact':
       specifier: ^3.2.4
       version: 3.2.4
@@ -185,9 +188,18 @@ catalogs:
     react-dom:
       specifier: ^19.2.1
       version: 19.2.4
+    solid-js:
+      specifier: ^1.9.15
+      version: 1.9.15
     typescript:
       specifier: 6.0.3
       version: 6.0.3
+    unplugin-solid:
+      specifier: ^2.0.0
+      version: 2.0.0
+    vite-plugin-solid:
+      specifier: ^2.11.14
+      version: 2.11.14
 
 overrides:
   chokidar: 5.0.0
@@ -2933,16 +2945,16 @@ importers:
         version: 2.2.6
     devDependencies:
       '@solidjs/testing-library':
-        specifier: ^0.8.10
+        specifier: 'catalog:'
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-solid:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4)
       vite-plugin-solid:
-        specifier: ^2.11.14
+        specifier: 'catalog:'
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
   packages/query-persist-client-core:
@@ -3105,22 +3117,22 @@ importers:
         version: link:../query-core
     devDependencies:
       '@solidjs/testing-library':
-        specifier: ^0.8.10
+        specifier: 'catalog:'
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
       solid-js:
-        specifier: ^1.9.15
+        specifier: 'catalog:'
         version: 1.9.15
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-solid:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4)
       vite-plugin-solid:
-        specifier: ^2.11.14
+        specifier: 'catalog:'
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
   packages/solid-query-devtools:
@@ -3130,22 +3142,22 @@ importers:
         version: link:../query-devtools
     devDependencies:
       '@solidjs/testing-library':
-        specifier: ^0.8.10
+        specifier: 'catalog:'
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
       solid-js:
-        specifier: ^1.9.15
+        specifier: 'catalog:'
         version: 1.9.15
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-solid:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4)
       vite-plugin-solid:
-        specifier: ^2.11.14
+        specifier: 'catalog:'
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
   packages/solid-query-persist-client:
@@ -3155,7 +3167,7 @@ importers:
         version: link:../query-persist-client-core
     devDependencies:
       '@solidjs/testing-library':
-        specifier: ^0.8.10
+        specifier: 'catalog:'
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
       '@tanstack/query-test-utils':
         specifier: workspace:*
@@ -3164,16 +3176,16 @@ importers:
         specifier: workspace:*
         version: link:../solid-query
       solid-js:
-        specifier: ^1.9.15
+        specifier: 'catalog:'
         version: 1.9.15
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-solid:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4)
       vite-plugin-solid:
-        specifier: ^2.11.14
+        specifier: 'catalog:'
         version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
 
   packages/svelte-query:

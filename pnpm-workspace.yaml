@@ -28,6 +28,12 @@ catalog:
   '@testing-library/preact': ^3.2.4
   preact: ^10.29.8
 
+  # solid
+  '@solidjs/testing-library': ^0.8.10
+  solid-js: ^1.9.15
+  unplugin-solid: ^2.0.0
+  vite-plugin-solid: ^2.11.14
+
 packages:
   - 'packages/*'
   - 'integrations/*'
