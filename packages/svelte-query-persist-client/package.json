@@ -57,15 +57,15 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.5.8",
-    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@sveltejs/package": "catalog:",
+    "@sveltejs/vite-plugin-svelte": "catalog:",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/svelte-query": "workspace:*",
-    "@testing-library/svelte": "^5.2.8",
+    "@testing-library/svelte": "catalog:",
     "@typescript-eslint/parser": "^8.70.1",
     "eslint-plugin-svelte": "^3.23.0",
-    "svelte": "^5.57.1",
-    "svelte-check": "^4.4.5",
+    "svelte": "catalog:",
+    "svelte-check": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

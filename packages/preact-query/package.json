@@ -64,12 +64,12 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.6",
+    "@preact/preset-vite": "catalog:",
     "@tanstack/query-persist-client-core": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
-    "@testing-library/preact": "^3.2.4",
+    "@testing-library/preact": "catalog:",
     "eslint-config-preact": "^2.0.0",
-    "preact": "^10.29.8",
+    "preact": "catalog:",
     "preact-render-to-string": "^6.6.4",
     "typescript": "catalog:",
     "typescript-eslint": "^8.54.0"

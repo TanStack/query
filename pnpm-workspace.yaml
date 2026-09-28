@@ -23,6 +23,24 @@ catalog:
   react: ^19.2.1
   react-dom: ^19.2.1
 
+  # preact
+  '@preact/preset-vite': ^2.10.6
+  '@testing-library/preact': ^3.2.4
+  preact: ^10.29.8
+
+  # solid
+  '@solidjs/testing-library': ^0.8.10
+  solid-js: ^1.9.15
+  unplugin-solid: ^2.0.0
+  vite-plugin-solid: ^2.11.14
+
+  # svelte
+  '@sveltejs/package': ^2.5.8
+  '@sveltejs/vite-plugin-svelte': ^7.3.1
+  '@testing-library/svelte': ^5.2.8
+  svelte: ^5.57.1
+  svelte-check: ^4.4.5
+
   # vue
   unplugin-vue: ^8.0.0
   vue: ^3.5.43
