@@ -55,7 +55,6 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "catalog:",
-    "@angular/animations": "^20.0.0",
     "@angular/common": "catalog:",
     "@angular/compiler": "catalog:",
     "@angular/core": "catalog:",
