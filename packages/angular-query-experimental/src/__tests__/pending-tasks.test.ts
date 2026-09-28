@@ -165,6 +165,64 @@ describe('pending tasks integration', () => {
     expect(query.data()).toBe('two')
   })
 
+  it('releases on the newest result when a refetch settles before the previous idle notification is delivered', async () => {
+    const key = queryKey()
+    let resolveFetch!: (value: string) => void
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        queryFn: () =>
+          new Promise<string>((resolve) => {
+            resolveFetch = resolve
+          }),
+      })),
+    )
+    readData = () => query.data()
+    TestBed.tick()
+    expect(events).toEqual(['add'])
+
+    resolveFetch('one')
+    await Promise.resolve()
+    await Promise.resolve()
+    void query.refetch()
+    resolveFetch('two')
+    await Promise.resolve()
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(events).toEqual(['add', 'release:two'])
+    expect(query.data()).toBe('two')
+  })
+
+  it('releases the task when notifyOnChangeProps suppresses the settled notification', async () => {
+    const key = queryKey()
+    TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        retry: false,
+        notifyOnChangeProps: ['data'],
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('boom'))),
+      })),
+    )
+    TestBed.tick()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(events).toEqual(['add', 'release:undefined'])
+  })
+
+  it('releases the task when throwOnError rethrows the error', async () => {
+    const key = queryKey()
+    TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: key,
+        retry: false,
+        throwOnError: true,
+        queryFn: () => sleep(10).then(() => Promise.reject(new Error('boom'))),
+      })),
+    )
+    TestBed.tick()
+    await expect(vi.advanceTimersByTimeAsync(11)).rejects.toThrow('boom')
+    expect(events).toEqual(['add', 'release:undefined'])
+  })
+
   it('releases the task when the query errors', async () => {
     const key = queryKey()
     const query = TestBed.runInInjectionContext(() =>

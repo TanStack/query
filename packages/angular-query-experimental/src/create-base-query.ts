@@ -97,6 +97,20 @@ export function createBaseQuery<
       pendingTaskRef ??= pendingTasks.add()
     }
   }
+  // Results queued by notifyManager but not yet written to the signal.
+  let undeliveredResults = 0
+  const releaseIfSettled = (
+    observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  ) => {
+    if (
+      pendingTaskRef &&
+      !undeliveredResults &&
+      observer.getCurrentResult().fetchStatus === 'idle'
+    ) {
+      pendingTaskRef()
+      pendingTaskRef = null
+    }
+  }
 
   effect(
     (onCleanup) => {
@@ -143,28 +157,41 @@ export function createBaseQuery<
                     }
                     resultFromSubscriberSignal.set(state)
                   } finally {
-                    // Release only after the signal write (`whenStable()` latches on a momentary
-                    // empty ledger), and only when the observer is CURRENTLY idle — an older queued
-                    // 'idle' snapshot must not release coverage for a newer in-flight refetch.
-                    if (
-                      state.fetchStatus === 'idle' &&
-                      pendingTaskRef &&
-                      observer.getCurrentResult().fetchStatus === 'idle'
-                    ) {
-                      pendingTaskRef()
-                      pendingTaskRef = null
-                    }
+                    // Here rather than only in releaseCheck: a throw aborts the rest of the flush.
+                    undeliveredResults--
+                    releaseIfSettled(observer)
                   }
                 })
               },
             )
 
-            return observer.subscribe((state) => {
+            const unsubscribeObserver = observer.subscribe((state) => {
+              undeliveredResults++
               // Fetches started outside this injection point (invalidateQueries, refetchQueries,
               // retries) are only visible here, and the batched callback runs a turn later.
               trackFetch(observer)
               notifyState(state)
             })
+            // Release only once the signal holds the newest result (`whenStable()` latches on a
+            // momentary empty ledger). The cache event still fires when notifyOnChangeProps
+            // suppresses the observer notification, so it covers the release there.
+            const releaseCheck = notifyManager.batchCalls(() =>
+              ngZone.run(() => releaseIfSettled(observer)),
+            )
+            const unsubscribeCache = queryClient
+              .getQueryCache()
+              .subscribe((event) => {
+                if (
+                  pendingTaskRef &&
+                  event.query === observer.getCurrentQuery()
+                ) {
+                  releaseCheck()
+                }
+              })
+            return () => {
+              unsubscribeCache()
+              unsubscribeObserver()
+            }
           }),
         )
 
