@@ -65,15 +65,5 @@
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
     "vue": "^3.3.0"
-  },
-  "nx": {
-    "targets": {
-      "build": {
-        "dependsOn": [
-          "^build",
-          "compile"
-        ]
-      }
-    }
   }
 }
