@@ -23,6 +23,14 @@ catalog:
   react: ^19.2.1
   react-dom: ^19.2.1
 
+  # angular
+  '@analogjs/vite-plugin-angular': ^2.7.5
+  '@angular/common': ^20.0.0
+  '@angular/compiler': ^20.0.0
+  '@angular/core': ^20.0.0
+  '@angular/platform-browser': ^20.0.0
+  '@testing-library/angular': ^18.0.0
+
 packages:
   - 'packages/*'
   - 'integrations/*'
