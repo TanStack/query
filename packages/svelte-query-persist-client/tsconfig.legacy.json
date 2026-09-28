@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist-ts/legacy",
-    "types": ["node", "svelte"]
+    "outDir": "./dist-ts/legacy"
   },
   "include": ["src"],
   "references": [
