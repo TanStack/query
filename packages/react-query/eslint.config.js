@@ -6,7 +6,7 @@ import rootConfig from './root.eslint.config.js'
 
 export default [
   ...rootConfig,
-  reactHooks.configs.flat['recommended-latest'],
+  reactHooks.configs.flat.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     ...pluginReact.configs.recommended,
