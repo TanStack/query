@@ -164,15 +164,24 @@ settings:
 
 catalogs:
   default:
+    '@preact/preset-vite':
+      specifier: ^2.10.6
+      version: 2.10.6
     '@solidjs/testing-library':
       specifier: ^0.8.10
       version: 0.8.10
+    '@testing-library/preact':
+      specifier: ^3.2.4
+      version: 3.2.4
     '@testing-library/react':
       specifier: ^16.1.0
       version: 16.3.2
     '@vitejs/plugin-react':
       specifier: ^6.1.1
       version: 6.1.1
+    preact:
+      specifier: ^10.29.8
+      version: 10.29.8
     react:
       specifier: ^19.2.1
       version: 19.2.4
@@ -2757,7 +2766,7 @@ importers:
         version: link:../query-core
     devDependencies:
       '@preact/preset-vite':
-        specifier: ^2.10.6
+        specifier: 'catalog:'
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@10.29.8)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
@@ -2766,13 +2775,13 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/preact':
-        specifier: ^3.2.4
+        specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
-        specifier: ^10.29.8
+        specifier: 'catalog:'
         version: 10.29.8(preact-render-to-string@6.6.7)
       preact-render-to-string:
         specifier: ^6.6.4
@@ -2791,19 +2800,19 @@ importers:
         version: link:../query-devtools
     devDependencies:
       '@preact/preset-vite':
-        specifier: ^2.10.6
+        specifier: 'catalog:'
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@10.29.8)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/preact-query':
         specifier: workspace:*
         version: link:../preact-query
       '@testing-library/preact':
-        specifier: ^3.2.4
+        specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
-        specifier: ^10.29.8
+        specifier: 'catalog:'
         version: 10.29.8(preact-render-to-string@6.6.7)
       typescript:
         specifier: 'catalog:'
@@ -2819,7 +2828,7 @@ importers:
         version: link:../query-persist-client-core
     devDependencies:
       '@preact/preset-vite':
-        specifier: ^2.10.6
+        specifier: 'catalog:'
         version: 2.10.6(@babel/core@7.29.7(supports-color@10.2.2))(preact@10.29.8)(rollup@4.60.1)(supports-color@10.2.2)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/preact-query':
         specifier: workspace:*
@@ -2828,13 +2837,13 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/preact':
-        specifier: ^3.2.4
+        specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
-        specifier: ^10.29.8
+        specifier: 'catalog:'
         version: 10.29.8(preact-render-to-string@6.6.7)
       typescript:
         specifier: 'catalog:'
