@@ -34,6 +34,13 @@ catalog:
   unplugin-solid: ^2.0.0
   vite-plugin-solid: ^2.11.14
 
+  # svelte
+  '@sveltejs/package': ^2.5.8
+  '@sveltejs/vite-plugin-svelte': ^7.3.1
+  '@testing-library/svelte': ^5.2.8
+  svelte: ^5.57.1
+  svelte-check: ^4.4.5
+
 packages:
   - 'packages/*'
   - 'integrations/*'

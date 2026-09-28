@@ -170,12 +170,21 @@ catalogs:
     '@solidjs/testing-library':
       specifier: ^0.8.10
       version: 0.8.10
+    '@sveltejs/package':
+      specifier: ^2.5.8
+      version: 2.5.8
+    '@sveltejs/vite-plugin-svelte':
+      specifier: ^7.3.1
+      version: 7.3.1
     '@testing-library/preact':
       specifier: ^3.2.4
       version: 3.2.4
     '@testing-library/react':
       specifier: ^16.1.0
       version: 16.3.2
+    '@testing-library/svelte':
+      specifier: ^5.2.8
+      version: 5.3.1
     '@vitejs/plugin-react':
       specifier: ^6.1.1
       version: 6.1.1
@@ -191,6 +200,12 @@ catalogs:
     solid-js:
       specifier: ^1.9.15
       version: 1.9.15
+    svelte:
+      specifier: ^5.57.1
+      version: 5.57.1
+    svelte-check:
+      specifier: ^4.4.5
+      version: 4.7.6
     typescript:
       specifier: 6.0.3
       version: 6.0.3
@@ -3195,16 +3210,16 @@ importers:
         version: link:../query-core
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.5.8
+        specifier: 'catalog:'
         version: 2.5.8(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.3.1
+        specifier: 'catalog:'
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/svelte':
-        specifier: ^5.2.8
+        specifier: 'catalog:'
         version: 5.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.11)
       '@typescript-eslint/parser':
         specifier: ^8.70.1
@@ -3213,10 +3228,10 @@ importers:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
-        specifier: ^5.57.1
+        specifier: 'catalog:'
         version: 5.57.1(@typescript-eslint/types@8.58.1)
       svelte-check:
-        specifier: ^4.4.5
+        specifier: 'catalog:'
         version: 4.7.6(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
@@ -3232,16 +3247,16 @@ importers:
         version: 1.2.2
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.5.8
+        specifier: 'catalog:'
         version: 2.5.8(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.3.1
+        specifier: 'catalog:'
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
       '@testing-library/svelte':
-        specifier: ^5.2.8
+        specifier: 'catalog:'
         version: 5.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.11)
       '@typescript-eslint/parser':
         specifier: ^8.70.1
@@ -3250,10 +3265,10 @@ importers:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
-        specifier: ^5.57.1
+        specifier: 'catalog:'
         version: 5.57.1(@typescript-eslint/types@8.58.1)
       svelte-check:
-        specifier: ^4.4.5
+        specifier: 'catalog:'
         version: 4.7.6(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
@@ -3266,10 +3281,10 @@ importers:
         version: link:../query-persist-client-core
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.5.8
+        specifier: 'catalog:'
         version: 2.5.8(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.3.1
+        specifier: 'catalog:'
         version: 7.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/query-test-utils':
         specifier: workspace:*
@@ -3278,7 +3293,7 @@ importers:
         specifier: workspace:*
         version: link:../svelte-query
       '@testing-library/svelte':
-        specifier: ^5.2.8
+        specifier: 'catalog:'
         version: 5.3.1(svelte@5.57.1(@typescript-eslint/types@8.58.1))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.11)
       '@typescript-eslint/parser':
         specifier: ^8.70.1
@@ -3287,10 +3302,10 @@ importers:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
-        specifier: ^5.57.1
+        specifier: 'catalog:'
         version: 5.57.1(@typescript-eslint/types@8.58.1)
       svelte-check:
-        specifier: ^4.4.5
+        specifier: 'catalog:'
         version: 4.7.6(picomatch@4.0.7)(svelte@5.57.1(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
