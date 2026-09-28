@@ -74,9 +74,9 @@
     "superjson": "^2.2.6"
   },
   "devDependencies": {
-    "@solidjs/testing-library": "^0.8.10",
+    "@solidjs/testing-library": "catalog:",
     "typescript": "catalog:",
-    "unplugin-solid": "^2.0.0",
-    "vite-plugin-solid": "^2.11.14"
+    "unplugin-solid": "catalog:",
+    "vite-plugin-solid": "catalog:"
   }
 }

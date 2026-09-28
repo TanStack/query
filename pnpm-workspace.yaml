@@ -23,6 +23,12 @@ catalog:
   react: ^19.2.1
   react-dom: ^19.2.1
 
+  # solid
+  '@solidjs/testing-library': ^0.8.10
+  solid-js: ^1.9.15
+  unplugin-solid: ^2.0.0
+  vite-plugin-solid: ^2.11.14
+
 packages:
   - 'packages/*'
   - 'integrations/*'
