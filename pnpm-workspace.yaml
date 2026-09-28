@@ -45,6 +45,14 @@ catalog:
   unplugin-vue: ^8.0.0
   vue: ^3.5.43
 
+  # angular
+  '@analogjs/vite-plugin-angular': ^2.7.5
+  '@angular/common': ^20.0.0
+  '@angular/compiler': ^20.0.0
+  '@angular/core': ^20.0.0
+  '@angular/platform-browser': ^20.0.0
+  '@testing-library/angular': ^18.0.0
+
 packages:
   - 'packages/*'
   - 'integrations/*'
