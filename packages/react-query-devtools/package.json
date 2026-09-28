@@ -80,10 +80,10 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@testing-library/react": "^16.1.0",
-    "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "react": "^19.2.1",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "react": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

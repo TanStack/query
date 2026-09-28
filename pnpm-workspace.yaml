@@ -15,6 +15,14 @@ trustPolicyExclude:
 catalog:
   typescript: 6.0.3
 
+  # react
+  '@testing-library/react': ^16.1.0
+  '@types/react': ^19.2.7
+  '@types/react-dom': ^19.2.3
+  '@vitejs/plugin-react': ^6.1.1
+  react: ^19.2.1
+  react-dom: ^19.2.1
+
 packages:
   - 'packages/*'
   - 'integrations/*'
@@ -30,8 +38,8 @@ packages:
 
 overrides:
   'chokidar': '5.0.0'
-  '@types/react': '^19.2.7'
-  '@types/react-dom': '^19.2.3'
+  '@types/react': 'catalog:'
+  '@types/react-dom': 'catalog:'
   '@types/node': '^22.15.3'
   esbuild: '^0.28.2'
 

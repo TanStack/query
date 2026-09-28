@@ -60,8 +60,8 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
-    "@testing-library/react": "^16.1.0",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@testing-library/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "typescript": "catalog:"
   }
 }
