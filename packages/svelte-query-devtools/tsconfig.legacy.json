@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts/legacy",
+    "types": ["node", "svelte"]
+  },
+  "include": ["src"],
+  "references": [{ "path": "../query-devtools" }, { "path": "../svelte-query" }]
+}
