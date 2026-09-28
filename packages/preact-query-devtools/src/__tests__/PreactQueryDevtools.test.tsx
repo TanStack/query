@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/preact'
+import { act, render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type { PreactQueryDevtools as PreactQueryDevtoolsComponent } from '../PreactQueryDevtools'
@@ -216,7 +216,9 @@ describe('PreactQueryDevtools', () => {
 
   it('should call "unmount" on the devtools instance when the component unmounts', () => {
     const { unmount } = render(<PreactQueryDevtools client={queryClient} />)
-    unmount()
+    act(() => {
+      unmount()
+    })
 
     expect(unmountMock).toHaveBeenCalled()
   })

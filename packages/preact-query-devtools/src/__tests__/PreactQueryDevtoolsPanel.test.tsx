@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/preact'
+import { act, render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { PreactQueryDevtoolsPanel as PreactQueryDevtoolsPanelComponent } from '../PreactQueryDevtoolsPanel'
@@ -175,7 +175,9 @@ describe('PreactQueryDevtoolsPanel', () => {
     const { unmount } = render(
       <PreactQueryDevtoolsPanel client={queryClient} />,
     )
-    unmount()
+    act(() => {
+      unmount()
+    })
 
     expect(unmountMock).toHaveBeenCalled()
   })
