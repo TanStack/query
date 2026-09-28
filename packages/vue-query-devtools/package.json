@@ -51,7 +51,7 @@
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
     "eslint-plugin-vue": "^10.11.1",
-    "typescript": "5.8.3",
+    "typescript": "catalog:",
     "unplugin-vue": "^8.0.0",
     "vue": "^3.5.43",
     "vue-tsc": "^2.2.8"
