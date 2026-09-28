@@ -18,7 +18,6 @@
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
-    "lint:fix": "eslint --concurrency=auto . --fix",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
@@ -28,13 +27,8 @@
     "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:watch": "pnpm run test:lib:dev",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsdown --tsconfig tsconfig.prod.json",
-    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
-    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
-    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
-    "perf:l3:raw": "node scripts/l3-stress.mjs"
+    "build": "tsdown --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
@@ -65,12 +59,12 @@
     "@tanstack/query-core": "workspace:*",
     "lit": "^3.3.3"
   },
-  "peerDependencies": {
-    "@tanstack/query-core": "^5.104.0",
-    "lit": ">=2.8.0 <4"
-  },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "^5.104.0",
+    "lit": ">=2.8.0 <4"
   }
 }
