@@ -41,6 +41,10 @@ catalog:
   svelte: ^5.57.1
   svelte-check: ^4.4.5
 
+  # vue
+  unplugin-vue: ^8.0.0
+  vue: ^3.5.43
+
 packages:
   - 'packages/*'
   - 'integrations/*'
