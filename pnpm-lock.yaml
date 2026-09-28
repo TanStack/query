@@ -3239,6 +3239,9 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      npm-run-all2:
+        specifier: ^9.0.3
+        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -3276,6 +3279,9 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      npm-run-all2:
+        specifier: ^9.0.3
+        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -3313,6 +3319,9 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
+      npm-run-all2:
+        specifier: ^9.0.3
+        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
