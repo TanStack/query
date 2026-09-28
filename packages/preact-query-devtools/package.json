@@ -79,11 +79,11 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.6",
+    "@preact/preset-vite": "catalog:",
     "@tanstack/preact-query": "workspace:*",
-    "@testing-library/preact": "^3.2.4",
+    "@testing-library/preact": "catalog:",
     "eslint-config-preact": "^2.0.0",
-    "preact": "^10.29.8",
+    "preact": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "^8.54.0"
   },
