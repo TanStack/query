@@ -179,6 +179,12 @@ catalogs:
     typescript:
       specifier: 6.0.3
       version: 6.0.3
+    unplugin-vue:
+      specifier: ^8.0.0
+      version: 8.0.0
+    vue:
+      specifier: ^3.5.43
+      version: 3.5.43
 
 overrides:
   chokidar: 5.0.0
@@ -3303,10 +3309,10 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-vue:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.11)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(vue@3.5.43(typescript@6.0.3))(webpack@5.105.4)(yaml@2.9.0)
       vue:
-        specifier: ^3.5.43
+        specifier: 'catalog:'
         version: 3.5.43(typescript@6.0.3)
       vue2:
         specifier: npm:vue@2.6
@@ -3331,10 +3337,10 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       unplugin-vue:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.11)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(vue@3.5.43(typescript@6.0.3))(webpack@5.105.4)(yaml@2.9.0)
       vue:
-        specifier: ^3.5.43
+        specifier: 'catalog:'
         version: 3.5.43(typescript@6.0.3)
       vue-tsc:
         specifier: ^2.2.8
