@@ -61,7 +61,8 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
-    "npm-run-all2": "^9.0.3"
+    "npm-run-all2": "^9.0.3",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/query-core": "^5.104.0",

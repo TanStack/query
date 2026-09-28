@@ -84,7 +84,8 @@
     "@types/react": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "npm-run-all2": "^9.0.3",
-    "react": "^19.2.1"
+    "react": "^19.2.1",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
