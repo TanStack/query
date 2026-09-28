@@ -66,7 +66,6 @@
     "@testing-library/angular": "^18.0.0",
     "@testing-library/dom": "^10.4.0",
     "eslint-plugin-jsdoc": "^50.5.0",
-    "npm-run-all2": "^9.0.3",
     "typescript": "catalog:"
   },
   "peerDependencies": {

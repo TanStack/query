@@ -67,6 +67,7 @@
     "jsdom": "^27.0.0",
     "knip": "6.38.0",
     "markdown-link-extractor": "^4.0.4",
+    "npm-run-all2": "^9.0.3",
     "nx": "23.2.1",
     "premove": "^4.0.0",
     "prettier": "^3.9.9",

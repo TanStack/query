@@ -63,7 +63,6 @@
     "@typescript-eslint/rule-tester": "^8.70.1",
     "combinate": "^1.1.11",
     "eslint": "^9.36.0",
-    "npm-run-all2": "^9.0.3",
     "typescript": "catalog:"
   },
   "peerDependencies": {

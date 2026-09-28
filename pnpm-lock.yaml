@@ -236,6 +236,9 @@ importers:
       markdown-link-extractor:
         specifier: ^4.0.4
         version: 4.0.4
+      npm-run-all2:
+        specifier: ^9.0.3
+        version: 9.0.3
       nx:
         specifier: 23.2.1
         version: 23.2.1
@@ -2625,9 +2628,6 @@ importers:
       '@testing-library/angular':
         specifier: ^18.0.0
         version: 18.1.1(3436010aec00f8e828978cdcb451dc36)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -2681,9 +2681,6 @@ importers:
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.8.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2706,9 +2703,6 @@ importers:
       eslint:
         specifier: ^9.36.0
         version: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2728,9 +2722,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2756,9 +2747,6 @@ importers:
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       preact:
         specifier: ^10.29.8
         version: 10.29.8(preact-render-to-string@6.6.7)
@@ -2790,9 +2778,6 @@ importers:
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       preact:
         specifier: ^10.29.8
         version: 10.29.8(preact-render-to-string@6.6.7)
@@ -2824,9 +2809,6 @@ importers:
       eslint-config-preact:
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       preact:
         specifier: ^10.29.8
         version: 10.29.8(preact-render-to-string@6.6.7)
@@ -2849,9 +2831,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2874,9 +2853,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2895,9 +2871,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2941,9 +2914,6 @@ importers:
       '@solidjs/testing-library':
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.15))(solid-js@1.9.15)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2963,9 +2933,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2982,9 +2949,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -2995,9 +2959,6 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@22.19.15)(@vitest/coverage-istanbul@4.1.11)(jsdom@27.4.0(supports-color@7.2.0))(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
     devDependencies:
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -3029,9 +2990,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       react:
         specifier: ^19.2.1
         version: 19.2.4
@@ -3063,9 +3021,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       react:
         specifier: ^19.2.1
         version: 19.2.4
@@ -3087,9 +3042,6 @@ importers:
       next:
         specifier: ^16.0.1
         version: 16.2.2(@babel/core@7.29.7(supports-color@10.2.2))(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0)
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       react:
         specifier: ^19.2.1
         version: 19.2.4
@@ -3118,9 +3070,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       react:
         specifier: ^19.2.1
         version: 19.2.4
@@ -3140,9 +3089,6 @@ importers:
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -3168,9 +3114,6 @@ importers:
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -3199,9 +3142,6 @@ importers:
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -3239,9 +3179,6 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -3279,9 +3216,6 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -3319,9 +3253,6 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.23.0
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       svelte:
         specifier: ^5.57.1
         version: 5.57.1(@typescript-eslint/types@8.58.1)
@@ -3356,9 +3287,6 @@ importers:
       eslint-plugin-vue:
         specifier: ^10.11.1
         version: 10.11.1(@stylistic/eslint-plugin@5.10.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -3387,9 +3315,6 @@ importers:
       eslint-plugin-vue:
         specifier: ^10.11.1
         version: 10.11.1(@stylistic/eslint-plugin@5.10.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
-      npm-run-all2:
-        specifier: ^9.0.3
-        version: 9.0.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
