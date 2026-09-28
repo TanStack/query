@@ -13,7 +13,6 @@ export default [
     rules: {
       '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
       'react-hooks/exhaustive-deps': 'error',
-      'react-hooks/rules-of-hooks': 'error',
       'react-hooks/unsupported-syntax': 'error',
       'react-hooks/incompatible-library': 'error',
     },
