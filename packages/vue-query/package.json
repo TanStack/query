@@ -67,7 +67,6 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@vue/composition-api": "1.7.2",
     "eslint-plugin-vue": "^10.11.1",
-    "npm-run-all2": "^9.0.3",
     "typescript": "catalog:",
     "unplugin-vue": "^8.0.0",
     "vue": "^3.5.43",

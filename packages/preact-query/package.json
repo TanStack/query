@@ -69,7 +69,6 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "^3.2.4",
     "eslint-config-preact": "^2.0.0",
-    "npm-run-all2": "^9.0.3",
     "preact": "^10.29.8",
     "preact-render-to-string": "^6.6.4",
     "typescript": "catalog:",
