@@ -177,7 +177,6 @@ describe('mutationOptions', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutating.value).toEqual(1)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating.value).toEqual(0)
   })

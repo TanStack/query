@@ -30,7 +30,6 @@ describe('useIsFetching', () => {
 
     expect(isFetchingQuery.value).toStrictEqual(true)
     expect(isFetching.value).toStrictEqual(2)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
@@ -49,11 +48,9 @@ describe('useIsFetching', () => {
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
@@ -104,6 +101,7 @@ describe('useIsFetching', () => {
 
     try {
       useIsFetching()
+
       expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )

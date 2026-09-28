@@ -163,7 +163,6 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -653,7 +652,6 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -885,9 +883,7 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(state).toMatchObject({
       data: 1,
       status: 'success',

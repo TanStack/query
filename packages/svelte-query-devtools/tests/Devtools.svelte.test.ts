@@ -65,8 +65,8 @@ describe('SvelteQueryDevtools', () => {
     render(SvelteQueryDevtools, {
       props: { client: queryClient, position: 'left' },
     })
-    await vi.dynamicImportSettled()
 
+    await vi.dynamicImportSettled()
     expect(setPositionMock).toHaveBeenCalledWith('left')
   })
 
@@ -75,8 +75,8 @@ describe('SvelteQueryDevtools', () => {
     render(SvelteQueryDevtools, {
       props: { client: queryClient, buttonPosition: 'top-left' },
     })
-    await vi.dynamicImportSettled()
 
+    await vi.dynamicImportSettled()
     expect(setButtonPositionMock).toHaveBeenCalledWith('top-left')
   })
 
@@ -85,8 +85,8 @@ describe('SvelteQueryDevtools', () => {
     render(SvelteQueryDevtools, {
       props: { client: queryClient, initialIsOpen: true },
     })
-    await vi.dynamicImportSettled()
 
+    await vi.dynamicImportSettled()
     expect(setInitialIsOpenMock).toHaveBeenCalledWith(true)
   })
 
@@ -96,8 +96,8 @@ describe('SvelteQueryDevtools', () => {
     render(SvelteQueryDevtools, {
       props: { client: queryClient, errorTypes },
     })
-    await vi.dynamicImportSettled()
 
+    await vi.dynamicImportSettled()
     expect(setErrorTypesMock).toHaveBeenCalledWith(errorTypes)
   })
 
@@ -106,8 +106,8 @@ describe('SvelteQueryDevtools', () => {
     render(SvelteQueryDevtools, {
       props: { client: queryClient, theme: 'dark' },
     })
-    await vi.dynamicImportSettled()
 
+    await vi.dynamicImportSettled()
     expect(setThemeMock).toHaveBeenCalledWith('dark')
   })
 
@@ -116,6 +116,7 @@ describe('SvelteQueryDevtools', () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, position: 'bottom' },
     })
+
     await vi.dynamicImportSettled()
     setPositionMock.mockClear()
 
@@ -129,6 +130,7 @@ describe('SvelteQueryDevtools', () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, buttonPosition: 'bottom-right' },
     })
+
     await vi.dynamicImportSettled()
     setButtonPositionMock.mockClear()
 
@@ -142,6 +144,7 @@ describe('SvelteQueryDevtools', () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, initialIsOpen: false },
     })
+
     await vi.dynamicImportSettled()
     setInitialIsOpenMock.mockClear()
 
@@ -155,6 +158,7 @@ describe('SvelteQueryDevtools', () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, errorTypes: [] },
     })
+
     await vi.dynamicImportSettled()
     setErrorTypesMock.mockClear()
 
@@ -169,6 +173,7 @@ describe('SvelteQueryDevtools', () => {
     const { rerender } = render(SvelteQueryDevtools, {
       props: { client: queryClient, theme: 'light' },
     })
+
     await vi.dynamicImportSettled()
     setThemeMock.mockClear()
 

@@ -18,7 +18,12 @@
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "vue-tsc --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
-    "test:types": "vue-tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts56": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript56/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
+    "test:types:ts57": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript57/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
+    "test:types:ts58": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript58/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
+    "test:types:ts59": "node -e \"process.argv.splice(1, 0, ''); require('vue-tsc').run(require.resolve('typescript59/lib/tsc'))\" -- --project tsconfig.legacy.json --outDir .cache/test-types/ts59 --tsBuildInfoFile .cache/test-types/ts59.tsbuildinfo",
+    "test:types:tscurrent": "vue-tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:build": "publint --strict && attw --pack",
     "build": "tsdown"
   },
@@ -51,7 +56,7 @@
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
     "eslint-plugin-vue": "^10.11.1",
-    "typescript": "5.8.3",
+    "typescript": "catalog:",
     "unplugin-vue": "^8.0.0",
     "vue": "^3.5.43",
     "vue-tsc": "^2.2.8"
@@ -59,15 +64,5 @@
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
     "vue": "^3.3.0"
-  },
-  "nx": {
-    "targets": {
-      "build": {
-        "dependsOn": [
-          "^build",
-          "compile"
-        ]
-      }
-    }
   }
 }

@@ -203,6 +203,7 @@ describe('core/utils', () => {
     it('should return the next value when the previous value is a different value', () => {
       const date1 = new Date()
       const date2 = new Date()
+
       expect(replaceEqualDeep(1, 0)).toBe(0)
       expect(replaceEqualDeep(1, 2)).toBe(2)
       expect(replaceEqualDeep('1', '2')).toBe('2')
@@ -479,6 +480,7 @@ describe('core/utils', () => {
         mutationCache: queryClient.getMutationCache(),
         options: {},
       })
+
       expect(matchMutation(filters, mutation)).toBe(false)
     })
   })

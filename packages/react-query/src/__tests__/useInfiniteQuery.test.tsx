@@ -63,7 +63,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
       data: undefined,
@@ -517,20 +516,19 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 10,11')).toBeInTheDocument()
+
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 9,10,11')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(31)
     expect(states.length).toBe(8)
     // Initial fetch
@@ -640,7 +638,6 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
     // Initial fetch
@@ -726,7 +723,6 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
     // Initial fetch
@@ -816,7 +812,6 @@ describe('useInfiniteQuery', () => {
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
     // Initial fetch
@@ -1081,7 +1076,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(60)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       hasNextPage: false,
@@ -1138,7 +1132,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(125)
-
     expect(fetches).toBe(2)
     expect(queryClient.getQueryState(key)).toMatchObject({
       data: initialData,
@@ -1304,7 +1297,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: { pages: [1] },
@@ -1336,7 +1328,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1375,7 +1366,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: { pages: [10] },
@@ -1414,7 +1404,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: { pages: [10] },
@@ -1456,7 +1445,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(11)
-
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1832,7 +1820,6 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).not.toHaveBeenCalled()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()

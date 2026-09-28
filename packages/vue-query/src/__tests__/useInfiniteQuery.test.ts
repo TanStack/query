@@ -28,7 +28,6 @@ describe('useInfiniteQuery', () => {
 
     expect(data.value).toStrictEqual(undefined)
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
@@ -58,7 +57,6 @@ describe('useInfiniteQuery', () => {
 
     expect(data.value).toStrictEqual(undefined)
     expect(status.value).toStrictEqual('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(data.value).toStrictEqual({
       pageParams: [0],
@@ -138,7 +136,6 @@ describe('useInfiniteQuery', () => {
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
     expect(status.value).toStrictEqual('success')
     expect(isError.value).toBe(false)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
     expect(status.value).toStrictEqual('error')
@@ -160,7 +157,6 @@ describe('useInfiniteQuery', () => {
     }))
 
     expect(isFetching.value).toBe(false)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
     expect(isFetching.value).toBe(false)
