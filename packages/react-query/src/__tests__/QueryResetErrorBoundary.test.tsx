@@ -437,6 +437,58 @@ describe('QueryErrorResetBoundary', () => {
       consoleErrorMock.mockRestore()
     })
 
+    it('should clear the public reset state when an observer remounts', () => {
+      const key = queryKey()
+      let reset = () => undefined
+      let isReset = () => false
+
+      function Page() {
+        useQuery({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+          enabled: false,
+        })
+
+        return <div>page</div>
+      }
+
+      function App() {
+        const [showPage, setShowPage] = React.useState(true)
+
+        return (
+          <>
+            <button onClick={() => setShowPage((value) => !value)}>
+              toggle
+            </button>
+            {showPage && <Page />}
+          </>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          {({ reset: resetBoundary, isReset: isResetBoundary }) => {
+            reset = resetBoundary
+            isReset = isResetBoundary
+            return <App />
+          }}
+        </QueryErrorResetBoundary>,
+      )
+
+      expect(rendered.getByText('page')).toBeInTheDocument()
+
+      act(() => {
+        reset()
+      })
+      expect(isReset()).toBe(true)
+
+      fireEvent.click(rendered.getByText('toggle'))
+      fireEvent.click(rendered.getByText('toggle'))
+
+      expect(isReset()).toBe(false)
+    })
+
     it('should still throw errors after a successful observer unmounts', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
