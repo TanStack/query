@@ -34,7 +34,7 @@ export const ensurePreventErrorBoundaryRetry = <
 
   if (options.suspense || throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
+    if (!errorResetBoundary.isReset(query?.queryHash)) {
       options.retryOnMount = false
     }
   }
@@ -42,14 +42,24 @@ export const ensurePreventErrorBoundaryRetry = <
 
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  queryHashes: string | Array<string | undefined>,
 ) => {
   React.useEffect(() => {
-    errorResetBoundary.clearReset()
+    const hashes = Array.isArray(queryHashes) ? queryHashes : [queryHashes]
+    hashes.forEach((queryHash) => {
+      if (queryHash) {
+        errorResetBoundary.clearReset(queryHash)
+      }
+    })
 
     return () => {
-      errorResetBoundary.reset()
+      hashes.forEach((queryHash) => {
+        if (queryHash) {
+          errorResetBoundary.reset(queryHash)
+        }
+      })
     }
-  }, [errorResetBoundary])
+  }, [errorResetBoundary, queryHashes])
 }
 
 export const getHasError = <
@@ -73,7 +83,7 @@ export const getHasError = <
 }) => {
   return (
     result.isError &&
-    !errorResetBoundary.isReset() &&
+    !errorResetBoundary.isReset(query?.queryHash) &&
     !result.isFetching &&
     query &&
     ((suspense && result.data === undefined) ||

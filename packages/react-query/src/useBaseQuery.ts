@@ -78,7 +78,7 @@ export function useBaseQuery<
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
-  useClearResetErrorBoundary(errorResetBoundary)
+  useClearResetErrorBoundary(errorResetBoundary, defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>

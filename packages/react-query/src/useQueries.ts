@@ -411,13 +411,18 @@ export function useQueries<
     [queries, client, isRestoring, subscribed],
   )
 
+  const queryHashes = React.useMemo(
+    () => defaultedQueries.map((queryOptions) => queryOptions.queryHash),
+    [defaultedQueries],
+  )
+
   defaultedQueries.forEach((queryOptions) => {
     ensureSuspenseTimers(queryOptions)
     const query = client.getQueryCache().get(queryOptions.queryHash)
     ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
+  useClearResetErrorBoundary(errorResetBoundary, queryHashes)
 
   const [observer] = React.useState(
     () =>
