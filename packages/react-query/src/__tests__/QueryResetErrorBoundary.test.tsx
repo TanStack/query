@@ -363,6 +363,7 @@ describe('QueryErrorResetBoundary', () => {
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
       const key = queryKey()
+      const siblingKey = queryKey()
 
       let succeed = false
       let fetchCount = 0
@@ -383,6 +384,15 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
+      function SiblingPage() {
+        const { data } = useQuery({
+          queryKey: siblingKey,
+          queryFn: () => sleep(10).then(() => 'sibling data'),
+        })
+
+        return <div>{data}</div>
+      }
+
       function App() {
         const [showPage, setShowPage] = React.useState(true)
 
@@ -395,6 +405,8 @@ describe('QueryErrorResetBoundary', () => {
               <ErrorBoundary fallback={<div>error boundary</div>}>
                 <Page />
               </ErrorBoundary>
+            ) : (
+              <SiblingPage />
             )}
           </>
         )
@@ -412,6 +424,9 @@ describe('QueryErrorResetBoundary', () => {
       expect(fetchCount).toBe(1)
 
       fireEvent.click(rendered.getByText('toggle'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('sibling data')).toBeInTheDocument()
+
       succeed = true
       fireEvent.click(rendered.getByText('toggle'))
       await vi.advanceTimersByTimeAsync(11)
