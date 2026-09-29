@@ -439,8 +439,8 @@ describe('QueryErrorResetBoundary', () => {
 
     it('should clear the public reset state when an observer remounts', () => {
       const key = queryKey()
-      let reset = () => undefined
-      let isReset = () => false
+      let reset: () => void = () => undefined
+      let isReset: () => boolean = () => false
 
       function Page() {
         useQuery({
@@ -497,8 +497,8 @@ describe('QueryErrorResetBoundary', () => {
 
       let succeed = false
       let fetchCount = 0
-      let reset = () => undefined
-      let clearReset = () => undefined
+      let reset: () => void = () => undefined
+      let clearReset: () => void = () => undefined
 
       function Page({ throwOnError }: { throwOnError: boolean }) {
         const { data, status } = useQuery({
@@ -1189,19 +1189,24 @@ describe('QueryErrorResetBoundary', () => {
         includeQuery: boolean
         setIncludeQuery: React.Dispatch<React.SetStateAction<boolean>>
       }) {
-        const [{ data, refetch, status } = {}] = useQueries({
-          queries: includeQuery
-            ? [
-                {
-                  queryKey: key,
-                  queryFn,
-                  retry: false,
-                  staleTime: Infinity,
-                  suspense: true,
-                },
-              ]
-            : [],
-        })
+        const queries: Array<{
+          queryKey: typeof key
+          queryFn: typeof queryFn
+          retry: false
+          staleTime: number
+          suspense: true
+        }> = includeQuery
+          ? [
+              {
+                queryKey: key,
+                queryFn,
+                retry: false,
+                staleTime: Infinity,
+                suspense: true,
+              },
+            ]
+          : []
+        const [{ data, status } = {}] = useQueries({ queries })
 
         if (!includeQuery) {
           return (
@@ -1213,9 +1218,6 @@ describe('QueryErrorResetBoundary', () => {
           <div>
             <div>data: {data}</div>
             <div>status: {status}</div>
-            <button onClick={() => refetch?.().catch(() => undefined)}>
-              refetch
-            </button>
             <button onClick={() => setIncludeQuery(false)}>
               remove query
             </button>
