@@ -53,6 +53,9 @@ export const ensurePreventErrorBoundaryRetry = <
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: object | undefined | Array<object | undefined>,
+  observer:
+    | { getCurrentQuery: () => object }
+    | { getQueries: () => Array<object> },
 ) => {
   const queries = Array.isArray(query)
     ? query.filter((value): value is object => value !== undefined)
@@ -68,19 +71,22 @@ export const useClearResetErrorBoundary = (
     queriesRef.current = queries
   }
 
-  const stableQueries = queriesRef.current
-
   React.useEffect(() => {
-    stableQueries.forEach((query) => {
+    queriesRef.current.forEach((query) => {
       clearQueryErrorReset(errorResetBoundary, query)
     })
 
     return () => {
-      stableQueries.forEach((query) => {
+      const queries =
+        'getCurrentQuery' in observer
+          ? [observer.getCurrentQuery()]
+          : observer.getQueries()
+
+      queries.forEach((query) => {
         resetQueryError(errorResetBoundary, query)
       })
     }
-  }, [errorResetBoundary, stableQueries])
+  }, [errorResetBoundary, observer])
 }
 
 export const getHasError = <

@@ -438,6 +438,7 @@ export function useQueries<
     defaultedQueries.map((queryOptions) =>
       client.getQueryCache().get(queryOptions.queryHash),
     ),
+    observer,
   )
 
   const shouldSubscribe = !isRestoring && subscribed

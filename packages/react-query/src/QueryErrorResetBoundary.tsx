@@ -58,7 +58,7 @@ export const registerQueryErrorReset = (
 ) => {
   const state = queryErrorResetStates.get(errorResetBoundary)
   if (state && !state.queryResetIds.has(query)) {
-    state.queryResetIds.set(query, 0)
+    state.queryResetIds.set(query, state.resetId)
   }
 }
 

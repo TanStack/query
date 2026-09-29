@@ -93,6 +93,7 @@ export function useBaseQuery<
     errorResetBoundary,
     client.getQueryCache().get(defaultedOptions.queryHash) ??
       observer.getCurrentQuery(),
+    observer,
   )
 
   const shouldSubscribe = !isRestoring && subscribed
