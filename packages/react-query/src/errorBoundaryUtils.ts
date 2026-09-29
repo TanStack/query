@@ -3,6 +3,7 @@ import * as React from 'react'
 import { shouldThrowError } from '@tanstack/query-core'
 import {
   clearQueryErrorReset,
+  getQueryErrorResetEpoch,
   isQueryErrorReset,
   registerQueryErrorReset,
   resetQueryError,
@@ -56,6 +57,8 @@ export const useClearResetErrorBoundary = (
     | { getCurrentQuery: () => object }
     | { getQueries: () => Array<object> },
 ) => {
+  const resetEpoch = getQueryErrorResetEpoch(errorResetBoundary)
+
   React.useEffect(() => {
     const queries =
       'getCurrentQuery' in observer
@@ -73,10 +76,10 @@ export const useClearResetErrorBoundary = (
           : observer.getQueries()
 
       currentQueries.forEach((query) => {
-        resetQueryError(errorResetBoundary, query)
+        resetQueryError(errorResetBoundary, query, resetEpoch)
       })
     }
-  }, [errorResetBoundary, observer])
+  }, [errorResetBoundary, observer, resetEpoch])
 }
 
 export const getHasError = <

@@ -17,6 +17,7 @@ export interface QueryErrorResetBoundaryValue {
  */
 type QueryErrorResetState = {
   resetId: number
+  resetEpoch: number
   isReset: boolean
   queryResetIds: WeakMap<object, number>
   queryReset: WeakSet<object>
@@ -30,6 +31,7 @@ const queryErrorResetStates = new WeakMap<
 function createValue(): QueryErrorResetBoundaryValue {
   const state: QueryErrorResetState = {
     resetId: 0,
+    resetEpoch: 0,
     isReset: false,
     queryResetIds: new WeakMap(),
     queryReset: new WeakSet(),
@@ -38,6 +40,7 @@ function createValue(): QueryErrorResetBoundaryValue {
   const value: QueryErrorResetBoundaryValue = {
     clearReset: () => {
       state.resetId = 0
+      state.resetEpoch += 1
       state.isReset = false
       state.queryResetIds = new WeakMap()
       state.queryReset = new WeakSet()
@@ -98,13 +101,18 @@ export const clearQueryErrorReset = (
 export const resetQueryError = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: object,
+  resetEpoch: number,
 ) => {
   const state = queryErrorResetStates.get(errorResetBoundary)
-  if (state) {
+  if (state && state.resetEpoch === resetEpoch) {
     state.queryResetIds.set(query, state.resetId)
     state.queryReset.add(query)
   }
 }
+
+export const getQueryErrorResetEpoch = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => queryErrorResetStates.get(errorResetBoundary)?.resetEpoch ?? 0
 
 const QueryErrorResetBoundaryContext = React.createContext(createValue())
 
