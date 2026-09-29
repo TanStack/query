@@ -162,6 +162,7 @@ describe('useIsMutating', () => {
   it('should track mutation filters and reactivity in useIsMutating', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
+    const unmatchedMutationKey = queryKey()
     let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
       mutationKey: mutationKey1,
     }
@@ -202,6 +203,12 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutatingAll()).toBe(2)
     expect(isMutatingFiltered()).toBe(1)
+
+    activeFilter = { mutationKey: unmatchedMutationKey }
+    host.requestUpdate()
+    await host.updateComplete
+
+    expect(isMutatingFiltered()).toBe(0)
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()

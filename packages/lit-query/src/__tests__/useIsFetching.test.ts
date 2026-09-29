@@ -161,6 +161,7 @@ describe('useIsFetching', () => {
   it('should track filters and filter reactivity in useIsFetching', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
+    const unmatchedKey = queryKey()
 
     let activeFilter: { queryKey?: ReadonlyArray<string> } = {
       queryKey: key1,
@@ -200,6 +201,12 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingAll()).toBe(2)
     expect(isFetchingFiltered()).toBe(1)
+
+    activeFilter = { queryKey: unmatchedKey }
+    host.requestUpdate()
+    await host.updateComplete
+
+    expect(isFetchingFiltered()).toBe(0)
 
     activeFilter = { queryKey: key2 }
     host.requestUpdate()
