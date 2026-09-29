@@ -4,7 +4,7 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 import type { MutationResultAccessor } from '../createMutationController.js'
 
 const providerTagName = generateElementName()

@@ -6,7 +6,7 @@ import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
