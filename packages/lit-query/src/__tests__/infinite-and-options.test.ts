@@ -9,7 +9,7 @@ import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
 import { queryOptions } from '../queryOptions.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import type { InfiniteData } from '@tanstack/query-core'
 

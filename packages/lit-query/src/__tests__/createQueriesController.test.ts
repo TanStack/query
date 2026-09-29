@@ -5,7 +5,7 @@ import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueriesController } from '../createQueriesController.js'
 import { queryOptions } from '../queryOptions.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 import type { QueriesResultAccessor } from '../createQueriesController.js'
 import type { QueryStatus } from '@tanstack/query-core'
 

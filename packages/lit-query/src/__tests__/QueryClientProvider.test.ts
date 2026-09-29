@@ -9,7 +9,7 @@ import {
   useQueryClient,
 } from '../index.js'
 import { QueryClientProvider } from '../QueryClientProvider.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
 customElements.define(tagName, QueryClientProvider)

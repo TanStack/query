@@ -3,7 +3,7 @@ import { LitElement } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
