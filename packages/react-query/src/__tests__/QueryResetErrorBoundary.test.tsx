@@ -489,6 +489,99 @@ describe('QueryErrorResetBoundary', () => {
       expect(isReset()).toBe(false)
     })
 
+    it('should not let stale cleanup reset a cleared boundary', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+
+      let succeed = false
+      let fetchCount = 0
+      let reset = () => undefined
+      let clearReset = () => undefined
+
+      function Page({ throwOnError }: { throwOnError: boolean }) {
+        const { data, status } = useQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              fetchCount++
+              if (!succeed) throw new Error('Error')
+              return 'data'
+            }),
+          retry: false,
+          throwOnError,
+        })
+
+        return (
+          <div>
+            <div>status: {status}</div>
+            <div>{data}</div>
+          </div>
+        )
+      }
+
+      function App() {
+        const [showPage, setShowPage] = React.useState(true)
+        const [throwOnError, setThrowOnError] = React.useState(false)
+
+        return (
+          <>
+            <button
+              onClick={() => {
+                if (showPage) {
+                  succeed = true
+                  setThrowOnError(true)
+                }
+                setShowPage((value) => !value)
+              }}
+            >
+              toggle
+            </button>
+            {showPage ? (
+              <ErrorBoundary fallback={<div>error boundary</div>}>
+                <Page throwOnError={throwOnError} />
+              </ErrorBoundary>
+            ) : (
+              <div>hidden</div>
+            )}
+          </>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          {({
+            reset: resetBoundary,
+            clearReset: clearResetBoundary,
+          }) => {
+            reset = resetBoundary
+            clearReset = clearResetBoundary
+            return <App />
+          }}
+        </QueryErrorResetBoundary>,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('status: error')).toBeInTheDocument()
+      expect(fetchCount).toBe(1)
+
+      act(() => {
+        reset()
+        clearReset()
+      })
+
+      fireEvent.click(rendered.getByText('toggle'))
+      fireEvent.click(rendered.getByText('toggle'))
+      await vi.advanceTimersByTimeAsync(11)
+
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(fetchCount).toBe(1)
+
+      consoleErrorMock.mockRestore()
+    })
+
     it('should still throw errors after a successful observer unmounts', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
@@ -1082,7 +1175,7 @@ describe('QueryErrorResetBoundary', () => {
 
       queryClient.setQueryData(key, 'initial')
       await queryClient
-        .fetchQuery({
+        .query({
           queryKey: key,
           queryFn,
           retry: false,
