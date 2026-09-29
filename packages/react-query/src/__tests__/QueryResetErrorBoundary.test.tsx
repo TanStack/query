@@ -1018,6 +1018,91 @@ describe('QueryErrorResetBoundary', () => {
       consoleErrorMock.mockRestore()
     })
 
+    it('should retry an errored query when it is re-added to the query list', async () => {
+      const key = queryKey()
+      let fetchCount = 0
+
+      function Page({
+        includeQuery,
+        setIncludeQuery,
+      }: {
+        includeQuery: boolean
+        setIncludeQuery: React.Dispatch<React.SetStateAction<boolean>>
+      }) {
+        const [{ data, refetch, status } = {}] = useQueries({
+          queries: includeQuery
+            ? [
+                {
+                  queryKey: key,
+                  queryFn: () =>
+                    sleep(10).then(() => {
+                      fetchCount++
+                      if (fetchCount === 2) throw new Error('Error')
+                      return `data ${fetchCount}`
+                    }),
+                  retry: false,
+                  staleTime: Infinity,
+                  suspense: true,
+                },
+              ]
+            : [],
+        })
+
+        if (!includeQuery) {
+          return (
+            <button onClick={() => setIncludeQuery(true)}>add query</button>
+          )
+        }
+
+        return (
+          <div>
+            <div>data: {data}</div>
+            <div>status: {status}</div>
+            <button onClick={() => refetch?.()}>refetch</button>
+            <button onClick={() => setIncludeQuery(false)}>
+              remove query
+            </button>
+          </div>
+        )
+      }
+
+      function App() {
+        const [includeQuery, setIncludeQuery] = React.useState(true)
+
+        return (
+          <React.Suspense fallback={<div>loading</div>}>
+            <Page
+              includeQuery={includeQuery}
+              setIncludeQuery={setIncludeQuery}
+            />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          <App />
+        </QueryErrorResetBoundary>,
+      )
+
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('refetch'))
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+      expect(rendered.getByText('status: error')).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('remove query'))
+      fireEvent.click(rendered.getByText('add query'))
+      await act(() => vi.advanceTimersByTimeAsync(11))
+
+      expect(rendered.getByText('data: data 3')).toBeInTheDocument()
+      expect(fetchCount).toBe(3)
+    })
+
     it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
       const key = queryKey()
       const consoleErrorMock = vi
