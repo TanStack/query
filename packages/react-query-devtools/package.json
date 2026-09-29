@@ -83,6 +83,7 @@
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "react": "catalog:",
     "typescript": "catalog:"
   },
