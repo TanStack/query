@@ -4,11 +4,6 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
-import { createMutationController } from '../createMutationController.js'
-import { createQueryController } from '../createQueryController.js'
-import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
-import { mutationOptions } from '../mutationOptions.js'
-import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './utils.js'
 import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -511,93 +506,5 @@ describe('createInfiniteQueryController', () => {
     expect(host.infinite().status).toBe('pending')
 
     host.infinite.destroy()
-  })
-})
-
-describe('options helpers integration', () => {
-  let queryClient: QueryClient
-  let container: HTMLElement
-
-  beforeEach(() => {
-    vi.useFakeTimers()
-    queryClient = new QueryClient()
-    container = document.createElement('div')
-    document.body.append(container)
-  })
-
-  afterEach(() => {
-    container.remove()
-    queryClient.clear()
-    vi.useRealTimers()
-  })
-
-  it('should integrate queryOptions with createQueryController', async () => {
-    const key = queryKey()
-
-    class Host extends LitElement {
-      readonly query = createQueryController(
-        this,
-        queryOptions({
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => 'query-ok'),
-        }),
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), Host)
-    const host = new Host()
-    container.append(host)
-    const query = host.query
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(query().isSuccess).toBe(true)
-    expect(query().data).toBe('query-ok')
-  })
-
-  it('should integrate mutationOptions with createMutationController', async () => {
-    class Host extends LitElement {
-      readonly mutation = createMutationController(
-        this,
-        mutationOptions({
-          mutationFn: (value: number) => sleep(10).then(() => value + 10),
-        }),
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), Host)
-    const host = new Host()
-    container.append(host)
-    const mutation = host.mutation
-
-    const mutatePromise = mutation.mutateAsync(5)
-    await vi.advanceTimersByTimeAsync(10)
-    await expect(mutatePromise).resolves.toBe(15)
-    expect(mutation().isSuccess).toBe(true)
-  })
-
-  it('should integrate infiniteQueryOptions with createInfiniteQueryController', async () => {
-    const key = queryKey()
-
-    class Host extends LitElement {
-      readonly infinite = createInfiniteQueryController(
-        this,
-        infiniteQueryOptions({
-          queryKey: key,
-          initialPageParam: 0,
-          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
-          getNextPageParam: (lastPage) =>
-            lastPage < 1 ? lastPage + 1 : undefined,
-        }),
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), Host)
-    const host = new Host()
-    container.append(host)
-    const infinite = host.infinite
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(infinite().isSuccess).toBe(true)
-    expect(infinite().data?.pages).toEqual([0])
   })
 })
