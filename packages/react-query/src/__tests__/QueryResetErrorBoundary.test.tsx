@@ -355,6 +355,70 @@ describe('QueryErrorResetBoundary', () => {
       consoleErrorMock.mockRestore()
     })
 
+    it('should retry fetch when the errored observer remounts', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+
+      let succeed = false
+      let fetchCount = 0
+
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              fetchCount++
+              if (!succeed) throw new Error('Error')
+              return 'data'
+            }),
+          retry: false,
+          throwOnError: true,
+        })
+
+        return <div>{data}</div>
+      }
+
+      function App() {
+        const [showPage, setShowPage] = React.useState(true)
+
+        return (
+          <>
+            <button onClick={() => setShowPage((value) => !value)}>
+              toggle
+            </button>
+            {showPage && (
+              <ErrorBoundary fallback={<div>error boundary</div>}>
+                <Page />
+              </ErrorBoundary>
+            )}
+          </>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          <App />
+        </QueryErrorResetBoundary>,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(fetchCount).toBe(1)
+
+      fireEvent.click(rendered.getByText('toggle'))
+      succeed = true
+      fireEvent.click(rendered.getByText('toggle'))
+      await vi.advanceTimersByTimeAsync(11)
+
+      expect(rendered.getByText('data')).toBeInTheDocument()
+      expect(fetchCount).toBe(2)
+
+      consoleErrorMock.mockRestore()
+    })
+
     it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
