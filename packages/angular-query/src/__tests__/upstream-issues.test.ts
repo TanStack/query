@@ -2,7 +2,9 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
+  ResourceParamsStatus,
   VERSION,
+  computed,
   effect,
   input,
   signal,
@@ -14,6 +16,7 @@ import {
   injectMutation,
   injectQuery,
   provideTanStackQuery,
+  toResource,
 } from '..'
 import { provideAngularQueryChangeDetection } from './test-utils'
 
@@ -285,5 +288,80 @@ describe('upstream Angular issue reproductions', () => {
     await TestBed.inject(ApplicationRef).whenStable()
     expect(query.data()).toBe('updated')
     expect(query.isRefetching()).toBe(false)
+  })
+
+  it('#11586: toResource handles debounced parameters throwing ResourceParamsStatus.LOADING or IDLE', async () => {
+    const param = signal<string | null | undefined>(null)
+    const debouncedParam = computed(() => {
+      const val = param()
+      if (val === null) {
+        throw ResourceParamsStatus.LOADING
+      }
+      if (val === undefined) {
+        throw ResourceParamsStatus.IDLE
+      }
+      return val
+    })
+
+    const app = TestBed.inject(ApplicationRef)
+    const resource = TestBed.runInInjectionContext(() => {
+      const query = injectQuery(() => {
+        const code = debouncedParam()
+        return {
+          queryKey: ['11586', code],
+          queryFn: () => Promise.resolve(`result-${code}`),
+        }
+      })
+      return toResource(query)
+    })
+
+    TestBed.tick()
+    expect(resource.status()).toBe('loading')
+    expect(resource.isLoading()).toBe(true)
+
+    param.set(undefined)
+    TestBed.tick()
+    expect(resource.status()).toBe('idle')
+    expect(resource.isLoading()).toBe(false)
+
+    param.set('settled')
+    TestBed.tick()
+    await app.whenStable()
+
+    expect(resource.status()).toBe('resolved')
+    expect(resource.value()).toBe('result-settled')
+  })
+
+  it('#11586: injectQuery gracefully suspends when optionsFn throws ResourceParamsStatus without unhandled effect errors', async () => {
+    const param = signal<string | null>(null)
+    const debouncedParam = computed(() => {
+      const val = param()
+      if (val === null) {
+        throw ResourceParamsStatus.LOADING
+      }
+      return val
+    })
+
+    const app = TestBed.inject(ApplicationRef)
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => {
+        const code = debouncedParam()
+        return {
+          queryKey: ['11586-bare', code],
+          queryFn: () => Promise.resolve(`data-${code}`),
+        }
+      }),
+    )
+
+    TestBed.tick()
+    expect(query.isPending()).toBe(true)
+    expect(query.fetchStatus()).toBe('idle')
+
+    param.set('ready')
+    TestBed.tick()
+    await app.whenStable()
+
+    expect(query.isSuccess()).toBe(true)
+    expect(query.data()).toBe('data-ready')
   })
 })

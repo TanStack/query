@@ -4,6 +4,7 @@ import { injectQueryZone } from './utils/inject-query-zone'
 import { injectIsRestoring } from './inject-is-restoring'
 import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
 import { injectExternalStore } from './utils/inject-external-store'
+import { getResourceParamsStatus } from './utils/resource-params-status'
 import type {
   QueryKey,
   QueryObserver,
@@ -45,12 +46,71 @@ export function injectBaseQuery<
     )
   }
 
+  let lastSuccessfulOptions:
+    | QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
+    | undefined
+
+  const evaluatedOptionsSignal = computed(() => {
+    try {
+      const options = optionsFn()
+      lastSuccessfulOptions = options
+      return {
+        options,
+        resourceParamsStatus: undefined,
+        error: undefined,
+      }
+    } catch (error) {
+      const resourceParamsStatus = getResourceParamsStatus(error)
+      if (resourceParamsStatus) {
+        return {
+          options: undefined,
+          resourceParamsStatus,
+          error,
+        }
+      }
+      throw error
+    }
+  })
+
+  const resourceParamsStatusSignal = computed(
+    () => evaluatedOptionsSignal().resourceParamsStatus,
+  )
+  const resourceParamsErrorSignal = computed(
+    () => evaluatedOptionsSignal().error,
+  )
+
   const defaultedOptionsSignal = computed(() => {
-    const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
+    const evaluated = evaluatedOptionsSignal()
+    const baseOptions =
+      evaluated.options ??
+      lastSuccessfulOptions ??
+      ({
+        queryKey: [
+          '__tanstack_query_resource_pending__',
+        ] as unknown as TQueryKey,
+        enabled: false,
+      } as QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >)
+
+    const defaultedOptions = queryClient.defaultQueryOptions(baseOptions)
     defaultedOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'
     defaultedOptions.notifyOnChangeProps = 'all'
+    if (evaluated.resourceParamsStatus) {
+      defaultedOptions.enabled = false
+    }
     return defaultedOptions
   })
 
@@ -103,5 +163,10 @@ export function injectBaseQuery<
       return observer
     })
 
-  return [resultSignal, getObserver] as const
+  return [
+    resultSignal,
+    getObserver,
+    resourceParamsStatusSignal,
+    resourceParamsErrorSignal,
+  ] as const
 }

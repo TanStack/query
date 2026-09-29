@@ -1,4 +1,8 @@
 import { computed, untracked } from '@angular/core'
+import {
+  RESOURCE_PARAMS_ERROR,
+  RESOURCE_PARAMS_STATUS,
+} from './utils/resource-params-status'
 import type { QueryObserverResult } from '@tanstack/query-core'
 import type { ResourceSnapshot } from './utils/resource-types'
 import type { Resource, ResourceStatus, Signal } from '@angular/core'
@@ -43,6 +47,17 @@ export function toResource<TValue>(
   // Intentionally does not use resource from snapshot to have
   // support for the reload method for compatible libraries
   const status = computed<ResourceStatus>(() => {
+    const paramsStatus = (query as any)[RESOURCE_PARAMS_STATUS]?.()
+    if (paramsStatus === 'loading') {
+      return query.data() === undefined ? 'loading' : 'reloading'
+    }
+    if (paramsStatus === 'idle') {
+      return 'idle'
+    }
+    if (paramsStatus === 'error') {
+      return 'error'
+    }
+
     const fetchStatus = query.fetchStatus()
     const data = query.data()
 
@@ -61,6 +76,12 @@ export function toResource<TValue>(
   })
 
   const error = computed<Error | undefined>(() => {
+    const paramsStatus = (query as any)[RESOURCE_PARAMS_STATUS]?.()
+    if (paramsStatus === 'error') {
+      const paramsError = (query as any)[RESOURCE_PARAMS_ERROR]?.()
+      return paramsError ? normalizeError(paramsError) : undefined
+    }
+
     return query.status() === 'error'
       ? normalizeError(query.error())
       : undefined

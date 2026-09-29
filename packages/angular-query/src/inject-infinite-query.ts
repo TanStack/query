@@ -2,6 +2,10 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { assertInInjectionContext, untracked } from '@angular/core'
 import { injectQueryZone } from './utils/inject-query-zone'
 import { injectBaseQuery } from './inject-base-query'
+import {
+  RESOURCE_PARAMS_ERROR,
+  RESOURCE_PARAMS_STATUS,
+} from './utils/resource-params-status'
 import { signalProxy } from './utils/signal-proxy'
 import { infiniteQueryResultFields } from './utils/result-fields'
 import type {
@@ -163,7 +167,12 @@ export function injectInfiniteQuery<
     assertInInjectionContext(injectInfiniteQuery)
   }
   const outsideZone = injectQueryZone()
-  const [resultSignal, getObserver] = injectBaseQuery(
+  const [
+    resultSignal,
+    getObserver,
+    resourceParamsStatus,
+    resourceParamsError,
+  ] = injectBaseQuery(
     optionsFn,
     InfiniteQueryObserver as typeof QueryObserver,
   )
@@ -193,6 +202,8 @@ export function injectInfiniteQuery<
         outsideZone(() =>
           untracked(() => getInfiniteObserver().fetchPreviousPage(options)),
         ),
+      [RESOURCE_PARAMS_STATUS]: resourceParamsStatus,
+      [RESOURCE_PARAMS_ERROR]: resourceParamsError,
     },
   ) as unknown as
     | DefinedCreateInfiniteQueryResult<TData, TError>
