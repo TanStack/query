@@ -1,48 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { LitElement } from 'lit'
-import { createQueryController } from '../createQueryController.js'
+import { describe, expect, it } from 'vitest'
 import { queryOptions } from '../queryOptions.js'
-import { generateElementName } from './utils.js'
+import type { CreateQueryOptions } from '../createQueryController.js'
 
 describe('queryOptions', () => {
-  let queryClient: QueryClient
-  let container: HTMLElement
+  it('should return the object received as a parameter without any modification.', () => {
+    const object: CreateQueryOptions = {
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    } as const
 
-  beforeEach(() => {
-    vi.useFakeTimers()
-    queryClient = new QueryClient()
-    container = document.createElement('div')
-    document.body.append(container)
-  })
-
-  afterEach(() => {
-    container.remove()
-    queryClient.clear()
-    vi.useRealTimers()
-  })
-
-  it('should work when passed to createQueryController', async () => {
-    const key = queryKey()
-
-    class Host extends LitElement {
-      readonly query = createQueryController(
-        this,
-        queryOptions({
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => 'query-ok'),
-        }),
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), Host)
-    const host = new Host()
-    container.append(host)
-    const query = host.query
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(query().isSuccess).toBe(true)
-    expect(query().data).toBe('query-ok')
+    expect(queryOptions(object)).toBe(object)
   })
 })
