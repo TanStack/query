@@ -5,5 +5,11 @@
     "rootDir": ".",
     "jsx": "react-jsx"
   },
-  "include": ["src", "test-setup.ts", "*.config.*", "package.json"]
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.ts",
+    "*.config.js",
+    "package.json"
+  ]
 }

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { streamedQuery } from '../streamedQuery'
 import { QueryClient, QueryObserver } from '..'
@@ -29,7 +29,7 @@ describe('streamedQuery', () => {
     }
   }
 
-  test('should stream data from an AsyncIterable', async () => {
+  it('should stream data from an AsyncIterable', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -39,31 +39,24 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -73,7 +66,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should allow Arrays to be returned from the stream', async () => {
+  it('should allow Arrays to be returned from the stream', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -87,23 +80,18 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [[0, 0]],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
@@ -112,9 +100,7 @@ describe('streamedQuery', () => {
         [1, 1],
       ],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -128,7 +114,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should handle empty streams', async () => {
+  it('should handle empty streams', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -139,15 +125,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -157,7 +140,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should replace on refetch', async () => {
+  it('should replace on refetch', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -167,15 +150,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -183,25 +163,19 @@ describe('streamedQuery', () => {
     })
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(40)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -211,7 +185,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support refetchMode append', async () => {
+  it('should support refetchMode append', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -222,15 +196,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -238,25 +209,19 @@ describe('streamedQuery', () => {
     })
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
     })
-
     await vi.advanceTimersByTimeAsync(40)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1, 0],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -266,7 +231,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support refetchMode replace', async () => {
+  it('should support refetchMode replace', async () => {
     const key = queryKey()
     let offset = 0
     const observer = new QueryObserver(queryClient, {
@@ -278,15 +243,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -296,25 +258,19 @@ describe('streamedQuery', () => {
     offset = 100
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
     })
-
     await vi.advanceTimersByTimeAsync(40)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -324,7 +280,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should abort ongoing stream when refetch happens', async () => {
+  it('should abort ongoing stream when refetch happens', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -340,15 +296,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
@@ -356,25 +309,19 @@ describe('streamedQuery', () => {
     })
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
     })
-
     await vi.advanceTimersByTimeAsync(40)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1, 0],
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -384,7 +331,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should abort when unsubscribed', async () => {
+  it('should abort when unsubscribed', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -399,15 +346,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(60)
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
@@ -415,9 +359,7 @@ describe('streamedQuery', () => {
     })
 
     unsubscribe()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -425,7 +367,7 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should not abort when signal not consumed', async () => {
+  it('should not abort when signal not consumed', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -435,15 +377,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(60)
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
@@ -451,9 +390,7 @@ describe('streamedQuery', () => {
     })
 
     unsubscribe()
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
@@ -461,7 +398,7 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should support custom reducer', async () => {
+  it('should support custom reducer', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -472,20 +409,18 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {} as Record<number, boolean>,
       }),
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -498,7 +433,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support custom reducer with initialValue', async () => {
+  it('should support custom reducer with initialValue', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -508,6 +443,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         initialValue: {
           10: true,
           11: true,
@@ -516,15 +452,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -539,7 +472,24 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should keep error state on reset refetch when initialData is defined', async () => {
+  it('should preserve null returned by a custom reducer', async () => {
+    const key = queryKey()
+    const data = await queryClient.query({
+      queryKey: key,
+      queryFn: streamedQuery<number, string | null>({
+        initialValue: 'initial',
+        reducer: () => null,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        streamFn: async function* () {
+          yield 1
+        },
+      }),
+    })
+    expect(data).toBeNull()
+    expect(queryClient.getQueryData(key)).toBeNull()
+  })
+
+  it('should keep error state on reset refetch when initialData is defined', async () => {
     const key = queryKey()
     let shouldError = false
     const error = new Error('stream failed')
@@ -550,6 +500,7 @@ describe('streamedQuery', () => {
       retry: false,
       queryFn: streamedQuery({
         refetchMode: 'reset',
+        // eslint-disable-next-line @typescript-eslint/require-await
         streamFn: async function* () {
           if (shouldError) {
             throw error
@@ -561,9 +512,7 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -573,7 +522,6 @@ describe('streamedQuery', () => {
     shouldError = true
 
     const refetchPromise = observer.refetch()
-
     await vi.advanceTimersByTimeAsync(0)
     await expect(refetchPromise).resolves.toMatchObject({
       status: 'error',
@@ -591,7 +539,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should treat a fetch after an initial error as a refetch for reset mode', async () => {
+  it('should treat a fetch after an initial error as a refetch for reset mode', async () => {
     const key = queryKey()
     let shouldError = true
     const error = new Error('stream failed')
@@ -612,9 +560,7 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
       fetchStatus: 'idle',
@@ -625,18 +571,14 @@ describe('streamedQuery', () => {
     shouldError = false
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
       error: null,
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -647,7 +589,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should reset to initialData on refetch after an initial error', async () => {
+  it('should reset to initialData on refetch after an initial error', async () => {
     const key = queryKey()
     let shouldError = true
     const error = new Error('stream failed')
@@ -669,9 +611,7 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
       fetchStatus: 'idle',
@@ -682,18 +622,14 @@ describe('streamedQuery', () => {
     shouldError = false
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: ['initial'],
       error: null,
     })
-
     await vi.advanceTimersByTimeAsync(50)
-
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
@@ -704,13 +640,14 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should not call reducer twice when refetchMode is replace', async () => {
+  it('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
     const arr: Array<number> = []
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
+        // eslint-disable-next-line @typescript-eslint/require-await
         streamFn: async function* () {
           const v = [1, 2, 3]
           yield* v
@@ -725,16 +662,12 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(arr).toEqual([1, 2, 3])
     expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 
     void observer.refetch()
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(arr).toEqual([1, 2, 3, 1, 2, 3])
     expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 

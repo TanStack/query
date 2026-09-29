@@ -7,6 +7,11 @@ import type {
 } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 
+/**
+ * Vue-aware subclass of `@tanstack/query-core`'s `MutationCache`. `find`/`findAll` also accept a
+ * {@link MaybeRefDeep} filters object, so `ref`s can be passed directly without unwrapping. Access it via
+ * `queryClient.getMutationCache()` — `QueryClient` constructs one of these by default.
+ */
 export class MutationCache extends MC {
   find<
     TData = unknown,

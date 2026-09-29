@@ -52,13 +52,14 @@ describe('Suspense Timer Tests', () => {
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {
     const TestComponent = createTestQuery({
       fetchCount,
-      queryKey: ['test'],
+      queryKey: queryKey(),
       staleTime: 10,
     })
 
@@ -77,14 +78,13 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(fetchCount.count).toBe(1)
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with function', async () => {
     const TestComponent = createTestQuery({
       fetchCount,
-      queryKey: ['test-func'],
+      queryKey: queryKey(),
       staleTime: () => 10,
     })
 
@@ -103,7 +103,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -129,7 +128,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(1500)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -155,7 +153,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(500)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -181,7 +178,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -207,7 +203,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -233,7 +228,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 })

@@ -3,13 +3,11 @@ id: MutationStateOptions
 title: MutationStateOptions
 ---
 
-# Type Alias: MutationStateOptions\<TResult\>
-
 ```ts
-type MutationStateOptions<TResult> = object;
+type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:140](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L140)
+Defined in: [packages/svelte-query/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L158)
 
 Options for useMutationState
 
@@ -17,34 +15,15 @@ Options for useMutationState
 
 ### TResult
 
-`TResult` = `MutationState`
+`TResult` = [`MutationState`](../interfaces/MutationState.md)
+
+### TMutation
+
+`TMutation` *extends* [`Mutation`](../classes/Mutation.md)\<`any`, `any`, `any`, `any`\> = [`MutationTypeFromResult`](MutationTypeFromResult.md)\<`TResult`\>
 
 ## Properties
 
-### filters?
-
-```ts
-optional filters: MutationFilters;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:141](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L141)
-
-***
-
-### select()?
-
-```ts
-optional select: (mutation) => TResult;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:142](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L142)
-
-#### Parameters
-
-##### mutation
-
-`Mutation`\<`unknown`, `DefaultError`, `unknown`, `unknown`\>
-
-#### Returns
-
-`TResult`
+| Property | Type |
+| ------ | ------ |
+| <a id="filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
+| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

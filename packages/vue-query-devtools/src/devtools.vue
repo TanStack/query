@@ -33,13 +33,12 @@ watchEffect(() => {
 
 onMounted(() => {
   devtools.mount(div.value as HTMLElement)
-})
-
-onScopeDispose(() => {
-  devtools.unmount()
+  onScopeDispose(() => {
+    devtools.unmount()
+  })
 })
 </script>
 
 <template>
-  <div className="tsqd-parent-container" ref="div"></div>
+  <div class="tsqd-parent-container" ref="div"></div>
 </template>

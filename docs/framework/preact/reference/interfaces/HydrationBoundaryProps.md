@@ -3,55 +3,15 @@ id: HydrationBoundaryProps
 title: HydrationBoundaryProps
 ---
 
-# Interface: HydrationBoundaryProps
+Defined in: [packages/preact-query/src/HydrationBoundary.tsx:17](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L17)
 
-Defined in: [preact-query/src/HydrationBoundary.tsx:12](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L12)
+The props accepted by `HydrationBoundary`.
 
 ## Properties
 
-### children?
-
-```ts
-optional children: ComponentChildren;
-```
-
-Defined in: [preact-query/src/HydrationBoundary.tsx:20](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L20)
-
-***
-
-### options?
-
-```ts
-optional options: OmitKeyof<HydrateOptions, "defaultOptions"> & object;
-```
-
-Defined in: [preact-query/src/HydrationBoundary.tsx:14](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L14)
-
-#### Type Declaration
-
-##### defaultOptions?
-
-```ts
-optional defaultOptions: OmitKeyof<{
-}, "mutations">;
-```
-
-***
-
-### queryClient?
-
-```ts
-optional queryClient: QueryClient;
-```
-
-Defined in: [preact-query/src/HydrationBoundary.tsx:21](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L21)
-
-***
-
-### state
-
-```ts
-state: DehydratedState | null | undefined;
-```
-
-Defined in: [preact-query/src/HydrationBoundary.tsx:13](https://github.com/theVedanta/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L13)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="children"></a> `children?` | `ComponentChildren` | The components to render — always rendered unconditionally, not gated on hydration. New queries are hydrated into the cache during render; for queries that already exist in the cache, only newer dehydrated data is hydrated, and that happens in an effect after commit, so `children` may render briefly before it lands. |
+| <a id="options"></a> `options?` | [`OmitKeyof`](../type-aliases/OmitKeyof.md)\<[`HydrateOptions`](HydrateOptions.md), `"defaultOptions"`\> & `object` | Optional. Note: unlike `hydrate`, `mutations` cannot be set here. |
+| <a id="queryclient"></a> `queryClient?` | [`QueryClient`](../classes/QueryClient.md) | Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used. |
+| <a id="state"></a> `state` | [`DehydratedState`](DehydratedState.md) \| `null` \| `undefined` | The state to hydrate. |

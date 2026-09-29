@@ -34,10 +34,10 @@ describe('useSuspenseQueries', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     queryClient.clear()
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
+    vi.useRealTimers()
   })
 
   function SuspenseFallback() {
@@ -106,7 +106,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
   })
@@ -187,7 +186,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onSuspend).toHaveBeenCalled()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
@@ -241,7 +239,6 @@ describe('useSuspenseQueries', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000)
     })
-
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
@@ -276,7 +273,6 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
     expect(spy).not.toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(30)
     expect(rendered.getByText('data')).toBeInTheDocument()
 
@@ -291,10 +287,8 @@ describe('useSuspenseQueries', () => {
     function getUserData() {
       return {
         queryKey: key,
-        queryFn: async () => {
-          await sleep(localDuration)
-          return { name: 'John Doe', age: 50 }
-        },
+        queryFn: () =>
+          sleep(localDuration).then(() => ({ name: 'John Doe', age: 50 })),
       }
     }
 
@@ -339,11 +333,8 @@ describe('useSuspenseQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(localDuration)
-
     expect(onSuspend).toHaveBeenCalled()
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith({
       data: 'John Doe',
@@ -353,20 +344,6 @@ describe('useSuspenseQueries', () => {
     // With the infinite loop bug, renderCount would be very high (e.g. > 100)
     // Without bug, it should be small (initial suspend + resolution = 2-3)
     expect(renderCount).toBeLessThan(10)
-  })
-})
-
-describe('useSuspenseQueries 2', () => {
-  let queryClient: QueryClient
-
-  beforeEach(() => {
-    vi.useFakeTimers()
-    queryClient = new QueryClient()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-    queryClient.clear()
   })
 
   it('should suspend all queries in parallel', async () => {
@@ -473,7 +450,6 @@ describe('useSuspenseQueries 2', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
@@ -539,8 +515,47 @@ describe('useSuspenseQueries 2', () => {
     expect(rendered.getByText('Data 1')).toBeInTheDocument()
   })
 
+  it('should throw error when a queryFn rejects with a falsy error', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const [query] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+            // literal `undefined` error crashes the framework. `0` is just an arbitrary
+            // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+            // crash) — any falsy primitive other than `null`/`undefined` would do.
+            queryFn: () => sleep(10).then(() => Promise.reject(0)),
+            retry: false,
+          },
+        ],
+      })
+
+      return <div>data: {String(query.data)}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleErrorMock.mockRestore()
+  })
+
   it('should throw error when queryKey changes and new query fails', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -585,11 +600,11 @@ describe('useSuspenseQueries 2', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should keep previous data when wrapped in a transition', async () => {
@@ -742,7 +757,7 @@ describe('useSuspenseQueries 2', () => {
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -785,7 +800,7 @@ describe('useSuspenseQueries 2', () => {
 
     expect(count).toBe(1)
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   describe('gc (with fake timers)', () => {
@@ -849,7 +864,7 @@ describe('useSuspenseQueries 2', () => {
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const key = queryKey()
@@ -878,17 +893,17 @@ describe('useSuspenseQueries 2', () => {
 
     renderWithClient(queryClient, <App />)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should log an error when skipToken is used in development environment', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -913,10 +928,10 @@ describe('useSuspenseQueries 2', () => {
       </Suspense>,
     )
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect(consoleErrorMock).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-    consoleErrorSpy.mockRestore()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -924,7 +939,7 @@ describe('useSuspenseQueries 2', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
-    const consoleErrorSpy = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -949,8 +964,8 @@ describe('useSuspenseQueries 2', () => {
       </Suspense>,
     )
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled()
-    consoleErrorSpy.mockRestore()
+    expect(consoleErrorMock).not.toHaveBeenCalled()
+    consoleErrorMock.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
@@ -993,7 +1008,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key2 resolves: suspend lifts, key1 shows cached data, key2 shows fresh data
     await vi.advanceTimersByTimeAsync(1000)
-
     expect(rendered.getByText('data1: cached')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
@@ -1002,7 +1016,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key1 background refetch completes: key1 updates to fresh data
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
@@ -1046,7 +1059,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key1 resolves: suspend lifts, key1 shows fresh data, key2 shows cached data
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached')).toBeInTheDocument()
 
@@ -1055,7 +1067,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key2 background refetch completes: key2 updates to fresh data
     await vi.advanceTimersByTimeAsync(1000)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
@@ -1161,7 +1172,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key2 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
@@ -1170,7 +1180,6 @@ describe('useSuspenseQueries 2', () => {
 
     // after key2 refetch completes, key1 is still fresh with no refetch triggered
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
     expect(queryFn1).toHaveBeenCalledTimes(0)
@@ -1229,7 +1238,6 @@ describe('useSuspenseQueries 2', () => {
 
     // key1 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
 
@@ -1238,7 +1246,6 @@ describe('useSuspenseQueries 2', () => {
 
     // after key1 refetch completes, key2 is still fresh with no refetch triggered
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
     expect(queryFn2).toHaveBeenCalledTimes(0)
@@ -1289,13 +1296,11 @@ describe('useSuspenseQueries 2', () => {
 
     // key2 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
     // key1 background refetch completes
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })

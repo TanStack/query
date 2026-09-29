@@ -6,8 +6,7 @@ import tseslint from 'typescript-eslint'
 
 import rootConfig from './root.eslint.config.js'
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default [
   ...rootConfig,
   ...preact,
   {
@@ -37,5 +36,3 @@ const config = [
     },
   },
 ]
-
-export default config

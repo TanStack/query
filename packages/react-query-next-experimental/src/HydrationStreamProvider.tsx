@@ -1,6 +1,6 @@
 'use client'
 
-import { isServer } from '@tanstack/react-query'
+import { environmentManager } from '@tanstack/react-query'
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
 import { htmlEscapeJsonString } from './htmlescape'
@@ -57,7 +57,7 @@ export interface HydrationStreamProviderProps<TShape> {
 }
 
 export function createHydrationStreamProvider<TShape>() {
-  const context = React.createContext<HydrationStreamContext<TShape>>(
+  const StreamContext = React.createContext<HydrationStreamContext<TShape>>(
     null as any,
   )
   /**
@@ -106,7 +106,7 @@ export function createHydrationStreamProvider<TShape>() {
 
     // <server stuff>
     const [stream] = React.useState<Array<TShape>>(() => {
-      if (!isServer) {
+      if (!environmentManager.isServer()) {
         return {
           push() {
             // no-op on the client
@@ -115,7 +115,7 @@ export function createHydrationStreamProvider<TShape>() {
       }
       return []
     })
-    const count = React.useRef(0)
+    const countRef = React.useRef(0)
     useServerInsertedHTML(() => {
       // This only happens on the server
       stream.push(...(props.onFlush?.() ?? []))
@@ -130,7 +130,6 @@ export function createHydrationStreamProvider<TShape>() {
         .join(',')
 
       // Flush stream
-      // eslint-disable-next-line react-hooks/immutability
       stream.length = 0
 
       const html: Array<string> = [
@@ -139,7 +138,7 @@ export function createHydrationStreamProvider<TShape>() {
       ]
       return (
         <script
-          key={count.current++}
+          key={countRef.current++}
           nonce={props.nonce}
           dangerouslySetInnerHTML={{
             __html: html.join(''),
@@ -154,7 +153,7 @@ export function createHydrationStreamProvider<TShape>() {
     // the initial render so children have access to the data immediately
     // This is important to avoid the client suspending during the initial render
     // if the data has not yet been hydrated.
-    if (!isServer) {
+    if (!environmentManager.isServer()) {
       const win = window as any
       if (!win[id]?.initialized) {
         // Client: consume cache:
@@ -169,7 +168,6 @@ export function createHydrationStreamProvider<TShape>() {
 
         onEntries(...winStream)
 
-        // eslint-disable-next-line react-hooks/immutability
         win[id] = {
           initialized: true,
           push: onEntries,
@@ -179,14 +177,14 @@ export function createHydrationStreamProvider<TShape>() {
     // </client stuff>
 
     return (
-      <context.Provider value={{ stream, id }}>
+      <StreamContext.Provider value={{ stream, id }}>
         {props.children}
-      </context.Provider>
+      </StreamContext.Provider>
     )
   }
 
   return {
     Provider: UseClientHydrationStreamProvider,
-    context,
+    context: StreamContext,
   }
 }

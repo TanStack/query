@@ -20,7 +20,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { UseQueryOptions } from './useQuery'
+import type { UseQueryOptions } from './queryOptions'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
@@ -30,12 +30,18 @@ export type UseBaseQueryReturnType<
   TResult = QueryObserverResult<TData, TError>,
 > = {
   [K in keyof TResult]: K extends
-    | 'fetchNextPage'
-    | 'fetchPreviousPage'
-    | 'refetch'
+    'fetchNextPage' | 'fetchPreviousPage' | 'refetch'
     ? TResult[K]
     : Ref<Readonly<TResult>[K]>
 } & {
+  /**
+   * Returns a promise for use with Vue's `Suspense` or `onServerPrefetch`. It fetches the query if it has no
+   * data or its data is stale and resolves with the result once that fetch resolves (usually when the query
+   * function finishes, but earlier after the first chunk of a streamed query or when data is set during the
+   * fetch), or resolves immediately if the data is fresh. While the query is disabled, it waits until the query
+   * is enabled. If the fetch fails, it resolves with the error result, unless `throwOnError` is (or returns)
+   * `true`, in which case it rejects.
+   */
   suspense: () => Promise<TResult>
 }
 
@@ -50,6 +56,14 @@ type UseQueryOptionsGeneric<
   | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
+/**
+ * Base implementation shared by `useQuery` and `useInfiniteQuery`.
+ *
+ * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
+ * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
+ * will be used.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,

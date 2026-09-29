@@ -34,14 +34,15 @@ export interface DevtoolsPanelOptions {
   /**
    * Callback function that is called when the devtools panel is closed
    */
-  onClose?: () => unknown
+  onClose?: () => void
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   *
+   * @defaultValue system
    */
   theme?: Theme
 }

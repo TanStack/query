@@ -1,10 +1,9 @@
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import tseslint from 'typescript-eslint'
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default [
   ...tseslint.configs.recommended,
-  ...pluginQuery.configs['flat/recommended'],
+  ...pluginQuery.configs['flat/recommended-strict'],
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
     rules: {
@@ -20,5 +19,3 @@ const config = [
     },
   },
 ]
-
-export default config

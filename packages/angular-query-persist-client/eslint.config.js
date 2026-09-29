@@ -3,8 +3,7 @@
 import pluginJsdoc from 'eslint-plugin-jsdoc'
 import rootConfig from './root.eslint.config.js'
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default [
   ...rootConfig,
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
@@ -30,5 +29,3 @@ const config = [
     },
   },
 ]
-
-export default config

@@ -1,24 +1,18 @@
 // @ts-check
 
+// @ts-ignore Needed due to moduleResolution Node vs Bundler
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
-import unusedImports from 'eslint-plugin-unused-imports'
 import vitest from '@vitest/eslint-plugin'
 import oxlint from 'eslint-plugin-oxlint'
-import { createJiti } from 'jiti'
+import { fileURLToPath } from 'node:url'
 
-const jiti = createJiti(import.meta.url)
-const oxlintConfig = /** @type {*} */ (await jiti.import('./oxlint.config.ts'))
-  .default
-
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default [
   ...tanstackConfig,
   {
     name: 'tanstack/temp',
     plugins: {
       cspell: pluginCspell,
-      'unused-imports': unusedImports,
     },
     rules: {
       'cspell/spellchecker': [
@@ -40,7 +34,7 @@ const config = [
               'tanstack', // Our package scope
               'todos', // Too general word to be caught as error
               'tsqd', // Our public interface (TanStack Query Devtools shorthand)
-              'tsup', // We use tsup as builder
+              'tsdown', // We use tsdown as builder
               'typecheck', // Field of vite.config.ts
               'vue-demi', // dependency of @tanstack/vue-query
               'ɵkind', // Angular specific
@@ -52,19 +46,52 @@ const config = [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
-      'no-shadow': 'off',
-      'pnpm/enforce-catalog': 'off',
-      'pnpm/json-enforce-catalog': 'off',
+      /**
+       * Disallows direct calls to deprecated imperative query methods of `QueryClient`
+       * for new tests and code
+       *
+       * Existing tests that directly test the methods from before the refactoring
+       * will be grandfathered in and allowed to continue using the deprecated methods.
+       * They should not be removed, but new tests should use the new methods instead.
+       */
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchQuery"], [callee.computed=true][callee.property.value="fetchQuery"])',
+          message: 'Use queryClient.query(options) instead.',
+        },
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchQuery"], [callee.computed=true][callee.property.value="prefetchQuery"])',
+          message:
+            'Use queryClient.query(options).catch(noop) instead if errors should be swallowed.',
+        },
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureQueryData"], [callee.computed=true][callee.property.value="ensureQueryData"])',
+          message:
+            "Use queryClient.query({ ...options, staleTime: 'static' }) instead.",
+        },
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="fetchInfiniteQuery"], [callee.computed=true][callee.property.value="fetchInfiniteQuery"])',
+          message: 'Use queryClient.infiniteQuery(options) instead.',
+        },
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="prefetchInfiniteQuery"], [callee.computed=true][callee.property.value="prefetchInfiniteQuery"])',
+          message:
+            'Use queryClient.infiniteQuery(options).catch(noop) instead if errors should be swallowed.',
+        },
+        {
+          selector:
+            'CallExpression[callee.type="MemberExpression"]:matches([callee.property.name="ensureInfiniteQueryData"], [callee.computed=true][callee.property.value="ensureInfiniteQueryData"])',
+          message:
+            "Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead.",
+        },
+      ],
       'prefer-const': 'off',
-      'unused-imports/no-unused-imports': 'warn',
-    },
-  },
-  {
-    name: 'tanstack/linter-options',
-    linterOptions: {
-      // eslint-disable comments are shared with oxlint — don't warn
-      // about directives ESLint considers unused
-      reportUnusedDisableDirectives: 'off',
     },
   },
   {
@@ -72,17 +99,27 @@ const config = [
     plugins: { vitest },
     rules: {
       ...vitest.configs.recommended.rules,
+      'vitest/consistent-test-it': [
+        'error',
+        { fn: 'it', withinDescribe: 'it' },
+      ],
       'vitest/no-standalone-expect': [
         'error',
         {
-          additionalTestBlockFunctions: ['testIf'],
+          additionalTestBlockFunctions: ['itIf'],
         },
       ],
     },
     settings: { vitest: { typecheck: true } },
   },
-  // Must be last — disables ESLint rules that oxlint already covers
-  ...oxlint.buildFromOxlintConfig(oxlintConfig),
+  // Only rules explicitly delegated at error level are disabled here.
+  // Precise options and type-aware policies remain enforced by ESLint.
+  ...oxlint
+    .buildFromOxlintConfigFile(
+      fileURLToPath(new URL('./oxlint.config.json', import.meta.url)),
+    )
+    .map((config) => ({
+      ...config,
+      basePath: import.meta.dirname,
+    })),
 ]
-
-export default config

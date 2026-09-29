@@ -3,30 +3,15 @@ id: QueryClientProviderProps
 title: QueryClientProviderProps
 ---
 
-# Type Alias: QueryClientProviderProps
-
 ```ts
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:147](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L147)
+Defined in: [packages/svelte-query/src/types.ts:167](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L167)
 
 ## Properties
 
-### children
-
-```ts
-children: Snippet;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L149)
-
-***
-
-### client
-
-```ts
-client: QueryClient;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:148](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L148)
+| Property | Type |
+| ------ | ------ |
+| <a id="children"></a> `children` | `Snippet` |
+| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) |

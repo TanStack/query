@@ -68,6 +68,22 @@ if (isSuccess) {
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEixEcKOnqsYwbuiKlylKr3RUA3BImsIzeEgAm9BgBo4wVAGVkrVulSp1AXjkKlK9AAUaFjCeAEA2lQwbjBUALq2AQCUcJ4AfHAACpr26AB08qgQADaqAQCsSVWGkiRwAfZOLm6oKQgScJ1wlgwSnJydAHoA-BKEEkA)
 
+The `reactive()` wrapper is what makes this work: it flattens the result into
+plain values, so `isSuccess` and `data` stay part of the same discriminated
+union. Destructuring `useQuery()` directly gives you independent refs, and
+TypeScript cannot carry a narrowing from one ref to another — `if (isSuccess.value)`
+leaves `data.value` as `Group[] | undefined`. Without `reactive()`, narrow the
+value ref itself:
+
+```tsx
+const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+
+if (data.value !== undefined) {
+  data.value
+  // ^? const data: Group[]
+}
+```
+
 [//]: # 'TypeNarrowing'
 [//]: # 'TypingError'
 

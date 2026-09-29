@@ -3,6 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  noop,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -42,10 +43,12 @@ function Example() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient.prefetchQuery({
-        queryKey: ['projects', page + 1],
-        queryFn: () => fetchProjects(page + 1),
-      })
+      queryClient
+        .query({
+          queryKey: ['projects', page + 1],
+          queryFn: () => fetchProjects(page + 1),
+        })
+        .catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 
@@ -54,7 +57,7 @@ function Example() {
       <p>
         In this example, each page of data remains visible as the next page is
         fetched. The buttons and capability to proceed to the next page are also
-        supressed until the next page cursor is known. Each page is cached as a
+        suppressed until the next page cursor is known. Each page is cached as a
         normal query too, so when going to previous pages, you'll see them
         instantaneously while they are also refetched invisibly in the
         background.

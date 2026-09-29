@@ -3,13 +3,11 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-# Type Alias: CreateMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> = OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>, "_defaulted">;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:86](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L86)
+Defined in: [packages/svelte-query/src/types.ts:93](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L93)
 
 Options for createMutation
 
@@ -21,7 +19,7 @@ Options for createMutation
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

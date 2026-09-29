@@ -1,71 +1,158 @@
-import { describe, expectTypeOf, test } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { injectMutation } from '..'
 import type { Signal } from '@angular/core'
+import type {
+  MutationFunctionContext,
+  MutationKey,
+  QueryClient,
+} from '@tanstack/query-core'
 
-describe('Discriminated union return type', () => {
-  test('data should be possibly undefined by default', () => {
-    const mutation = injectMutation(() => ({
-      mutationFn: () => sleep(0).then(() => 'string'),
-    }))
+describe('injectMutation', () => {
+  describe('Discriminated union return type', () => {
+    it('data should be possibly undefined by default', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: () => sleep(0).then(() => 'string'),
+      }))
 
-    expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
+      expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
+    })
+
+    it('data should be defined when mutation is success', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: () => sleep(0).then(() => 'string'),
+      }))
+
+      if (mutation.isSuccess()) {
+        expectTypeOf(mutation.data).toEqualTypeOf<Signal<string>>()
+      }
+    })
+
+    it('error should be null when mutation is success', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: () => sleep(0).then(() => 'string'),
+      }))
+
+      if (mutation.isSuccess()) {
+        expectTypeOf(mutation.error).toEqualTypeOf<Signal<null>>()
+      }
+    })
+
+    it('data should be undefined when mutation is pending', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: () => sleep(0).then(() => 'string'),
+      }))
+
+      if (mutation.isPending()) {
+        expectTypeOf(mutation.data).toEqualTypeOf<Signal<undefined>>()
+      }
+    })
+
+    it('error should be defined when mutation is error', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: () => sleep(0).then(() => 'string'),
+      }))
+
+      if (mutation.isError()) {
+        expectTypeOf(mutation.error).toEqualTypeOf<Signal<Error>>()
+      }
+    })
+
+    it('should narrow variables', () => {
+      const mutation = injectMutation(() => ({
+        mutationFn: (_variables: string) => sleep(0).then(() => 'string'),
+      }))
+
+      if (mutation.isIdle()) {
+        expectTypeOf(mutation.variables).toEqualTypeOf<Signal<undefined>>()
+      }
+      if (mutation.isPending()) {
+        expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
+      }
+      if (mutation.isSuccess()) {
+        expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
+      }
+      expectTypeOf(mutation.variables).toEqualTypeOf<
+        Signal<string | undefined>
+      >()
+    })
   })
 
-  test('data should be defined when mutation is success', () => {
-    const mutation = injectMutation(() => ({
+  it('should infer TOnMutateResult from onMutate return type', () => {
+    injectMutation(() => ({
       mutationFn: () => sleep(0).then(() => 'string'),
+      onMutate: () => {
+        return { token: 'abc' }
+      },
+      onSuccess: (_data, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<{ token: string }>()
+      },
+      onError: (_error, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<
+          { token: string } | undefined
+        >()
+      },
     }))
-
-    if (mutation.isSuccess()) {
-      expectTypeOf(mutation.data).toEqualTypeOf<Signal<string>>()
-    }
   })
 
-  test('error should be null when mutation is success', () => {
+  it('should allow calling mutate with no arguments when TVariables is optional undefinable', () => {
     const mutation = injectMutation(() => ({
-      mutationFn: () => sleep(0).then(() => 'string'),
+      mutationFn: (_variables: number | undefined) => sleep(0).then(() => 1),
     }))
 
-    if (mutation.isSuccess()) {
-      expectTypeOf(mutation.error).toEqualTypeOf<Signal<null>>()
-    }
+    expectTypeOf(mutation.mutate).toBeCallableWith()
+    expectTypeOf(mutation.mutateAsync).toBeCallableWith()
   })
 
-  test('data should be undefined when mutation is pending', () => {
-    const mutation = injectMutation(() => ({
-      mutationFn: () => sleep(0).then(() => 'string'),
+  it('should type context as the last argument for mutationFn and every hook-level callback', () => {
+    injectMutation(() => ({
+      mutationFn: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+        expectTypeOf(context.client).toEqualTypeOf<QueryClient>()
+        return Promise.resolve('data')
+      },
+      onMutate: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
     }))
-
-    if (mutation.isPending()) {
-      expectTypeOf(mutation.data).toEqualTypeOf<Signal<undefined>>()
-    }
   })
 
-  test('error should be defined when mutation is error', () => {
+  it('should type context as the last argument for every per-call mutate option', () => {
     const mutation = injectMutation(() => ({
-      mutationFn: () => sleep(0).then(() => 'string'),
+      mutationFn: () => Promise.resolve('data'),
     }))
 
-    if (mutation.isError()) {
-      expectTypeOf(mutation.error).toEqualTypeOf<Signal<Error>>()
-    }
+    mutation.mutate(undefined, {
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+    })
   })
 
-  test('should narrow variables', () => {
-    const mutation = injectMutation(() => ({
-      mutationFn: (_variables: string) => sleep(0).then(() => 'string'),
+  it('should type context.mutationKey as MutationKey', () => {
+    injectMutation(() => ({
+      mutationKey: ['todos', 'add'] as const,
+      mutationFn: () => Promise.resolve('data'),
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context.mutationKey).toEqualTypeOf<
+          MutationKey | undefined
+        >()
+      },
     }))
-
-    if (mutation.isIdle()) {
-      expectTypeOf(mutation.variables).toEqualTypeOf<Signal<undefined>>()
-    }
-    if (mutation.isPending()) {
-      expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
-    }
-    if (mutation.isSuccess()) {
-      expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
-    }
-    expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string | undefined>>()
   })
 })

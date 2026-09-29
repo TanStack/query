@@ -5,8 +5,7 @@ import pluginSvelte from 'eslint-plugin-svelte'
 import rootConfig from './root.eslint.config.js'
 import svelteConfig from './svelte.config.js'
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default [
   ...rootConfig,
   ...pluginSvelte.configs['recommended'],
   {
@@ -27,5 +26,3 @@ const config = [
     },
   },
 ]
-
-export default config

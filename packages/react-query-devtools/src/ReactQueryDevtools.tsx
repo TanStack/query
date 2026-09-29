@@ -16,15 +16,17 @@ export interface DevtoolsOptions {
    */
   initialIsOpen?: boolean
   /**
-   * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-right'.
+   * The position of the TanStack logo to open and close the devtools panel.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+   *
+   * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the React Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   *
+   * @defaultValue bottom
    */
   position?: DevtoolsPosition
   /**
@@ -49,7 +51,8 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   * Defaults to 'system'.
+   *
+   * @defaultValue system
    */
   theme?: Theme
 }

@@ -3,13 +3,11 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-# Type Alias: CreateInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
-
 ```ts
 type CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:53](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L53)
+Defined in: [packages/svelte-query/src/types.ts:54](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L54)
 
 Options for createInfiniteQuery
 
@@ -21,7 +19,7 @@ Options for createInfiniteQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -29,7 +27,7 @@ Options for createInfiniteQuery
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)
 
 ### TPageParam
 

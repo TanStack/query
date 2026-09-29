@@ -13,7 +13,7 @@ export default function Streamed() {
         <p>
           For more control over error handling, try leveraging the `Switch`
           component and watching the reactive `query.isError` property. See
-          `compoennts/query-boundary.tsx` for one possible approach.
+          `components/query-boundary.tsx` for one possible approach.
         </p>
       </div>
 

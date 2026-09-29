@@ -3,13 +3,11 @@ id: CreateInfiniteQueryResult
 title: CreateInfiniteQueryResult
 ---
 
-# Type Alias: CreateInfiniteQueryResult\<TData, TError\>
-
 ```ts
 type CreateInfiniteQueryResult<TData, TError> = InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:68](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L68)
+Defined in: [packages/svelte-query/src/types.ts:69](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L69)
 
 Result from createInfiniteQuery
 
@@ -21,4 +19,4 @@ Result from createInfiniteQuery
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)

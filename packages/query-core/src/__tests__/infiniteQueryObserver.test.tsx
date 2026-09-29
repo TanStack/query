@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
@@ -20,7 +20,7 @@ describe('InfiniteQueryObserver', () => {
     vi.useRealTimers()
   })
 
-  test('should be able to fetch an infinite query with selector', async () => {
+  it('should be able to fetch an infinite query with selector', async () => {
     const key = queryKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -43,7 +43,7 @@ describe('InfiniteQueryObserver', () => {
     })
   })
 
-  test('should pass the meta option to the queryFn', async () => {
+  it('should pass the meta option to the queryFn', async () => {
     const meta = {
       it: 'works',
     }
@@ -70,10 +70,10 @@ describe('InfiniteQueryObserver', () => {
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
     })
-    expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
+    expect(queryFn).toHaveBeenCalledWith(expect.objectContaining({ meta }))
   })
 
-  test('should make getNextPageParam and getPreviousPageParam receive current pageParams', async () => {
+  it('should make getNextPageParam and getPreviousPageParam receive current pageParams', async () => {
     const key = queryKey()
     let single: Array<string> = []
     let all: Array<string> = []
@@ -92,13 +92,13 @@ describe('InfiniteQueryObserver', () => {
         return firstPageParam - 1
       },
     })
+
     await vi.advanceTimersByTimeAsync(10)
 
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(single).toEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
     expect(all).toEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
 
@@ -107,12 +107,11 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(single).toEqual(['next0', 'next1', 'prev0'])
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
 
-  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
+  it('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
     const key = queryKey()
 
     const getNextPageParam = vi.fn()
@@ -136,14 +135,13 @@ describe('InfiniteQueryObserver', () => {
     getPreviousPageParam.mockClear()
 
     queryClient.setQueryData(key, { pages: [], pageParams: [] })
-
     expect(getNextPageParam).toHaveBeenCalledTimes(0)
     expect(getPreviousPageParam).toHaveBeenCalledTimes(0)
 
     unsubscribe()
   })
 
-  test('should stop refetching if undefined is returned from getNextPageParam', async () => {
+  it('should stop refetching if undefined is returned from getNextPageParam', async () => {
     const key = queryKey()
     let next: number | undefined = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
@@ -160,22 +158,20 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
     next = undefined
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
-    expect(queryFn).toBeCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
-  test('should stop refetching if null is returned from getNextPageParam', async () => {
+  it('should stop refetching if null is returned from getNextPageParam', async () => {
     const key = queryKey()
     let next: number | null = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
@@ -192,22 +188,20 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
-    expect(queryFn).toBeCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
     next = null
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
-    expect(queryFn).toBeCalledTimes(3)
+    expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
-  test('should set infinite query behavior via getOptimisticResult and return the initial state', () => {
+  it('should set infinite query behavior via getOptimisticResult and return the initial state', () => {
     const key = queryKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -235,8 +229,7 @@ describe('InfiniteQueryObserver', () => {
 
     const result = observer.getOptimisticResult(options)
 
-    expect(options.behavior).toBeDefined()
-    expect(options.behavior?.onFetch).toBeDefined()
+    expect(options._type).toBe('infinite')
 
     expect(result).toMatchObject({
       data: undefined,

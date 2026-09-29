@@ -25,9 +25,12 @@ interface InjectIsRestoringOptions {
 }
 
 /**
- * Injects a signal that tracks whether a restore is currently in progress. {@link injectQuery} and friends also check this internally to avoid race conditions between the restore and initializing queries.
- * @param options - Options for injectIsRestoring.
- * @returns readonly signal with boolean that indicates whether a restore is in progress.
+ * Injects a signal that tracks whether a restore (e.g. from a persisted client, wired up via
+ * `provideIsRestoring`) is currently in progress. `injectQuery` and friends also check this internally to
+ * avoid race conditions between the restore and initializing queries.
+ * @param options - Additional configuration
+ * @returns A readonly `Signal<boolean>` — `true` while a restore is in progress, `false` otherwise (the
+ * default when no `provideIsRestoring` provider is registered).
  */
 export function injectIsRestoring(options?: InjectIsRestoringOptions) {
   !options?.injector && assertInInjectionContext(injectIsRestoring)
@@ -36,9 +39,11 @@ export function injectIsRestoring(options?: InjectIsRestoringOptions) {
 }
 
 /**
- * Used by TanStack Query Angular persist client plugin to provide the signal that tracks the restore state
- * @param isRestoring - a readonly signal that returns a boolean
- * @returns Provider for the `isRestoring` signal
+ * Registers a provider for the restore state read by `injectIsRestoring`. Wire this up wherever you drive a
+ * restore yourself — e.g. a persist-client integration — so `injectQuery` and friends can defer subscribing
+ * to their observer (avoiding a race with the restore) until the restore signal flips back to `false`.
+ * @param isRestoring - A readonly `Signal<boolean>` that tracks the restore state.
+ * @returns A provider for the `isRestoring` signal.
  */
 export function provideIsRestoring(isRestoring: Signal<boolean>): Provider {
   return {
