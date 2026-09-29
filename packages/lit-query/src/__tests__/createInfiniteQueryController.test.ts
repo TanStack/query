@@ -507,4 +507,150 @@ describe('createInfiniteQueryController', () => {
 
     host.infinite.destroy()
   })
+
+  it('should switch infinite query controller to new provider client while connected', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = clientA
+    container.append(provider)
+    await provider.updateComplete
+
+    class Consumer extends LitElement {
+      pageCalls = 0
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, () => ({
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => {
+          this.pageCalls += 1
+          return sleep(10).then(() => Number(pageParam))
+        },
+        getNextPageParam: (lastPage: number) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    provider.append(consumer)
+
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(consumer.infinite().data?.pages).toEqual([0])
+
+    const cacheAEntryBeforeSwitch = clientA
+      .getQueryCache()
+      .find({ queryKey: consumer.queryKey })
+    expect(cacheAEntryBeforeSwitch?.getObserversCount()).toBe(1)
+
+    provider.client = clientB
+    await provider.updateComplete
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      clientB
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount(),
+    ).toBe(1)
+    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.infinite().hasNextPage).toBe(true)
+
+    const cacheAEntryAfterSwitch = clientA
+      .getQueryCache()
+      .find({ queryKey: consumer.queryKey })
+    expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+
+    void consumer.infinite.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().data?.pages).toEqual([0, 1])
+
+    consumer.infinite.destroy()
+    provider.remove()
+    await Promise.resolve()
+  })
+
+  it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const providerA = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerA.client = clientA
+    const providerB = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerB.client = clientB
+
+    class Consumer extends LitElement {
+      pageCalls = 0
+      readonly queryKey = key
+
+      readonly infinite = createInfiniteQueryController(this, () => ({
+        queryKey: this.queryKey,
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => {
+          this.pageCalls += 1
+          return sleep(10).then(() => Number(pageParam))
+        },
+        getNextPageParam: (lastPage: number) =>
+          lastPage < 1 ? lastPage + 1 : undefined,
+        retry: false,
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    providerA.append(consumer)
+
+    container.append(providerA)
+    await providerA.updateComplete
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
+
+    consumer.remove()
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+
+    providerA.remove()
+
+    providerB.append(consumer)
+    container.append(providerB)
+    await providerB.updateComplete
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(consumer.infinite().data?.pages).toEqual([0])
+    expect(consumer.pageCalls).toBe(2)
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+    expect(
+      clientB
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount(),
+    ).toBe(1)
+
+    consumer.infinite.destroy()
+    providerA.remove()
+    providerB.remove()
+    await Promise.resolve()
+  })
 })

@@ -505,4 +505,128 @@ describe('createMutationController', () => {
 
     host.mutation.destroy()
   })
+
+  it('should switch mutation controller to new provider client while connected', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = clientA
+    container.append(provider)
+    await provider.updateComplete
+
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, () => ({
+        mutationKey: this.mutationKey,
+        mutationFn: async (value: number) => {
+          await sleep(10)
+          return value + 1
+        },
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    provider.append(consumer)
+
+    await Promise.resolve()
+    await Promise.resolve()
+    const firstMutation = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(firstMutation).resolves.toBe(2)
+
+    const countAAfterFirst = clientA
+      .getMutationCache()
+      .findAll({ mutationKey: consumer.mutationKey }).length
+    expect(countAAfterFirst).toBeGreaterThan(0)
+
+    provider.client = clientB
+    await provider.updateComplete
+    await Promise.resolve()
+    const secondMutation = consumer.mutation.mutateAsync(2)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(secondMutation).resolves.toBe(3)
+
+    const countAAfterSecond = clientA
+      .getMutationCache()
+      .findAll({ mutationKey: consumer.mutationKey }).length
+    const countBAfterSecond = clientB
+      .getMutationCache()
+      .findAll({ mutationKey: consumer.mutationKey }).length
+
+    expect(countAAfterSecond).toBe(countAAfterFirst)
+    expect(countBAfterSecond).toBeGreaterThan(0)
+
+    consumer.mutation.destroy()
+    provider.remove()
+    await Promise.resolve()
+  })
+
+  it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const providerA = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerA.client = clientA
+    const providerB = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerB.client = clientB
+
+    class Consumer extends LitElement {
+      readonly mutationKey = key
+
+      readonly mutation = createMutationController(this, () => ({
+        mutationKey: this.mutationKey,
+        mutationFn: async (value: number) => {
+          await sleep(10)
+          return value + 1
+        },
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    providerA.append(consumer)
+
+    container.append(providerA)
+    await providerA.updateComplete
+
+    await Promise.resolve()
+    await Promise.resolve()
+    const firstMutation = consumer.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(firstMutation).resolves.toBe(2)
+
+    consumer.remove()
+    providerA.remove()
+
+    providerB.append(consumer)
+    container.append(providerB)
+    await providerB.updateComplete
+
+    await Promise.resolve()
+    await Promise.resolve()
+    const secondMutation = consumer.mutation.mutateAsync(2)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(secondMutation).resolves.toBe(3)
+    expect(
+      clientA.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
+        .length,
+    ).toBeGreaterThan(0)
+    expect(
+      clientB.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
+        .length,
+    ).toBeGreaterThan(0)
+
+    consumer.mutation.destroy()
+    providerB.remove()
+    await Promise.resolve()
+  })
 })

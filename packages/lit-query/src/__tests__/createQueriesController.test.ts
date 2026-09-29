@@ -866,4 +866,157 @@ describe('createQueriesController', () => {
 
     queries.destroy()
   })
+
+  it('should switch queries controller to new provider client while connected', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = clientA
+    container.append(provider)
+    await provider.updateComplete
+
+    class Consumer extends LitElement {
+      queryCalls = 0
+      readonly queryKey = key
+
+      readonly queries = createQueriesController(this, () => ({
+        queries: [
+          {
+            queryKey: this.queryKey,
+            queryFn: () => {
+              this.queryCalls += 1
+              return sleep(10).then(() => `q-${this.queryCalls}`)
+            },
+            retry: false,
+          },
+        ] as const,
+        combine: (results) => results.map((result) => result.data),
+      }))
+
+      override render() {
+        return html`data: ${this.queries()[0] ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    provider.append(consumer)
+
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-1')
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-1')
+
+    const cacheAEntryBeforeSwitch = clientA
+      .getQueryCache()
+      .find({ queryKey: consumer.queryKey })
+    expect(cacheAEntryBeforeSwitch?.getObserversCount()).toBe(1)
+
+    provider.client = clientB
+    await provider.updateComplete
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      clientB
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount(),
+    ).toBe(1)
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-2')
+
+    const cacheAEntryAfterSwitch = clientA
+      .getQueryCache()
+      .find({ queryKey: consumer.queryKey })
+    expect(cacheAEntryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
+
+    void clientB.invalidateQueries({ queryKey: consumer.queryKey })
+    expect(consumer.queryCalls).toBe(3)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-3')
+    expect(consumer.shadowRoot).toHaveTextContent('data: q-3')
+
+    consumer.queries.destroy()
+    provider.remove()
+    await Promise.resolve()
+  })
+
+  it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
+    const key = queryKey()
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const providerA = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerA.client = clientA
+    const providerB = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    providerB.client = clientB
+
+    class Consumer extends LitElement {
+      queryCalls = 0
+      readonly queryKey = key
+
+      readonly queries = createQueriesController(this, () => ({
+        queries: [
+          {
+            queryKey: this.queryKey,
+            queryFn: () => {
+              this.queryCalls += 1
+              return sleep(10).then(() => `q-${this.queryCalls}`)
+            },
+            retry: false,
+          },
+        ] as const,
+        combine: (results) => results.map((result) => result.data),
+      }))
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    providerA.append(consumer)
+
+    container.append(providerA)
+    await providerA.updateComplete
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-1')
+
+    consumer.remove()
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+
+    providerA.remove()
+
+    providerB.append(consumer)
+    container.append(providerB)
+    await providerB.updateComplete
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.queries()[0]).toBe('q-2')
+    expect(consumer.queryCalls).toBe(2)
+    expect(
+      clientA
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount() ?? 0,
+    ).toBe(0)
+    expect(
+      clientB
+        .getQueryCache()
+        .find({ queryKey: consumer.queryKey })
+        ?.getObserversCount(),
+    ).toBe(1)
+
+    consumer.queries.destroy()
+    providerA.remove()
+    providerB.remove()
+    await Promise.resolve()
+  })
 })
