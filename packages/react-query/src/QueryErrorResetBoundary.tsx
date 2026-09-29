@@ -9,6 +9,7 @@ export type QueryErrorClearResetFunction = (queryHash?: string) => void
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
   isReset: QueryErrorIsResetFunction
+  registerReset: (queryHash: string) => void
   reset: QueryErrorResetFunction
 }
 
@@ -51,11 +52,16 @@ function createValue(): QueryErrorResetBoundaryValue {
       if (typeof queryHash === 'string') {
         return (
           queryReset.has(queryHash) ||
-          (queryResetIds.get(queryHash) ?? 0) < resetId
+          (queryResetIds.get(queryHash) ?? resetId) < resetId
         )
       }
 
       return resetId > 0
+    },
+    registerReset: (queryHash) => {
+      if (!queryResetIds.has(queryHash)) {
+        queryResetIds.set(queryHash, 0)
+      }
     },
   }
 }

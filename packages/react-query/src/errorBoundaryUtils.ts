@@ -33,6 +33,10 @@ export const ensurePreventErrorBoundaryRetry = <
       : options.throwOnError
 
   if (options.suspense || throwOnError) {
+    if (query?.state.status === 'error') {
+      errorResetBoundary.registerReset(query.queryHash)
+    }
+
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset(query?.queryHash)) {
       options.retryOnMount = false
