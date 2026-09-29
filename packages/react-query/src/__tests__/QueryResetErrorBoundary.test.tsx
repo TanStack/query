@@ -401,7 +401,7 @@ describe('QueryErrorResetBoundary', () => {
             <button onClick={() => setShowPage((value) => !value)}>
               toggle
             </button>
-            {showPage && (
+            {showPage ? (
               <ErrorBoundary fallback={<div>error boundary</div>}>
                 <Page />
               </ErrorBoundary>
