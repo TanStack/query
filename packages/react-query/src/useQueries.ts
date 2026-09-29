@@ -435,9 +435,6 @@ export function useQueries<
 
   useClearResetErrorBoundary(
     errorResetBoundary,
-    defaultedQueries.map((queryOptions) =>
-      client.getQueryCache().get(queryOptions.queryHash),
-    ),
     observer,
   )
 

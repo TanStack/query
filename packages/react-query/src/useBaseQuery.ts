@@ -89,12 +89,7 @@ export function useBaseQuery<
 
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
-  useClearResetErrorBoundary(
-    errorResetBoundary,
-    client.getQueryCache().get(defaultedOptions.queryHash) ??
-      observer.getCurrentQuery(),
-    observer,
-  )
+  useClearResetErrorBoundary(errorResetBoundary, observer)
 
   const shouldSubscribe = !isRestoring && subscribed
   React.useSyncExternalStore(

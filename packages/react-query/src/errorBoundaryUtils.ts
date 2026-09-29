@@ -1,6 +1,12 @@
 'use client'
 import * as React from 'react'
 import { shouldThrowError } from '@tanstack/query-core'
+import {
+  clearQueryErrorReset,
+  isQueryErrorReset,
+  registerQueryErrorReset,
+  resetQueryError,
+} from './QueryErrorResetBoundary'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -8,12 +14,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import {
-  clearQueryErrorReset,
-  isQueryErrorReset,
-  registerQueryErrorReset,
-  resetQueryError,
-} from './QueryErrorResetBoundary'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const ensurePreventErrorBoundaryRetry = <
@@ -52,37 +52,27 @@ export const ensurePreventErrorBoundaryRetry = <
 
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: object | undefined | Array<object | undefined>,
   observer:
     | { getCurrentQuery: () => object }
     | { getQueries: () => Array<object> },
 ) => {
-  const queries = Array.isArray(query)
-    ? query.filter((value): value is object => value !== undefined)
-    : query
-      ? [query]
-      : []
-  const queriesRef = React.useRef<Array<object>>([])
-
-  if (
-    queriesRef.current.length !== queries.length ||
-    queries.some((value, index) => queriesRef.current[index] !== value)
-  ) {
-    queriesRef.current = queries
-  }
-
   React.useEffect(() => {
-    queriesRef.current.forEach((query) => {
+    const queries =
+      'getCurrentQuery' in observer
+        ? [observer.getCurrentQuery()]
+        : observer.getQueries()
+
+    queries.forEach((query) => {
       clearQueryErrorReset(errorResetBoundary, query)
     })
 
     return () => {
-      const queries =
+      const currentQueries =
         'getCurrentQuery' in observer
           ? [observer.getCurrentQuery()]
           : observer.getQueries()
 
-      queries.forEach((query) => {
+      currentQueries.forEach((query) => {
         resetQueryError(errorResetBoundary, query)
       })
     }

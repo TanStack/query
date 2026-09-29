@@ -1,3 +1,4 @@
+import { clearQueryErrorReset } from './QueryErrorResetBoundary'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -6,7 +7,6 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import { clearQueryErrorReset } from './QueryErrorResetBoundary'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const defaultThrowOnError = <
