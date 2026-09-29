@@ -51,7 +51,7 @@ function createValue(): QueryErrorResetBoundaryValue {
       if (typeof queryHash === 'string') {
         return (
           queryReset.has(queryHash) ||
-          (queryResetIds.get(queryHash) ?? resetId) < resetId
+          (queryResetIds.get(queryHash) ?? 0) < resetId
         )
       }
 
