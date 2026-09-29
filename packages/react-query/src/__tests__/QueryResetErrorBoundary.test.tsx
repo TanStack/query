@@ -1059,7 +1059,9 @@ describe('QueryErrorResetBoundary', () => {
           <div>
             <div>data: {data}</div>
             <div>status: {status}</div>
-            <button onClick={() => refetch?.()}>refetch</button>
+            <button onClick={() => refetch?.().catch(() => undefined)}>
+              refetch
+            </button>
             <button onClick={() => setIncludeQuery(false)}>
               remove query
             </button>
