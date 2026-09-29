@@ -10,8 +10,12 @@ export default [
   pluginReact.configs.recommended,
   {
     rules: {
+      'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/unsupported-syntax': 'error',
+      'react-hooks/incompatible-library': 'error',
       '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
       '@eslint-react/no-use-context': 'off', // We need to be React 18 compatible
+      '@eslint-react/dom-no-dangerously-set-innerhtml': 'off',
       // Covered by 'eslint-plugin-react-hooks'
       '@eslint-react/error-boundaries': 'off',
       '@eslint-react/exhaustive-deps': 'off',
@@ -25,10 +29,6 @@ export default [
       '@eslint-react/static-components': 'off',
       '@eslint-react/unsupported-syntax': 'off',
       '@eslint-react/use-memo': 'off',
-      '@eslint-react/dom-no-dangerously-set-innerhtml': 'off',
-      'react-hooks/exhaustive-deps': 'error',
-      'react-hooks/unsupported-syntax': 'error',
-      'react-hooks/incompatible-library': 'error',
     },
   },
 ]
