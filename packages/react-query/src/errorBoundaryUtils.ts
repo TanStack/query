@@ -59,7 +59,7 @@ export const useClearResetErrorBoundary = (
     return () => {
       hashes.forEach((queryHash) => {
         if (queryHash) {
-          errorResetBoundary.reset(queryHash)
+          errorResetBoundary.resetQuery(queryHash)
         }
       })
     }

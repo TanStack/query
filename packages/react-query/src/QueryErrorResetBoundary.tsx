@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 // CONTEXT
-export type QueryErrorResetFunction = (queryHash?: string) => void
+export type QueryErrorResetFunction = () => void
 export type QueryErrorIsResetFunction = (queryHash?: string) => boolean
 export type QueryErrorClearResetFunction = (queryHash?: string) => void
 
@@ -10,6 +10,7 @@ export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
   isReset: QueryErrorIsResetFunction
   registerReset: (queryHash: string) => void
+  resetQuery: (queryHash: string) => void
   reset: QueryErrorResetFunction
 }
 
@@ -38,12 +39,11 @@ function createValue(): QueryErrorResetBoundaryValue {
     /**
      * Resets any query errors within the boundary, so queries know they can try again.
      */
-    reset: (queryHash) => {
-      if (typeof queryHash === 'string') {
-        queryReset.add(queryHash)
-      } else {
-        resetId += 1
-      }
+    reset: () => {
+      resetId += 1
+    },
+    resetQuery: (queryHash) => {
+      queryReset.add(queryHash)
     },
     /**
      * Returns whether the boundary has been reset and not yet cleared.
