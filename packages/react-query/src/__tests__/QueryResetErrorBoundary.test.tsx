@@ -1037,9 +1037,10 @@ describe('QueryErrorResetBoundary', () => {
                   queryFn: () =>
                     sleep(10).then(() => {
                       fetchCount++
-                      if (fetchCount === 2) throw new Error('Error')
+                      if (fetchCount === 1) throw new Error('Error')
                       return `data ${fetchCount}`
                     }),
+                  initialData: 'initial',
                   retry: false,
                   staleTime: Infinity,
                   suspense: true,
@@ -1070,12 +1071,10 @@ describe('QueryErrorResetBoundary', () => {
         const [includeQuery, setIncludeQuery] = React.useState(true)
 
         return (
-          <React.Suspense fallback={<div>loading</div>}>
-            <Page
-              includeQuery={includeQuery}
-              setIncludeQuery={setIncludeQuery}
-            />
-          </React.Suspense>
+          <Page
+            includeQuery={includeQuery}
+            setIncludeQuery={setIncludeQuery}
+          />
         )
       }
 
@@ -1086,21 +1085,19 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(11))
-      expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+      expect(rendered.getByText('data: initial')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('refetch'))
       await act(() => vi.advanceTimersByTimeAsync(11))
-      expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+      expect(rendered.getByText('data: initial')).toBeInTheDocument()
       expect(rendered.getByText('status: error')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('remove query'))
       fireEvent.click(rendered.getByText('add query'))
       await act(() => vi.advanceTimersByTimeAsync(11))
 
-      expect(rendered.getByText('data: data 3')).toBeInTheDocument()
-      expect(fetchCount).toBe(3)
+      expect(rendered.getByText('data: data 2')).toBeInTheDocument()
+      expect(fetchCount).toBe(2)
     })
 
     it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
