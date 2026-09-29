@@ -744,10 +744,10 @@ describe('QueryErrorResetBoundary', () => {
       })
 
       function Page() {
-        const [_, forceUpdate] = React.useState(0)
+        const [_count, setCount] = React.useState(0)
 
         React.useEffect(() => {
-          forceUpdate(1)
+          setCount(1)
         }, [])
 
         const { data, refetch } = useQuery({
