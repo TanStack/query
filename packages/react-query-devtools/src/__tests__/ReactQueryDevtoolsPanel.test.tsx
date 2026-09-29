@@ -142,6 +142,16 @@ describe('ReactQueryDevtoolsPanel', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <ReactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />,
+    )
+
+    rerender(<ReactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />)
+
+    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+  })
+
   it('should preserve the default container height when "style" omits "height"', () => {
     const { container } = render(
       <ReactQueryDevtoolsPanel
