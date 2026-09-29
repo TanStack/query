@@ -6808,7 +6808,7 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
-  it('should not retry on mount when throwOnError function returns true', async () => {
+  it('should retry on mount when throwOnError function returns true', async () => {
     const key = queryKey()
     let fetchCount = 0
     const queryFn = vi.fn().mockImplementation(() => {
@@ -6877,9 +6877,8 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
-    // Should not retry because throwOnError returns true
-    expect(fetchCount).toBe(initialFetchCount)
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should handle throwOnError function based on actual error state', async () => {
