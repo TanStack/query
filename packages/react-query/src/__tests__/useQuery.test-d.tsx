@@ -360,6 +360,7 @@ describe('useQuery', () => {
         _data: DataTypeToEntity[TDataType],
       ) => 'test'
 
+      // eslint-disable-next-line @eslint-react/no-nested-component-definitions
       function Test<TDataType extends DataType>(props: {
         dataType: TDataType
       }) {
