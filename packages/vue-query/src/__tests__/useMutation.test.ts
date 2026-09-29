@@ -173,8 +173,12 @@ describe('useMutation', () => {
       )
     })
 
+    if (!relevantMutation) {
+      throw new Error('Expected the matching mutation to exist')
+    }
+
     expect(
-      (relevantMutation?.options.mutationKey as Array<MutationKeyTest>)[0]
+      (relevantMutation.options.mutationKey as Array<MutationKeyTest>)[0]
         ?.otherObject.name === 'someOtherObjectName',
     ).toBe(true)
   })
