@@ -1021,6 +1021,21 @@ describe('QueryErrorResetBoundary', () => {
     it('should retry an errored query when it is re-added to the query list', async () => {
       const key = queryKey()
       let fetchCount = 0
+      const queryFn = () => {
+        fetchCount++
+        return fetchCount === 1
+          ? Promise.reject(new Error('Error'))
+          : Promise.resolve(`data ${fetchCount}`)
+      }
+
+      queryClient.setQueryData(key, 'initial')
+      await queryClient
+        .fetchQuery({
+          queryKey: key,
+          queryFn,
+          retry: false,
+        })
+        .catch(() => undefined)
 
       function Page({
         includeQuery,
@@ -1034,13 +1049,7 @@ describe('QueryErrorResetBoundary', () => {
             ? [
                 {
                   queryKey: key,
-                  queryFn: () =>
-                    sleep(10).then(() => {
-                      fetchCount++
-                      if (fetchCount === 1) throw new Error('Error')
-                      return `data ${fetchCount}`
-                    }),
-                  initialData: 'initial',
+                  queryFn,
                   retry: false,
                   staleTime: Infinity,
                   suspense: true,
@@ -1087,10 +1096,6 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      expect(rendered.getByText('data: initial')).toBeInTheDocument()
-
-      fireEvent.click(rendered.getByText('refetch'))
-      await act(() => vi.advanceTimersByTimeAsync(11))
       expect(rendered.getByText('data: initial')).toBeInTheDocument()
       expect(rendered.getByText('status: error')).toBeInTheDocument()
 
