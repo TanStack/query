@@ -8,6 +8,12 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import {
+  clearQueryErrorReset,
+  isQueryErrorReset,
+  registerQueryErrorReset,
+  resetQueryError,
+} from './QueryErrorResetBoundary'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const ensurePreventErrorBoundaryRetry = <
@@ -34,11 +40,11 @@ export const ensurePreventErrorBoundaryRetry = <
 
   if (options.suspense || throwOnError) {
     if (query?.state.status === 'error') {
-      errorResetBoundary.registerReset(query.queryHash)
+      registerQueryErrorReset(errorResetBoundary, query)
     }
 
     // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset(query?.queryHash)) {
+    if (!isQueryErrorReset(errorResetBoundary, query)) {
       options.retryOnMount = false
     }
   }
@@ -46,24 +52,35 @@ export const ensurePreventErrorBoundaryRetry = <
 
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
-  queryHashes: string | Array<string | undefined>,
+  query: object | undefined | Array<object | undefined>,
 ) => {
+  const queries = Array.isArray(query)
+    ? query.filter((value): value is object => value !== undefined)
+    : query
+      ? [query]
+      : []
+  const queriesRef = React.useRef<Array<object>>([])
+
+  if (
+    queriesRef.current.length !== queries.length ||
+    queries.some((value, index) => queriesRef.current[index] !== value)
+  ) {
+    queriesRef.current = queries
+  }
+
+  const stableQueries = queriesRef.current
+
   React.useEffect(() => {
-    const hashes = Array.isArray(queryHashes) ? queryHashes : [queryHashes]
-    hashes.forEach((queryHash) => {
-      if (queryHash) {
-        errorResetBoundary.clearReset(queryHash)
-      }
+    stableQueries.forEach((query) => {
+      clearQueryErrorReset(errorResetBoundary, query)
     })
 
     return () => {
-      hashes.forEach((queryHash) => {
-        if (queryHash) {
-          errorResetBoundary.resetQuery(queryHash)
-        }
+      stableQueries.forEach((query) => {
+        resetQueryError(errorResetBoundary, query)
       })
     }
-  }, [errorResetBoundary, queryHashes])
+  }, [errorResetBoundary, stableQueries])
 }
 
 export const getHasError = <
@@ -87,7 +104,7 @@ export const getHasError = <
 }) => {
   return (
     result.isError &&
-    !errorResetBoundary.isReset(query?.queryHash) &&
+    !isQueryErrorReset(errorResetBoundary, query) &&
     !result.isFetching &&
     query &&
     ((suspense && result.data === undefined) ||

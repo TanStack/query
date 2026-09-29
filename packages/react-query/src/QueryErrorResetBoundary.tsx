@@ -3,66 +3,101 @@ import * as React from 'react'
 
 // CONTEXT
 export type QueryErrorResetFunction = () => void
-export type QueryErrorIsResetFunction = (queryHash?: string) => boolean
-export type QueryErrorClearResetFunction = (queryHash?: string) => void
+export type QueryErrorIsResetFunction = () => boolean
+export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
   isReset: QueryErrorIsResetFunction
-  registerReset: (queryHash: string) => void
-  resetQuery: (queryHash: string) => void
   reset: QueryErrorResetFunction
 }
 
 /**
  * Resets any query errors within the boundary, so queries know they can try again.
  */
+type QueryErrorResetState = {
+  resetId: number
+  queryResetIds: WeakMap<object, number>
+  queryReset: WeakSet<object>
+}
+
+const queryErrorResetStates = new WeakMap<
+  QueryErrorResetBoundaryValue,
+  QueryErrorResetState
+>()
+
 function createValue(): QueryErrorResetBoundaryValue {
-  let resetId = 0
-  const queryResetIds = new Map<string, number>()
-  const queryReset = new Set<string>()
+  const state: QueryErrorResetState = {
+    resetId: 0,
+    queryResetIds: new WeakMap(),
+    queryReset: new WeakSet(),
+  }
 
-  return {
-    /**
-     * Clears the reset state, so queries know not to try again until the boundary is reset again.
-     */
-    clearReset: (queryHash) => {
-      if (typeof queryHash === 'string') {
-        queryResetIds.set(queryHash, resetId)
-        queryReset.delete(queryHash)
-      } else {
-        resetId = 0
-        queryResetIds.clear()
-        queryReset.clear()
-      }
+  const value: QueryErrorResetBoundaryValue = {
+    clearReset: () => {
+      state.resetId = 0
+      state.queryResetIds = new WeakMap()
+      state.queryReset = new WeakSet()
     },
-    /**
-     * Resets any query errors within the boundary, so queries know they can try again.
-     */
     reset: () => {
-      resetId += 1
+      state.resetId += 1
     },
-    resetQuery: (queryHash) => {
-      queryReset.add(queryHash)
+    isReset: () => {
+      return state.resetId > 0
     },
-    /**
-     * Returns whether the boundary has been reset and not yet cleared.
-     */
-    isReset: (queryHash) => {
-      if (typeof queryHash === 'string') {
-        return (
-          queryReset.has(queryHash) ||
-          (queryResetIds.get(queryHash) ?? resetId) < resetId
-        )
-      }
+  }
 
-      return resetId > 0
-    },
-    registerReset: (queryHash) => {
-      if (!queryResetIds.has(queryHash)) {
-        queryResetIds.set(queryHash, 0)
-      }
-    },
+  queryErrorResetStates.set(value, state)
+
+  return value
+}
+
+export const registerQueryErrorReset = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object,
+) => {
+  const state = queryErrorResetStates.get(errorResetBoundary)
+  if (state && !state.queryResetIds.has(query)) {
+    state.queryResetIds.set(query, 0)
+  }
+}
+
+export const isQueryErrorReset = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object | undefined,
+) => {
+  if (!query) {
+    return errorResetBoundary.isReset()
+  }
+
+  const state = queryErrorResetStates.get(errorResetBoundary)
+
+  return (
+    state !== undefined &&
+    (state.queryReset.has(query) ||
+      (state.queryResetIds.get(query) ?? state.resetId) < state.resetId)
+  )
+}
+
+export const clearQueryErrorReset = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object,
+) => {
+  const state = queryErrorResetStates.get(errorResetBoundary)
+  if (state) {
+    state.queryResetIds.set(query, state.resetId)
+    state.queryReset.delete(query)
+  }
+}
+
+export const resetQueryError = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object,
+) => {
+  const state = queryErrorResetStates.get(errorResetBoundary)
+  if (state) {
+    state.queryResetIds.set(query, state.resetId)
+    state.queryReset.add(query)
   }
 }
 

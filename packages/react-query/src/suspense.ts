@@ -6,6 +6,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import { clearQueryErrorReset } from './QueryErrorResetBoundary'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const defaultThrowOnError = <
@@ -70,5 +71,5 @@ export const fetchOptimistic = <
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) =>
   observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset(defaultedOptions.queryHash)
+    clearQueryErrorReset(errorResetBoundary, observer.getCurrentQuery())
   })
