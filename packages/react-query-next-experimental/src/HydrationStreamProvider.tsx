@@ -57,7 +57,7 @@ export interface HydrationStreamProviderProps<TShape> {
 }
 
 export function createHydrationStreamProvider<TShape>() {
-  const context = React.createContext<HydrationStreamContext<TShape>>(
+  const StreamContext = React.createContext<HydrationStreamContext<TShape>>(
     null as any,
   )
   /**
@@ -115,7 +115,7 @@ export function createHydrationStreamProvider<TShape>() {
       }
       return []
     })
-    const count = React.useRef(0)
+    const countRef = React.useRef(0)
     useServerInsertedHTML(() => {
       // This only happens on the server
       stream.push(...(props.onFlush?.() ?? []))
@@ -138,7 +138,7 @@ export function createHydrationStreamProvider<TShape>() {
       ]
       return (
         <script
-          key={count.current++}
+          key={countRef.current++}
           nonce={props.nonce}
           dangerouslySetInnerHTML={{
             __html: html.join(''),
@@ -177,14 +177,14 @@ export function createHydrationStreamProvider<TShape>() {
     // </client stuff>
 
     return (
-      <context.Provider value={{ stream, id }}>
+      <StreamContext.Provider value={{ stream, id }}>
         {props.children}
-      </context.Provider>
+      </StreamContext.Provider>
     )
   }
 
   return {
     Provider: UseClientHydrationStreamProvider,
-    context,
+    context: StreamContext,
   }
 }
