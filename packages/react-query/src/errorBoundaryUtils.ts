@@ -45,6 +45,10 @@ export const useClearResetErrorBoundary = (
 ) => {
   React.useEffect(() => {
     errorResetBoundary.clearReset()
+
+    return () => {
+      errorResetBoundary.reset()
+    }
   }, [errorResetBoundary])
 }
 
