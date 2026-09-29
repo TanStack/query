@@ -278,12 +278,6 @@ importers:
       '@types/node':
         specifier: ^22.15.3
         version: 22.19.15
-      '@types/react':
-        specifier: ^19.2.7
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.14)
       '@vitest/coverage-istanbul':
         specifier: 4.1.11
         version: 4.1.11(supports-color@7.2.0)(vitest@4.1.11)
@@ -320,12 +314,6 @@ importers:
       publint:
         specifier: ^0.3.24
         version: 0.3.24
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
       sherif:
         specifier: ^1.13.0
         version: 1.13.0
