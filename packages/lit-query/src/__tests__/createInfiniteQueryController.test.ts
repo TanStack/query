@@ -128,7 +128,7 @@ describe('createInfiniteQueryController', () => {
     provider.remove()
   })
 
-  it('should support initial page, fetchNextPage, and fetchPreviousPage', async () => {
+  it('should fetch the initial page', async () => {
     const key = queryKey()
 
     class Host extends LitElement {
@@ -161,18 +161,78 @@ describe('createInfiniteQueryController', () => {
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
     expect(host.shadowRoot).toHaveTextContent('pages: 0')
+  })
+
+  it('should append the next page with fetchNextPage', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          getPreviousPageParam: (firstPage) =>
+            firstPage > -1 ? firstPage - 1 : undefined,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
+    await host.updateComplete
+    await vi.advanceTimersByTimeAsync(10)
 
     const fetchNextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchNextPagePromise
     expect(infinite().data?.pages).toEqual([0, 1])
     expect(host.shadowRoot).toHaveTextContent('pages: 0, 1')
+  })
+
+  it('should prepend the previous page with fetchPreviousPage', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          initialPageParam: 0,
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          getPreviousPageParam: (firstPage) =>
+            firstPage > -1 ? firstPage - 1 : undefined,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
+    await host.updateComplete
+    await vi.advanceTimersByTimeAsync(10)
 
     const fetchPreviousPagePromise = infinite.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchPreviousPagePromise
-    expect(infinite().data?.pages).toEqual([-1, 0, 1])
-    expect(host.shadowRoot).toHaveTextContent('pages: -1, 0, 1')
+    expect(infinite().data?.pages).toEqual([-1, 0])
+    expect(host.shadowRoot).toHaveTextContent('pages: -1, 0')
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
