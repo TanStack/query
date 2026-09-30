@@ -152,6 +152,51 @@ describe('QueryClientProvider/context', () => {
     unmountB.mockRestore()
   })
 
+  it('should unmount the initial client when the client is replaced before the first update', async () => {
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const mountA = vi.spyOn(clientA, 'mount')
+    const unmountA = vi.spyOn(clientA, 'unmount')
+    const mountB = vi.spyOn(clientB, 'mount')
+    const unmountB = vi.spyOn(clientB, 'unmount')
+
+    const provider = document.createElement(tagName) as QueryClientProvider
+    provider.client = clientA
+
+    container.append(provider)
+
+    provider.client = clientB
+    await provider.updateComplete
+    expect(mountA).toHaveBeenCalledTimes(1)
+    expect(unmountA).toHaveBeenCalledTimes(1)
+    expect(mountB).toHaveBeenCalledTimes(1)
+    expect(unmountB).toHaveBeenCalledTimes(0)
+    expect(useQueryClient()).toBe(clientB)
+
+    provider.remove()
+    expect(unmountB).toHaveBeenCalledTimes(1)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
+
+    mountA.mockRestore()
+    unmountA.mockRestore()
+    mountB.mockRestore()
+    unmountB.mockRestore()
+  })
+
+  it('should not throw when the client is cleared on a disconnected provider', async () => {
+    const provider = document.createElement(tagName) as QueryClientProvider
+    provider.client = queryClient
+
+    container.append(provider)
+    await provider.updateComplete
+
+    provider.remove()
+    provider.client = undefined as unknown as QueryClient
+    await expect(provider.updateComplete).resolves.toBe(true)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
+  })
+
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
     const key = queryKey()
     const mount = vi.spyOn(queryClient, 'mount')
