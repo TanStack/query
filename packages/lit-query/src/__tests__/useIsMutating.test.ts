@@ -159,6 +159,49 @@ describe('useIsMutating', () => {
     expect(host.shadowRoot).toHaveTextContent('mutating: 0')
   })
 
+  it('should count all mutating mutations when filters are omitted', async () => {
+    class Producer extends LitElement {
+      readonly mutation1 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data1'),
+      })
+
+      readonly mutation2 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data2'),
+      })
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly isMutating = useIsMutating(this)
+
+      override render() {
+        return html`<p>mutating: ${this.isMutating()}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = queryClient
+    const producer = new Producer()
+    const host = new Host()
+    provider.append(producer, host)
+
+    container.append(provider)
+    await provider.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
+
+    producer.mutation1.mutate()
+    producer.mutation2.mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('mutating: 2')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
+  })
+
   it('should track mutation filters and reactivity in useIsMutating', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()

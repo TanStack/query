@@ -158,6 +158,47 @@ describe('useIsFetching', () => {
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
 
+  it('should count all fetching queries when filters are omitted', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    class Producer extends LitElement {
+      readonly query1 = createQueryController(this, {
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 'data1'),
+      })
+
+      readonly query2 = createQueryController(this, {
+        queryKey: key2,
+        queryFn: () => sleep(10).then(() => 'data2'),
+      })
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly isFetching = useIsFetching(this)
+
+      override render() {
+        return html`<p>fetching: ${this.isFetching()}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = queryClient
+    const producer = new Producer()
+    const host = new Host()
+    provider.append(producer, host)
+
+    container.append(provider)
+    await provider.updateComplete
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('fetching: 2')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('fetching: 0')
+  })
+
   it('should track filters and filter reactivity in useIsFetching', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
