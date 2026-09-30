@@ -30,6 +30,10 @@ describe('useMutationState', () => {
 
   it('should not request another update when stable mutation state selectors refresh during host update', async () => {
     class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
       updatesRequested = 0
 
       readonly mutationStates = useMutationState<string>(
@@ -46,10 +50,6 @@ describe('useMutationState', () => {
         this.updatesRequested += 1
         super.requestUpdate(...args)
       }
-
-      forceUpdate(): void {
-        super.requestUpdate()
-      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -65,11 +65,11 @@ describe('useMutationState', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.forceUpdate()
+        host.count = i
         await host.updateComplete
       }
 
-      expect(host.updatesRequested).toBe(0)
+      expect(host.updatesRequested).toBe(5)
       expect(mutationStates()).toEqual([])
     } finally {
       mutationStates.destroy()

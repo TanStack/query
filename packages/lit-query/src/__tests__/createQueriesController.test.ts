@@ -181,6 +181,10 @@ describe('createQueriesController', () => {
     let callCount = 0
 
     class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
       updatesRequested = 0
 
       readonly queries = createQueriesController(
@@ -207,10 +211,6 @@ describe('createQueriesController', () => {
         this.updatesRequested += 1
         super.requestUpdate(...args)
       }
-
-      forceUpdate(): void {
-        super.requestUpdate()
-      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -225,11 +225,11 @@ describe('createQueriesController', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.forceUpdate()
+        host.count = i
         await host.updateComplete
       }
 
-      expect(host.updatesRequested).toBe(0)
+      expect(host.updatesRequested).toBe(5)
       expect(queries()[0].data).toBe('stable-result')
       expect(callCount).toBe(1)
     } finally {

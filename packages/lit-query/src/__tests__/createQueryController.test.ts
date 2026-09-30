@@ -134,6 +134,10 @@ describe('createQueryController', () => {
     let callCount = 0
 
     class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
       updatesRequested = 0
 
       readonly query = createQueryController(
@@ -155,10 +159,6 @@ describe('createQueryController', () => {
         this.updatesRequested += 1
         super.requestUpdate(...args)
       }
-
-      forceUpdate(): void {
-        super.requestUpdate()
-      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -172,12 +172,11 @@ describe('createQueryController', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.forceUpdate()
+        host.count = i
         await host.updateComplete
       }
 
-      await host.updateComplete
-      expect(host.updatesRequested).toBe(0)
+      expect(host.updatesRequested).toBe(5)
       expect(query().data).toBe('stable-result')
       expect(callCount).toBe(1)
     } finally {
@@ -464,6 +463,10 @@ describe('createQueryController', () => {
     let callCount = 0
 
     class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
       updatesRequested = 0
 
       readonly query = createQueryController(
@@ -485,10 +488,6 @@ describe('createQueryController', () => {
         this.updatesRequested += 1
         super.requestUpdate(...args)
       }
-
-      forceUpdate(): void {
-        super.requestUpdate()
-      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -501,13 +500,11 @@ describe('createQueryController', () => {
     await host.updateComplete
     const updatesAfterSuccess = host.updatesRequested
 
-    host.forceUpdate()
-    await host.updateComplete
-
+    host.count = 1
     await host.updateComplete
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
-    expect(host.updatesRequested).toBe(updatesAfterSuccess)
+    expect(host.updatesRequested).toBe(updatesAfterSuccess + 1)
   })
 
   it('should follow the stale-vs-fresh policy for refetchOnMount', async () => {
