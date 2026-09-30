@@ -193,11 +193,11 @@ describe('createQueriesController', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: async () => {
-                await sleep(10)
-                callCount += 1
-                return 'stable-result'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  callCount += 1
+                  return 'stable-result'
+                }),
               staleTime: Infinity,
             },
           ] as const,
@@ -530,19 +530,19 @@ describe('createQueriesController', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: async () => {
-                await sleep(10)
-                callCount += 1
-                return 'shared-value'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  callCount += 1
+                  return 'shared-value'
+                }),
             },
             {
               queryKey: key,
-              queryFn: async () => {
-                await sleep(10)
-                callCount += 1
-                return 'shared-value'
-              },
+              queryFn: () =>
+                sleep(10).then(() => {
+                  callCount += 1
+                  return 'shared-value'
+                }),
             },
           ] as const,
           combine: (results) =>
