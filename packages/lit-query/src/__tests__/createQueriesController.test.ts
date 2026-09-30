@@ -79,7 +79,6 @@ describe('createQueriesController', () => {
 
     consumer.queries.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -135,7 +134,6 @@ describe('createQueriesController', () => {
 
     consumer.queries.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should combine multiple query results', async () => {
@@ -229,7 +227,6 @@ describe('createQueriesController', () => {
       for (let i = 0; i < 5; i += 1) {
         host.forceUpdate()
         await host.updateComplete
-        await Promise.resolve()
       }
 
       expect(host.updatesRequested).toBe(0)
@@ -281,20 +278,19 @@ describe('createQueriesController', () => {
       await host.updateComplete
 
       expect(queries()[0].data).toBe('stable-data')
-      await Promise.resolve()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
 
       const refetch = queries()[0].refetch()
 
       expect(resolveRefetch).toBeDefined()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
     } finally {
       queries.destroy()
@@ -340,21 +336,20 @@ describe('createQueriesController', () => {
       await host.updateComplete
 
       expect(queries()[0].isFetching).toBe(false)
-      await Promise.resolve()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       defaultQueryOptionsCalls = 0
 
       const refetch = queries()[0].refetch()
 
       expect(resolveRefetch).toBeDefined()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(queries()[0].isFetching).toBe(true)
       expect(defaultQueryOptionsCalls).toBe(0)
 
       resolveRefetch!()
       await refetch
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(queries()[0].isFetching).toBe(false)
       expect(defaultQueryOptionsCalls).toBe(0)
     } finally {
@@ -399,14 +394,13 @@ describe('createQueriesController', () => {
       await host.updateComplete
 
       expect(queries()[0].status).toBe('success')
-      await Promise.resolve()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
 
       queryClient.setQueryData(key, 'updated-data')
 
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
 
       expect(queries()[0].data).toBe('updated-data')
@@ -630,7 +624,6 @@ describe('createQueriesController', () => {
 
     consumer.queries.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should reject placeholder refetch of raw query results after the missing-client handshake', async () => {
@@ -666,7 +659,6 @@ describe('createQueriesController', () => {
 
     consumer.queries.destroy()
     consumer.remove()
-    await Promise.resolve()
   })
 
   it('should defer placeholder accessors in the constructor until host fields are initialized', () => {
@@ -812,7 +804,7 @@ describe('createQueriesController', () => {
     expect(() => new InvalidExplicitCombineQueriesHost()).not.toThrow()
 
     const host = new InvalidExplicitCombineQueriesHost()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(() => host.queries()).toThrow('invalid combine')
   })
 
@@ -857,8 +849,6 @@ describe('createQueriesController', () => {
     )
     const queries = host.queries
 
-    await Promise.resolve()
-    await Promise.resolve()
     expect(queries()).toEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
@@ -905,7 +895,6 @@ describe('createQueriesController', () => {
     const consumer = new Consumer()
     provider.append(consumer)
 
-    await Promise.resolve()
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
     expect(consumer.shadowRoot).toHaveTextContent('data: q-1')
@@ -939,7 +928,6 @@ describe('createQueriesController', () => {
 
     consumer.queries.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should reparent queries controller under a different provider without cross-tree leakage', async () => {
@@ -1017,6 +1005,5 @@ describe('createQueriesController', () => {
     consumer.queries.destroy()
     providerA.remove()
     providerB.remove()
-    await Promise.resolve()
   })
 })

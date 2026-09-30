@@ -66,7 +66,6 @@ describe('useIsFetching', () => {
     consumer.query.destroy()
     consumer.isFetching.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -119,7 +118,6 @@ describe('useIsFetching', () => {
     consumer.query.destroy()
     consumer.isFetching.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should track the fetching count', async () => {
@@ -265,7 +263,6 @@ describe('useIsFetching', () => {
     consumer.query.destroy()
     consumer.isFetching.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
@@ -302,8 +299,6 @@ describe('useIsFetching', () => {
     host.isFetching = useIsFetching(host, {}, queryClient)
     const { isFetching } = host
 
-    await Promise.resolve()
-    await Promise.resolve()
     expect(isFetching()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(isFetching()).toBe(0)

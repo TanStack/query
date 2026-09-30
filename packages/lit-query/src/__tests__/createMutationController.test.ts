@@ -58,7 +58,6 @@ describe('createMutationController', () => {
     container.append(provider)
     await provider.updateComplete
 
-    await Promise.resolve()
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
@@ -66,7 +65,6 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -97,7 +95,6 @@ describe('createMutationController', () => {
     container.append(provider)
     await provider.updateComplete
 
-    await Promise.resolve()
     const mutatePromise = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(3)
@@ -115,7 +112,6 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should support mutate and mutateAsync paths', async () => {
@@ -399,7 +395,6 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     consumer.remove()
-    await Promise.resolve()
   })
 
   it('should recover without reconstruction when a valid provider is adopted later', async () => {
@@ -430,7 +425,6 @@ describe('createMutationController', () => {
     container.append(provider)
     await provider.updateComplete
 
-    await Promise.resolve()
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
@@ -438,7 +432,6 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should not throw for a mutation controller on an already-connected host with an explicit client', async () => {
@@ -465,8 +458,7 @@ describe('createMutationController', () => {
     const mutation = host.mutation
 
     // Wait for the deferred onConnected to complete
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
 
     // Mutation controller should work correctly
     expect(mutation().isIdle).toBe(true)
@@ -533,8 +525,7 @@ describe('createMutationController', () => {
     const consumer = new Consumer()
     provider.append(consumer)
 
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(firstMutation).resolves.toBe(2)
@@ -546,7 +537,6 @@ describe('createMutationController', () => {
 
     provider.client = clientB
     await provider.updateComplete
-    await Promise.resolve()
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
@@ -563,7 +553,6 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
@@ -598,8 +587,6 @@ describe('createMutationController', () => {
     container.append(providerA)
     await providerA.updateComplete
 
-    await Promise.resolve()
-    await Promise.resolve()
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(firstMutation).resolves.toBe(2)
@@ -611,8 +598,6 @@ describe('createMutationController', () => {
     container.append(providerB)
     await providerB.updateComplete
 
-    await Promise.resolve()
-    await Promise.resolve()
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
@@ -627,6 +612,5 @@ describe('createMutationController', () => {
 
     consumer.mutation.destroy()
     providerB.remove()
-    await Promise.resolve()
   })
 })

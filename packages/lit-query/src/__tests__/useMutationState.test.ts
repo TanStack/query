@@ -59,7 +59,7 @@ describe('useMutationState', () => {
       container.append(host)
       await host.updateComplete
 
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual([])
 
       host.updatesRequested = 0
@@ -67,7 +67,6 @@ describe('useMutationState', () => {
       for (let i = 0; i < 5; i += 1) {
         host.forceUpdate()
         await host.updateComplete
-        await Promise.resolve()
       }
 
       expect(host.updatesRequested).toBe(0)
@@ -110,7 +109,7 @@ describe('useMutationState', () => {
       container.append(host)
       await host.updateComplete
 
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual(['idle'])
 
       host.updatesRequested = 0
@@ -121,7 +120,7 @@ describe('useMutationState', () => {
           mutation,
           action: { type: 'pause' } as never,
         })
-        await Promise.resolve()
+        await vi.advanceTimersByTimeAsync(0)
       }
 
       expect(host.updatesRequested).toBe(0)
@@ -169,7 +168,6 @@ describe('useMutationState', () => {
     consumer.mutation.destroy()
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -217,7 +215,6 @@ describe('useMutationState', () => {
     consumer.mutation.destroy()
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should track mutation state', async () => {
@@ -251,7 +248,6 @@ describe('useMutationState', () => {
     container.append(host)
     const { mutation, mutationStatuses } = host
 
-    await vi.advanceTimersByTimeAsync(0)
     mutation.mutate(1)
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('statuses: pending')
@@ -401,7 +397,6 @@ describe('useMutationState', () => {
 
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
@@ -422,7 +417,6 @@ describe('useMutationState', () => {
     container.append(producer)
     const producerMutation = producer.mutation
 
-    await vi.advanceTimersByTimeAsync(0)
     producerMutation.mutate()
 
     class Host extends LitElement {
@@ -445,8 +439,6 @@ describe('useMutationState', () => {
     )
     const { mutationStatuses } = host
 
-    await Promise.resolve()
-    await Promise.resolve()
     expect(mutationStatuses()).toContain('pending')
     await vi.advanceTimersByTimeAsync(10)
     expect(mutationStatuses()).toContain('success')
