@@ -507,14 +507,14 @@ describe('streaming SSR hydration', () => {
     }
   })
 
-  // The data node has default ('server') hydration semantics: the
-  // serialized server value owns the DOM for the whole hydration window,
-  // and a latched node that recomputes mid-stream (a cache write landed)
-  // arms the engine's hydration-end takeover — the change commits when the
-  // stream closes, deferred rather than lost. Network activity is NOT
-  // deferred: observers attach per-query as the channel primes, so
-  // mid-stream invalidations refetch immediately.
-  it('cache writes during the open stream commit when hydration completes', async () => {
+  // Hydration does not wait for the page: once the root pass is over, a
+  // node outside every still-pending streamed boundary answers client
+  // writes. The header's boundary has resumed, so a cache write while the
+  // feed keeps the stream open reaches its DOM immediately, and so does a
+  // mid-stream refetch (observers attach per-query as the channel primes).
+  // The pending feed boundary is untouched and hydrates from the server
+  // payload when its chunk lands.
+  it('cache writes during the open stream commit immediately outside pending boundaries', async () => {
     const { phase1, phase2 } = splitStream()
     const app = bundle.createStreamApp()
     const container = document.createElement('div')
@@ -533,39 +533,39 @@ describe('streaming SSR hydration', () => {
       // The slow section still shows its fallback.
       expect(container.querySelector('#feed')).toBeNull()
 
-      // A write while the stream is open reaches the CACHE immediately but
-      // not the DOM — the serialized server value holds the document.
+      // A write while the stream is open reaches the cache and the
+      // resumed header's DOM at once.
       app.queryClient.setQueryData(['header'], 'updated-client')
-      await tick(30)
+      await vi.waitFor(() => {
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'updated-client',
+        )
+      })
       expect(app.queryClient.getQueryData(['header'])).toBe('updated-client')
-      expect(container.querySelector('#header')?.textContent).toBe(
-        'header-server',
-      )
+      expect(container.querySelector('#feed')).toBeNull()
 
       // An invalidation while the stream is open refetches immediately
-      // (the observer is subscribed — network is not deferred), but the
-      // result is held with the rest.
+      // (the observer is subscribed) and its result commits as it lands.
       void app.queryClient.invalidateQueries({ queryKey: ['header'] })
       await vi.waitFor(() => {
-        expect(app.counts.header).toBe(1)
+        expect(container.querySelector('#header')?.textContent).toBe(
+          'header-client',
+        )
       })
-      expect(container.querySelector('#header')?.textContent).toBe(
-        'header-server',
-      )
+      expect(app.counts.header).toBe(1)
+      expect(container.querySelector('#feed')).toBeNull()
 
-      // The late boundary hydrates, closing the stream — the divergence
-      // takeover re-runs the latched node and the held state commits.
+      // The late boundary hydrates from the server payload, closing the
+      // stream; the header keeps its client state.
       applyChunks(container, phase2)
       await vi.waitFor(() => {
         expect(container.querySelector('#feed')?.textContent).toBe(
           'feed-server',
         )
       })
-      await vi.waitFor(() => {
-        expect(container.querySelector('#header')?.textContent).toBe(
-          'header-client',
-        )
-      })
+      expect(container.querySelector('#header')?.textContent).toBe(
+        'header-client',
+      )
       expect(app.counts.feed).toBe(0)
 
       // And fully live from then on.
