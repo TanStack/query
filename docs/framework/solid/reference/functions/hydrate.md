@@ -34,6 +34,17 @@ promise, it is resumed via `query.fetch()` (reusing that promise as `initialProm
 
 [`HydrateOptions`](../interfaces/HydrateOptions.md)
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | `MutationOptions`\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | `QueryOptions`\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
+
 ## Returns
 
 `void`

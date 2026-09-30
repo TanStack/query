@@ -210,6 +210,430 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
   if (pkg.redirectFrom) {
     await addRedirectFromToFrontmatter(outputDir, pkg.redirectFrom)
   }
+
+  await addReferenceDetails(outputDir)
+}
+
+// Splits the escaped type arguments (`\\<…\\>`) that follow a type name from the rest of the line.
+function splitTypeArguments(rest: string) {
+  if (!rest.startsWith('\\<')) {
+    return { typeArguments: undefined, after: rest }
+  }
+  let depth = 0
+  for (let index = 0; index < rest.length; index++) {
+    if (rest.startsWith('\\<', index)) {
+      depth++
+    } else if (rest.startsWith('\\>', index) && --depth === 0) {
+      return {
+        typeArguments: rest.slice(2, index),
+        after: rest.slice(index + 2),
+      }
+    }
+  }
+  return { typeArguments: undefined, after: rest }
+}
+
+// The type page a `Parameters`/`Returns` type line refers to when the whole line is that one type
+// (with an optional default value), looking through wrappers that only change how the value is
+// passed, i.e. aliases like `Accessor<T> = () => T` and inline `() => T`.
+// Whether a type alias only changes how its single type argument is passed, e.g. `Accessor<T> = () => T`.
+async function isWrapperAlias(outputDir: string, from: string) {
+  const code = (await readPage(outputDir, from))?.match(
+    /```ts\ntype \w+<(\w+)> = ([^\n]*);\n```/,
+  )
+  return (
+    !!code &&
+    code[2]!
+      .split(' | ')
+      .every((member) => member === code[1] || member === `() => ${code[1]}`)
+  )
+}
+
+// The type page a `Parameters`/`Returns` type line refers to when the whole line is that one type
+// (with an optional default value), looking through wrappers that only change how the value is
+// passed, i.e. aliases like `Accessor<T> = () => T` and inline `() => T`.
+async function linkedTypePage(outputDir: string, typeLine: string) {
+  let line = typeLine
+  for (;;) {
+    line = line.replace(/^\(\) => /, '')
+    const link = line.match(
+      /^\[`\w+`\]\(\.\.\/((?:interfaces|type-aliases)\/\w+)\.md\)/,
+    )
+    if (!link) {
+      return undefined
+    }
+    const { typeArguments, after } = splitTypeArguments(
+      line.slice(link[0].length),
+    )
+    if (typeArguments && (await isWrapperAlias(outputDir, link[1]!))) {
+      line = typeArguments
+      continue
+    }
+    return after === '' || after.startsWith(' = ') ? link[1] : undefined
+  }
+}
+
+// The name of the type a signature's code starts with, looking through the same wrappers.
+async function typeNameInCode(outputDir: string, code: string) {
+  let type = code
+  for (;;) {
+    type = type.replace(/^\(\) => /, '')
+    const name = type.match(/^\w+/)?.[0]
+    if (
+      !name ||
+      type[name.length] !== '<' ||
+      !(await isWrapperAlias(outputDir, `type-aliases/${name}`))
+    ) {
+      return name
+    }
+    let depth = 0
+    for (let index = name.length; index < type.length; index++) {
+      if (type[index] === '<') {
+        depth++
+      } else if (
+        type[index] === '>' &&
+        type[index - 1] !== '=' &&
+        --depth === 0
+      ) {
+        type = type.slice(name.length + 1, index)
+        break
+      }
+    }
+  }
+}
+
+// The property table for the first type line that has one.
+async function findPropertiesTable(
+  outputDir: string,
+  typeLines: Array<string>,
+) {
+  for (const typeLine of typeLines) {
+    const link = await linkedTypePage(outputDir, typeLine)
+    const from = link && (await propertiesPage(outputDir, link))
+    const table = from && (await readPropertiesTable(outputDir, from))
+    if (table) {
+      return table
+    }
+  }
+  return undefined
+}
+
+// The type line of each parameter and of the return value in one call signature.
+function signatureTypes(signature: string) {
+  const parametersHeading = signature.match(/\n#{2,3} Parameters\n/)
+  const returnsHeading = signature.match(/\n#{2,3} Returns\n/)
+  const parameters = parametersHeading
+    ? signature.slice(
+        parametersHeading.index! + parametersHeading[0].length - 1,
+        returnsHeading?.index,
+      )
+    : ''
+  // Only the headings one level below `Parameters`, not the properties of an inline object argument.
+  const parameterHeading = '#'.repeat(
+    (parametersHeading?.[0].trim().indexOf(' ') ?? 0) + 1,
+  )
+  return {
+    parameters: new Map(
+      [
+        ...parameters.matchAll(
+          new RegExp(`\\n${parameterHeading} (\\S+)\\n\\n([^\\n]*)`, 'g'),
+        ),
+      ].map(([, name, typeLine]) => [name!, typeLine!]),
+    ),
+    returns: returnsHeading
+      ? signature
+          .slice(returnsHeading.index! + returnsHeading[0].length)
+          .trim()
+          .split('\n')[0]!
+      : undefined,
+  }
+}
+
+function readPage(outputDir: string, from: string) {
+  return readFile(resolve(outputDir, `${from}.md`), 'utf8').then(
+    (source) => source,
+    () => undefined,
+  )
+}
+
+// Resolves a type page to the interface pages it stands for: itself when it has a `## Properties`
+// table, or the members of a plain alias or union. Anything else (intersections, `Omit`, `Override`, …)
+// resolves to nothing, since no generated table describes it as-is.
+async function resolveInterfacePages(
+  outputDir: string,
+  from: string,
+): Promise<Array<string> | undefined> {
+  const source = await readPage(outputDir, from)
+  if (source === undefined) {
+    return undefined
+  }
+  if (source.includes('\n## Properties\n')) {
+    return [from]
+  }
+  const code = source.match(
+    /```ts\ntype \w+(?:<[^\n=]*>)? = ([\s\S]*?);\n```/,
+  )?.[1]
+  if (!code) {
+    return undefined
+  }
+  let members = code
+  while (/<[^<>]*>/.test(members)) {
+    members = members.replace(/<[^<>]*>/g, '')
+  }
+  const names = members
+    .split('|')
+    .map((member) => member.trim())
+    .filter(Boolean)
+  if (!names.every((name) => /^\w+$/.test(name))) {
+    return undefined
+  }
+  const pages: Array<string> = []
+  for (const name of names) {
+    const resolved =
+      (await resolveInterfacePages(outputDir, `interfaces/${name}`)) ??
+      (await resolveInterfacePages(outputDir, `type-aliases/${name}`))
+    if (!resolved) {
+      return undefined
+    }
+    pages.push(...resolved)
+  }
+  return pages
+}
+
+// The page whose `## Properties` table describes the type: the type itself, or the interface every
+// member of a union extends.
+async function propertiesPage(outputDir: string, from: string) {
+  const pages = await resolveInterfacePages(outputDir, from)
+  if (!pages?.length) {
+    return undefined
+  }
+  if (pages.length === 1) {
+    return pages[0]
+  }
+  const bases = new Set<string>()
+  for (const page of pages) {
+    const base = (await readPage(outputDir, page))?.match(
+      /\n## Extends\n\n- \[`\w+`\]\((\w+)\.md\)[^\n]*\n\n##/,
+    )?.[1]
+    if (!base) {
+      return undefined
+    }
+    bases.add(`${dirname(page)}/${base}`)
+  }
+  return bases.size === 1 ? [...bases][0] : undefined
+}
+
+async function readPropertiesTable(outputDir: string, from: string) {
+  const source = await readPage(outputDir, from)
+  const start = source?.indexOf('\n## Properties\n') ?? -1
+  if (source === undefined || start === -1) {
+    return undefined
+  }
+  const fromDir = dirname(from)
+  return source
+    .slice(start + '\n## Properties\n'.length)
+    .trim()
+    .replace(
+      /\]\((?!https?:|#)([^)]+)\)/g,
+      (_, link: string) =>
+        `](../${link.startsWith('../') ? link.slice(3) : `${fromDir}/${link}`})`,
+    )
+}
+
+// Adds to every function page without changing what TypeDoc generated: the properties of each
+// argument and of the result, and an `## Overview` of every call signature on overloaded pages. The
+// properties come from the generated page of the type, following plain aliases and, for a union,
+// the interface all of its members extend. Types that override or omit properties get no table.
+async function addReferenceDetails(outputDir: string) {
+  const files = await readdir(resolve(outputDir, 'functions')).catch(
+    () => [] as Array<string>,
+  )
+  for (const file of files.filter((name) => name.endsWith('.md'))) {
+    const pagePath = `functions/${file.slice(0, -3)}`
+    const pageFile = resolve(outputDir, `${pagePath}.md`)
+    const page = await readFile(pageFile, 'utf8')
+    const [head, ...signatures] = page.split('\n## Call Signature\n')
+    const isOverloaded = signatures.length > 1
+    const lastSignature = signatures.at(-1) ?? page
+
+    // Property tables of the arguments whose type has a `## Properties` table, and of the result.
+    const tables: Array<{
+      id: string
+      title: string
+      table: string
+      parameter?: string
+    }> = []
+    const parametersHeading = lastSignature.match(/\n#{2,3} Parameters\n/)
+    const returnsHeading = lastSignature.match(/\n#{2,3} Returns\n/)
+    const parameters = parametersHeading
+      ? lastSignature.slice(
+          parametersHeading.index! + parametersHeading[0].length - 1,
+          returnsHeading?.index,
+        )
+      : ''
+    // Overloads describe the same arguments with different types, so a table missing from the
+    // last (most general) signature is taken from the latest earlier one that has it.
+    const signatureTypeLines = (signatures.length ? signatures : [page])
+      .map(signatureTypes)
+      .reverse()
+    for (const name of signatureTypeLines[0]!.parameters.keys()) {
+      const table = await findPropertiesTable(
+        outputDir,
+        signatureTypeLines.flatMap((types) => types.parameters.get(name) ?? []),
+      )
+      if (!table) {
+        continue
+      }
+      const argument = name.replace(/\\/g, '').replace(/\?$/, '')
+      const key = argument === '__namedParameters' ? 'props' : argument
+      tables.push({
+        id: `${key}-properties`,
+        title: `\`${key}\` properties`,
+        table,
+        parameter: name,
+      })
+    }
+    const resultTable = await findPropertiesTable(
+      outputDir,
+      signatureTypeLines.flatMap((types) => types.returns ?? []),
+    )
+    if (resultTable) {
+      tables.push({
+        id: 'result-properties',
+        title: 'Result properties',
+        table: resultTable,
+      })
+    }
+
+    // Property anchors are prefixed with the table's name, so they stay unique when two tables on
+    // the same page list the same properties.
+    const section = (
+      level: number,
+      { id, title, table }: (typeof tables)[number],
+    ) =>
+      `<a id="${id}"></a>\n\n${'#'.repeat(level)} ${title}\n\n${table.replace(
+        /<a id="([^"]+)"><\/a>/g,
+        `<a id="${id.replace(/-properties$/, '')}-$1"></a>`,
+      )}`
+
+    if (!isOverloaded) {
+      // Put each table at the end of the section it describes, so nothing is repeated.
+      let updated = page.trimEnd()
+      for (const entry of tables) {
+        const heading = entry.parameter
+          ? `\n### ${entry.parameter}\n`
+          : '\n## Returns\n'
+        const level = entry.parameter ? 3 : 2
+        const start = updated.indexOf(heading)
+        if (start === -1) {
+          continue
+        }
+        const next = updated
+          .slice(start + heading.length)
+          .search(new RegExp(`\\n#{1,${level}} `))
+        const insertAt =
+          next === -1 ? updated.length : start + heading.length + next
+        updated = `${updated.slice(0, insertAt).trimEnd()}\n\n${section(level + 1, entry)}\n${updated.slice(insertAt)}`
+      }
+      await writeFile(pageFile, `${updated.trimEnd()}\n`)
+      continue
+    }
+
+    const entries = await Promise.all(
+      signatures.map(async (signature, index) => {
+        const code = signature.match(/```ts\n([\s\S]*?)\n```/)?.[1] ?? ''
+        const summary = signature
+          .split('\n### ')[0]!
+          .split('\n\n')
+          .map((block) => block.trim())
+          .find(
+            (block) =>
+              block !== '' &&
+              !block.startsWith('```') &&
+              !block.startsWith('Defined in:'),
+          )
+        const label = (
+          await Promise.all(
+            [
+              code.match(/\((?:\w+\??): ([\s\S]*)/)?.[1],
+              code.match(/\): ([\s\S]*)/)?.[1],
+            ].map((type) => type && typeNameInCode(outputDir, type)),
+          )
+        )
+          .filter(Boolean)
+          .map((type) => `\`${type}\``)
+          .join(' → ')
+        return {
+          code,
+          line: `- [${label || `Call signature ${index + 1}`}](#call-signature-${index + 1})${summary ? `: ${summary.replace(/\n/g, ' ')}` : ''}`,
+        }
+      }),
+    )
+    // Repeat the last (most general) signature's `Parameters` and `Returns` once at the end, one
+    // heading level up, with the property tables, so every argument and the result are listed together.
+    const promote = (block: string) => block.replace(/^#(#+) /gm, '$1 ')
+    let parametersSummary = parametersHeading
+      ? `## Parameters\n\n${promote(parameters.trim())}`
+      : ''
+    for (const entry of tables.filter((table) => table.parameter)) {
+      const heading = `\n### ${entry.parameter}\n`
+      const start = parametersSummary.indexOf(heading)
+      const next = parametersSummary
+        .slice(start + heading.length)
+        .search(/\n#{1,3} /)
+      const insertAt =
+        next === -1 ? parametersSummary.length : start + heading.length + next
+      parametersSummary = `${parametersSummary.slice(0, insertAt).trimEnd()}\n\n${section(4, entry)}\n${parametersSummary.slice(insertAt)}`
+    }
+    const returnsBlock = returnsHeading
+      ? lastSignature
+          .slice(returnsHeading.index! + returnsHeading[0].length)
+          .split(/\n#{2,3} /)[0]!
+          .trim()
+      : ''
+    const resultEntry = tables.find((table) => !table.parameter)
+    const summaries = [
+      parametersSummary
+        ? `<a id="parameters-summary"></a>\n\n${parametersSummary.trimEnd()}`
+        : '',
+      returnsBlock
+        ? [
+            '<a id="returns-summary"></a>',
+            '',
+            '## Returns',
+            '',
+            returnsBlock,
+            ...(resultEntry ? ['', section(3, resultEntry)] : []),
+          ].join('\n')
+        : '',
+    ].filter(Boolean)
+    const links = [
+      ...(parametersSummary ? ['[Parameters](#parameters-summary)'] : []),
+      ...(returnsBlock ? ['[Returns](#returns-summary)'] : []),
+    ]
+    const overview = [
+      '## Overview',
+      '',
+      '```ts',
+      ...entries.map((entry) => entry.code),
+      '```',
+      '',
+      ...entries.map((entry) => entry.line),
+      ...(links.length > 0 ? ['', `See also: ${links.join(' · ')}`] : []),
+    ].join('\n')
+    const body = signatures
+      .map(
+        (signature, index) =>
+          `\n<a id="call-signature-${index + 1}"></a>\n\n## Call Signature\n${signature}`,
+      )
+      .join('')
+      .trimEnd()
+    const appended = summaries.join('\n\n')
+    await writeFile(
+      pageFile,
+      `${head!.trimEnd()}\n\n${overview}\n${body}${appended ? `\n\n${appended}` : ''}\n`,
+    )
+  }
 }
 
 const packages: Array<PackageReferenceDocsConfig> = [

@@ -3,6 +3,20 @@ id: queryOptions
 title: queryOptions
 ---
 
+## Overview
+
+```ts
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+```
+
+- [`DefinedInitialDataOptions` → `CreateQueryOptions`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `CreateQueryOptions`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -82,6 +96,8 @@ The same options object, typed so that `queryKey` carries the inferred data type
 </ul>
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -156,3 +172,21 @@ A parameterized factory, so the same options object can be reused per `id`:
   <h1>{query.data.title}</h1>
 {/if}
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.

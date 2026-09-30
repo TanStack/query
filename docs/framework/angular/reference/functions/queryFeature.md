@@ -36,3 +36,12 @@ The Angular providers this feature contributes to `provideTanStackQuery`.
 [`QueryFeature`](../interfaces/QueryFeature.md)\<`TFeatureKind`\>
 
 A Query feature.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="result-ɵkind"></a> `ɵkind` | `TFeatureKind` |
+| <a id="result-ɵproviders"></a> `ɵproviders` | `Provider`[] |

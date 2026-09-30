@@ -3,6 +3,22 @@ id: queryOptions
 title: queryOptions
 ---
 
+## Overview
+
+```ts
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+```
+
+- [`DefinedInitialDataOptions` → `Omit`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenOptions` → `OmitKeyof`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `UseQueryOptions`](#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -80,6 +96,8 @@ function Posts() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -148,6 +166,8 @@ function Post({ id }: { id: string }) {
   return <h1>{data.title}</h1>
 }
 ```
+
+<a id="call-signature-3"></a>
 
 ## Call Signature
 
@@ -242,3 +262,19 @@ function Post({ postId }: { postId: number | undefined }) {
   return <h1>{data?.title}</h1>
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+The same options object, typed so that `queryKey` carries the inferred data type.

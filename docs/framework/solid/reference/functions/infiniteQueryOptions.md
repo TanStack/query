@@ -5,6 +5,20 @@ redirect_from:
   - framework/solid/reference/infiniteQueryOptions
 ---
 
+## Overview
+
+```ts
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+```
+
+- [`InfiniteQueryOptions` → `InfiniteQueryOptions`](#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`InfiniteQueryOptions` → `InfiniteQueryOptions`](#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -91,6 +105,8 @@ function Projects() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -176,3 +192,21 @@ function Comments(props: { postId: string }) {
   )
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object`
+
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
