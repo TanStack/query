@@ -343,6 +343,10 @@ export class Mutation<
           })
         }
       }
+      // Unpause a mutation that became able to start while onMutate was running
+      if (this.state.isPaused && retryer.canStart()) {
+        onContinue()
+      }
       const data = await retryer.start()
 
       // Notify cache callback
