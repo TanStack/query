@@ -82,10 +82,10 @@
     "@preact/preset-vite": "catalog:",
     "@tanstack/preact-query": "workspace:*",
     "@testing-library/preact": "catalog:",
-    "eslint-config-preact": "^2.0.0",
+    "eslint-config-preact": "catalog:",
     "preact": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.54.0"
+    "typescript-eslint": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/preact-query": "workspace:^",
