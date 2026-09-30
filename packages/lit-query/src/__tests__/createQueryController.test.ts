@@ -251,7 +251,7 @@ describe('createQueryController', () => {
           queryKey: key,
           initialData: 'initial-data',
           staleTime: Infinity,
-          queryFn: () => Promise.resolve('unused'),
+          queryFn: () => sleep(10).then(() => 'unused'),
         },
         queryClient,
       )
@@ -1486,7 +1486,7 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, this.id],
-          queryFn: () => Promise.resolve(this.id),
+          queryFn: () => sleep(10).then(() => this.id),
           retry: false,
         }),
         queryClient,

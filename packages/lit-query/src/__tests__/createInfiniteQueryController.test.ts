@@ -306,7 +306,7 @@ describe('createInfiniteQueryController', () => {
             pageParams: [0],
           },
           staleTime: Infinity,
-          queryFn: () => Promise.resolve('unused'),
+          queryFn: () => sleep(10).then(() => 'unused'),
           getNextPageParam: () => undefined,
         },
         queryClient,
@@ -455,7 +455,7 @@ describe('createInfiniteQueryController', () => {
       {
         queryKey: key,
         initialPageParam: 0,
-        queryFn: ({ pageParam }) => Promise.resolve(Number(pageParam)),
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
         staleTime: 30_000,
@@ -479,7 +479,7 @@ describe('createInfiniteQueryController', () => {
         () => ({
           queryKey: [...key, this.id],
           initialPageParam: 0,
-          queryFn: ({ pageParam }) => Promise.resolve(Number(pageParam)),
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
           getNextPageParam: (lastPage) =>
             lastPage < 1 ? lastPage + 1 : undefined,
           retry: false,
