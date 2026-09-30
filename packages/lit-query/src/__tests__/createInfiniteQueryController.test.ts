@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, skipToken } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
@@ -7,6 +7,7 @@ import { createInfiniteQueryController } from '../createInfiniteQueryController.
 import { generateElementName } from './utils.js'
 import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { Mock } from 'vitest'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -388,6 +389,91 @@ describe('createInfiniteQueryController', () => {
     expect(nextPageResult.error).toEqual(new Error('next-page-failed'))
     expect(infinite().isFetchNextPageError).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
+  })
+
+  it('should cancel the query function when there are no more subscriptions', async () => {
+    const key = queryKey()
+    let cancelFn: Mock = vi.fn()
+
+    const queryFn = ({ signal }: { signal?: AbortSignal }) => {
+      const promise = new Promise<string>((resolve, reject) => {
+        cancelFn = vi.fn(() => reject('Cancelled'))
+        signal?.addEventListener('abort', cancelFn)
+        sleep(1000).then(() => resolve('OK'))
+      })
+
+      return promise
+    }
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`status: ${this.infinite().status}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: pending')
+
+    host.remove()
+    expect(cancelFn).toHaveBeenCalled()
+  })
+
+  it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+      sleep(10).then(() => `comments for 1 page ${pageParam}`),
+    )
+
+    class Host extends LitElement {
+      static override properties = { postId: { type: String } }
+
+      declare postId: string | undefined
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        () => ({
+          queryKey: key,
+          queryFn: this.postId != null ? queryFn : skipToken,
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }),
+        queryClient,
+      )
+
+      override render() {
+        const infinite = this.infinite()
+        const pages = infinite.data?.pages.join(', ') ?? 'none'
+        return html`isFetching: ${String(infinite.isFetching)}, pages: ${pages}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('isFetching: false')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(host.shadowRoot).toHaveTextContent('isFetching: false, pages: none')
+
+    host.postId = '1'
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(host.shadowRoot).toHaveTextContent('pages: comments for 1 page 0')
   })
 
   it('should fail deterministically and align imperative methods when the provider is missing', async () => {
