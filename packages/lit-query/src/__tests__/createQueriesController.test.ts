@@ -568,6 +568,46 @@ describe('createQueriesController', () => {
     expect(callCount).toBeGreaterThan(0)
   })
 
+  it('should not process detached updates when disconnected while in-flight', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => sleep(10).then(() => 'data'),
+            },
+          ],
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should fail after the handshake when the provider is missing and recover when a provider is adopted later', async () => {
     const key = queryKey()
 
