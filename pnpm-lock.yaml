@@ -218,6 +218,9 @@ catalogs:
     eslint-plugin-svelte:
       specifier: ^3.23.0
       version: 3.23.0
+    eslint-plugin-vue:
+      specifier: ^10.11.1
+      version: 10.11.1
     preact:
       specifier: ^10.29.8
       version: 10.29.8
@@ -3390,7 +3393,7 @@ importers:
         specifier: 1.7.2
         version: 1.7.2(vue@3.5.43(typescript@6.0.3))
       eslint-plugin-vue:
-        specifier: ^10.11.1
+        specifier: 'catalog:'
         version: 10.11.1(@stylistic/eslint-plugin@5.10.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
       typescript:
         specifier: 'catalog:'
@@ -3418,7 +3421,7 @@ importers:
         specifier: workspace:*
         version: link:../vue-query
       eslint-plugin-vue:
-        specifier: ^10.11.1
+        specifier: 'catalog:'
         version: 10.11.1(@stylistic/eslint-plugin@5.10.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2)))(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(vue-eslint-parser@10.4.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
       typescript:
         specifier: 'catalog:'
