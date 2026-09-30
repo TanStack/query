@@ -4,13 +4,14 @@ import {
   createProjection,
   createRenderEffect,
   createSignal,
+  isHydrating,
   isPending as isValuePending,
   onCleanup,
   resolve,
   runWithOwner,
-  sharedConfig,
   untrack,
 } from 'solid-js'
+import { takeHydrationValue } from '@solidjs/web'
 import { HYDRATION_KEY_PREFIX, useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions, UseBaseQueryResult } from './types'
@@ -166,12 +167,10 @@ export function useBaseQueryLayer<
   )
 
   /**
-   * `sharedConfig.hydrating` is Solid's own "this component is being
-   * hydrated" flag, captured at setup. (The server build's sharedConfig
-   * has no such field — undefined there, and unused.)
+   * Solid's own "this component is being hydrated" answer, captured at
+   * setup. Always false on the server.
    */
-  const hydratedMount =
-    !isServer && (sharedConfig as { hydrating?: boolean }).hydrating === true
+  const hydratedMount = isHydrating()
 
   /**
    * One version signal per hook, bumped by cache events for this query hash.
@@ -336,10 +335,6 @@ export function useBaseQueryLayer<
 
   if (!isServer) {
     cacheSub = activeClient.getQueryCache().subscribe(onCacheEvent)
-    const sc = sharedConfig as unknown as {
-      has?: (id: string) => boolean
-      load?: (id: string) => any
-    }
     const registryKey =
       HYDRATION_KEY_PREFIX + untrack(defaultedOptions).queryHash
     const primeAndAttach = (entry?: Partial<HydratedEntry> | null) => {
@@ -348,24 +343,12 @@ export function useBaseQueryLayer<
       attach()
     }
     const settle = hydratedMount ? primeAndAttach : prime
-    if (sc.has?.(registryKey)) {
-      const entry = sc.load!(registryKey)
-      delete (globalThis as unknown as { _$HY: { r: Record<string, unknown> } })
-        ._$HY.r[registryKey]
-      if (entry != null && typeof entry === 'object') {
-        // Settled serialization refs are stamped `s`/`v`; still-streaming
-        // ones are plain thenable refs that land with their chunk.
-        if (entry.s === 1) settle(entry.v)
-        else if (entry.s === 2) settle()
-        else if (typeof entry.then === 'function')
-          entry.then(settle, () => settle())
-        else settle(entry)
-      } else {
-        settle(entry)
-      }
-    } else if (hydratedMount) {
-      primeAndAttach()
-    }
+    const entry = takeHydrationValue<Partial<HydratedEntry> | null>(registryKey)
+    if (entry?.status === 'resolved') settle(entry.value)
+    else if (entry?.status === 'rejected') settle()
+    else if (entry?.status === 'pending')
+      entry.promise.then(settle, () => settle())
+    else if (hydratedMount) primeAndAttach()
     if (!hydratedMount) {
       createRenderEffect(
         () => isRestoring(),
@@ -544,7 +527,7 @@ export function useBaseQueryLayer<
        * priming; if a fetch is genuinely needed, the post-priming observer
        * attach issues it outside the window.
        */
-      if (!isServer && (sharedConfig as { hydrating?: boolean }).hydrating) {
+      if (isHydrating()) {
         return NEVER
       }
       /**
@@ -615,12 +598,10 @@ export function useBaseQueryLayer<
    * first-paint exception in `computeData`.
    *
    * Default ('server') hydration semantics: the serialized value owns the
-   * node for the whole hydration window — server truth holds the document
-   * while the stream is open — and any cache write that lands mid-stream
-   * arms the engine's hydration-end takeover (a latched node that
-   * recomputes has diverged), committing when hydration completes.
-   * Requires solid-js > 2.0.0-rc.3 (before the takeover fix, a mid-stream
-   * divergence was lost rather than deferred).
+   * node while it hydrates. Outside every still-pending streamed boundary,
+   * a cache write commits immediately. Under a pending boundary it waits
+   * for that boundary to resume, which hydrates against the server
+   * snapshot.
    */
   const dataStore = createProjection<{ value: TData }>(
     (draft) => computeData(draft.value as TData | undefined),
