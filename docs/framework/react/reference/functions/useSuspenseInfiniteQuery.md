@@ -95,6 +95,12 @@ The same object as `useInfiniteQuery`, except that `data` is guaranteed to be de
 `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
 accordingly).
 
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`InfiniteQueryObserverBaseResult`](../interfaces/InfiniteQueryObserverBaseResult.md#properties). See the type above for what it changes.
+
 ## Remarks
 
 Multiple suspenseful query calls in the same component suspend serially, causing a request

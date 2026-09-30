@@ -303,6 +303,12 @@ export class Post {
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `injectQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns

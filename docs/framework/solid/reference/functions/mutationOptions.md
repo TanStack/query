@@ -170,6 +170,12 @@ function CreatePost() {
 The mutation options to use, identical to what you'd pass to `useMutation`, without a
 `mutationKey`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationOptions`](../interfaces/MutationOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -177,3 +183,9 @@ The mutation options to use, identical to what you'd pass to `useMutation`, with
 `Omit`\<[`MutationOptions`](../interfaces/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object, unchanged.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationOptions`](../interfaces/MutationOptions.md#properties). See the type above for what it changes.

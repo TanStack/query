@@ -30,6 +30,12 @@ promise, it is resumed via `query.fetch()` (reusing that promise as `initialProm
 
 `Partial`\<[`DehydratedState`](../interfaces/DehydratedState.md)\>
 
+<a id="dehydratedState-properties"></a>
+
+#### `dehydratedState` properties
+
+Built from [`DehydratedState`](../interfaces/DehydratedState.md#properties). See the type above for what it changes.
+
 ### options?
 
 [`HydrateOptions`](../interfaces/HydrateOptions.md)

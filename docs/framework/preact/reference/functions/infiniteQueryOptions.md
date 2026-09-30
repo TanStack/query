@@ -285,6 +285,12 @@ function Comments({ postId }: { postId: string }) {
 
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`UseInfiniteQueryOptions`](../interfaces/UseInfiniteQueryOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns

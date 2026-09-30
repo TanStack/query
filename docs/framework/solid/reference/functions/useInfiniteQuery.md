@@ -285,6 +285,12 @@ function Projects() {
 An accessor returning the [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything
 you can pass to `useInfiniteQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>

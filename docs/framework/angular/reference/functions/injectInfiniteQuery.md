@@ -437,3 +437,9 @@ Additional configuration.
 [`CreateInfiniteQueryResult`](../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
 The infinite query result.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`BaseQueryNarrowing`](../interfaces/BaseQueryNarrowing.md#properties), [`InfiniteQueryObserverBaseResult`](../interfaces/InfiniteQueryObserverBaseResult.md#properties). See the type above for what it changes.

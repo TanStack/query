@@ -327,6 +327,12 @@ function Posts() {
 An accessor returning the [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can
 pass to `useQuery`, with `initialData` set.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryOptions`](../interfaces/QueryOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 () => [`QueryClient`](../classes/QueryClient.md)

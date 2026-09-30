@@ -203,6 +203,12 @@ function Comments(props: { postId: string }) {
 
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -210,3 +216,9 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`InfiniteQueryOptions`](../interfaces/InfiniteQueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

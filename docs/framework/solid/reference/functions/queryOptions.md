@@ -186,6 +186,12 @@ function Post(props: { id: string }) {
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryOptions`](../interfaces/QueryOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -193,3 +199,9 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 [`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryOptions`](../interfaces/QueryOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

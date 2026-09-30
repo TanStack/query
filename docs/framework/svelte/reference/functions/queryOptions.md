@@ -183,6 +183,12 @@ A parameterized factory, so the same options object can be reused per `id`:
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `createQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -190,3 +196,9 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 [`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

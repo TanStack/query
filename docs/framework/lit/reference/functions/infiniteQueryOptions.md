@@ -85,6 +85,12 @@ Infinite query options to preserve and brand.
 
 The same options object with a typed `queryKey`.
 
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md#properties). See the type above for what it changes.
+
 ## Example
 
 ```ts

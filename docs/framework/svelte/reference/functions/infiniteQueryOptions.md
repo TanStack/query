@@ -204,6 +204,12 @@ A parameterized factory, so the same options object can be reused per `postId`:
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
 `createInfiniteQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -211,3 +217,9 @@ The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataIn
 [`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md#properties), [`QueryKeyWithDataTag`](../type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.

@@ -315,6 +315,12 @@ export class Comments {
 The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
 `injectInfiniteQuery`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns

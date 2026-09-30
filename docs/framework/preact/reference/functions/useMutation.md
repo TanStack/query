@@ -75,6 +75,12 @@ mutation definition. Hook-level callbacks (passed to `options`) fire for every m
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
 
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
+
 ## See
 
 [mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look

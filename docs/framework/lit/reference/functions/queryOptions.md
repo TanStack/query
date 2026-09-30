@@ -174,6 +174,12 @@ The same options object with a typed `queryKey`.
 
 Query options to preserve and brand.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -181,3 +187,9 @@ Query options to preserve and brand.
 [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\> & `object` & `object`
 
 The same options object with a typed `queryKey`.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.

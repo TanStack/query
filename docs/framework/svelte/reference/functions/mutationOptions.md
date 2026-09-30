@@ -161,6 +161,12 @@ The same options object.
 
 The options to use — everything you can pass to `createMutation`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.
+
 <a id="returns-summary"></a>
 
 ## Returns
@@ -168,3 +174,9 @@ The options to use — everything you can pass to `createMutation`.
 `Omit`\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The same options object.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.

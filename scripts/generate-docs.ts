@@ -315,7 +315,128 @@ async function findPropertiesTable(
       return table
     }
   }
+  const bases = await findBasePages(outputDir, typeLines)
+  if (bases.length) {
+    return `Built from ${bases
+      .map(
+        (base) => `[\`${base.split('/').at(-1)}\`](../${base}.md#properties)`,
+      )
+      .join(', ')}. See the type above for what it changes.`
+  }
   return undefined
+}
+
+// Splits a type expression at a top-level separator, outside `<>`, `()`, `{}`, and `[]`.
+function splitTopLevel(type: string, separator: string) {
+  const parts: Array<string> = []
+  let depth = 0
+  let start = 0
+  for (let index = 0; index < type.length; index++) {
+    const char = type[index]!
+    if ('<({['.includes(char)) {
+      depth++
+    } else if (
+      ')}]'.includes(char) ||
+      (char === '>' && type[index - 1] !== '=')
+    ) {
+      depth--
+    } else if (depth === 0 && type.startsWith(separator, index)) {
+      parts.push(type.slice(start, index))
+      start = index + separator.length
+      index += separator.length - 1
+    }
+  }
+  parts.push(type.slice(start))
+  return parts.map((part) => part.trim()).filter(Boolean)
+}
+
+async function typePage(outputDir: string, name: string) {
+  for (const from of [`interfaces/${name}`, `type-aliases/${name}`]) {
+    if ((await readPage(outputDir, from)) !== undefined) {
+      return from
+    }
+  }
+  return undefined
+}
+
+// The pages with a `## Properties` table that a type expression without one is built from: every
+// member of an intersection (skipping object literals, which only add properties), and the first type
+// argument of a utility that isn't built from one itself, like `Omit<…>`. Returns nothing unless every part is found.
+async function basePagesOfType(
+  outputDir: string,
+  type: string,
+  seen: Set<string>,
+): Promise<Array<string>> {
+  const expression = splitTopLevel(type, ' = ')[0]!
+    .replace(/^[|&]\s*/, '')
+    .replace(/^\(\) => /, '')
+    .trim()
+  const members = splitTopLevel(expression, ' & ').filter(
+    (member) => member !== 'object' && !member.startsWith('{'),
+  )
+  if (members.length > 1) {
+    const pages: Array<string> = []
+    for (const member of members) {
+      const memberPages = await basePagesOfType(outputDir, member, seen)
+      if (!memberPages.length) {
+        return []
+      }
+      pages.push(...memberPages)
+    }
+    return [...new Set(pages)]
+  }
+  const reference = members[0]?.match(/^(\w+)(?:<([\s\S]*)>)?$/)
+  if (!reference) {
+    return []
+  }
+  const [, name, typeArguments] = reference
+  const [firstTypeArgument] = typeArguments
+    ? splitTopLevel(typeArguments, ',')
+    : []
+  const page = await typePage(outputDir, name!)
+  const pages =
+    page && !(await isWrapperAlias(outputDir, page))
+      ? await basePages(outputDir, page, seen)
+      : []
+  if (pages.length) {
+    return pages
+  }
+  return firstTypeArgument
+    ? basePagesOfType(outputDir, firstTypeArgument, seen)
+    : []
+}
+
+async function basePages(
+  outputDir: string,
+  from: string,
+  seen: Set<string>,
+): Promise<Array<string>> {
+  if (seen.has(from)) {
+    return []
+  }
+  seen.add(from)
+  const page = await propertiesPage(outputDir, from)
+  if (page) {
+    return [page]
+  }
+  const code = (await readPage(outputDir, from))?.match(
+    /```ts\ntype \w+(?:<[^\n=]*>)? = ([\s\S]*?);\n```/,
+  )?.[1]
+  return code ? basePagesOfType(outputDir, code, seen) : []
+}
+
+// The base pages of the first type line that has any.
+async function findBasePages(outputDir: string, typeLines: Array<string>) {
+  for (const typeLine of typeLines) {
+    const type = typeLine
+      .replace(/\[`?(\w+)`?\]\([^)]*\)/g, '$1')
+      .replace(/[\\`]/g, '')
+    const pages = await basePagesOfType(outputDir, type, new Set())
+    if (pages.length) {
+      return pages
+    }
+  }
+  return []
 }
 
 // The type line of each parameter and of the return value in one call signature.

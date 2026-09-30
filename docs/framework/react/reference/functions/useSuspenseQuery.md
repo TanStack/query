@@ -87,6 +87,12 @@ be used.
 The same object as `useQuery`, except that `data` is guaranteed to be defined, `isPlaceholderData`
 is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
 
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryObserverBaseResult`](../interfaces/QueryObserverBaseResult.md#properties). See the type above for what it changes.
+
 ## Remarks
 
 Multiple `useSuspenseQuery` calls in the same component suspend serially, causing a request
