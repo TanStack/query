@@ -638,6 +638,41 @@ describe('createMutationController', () => {
     expect(callbackEvents.slice(2)).toEqual(['error:v2', 'settled:v2'])
   })
 
+  it('should not process detached updates when disconnected while in-flight', async () => {
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const { mutation } = host
+
+    container.append(host)
+    await host.updateComplete
+
+    mutation.mutate(1)
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should become a deterministic missing-client state when the provider is missing', async () => {
     const key = queryKey()
 
