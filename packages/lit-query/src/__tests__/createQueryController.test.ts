@@ -507,113 +507,104 @@ describe('createQueryController', () => {
     expect(host.updatesRequested).toBe(updatesAfterSuccess + 1)
   })
 
-  it('should follow the stale-vs-fresh policy for refetchOnMount', async () => {
-    let staleCalls = 0
-    const staleKey = queryKey()
-
-    class StaleHost extends LitElement {
-      readonly query = createQueryController(
-        this,
-        {
-          queryKey: staleKey,
-          staleTime: 0,
-          refetchOnMount: true,
-          queryFn: () => {
-            staleCalls += 1
-            return sleep(10).then(() => `stale-${staleCalls}`)
-          },
-        },
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), StaleHost)
-
-    const staleHostA = new StaleHost()
-    const staleQueryA = staleHostA.query
-
-    container.append(staleHostA)
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(staleQueryA().isSuccess).toBe(true)
-    expect(staleCalls).toBe(1)
-
-    staleHostA.remove()
-    staleQueryA.destroy()
-
-    const staleHostB = new StaleHost()
-    const staleQueryB = staleHostB.query
-
-    container.append(staleHostB)
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(staleCalls).toBe(2)
-    expect(staleQueryB().isSuccess).toBe(true)
-
-    staleHostB.remove()
-    staleQueryB.destroy()
-
-    let freshCalls = 0
-    const freshKey = queryKey()
-
-    class FreshHost extends LitElement {
-      readonly query = createQueryController(
-        this,
-        {
-          queryKey: freshKey,
-          staleTime: Number.POSITIVE_INFINITY,
-          refetchOnMount: true,
-          queryFn: () => {
-            freshCalls += 1
-            return sleep(10).then(() => `fresh-${freshCalls}`)
-          },
-        },
-        queryClient,
-      )
-    }
-    customElements.define(generateElementName(), FreshHost)
-
-    const freshHostA = new FreshHost()
-    const freshQueryA = freshHostA.query
-
-    container.append(freshHostA)
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(freshQueryA().isSuccess).toBe(true)
-    expect(freshCalls).toBe(1)
-
-    freshHostA.remove()
-    freshQueryA.destroy()
-
-    const freshHostB = new FreshHost()
-    const freshQueryB = freshHostB.query
-
-    container.append(freshHostB)
-
-    expect(freshQueryB().isSuccess).toBe(true)
-    await vi.advanceTimersByTimeAsync(10)
-    expect(freshCalls).toBe(1)
-    expect(freshQueryB().data).toBe('fresh-1')
-  })
-
-  it('should transform data with select and surface a throwing select as an error', async () => {
+  it('should refetch on mount when the data is stale', async () => {
     const key = queryKey()
-
-    let shouldThrow = false
+    let callCount = 0
 
     class Host extends LitElement {
       readonly query = createQueryController(
         this,
-        () => ({
+        {
+          queryKey: key,
+          staleTime: 0,
+          refetchOnMount: true,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => `value-${callCount}`)
+          },
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+
+    const firstHost = new Host()
+    const firstQuery = firstHost.query
+
+    container.append(firstHost)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(firstQuery().isSuccess).toBe(true)
+    expect(callCount).toBe(1)
+
+    firstHost.remove()
+    firstQuery.destroy()
+
+    const secondHost = new Host()
+    const secondQuery = secondHost.query
+
+    container.append(secondHost)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(callCount).toBe(2)
+    expect(secondQuery().isSuccess).toBe(true)
+  })
+
+  it('should not refetch on mount when the data is fresh', async () => {
+    const key = queryKey()
+    let callCount = 0
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          staleTime: Number.POSITIVE_INFINITY,
+          refetchOnMount: true,
+          queryFn: () => {
+            callCount += 1
+            return sleep(10).then(() => `value-${callCount}`)
+          },
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+
+    const firstHost = new Host()
+    const firstQuery = firstHost.query
+
+    container.append(firstHost)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(firstQuery().isSuccess).toBe(true)
+    expect(callCount).toBe(1)
+
+    firstHost.remove()
+    firstQuery.destroy()
+
+    const secondHost = new Host()
+    const secondQuery = secondHost.query
+
+    container.append(secondHost)
+
+    expect(secondQuery().isSuccess).toBe(true)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callCount).toBe(1)
+    expect(secondQuery().data).toBe('value-1')
+  })
+
+  it('should transform data with select', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ value: 2 })),
-          select: (payload: { value: number }) => {
-            if (shouldThrow) {
-              throw new Error('select-failed')
-            }
-
-            return payload.value * 10
-          },
-        }),
+          select: (payload: { value: number }) => payload.value * 10,
+        },
         queryClient,
       )
     }
@@ -626,14 +617,33 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe(20)
+  })
 
-    shouldThrow = true
-    const refetchPromise = query.refetch()
+  it('should surface a throwing select as an error', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ value: 2 })),
+          select: (_payload: { value: number }): number => {
+            throw new Error('select-failed')
+          },
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+
+    container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
-    await expect(refetchPromise).resolves.toMatchObject({ isError: true })
     expect(query().isError).toBe(true)
-    expect(query().error).toBeInstanceOf(Error)
-    expect((query().error as Error).message).toContain('select-failed')
+    expect(query().error).toEqual(new Error('select-failed'))
   })
 
   it('should preserve prior data during key transitions with keepPreviousData', async () => {
