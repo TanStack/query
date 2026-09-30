@@ -685,6 +685,34 @@ describe('createQueriesController', () => {
     expect(host.queries()).toEqual(['pending', 'pending'])
   })
 
+  it('should re-surface permanent placeholder combine errors after initialization', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly queries = createQueriesController(this, {
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => 'alpha'),
+            retry: false,
+          },
+        ],
+        combine: () => {
+          throw new Error('invalid combine')
+        },
+      })
+
+      readonly firstRead = this.queries()
+    }
+    customElements.define(generateElementName(), Host)
+
+    expect(() => new Host()).not.toThrow()
+
+    const host = new Host()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(() => host.queries()).toThrow('invalid combine')
+  })
+
   it('should materialize defined initialData in placeholder combine before a client is available', () => {
     const key = queryKey()
 
