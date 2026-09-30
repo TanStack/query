@@ -215,6 +215,9 @@ catalogs:
     eslint-plugin-react-hooks:
       specifier: ^7.1.1
       version: 7.1.1
+    eslint-plugin-svelte:
+      specifier: ^3.23.0
+      version: 3.23.0
     eslint-plugin-vue:
       specifier: ^10.11.1
       version: 10.11.1
@@ -3282,7 +3285,7 @@ importers:
         specifier: ^8.70.1
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-plugin-svelte:
-        specifier: ^3.23.0
+        specifier: 'catalog:'
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
         specifier: 'catalog:'
@@ -3319,7 +3322,7 @@ importers:
         specifier: ^8.70.1
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-plugin-svelte:
-        specifier: ^3.23.0
+        specifier: 'catalog:'
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
         specifier: 'catalog:'
@@ -3356,7 +3359,7 @@ importers:
         specifier: ^8.70.1
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-plugin-svelte:
-        specifier: ^3.23.0
+        specifier: 'catalog:'
         version: 3.23.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(svelte@5.57.1(@typescript-eslint/types@8.58.1))
       svelte:
         specifier: 'catalog:'
