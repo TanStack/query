@@ -258,6 +258,52 @@ describe('useMutationState', () => {
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
+  it('should return the states of all mutations when options are omitted', async () => {
+    class Producer extends LitElement {
+      readonly mutation1 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data1'),
+      })
+
+      readonly mutation2 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data2'),
+      })
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly mutationStates = useMutationState(this)
+
+      override render() {
+        const statuses = this.mutationStates()
+          .map((state) => state.status)
+          .join(', ')
+        return html`<p>statuses: ${statuses || 'none'}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = queryClient
+    const producer = new Producer()
+    const host = new Host()
+    provider.append(producer, host)
+
+    container.append(provider)
+    await provider.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('statuses: none')
+
+    producer.mutation1.mutate()
+    producer.mutation2.mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('statuses: pending, pending')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('statuses: success, success')
+  })
+
   it('should select and filter by mutation key/status in useMutationState', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
