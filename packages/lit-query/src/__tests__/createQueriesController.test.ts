@@ -50,6 +50,13 @@ describe('createQueriesController', () => {
             data: result.data,
           })),
       })
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -76,6 +83,9 @@ describe('createQueriesController', () => {
       'alpha',
       'beta',
     ])
+    expect(consumer.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:beta',
+    )
 
     consumer.queries.destroy()
     provider.remove()
@@ -112,6 +122,13 @@ describe('createQueriesController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -124,6 +141,9 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
+    expect(consumer.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:beta',
+    )
     expect(
       queryClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
         ?.state.data,
@@ -484,6 +504,16 @@ describe('createQueriesController', () => {
         }),
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map(
+            (result) =>
+              `${result.status}:${result.data ?? result.error ?? 'none'}`,
+          )
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -494,6 +524,9 @@ describe('createQueriesController', () => {
     expect(queries()).toHaveLength(2)
     expect(queries()[0]).toMatchObject({ status: 'success', data: 'alpha' })
     expect(queries()[1]).toMatchObject({ status: 'error', error: 'm13-fail' })
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, error:m13-fail',
+    )
 
     includeThird = true
     host.requestUpdate()
@@ -503,6 +536,9 @@ describe('createQueriesController', () => {
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('error')
     expect(queries()[2]).toMatchObject({ status: 'success', data: 'gamma' })
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, error:m13-fail, success:gamma',
+    )
 
     includeFailing = false
     host.requestUpdate()
@@ -512,6 +548,9 @@ describe('createQueriesController', () => {
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('success')
     expect(queries().map((item) => item.data)).toEqual(['alpha', 'gamma'])
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:gamma',
+    )
   })
 
   it('should preserve the documented result order mapping when queries are reordered', async () => {
@@ -530,6 +569,11 @@ describe('createQueriesController', () => {
         }),
         queryClient,
       )
+
+      override render() {
+        const data = this.queries().map((result) => result ?? 'none')
+        return html`data: ${data.join(', ')}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -538,12 +582,14 @@ describe('createQueriesController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['first', 'second'])
+    expect(host.shadowRoot).toHaveTextContent('data: first, second')
 
     order = ['second', 'first']
     host.requestUpdate()
     await host.updateComplete
 
     expect(queries()).toEqual(['second', 'first'])
+    expect(host.shadowRoot).toHaveTextContent('data: second, first')
   })
 
   it('should return stable per-index results for duplicate query keys', async () => {
@@ -580,6 +626,13 @@ describe('createQueriesController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -592,6 +645,9 @@ describe('createQueriesController', () => {
     expect(queries()[1]?.status).toBe('success')
     expect(queries()[0]?.data).toBe('shared-value')
     expect(queries()[1]?.data).toBe('shared-value')
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:shared-value, success:shared-value',
+    )
     expect(callCount).toBeGreaterThan(0)
   })
 
