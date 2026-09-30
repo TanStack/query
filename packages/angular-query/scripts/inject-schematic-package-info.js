@@ -11,26 +11,27 @@ const devtoolsPackage = readPackageJson(
   path.resolve(packageDir, '../angular-query-devtools/package.json'),
 )
 
-const outputPath = path.join(packageDir, 'dist/schematics/ng-add/index.js')
-let output = fs.readFileSync(outputPath, 'utf8')
-
 const replacements = new Map([
   ['__ANGULAR_QUERY_PACKAGE_NAME__', queryPackage.name],
+  ['__ANGULAR_QUERY_PACKAGE_VERSION__', queryPackage.version],
   ['__ANGULAR_QUERY_DEVTOOLS_PACKAGE_NAME__', devtoolsPackage.name],
   ['__ANGULAR_QUERY_DEVTOOLS_PACKAGE_VERSION__', devtoolsPackage.version],
 ])
 
-for (const [placeholder, value] of replacements) {
-  if (output.includes(placeholder)) {
+for (const schematic of ['ng-add', 'migrate-from-experimental']) {
+  const outputPath = path.join(
+    packageDir,
+    `dist/schematics/${schematic}/index.js`,
+  )
+  let output = fs.readFileSync(outputPath, 'utf8')
+  for (const [placeholder, value] of replacements) {
     output = output.replaceAll(placeholder, value)
-  } else if (!output.includes(value)) {
-    throw new Error(
-      `Could not find ${placeholder} or its expected value in ${outputPath}.`,
-    )
   }
+  if (output.includes('__ANGULAR_QUERY_')) {
+    throw new Error(`Unresolved package metadata in ${outputPath}.`)
+  }
+  fs.writeFileSync(outputPath, output)
 }
-
-fs.writeFileSync(outputPath, output)
 
 /**
  * @param {string} packageJsonPath
