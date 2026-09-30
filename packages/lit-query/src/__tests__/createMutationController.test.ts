@@ -37,6 +37,10 @@ describe('createMutationController', () => {
         mutationKey: this.mutationKey,
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
+
+      override render() {
+        return html`status: ${this.mutation().status}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -57,11 +61,15 @@ describe('createMutationController', () => {
 
     container.append(provider)
     await provider.updateComplete
+    await consumer.updateComplete
+
+    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
+    expect(consumer.shadowRoot).toHaveTextContent('status: success')
 
     consumer.mutation.destroy()
     provider.remove()
@@ -186,21 +194,30 @@ describe('createMutationController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const { status, data } = this.mutation()
+        return html`status: ${status}, data: ${data ?? 'none'}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
     const mutation = host.mutation
+    await host.updateComplete
 
     expect(mutation().isIdle).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
 
     const successPromise = mutation.mutateAsync(10)
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isPending).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
     await vi.advanceTimersByTimeAsync(10)
     await expect(successPromise).resolves.toBe(11)
     expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(11)
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: 11')
   })
 
   it('should transition from pending to error when the mutation fails', async () => {
@@ -218,6 +235,11 @@ describe('createMutationController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const { status, error } = this.mutation()
+        return html`status: ${status}, error: ${error?.message ?? 'none'}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -229,10 +251,14 @@ describe('createMutationController', () => {
       .catch((error: unknown) => error)
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isPending).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, error: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(await errorPromise).toEqual(new Error('negative-not-allowed'))
     expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('negative-not-allowed'))
+    expect(host.shadowRoot).toHaveTextContent(
+      'status: error, error: negative-not-allowed',
+    )
   })
 
   it('should reset mutation state back to the idle baseline', async () => {
@@ -245,6 +271,11 @@ describe('createMutationController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const { status, error } = this.mutation()
+        return html`status: ${status}, error: ${error?.message ?? 'none'}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -257,13 +288,18 @@ describe('createMutationController', () => {
     ])
     expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('reset-target'))
+    expect(host.shadowRoot).toHaveTextContent(
+      'status: error, error: reset-target',
+    )
 
     mutation.reset()
+    await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isIdle).toBe(true)
     expect(mutation().isPaused).toBe(false)
     expect(mutation().isError).toBe(false)
     expect(mutation().error).toBeNull()
     expect(mutation().data).toBeUndefined()
+    expect(host.shadowRoot).toHaveTextContent('status: idle, error: none')
   })
 
   it('should call mutate callbacks when createMutationController has no callbacks', async () => {
