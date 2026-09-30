@@ -179,6 +179,9 @@ catalogs:
     '@angular/platform-browser':
       specifier: ^20.0.0
       version: 20.3.18
+    '@eslint-react/eslint-plugin':
+      specifier: ^5.21.0
+      version: 5.21.0
     '@preact/preset-vite':
       specifier: ^2.10.6
       version: 2.10.6
@@ -206,6 +209,9 @@ catalogs:
     '@vitejs/plugin-react':
       specifier: ^6.1.1
       version: 6.1.1
+    eslint-plugin-react-hooks:
+      specifier: ^7.1.1
+      version: 7.1.1
     preact:
       specifier: ^10.29.8
       version: 10.29.8
@@ -3036,7 +3042,7 @@ importers:
         version: link:../query-core
     devDependencies:
       '@eslint-react/eslint-plugin':
-        specifier: ^5.21.0
+        specifier: 'catalog:'
         version: 5.21.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
@@ -3060,7 +3066,7 @@ importers:
         specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       eslint-plugin-react-hooks:
-        specifier: ^7.1.1
+        specifier: 'catalog:'
         version: 7.1.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       react:
         specifier: 'catalog:'
@@ -3082,7 +3088,7 @@ importers:
         version: link:../query-devtools
     devDependencies:
       '@eslint-react/eslint-plugin':
-        specifier: ^5.21.0
+        specifier: 'catalog:'
         version: 5.21.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: workspace:*
@@ -3097,7 +3103,7 @@ importers:
         specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       eslint-plugin-react-hooks:
-        specifier: ^7.1.1
+        specifier: 'catalog:'
         version: 7.1.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       react:
         specifier: 'catalog:'
@@ -3109,7 +3115,7 @@ importers:
   packages/react-query-next-experimental:
     devDependencies:
       '@eslint-react/eslint-plugin':
-        specifier: ^5.21.0
+        specifier: 'catalog:'
         version: 5.21.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: workspace:*
@@ -3121,7 +3127,7 @@ importers:
         specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       eslint-plugin-react-hooks:
-        specifier: ^7.1.1
+        specifier: 'catalog:'
         version: 7.1.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       next:
         specifier: ^16.0.1
@@ -3140,7 +3146,7 @@ importers:
         version: link:../query-persist-client-core
     devDependencies:
       '@eslint-react/eslint-plugin':
-        specifier: ^5.21.0
+        specifier: 'catalog:'
         version: 5.21.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@tanstack/query-test-utils':
         specifier: workspace:*
@@ -3158,7 +3164,7 @@ importers:
         specifier: 'catalog:'
         version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.19.15)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
       eslint-plugin-react-hooks:
-        specifier: ^7.1.1
+        specifier: 'catalog:'
         version: 7.1.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       react:
         specifier: 'catalog:'
