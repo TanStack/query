@@ -598,12 +598,10 @@ export function useBaseQueryLayer<
    * first-paint exception in `computeData`.
    *
    * Default ('server') hydration semantics: the serialized value owns the
-   * node for the whole hydration window — server truth holds the document
-   * while the stream is open — and any cache write that lands mid-stream
-   * arms the engine's hydration-end takeover (a latched node that
-   * recomputes has diverged), committing when hydration completes.
-   * Requires solid-js > 2.0.0-rc.3 (before the takeover fix, a mid-stream
-   * divergence was lost rather than deferred).
+   * node while it hydrates. Outside every still-pending streamed boundary,
+   * a cache write commits immediately. Under a pending boundary it waits
+   * for that boundary to resume, which hydrates against the server
+   * snapshot.
    */
   const dataStore = createProjection<{ value: TData }>(
     (draft) => computeData(draft.value as TData | undefined),
