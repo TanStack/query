@@ -41,6 +41,10 @@ describe('useIsFetching', () => {
       })
 
       readonly isFetching = useIsFetching(this, { queryKey: this.queryKey })
+
+      override render() {
+        return html`<p>fetching: ${this.isFetching()}</p>`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -59,9 +63,12 @@ describe('useIsFetching', () => {
     await consumer.updateComplete
 
     expect(consumer.isFetching()).toBe(1)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(consumer.isFetching()).toBe(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
 
     consumer.query.destroy()
     consumer.isFetching.destroy()
@@ -95,6 +102,10 @@ describe('useIsFetching', () => {
         { queryKey: this.queryKey },
         queryClient,
       )
+
+      override render() {
+        return html`<p>fetching: ${this.isFetching()}</p>`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -105,8 +116,11 @@ describe('useIsFetching', () => {
     await consumer.updateComplete
 
     expect(consumer.isFetching()).toBe(1)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
     expect(
       queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
         .data,
@@ -270,6 +284,12 @@ describe('useIsFetching', () => {
         { queryKey: key1 },
         queryClient,
       )
+
+      override render() {
+        const all = this.isFetchingAll()
+        const filtered = this.isFetchingFiltered()
+        return html`<p>all: ${all}, filtered: ${filtered}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -279,12 +299,15 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingAll()).toBe(2)
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('all: 2, filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isFetchingAll()).toBe(1)
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 1, filtered: 0')
     await vi.advanceTimersByTimeAsync(10)
     expect(isFetchingAll()).toBe(0)
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 0, filtered: 0')
   })
 
   it('should apply updated filters on host updates', async () => {
@@ -319,6 +342,10 @@ describe('useIsFetching', () => {
         () => activeFilter,
         queryClient,
       )
+
+      override render() {
+        return html`<p>filtered: ${this.isFetchingFiltered()}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -327,22 +354,27 @@ describe('useIsFetching', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
 
     activeFilter = { queryKey: unmatchedKey }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
 
     activeFilter = { queryKey: key2 }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
   })
 
   it('should fail after the handshake and recover under a provider', async () => {

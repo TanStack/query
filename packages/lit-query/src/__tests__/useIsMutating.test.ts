@@ -271,6 +271,12 @@ describe('useIsMutating', () => {
         { mutationKey: mutationKey1 },
         queryClient,
       )
+
+      override render() {
+        const all = this.isMutatingAll()
+        const filtered = this.isMutatingFiltered()
+        return html`<p>all: ${all}, filtered: ${filtered}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -282,12 +288,15 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutatingAll()).toBe(2)
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('all: 2, filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutatingAll()).toBe(1)
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 1, filtered: 0')
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutatingAll()).toBe(0)
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 0, filtered: 0')
   })
 
   it('should apply updated filters on host updates', async () => {
@@ -322,6 +331,10 @@ describe('useIsMutating', () => {
         () => activeFilter,
         queryClient,
       )
+
+      override render() {
+        return html`<p>filtered: ${this.isMutatingFiltered()}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -332,22 +345,27 @@ describe('useIsMutating', () => {
     mutationB.mutate()
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
 
     activeFilter = { mutationKey: unmatchedMutationKey }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
   })
 
   it('should fail after the handshake and recover under a provider', async () => {
