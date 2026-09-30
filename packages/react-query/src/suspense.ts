@@ -69,7 +69,10 @@ export const fetchOptimistic = <
   >,
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) =>
   observer.fetchOptimistic(defaultedOptions).catch(() => {
-    clearQueryErrorReset(errorResetBoundary, observer.getCurrentQuery())
+    if (query) {
+      clearQueryErrorReset(errorResetBoundary, query)
+    }
   })

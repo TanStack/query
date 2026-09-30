@@ -117,7 +117,16 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    throw fetchOptimistic(
+      defaultedOptions,
+      observer,
+      errorResetBoundary,
+      client
+        .getQueryCache()
+        .get<TQueryFnData, TError, TQueryData, TQueryKey>(
+          defaultedOptions.queryHash,
+        ),
+    )
   }
 
   // Handle error boundary

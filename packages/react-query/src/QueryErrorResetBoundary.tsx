@@ -21,6 +21,7 @@ type QueryErrorResetState = {
   isReset: boolean
   queryResetIds: WeakMap<object, number>
   queryReset: WeakSet<object>
+  queryErrorThrown: WeakSet<object>
 }
 
 const queryErrorResetStates = new WeakMap<
@@ -35,6 +36,7 @@ function createValue(): QueryErrorResetBoundaryValue {
     isReset: false,
     queryResetIds: new WeakMap(),
     queryReset: new WeakSet(),
+    queryErrorThrown: new WeakSet(),
   }
 
   const value: QueryErrorResetBoundaryValue = {
@@ -44,6 +46,7 @@ function createValue(): QueryErrorResetBoundaryValue {
       state.isReset = false
       state.queryResetIds = new WeakMap()
       state.queryReset = new WeakSet()
+      state.queryErrorThrown = new WeakSet()
     },
     reset: () => {
       state.resetId += 1
@@ -86,6 +89,20 @@ export const isQueryErrorReset = (
   )
 }
 
+export const markQueryErrorThrown = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object,
+) => {
+  queryErrorResetStates.get(errorResetBoundary)?.queryErrorThrown.add(query)
+}
+
+export const isQueryErrorThrown = (
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: object,
+) =>
+  queryErrorResetStates.get(errorResetBoundary)?.queryErrorThrown.has(query) ??
+  false
+
 export const clearQueryErrorReset = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: object,
@@ -95,6 +112,7 @@ export const clearQueryErrorReset = (
     state.isReset = false
     state.queryResetIds.set(query, state.resetId)
     state.queryReset.delete(query)
+    state.queryErrorThrown.delete(query)
   }
 }
 

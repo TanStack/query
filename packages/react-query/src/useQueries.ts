@@ -472,6 +472,7 @@ export function useQueries<
             opts,
             queryObserver,
             errorResetBoundary,
+            client.getQueryCache().get(opts.queryHash),
           )
         }
         return []

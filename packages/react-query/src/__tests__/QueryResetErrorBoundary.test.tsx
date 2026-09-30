@@ -649,6 +649,70 @@ describe('QueryErrorResetBoundary', () => {
       consoleErrorMock.mockRestore()
     })
 
+    it('should render the error boundary when a disabled errored query remounts', async () => {
+      const consoleErrorMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Error')),
+          retry: false,
+          enabled: false,
+          throwOnError: true,
+        })
+
+        return <div>{data ?? 'content'}</div>
+      }
+
+      function App() {
+        const [showPage, setShowPage] = React.useState(true)
+
+        return (
+          <>
+            <button onClick={() => setShowPage((value) => !value)}>
+              toggle
+            </button>
+            {showPage ? (
+              <ErrorBoundary fallback={<div>error boundary</div>}>
+                <Page />
+              </ErrorBoundary>
+            ) : (
+              <div>hidden</div>
+            )}
+          </>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          <App />
+        </QueryErrorResetBoundary>,
+      )
+
+      expect(rendered.getByText('content')).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByText('toggle'))
+      expect(rendered.getByText('hidden')).toBeInTheDocument()
+
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Error')),
+          retry: false,
+        })
+        .catch(() => undefined)
+
+      fireEvent.click(rendered.getByText('toggle'))
+
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+      consoleErrorMock.mockRestore()
+    })
+
     it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')

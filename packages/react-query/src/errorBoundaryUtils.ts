@@ -5,6 +5,8 @@ import {
   clearQueryErrorReset,
   getQueryErrorResetEpoch,
   isQueryErrorReset,
+  isQueryErrorThrown,
+  markQueryErrorThrown,
   registerQueryErrorReset,
   resetQueryError,
 } from './QueryErrorResetBoundary'
@@ -76,7 +78,9 @@ export const useClearResetErrorBoundary = (
           : observer.getQueries()
 
       currentQueries.forEach((query) => {
-        resetQueryError(errorResetBoundary, query, resetEpoch)
+        if (isQueryErrorThrown(errorResetBoundary, query)) {
+          resetQueryError(errorResetBoundary, query, resetEpoch)
+        }
       })
     }
   }, [errorResetBoundary, observer, resetEpoch])
@@ -101,12 +105,17 @@ export const getHasError = <
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
   suspense: boolean | undefined
 }) => {
-  return (
+  if (
     result.isError &&
     !isQueryErrorReset(errorResetBoundary, query) &&
     !result.isFetching &&
     query &&
     ((suspense && result.data === undefined) ||
       shouldThrowError(throwOnError, [result.error, query]))
-  )
+  ) {
+    markQueryErrorThrown(errorResetBoundary, query)
+    return true
+  }
+
+  return false
 }
