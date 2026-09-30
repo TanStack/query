@@ -385,6 +385,11 @@ describe('useMutationState', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const statuses = this.mutationStatuses().join(', ') || 'none'
+        return html`<p>statuses: ${statuses}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -401,12 +406,14 @@ describe('useMutationState', () => {
       vi.advanceTimersByTimeAsync(10),
     ])
     expect(mutationStatuses()).toEqual(['success'])
+    expect(host.shadowRoot).toHaveTextContent('statuses: success')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
 
     expect(mutationStatuses()).toEqual(['error'])
+    expect(host.shadowRoot).toHaveTextContent('statuses: error')
   })
 
   it('should refresh useMutationState when the select closure changes on host update', async () => {
@@ -433,6 +440,11 @@ describe('useMutationState', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const labels = this.mutationLabels().join(', ') || 'none'
+        return html`<p>labels: ${labels}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -443,12 +455,14 @@ describe('useMutationState', () => {
     await vi.advanceTimersByTimeAsync(10)
     await expect(promise).resolves.toBe('ok')
     expect(mutationLabels()).toEqual(['before'])
+    expect(host.shadowRoot).toHaveTextContent('labels: before')
 
     label = 'after'
     host.requestUpdate()
     await host.updateComplete
 
     expect(mutationLabels()).toEqual(['after'])
+    expect(host.shadowRoot).toHaveTextContent('labels: after')
 
     mutation.destroy()
     mutationLabels.destroy()
