@@ -709,7 +709,7 @@ describe('createQueriesController', () => {
     queries.destroy()
   })
 
-  it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', () => {
+  it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitQueriesHost extends LitElement {
@@ -736,10 +736,15 @@ describe('createQueriesController', () => {
     const host = new DeferredExplicitQueriesHost()
     expect(host.queries()).toEqual(['pending', 'pending'])
 
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.queries()).toEqual(['success', 'success'])
+
     host.queries.destroy()
   })
 
-  it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', () => {
+  it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitCombineQueriesHost extends LitElement {
@@ -771,6 +776,11 @@ describe('createQueriesController', () => {
 
     const host = new DeferredExplicitCombineQueriesHost()
     expect(host.queries()).toEqual(['alpha:pending'])
+
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.queries()).toEqual(['alpha:success'])
 
     host.queries.destroy()
   })
@@ -849,6 +859,11 @@ describe('createQueriesController', () => {
     )
     const queries = host.queries
 
+    expect(queries()).toEqual([
+      { status: 'success', data: 'alpha' },
+      { status: 'success', data: 'beta' },
+    ])
+    await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
