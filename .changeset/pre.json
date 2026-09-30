@@ -46,8 +46,10 @@
     "solid-hydration-data-consumption",
     "solid-query-flight-metadata",
     "solid-query-native-rewrite",
+    "solid-query-public-hydration-api",
     "solid-rc-6-floor",
     "solid-rc-upgrade",
+    "solid-rc9",
     "solid-removed-query-not-rebuilt",
     "sour-balloons-nail",
     "whole-coins-count"
