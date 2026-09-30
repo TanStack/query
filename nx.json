@@ -12,7 +12,8 @@
       "{workspaceRoot}/scripts/*.js",
       "{workspaceRoot}/tsconfig.json",
       "{workspaceRoot}/eslint.config.js",
-      "{workspaceRoot}/pnpm-workspace.yaml"
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/oxlint.config.json"
     ],
     "default": [
       "sharedGlobals",
@@ -83,6 +84,10 @@
       "cache": true,
       "dependsOn": ["build"],
       "inputs": ["production"]
+    },
+    "test:oxlint": {
+      "cache": true,
+      "inputs": ["{workspaceRoot}/**/*"]
     }
   }
 }

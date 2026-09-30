@@ -4,6 +4,8 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import oxlint from 'eslint-plugin-oxlint'
+import { fileURLToPath } from 'node:url'
 
 export default [
   ...tanstackConfig,
@@ -110,4 +112,14 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
+  // Only rules explicitly delegated at error level are disabled here.
+  // Precise options and type-aware policies remain enforced by ESLint.
+  ...oxlint
+    .buildFromOxlintConfigFile(
+      fileURLToPath(new URL('./oxlint.config.json', import.meta.url)),
+    )
+    .map((config) => ({
+      ...config,
+      basePath: import.meta.dirname,
+    })),
 ]
