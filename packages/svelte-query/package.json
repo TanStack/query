@@ -62,7 +62,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/svelte": "catalog:",
     "@typescript-eslint/parser": "catalog:",
-    "eslint-plugin-svelte": "^3.23.0",
+    "eslint-plugin-svelte": "catalog:",
     "svelte": "catalog:",
     "svelte-check": "catalog:",
     "typescript": "catalog:"
