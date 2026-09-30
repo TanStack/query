@@ -258,6 +258,52 @@ describe('useMutationState', () => {
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
+  it('should not process mutation cache updates while disconnected', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly mutationStatuses = useMutationState<string>(
+        this,
+        {
+          select: (item) => item.state.status,
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const producer = new Producer()
+    const host = new Host()
+    container.append(producer, host)
+    const { mutation } = producer
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    mutation.mutate(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should return the states of all mutations when options are omitted', async () => {
     class Producer extends LitElement {
       readonly mutation1 = createMutationController(this, {
