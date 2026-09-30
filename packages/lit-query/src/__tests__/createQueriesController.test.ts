@@ -709,6 +709,59 @@ describe('createQueriesController', () => {
     queries.destroy()
   })
 
+  it('should call initialData and initialDataUpdatedAt functions in placeholder combine before a client is available', () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly queries = createQueriesController(this, {
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => 'fetched'),
+            initialData: () => 'seed',
+            initialDataUpdatedAt: () => 1000,
+          },
+        ] as const,
+        combine: (result) => ({
+          data: result[0].data,
+          dataUpdatedAt: result[0].dataUpdatedAt,
+        }),
+      })
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const queries = host.queries
+
+    expect(queries()).toEqual({ data: 'seed', dataUpdatedAt: 1000 })
+
+    queries.destroy()
+  })
+
+  it('should apply select to initialData in placeholder combine before a client is available', () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly queries = createQueriesController(this, {
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => 'fetched'),
+            initialData: 'seed',
+            select: (data: string) => data.toUpperCase(),
+          },
+        ] as const,
+        combine: (result) => result[0].data,
+      })
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const queries = host.queries
+
+    expect(queries()).toBe('SEED')
+
+    queries.destroy()
+  })
+
   it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', async () => {
     const key = queryKey()
 
