@@ -55,6 +55,9 @@ describe('createInfiniteQueryController', () => {
     await expect(consumer.infinite.fetchNextPage()).rejects.toThrow(
       /No QueryClient available/,
     )
+    await expect(consumer.infinite.fetchPreviousPage()).rejects.toThrow(
+      /No QueryClient available/,
+    )
 
     const provider = document.createElement(
       providerTagName,
@@ -419,6 +422,9 @@ describe('createInfiniteQueryController', () => {
       /No QueryClient available/,
     )
     await expect(consumer.infinite.fetchNextPage()).rejects.toThrow(
+      /No QueryClient available/,
+    )
+    await expect(consumer.infinite.fetchPreviousPage()).rejects.toThrow(
       /No QueryClient available/,
     )
     await expect(placeholderResult.refetch()).rejects.toThrow(
