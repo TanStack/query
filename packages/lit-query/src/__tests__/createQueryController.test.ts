@@ -251,7 +251,7 @@ describe('createQueryController', () => {
           queryKey: key,
           initialData: 'initial-data',
           staleTime: Infinity,
-          queryFn: () => Promise.resolve('unused'),
+          queryFn: () => sleep(10).then(() => 'unused'),
         },
         queryClient,
       )
@@ -1478,7 +1478,7 @@ describe('createQueryController', () => {
     query.destroy()
   })
 
-  it('should defer explicit-client query accessors until host fields are initialized', () => {
+  it('should defer explicit-client query accessors until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitQueryHost extends LitElement {
@@ -1486,7 +1486,7 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, this.id],
-          queryFn: () => Promise.resolve(this.id),
+          queryFn: () => sleep(10).then(() => this.id),
           retry: false,
         }),
         queryClient,
@@ -1501,6 +1501,17 @@ describe('createQueryController', () => {
 
     const host = new DeferredExplicitQueryHost()
     expect(host.query().status).toBe('pending')
+
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.query().data).toBe('alpha')
+    expect(
+      queryClient
+        .getQueryCache()
+        .findAll({ queryKey: key })
+        .map((query) => query.queryKey),
+    ).toEqual([[...key, 'alpha']])
 
     host.query.destroy()
   })

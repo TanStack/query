@@ -306,7 +306,7 @@ describe('createInfiniteQueryController', () => {
             pageParams: [0],
           },
           staleTime: Infinity,
-          queryFn: () => Promise.resolve('unused'),
+          queryFn: () => sleep(10).then(() => 'unused'),
           getNextPageParam: () => undefined,
         },
         queryClient,
@@ -455,7 +455,7 @@ describe('createInfiniteQueryController', () => {
       {
         queryKey: key,
         initialPageParam: 0,
-        queryFn: ({ pageParam }) => Promise.resolve(Number(pageParam)),
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam) + 1),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
         staleTime: 30_000,
@@ -466,11 +466,13 @@ describe('createInfiniteQueryController', () => {
 
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
+    await vi.advanceTimersByTimeAsync(10)
+    expect(infinite().data?.pages).toEqual([0])
 
     infinite.destroy()
   })
 
-  it('should defer explicit-client infinite accessors until host fields are initialized', () => {
+  it('should defer explicit-client infinite accessors until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitInfiniteHost extends LitElement {
@@ -479,7 +481,7 @@ describe('createInfiniteQueryController', () => {
         () => ({
           queryKey: [...key, this.id],
           initialPageParam: 0,
-          queryFn: ({ pageParam }) => Promise.resolve(Number(pageParam)),
+          queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
           getNextPageParam: (lastPage) =>
             lastPage < 1 ? lastPage + 1 : undefined,
           retry: false,
@@ -496,6 +498,17 @@ describe('createInfiniteQueryController', () => {
 
     const host = new DeferredExplicitInfiniteHost()
     expect(host.infinite().status).toBe('pending')
+
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.infinite().data?.pages).toEqual([0])
+    expect(
+      queryClient
+        .getQueryCache()
+        .findAll({ queryKey: key })
+        .map((query) => query.queryKey),
+    ).toEqual([[...key, 'alpha']])
 
     host.infinite.destroy()
   })

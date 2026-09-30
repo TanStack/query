@@ -471,7 +471,7 @@ describe('createMutationController', () => {
     mutation.destroy()
   })
 
-  it('should defer explicit-client mutation accessors until host fields are initialized', () => {
+  it('should defer explicit-client mutation accessors until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitMutationHost extends LitElement {
@@ -479,7 +479,8 @@ describe('createMutationController', () => {
         this,
         () => ({
           mutationKey: [...key, this.id],
-          mutationFn: (value: number) => Promise.resolve(value + this.offset),
+          mutationFn: (value: number) =>
+            sleep(10).then(() => value + this.offset),
         }),
         queryClient,
       )
@@ -494,6 +495,18 @@ describe('createMutationController', () => {
 
     const host = new DeferredExplicitMutationHost()
     expect(host.mutation().isIdle).toBe(true)
+
+    container.append(host)
+
+    const mutatePromise = host.mutation.mutateAsync(1)
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(mutatePromise).resolves.toBe(2)
+    expect(
+      queryClient
+        .getMutationCache()
+        .findAll({ mutationKey: key })
+        .map((mutation) => mutation.options.mutationKey),
+    ).toEqual([[...key, 'alpha']])
 
     host.mutation.destroy()
   })

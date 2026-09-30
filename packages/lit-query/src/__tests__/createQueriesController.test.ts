@@ -371,7 +371,7 @@ describe('createQueriesController', () => {
               queryKey: key,
               initialData: 'initial-data',
               staleTime: Infinity,
-              queryFn: () => Promise.resolve('unused'),
+              queryFn: () => sleep(10).then(() => 'unused'),
             },
           ] as const,
         },
@@ -638,7 +638,7 @@ describe('createQueriesController', () => {
       readonly queries = createQueriesController(this, {
         queries: this.queryKeys.map((queryKey) => ({
           queryKey,
-          queryFn: () => Promise.resolve(queryKey[1]),
+          queryFn: () => sleep(10).then(() => queryKey[1]),
           retry: false,
         })),
       })
@@ -668,7 +668,7 @@ describe('createQueriesController', () => {
       readonly queries = createQueriesController(this, () => ({
         queries: this.ids.map((id) => ({
           queryKey: [...key, id],
-          queryFn: () => Promise.resolve(id),
+          queryFn: () => sleep(10).then(() => id),
           retry: false,
         })),
         combine: (results) => results.map((result) => result.status),
@@ -693,7 +693,7 @@ describe('createQueriesController', () => {
         queries: [
           queryOptions({
             queryKey: key,
-            queryFn: () => Promise.resolve({ id: 4, name: 'Marie' }),
+            queryFn: () => sleep(10).then(() => ({ id: 4, name: 'Marie' })),
             initialData: { id: 0, name: 'Seed' },
           }),
         ] as const,
@@ -709,7 +709,7 @@ describe('createQueriesController', () => {
     queries.destroy()
   })
 
-  it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', () => {
+  it('should defer dynamic accessors in the explicit-client constructor until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitQueriesHost extends LitElement {
@@ -718,7 +718,7 @@ describe('createQueriesController', () => {
         () => ({
           queries: this.ids.map((id) => ({
             queryKey: [...key, id],
-            queryFn: () => Promise.resolve(id),
+            queryFn: () => sleep(10).then(() => id),
             retry: false,
           })),
           combine: (results) => results.map((result) => result.status),
@@ -736,10 +736,15 @@ describe('createQueriesController', () => {
     const host = new DeferredExplicitQueriesHost()
     expect(host.queries()).toEqual(['pending', 'pending'])
 
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.queries()).toEqual(['success', 'success'])
+
     host.queries.destroy()
   })
 
-  it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', () => {
+  it('should defer static combine callbacks in the explicit-client constructor until host fields are initialized', async () => {
     const key = queryKey()
 
     class DeferredExplicitCombineQueriesHost extends LitElement {
@@ -749,7 +754,7 @@ describe('createQueriesController', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: () => Promise.resolve('alpha'),
+              queryFn: () => sleep(10).then(() => 'alpha'),
               retry: false,
             },
           ] as const,
@@ -772,6 +777,11 @@ describe('createQueriesController', () => {
     const host = new DeferredExplicitCombineQueriesHost()
     expect(host.queries()).toEqual(['alpha:pending'])
 
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.queries()).toEqual(['alpha:success'])
+
     host.queries.destroy()
   })
 
@@ -785,7 +795,7 @@ describe('createQueriesController', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: () => Promise.resolve('alpha'),
+              queryFn: () => sleep(10).then(() => 'alpha'),
               retry: false,
             },
           ] as const,
@@ -830,12 +840,12 @@ describe('createQueriesController', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: () => Promise.resolve('fetched-alpha'),
+            queryFn: () => sleep(10).then(() => 'fetched-alpha'),
             staleTime: 30_000,
           },
           {
             queryKey: key2,
-            queryFn: () => Promise.resolve('fetched-beta'),
+            queryFn: () => sleep(10).then(() => 'fetched-beta'),
             staleTime: 30_000,
           },
         ] as const,
@@ -849,6 +859,11 @@ describe('createQueriesController', () => {
     )
     const queries = host.queries
 
+    expect(queries()).toEqual([
+      { status: 'success', data: 'alpha' },
+      { status: 'success', data: 'beta' },
+    ])
+    await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
