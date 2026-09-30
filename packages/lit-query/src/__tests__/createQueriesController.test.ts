@@ -153,7 +153,7 @@ describe('createQueriesController', () => {
               queryKey: key2,
               queryFn: () => sleep(10).then(() => 'beta'),
             },
-          ] as const,
+          ],
           combine: (results) => results.map((result) => result.data),
         },
         queryClient,
@@ -200,7 +200,7 @@ describe('createQueriesController', () => {
                 }),
               staleTime: Infinity,
             },
-          ] as const,
+          ],
         }),
         queryClient,
       )
@@ -257,7 +257,7 @@ describe('createQueriesController', () => {
                   resolveRefetch = () => resolve('stable-data')
                 }),
             },
-          ] as const,
+          ],
         },
         queryClient,
       )
@@ -322,7 +322,7 @@ describe('createQueriesController', () => {
                   resolveRefetch = () => resolve('stable-data')
                 }),
             },
-          ] as const,
+          ],
         },
         queryClient,
       )
@@ -373,7 +373,7 @@ describe('createQueriesController', () => {
               staleTime: Infinity,
               queryFn: () => sleep(10).then(() => 'unused'),
             },
-          ] as const,
+          ],
         },
         queryClient,
       )
@@ -446,7 +446,7 @@ describe('createQueriesController', () => {
                   },
                 ]
               : []),
-          ] as const,
+          ],
           combine: (results) =>
             results.map((result) => ({
               status: result.status,
@@ -544,7 +544,7 @@ describe('createQueriesController', () => {
                   return 'shared-value'
                 }),
             },
-          ] as const,
+          ],
           combine: (results) =>
             results.map((result) => ({
               status: result.status,
@@ -675,7 +675,7 @@ describe('createQueriesController', () => {
       }))
 
       readonly firstRead = this.queries()
-      readonly ids = ['alpha', 'beta'] as const
+      readonly ids = ['alpha', 'beta']
     }
     customElements.define(generateElementName(), DeferredFieldsQueriesHost)
 
@@ -696,7 +696,7 @@ describe('createQueriesController', () => {
             queryFn: () => sleep(10).then(() => ({ id: 4, name: 'Marie' })),
             initialData: { id: 0, name: 'Seed' },
           }),
-        ] as const,
+        ],
         combine: (result) => result[0].data.name,
       })
     }
@@ -721,7 +721,7 @@ describe('createQueriesController', () => {
             initialData: () => 'seed',
             initialDataUpdatedAt: () => 1000,
           },
-        ] as const,
+        ],
         combine: (result) => ({
           data: result[0].data,
           dataUpdatedAt: result[0].dataUpdatedAt,
@@ -749,7 +749,7 @@ describe('createQueriesController', () => {
             initialData: 'seed',
             select: (data: string) => data.toUpperCase(),
           },
-        ] as const,
+        ],
         combine: (result) => result[0].data,
       })
     }
@@ -780,7 +780,7 @@ describe('createQueriesController', () => {
       )
 
       readonly firstRead = this.queries()
-      readonly ids = ['alpha', 'beta'] as const
+      readonly ids = ['alpha', 'beta']
     }
     customElements.define(generateElementName(), DeferredExplicitQueriesHost)
 
@@ -810,7 +810,7 @@ describe('createQueriesController', () => {
               queryFn: () => sleep(10).then(() => 'alpha'),
               retry: false,
             },
-          ] as const,
+          ],
           combine: (results) =>
             this.ids.map((id, index) => `${id}:${results[index]?.status}`),
         },
@@ -818,7 +818,7 @@ describe('createQueriesController', () => {
       )
 
       readonly firstRead = this.queries()
-      readonly ids = ['alpha'] as const
+      readonly ids = ['alpha']
     }
     customElements.define(
       generateElementName(),
@@ -851,7 +851,7 @@ describe('createQueriesController', () => {
               queryFn: () => sleep(10).then(() => 'alpha'),
               retry: false,
             },
-          ] as const,
+          ],
           combine: () => {
             throw new Error('invalid combine')
           },
@@ -901,7 +901,7 @@ describe('createQueriesController', () => {
             queryFn: () => sleep(10).then(() => 'fetched-beta'),
             staleTime: 30_000,
           },
-        ] as const,
+        ],
         combine: (results) =>
           results.map((result) => ({
             status: result.status,
@@ -951,7 +951,7 @@ describe('createQueriesController', () => {
             },
             retry: false,
           },
-        ] as const,
+        ],
         combine: (results) => results.map((result) => result.data),
       }))
 
@@ -1026,7 +1026,7 @@ describe('createQueriesController', () => {
             },
             retry: false,
           },
-        ] as const,
+        ],
         combine: (results) => results.map((result) => result.data),
       }))
     }
