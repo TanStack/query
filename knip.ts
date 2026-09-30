@@ -11,7 +11,7 @@ export default {
       ignoreDependencies: ['react', 'react-dom'],
     },
     'packages/angular-query': {
-      entry: ['schematics/ng-add/index.ts', 'src/__tests__/*.test-d.ts'],
+      entry: ['schematics/*/index.ts', 'src/__tests__/*.test-d.ts'],
     },
     'packages/query-codemods': {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],
