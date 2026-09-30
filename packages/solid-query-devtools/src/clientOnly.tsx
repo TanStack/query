@@ -1,9 +1,9 @@
 import {
   createMemo,
   createSignal,
+  isHydrating,
   omit,
   onSettled,
-  sharedConfig,
   untrack,
 } from 'solid-js'
 import { isServer } from '@solidjs/web'
@@ -30,8 +30,8 @@ export default function clientOnly<T extends Component<any>>(
     let Comp: T | undefined
     let m: boolean
     const rest = omit(props, 'fallback')
-    if ((Comp = comp()) && !sharedConfig.hydrating) return Comp(rest)
-    const [mounted, setMounted] = createSignal(!sharedConfig.hydrating)
+    if ((Comp = comp()) && !isHydrating()) return Comp(rest)
+    const [mounted, setMounted] = createSignal(!isHydrating())
     onSettled(() => {
       setMounted(true)
     })

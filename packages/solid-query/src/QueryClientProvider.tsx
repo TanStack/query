@@ -1,5 +1,5 @@
-import { createContext, onCleanup, sharedConfig, useContext } from 'solid-js'
-import { REVALIDATE_HEADER } from '@solidjs/web'
+import { createContext, isHydratable, onCleanup, useContext } from 'solid-js'
+import { REVALIDATE_HEADER, getHydrationWriter } from '@solidjs/web'
 import { hydrate } from '@tanstack/query-core'
 import { subscribeFlightData } from '@solidjs/web/server-functions'
 import type { DehydratedState, Query } from '@tanstack/query-core'
@@ -148,16 +148,8 @@ export type QueryClientProviderProps = {
  * serialize, so seroval's cross-reference dedupe emits it once.
  */
 function serializeCacheOnServer(client: QueryClient): void {
-  const ctx = (
-    sharedConfig as unknown as {
-      context?: {
-        async?: boolean
-        noHydrate?: boolean
-        serialize: (key: string, value: unknown) => void
-      }
-    }
-  ).context
-  if (!ctx || !ctx.async || ctx.noHydrate) return
+  const writer = getHydrationWriter()
+  if (!writer || !writer.async || !isHydratable()) return
 
   const cache = client.getQueryCache()
   // The standard dehydrate filter gates the wire here too, so apps keep
@@ -175,7 +167,7 @@ function serializeCacheOnServer(client: QueryClient): void {
     const state = query.state
     if (state.status === 'success') {
       seen.add(query.queryHash)
-      ctx.serialize(HYDRATION_KEY_PREFIX + query.queryHash, {
+      writer.write(HYDRATION_KEY_PREFIX + query.queryHash, {
         data: state.data,
         t: state.dataUpdatedAt,
       })
@@ -185,7 +177,7 @@ function serializeCacheOnServer(client: QueryClient): void {
       const promise = query.promise as Promise<unknown> | undefined
       if (!promise) return
       seen.add(query.queryHash)
-      ctx.serialize(
+      writer.write(
         HYDRATION_KEY_PREFIX + query.queryHash,
         promise.then(() => ({
           data: query.state.data,

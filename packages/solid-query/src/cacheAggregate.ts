@@ -2,8 +2,8 @@ import {
   createEffect,
   createOptimistic,
   createSignal,
+  isHydrating,
   onCleanup,
-  sharedConfig,
   untrack,
 } from 'solid-js'
 import type { Accessor } from 'solid-js'
@@ -47,8 +47,7 @@ export function createCacheAggregate<T>(
   read: (prev: T) => T,
   empty: T,
 ): Accessor<T> {
-  const hydratedMount =
-    !isServer && (sharedConfig as { hydrating?: boolean }).hydrating === true
+  const hydratedMount = isHydrating()
 
   // Cast: createSignal's value overload excludes functions (a function
   // argument means a compute); aggregate values are counts and arrays.
