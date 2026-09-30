@@ -209,6 +209,9 @@ catalogs:
     '@vitejs/plugin-react':
       specifier: ^6.1.1
       version: 6.1.1
+    eslint-config-preact:
+      specifier: ^2.0.0
+      version: 2.0.0
     eslint-plugin-react-hooks:
       specifier: ^7.1.1
       version: 7.1.1
@@ -233,6 +236,9 @@ catalogs:
     typescript:
       specifier: 6.0.3
       version: 6.0.3
+    typescript-eslint:
+      specifier: ^8.54.0
+      version: 8.70.1
     unplugin-solid:
       specifier: ^2.0.0
       version: 2.0.0
@@ -2817,7 +2823,7 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
         specifier: 'catalog:'
@@ -2829,7 +2835,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       typescript-eslint:
-        specifier: ^8.54.0
+        specifier: 'catalog:'
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/preact-query-devtools:
@@ -2848,7 +2854,7 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
         specifier: 'catalog:'
@@ -2857,7 +2863,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       typescript-eslint:
-        specifier: ^8.54.0
+        specifier: 'catalog:'
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/preact-query-persist-client:
@@ -2879,7 +2885,7 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
       eslint-config-preact:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       preact:
         specifier: 'catalog:'
@@ -2888,7 +2894,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       typescript-eslint:
-        specifier: ^8.54.0
+        specifier: 'catalog:'
         version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/query-async-storage-persister:
