@@ -199,14 +199,9 @@ describe('useIsFetching', () => {
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
 
-  it('should track filters and filter reactivity in useIsFetching', async () => {
+  it('should be able to filter', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const unmatchedKey = queryKey()
-
-    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
-      queryKey: key1,
-    }
 
     class Host extends LitElement {
       readonly query1 = createQueryController(
@@ -230,7 +225,7 @@ describe('useIsFetching', () => {
       readonly isFetchingAll = useIsFetching(this, {}, queryClient)
       readonly isFetchingFiltered = useIsFetching(
         this,
-        () => activeFilter,
+        { queryKey: key1 },
         queryClient,
       )
     }
@@ -241,6 +236,54 @@ describe('useIsFetching', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingAll()).toBe(2)
+    expect(isFetchingFiltered()).toBe(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isFetchingAll()).toBe(1)
+    expect(isFetchingFiltered()).toBe(0)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isFetchingAll()).toBe(0)
+    expect(isFetchingFiltered()).toBe(0)
+  })
+
+  it('should apply updated filters on host updates', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const unmatchedKey = queryKey()
+    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
+      queryKey: key1,
+    }
+
+    class Host extends LitElement {
+      readonly query1 = createQueryController(
+        this,
+        {
+          queryKey: key1,
+          queryFn: () => sleep(10).then(() => 'a'),
+        },
+        queryClient,
+      )
+
+      readonly query2 = createQueryController(
+        this,
+        {
+          queryKey: key2,
+          queryFn: () => sleep(20).then(() => 'b'),
+        },
+        queryClient,
+      )
+
+      readonly isFetchingFiltered = useIsFetching(
+        this,
+        () => activeFilter,
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const { isFetchingFiltered } = host
+
+    await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingFiltered()).toBe(1)
 
     activeFilter = { queryKey: unmatchedKey }
@@ -255,10 +298,8 @@ describe('useIsFetching', () => {
 
     expect(isFetchingFiltered()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(1)
     expect(isFetchingFiltered()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(0)
     expect(isFetchingFiltered()).toBe(0)
   })
 
