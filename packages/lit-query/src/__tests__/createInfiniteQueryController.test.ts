@@ -409,6 +409,31 @@ describe('createInfiniteQueryController', () => {
     }
   })
 
+  it('should return the same result between reads when nothing changed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const infinite = host.infinite
+
+    await vi.advanceTimersByTimeAsync(10)
+    const result = infinite()
+    expect(infinite()).toBe(result)
+  })
+
   it('should preserve prior pages consistently when fetching the next page fails', async () => {
     const key = queryKey()
 
