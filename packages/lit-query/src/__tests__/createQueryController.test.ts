@@ -1515,4 +1515,159 @@ describe('createQueryController', () => {
 
     host.query.destroy()
   })
+
+  it('should fetch and resolve with the fetched result from suspense when the data is stale', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        { queryKey: key, queryFn },
+        queryClient,
+      )
+
+      override render() {
+        const query = this.query()
+        return html`status: ${query.status}, data: ${query.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+
+    const suspensePromise = host.query.suspense()
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(suspensePromise).resolves.toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    host.query.destroy()
+  })
+
+  it('should resolve immediately without refetching from suspense when the data is fresh', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn,
+          initialData: 'initial',
+          staleTime: Infinity,
+        },
+        queryClient,
+      )
+
+      override render() {
+        const query = this.query()
+        return html`status: ${query.status}, data: ${query.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: initial')
+
+    await expect(host.query.suspense()).resolves.toMatchObject({
+      status: 'success',
+      data: 'initial',
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: initial')
+    expect(queryFn).not.toHaveBeenCalled()
+
+    host.query.destroy()
+  })
+
+  it('should resolve with the current result without fetching from suspense when disabled', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        { queryKey: key, queryFn, enabled: false },
+        queryClient,
+      )
+
+      override render() {
+        const query = this.query()
+        return html`status: ${query.status}, data: ${query.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+
+    await expect(host.query.suspense()).resolves.toMatchObject({
+      status: 'pending',
+      fetchStatus: 'idle',
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+    expect(queryFn).not.toHaveBeenCalled()
+
+    host.query.destroy()
+  })
+
+  it('should apply the latest options to the controller before resolving from suspense', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      userId = 1
+
+      readonly query = createQueryController(
+        this,
+        () => {
+          const userId = this.userId
+          return {
+            queryKey: [...key, userId],
+            queryFn: () => sleep(10).then(() => `data-${userId}`),
+          }
+        },
+        queryClient,
+      )
+
+      override render() {
+        const query = this.query()
+        return html`status: ${query.status}, data: ${query.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: data-1')
+
+    host.userId = 2
+    const suspensePromise = host.query.suspense()
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(suspensePromise).resolves.toMatchObject({
+      status: 'success',
+      data: 'data-2',
+    })
+    expect(host.query().data).toBe('data-2')
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: data-2')
+
+    host.query.destroy()
+  })
 })
