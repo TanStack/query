@@ -849,10 +849,9 @@ describe('createQueryController', () => {
         this,
         () => ({
           queryKey: [...key, keyId],
-          queryFn: async ({ queryKey }) => {
+          queryFn: ({ queryKey }) => {
             const id = queryKey[1] as number
-            await sleep(Math.max(1, 20 - id))
-            return `result-${id}`
+            return sleep(Math.max(1, 20 - id)).then(() => `result-${id}`)
           },
         }),
         queryClient,

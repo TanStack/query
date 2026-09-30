@@ -155,13 +155,13 @@ describe('createMutationController', () => {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            if (value < 0) {
-              throw new Error('negative-not-allowed')
-            }
-            return value + 1
-          },
+          mutationFn: (value: number) =>
+            sleep(10).then(() => {
+              if (value < 0) {
+                throw new Error('negative-not-allowed')
+              }
+              return value + 1
+            }),
         },
         queryClient,
       )
@@ -227,14 +227,14 @@ describe('createMutationController', () => {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            if (value < 0) {
-              throw new Error('negative-not-allowed')
-            }
+          mutationFn: (value: number) =>
+            sleep(10).then(() => {
+              if (value < 0) {
+                throw new Error('negative-not-allowed')
+              }
 
-            return value + 1
-          },
+              return value + 1
+            }),
         },
         queryClient,
       )
@@ -261,13 +261,13 @@ describe('createMutationController', () => {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            if (value < 0) {
-              throw new Error('callback-order-failure')
-            }
-            return value + 1
-          },
+          mutationFn: (value: number) =>
+            sleep(10).then(() => {
+              if (value < 0) {
+                throw new Error('callback-order-failure')
+              }
+              return value + 1
+            }),
           onSuccess: (_data, value) => {
             callbackEvents.push(`success:${value}`)
           },
@@ -315,13 +315,13 @@ describe('createMutationController', () => {
           const callbackVersion = version
 
           return {
-            mutationFn: async (value: number) => {
-              await sleep(10)
-              if (value < 0) {
-                throw new Error('freshness-failure')
-              }
-              return value + 1
-            },
+            mutationFn: (value: number) =>
+              sleep(10).then(() => {
+                if (value < 0) {
+                  throw new Error('freshness-failure')
+                }
+                return value + 1
+              }),
             onSuccess: () => {
               callbackEvents.push(`success:${callbackVersion}`)
             },
@@ -528,10 +528,7 @@ describe('createMutationController', () => {
 
       readonly mutation = createMutationController(this, () => ({
         mutationKey: this.mutationKey,
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          return value + 1
-        },
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
     customElements.define(generateElementName(), Consumer)
@@ -587,10 +584,7 @@ describe('createMutationController', () => {
 
       readonly mutation = createMutationController(this, () => ({
         mutationKey: this.mutationKey,
-        mutationFn: async (value: number) => {
-          await sleep(10)
-          return value + 1
-        },
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
     customElements.define(generateElementName(), Consumer)

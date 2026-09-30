@@ -187,11 +187,11 @@ describe('createInfiniteQueryController', () => {
         () => ({
           queryKey: key,
           initialPageParam: 0,
-          queryFn: async ({ pageParam }) => {
-            await sleep(10)
-            callCount += 1
-            return Number(pageParam)
-          },
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => {
+              callCount += 1
+              return Number(pageParam)
+            }),
           getNextPageParam: () => undefined,
           staleTime: Infinity,
         }),
@@ -354,14 +354,14 @@ describe('createInfiniteQueryController', () => {
         {
           queryKey: key,
           initialPageParam: 0,
-          queryFn: async ({ pageParam }) => {
-            await sleep(10)
-            const page = Number(pageParam)
-            if (page === 1) {
-              throw new Error('next-page-failed')
-            }
-            return page
-          },
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => {
+              const page = Number(pageParam)
+              if (page === 1) {
+                throw new Error('next-page-failed')
+              }
+              return page
+            }),
           getNextPageParam: (lastPage) =>
             lastPage < 1 ? lastPage + 1 : undefined,
           retry: false,
