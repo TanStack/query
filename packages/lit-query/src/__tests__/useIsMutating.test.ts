@@ -66,7 +66,6 @@ describe('useIsMutating', () => {
     consumer.mutation.destroy()
     consumer.isMutating.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -122,7 +121,6 @@ describe('useIsMutating', () => {
     consumer.mutation.destroy()
     consumer.isMutating.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should track the mutating count', async () => {
@@ -257,7 +255,6 @@ describe('useIsMutating', () => {
 
     consumer.isMutating.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should not throw on an already-connected host with an explicit client', async () => {
@@ -278,7 +275,6 @@ describe('useIsMutating', () => {
     container.append(producer)
     const producerMutation = producer.mutation
 
-    await vi.advanceTimersByTimeAsync(0)
     producerMutation.mutate()
     expect(queryClient.isMutating()).toBe(1)
 
@@ -295,8 +291,6 @@ describe('useIsMutating', () => {
     host.isMutating = useIsMutating(host, {}, queryClient)
     const { isMutating } = host
 
-    await Promise.resolve()
-    await Promise.resolve()
     expect(isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating()).toBe(0)

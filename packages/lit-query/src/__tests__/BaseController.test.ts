@@ -66,8 +66,7 @@ describe('BaseController', () => {
     await host.updateComplete
 
     const controller = new RecordingController(host)
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(controller.lifecycle).toEqual([
       'connected:missing',
       'changed:client',
@@ -75,6 +74,5 @@ describe('BaseController', () => {
 
     controller.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 })

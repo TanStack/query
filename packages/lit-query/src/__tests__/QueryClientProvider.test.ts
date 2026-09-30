@@ -42,7 +42,6 @@ describe('QueryClientProvider/context', () => {
     expect(resolveQueryClient()).toBe(queryClient)
 
     provider.remove()
-    await Promise.resolve()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -64,11 +63,10 @@ describe('QueryClientProvider/context', () => {
     expect(useQueryClient()).toBe(queryClient)
 
     providerB.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(useQueryClient()).toBe(queryClient)
 
     providerA.remove()
-    await Promise.resolve()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -92,12 +90,10 @@ describe('QueryClientProvider/context', () => {
     )
 
     providerB.remove()
-    await Promise.resolve()
     expect(getDefaultQueryClient()).toBe(clientA)
     expect(useQueryClient()).toBe(clientA)
 
     providerA.remove()
-    await Promise.resolve()
   })
 
   it('should require an explicit client before connect', () => {
@@ -129,7 +125,7 @@ describe('QueryClientProvider/context', () => {
     expect(unmountB).toHaveBeenCalledTimes(0)
 
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
@@ -147,7 +143,7 @@ describe('QueryClientProvider/context', () => {
     expect(unmountB).toHaveBeenCalledTimes(0)
 
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmountB).toHaveBeenCalledTimes(1)
 
     mountA.mockRestore()
@@ -199,7 +195,7 @@ describe('QueryClientProvider/context', () => {
 
     consumer.query.destroy()
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmount).toHaveBeenCalledTimes(1)
 
     mount.mockRestore()

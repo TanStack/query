@@ -55,8 +55,7 @@ describe('createQueryController', () => {
 
     container.append(host)
     query.destroy()
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(host.updatesRequested).toBe(0)
   })
 
@@ -175,7 +174,6 @@ describe('createQueryController', () => {
       for (let i = 0; i < 5; i += 1) {
         host.forceUpdate()
         await host.updateComplete
-        await Promise.resolve()
       }
 
       await host.updateComplete
@@ -224,21 +222,17 @@ describe('createQueryController', () => {
       await host.updateComplete
 
       expect(query().data).toBe('stable-data')
-      await Promise.resolve()
-      await Promise.resolve()
       await host.updateComplete
 
       host.updatesRequested = 0
 
       const refetch = query.refetch()
       expect(resolveRefetch).toBeDefined()
-      await Promise.resolve()
       await host.updateComplete
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
-      await Promise.resolve()
       await host.updateComplete
       expect(host.updatesRequested).toBe(0)
     } finally {
@@ -279,15 +273,12 @@ describe('createQueryController', () => {
       await host.updateComplete
 
       expect(query().status).toBe('success')
-      await Promise.resolve()
-      await Promise.resolve()
       await host.updateComplete
 
       host.updatesRequested = 0
 
       queryClient.setQueryData(key, 'updated-data')
 
-      await Promise.resolve()
       await host.updateComplete
       expect(host.updatesRequested).toBe(0)
 
@@ -507,16 +498,12 @@ describe('createQueryController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
-    await Promise.resolve()
-    await Promise.resolve()
     await host.updateComplete
     const updatesAfterSuccess = host.updatesRequested
 
     host.forceUpdate()
     await host.updateComplete
 
-    await Promise.resolve()
-    await Promise.resolve()
     await host.updateComplete
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
@@ -934,7 +921,6 @@ describe('createQueryController', () => {
     expect(query().isFetching).toBe(true)
 
     host.remove()
-    await Promise.resolve()
     await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
 
@@ -1081,7 +1067,6 @@ describe('createQueryController', () => {
 
     consumer.query.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should track retry failure metadata before eventual success', async () => {
@@ -1203,7 +1188,6 @@ describe('createQueryController', () => {
 
     consumer.query.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should not spuriously throw during the handshake on the first provider-backed connection', async () => {
@@ -1244,7 +1228,6 @@ describe('createQueryController', () => {
 
     consumer.query.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should throw after the initial placeholder phase when no provider is available', async () => {
@@ -1282,7 +1265,6 @@ describe('createQueryController', () => {
 
     consumer.query.destroy()
     consumer.remove()
-    await Promise.resolve()
   })
 
   it('should share the missing-client contract between wrapper and result-object imperative methods', async () => {
@@ -1318,7 +1300,6 @@ describe('createQueryController', () => {
 
     consumer.query.destroy()
     consumer.remove()
-    await Promise.resolve()
   })
 
   it('should clear stale provider-derived client state when reconnecting outside any provider', async () => {
@@ -1375,7 +1356,6 @@ describe('createQueryController', () => {
     consumer.query.destroy()
     consumer.remove()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should rebind cleanly with later recovery when reconnecting under a different provider', async () => {
@@ -1453,7 +1433,6 @@ describe('createQueryController', () => {
     consumer.query.destroy()
     providerA.remove()
     providerB.remove()
-    await Promise.resolve()
   })
 
   it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
@@ -1486,8 +1465,7 @@ describe('createQueryController', () => {
     )
     const query = host.query
 
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(query().data).toBe('hydrated-value')
     expect(query().isSuccess).toBe(true)
     expect(queryFnCalls).toBe(0)

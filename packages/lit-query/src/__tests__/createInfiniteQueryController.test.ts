@@ -72,7 +72,6 @@ describe('createInfiniteQueryController', () => {
 
     consumer.infinite.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
@@ -123,7 +122,6 @@ describe('createInfiniteQueryController', () => {
 
     consumer.infinite.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should support initial page, fetchNextPage, and fetchPreviousPage', async () => {
@@ -222,7 +220,6 @@ describe('createInfiniteQueryController', () => {
       for (let i = 0; i < 5; i += 1) {
         host.forceUpdate()
         await host.updateComplete
-        await Promise.resolve()
       }
 
       expect(host.updatesRequested).toBe(0)
@@ -275,19 +272,18 @@ describe('createInfiniteQueryController', () => {
       await host.updateComplete
 
       expect(infinite().data?.pages).toEqual(['stable-page'])
-      await Promise.resolve()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
 
       const refetch = infinite.refetch()
       expect(resolveRefetch).toBeDefined()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
 
       resolveRefetch!()
       await refetch
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
     } finally {
       infinite.destroy()
@@ -332,8 +328,7 @@ describe('createInfiniteQueryController', () => {
       await host.updateComplete
 
       expect(infinite().status).toBe('success')
-      await Promise.resolve()
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
 
@@ -342,7 +337,7 @@ describe('createInfiniteQueryController', () => {
         pageParams: [0],
       })
 
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(infinite().data?.pages).toEqual(['updated-page'])
       expect(host.updatesRequested).toBe(0)
     } finally {
@@ -438,7 +433,6 @@ describe('createInfiniteQueryController', () => {
 
     consumer.infinite.destroy()
     consumer.remove()
-    await Promise.resolve()
   })
 
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
@@ -470,8 +464,6 @@ describe('createInfiniteQueryController', () => {
     )
     const infinite = host.infinite
 
-    await Promise.resolve()
-    await Promise.resolve()
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
 
@@ -540,7 +532,6 @@ describe('createInfiniteQueryController', () => {
     const consumer = new Consumer()
     provider.append(consumer)
 
-    await Promise.resolve()
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -574,7 +565,6 @@ describe('createInfiniteQueryController', () => {
 
     consumer.infinite.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should reparent infinite query controller under a different provider and bind the new nearest client', async () => {
@@ -651,6 +641,5 @@ describe('createInfiniteQueryController', () => {
     consumer.infinite.destroy()
     providerA.remove()
     providerB.remove()
-    await Promise.resolve()
   })
 })
