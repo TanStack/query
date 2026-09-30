@@ -158,6 +158,48 @@ describe('useIsFetching', () => {
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
 
+  it('should not process query cache updates while disconnected', async () => {
+    const key = queryKey()
+
+    class Producer extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly isFetching = useIsFetching(this, {}, queryClient)
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    container.append(new Producer())
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should count all fetching queries when filters are omitted', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
