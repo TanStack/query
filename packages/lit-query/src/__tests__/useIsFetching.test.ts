@@ -123,19 +123,19 @@ describe('useIsFetching', () => {
   it('should track the fetching count', async () => {
     const key = queryKey()
 
-    class Host extends LitElement {
+    class Producer extends LitElement {
       readonly query = createQueryController(
         this,
         {
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            return 'done'
-          },
+          queryFn: () => sleep(10).then(() => 'done'),
         },
         queryClient,
       )
+    }
+    customElements.define(generateElementName(), Producer)
 
+    class Host extends LitElement {
       readonly isFetching = useIsFetching(this, {}, queryClient)
 
       override render() {
@@ -143,9 +143,11 @@ describe('useIsFetching', () => {
       }
     }
     customElements.define(generateElementName(), Host)
+    const producer = new Producer()
     const host = new Host()
-    container.append(host)
-    const { query, isFetching } = host
+    container.append(producer, host)
+    const { query } = producer
+    const { isFetching } = host
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetching()).toBe(1)

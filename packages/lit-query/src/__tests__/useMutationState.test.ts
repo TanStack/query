@@ -218,18 +218,18 @@ describe('useMutationState', () => {
   })
 
   it('should track mutation state', async () => {
-    class Host extends LitElement {
+    class Producer extends LitElement {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            return value + 10
-          },
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
         },
         queryClient,
       )
+    }
+    customElements.define(generateElementName(), Producer)
 
+    class Host extends LitElement {
       readonly mutationStatuses = useMutationState<string>(
         this,
         {
@@ -244,9 +244,11 @@ describe('useMutationState', () => {
       }
     }
     customElements.define(generateElementName(), Host)
+    const producer = new Producer()
     const host = new Host()
-    container.append(host)
-    const { mutation, mutationStatuses } = host
+    container.append(producer, host)
+    const { mutation } = producer
+    const { mutationStatuses } = host
 
     mutation.mutate(1)
     await vi.advanceTimersByTimeAsync(0)

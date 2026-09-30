@@ -124,18 +124,18 @@ describe('useIsMutating', () => {
   })
 
   it('should track the mutating count', async () => {
-    class Host extends LitElement {
+    class Producer extends LitElement {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            return value + 10
-          },
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
         },
         queryClient,
       )
+    }
+    customElements.define(generateElementName(), Producer)
 
+    class Host extends LitElement {
       readonly isMutating = useIsMutating(this, {}, queryClient)
 
       override render() {
@@ -143,9 +143,11 @@ describe('useIsMutating', () => {
       }
     }
     customElements.define(generateElementName(), Host)
+    const producer = new Producer()
     const host = new Host()
-    container.append(host)
-    const { mutation, isMutating } = host
+    container.append(producer, host)
+    const { mutation } = producer
+    const { isMutating } = host
 
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate(1)
