@@ -28,7 +28,9 @@ catalog:
   # preact
   '@preact/preset-vite': ^2.10.6
   '@testing-library/preact': ^3.2.4
+  eslint-config-preact: ^2.0.0
   preact: ^10.29.8
+  typescript-eslint: ^8.54.0
 
   # solid
   '@solidjs/testing-library': ^0.8.10
