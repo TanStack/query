@@ -410,6 +410,33 @@ describe('createQueriesController', () => {
     }
   })
 
+  it('should return the same result between reads when nothing changed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => sleep(10).then(() => 'data'),
+            },
+          ],
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const queries = host.queries
+
+    await vi.advanceTimersByTimeAsync(10)
+    const result = queries()
+    expect(queries()).toBe(result)
+  })
+
   it('should support dynamic add/remove and keep partial failure stability', async () => {
     const key1 = queryKey()
     const key2 = queryKey()

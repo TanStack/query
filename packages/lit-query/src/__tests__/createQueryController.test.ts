@@ -288,6 +288,29 @@ describe('createQueryController', () => {
     }
   })
 
+  it('should return the same result between reads when nothing changed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const query = host.query
+
+    await vi.advanceTimersByTimeAsync(10)
+    const result = query()
+    expect(query()).toBe(result)
+  })
+
   it('should transition from pending to success with expected contract', async () => {
     const key = queryKey()
 
