@@ -29,7 +29,7 @@ describe('createQueriesController', () => {
             queryKey: queryKey(),
             queryFn: () => Promise.resolve('x'),
           },
-        ] as const,
+        ],
       },
       new QueryClient(),
     )
@@ -52,7 +52,7 @@ describe('createQueriesController', () => {
             queryKey: queryKey(),
             queryFn: () => Promise.resolve('ok'),
           },
-        ] as const,
+        ],
         combine: (results) => ({
           first: results[0].data,
           second: results[1].data,
@@ -79,7 +79,7 @@ describe('createQueriesController', () => {
             queryFn: () => Promise.resolve({ id: 4, name: 'Marie' }),
             initialData: { id: 0, name: 'Seed' },
           }),
-        ] as const,
+        ],
       },
       new QueryClient(),
     )
@@ -101,7 +101,7 @@ describe('createQueriesController', () => {
             queryFn: () => Promise.resolve({ id: 5, name: 'Katherine' }),
             initialData: { id: 1, name: 'Init' },
           }),
-        ] as const,
+        ],
         combine: (results) => results[0].data.name,
       },
       new QueryClient(),
