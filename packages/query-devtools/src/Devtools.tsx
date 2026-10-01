@@ -108,25 +108,13 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
-  const { offline, setOffline } = useDevtoolsState()
+  const { offline } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-  const onlineManager = createMemo(
-    () => useQueryDevtoolsContext().onlineManager,
-  )
-  onMount(() => {
-    const unsubscribe = onlineManager().subscribe((online) => {
-      setOffline(!online)
-    })
-
-    onCleanup(() => {
-      unsubscribe()
-    })
   })
 
   const pip = usePiPWindow()
@@ -2587,15 +2575,8 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<
-  (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
->()
-
 const setupQueryCacheSubscription = () => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2623,6 +2604,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2649,12 +2631,8 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   return value
 }
 
-const mutationCacheMap = new Map<
-  (q: Accessor<MutationCache>) => any,
-  Setter<any>
->()
-
 const setupMutationCacheSubscription = () => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
@@ -2680,6 +2658,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
 ) => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
