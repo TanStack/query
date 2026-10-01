@@ -1,26 +1,13 @@
-import { createContext, useContext } from 'solid-js'
 import { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
+import { DevtoolsSubscriptionsContext } from '../contexts/DevtoolsSubscriptionsContext'
 import type {
   MutationCache,
   MutationCacheNotifyEvent,
   QueryCache,
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
+import type { DevtoolsSubscriptions } from '../contexts/types'
 import type { ParentProps } from 'solid-js'
-
-interface DevtoolsSubscriptions {
-  queryCacheSubscriptions: ReturnType<
-    typeof createCacheSubscriptionRegistry<QueryCache, QueryCacheNotifyEvent>
-  >
-  mutationCacheSubscriptions: ReturnType<
-    typeof createCacheSubscriptionRegistry<
-      MutationCache,
-      MutationCacheNotifyEvent
-    >
-  >
-}
-
-const DevtoolsSubscriptionsContext = createContext<DevtoolsSubscriptions>()
 
 export function DevtoolsSubscriptionsProvider(props: ParentProps) {
   const queryCacheSubscriptions = createCacheSubscriptionRegistry<
@@ -40,10 +27,4 @@ export function DevtoolsSubscriptionsProvider(props: ParentProps) {
       {props.children}
     </DevtoolsSubscriptionsContext.Provider>
   )
-}
-
-export function useDevtoolsSubscriptions() {
-  const subscriptions = useContext(DevtoolsSubscriptionsContext)
-  if (!subscriptions) throw new Error('Missing DevtoolsSubscriptionsProvider')
-  return subscriptions
 }

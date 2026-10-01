@@ -17,6 +17,7 @@ import { Key } from '@solid-primitives/keyed'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
+import { useDevtoolsOffline } from './contexts/DevtoolsOfflineContext'
 import { useDevtoolsSubscriptions } from './contexts/DevtoolsSubscriptionsContext'
 import { useDevtoolsState } from './contexts/DevtoolsStateContext'
 import { tokens } from './theme'
@@ -668,8 +669,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     selectedMutationId,
     setSelectedMutationId,
     panelWidth,
-    offline,
   } = useDevtoolsState()
+
+  const { offline, toggleOffline } = useDevtoolsOffline()
 
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
@@ -703,10 +705,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   const sortFn = createMemo(() => sortFns[sort() as string])
   const mutationSortFn = createMemo(
     () => mutationSortFns[mutationSort() as string],
-  )
-
-  const onlineManager = createMemo(
-    () => useQueryDevtoolsContext().onlineManager,
   )
 
   const query_cache = createMemo(() => {
@@ -1030,9 +1028,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               <Trash />
             </button>
             <button
-              onClick={() => {
-                onlineManager().setOnline(!onlineManager().isOnline())
-              }}
+              onClick={toggleOffline}
               class={cx(
                 styles().actionsBtn,
                 offline() && styles().actionsBtnOffline,

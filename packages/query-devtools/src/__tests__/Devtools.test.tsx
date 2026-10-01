@@ -10,12 +10,11 @@ import {
 } from '@tanstack/query-core'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
-import { DevtoolsSubscriptionsProvider } from '../contexts/DevtoolsSubscriptionsContext'
+import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
+import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
 import DevtoolsComponent from '../DevtoolsComponent'
-import {
-  DevtoolsStateProvider,
-  useDevtoolsState,
-} from '../contexts/DevtoolsStateContext'
+import { DevtoolsStateProvider } from '../providers/DevtoolsStateProvider'
+import { useDevtoolsState } from '../contexts/DevtoolsStateContext'
 import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
@@ -143,20 +142,22 @@ describe('Devtools', () => {
           }}
         >
           <DevtoolsStateProvider>
-            <DevtoolsSubscriptionsProvider>
-              <StateProbe />
-              <PiPProvider
-                localStore={localStore}
-                setLocalStore={setLocalStore}
-              >
-                <ThemeContext.Provider value={() => 'dark'}>
-                  <Devtools
-                    localStore={localStore}
-                    setLocalStore={setLocalStore}
-                  />
-                </ThemeContext.Provider>
-              </PiPProvider>
-            </DevtoolsSubscriptionsProvider>
+            <DevtoolsOfflineProvider>
+              <DevtoolsSubscriptionsProvider>
+                <StateProbe />
+                <PiPProvider
+                  localStore={localStore}
+                  setLocalStore={setLocalStore}
+                >
+                  <ThemeContext.Provider value={() => 'dark'}>
+                    <Devtools
+                      localStore={localStore}
+                      setLocalStore={setLocalStore}
+                    />
+                  </ThemeContext.Provider>
+                </PiPProvider>
+              </DevtoolsSubscriptionsProvider>
+            </DevtoolsOfflineProvider>
           </DevtoolsStateProvider>
         </QueryDevtoolsContext.Provider>
       )
