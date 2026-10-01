@@ -68,11 +68,11 @@
     "@tanstack/query-persist-client-core": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "catalog:",
-    "eslint-config-preact": "^2.0.0",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint-config-preact": "catalog:",
     "preact": "catalog:",
     "preact-render-to-string": "^6.6.4",
-    "typescript": "catalog:",
-    "typescript-eslint": "^8.54.0"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "preact": "^10.0.0"

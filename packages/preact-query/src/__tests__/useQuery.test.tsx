@@ -514,7 +514,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const [, rerender] = useState({})
+      const [_state, setState] = useState({})
 
       const state = useQuery({
         queryKey: key,
@@ -533,7 +533,7 @@ describe('useQuery', () => {
           <button
             onClick={() => {
               queryClient.removeQueries({ queryKey: key })
-              rerender({})
+              setState({})
             }}
           >
             remove
@@ -817,7 +817,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const [, rerender] = useState({})
+      const [_state, setState] = useState({})
       const state = useQuery({
         queryKey: key,
         queryFn: () => ++count,
@@ -831,7 +831,7 @@ describe('useQuery', () => {
           <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
             remove
           </button>
-          <button onClick={() => rerender({})}>rerender</button>
+          <button onClick={() => setState({})}>rerender</button>
           data: {state.data ?? 'null'}
         </div>
       )
@@ -2338,7 +2338,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const [, setNewState] = useState('state')
+      const [_newState, setNewState] = useState('state')
       const state = useQuery({ queryKey: key, queryFn: () => 'data' })
       useEffect(() => {
         setActTimeout(() => {
@@ -3660,7 +3660,7 @@ describe('useQuery', () => {
 
     function Page() {
       const [enabled, setEnabled] = useState(false)
-      const [isPrefetched, setPrefetched] = useState(false)
+      const [isPrefetched, setIsPrefetched] = useState(false)
 
       const query = useQuery({
         queryKey: key,
@@ -3681,7 +3681,7 @@ describe('useQuery', () => {
               queryFn: () => Promise.resolve('prefetched data'),
             })
             .catch(noop)
-          act(() => setPrefetched(true))
+          act(() => setIsPrefetched(true))
         }
 
         prefetch()
@@ -6129,11 +6129,11 @@ describe('useQuery', () => {
         queryFn: () => sleep(10).then(() => 5),
       })
 
-      const mounted = useRef<boolean>(null)
+      const mountedRef = useRef<boolean>(null)
       // this simulates a synchronous update between the time the query is created
       // and the time it is subscribed to that could be missed otherwise
-      if (mounted.current === null) {
-        mounted.current = true
+      if (mountedRef.current === null) {
+        mountedRef.current = true
         queryClient.setQueryData(key, 1)
       }
 
@@ -6290,7 +6290,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Test() {
-      const [_, setRef] = useState<HTMLDivElement | null>()
+      const [_ref, setRef] = useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: [key],
