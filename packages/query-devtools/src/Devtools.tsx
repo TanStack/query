@@ -17,6 +17,7 @@ import { Key } from '@solid-primitives/keyed'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
+import { useDevtoolsSubscriptions } from './contexts/DevtoolsSubscriptionsContext'
 import { useDevtoolsState } from './contexts/DevtoolsStateContext'
 import { tokens } from './theme'
 import {
@@ -2578,7 +2579,7 @@ const MutationDetails = () => {
 }
 
 const setupQueryCacheSubscription = () => {
-  const { queryCacheMap } = useDevtoolsState()
+  const { queryCacheSubscriptions } = useDevtoolsSubscriptions()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2588,10 +2589,7 @@ const setupQueryCacheSubscription = () => {
     const cache = queryCache()
     const unsubscribe = cache.subscribe((event) => {
       batch(() => {
-        for (const [callback, value] of queryCacheMap.entries()) {
-          if (!value.shouldUpdate(event)) continue
-          value.setter(callback(() => cache))
-        }
+        queryCacheSubscriptions.notify(() => cache, event)
       })
     })
     onCleanup(unsubscribe)
@@ -2603,7 +2601,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
-  const { queryCacheMap } = useDevtoolsState()
+  const { queryCacheSubscriptions } = useDevtoolsSubscriptions()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2618,20 +2616,13 @@ const createSubscribeToQueryCacheBatcher = <T,>(
     setValue(callback(queryCache))
   })
 
-  queryCacheMap.set(callback, {
-    setter: setValue,
-    shouldUpdate: shouldUpdate,
-  })
-
-  onCleanup(() => {
-    queryCacheMap.delete(callback)
-  })
+  queryCacheSubscriptions.register(callback, setValue, shouldUpdate)
 
   return value
 }
 
 const setupMutationCacheSubscription = () => {
-  const { mutationCacheMap } = useDevtoolsState()
+  const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
@@ -2640,14 +2631,16 @@ const setupMutationCacheSubscription = () => {
   createEffect(() => {
     const cache = mutationCache()
     let active = true
-    const unsubscribe = cache.subscribe(() => {
-      for (const [callback, setter] of mutationCacheMap.entries()) {
-        queueMicrotask(() => {
-          if (active && mutationCacheMap.has(callback)) {
-            setter(callback(() => cache))
-          }
-        })
-      }
+    const unsubscribe = cache.subscribe((event) => {
+      mutationCacheSubscriptions.notify(
+        () => cache,
+        event,
+        (update) => {
+          queueMicrotask(() => {
+            if (active) update()
+          })
+        },
+      )
     })
     onCleanup(() => {
       active = false
@@ -2660,7 +2653,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
 ) => {
-  const { mutationCacheMap } = useDevtoolsState()
+  const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
@@ -2675,11 +2668,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  mutationCacheMap.set(callback, setValue)
-
-  onCleanup(() => {
-    mutationCacheMap.delete(callback)
-  })
+  mutationCacheSubscriptions.register(callback, setValue)
 
   return value
 }

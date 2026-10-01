@@ -10,6 +10,7 @@ import {
 } from '@tanstack/query-core'
 import { fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
+import { DevtoolsSubscriptionsProvider } from '../contexts/DevtoolsSubscriptionsContext'
 import DevtoolsComponent from '../DevtoolsComponent'
 import {
   DevtoolsStateProvider,
@@ -142,15 +143,20 @@ describe('Devtools', () => {
           }}
         >
           <DevtoolsStateProvider>
-            <StateProbe />
-            <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-              <ThemeContext.Provider value={() => 'dark'}>
-                <Devtools
-                  localStore={localStore}
-                  setLocalStore={setLocalStore}
-                />
-              </ThemeContext.Provider>
-            </PiPProvider>
+            <DevtoolsSubscriptionsProvider>
+              <StateProbe />
+              <PiPProvider
+                localStore={localStore}
+                setLocalStore={setLocalStore}
+              >
+                <ThemeContext.Provider value={() => 'dark'}>
+                  <Devtools
+                    localStore={localStore}
+                    setLocalStore={setLocalStore}
+                  />
+                </ThemeContext.Provider>
+              </PiPProvider>
+            </DevtoolsSubscriptionsProvider>
           </DevtoolsStateProvider>
         </QueryDevtoolsContext.Provider>
       )

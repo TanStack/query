@@ -6,12 +6,7 @@ import {
   useContext,
 } from 'solid-js'
 import { useQueryDevtoolsContext } from './QueryDevtoolsContext'
-import type {
-  MutationCache,
-  QueryCache,
-  QueryCacheNotifyEvent,
-} from '@tanstack/query-core'
-import type { Accessor, ParentProps, Setter } from 'solid-js'
+import type { ParentProps } from 'solid-js'
 
 function createDevtoolsState() {
   const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
@@ -23,20 +18,7 @@ function createDevtoolsState() {
   const [panelWidth, setPanelWidth] = createSignal(0)
   const [offline, setOffline] = createSignal(false)
 
-  const queryCacheMap = new Map<
-    (q: Accessor<QueryCache>) => any,
-    {
-      setter: Setter<any>
-      shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-    }
-  >()
-  const mutationCacheMap = new Map<
-    (q: Accessor<MutationCache>) => any,
-    Setter<any>
-  >()
   return {
-    queryCacheMap,
-    mutationCacheMap,
     selectedQueryHash,
     setSelectedQueryHash,
     selectedMutationId,
