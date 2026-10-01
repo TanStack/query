@@ -249,7 +249,7 @@ catalogs:
       specifier: 6.0.3
       version: 6.0.3
     typescript-eslint:
-      specifier: ^8.54.0
+      specifier: ^8.70.1
       version: 8.70.1
     unplugin-solid:
       specifier: ^2.0.0
