@@ -1,24 +1,16 @@
 // @ts-check
+
 // @ts-ignore: no types for eslint-config-preact
 import preact from 'eslint-config-preact'
-// eslint-config-preact uses typescript-eslint under the hood
-import tseslint from 'typescript-eslint'
-
+import tsParser from '@typescript-eslint/parser'
 import rootConfig from './root.eslint.config.js'
 
 export default [
   ...rootConfig,
   ...preact,
   {
-    files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: true,
-      },
-    },
-    plugins: {
-      'typescript-eslint': tseslint.plugin,
+      parser: tsParser,
     },
     rules: {
       // Disable base rule to prevent overload false positives
