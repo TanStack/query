@@ -10,7 +10,12 @@ import {
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
-import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
+import {
+  DevtoolsStateProvider,
+  PiPProvider,
+  QueryDevtoolsContext,
+  ThemeContext,
+} from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
 
 // `solid-transition-group` internally imports from
@@ -126,11 +131,16 @@ describe('Devtools', () => {
             ...overrides,
           }}
         >
-          <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-            <ThemeContext.Provider value={() => 'dark'}>
-              <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-            </ThemeContext.Provider>
-          </PiPProvider>
+          <DevtoolsStateProvider>
+            <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+              <ThemeContext.Provider value={() => 'dark'}>
+                <Devtools
+                  localStore={localStore}
+                  setLocalStore={setLocalStore}
+                />
+              </ThemeContext.Provider>
+            </PiPProvider>
+          </DevtoolsStateProvider>
         </QueryDevtoolsContext.Provider>
       )
     })
