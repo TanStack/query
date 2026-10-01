@@ -6,9 +6,22 @@ import {
   useContext,
 } from 'solid-js'
 import { useQueryDevtoolsContext } from './QueryDevtoolsContext'
-import type { ParentProps } from 'solid-js'
+import type { Accessor, ParentProps, Setter } from 'solid-js'
 
-function createDevtoolsState() {
+interface DevtoolsState {
+  selectedQueryHash: Accessor<string | null>
+  setSelectedQueryHash: Setter<string | null>
+  selectedMutationId: Accessor<number | null>
+  setSelectedMutationId: Setter<number | null>
+  panelWidth: Accessor<number>
+  setPanelWidth: Setter<number>
+  offline: Accessor<boolean>
+  setOffline: Setter<boolean>
+}
+
+const DevtoolsStateContext = createContext<DevtoolsState>()
+
+export function DevtoolsStateProvider(props: ParentProps) {
   const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
     null,
   )
@@ -18,7 +31,7 @@ function createDevtoolsState() {
   const [panelWidth, setPanelWidth] = createSignal(0)
   const [offline, setOffline] = createSignal(false)
 
-  return {
+  const state: DevtoolsState = {
     selectedQueryHash,
     setSelectedQueryHash,
     selectedMutationId,
@@ -28,13 +41,6 @@ function createDevtoolsState() {
     offline,
     setOffline,
   }
-}
-
-const DevtoolsStateContext =
-  createContext<ReturnType<typeof createDevtoolsState>>()
-
-export function DevtoolsStateProvider(props: ParentProps) {
-  const state = createDevtoolsState()
   const context = useQueryDevtoolsContext()
   createEffect(() => {
     const manager = context.onlineManager

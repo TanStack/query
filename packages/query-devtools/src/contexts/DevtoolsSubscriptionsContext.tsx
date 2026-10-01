@@ -8,7 +8,21 @@ import type {
 } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
 
-function createDevtoolsSubscriptions() {
+interface DevtoolsSubscriptions {
+  queryCacheSubscriptions: ReturnType<
+    typeof createCacheSubscriptionRegistry<QueryCache, QueryCacheNotifyEvent>
+  >
+  mutationCacheSubscriptions: ReturnType<
+    typeof createCacheSubscriptionRegistry<
+      MutationCache,
+      MutationCacheNotifyEvent
+    >
+  >
+}
+
+const DevtoolsSubscriptionsContext = createContext<DevtoolsSubscriptions>()
+
+export function DevtoolsSubscriptionsProvider(props: ParentProps) {
   const queryCacheSubscriptions = createCacheSubscriptionRegistry<
     QueryCache,
     QueryCacheNotifyEvent
@@ -17,14 +31,10 @@ function createDevtoolsSubscriptions() {
     MutationCache,
     MutationCacheNotifyEvent
   >()
-  return { queryCacheSubscriptions, mutationCacheSubscriptions }
-}
-
-const DevtoolsSubscriptionsContext =
-  createContext<ReturnType<typeof createDevtoolsSubscriptions>>()
-
-export function DevtoolsSubscriptionsProvider(props: ParentProps) {
-  const subscriptions = createDevtoolsSubscriptions()
+  const subscriptions: DevtoolsSubscriptions = {
+    queryCacheSubscriptions,
+    mutationCacheSubscriptions,
+  }
   return (
     <DevtoolsSubscriptionsContext.Provider value={subscriptions}>
       {props.children}
