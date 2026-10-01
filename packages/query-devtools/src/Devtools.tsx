@@ -17,6 +17,7 @@ import { Key } from '@solid-primitives/keyed'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
+import { useDevtoolsState } from './contexts/DevtoolsStateContext'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -78,7 +79,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
+import type { Accessor, Component, JSX } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -98,15 +99,6 @@ interface QueryStatusProps {
   count: number
 }
 
-const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
-  null,
-)
-const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
-  null,
-)
-const [panelWidth, setPanelWidth] = createSignal(0)
-const [offline, setOffline] = createSignal(false)
-
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
@@ -119,19 +111,6 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
-  const onlineManager = createMemo(
-    () => useQueryDevtoolsContext().onlineManager,
-  )
-  onMount(() => {
-    const unsubscribe = onlineManager().subscribe((online) => {
-      setOffline(!online)
-    })
-
-    onCleanup(() => {
-      unsubscribe()
-    })
-  })
-
   const pip = usePiPWindow()
 
   const buttonPosition = createMemo(() => {
@@ -285,6 +264,8 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 const PiPPanel: Component<{
   children: JSX.Element
 }> = (props) => {
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
+
   const pip = usePiPWindow()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -355,6 +336,8 @@ const PiPPanel: Component<{
 export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -412,6 +395,8 @@ export const ParentPanel: Component<{
 }
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
+  const { setSelectedQueryHash, panelWidth, setPanelWidth } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -676,6 +661,15 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
 }
 
 export const ContentView: Component<ContentViewProps> = (props) => {
+  const {
+    selectedQueryHash,
+    setSelectedQueryHash,
+    selectedMutationId,
+    setSelectedMutationId,
+    panelWidth,
+    offline,
+  } = useDevtoolsState()
+
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
@@ -1376,6 +1370,8 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 }
 
 const QueryRow: Component<{ query: Query }> = (props) => {
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1485,6 +1481,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 }
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1726,6 +1724,8 @@ const MutationStatusCount: Component = () => {
 }
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
+  const { selectedQueryHash, panelWidth } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1841,6 +1841,8 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 }
 
 const QueryDetails = () => {
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2386,6 +2388,8 @@ const QueryDetails = () => {
 }
 
 const MutationDetails = () => {
+  const { selectedMutationId } = useDevtoolsState()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2573,35 +2577,25 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<
-  (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
->()
-
 const setupQueryCacheSubscription = () => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
   })
 
-  const unsubscribe = queryCache().subscribe((q) => {
-    batch(() => {
-      for (const [callback, value] of queryCacheMap.entries()) {
-        if (!value.shouldUpdate(q)) continue
-        value.setter(callback(queryCache))
-      }
+  createEffect(() => {
+    const cache = queryCache()
+    const unsubscribe = cache.subscribe((event) => {
+      batch(() => {
+        for (const [callback, value] of queryCacheMap.entries()) {
+          if (!value.shouldUpdate(event)) continue
+          value.setter(callback(() => cache))
+        }
+      })
     })
+    onCleanup(unsubscribe)
   })
-
-  onCleanup(() => {
-    queryCacheMap.clear()
-    unsubscribe()
-  })
-
-  return unsubscribe
 }
 
 const createSubscribeToQueryCacheBatcher = <T,>(
@@ -2609,6 +2603,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2635,37 +2630,37 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   return value
 }
 
-const mutationCacheMap = new Map<
-  (q: Accessor<MutationCache>) => any,
-  Setter<any>
->()
-
 const setupMutationCacheSubscription = () => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
   })
 
-  const unsubscribe = mutationCache().subscribe(() => {
-    for (const [callback, setter] of mutationCacheMap.entries()) {
-      queueMicrotask(() => {
-        setter(callback(mutationCache))
-      })
-    }
+  createEffect(() => {
+    const cache = mutationCache()
+    let active = true
+    const unsubscribe = cache.subscribe(() => {
+      for (const [callback, setter] of mutationCacheMap.entries()) {
+        queueMicrotask(() => {
+          if (active && mutationCacheMap.has(callback)) {
+            setter(callback(() => cache))
+          }
+        })
+      }
+    })
+    onCleanup(() => {
+      active = false
+      unsubscribe()
+    })
   })
-
-  onCleanup(() => {
-    mutationCacheMap.clear()
-    unsubscribe()
-  })
-
-  return unsubscribe
 }
 
 const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
 ) => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
