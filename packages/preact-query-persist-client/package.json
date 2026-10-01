@@ -62,10 +62,10 @@
     "@tanstack/preact-query": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
     "eslint-config-preact": "catalog:",
     "preact": "catalog:",
-    "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/preact-query": "workspace:^",

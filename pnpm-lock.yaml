@@ -248,9 +248,6 @@ catalogs:
     typescript:
       specifier: 6.0.3
       version: 6.0.3
-    typescript-eslint:
-      specifier: ^8.70.1
-      version: 8.70.1
     unplugin-solid:
       specifier: ^2.0.0
       version: 2.0.0
@@ -2834,6 +2831,9 @@ importers:
       '@testing-library/preact':
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-config-preact:
         specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -2846,9 +2846,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/preact-query-devtools:
     dependencies:
@@ -2865,6 +2862,9 @@ importers:
       '@testing-library/preact':
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-config-preact:
         specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -2874,9 +2874,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/preact-query-persist-client:
     dependencies:
@@ -2896,6 +2893,9 @@ importers:
       '@testing-library/preact':
         specifier: 'catalog:'
         version: 3.2.4(preact@10.29.8)
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-config-preact:
         specifier: 'catalog:'
         version: 2.0.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -2905,9 +2905,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-      typescript-eslint:
-        specifier: 'catalog:'
-        version: 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
 
   packages/query-async-storage-persister:
     dependencies:
@@ -22910,22 +22907,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
-    dependencies:
-      '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-      '@typescript-eslint/scope-manager': 8.70.1
-      '@typescript-eslint/type-utils': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/visitor-keys': 8.70.1
-      eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
-      ignore: 7.0.5
-      natural-compare: 1.4.0
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      typescript: 6.0.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
@@ -23098,18 +23079,6 @@ snapshots:
       eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
       ts-api-utils: 2.5.0(typescript@5.8.3)
       typescript: 5.8.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@typescript-eslint/type-utils@8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)':
-    dependencies:
-      '@typescript-eslint/types': 8.70.1
-      '@typescript-eslint/typescript-estree': 8.70.1(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      debug: 4.4.3(supports-color@10.2.2)
-      eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -32796,17 +32765,6 @@ snapshots:
       '@typescript-eslint/utils': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.8.3)
       eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
       typescript: 5.8.3
-    transitivePeerDependencies:
-      - supports-color
-
-  typescript-eslint@8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3):
-    dependencies:
-      '@typescript-eslint/eslint-plugin': 8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/parser': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/typescript-estree': 8.70.1(supports-color@10.2.2)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.70.1(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      eslint: 9.39.4(jiti@2.7.0)(supports-color@10.2.2)
-      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
