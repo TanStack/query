@@ -16,6 +16,7 @@ catalog:
   typescript: 6.0.3
   '@typescript-eslint/parser': ^8.70.1
   eslint: ^9.36.0
+  typescript-eslint: ^8.70.1
 
   # react
   '@eslint-react/eslint-plugin': ^5.21.0
@@ -32,7 +33,6 @@ catalog:
   '@testing-library/preact': ^3.2.4
   eslint-config-preact: ^2.0.0
   preact: ^10.29.8
-  typescript-eslint: ^8.54.0
 
   # solid
   '@solidjs/testing-library': ^0.8.10
