@@ -1,8 +1,8 @@
 // @ts-check
+
 // @ts-ignore: no types for eslint-config-preact
 import preact from 'eslint-config-preact'
 import tsParser from '@typescript-eslint/parser'
-
 import rootConfig from './root.eslint.config.js'
 
 export default [
