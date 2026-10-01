@@ -29,5 +29,5 @@
     "target": "ES2020",
     "types": ["node"]
   },
-  "include": ["*.config.*"]
+  "include": ["*.config.*", "knip.ts"]
 }
