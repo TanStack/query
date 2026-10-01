@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import DevtoolsComponent from '../DevtoolsComponent'
+import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import type { render as renderType } from '@solidjs/testing-library'
 
 // `solid-transition-group` internally imports from
@@ -100,6 +101,15 @@ describe('Devtools instance isolation', () => {
     return rendered.container.querySelector('.tsqd-query-details-container')
   }
 
+  // The Data Explorer renders string values as editable inputs, so the
+  // displayed data value is read from the input rather than textContent.
+  function dataOwnerValue(
+    rendered: ReturnType<typeof renderType>,
+  ): string | undefined {
+    const input = detailsOf(rendered)?.querySelector('input')
+    return input ? (input as HTMLInputElement).value : undefined
+  }
+
   it('selecting a query in one panel does not affect the other panel', () => {
     renderPair()
 
@@ -136,5 +146,69 @@ describe('Devtools instance isolation', () => {
     // Panel A hides its details, panel B keeps its own selection
     expect(detailsOf(renderedA!)).not.toBeInTheDocument()
     expect(detailsOf(renderedB!)).toBeInTheDocument()
+  })
+
+  it('cache updates in one client do not leak into the other panel', () => {
+    renderPair()
+
+    // Both panels show details for their own client's `["shared"]` query
+    fireEvent.click(renderedA!.getByLabelText(/Query key \["shared"\]/))
+    fireEvent.click(renderedB!.getByLabelText(/Query key \["shared"\]/))
+    expect(dataOwnerValue(renderedA!)).toBe('a')
+    expect(dataOwnerValue(renderedB!)).toBe('b')
+
+    // Update the query in client A only
+    clientA.setQueryData(['shared'], { owner: 'a-updated' })
+
+    // Panel A reflects the update...
+    expect(dataOwnerValue(renderedA!)).toBe('a-updated')
+    // ...but panel B must keep showing its own client's data
+    expect(dataOwnerValue(renderedB!)).toBe('b')
+  })
+
+  it('unmounting one panel does not break cache updates in the other panel', () => {
+    renderPair()
+
+    fireEvent.click(renderedB!.getByLabelText(/Query key \["shared"\]/))
+    expect(detailsOf(renderedB!)).toBeInTheDocument()
+
+    // Unmount panel A entirely; its cleanup must not wipe panel B's
+    // cache-subscription registrations
+    renderedA!.unmount()
+    renderedA = undefined
+
+    clientB.setQueryData(['shared'], { owner: 'b-updated' })
+    expect(dataOwnerValue(renderedB!)).toBe('b-updated')
+  })
+
+  it('a panel-only instance reflects the onlineManager status', () => {
+    // DevtoolsPanelComponent renders ContentView without Devtools, so the
+    // offline indicator must be driven by the provider-level subscription
+    const renderedPanel = render(() => (
+      <DevtoolsPanelComponent
+        client={clientA}
+        queryFlavor="TanStack Query"
+        version="5"
+        onlineManager={onlineManager}
+        initialIsOpen={true}
+      />
+    ))
+    try {
+      const offlineButton = () =>
+        renderedPanel.container.querySelector(
+          '.tsqd-action-mock-offline-behavior',
+        )
+
+      expect(offlineButton()!.getAttribute('aria-pressed')).toBe('false')
+
+      onlineManager.setOnline(false)
+      expect(offlineButton()!.getAttribute('aria-pressed')).toBe('true')
+
+      onlineManager.setOnline(true)
+      expect(offlineButton()!.getAttribute('aria-pressed')).toBe('false')
+    } finally {
+      onlineManager.setOnline(true)
+      renderedPanel.unmount()
+    }
   })
 })
