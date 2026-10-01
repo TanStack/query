@@ -51,7 +51,12 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
-import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import {
+  useDevtoolsState,
+  usePiPWindow,
+  useQueryDevtoolsContext,
+  useTheme,
+} from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
@@ -98,20 +103,12 @@ interface QueryStatusProps {
   count: number
 }
 
-const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
-  null,
-)
-const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
-  null,
-)
-const [panelWidth, setPanelWidth] = createSignal(0)
-const [offline, setOffline] = createSignal(false)
-
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
+  const { offline, setOffline } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -286,6 +283,7 @@ const PiPPanel: Component<{
   children: JSX.Element
 }> = (props) => {
   const pip = usePiPWindow()
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -355,6 +353,7 @@ const PiPPanel: Component<{
 export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -412,6 +411,7 @@ export const ParentPanel: Component<{
 }
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
+  const { panelWidth, setPanelWidth, setSelectedQueryHash } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -676,6 +676,14 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
 }
 
 export const ContentView: Component<ContentViewProps> = (props) => {
+  const {
+    selectedQueryHash,
+    setSelectedQueryHash,
+    selectedMutationId,
+    setSelectedMutationId,
+    panelWidth,
+    offline,
+  } = useDevtoolsState()
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
@@ -1376,6 +1384,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 }
 
 const QueryRow: Component<{ query: Query }> = (props) => {
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1485,6 +1494,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 }
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1726,6 +1736,7 @@ const MutationStatusCount: Component = () => {
 }
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
+  const { selectedQueryHash, panelWidth } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -1841,6 +1852,8 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 }
 
 const QueryDetails = () => {
+  const { selectedQueryHash, setSelectedQueryHash, panelWidth } =
+    useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2386,6 +2399,7 @@ const QueryDetails = () => {
 }
 
 const MutationDetails = () => {
+  const { selectedMutationId } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
