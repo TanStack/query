@@ -179,6 +179,41 @@ describe('createMutationController', () => {
     expect(host.shadowRoot).toHaveTextContent('data: 3')
   })
 
+  it('should be able to use mutation defaults', async () => {
+    const key = queryKey()
+
+    queryClient.setMutationDefaults(key, {
+      mutationFn: (text: string) => sleep(10).then(() => text),
+    })
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController<string, unknown, string>(
+        this,
+        { mutationKey: key },
+        queryClient,
+      )
+
+      override render() {
+        const { status, data } = this.mutation()
+        return html`status: ${status}, data: ${data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
+
+    host.mutation.mutate('todo')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.mutation().data).toBe('todo')
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: todo')
+  })
+
   it('should transition from idle to pending to success', async () => {
     class Host extends LitElement {
       readonly mutation = createMutationController(
