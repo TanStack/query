@@ -4,7 +4,7 @@ title: matchQuery
 ---
 
 ```ts
-function matchQuery(filters, query): boolean;
+function matchQuery(filters: QueryFilters, query: Query<any, any, any, any>): boolean;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:175](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L175)

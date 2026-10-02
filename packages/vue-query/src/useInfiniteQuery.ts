@@ -32,13 +32,15 @@ export type UseInfiniteQueryOptions<
   TPageParam = unknown,
 > = MaybeRef<
   {
-    [Property in keyof InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >]: Property extends 'enabled'
+    [
+      Property in keyof InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    ]: Property extends 'enabled'
       ? MaybeRefOrGetter<
           InfiniteQueryObserverOptions<
             TQueryFnData,
@@ -70,7 +72,8 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
  *
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as

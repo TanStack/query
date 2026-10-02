@@ -5,12 +5,12 @@ title: useIsFetching
 
 ```ts
 function useIsFetching(
-   host,
-   filters,
-   queryClient?): IsFetchingAccessor;
+   host: ReactiveControllerHost,
+   filters: Accessor<QueryFilters<readonly unknown[]>>,
+   queryClient?: QueryClient): IsFetchingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsFetching.ts:147](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L147)
+Defined in: [packages/lit-query/src/useIsFetching.ts:143](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L143)
 
 Creates a Lit reactive controller that tracks how many matching queries are
 currently fetching.

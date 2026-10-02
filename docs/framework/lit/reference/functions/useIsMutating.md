@@ -5,12 +5,12 @@ title: useIsMutating
 
 ```ts
 function useIsMutating(
-   host,
-   filters,
-   queryClient?): IsMutatingAccessor;
+   host: ReactiveControllerHost,
+   filters: Accessor<MutationFilters<unknown, Error, unknown, unknown>>,
+   queryClient?: QueryClient): IsMutatingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsMutating.ts:147](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L147)
+Defined in: [packages/lit-query/src/useIsMutating.ts:143](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L143)
 
 Creates a Lit reactive controller that tracks how many matching mutations are
 currently pending.

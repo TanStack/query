@@ -8,7 +8,7 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
 Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:105](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L105)
@@ -94,7 +94,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
 Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:174](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L174)

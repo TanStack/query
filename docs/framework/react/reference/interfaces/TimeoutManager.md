@@ -26,7 +26,7 @@ coalesces timeouts.
 ### clearInterval()
 
 ```ts
-clearInterval(intervalId): void;
+clearInterval(intervalId: ManagedTimerId | undefined): void;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:224](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L224)
@@ -67,7 +67,7 @@ timeoutManager.clearInterval(intervalId)
 ### clearTimeout()
 
 ```ts
-clearTimeout(timeoutId): void;
+clearTimeout(timeoutId: ManagedTimerId | undefined): void;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L179)
@@ -108,7 +108,7 @@ timeoutManager.clearTimeout(timeoutId)
 ### setInterval()
 
 ```ts
-setInterval(callback, delay): ManagedTimerId;
+setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:200](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L200)
@@ -153,7 +153,7 @@ const intervalId = timeoutManager.setInterval(
 ### setTimeout()
 
 ```ts
-setTimeout(callback, delay): ManagedTimerId;
+setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:155](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L155)
@@ -201,7 +201,7 @@ const timeoutIdNumber: number = Number(timeoutId)
 ### setTimeoutProvider()
 
 ```ts
-setTimeoutProvider<TTimerId>(provider): void;
+setTimeoutProvider<TTimerId>(provider: TimeoutProvider<TTimerId>): void;
 ```
 
 Defined in: [packages/query-core/src/timeoutManager.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/timeoutManager.ts#L106)

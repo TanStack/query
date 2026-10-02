@@ -7,7 +7,7 @@ title: QueryFunctionContext
 type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? object : object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:144](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L144)
+Defined in: [packages/query-core/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L174)
 
 ## Type Parameters
 

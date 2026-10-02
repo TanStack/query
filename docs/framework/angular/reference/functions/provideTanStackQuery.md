@@ -4,7 +4,9 @@ title: provideTanStackQuery
 ---
 
 ```ts
-function provideTanStackQuery(queryClient, ...features): Provider[];
+function provideTanStackQuery(queryClient: 
+  | QueryClient
+  | InjectionToken<QueryClient>, ...features: QueryFeatures[]): Provider[];
 ```
 
 Defined in: [packages/angular-query-experimental/src/providers.ts:102](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L102)

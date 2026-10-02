@@ -208,13 +208,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   remove(query: Query<any, any, any, any>): void {
     const queryInMap = this.#queries.get(query.queryHash)
 
-    if (queryInMap) {
+    if (queryInMap === query) {
       query.destroy()
-
-      if (queryInMap === query) {
-        this.#queries.delete(query.queryHash)
-      }
-
+      this.#queries.delete(query.queryHash)
       this.notify({ type: 'removed', query })
     }
   }
@@ -260,8 +256,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     queryHash: string,
   ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
     return this.#queries.get(queryHash) as
-      | Query<TQueryFnData, TError, TData, TQueryKey>
-      | undefined
+      Query<TQueryFnData, TError, TData, TQueryKey> | undefined
   }
 
   /**

@@ -47,7 +47,7 @@ const observer = new MutationObserver(queryClient, {
 ### Constructor
 
 ```ts
-new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client, options): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
+new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client: QueryClient, options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:58](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L58)
@@ -76,22 +76,6 @@ Subscribable<
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<MutationObserverListener<TData, TError, TVariables, TOnMutateResult>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
@@ -101,20 +85,6 @@ options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 Defined in: [packages/query-core/src/mutationObserver.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L46)
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L75)
-
-#### Returns
-
-`void`
-
-***
 
 ### getCurrentResult()
 
@@ -140,7 +110,9 @@ built yet, e.g. before the first `mutate()` call or after `reset()`).
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
@@ -157,7 +129,7 @@ Subscribable.hasListeners
 ### mutate()
 
 ```ts
-mutate(variables, options?): Promise<TData>;
+mutate(variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:207](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L207)
@@ -192,46 +164,6 @@ await observer.mutate(
   { title: 'New post' },
   { onSuccess: (data) => console.log(data) },
 )
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L127)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L135)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -271,7 +203,7 @@ observer.reset()
 ### setOptions()
 
 ```ts
-setOptions(options): void;
+setOptions(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): void;
 ```
 
 Defined in: [packages/query-core/src/mutationObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L96)
@@ -307,16 +239,22 @@ observer.setOptions({
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: MutationObserverListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
+Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
 ##### listener
 
 `MutationObserverListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
@@ -327,6 +265,16 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Inherited from
 

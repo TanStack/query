@@ -49,7 +49,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### Constructor
 
 ```ts
-new Mutation<TData, TError, TVariables, TOnMutateResult>(config): Mutation<TData, TError, TVariables, TOnMutateResult>;
+new Mutation<TData, TError, TVariables, TOnMutateResult>(config: MutationConfig<TData, TError, TVariables, TOnMutateResult>): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/query-core/src/mutation.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L152)
@@ -78,7 +78,7 @@ Removable.constructor
 gcTime: number;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L7)
+Defined in: [packages/query-core/src/removable.ts:11](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L11)
 
 #### Inherited from
 
@@ -136,26 +136,6 @@ The `meta` object passed in the mutation's options, if any.
 
 ## Methods
 
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L32)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
-```
-
-***
-
 ### continue()
 
 ```ts
@@ -199,7 +179,11 @@ await mutation?.continue()
 destroy(): void;
 ```
 
-Defined in: [packages/query-core/src/removable.ts:10](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L10)
+Defined in: [packages/query-core/src/removable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L19)
+
+Clears the pending garbage collection timeout, so the entry is no longer scheduled for removal.
+A subclass may override this to release what it holds on to as well — `Query` also cancels any
+in-flight fetch.
 
 #### Returns
 
@@ -216,7 +200,7 @@ Removable.destroy
 ### execute()
 
 ```ts
-execute(variables): Promise<TData>;
+execute(variables: TVariables): Promise<TData>;
 ```
 
 Defined in: [packages/query-core/src/mutation.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L284)
@@ -262,69 +246,3 @@ const data = await mutation.execute(variables)
 #### See
 
 [Mutation#continue](#continue)
-
-***
-
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:212](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L212)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:14](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L14)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:24](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L24)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```

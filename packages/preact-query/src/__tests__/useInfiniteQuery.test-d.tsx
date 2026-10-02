@@ -31,6 +31,7 @@ describe('pageParam', () => {
 
   it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     queryClient.fetchInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => {
@@ -54,6 +55,7 @@ describe('pageParam', () => {
 
   it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     queryClient.prefetchInfiniteQuery({
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => {

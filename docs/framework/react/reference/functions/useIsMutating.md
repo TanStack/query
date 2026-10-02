@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsMutating(filters?, queryClient?): number;
+function useIsMutating(filters?: MutationFilters<unknown, Error, unknown, unknown>, queryClient?: QueryClient): number;
 ```
 
 Defined in: [packages/react-query/src/useMutationState.ts:35](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutationState.ts#L35)

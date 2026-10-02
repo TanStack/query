@@ -10,7 +10,7 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<Us
 Defined in: [packages/react-query/src/queryOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L80)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined`.
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 

@@ -18,7 +18,7 @@ instead of a wrapping component.
 ### install()
 
 ```ts
-install: (app, options) => void;
+install: (app: any, options: VueQueryPluginOptions) => void;
 ```
 
 #### Parameters

@@ -4,7 +4,7 @@ title: infiniteQueryOptions
 ---
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
 Defined in: [packages/lit-query/src/infiniteQueryOptions.ts:28](https://github.com/TanStack/query/blob/main/packages/lit-query/src/infiniteQueryOptions.ts#L28)

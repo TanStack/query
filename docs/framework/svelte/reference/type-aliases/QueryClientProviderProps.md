@@ -11,20 +11,7 @@ Defined in: [packages/svelte-query/src/types.ts:167](https://github.com/TanStack
 
 ## Properties
 
-### children
-
-```ts
-children: Snippet;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:169](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L169)
-
-***
-
-### client
-
-```ts
-client: QueryClient;
-```
-
-Defined in: [packages/svelte-query/src/types.ts:168](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L168)
+| Property | Type |
+| ------ | ------ |
+| <a id="children"></a> `children` | `Snippet` |
+| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) |

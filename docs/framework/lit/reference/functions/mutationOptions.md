@@ -4,7 +4,7 @@ title: mutationOptions
 ---
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/lit-query/src/mutationOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/lit-query/src/mutationOptions.ts#L22)

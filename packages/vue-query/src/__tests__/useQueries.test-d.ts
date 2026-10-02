@@ -4,7 +4,7 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof, QueryObserverResult } from '..'
-import type { UseQueryOptions } from '../useQuery'
+import type { UseQueryOptions } from '../queryOptions'
 
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {

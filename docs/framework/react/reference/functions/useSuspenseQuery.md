@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseSuspenseQueryResult<TData, TError>;
+function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseSuspenseQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/react-query/src/useSuspenseQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQuery.ts#L75)

@@ -37,7 +37,7 @@ Returns whether the current runtime should be treated as a server environment.
 ### setIsServer()
 
 ```ts
-setIsServer(isServerValue): void;
+setIsServer(isServerValue: IsServerValue): void;
 ```
 
 Overrides the server check globally.

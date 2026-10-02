@@ -185,7 +185,7 @@ type QueriesResults<
         : { [K in keyof T]: GetResults<T[K]> }
 
 /**
- * The `useQueries` hook can be used to fetch a variable number of queries.
+ * The `useQueries` primitive can be used to fetch a variable number of queries.
  *
  * The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
  * `placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'

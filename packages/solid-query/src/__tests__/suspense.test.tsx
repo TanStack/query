@@ -163,7 +163,6 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('rendered')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -440,7 +439,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -483,7 +482,7 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
@@ -532,7 +531,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -575,7 +574,7 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
@@ -653,7 +652,6 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -665,7 +663,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error caught in error boundary without infinite loop', async () => {
     const key = queryKey()
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -723,13 +721,13 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -785,11 +783,11 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should error caught in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -848,7 +846,7 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   // https://github.com/TanStack/query/issues/9955
@@ -928,9 +926,7 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(state).toMatchObject({
       data: 1,
       status: 'success',

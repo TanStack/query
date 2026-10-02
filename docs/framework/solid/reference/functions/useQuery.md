@@ -8,10 +8,13 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
+Defined in: [packages/solid-query/src/useQuery.ts:185](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L185)
+
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
 
 ### Type Parameters
 
@@ -156,7 +159,9 @@ function Post(props: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 
@@ -170,6 +175,8 @@ function Post(props: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === props.postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   }))
 
   return postQuery.isError ? <span>Error: {postQuery.error.message}</span> : <h1>{postQuery.data?.title}</h1>
@@ -209,12 +216,16 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:226](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L226)
+Defined in: [packages/solid-query/src/useQuery.ts:237](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L237)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+The query runs when the options call for it — `enabled: false` skips the initial fetch.
+
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 

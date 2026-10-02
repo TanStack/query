@@ -32,111 +32,14 @@ that observer results (e.g. `MutationObserverResult`) are derived from.
 
 ## Properties
 
-### context
-
-```ts
-context: TOnMutateResult | undefined;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:40](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L40)
-
-The value returned by `onMutate`, if defined. Passed to `onSuccess`,
-`onError` and `onSettled` as the mutation's context.
-
-***
-
-### data
-
-```ts
-data: TData | undefined;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:44](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L44)
-
-The last successfully resolved data for the mutation.
-
-***
-
-### error
-
-```ts
-error: TError | null;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L49)
-
-The error object for the mutation, if the last attempt resulted in an error.
-- Defaults to `null`.
-
-***
-
-### failureCount
-
-```ts
-failureCount: number;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:53](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L53)
-
-The number of times the mutation function has failed for the current attempt.
-
-***
-
-### failureReason
-
-```ts
-failureReason: TError | null;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:57](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L57)
-
-The reason the current attempt failed, as reported by the retryer.
-
-***
-
-### isPaused
-
-```ts
-isPaused: boolean;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:62](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L62)
-
-Whether the mutation is currently paused (see network mode), or is
-waiting for another mutation with the same `scope` to finish.
-
-***
-
-### status
-
-```ts
-status: MutationStatus;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:66](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L66)
-
-The status of the mutation.
-
-***
-
-### submittedAt
-
-```ts
-submittedAt: number;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:74](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L74)
-
-The timestamp for when the mutation was submitted.
-
-***
-
-### variables
-
-```ts
-variables: TVariables | undefined;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L70)
-
-The variables the mutation was last called with.
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="context"></a> `context` | `TOnMutateResult` \| `undefined` | The value returned by `onMutate`, if defined. Passed to `onSuccess`, `onError` and `onSettled` as the mutation's context. |
+| <a id="data"></a> `data` | `TData` \| `undefined` | The last successfully resolved data for the mutation. |
+| <a id="error"></a> `error` | `TError` \| `null` | The error object for the mutation, if the last attempt resulted in an error. - Defaults to `null`. |
+| <a id="failurecount"></a> `failureCount` | `number` | The number of times the mutation function has failed for the current attempt. |
+| <a id="failurereason"></a> `failureReason` | `TError` \| `null` | The reason the current attempt failed, as reported by the retryer. |
+| <a id="ispaused"></a> `isPaused` | `boolean` | Whether the mutation is currently paused (see network mode), or is waiting for another mutation with the same `scope` to finish. |
+| <a id="status"></a> `status` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | The status of the mutation. |
+| <a id="submittedat"></a> `submittedAt` | `number` | The timestamp for when the mutation was submitted. |
+| <a id="variables"></a> `variables` | `TVariables` \| `undefined` | The variables the mutation was last called with. |

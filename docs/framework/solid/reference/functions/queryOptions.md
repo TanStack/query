@@ -8,16 +8,17 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:89](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L89)
+Defined in: [packages/solid-query/src/queryOptions.ts:90](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L90)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -86,10 +87,10 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:139](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L139)
+Defined in: [packages/solid-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L140)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and

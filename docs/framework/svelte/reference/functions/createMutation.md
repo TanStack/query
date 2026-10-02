@@ -4,7 +4,7 @@ title: createMutation
 ---
 
 ```ts
-function createMutation<TData, TError, TVariables, TContext>(options, queryClient?): CreateMutationResult<TData, TError, TVariables, TContext>;
+function createMutation<TData, TError, TVariables, TContext>(options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>, queryClient?: Accessor<QueryClient>): CreateMutationResult<TData, TError, TVariables, TContext>;
 ```
 
 Defined in: [packages/svelte-query/src/createMutation.svelte.ts:171](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.svelte.ts#L171)

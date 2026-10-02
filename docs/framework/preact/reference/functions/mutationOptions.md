@@ -6,7 +6,7 @@ title: mutationOptions
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/preact-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L34)
@@ -75,7 +75,7 @@ function SavingIndicator() {
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/preact-query/src/mutationOptions.ts:74](https://github.com/TanStack/query/blob/main/packages/preact-query/src/mutationOptions.ts#L74)

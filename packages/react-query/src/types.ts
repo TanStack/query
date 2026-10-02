@@ -344,8 +344,8 @@ export type UseSuspenseQueryResult<
 
 /**
  * The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
- * omission — `data` is never `undefined`. Re-exports {@link DefinedQueryObserverResult} from
- * `@tanstack/query-core`.
+ * omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * Re-exports {@link DefinedQueryObserverResult} from `@tanstack/query-core`.
  *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -368,8 +368,9 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Re-exports
- * {@link DefinedInfiniteQueryObserverResult} from `@tanstack/query-core`.
+ * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
+ * `select` changes `TData` to include `undefined`). Re-exports {@link DefinedInfiniteQueryObserverResult}
+ * from `@tanstack/query-core`.
  *
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.

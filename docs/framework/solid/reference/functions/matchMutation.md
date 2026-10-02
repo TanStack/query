@@ -4,7 +4,7 @@ title: matchMutation
 ---
 
 ```ts
-function matchMutation(filters, mutation): boolean;
+function matchMutation(filters: MutationFilters, mutation: Mutation<any, any>): boolean;
 ```
 
 Defined in: [packages/query-core/src/utils.ts:237](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L237)
