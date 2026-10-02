@@ -10,13 +10,14 @@ import type {
 } from '@tanstack/query-core'
 
 /**
- * Internal context that carries the frozen server snapshot for the nearest
- * hydration boundary. Hooks use it to replay the result that produced the
- * server markup instead of reading newer data from the live cache.
+ * Internal context that carries frozen server snapshots from hydration
+ * boundaries, ordered from nearest to outermost. Hooks use it to replay the
+ * result that produced the server markup instead of reading newer data from
+ * the live cache.
  */
 export const QueryServerSnapshotContext = React.createContext<
-  QueryClient | undefined
->(undefined)
+  ReadonlyArray<QueryClient>
+>([])
 
 /**
  * The props accepted by `HydrationBoundary`.
@@ -98,6 +99,7 @@ export const HydrationBoundary = ({
   queryClient,
 }: HydrationBoundaryProps) => {
   const client = useQueryClient(queryClient)
+  const parentSnapshotClients = React.useContext(QueryServerSnapshotContext)
 
   const optionsRef = React.useRef(options)
   React.useEffect(() => {
@@ -150,6 +152,14 @@ export const HydrationBoundary = ({
 
     return frozenClient
   }, [client, options, state])
+
+  const snapshotClients = React.useMemo(
+    () =>
+      snapshotClient
+        ? [snapshotClient, ...parentSnapshotClients]
+        : parentSnapshotClients,
+    [snapshotClient, parentSnapshotClients],
+  )
 
   // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
@@ -223,7 +233,7 @@ export const HydrationBoundary = ({
   }, [client, hydrationQueue])
 
   return (
-    <QueryServerSnapshotContext.Provider value={snapshotClient}>
+    <QueryServerSnapshotContext.Provider value={snapshotClients}>
       {children}
     </QueryServerSnapshotContext.Provider>
   )

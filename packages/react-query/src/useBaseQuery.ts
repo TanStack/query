@@ -98,19 +98,17 @@ export function useBaseQuery<
   // Result to replay while React is hydrating, matching what the server rendered. Built once on a
   // throwaway client so the live cache (which may already have advanced) is untouched. Computed in
   // a lazy initializer rather than a memo because `defaultedOptions` is intentionally mutated above.
-  const snapshotClient = React.useContext(QueryServerSnapshotContext)
+  const snapshotClients = React.useContext(QueryServerSnapshotContext)
   const [serverSnapshotResult] = React.useState<
     QueryObserverResult<TData, TError> | undefined
   >(() => {
+    // The nearest boundary containing this query takes precedence. An empty
+    // or unrelated inner boundary must not hide an ancestor's server snapshot.
+    const snapshotClient = snapshotClients.find((candidate) =>
+      candidate.getQueryCache().get(defaultedOptions.queryHash),
+    )
+
     if (!snapshotClient) {
-      return undefined
-    }
-
-    const snapshotQuery = snapshotClient
-      .getQueryCache()
-      .get(defaultedOptions.queryHash)
-
-    if (!snapshotQuery) {
       return undefined
     }
 

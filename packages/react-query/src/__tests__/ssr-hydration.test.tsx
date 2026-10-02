@@ -380,6 +380,205 @@ describe('Server side rendering with de/rehydration', () => {
     queryClient.clear()
   })
 
+  it.each(['absent', 'empty', 'unrelated'] as const)(
+    'should preserve an outer pending snapshot with %s inner boundary state',
+    async (innerStateKind) => {
+      const key = queryKey()
+
+      let resolveQuery!: (value: string) => void
+      const pendingQuery = new Promise<string>((resolve) => {
+        resolveQuery = resolve
+      })
+      const queryFn = vi.fn(() => pendingQuery)
+      const renderedStates: Array<string> = []
+
+      const innerClient = new QueryClient()
+      if (innerStateKind === 'unrelated') {
+        innerClient.setQueryData(queryKey(), 'unrelated data')
+      }
+      const innerState =
+        innerStateKind === 'absent' ? undefined : dehydrate(innerClient)
+
+      // -- Shared part --
+      function SuccessComponent() {
+        const result = useQuery({
+          queryKey: key,
+          queryFn,
+        })
+        const rendered = `SuccessComponent - status:${result.status} fetching:${result.isFetching} data:${result.data}`
+        renderedStates.push(rendered)
+        return rendered
+      }
+
+      // -- Server part --
+      setIsServer(true)
+
+      const prefetchClient = new QueryClient()
+      // Prefetch without awaiting: the query is dehydrated while still pending.
+      void prefetchClient.query({ queryKey: key, queryFn }).catch(noop)
+      // Let the retryer start so the pending promise is part of the dehydrated state.
+      await vi.advanceTimersByTimeAsync(1)
+      const dehydratedStateServer = dehydrate(prefetchClient, {
+        shouldDehydrateQuery: () => true,
+      })
+      expect(dehydratedStateServer.queries[0]?.promise).toBeDefined()
+
+      const renderCache = new QueryCache()
+      const renderClient = new QueryClient({ queryCache: renderCache })
+      hydrate(renderClient, dehydratedStateServer)
+      const markup = ReactDOMServer.renderToString(
+        <QueryClientProvider client={renderClient}>
+          <HydrationBoundary state={dehydratedStateServer}>
+            <HydrationBoundary state={innerState}>
+              <SuccessComponent />
+            </HydrationBoundary>
+          </HydrationBoundary>
+        </QueryClientProvider>,
+      )
+      renderClient.clear()
+      setIsServer(false)
+
+      const expectedMarkup =
+        'SuccessComponent - status:pending fetching:true data:undefined'
+
+      expect(markup).toBe(expectedMarkup)
+
+      // -- Client part --
+      renderedStates.length = 0
+      const el = document.createElement('div')
+      el.innerHTML = markup
+
+      const queryCache = new QueryCache()
+      const queryClient = new QueryClient({ queryCache })
+      // Pass the dehydrated promise through (not JSON-serializable) to mimic a
+      // framework streaming the pending query's promise to the browser.
+      hydrate(queryClient, dehydratedStateServer)
+
+      // The streamed promise resolves before React hydrates, so the live cache is
+      // already successful while the server markup shows the pending state.
+      resolveQuery('success!')
+      await vi.advanceTimersByTimeAsync(1)
+
+      expect(queryClient.getQueryData(key)).toBe('success!')
+
+      const onRecoverableError = vi.fn()
+      const unmount = ReactHydrate(
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={dehydratedStateServer}>
+            <HydrationBoundary state={innerState}>
+              <SuccessComponent />
+            </HydrationBoundary>
+          </HydrationBoundary>
+        </QueryClientProvider>,
+        el,
+        { onRecoverableError },
+      )
+
+      try {
+        // Hydration must not report a mismatch, and the first client render must
+        // replay the frozen server snapshot (pending) even though the live cache is
+        // already successful.
+        expect.soft(onRecoverableError).toHaveBeenCalledTimes(0)
+        expect.soft(renderedStates[0]).toBe(expectedMarkup)
+
+        await vi.advanceTimersByTimeAsync(50)
+        expect(renderedStates.at(-1)).toBe(
+          'SuccessComponent - status:success fetching:false data:success!',
+        )
+        expect(el.innerHTML).toBe(
+          'SuccessComponent - status:success fetching:false data:success!',
+        )
+      } finally {
+        act(() => {
+          unmount()
+        })
+        queryClient.clear()
+        prefetchClient.clear()
+        innerClient.clear()
+      }
+    },
+  )
+
+  it('should prefer the inner snapshot when both boundaries contain the same query', async () => {
+    const key = queryKey()
+    const outerClient = new QueryClient()
+    outerClient.setQueryData(key, 'outer data', { updatedAt: 1 })
+    const outerState = dehydrate(outerClient)
+    const innerClient = new QueryClient()
+    innerClient.setQueryData(key, 'inner data', { updatedAt: 2 })
+    const innerState = dehydrate(innerClient)
+    const renderedStates: Array<string> = []
+
+    function Page() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve('fetched data'),
+        staleTime: Infinity,
+      })
+      const rendered = `${result.status}:${result.data}`
+      renderedStates.push(rendered)
+      return <div>{rendered}</div>
+    }
+
+    function App({ client }: { client: QueryClient }) {
+      return (
+        <QueryClientProvider client={client}>
+          <HydrationBoundary state={outerState}>
+            <Page />
+            <HydrationBoundary state={innerState}>
+              <Page />
+            </HydrationBoundary>
+          </HydrationBoundary>
+        </QueryClientProvider>
+      )
+    }
+
+    setIsServer(true)
+    const renderClient = new QueryClient()
+    let markup: string
+    try {
+      markup = ReactDOMServer.renderToString(<App client={renderClient} />)
+    } finally {
+      setIsServer(false)
+      renderClient.clear()
+    }
+    expect(markup).toBe(
+      '<div>success:outer data</div><div>success:inner data</div>',
+    )
+
+    renderedStates.length = 0
+    const el = document.createElement('div')
+    el.innerHTML = markup
+    const queryClient = new QueryClient()
+    // Distinct live data makes falling back to the cache observable as well.
+    queryClient.setQueryData(key, 'live data', { updatedAt: 3 })
+    const onRecoverableError = vi.fn()
+    const unmount = ReactHydrate(<App client={queryClient} />, el, {
+      onRecoverableError,
+    })
+
+    try {
+      expect(onRecoverableError).not.toHaveBeenCalled()
+      expect(renderedStates.slice(0, 2)).toEqual([
+        'success:outer data',
+        'success:inner data',
+      ])
+
+      await vi.advanceTimersByTimeAsync(1)
+      expect(Array.from(el.children, (child) => child.textContent)).toEqual([
+        'success:live data',
+        'success:live data',
+      ])
+    } finally {
+      act(() => {
+        unmount()
+      })
+      queryClient.clear()
+      outerClient.clear()
+      innerClient.clear()
+    }
+  })
+
   it('should not mismatch when a query above the boundary creates an empty cache entry', async () => {
     const key = queryKey()
     const queryFn = () => new Promise<string>(noop)
