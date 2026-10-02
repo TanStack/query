@@ -160,21 +160,17 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
-      await vi.advanceTimersByTimeAsync(0)
 
+      await vi.advanceTimersByTimeAsync(0)
       let spans = debugElement
         .queryAll(By.css('span'))
         .map((span) => span.nativeNode.textContent)
-
       expect(spans).toEqual(['pending', 'pending'])
-
       await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
-
       spans = debugElement
         .queryAll(By.css('span'))
         .map((span) => span.nativeNode.textContent)
-
       expect(spans).toEqual(['success', 'error'])
     })
 

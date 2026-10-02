@@ -3,7 +3,7 @@ id: InfiniteQueryObserverOptions
 title: InfiniteQueryObserverOptions
 ---
 
-Defined in: [packages/solid-query/src/QueryClient.ts:62](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L62)
+Defined in: [packages/solid-query/src/QueryClient.ts:60](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L60)
 
 The core `InfiniteQueryObserverOptions`, with Solid's `reconcile` option added.
 

@@ -2,6 +2,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { createQueries, queryOptions } from '../src/index.js'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -245,6 +246,18 @@ describe('queryOptions', () => {
 
     expectTypeOf(options(null).initialData).returns.toEqualTypeOf<
       { id: string; title: string } | undefined
+    >()
+  })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
     >()
   })
 })

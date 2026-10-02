@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import { environmentManager, isServer } from '@tanstack/query-core'
+import { environmentManager } from '@tanstack/query-core'
 import { QueryClientProvider, onlineManager } from '..'
 import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
@@ -32,6 +32,7 @@ export function Blink({
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {
@@ -57,8 +58,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 export function setIsServer(value: boolean) {
+  const originalIsServer = environmentManager.isServer()
   environmentManager.setIsServer(() => value)
   return () => {
-    environmentManager.setIsServer(() => isServer)
+    environmentManager.setIsServer(() => originalIsServer)
   }
 }

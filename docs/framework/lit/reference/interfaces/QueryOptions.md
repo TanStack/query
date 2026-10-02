@@ -3,7 +3,7 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L278)
+Defined in: [packages/query-core/src/types.ts:276](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L276)
 
 ## Type Parameters
 

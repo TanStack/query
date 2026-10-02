@@ -12,7 +12,7 @@ type InfiniteQueryObserverResult<TData, TError> =
 | InfiniteQueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1217](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1217)
+Defined in: [packages/query-core/src/types.ts:1211](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1211)
 
 ## Type Parameters
 

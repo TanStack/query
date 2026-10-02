@@ -3,7 +3,7 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1158](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1158)
+Defined in: [packages/query-core/src/types.ts:1152](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1152)
 
 ## Extends
 

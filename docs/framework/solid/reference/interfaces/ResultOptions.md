@@ -3,7 +3,7 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:753](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L753)
+Defined in: [packages/query-core/src/types.ts:750](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L750)
 
 ## Extended by
 

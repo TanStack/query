@@ -28,9 +28,7 @@ function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,
   result: QueryObserverResult<TData, TError>,
   reconcileOption:
-    | string
-    | false
-    | ((oldData: TData | undefined, newData: TData) => TData),
+    string | false | ((oldData: TData | undefined, newData: TData) => TData),
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
   if (reconcileOption === false) return result
@@ -342,7 +340,7 @@ export function useBaseQuery<
   )
 
   onCleanup(() => {
-    if (isServer && queryResource.loading) {
+    if (isServer && queryResource.state === 'pending') {
       unsubscribeQueued = true
       return
     }

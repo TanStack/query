@@ -3,7 +3,7 @@ id: InfiniteQueryObserverOptions
 title: InfiniteQueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:594](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L594)
+Defined in: [packages/query-core/src/types.ts:591](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L591)
 
 ## Extends
 

@@ -3,7 +3,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/solid-query/src/QueryClient.ts:96](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L96)
+Defined in: [packages/solid-query/src/QueryClient.ts:92](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L92)
 
 The default options a `QueryClient` applies to every query, with Solid's `reconcile` option added to
 `queries`.

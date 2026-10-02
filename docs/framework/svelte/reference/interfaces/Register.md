@@ -3,7 +3,7 @@ id: Register
 title: Register
 ---
 
-Defined in: [packages/query-core/src/types.ts:56](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L56)
+Defined in: [packages/query-core/src/types.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L55)
 
 The interface to augment via declaration merging to override Query's default types repository-wide.
 Each field it declares replaces the default of the matching type: `defaultError` for [DefaultError](../type-aliases/DefaultError.md),

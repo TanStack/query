@@ -1,5 +1,32 @@
 # @tanstack/query-devtools
 
+## 5.104.1
+
+### Patch Changes
+
+- [#11799](https://github.com/TanStack/query/pull/11799) [`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878) - Isolate the signals and subscriptions used across the DevTools context
+- Updated dependencies []:
+  - @tanstack/query-core@5.104.1
+
+## 5.104.0
+
+### Minor Changes
+
+- [#11650](https://github.com/TanStack/query/pull/11650) [`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e) - Build projects with Vite 8
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-core@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- [#11648](https://github.com/TanStack/query/pull/11648) [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d) - chore: update dependencies
+- Updated dependencies []:
+  - @tanstack/query-core@5.103.3
+
 ## 5.103.2
 
 ### Patch Changes
