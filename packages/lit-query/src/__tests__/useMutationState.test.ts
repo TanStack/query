@@ -258,6 +258,48 @@ describe('useMutationState', () => {
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
+  it('should return the current mutation states when connected after a mutation started', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly mutationStates = useMutationState(
+        this,
+        {
+          filters: { status: 'pending' },
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`<p>pending: ${this.mutationStates().length}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const producer = new Producer()
+    const host = new Host()
+    container.append(producer)
+    const { mutation } = producer
+    await producer.updateComplete
+
+    mutation.mutate(1)
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('pending: 1')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('pending: 0')
+  })
+
   it('should not process mutation cache updates while disconnected', async () => {
     class Producer extends LitElement {
       readonly mutation = createMutationController(
