@@ -11,7 +11,7 @@ import {
   injectQuery,
   keepPreviousData,
 } from '@tanstack/angular-query'
-import { lastValueFrom } from 'rxjs'
+import { lastValueFrom, noop } from 'rxjs'
 import { ProjectsService } from '../services/projects.service'
 
 @Component({
