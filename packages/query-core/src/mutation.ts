@@ -6,6 +6,7 @@ import type {
   MutationFunctionContext,
   MutationMeta,
   MutationOptions,
+  MutationScope,
   MutationStatus,
 } from './types'
 import type { MutationCache } from './mutationCache'
@@ -147,6 +148,7 @@ export class Mutation<
     MutationObserver<TData, TError, TVariables, TOnMutateResult>
   >
   #mutationCache: MutationCache
+  readonly #scope: MutationScope | undefined
   #retryer?: Retryer<TData>
 
   constructor(
@@ -157,6 +159,7 @@ export class Mutation<
     this.#client = config.client
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
+    this.#scope = config.options.scope
     this.#observers = []
     this.state = config.state || getDefaultState()
 
@@ -168,7 +171,8 @@ export class Mutation<
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
-    this.options = options
+    // Cache membership is determined at creation; changing scope would strand its queue.
+    this.options = { ...options, scope: this.#scope }
 
     this.updateGcTime(this.options.gcTime)
   }
