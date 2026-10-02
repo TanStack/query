@@ -396,6 +396,42 @@ describe('createQueryController', () => {
     )
   })
 
+  it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: async () => {
+            fetchCount++
+            await sleep(10)
+            return 'data'
+          },
+          enabled: false,
+          initialData: 'initialData',
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`data: ${this.query().data}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.query.refetch()
+    host.query.refetch({ cancelRefetch: false })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(fetchCount).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('data: data')
+  })
+
   it('should not leak observers and should refetch on remount with gcTime=0', async () => {
     const key = queryKey()
     let callCount = 0
