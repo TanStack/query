@@ -50,7 +50,6 @@ export interface QueryObserverResultContext<
   TQueryData,
   TQueryKey extends QueryKey,
 > {
-  result: QueryObserverResult<TData, TError>
   options?: QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -108,20 +107,14 @@ export class QueryObserver<
   #client: QueryClient
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
+  #currentResult: QueryObserverResult<TData, TError> = undefined!
   #resultContext: QueryObserverResultContext<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
     TQueryKey
-  > = { result: undefined!, selectError: null }
-  #pendingResultContext?: QueryObserverResultContext<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
+  > = { selectError: null }
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -345,6 +338,7 @@ export class QueryObserver<
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
     options = { ...options }
     const context = { ...this.#resultContext }
+    let result = this.#currentResult
 
     const getSnapshot = () => {
       const query = this.#client.getQueryCache().build(this.#client, options)
@@ -365,12 +359,12 @@ export class QueryObserver<
         context.selectErrorUpdatedAt = committed.selectErrorUpdatedAt
       }
 
-      const result = this.createResult(query, options, context)
-      if (!shallowEqualObjects(result, context.result)) {
-        context.result = result
+      const nextResult = this.createResult(query, options, context, result)
+      if (!shallowEqualObjects(nextResult, result)) {
+        result = nextResult
       }
       context.options = options
-      return context.result
+      return result
     }
 
     return {
@@ -379,12 +373,10 @@ export class QueryObserver<
         // Recheck the source before adopting a render's memo: the cache may
         // have changed between the render and the options effect.
         getSnapshot()
-        this.#pendingResultContext = { ...context }
-        try {
-          this.setOptions(options)
-        } finally {
-          this.#pendingResultContext = undefined
-        }
+        // Reuse the computation while retaining the stored result for
+        // updateResult's comparison and subscriber notifications.
+        this.#resultContext = { ...context }
+        this.setOptions(options)
       },
     }
   }
@@ -402,7 +394,7 @@ export class QueryObserver<
    * ```
    */
   getCurrentResult(): QueryObserverResult<TData, TError> {
-    return this.#resultContext.result
+    return this.#currentResult
   }
 
   /**
@@ -535,7 +527,7 @@ export class QueryObserver<
       cancelRefetch: fetchOptions.cancelRefetch ?? true,
     }).then(() => {
       this.updateResult()
-      return this.#resultContext.result
+      return this.#currentResult
     })
   }
 
@@ -573,24 +565,18 @@ export class QueryObserver<
       this.#currentQuery,
     )
 
-    if (
-      this.#resultContext.result.isStale ||
-      !this.#shouldScheduleTimer(staleTime)
-    ) {
+    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
       return
     }
 
-    const time = timeUntilStale(
-      this.#resultContext.result.dataUpdatedAt,
-      staleTime,
-    )
+    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
 
     // The timeout is sometimes triggered 1 ms before the stale time expiration.
     // To mitigate this issue we always add 1 ms to the timeout.
     const timeout = time + 1
 
     this.#staleTimeoutId = timeoutManager.setTimeout(() => {
-      if (!this.#resultContext.result.isStale) {
+      if (!this.#currentResult.isStale) {
         this.updateResult()
       }
     }, timeout)
@@ -654,11 +640,11 @@ export class QueryObserver<
       TQueryKey
     >,
     context = this.#resultContext,
+    prevResult = this.#currentResult as
+      QueryObserverResult<TData, TError> | undefined,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
-    const prevResult = context.result as
-      QueryObserverResult<TData, TError> | undefined
     const queryChange = query !== prevQuery
     const queryInitialState = queryChange
       ? query.state
@@ -832,21 +818,10 @@ export class QueryObserver<
    * update was missed in the gap between creating the observer and subscribing to it.
    */
   updateResult(): void {
-    const prevResult = this.#resultContext.result as
+    const prevResult = this.#currentResult as
       QueryObserverResult<TData, TError> | undefined
 
-    const context = this.#pendingResultContext ?? this.#resultContext
-    const nextResult = this.createResult(
-      this.#currentQuery,
-      this.options,
-      context,
-    )
-
-    // Consume a committed reader's memo without replacing the result before
-    // comparing it with the result already delivered to subscribers.
-    this.#resultContext = context
-    this.#resultContext.result = prevResult!
-    this.#pendingResultContext = undefined
+    const nextResult = this.createResult(this.#currentQuery, this.options)
 
     this.#resultContext.options = this.options
 
@@ -859,7 +834,7 @@ export class QueryObserver<
       return
     }
 
-    this.#resultContext.result = nextResult
+    this.#currentResult = nextResult
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -887,10 +862,9 @@ export class QueryObserver<
         includedProps.add('error')
       }
 
-      return Object.keys(this.#resultContext.result).some((key) => {
+      return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
-        const changed =
-          this.#resultContext.result[typedKey] !== prevResult[typedKey]
+        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
 
         return changed && includedProps.has(typedKey)
       })
@@ -902,7 +876,7 @@ export class QueryObserver<
       // First, trigger the listeners
       if (notifyListeners) {
         this.listeners.forEach((listener) => {
-          listener(this.#resultContext.result)
+          listener(this.#currentResult)
         })
       }
 

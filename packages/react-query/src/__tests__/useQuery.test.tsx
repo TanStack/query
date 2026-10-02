@@ -95,6 +95,52 @@ describe('useQuery', () => {
     expect(results.every((result) => result === firstResult)).toBe(true)
   })
 
+  it('should run a data effect once when changing a memoized todo filter', async () => {
+    const key = queryKey()
+    const todos = [
+      { id: 1, title: 'Buy milk', completed: false },
+      { id: 2, title: 'Walk the dog', completed: true },
+    ]
+    queryClient.setQueryData(key, todos)
+    const onDataChange = vi.fn()
+
+    function Page() {
+      const [completed, setCompleted] = React.useState(false)
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve(todos),
+        staleTime: Infinity,
+        select: React.useCallback(
+          (items: typeof todos) =>
+            items.filter((todo) => todo.completed === completed),
+          [completed],
+        ),
+      })
+
+      React.useEffect(() => {
+        onDataChange(data)
+      }, [data])
+
+      return (
+        <>
+          <button onClick={() => setCompleted(true)}>Show completed</button>
+          <div>{data?.map((todo) => todo.title).join(', ')}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    rendered.getByText('Buy milk')
+    expect(onDataChange).toHaveBeenCalledExactlyOnceWith([todos[0]])
+    onDataChange.mockClear()
+
+    fireEvent.click(rendered.getByRole('button', { name: 'Show completed' }))
+    await vi.advanceTimersByTimeAsync(1)
+
+    rendered.getByText('Walk the dog')
+    expect(onDataChange).toHaveBeenCalledExactlyOnceWith([todos[1]])
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
     const key = queryKey()

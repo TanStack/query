@@ -15,6 +15,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
+  QueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
@@ -234,9 +235,10 @@ export class InfiniteQueryObserver<
       InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
+    prevResult?: QueryObserverResult<TData, TError>,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
-    const parentResult = super.createResult(query, options, context)
+    const parentResult = super.createResult(query, options, context, prevResult)
 
     const { isFetching, isRefetching, isError, isRefetchError } = parentResult
     const fetchDirection = state.fetchMeta?.fetchMore?.direction
