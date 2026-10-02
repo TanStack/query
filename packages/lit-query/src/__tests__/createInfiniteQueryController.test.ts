@@ -6,7 +6,7 @@ import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { generateElementName } from './utils.js'
 import type { InfiniteQueryResultAccessor } from '../createInfiniteQueryController.js'
-import type { InfiniteData } from '@tanstack/query-core'
+import type { InfiniteData, QueryFunctionContext } from '@tanstack/query-core'
 import type { Mock } from 'vitest'
 
 const providerTagName = generateElementName()
@@ -243,6 +243,75 @@ describe('createInfiniteQueryController', () => {
     await fetchPreviousPagePromise
     expect(infinite().data?.pages).toEqual([-1, 0])
     expect(host.shadowRoot).toHaveTextContent('pages: -1, 0')
+  })
+
+  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
+    const key = queryKey()
+    const start = 10
+    const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
+    const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
+    const fetchPage = vi.fn<
+      (context: QueryFunctionContext<typeof key, number>) => Promise<number>
+    >(async ({ pageParam, signal }) => {
+      const onAbort = vi.fn()
+      const abortListener = vi.fn()
+      onAborts.push(onAbort)
+      abortListeners.push(abortListener)
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
+      await sleep(50)
+      return pageParam
+    })
+
+    class Host extends LitElement {
+      readonly infinite = createInfiniteQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: fetchPage,
+          initialPageParam: start,
+          getNextPageParam: (lastPage) => lastPage + 1,
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await vi.advanceTimersByTimeAsync(50)
+
+    host.infinite.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    host.infinite.fetchNextPage({ cancelRefetch: false })
+    await vi.advanceTimersByTimeAsync(40)
+    expect(host.shadowRoot).toHaveTextContent('pages: 10, 11')
+
+    const expectedCallCount = 2
+    expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
+    expect(onAborts).toHaveLength(expectedCallCount)
+    expect(abortListeners).toHaveLength(expectedCallCount)
+
+    let callIndex = 0
+    const firstCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(firstCtx.pageParam).toEqual(start)
+    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
+    expect(firstCtx.signal.aborted).toBe(false)
+    expect(onAborts[callIndex]).not.toHaveBeenCalled()
+    expect(abortListeners[callIndex]).not.toHaveBeenCalled()
+
+    callIndex = 1
+    const secondCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(secondCtx.pageParam).toBe(11)
+    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
+    expect(secondCtx.signal.aborted).toBe(false)
+    expect(onAborts[callIndex]).not.toHaveBeenCalled()
+    expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
 
   it('should not request another update when stable function options refresh during host update', async () => {
