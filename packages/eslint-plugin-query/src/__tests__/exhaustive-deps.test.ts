@@ -668,6 +668,17 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass with whitespace between optional chaining and a computed member',
+      code: `
+        function useTest(ids?: Array<string>) {
+          return useQuery({
+            queryKey: ['query-name', ids[0]],
+            queryFn: async () => sendQuery(ids?. [0]),
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass in Vue file when deps are correctly included (script setup)',
       filename: 'Component.vue',
       code: normalizeIndent`
@@ -1032,6 +1043,37 @@ ruleTester.run('exhaustive-deps', rule, {
                   useQuery({
                     queryKey: ['data', ids[0]],
                     queryFn: () => fetchData(ids?.[0]),
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail with a valid suggestion when an optional computed member with whitespace is missing in queryKey',
+      code: normalizeIndent`
+        function Component({ ids }) {
+          useQuery({
+            queryKey: ['data'],
+            queryFn: () => fetchData(ids?. [0]),
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'ids[0]' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['data', ids[0]]" },
+              output: normalizeIndent`
+                function Component({ ids }) {
+                  useQuery({
+                    queryKey: ['data', ids[0]],
+                    queryFn: () => fetchData(ids?. [0]),
                   })
                 }
               `,

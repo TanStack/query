@@ -296,7 +296,7 @@ export const ExhaustiveDepsUtils = {
    */
   normalizeChain(text: string): string {
     return text
-      .replace(/\?\.(?=\[)/g, '')
+      .replace(/\?\.(?=\s*\[)/g, '')
       .replace(/(?:\?(\.)|!)/g, '$1')
       .replace(/\s+/g, '')
   },
