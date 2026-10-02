@@ -371,8 +371,9 @@ export class QueryObserver<
     return {
       getSnapshot,
       commit: () => {
-        // Recheck the source before adopting a render's memo: the cache may
-        // have changed between the render and the options effect.
+        // Reuse any matching selection the observer computed after the last
+        // read, so adopting this reader's memo does not rerun the selector
+        // or replace the selected data reference during setOptions.
         getSnapshot()
         // Reuse the computation while retaining the stored result for
         // updateResult's comparison and subscriber notifications.

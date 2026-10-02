@@ -192,6 +192,40 @@ describe('query observer result readers', () => {
     expect(observer.getCurrentResult()).toBe(current)
   })
 
+  it('reuses a subscription selection made after the last snapshot read', () => {
+    const key = queryKey()
+    client.setQueryData(key, { value: 1 })
+    const select = vi.fn((data: { value: number }) => ({
+      selected: data.value,
+    }))
+    const options = client.defaultQueryOptions({
+      queryKey: key,
+      enabled: false,
+      select,
+      structuralSharing: false,
+    })
+    const observer = new QueryObserver(client, options)
+    const listener = vi.fn()
+    const unsubscribe = observer.subscribe(listener)
+    const reader = observer.createResultReader(options)
+    expect(reader.getSnapshot().data).toEqual({ selected: 1 })
+
+    // The subscription selects the new data before the reader commits.
+    client.setQueryData(key, { value: 2 })
+    const updated = observer.getCurrentResult()
+    expect(updated.data).toEqual({ selected: 2 })
+    expect(select).toHaveBeenCalledTimes(2)
+    listener.mockClear()
+
+    reader.commit()
+
+    expect(select).toHaveBeenCalledTimes(2)
+    expect(observer.getCurrentResult().data).toBe(updated.data)
+    expect(reader.getSnapshot().data).toBe(updated.data)
+    expect(listener).not.toHaveBeenCalled()
+    unsubscribe()
+  })
+
   it('rechecks data before commit and reuses the reader selection', () => {
     const key = queryKey()
     client.setQueryData(key, { value: 1 })
