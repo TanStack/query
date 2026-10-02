@@ -1,4 +1,4 @@
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { ElementRef } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -21,6 +21,11 @@ export interface DevtoolsPanelOptions {
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   errorTypes?: Array<DevtoolsErrorType>
+  /**
+   * The theme of the devtools panel.
+   * @default 'system'
+   */
+  theme?: Theme
   /**
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */

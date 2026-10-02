@@ -61,6 +61,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
     const {
       client = injectedClient,
       errorTypes = [],
+      theme = 'system',
       styleNonce,
       shadowDOMTarget,
       onClose,
@@ -88,6 +89,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
               position: 'bottom',
               initialIsOpen: true,
               errorTypes,
+              theme,
               styleNonce,
               shadowDOMTarget,
               onClose,
@@ -101,6 +103,7 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
       } else if (devtools && hostElement) {
         devtools.setClient(client)
         devtools.setErrorTypes(errorTypes)
+        devtools.setTheme(theme)
         onClose && devtools.setOnClose(onClose)
       } else if (devtools && !hostElement) {
         unmount()

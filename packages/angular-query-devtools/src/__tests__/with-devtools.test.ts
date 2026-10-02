@@ -257,7 +257,10 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenLastCalledWith(
+      errorTypes(),
+    )
 
     const newErrorTypes = [
       {
@@ -269,8 +272,8 @@ describe('withDevtools feature', () => {
     errorTypes.set(newErrorTypes)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledWith(
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenLastCalledWith(
       newErrorTypes,
     )
   })
@@ -294,14 +297,15 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setClient).toHaveBeenLastCalledWith(client())
 
     const newClient = new QueryClient()
     client.set(newClient)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledWith(newClient)
+    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setClient).toHaveBeenLastCalledWith(newClient)
   })
 
   it('should update position', async () => {
@@ -323,13 +327,14 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenLastCalledWith('top')
 
     position.set('left')
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledWith('left')
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenLastCalledWith('left')
   })
 
   it('should update button position', async () => {
@@ -351,13 +356,16 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenLastCalledWith(
+      'bottom-left',
+    )
 
     buttonPosition.set('bottom-right')
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledWith(
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenLastCalledWith(
       'bottom-right',
     )
   })
@@ -381,13 +389,16 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenLastCalledWith(
+      false,
+    )
 
     initialIsOpen.set(true)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledWith(true)
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenLastCalledWith(true)
   })
 
   it('should update theme', async () => {
@@ -409,13 +420,14 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(0)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenLastCalledWith('system')
 
     theme.set('dark')
     await TestBed.inject(ApplicationRef).whenStable()
 
-    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(1)
-    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledWith('dark')
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.setTheme).toHaveBeenLastCalledWith('dark')
   })
 
   it('should pass construction-only options to the devtools', async () => {
@@ -626,7 +638,7 @@ describe('withDevtools feature', () => {
       service.position.set('top')
       await TestBed.inject(ApplicationRef).whenStable()
 
-      expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledWith('top')
+      expect(mockDevtoolsInstance.setPosition).toHaveBeenLastCalledWith('top')
       expect(withDevtoolsFn).toHaveBeenCalledTimes(1)
     })
   })
