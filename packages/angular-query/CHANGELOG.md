@@ -1,5 +1,7 @@
 # @tanstack/angular-query
 
+## 5.0.0-rc.1
+
 ## 5.0.0-rc.0
 
 ### Major Changes
