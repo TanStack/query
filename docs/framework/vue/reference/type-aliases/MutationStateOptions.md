@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L92)
+Defined in: [packages/vue-query/src/useMutationState.ts:91](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L91)
 
 ## Type Parameters
 

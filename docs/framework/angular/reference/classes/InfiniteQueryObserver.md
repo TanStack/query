@@ -631,7 +631,7 @@ properties you actually read" behavior.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:735](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L735)
+Defined in: [packages/query-core/src/queryObserver.ts:733](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L733)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query

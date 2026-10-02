@@ -1,23 +1,19 @@
-import {
-  InfiniteQueryObserver,
-  type DefaultError,
-  type DefaultedInfiniteQueryObserverOptions,
-  type InfiniteData,
-  type InfiniteQueryObserverOptions,
-  type InfiniteQueryObserverResult,
-  type QueryKey,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefaultedInfiniteQueryObserverOptions,
+  InfiniteData,
+  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverResult,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createInfiniteQueryController`.

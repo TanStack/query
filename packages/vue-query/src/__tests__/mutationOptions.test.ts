@@ -63,7 +63,6 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(data.value).toEqual('data')
   })
 
@@ -178,7 +177,6 @@ describe('mutationOptions', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(isMutating.value).toEqual(1)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(isMutating.value).toEqual(0)
   })
@@ -696,7 +694,6 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
@@ -712,7 +709,6 @@ describe('mutationOptions', () => {
 
     mutate()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
@@ -730,7 +726,6 @@ describe('mutationOptions', () => {
 
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutationFn).toHaveBeenCalledTimes(1)
     expect(mutationFn).toHaveBeenNthCalledWith(
       1,
@@ -742,7 +737,6 @@ describe('mutationOptions', () => {
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
-
     expect(mutationFn).toHaveBeenCalledTimes(2)
     expect(mutationFn).toHaveBeenNthCalledWith(
       2,

@@ -7,7 +7,7 @@ title: QueryResultAccessor
 type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createQueryController.ts:42](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L42)
+Defined in: [packages/lit-query/src/createQueryController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L38)
 
 Accessor returned by `createQueryController`.
 

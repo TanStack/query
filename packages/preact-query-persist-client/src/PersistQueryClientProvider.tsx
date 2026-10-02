@@ -29,23 +29,23 @@ export const PersistQueryClientProvider = ({
   ...props
 }: PersistQueryClientProviderProps): VNode => {
   const [isRestoring, setIsRestoring] = useState(true)
-  const refs = useRef({ persistOptions, onSuccess, onError })
-  const didRestore = useRef(false)
+  const optionsRef = useRef({ persistOptions, onSuccess, onError })
+  const didRestoreRef = useRef(false)
 
   useEffect(() => {
-    refs.current = { persistOptions, onSuccess, onError }
+    optionsRef.current = { persistOptions, onSuccess, onError }
   })
 
   useEffect(() => {
     const options = {
-      ...refs.current.persistOptions,
+      ...optionsRef.current.persistOptions,
       queryClient: props.client,
     }
-    if (!didRestore.current) {
-      didRestore.current = true
+    if (!didRestoreRef.current) {
+      didRestoreRef.current = true
       persistQueryClientRestore(options)
-        .then(() => refs.current.onSuccess?.())
-        .catch(() => refs.current.onError?.())
+        .then(() => optionsRef.current.onSuccess?.())
+        .catch(() => optionsRef.current.onError?.())
         .finally(() => {
           setIsRestoring(false)
         })

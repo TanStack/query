@@ -32,13 +32,15 @@ export type UseInfiniteQueryOptions<
   TPageParam = unknown,
 > = MaybeRef<
   {
-    [Property in keyof InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >]: Property extends 'enabled'
+    [
+      Property in keyof InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    ]: Property extends 'enabled'
       ? MaybeRefOrGetter<
           InfiniteQueryObserverOptions<
             TQueryFnData,

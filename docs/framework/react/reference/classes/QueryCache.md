@@ -164,7 +164,7 @@ find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly un
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:295](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L295)
+Defined in: [packages/query-core/src/queryCache.ts:294](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L294)
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -220,7 +220,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:320](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L320)
+Defined in: [packages/query-core/src/queryCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L319)
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -313,7 +313,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
+Defined in: [packages/query-core/src/queryCache.ts:272](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L272)
 
 Returns all queries within the cache.
 
