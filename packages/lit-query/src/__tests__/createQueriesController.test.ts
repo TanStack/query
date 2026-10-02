@@ -196,6 +196,52 @@ describe('createQueriesController', () => {
     expect(host.shadowRoot).toHaveTextContent('data: alpha, beta')
   })
 
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
+      readonly queries = createQueriesController(
+        this,
+        () => {
+          const { count } = this
+          return {
+            queries: [
+              {
+                queryKey: key,
+                queryFn: () => sleep(10).then(() => 'result'),
+              },
+            ],
+            combine: (results) => ({
+              count,
+              res: results.map((result) => result.data).join(','),
+            }),
+          }
+        },
+        queryClient,
+      )
+
+      override render() {
+        const { count, res } = this.queries()
+        return html`data: ${String(count)} ${res}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    host.count = 0
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('data: 0 result')
+
+    host.count = 1
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('data: 1 result')
+  })
+
   it('should not request another update when stable function query options refresh during host update', async () => {
     const key = queryKey()
     let callCount = 0
