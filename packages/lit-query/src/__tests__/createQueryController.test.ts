@@ -59,6 +59,34 @@ describe('createQueryController', () => {
     expect(host.updatesRequested).toBe(0)
   })
 
+  it('should remove the observer from the query when destroyed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'done'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+    container.append(host)
+    await host.updateComplete
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(1)
+
+    query.destroy()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(0)
+  })
+
   it('should return observer count to baseline after 100 lifecycle cycles', async () => {
     const key = queryKey()
 
