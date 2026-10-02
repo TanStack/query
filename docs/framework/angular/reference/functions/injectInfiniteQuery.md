@@ -6,7 +6,7 @@ title: injectInfiniteQuery
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): DefinedCreateInfiniteQueryResult<TData, TError>;
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:83](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L83)
@@ -107,7 +107,7 @@ export class Projects {
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>;
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:239](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L239)
@@ -296,7 +296,7 @@ export class Comments {
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>;
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:267](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L267)

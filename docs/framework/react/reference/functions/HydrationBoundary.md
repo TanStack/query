@@ -4,7 +4,7 @@ title: HydrationBoundary
 ---
 
 ```ts
-function HydrationBoundary(__namedParameters): ReactElement<unknown, string | JSXElementConstructor<any>>;
+function HydrationBoundary(__namedParameters: HydrationBoundaryProps): ReactElement<unknown, string | JSXElementConstructor<any>>;
 ```
 
 Defined in: [packages/react-query/src/HydrationBoundary.tsx:86](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L86)

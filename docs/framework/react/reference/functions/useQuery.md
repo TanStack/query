@@ -8,12 +8,13 @@ redirect_from:
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedUseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L50)
+Defined in: [packages/react-query/src/useQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L51)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -88,10 +89,10 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L117)
+Defined in: [packages/react-query/src/useQuery.ts:118](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L118)
 
 ### Type Parameters
 
@@ -189,10 +190,10 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function useQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): UseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L281)
+Defined in: [packages/react-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L286)
 
 ### Type Parameters
 
@@ -326,7 +327,9 @@ function Post({ postId }: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -340,6 +343,8 @@ function Post({ postId }: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   })
 
   if (isError) return <span>Error: {error.message}</span>

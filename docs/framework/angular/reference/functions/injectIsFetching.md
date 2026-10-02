@@ -4,7 +4,7 @@ title: injectIsFetching
 ---
 
 ```ts
-function injectIsFetching(filters?, options?): Signal<number>;
+function injectIsFetching(filters?: QueryFilters<readonly unknown[]>, options?: InjectIsFetchingOptions): Signal<number>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:63](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L63)

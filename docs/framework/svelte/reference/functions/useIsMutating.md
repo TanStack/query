@@ -4,12 +4,12 @@ title: useIsMutating
 ---
 
 ```ts
-function useIsMutating(filters?, queryClient?): ReactiveValue<number>;
+function useIsMutating(filters?: MutationFilters<unknown, Error, unknown, unknown>, queryClient?: QueryClient): ReactiveValue<number>;
 ```
 
 Defined in: [packages/svelte-query/src/useIsMutating.svelte.ts:28](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsMutating.svelte.ts#L28)
 
-`useIsMutating` is an optional hook that returns the `number` of mutations that your application is
+`useIsMutating` is an optional function that returns the `number` of mutations that your application is
 running (useful for app-wide loading indicators).
 
 ## Parameters

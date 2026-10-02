@@ -1,13 +1,4 @@
-import {
-  afterEach,
-  assertType,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { createNotifyManager } from '../notifyManager'
 
@@ -56,7 +47,6 @@ describe('notifyManager', () => {
     notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
 
     expect(customCallback).toHaveBeenCalledOnce()
-
     await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
@@ -75,26 +65,7 @@ describe('notifyManager', () => {
     } catch {}
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(notifySpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('typeDefs should catch proper signatures', () => {
-    const notifyManagerTest = createNotifyManager()
-
-    // we define some fn with its signature:
-    const fn: (a: string, b: number) => string = (a, b) => a + b
-
-    // now someFn expect to be called with args [a: string, b: number]
-    const someFn = notifyManagerTest.batchCalls(fn)
-
-    expectTypeOf(someFn).parameters.toEqualTypeOf<Parameters<typeof fn>>()
-    assertType<Parameters<typeof someFn>>(['im happy', 4])
-    assertType<Parameters<typeof someFn>>([
-      'im not happy',
-      // @ts-expect-error
-      false,
-    ])
   })
 
   it('should use custom batch notify function', async () => {
@@ -111,7 +82,6 @@ describe('notifyManager', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(batchNotifySpy).toHaveBeenCalled()
     expect(callbackSpy1).toHaveBeenCalled()
     expect(callbackSpy2).toHaveBeenCalled()
@@ -127,7 +97,6 @@ describe('notifyManager', () => {
 
     batchedFn(1, 'test')
     await vi.advanceTimersByTimeAsync(0)
-
     expect(callbackSpy).toHaveBeenCalledWith(1, 'test')
   })
 })

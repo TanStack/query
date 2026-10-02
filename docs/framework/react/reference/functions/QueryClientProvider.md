@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function QueryClientProvider(__namedParameters): Element;
+function QueryClientProvider(__namedParameters: QueryClientProviderProps): Element;
 ```
 
 Defined in: [packages/react-query/src/QueryClientProvider.tsx:70](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L70)

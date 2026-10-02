@@ -4,7 +4,7 @@ title: useQueryClient
 ---
 
 ```ts
-function useQueryClient(queryClient?): QueryClient;
+function useQueryClient(queryClient?: QueryClient): QueryClient;
 ```
 
 Defined in: [packages/preact-query/src/QueryClientProvider.tsx:21](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryClientProvider.tsx#L21)

@@ -92,13 +92,13 @@ describe('InfiniteQueryObserver', () => {
         return firstPageParam - 1
       },
     })
+
     await vi.advanceTimersByTimeAsync(10)
 
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(single).toEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
     expect(all).toEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
 
@@ -107,7 +107,6 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(20)
-
     expect(single).toEqual(['next0', 'next1', 'prev0'])
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
@@ -136,7 +135,6 @@ describe('InfiniteQueryObserver', () => {
     getPreviousPageParam.mockClear()
 
     queryClient.setQueryData(key, { pages: [], pageParams: [] })
-
     expect(getNextPageParam).toHaveBeenCalledTimes(0)
     expect(getPreviousPageParam).toHaveBeenCalledTimes(0)
 
@@ -160,7 +158,6 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
@@ -169,7 +166,6 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
@@ -192,7 +188,6 @@ describe('InfiniteQueryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     observer.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(observer.getCurrentResult().hasNextPage).toBe(true)
@@ -201,7 +196,6 @@ describe('InfiniteQueryObserver', () => {
 
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
-
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toHaveBeenCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)

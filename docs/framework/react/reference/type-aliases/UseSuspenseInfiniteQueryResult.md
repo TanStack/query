@@ -7,7 +7,7 @@ title: UseSuspenseInfiniteQueryResult
 type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [packages/react-query/src/types.ts:389](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L389)
+Defined in: [packages/react-query/src/types.ts:390](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L390)
 
 The result of `useSuspenseInfiniteQuery`. Same as [DefinedUseInfiniteQueryResult](DefinedUseInfiniteQueryResult.md), minus
 `isPlaceholderData` — Suspense hooks never render placeholder data.

@@ -4,7 +4,7 @@ title: HydrationBoundary
 ---
 
 ```ts
-function HydrationBoundary(__namedParameters): Element;
+function HydrationBoundary(__namedParameters: HydrationBoundaryProps): Element;
 ```
 
 Defined in: [packages/preact-query/src/HydrationBoundary.tsx:87](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L87)

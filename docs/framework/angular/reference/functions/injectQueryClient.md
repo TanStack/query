@@ -4,7 +4,7 @@ title: injectQueryClient
 ---
 
 ```ts
-function injectQueryClient(injectOptions): QueryClient;
+function injectQueryClient(injectOptions: InjectOptions & object): QueryClient;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-query-client.ts:18](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query-client.ts#L18)

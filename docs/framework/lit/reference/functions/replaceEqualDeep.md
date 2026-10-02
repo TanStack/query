@@ -5,12 +5,12 @@ title: replaceEqualDeep
 
 ```ts
 function replaceEqualDeep<T>(
-   a,
-   b,
-   depth?): T;
+   a: unknown,
+   b: T,
+   depth?: number): T;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:339](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L339)
+Defined in: [packages/query-core/src/utils.ts:340](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L340)
 
 This function returns `a` if `b` is deeply equal.
 If not, it will replace any deeply equal children of `b` with those of `a`.

@@ -149,7 +149,6 @@ describe('SolidQueryDevtools', () => {
     setButtonPosition.mockClear()
 
     setButtonPositionSignal('top-left')
-
     expect(setButtonPosition).toHaveBeenCalledWith('top-left')
   })
 
@@ -164,7 +163,6 @@ describe('SolidQueryDevtools', () => {
     setPosition.mockClear()
 
     setPositionSignal('top')
-
     expect(setPosition).toHaveBeenCalledWith('top')
   })
 
@@ -184,7 +182,6 @@ describe('SolidQueryDevtools', () => {
     setInitialIsOpen.mockClear()
 
     setInitialIsOpenSignal(true)
-
     expect(setInitialIsOpen).toHaveBeenCalledWith(true)
   })
 
@@ -206,7 +203,6 @@ describe('SolidQueryDevtools', () => {
       { name: 'Network', initializer: () => new Error('Network') },
     ]
     setErrorTypesSignal(nextErrorTypes)
-
     expect(setErrorTypes).toHaveBeenCalledWith(nextErrorTypes)
   })
 
@@ -218,7 +214,6 @@ describe('SolidQueryDevtools', () => {
     setTheme.mockClear()
 
     setThemeSignal('dark')
-
     expect(setTheme).toHaveBeenCalledWith('dark')
   })
 

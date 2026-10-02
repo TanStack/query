@@ -40,9 +40,9 @@ const unsubscribe = observer.subscribe((result) => {
 
 ```ts
 new QueriesObserver<TCombinedResult>(
-   client,
-   queries,
-options?): QueriesObserver<TCombinedResult>;
+   client: QueryClient,
+   queries: QueryObserverOptions<any, any, any, any, any, never>[],
+options?: QueriesObserverOptions<TCombinedResult>): QueriesObserver<TCombinedResult>;
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L70)
@@ -69,22 +69,6 @@ Defined in: [packages/query-core/src/queriesObserver.ts:70](https://github.com/T
 
 ```ts
 Subscribable<QueriesObserverListener>.constructor
-```
-
-## Properties
-
-### listeners
-
-```ts
-protected listeners: Set<QueriesObserverListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
 ```
 
 ## Methods
@@ -152,7 +136,7 @@ in the same order as the queries passed to the constructor or
 ### getOptimisticResult()
 
 ```ts
-getOptimisticResult(queries, combine): [QueryObserverResult[], (r?) => TCombinedResult, () => QueryObserverResult[]];
+getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [QueryObserverResult[], (r?: QueryObserverResult[]) => TCombinedResult, () => QueryObserverResult[]];
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:238](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L238)
@@ -175,7 +159,7 @@ wrap the results for property-access tracking.
 
 #### Returns
 
-\[[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[], (`r?`) => `TCombinedResult`, () => [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]\]
+\[[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[], (`r?`: [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]) => `TCombinedResult`, () => [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)[]\]
 
 ***
 
@@ -202,7 +186,9 @@ the same order as the queries passed to the constructor or `setQueries`.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
@@ -216,50 +202,10 @@ Subscribable.hasListeners
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queriesObserver.ts:86](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L86)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queriesObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L96)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
-
-***
-
 ### setQueries()
 
 ```ts
-setQueries(queries, options?): void;
+setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
 Defined in: [packages/query-core/src/queriesObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L127)
@@ -297,16 +243,22 @@ observer.setQueries([
 ### subscribe()
 
 ```ts
-subscribe(listener): () => void;
+subscribe(listener: QueriesObserverListener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
+Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
 ##### listener
 
 `QueriesObserverListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
@@ -317,6 +269,16 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Inherited from
 

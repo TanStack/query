@@ -4,7 +4,7 @@ title: QueryErrorResetBoundary
 ---
 
 ```ts
-function QueryErrorResetBoundary(__namedParameters): Element;
+function QueryErrorResetBoundary(__namedParameters: QueryErrorResetBoundaryProps): Element;
 ```
 
 Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L159)

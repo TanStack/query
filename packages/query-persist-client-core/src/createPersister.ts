@@ -66,7 +66,8 @@ export interface StoragePersisterOptions<TStorageValue = string> {
    * If set to `true`, the query will refetch on successful query restoration if the data is stale.
    * If set to `false`, the query will not refetch on successful query restoration.
    * If set to `'always'`, the query will always refetch on successful query restoration.
-   * Defaults to `true`.
+   *
+   * @defaultValue true
    */
   refetchOnRestore?: boolean | 'always'
   /**
@@ -130,7 +131,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       const storageKey = `${prefix}-${queryHash}`
       try {
         const storedData = await storage.getItem(storageKey)
-        if (storedData) {
+        if (storedData != null) {
           let persistedQuery: PersistedQuery
           try {
             persistedQuery = await deserialize(storedData)

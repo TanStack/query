@@ -6,7 +6,7 @@ title: infiniteQueryOptions
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
 Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:171](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L171)
@@ -92,7 +92,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
 Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:233](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L233)
@@ -175,7 +175,7 @@ function Comments({ postId }: { postId: string }) {
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
 Defined in: [packages/preact-query/src/infiniteQueryOptions.ts:295](https://github.com/TanStack/query/blob/main/packages/preact-query/src/infiniteQueryOptions.ts#L295)

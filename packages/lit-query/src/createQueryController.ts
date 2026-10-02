@@ -1,22 +1,18 @@
-import {
-  QueryObserver,
-  type DefaultError,
-  type DefaultedQueryObserverOptions,
-  type QueryKey,
-  type QueryObserverOptions,
-  type QueryObserverResult,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { QueryObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefaultedQueryObserverOptions,
+  QueryClient,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createQueryController`.
@@ -300,13 +296,7 @@ class QueryController<
     this.queryClient = resolvedClient
     const defaulted = resolvedClient.defaultQueryOptions(
       readAccessor(this.options),
-    ) as DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    )
     ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =
       'optimistic'
     return defaulted

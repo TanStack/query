@@ -94,12 +94,10 @@ describe('PersistQueryClientProvider (preact)', () => {
     )
 
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
-
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10)
     })
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await act(async () => {
       await vi.advanceTimersByTimeAsync(11)
     })

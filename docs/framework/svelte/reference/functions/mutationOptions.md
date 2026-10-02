@@ -6,7 +6,7 @@ title: mutationOptions
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/svelte-query/src/mutationOptions.ts:34](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L34)
@@ -76,7 +76,7 @@ Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "savi
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
 Defined in: [packages/svelte-query/src/mutationOptions.ts:71](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/mutationOptions.ts#L71)

@@ -6,7 +6,7 @@ title: useInfiniteQuery
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): DefinedUseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/preact-query/src/useInfiniteQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L65)
@@ -102,7 +102,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/preact-query/src/useInfiniteQuery.ts:191](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L191)
@@ -262,7 +262,7 @@ function Projects() {
 ## Call Signature
 
 ```ts
-function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/preact-query/src/useInfiniteQuery.ts:347](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useInfiniteQuery.ts#L347)

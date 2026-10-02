@@ -4,7 +4,9 @@ title: provideQueryClient
 ---
 
 ```ts
-function provideQueryClient(queryClient): Provider;
+function provideQueryClient(queryClient: 
+  | QueryClient
+  | InjectionToken<QueryClient>): Provider;
 ```
 
 Defined in: [packages/angular-query-experimental/src/providers.ts:22](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L22)

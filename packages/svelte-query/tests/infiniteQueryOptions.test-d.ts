@@ -129,6 +129,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()

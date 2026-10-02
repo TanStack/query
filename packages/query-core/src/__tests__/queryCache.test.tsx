@@ -25,6 +25,7 @@ describe('queryCache', () => {
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
       expect(subscriber).toHaveBeenNthCalledWith(1, { query, type: 'added' })
+
       unsubscribe()
     })
 
@@ -59,7 +60,6 @@ describe('queryCache', () => {
       })
 
       const unsubScribeObserver = observer.subscribe(vi.fn())
-
       await vi.advanceTimersByTimeAsync(11)
       expect(events.length).toBe(8)
 
@@ -419,18 +419,24 @@ describe('queryCache', () => {
   })
 
   describe('QueryCache.remove', () => {
-    it('should only delete the instance currently stored under its queryHash', () => {
+    it('should be a no-op if the query is no longer the cached instance', () => {
       const key = queryKey()
 
       const staleQuery = queryCache.build(queryClient, { queryKey: key })
       queryCache.remove(staleQuery)
 
       const currentQuery = queryCache.build(queryClient, { queryKey: key })
+
       expect(currentQuery).not.toBe(staleQuery)
+      const subscriber = vi.fn()
+      const unsubscribe = queryCache.subscribe(subscriber)
 
       queryCache.remove(staleQuery)
 
       expect(queryCache.get(hashKey(key))).toBe(currentQuery)
+      expect(subscriber).not.toHaveBeenCalled()
+
+      unsubscribe()
     })
   })
 
@@ -450,6 +456,7 @@ describe('queryCache', () => {
       const queryClone = Object.assign({}, query)
 
       queryCache.add(queryClone)
+
       expect(queryCache.getAll().length).toEqual(1)
     })
   })

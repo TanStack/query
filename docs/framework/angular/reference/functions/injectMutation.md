@@ -4,7 +4,7 @@ title: injectMutation
 ---
 
 ```ts
-function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn, options?): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
+function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn: () => CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, options?: InjectMutationOptions): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-mutation.ts:174](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L174)

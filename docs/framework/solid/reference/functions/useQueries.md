@@ -6,12 +6,16 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(queriesOptions, queryClient?): TCombinedResult;
+function useQueries<T, TCombinedResult>(queriesOptions: Accessor<{
+  combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetResults<...>, GetResults<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : [...(...)[]] : { [K in string | number | symbol]: GetResults<T[K<(...)>]> }) => TCombinedResult;
+  queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetOptions<...>, GetOptions<...>] : [...(...)[]] extends [..., ...(...)[]] ? ... extends ... ? ... : ... : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends UseQueryOptionsForUseQueries<..., ..., ..., ...>[] ? UseQueryOptionsForUseQueries<..., ..., ..., ...>[] : UseQueryOptionsForUseQueries<..., ..., ..., ...>[]]
+     | readonly [{ [K in string | number | symbol]: GetOptions<T[K<K>]> }];
+}>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
 Defined in: [packages/solid-query/src/useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
 
-The `useQueries` hook can be used to fetch a variable number of queries.
+The `useQueries` primitive can be used to fetch a variable number of queries.
 
 The `queries` key accepts an array with query option objects mostly identical to `useQuery` — see
 `placeholderData` below for the one difference. A custom `QueryClient` is supplied once, as `useQueries`'
@@ -69,7 +73,7 @@ previously rendered queries, because the number of queries can differ between re
 ### queriesOptions
 
 `Accessor`\<\{
-  `combine?`: (`result`) => `TCombinedResult`;
+  `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<(...)\>\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetOptions`\<...\>, `GetOptions`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[] ? `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[] : `UseQueryOptionsForUseQueries`\<..., ..., ..., ...\>[]\]
      \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\<K\>\]\> \}\];
 \}\>

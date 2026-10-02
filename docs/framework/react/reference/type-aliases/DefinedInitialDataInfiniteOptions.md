@@ -10,7 +10,7 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, T
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:103](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L103)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined`.
+never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 

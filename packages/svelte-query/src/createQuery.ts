@@ -13,6 +13,61 @@ import type {
 } from './queryOptions.js'
 
 /**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
+ * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+ * a `select` changes `TData` to include `undefined`).
+ *
+ * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
+ * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
+ * with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+ * be used.
+ * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
+ * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
+ * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { createQuery } from '@tanstack/svelte-query'
+ *
+ *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+ *   // so the list stays visible alongside the error.
+ *   const query = createQuery(() => ({
+ *     queryKey: ['posts'],
+ *     queryFn: fetchPosts,
+ *     initialData: [],
+ *   }))
+ * </script>
+ *
+ * {#if query.isError}
+ *   <span>Error: {query.error.message}</span>
+ * {/if}
+ * <ul>
+ *   {#each query.data as post (post.id)}
+ *     <li>{post.title}</li>
+ *   {/each}
+ * </ul>
+ * ```
+ */
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: Accessor<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+  queryClient?: Accessor<QueryClient>,
+): DefinedCreateQueryResult<TData, TError>
+
+/**
+ * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * The query runs when the options call for it — `enabled: false` skips the initial fetch.
+ *
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * wrapped in an {@link Accessor} so options can be reactive.
@@ -82,54 +137,6 @@ export function createQuery<
   >,
   queryClient?: Accessor<QueryClient>,
 ): CreateQueryResult<TData, TError>
-
-/**
- * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
- *
- * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
- * with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
- * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
- * be used.
- * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
- * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
- * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
- *
- * @example
- * ```svelte
- * <script lang="ts">
- *   import { createQuery } from '@tanstack/svelte-query'
- *
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
- *   // so the list stays visible alongside the error.
- *   const query = createQuery(() => ({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     initialData: [],
- *   }))
- * </script>
- *
- * {#if query.isError}
- *   <span>Error: {query.error.message}</span>
- * {/if}
- * <ul>
- *   {#each query.data as post (post.id)}
- *     <li>{post.title}</li>
- *   {/each}
- * </ul>
- * ```
- */
-export function createQuery<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: Accessor<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
-  queryClient?: Accessor<QueryClient>,
-): DefinedCreateQueryResult<TData, TError>
 
 /**
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.

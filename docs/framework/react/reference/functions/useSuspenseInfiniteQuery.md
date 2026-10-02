@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): UseSuspenseInfiniteQueryResult<TData, TError>;
+function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
 Defined in: [packages/react-query/src/useSuspenseInfiniteQuery.ts:104](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseInfiniteQuery.ts#L104)

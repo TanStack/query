@@ -28,7 +28,7 @@ const unsubscribe = mutationCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new MutationCache(config): MutationCache;
+new MutationCache(config: MutationCacheConfig): MutationCache;
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
@@ -59,22 +59,6 @@ config: MutationCacheConfig = {};
 
 Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
 
-***
-
-### listeners
-
-```ts
-protected listeners: Set<MutationCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:2](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L2)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
 ## Methods
 
 ### clear()
@@ -104,7 +88,7 @@ mutationCache.clear()
 ### find()
 
 ```ts
-find<TData, TError, TVariables, TOnMutateResult>(filters):
+find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters):
   | Mutation<TData, TError, TVariables, TOnMutateResult>
   | undefined;
 ```
@@ -163,7 +147,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 ### findAll()
 
 ```ts
-findAll(filters): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:308](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L308)
@@ -231,7 +215,9 @@ const mutations = mutationCache.getAll()
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:19](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L19)
+Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+
+Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
@@ -245,59 +231,25 @@ Subscribable.hasListeners
 
 ***
 
-### onSubscribe()
+### subscribe()
 
 ```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
+subscribe(listener: MutationCacheListener): () => void;
 ```
 
 Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
 
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onUnsubscribe
-```
-
-***
-
-### subscribe()
-
-```ts
-subscribe(listener): () => void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L8)
+Registers a listener to be called on every update this object notifies about. Returns a function
+that removes the listener again — call it to stop listening. The base class never drops a listener
+on its own, though some subclasses clear all of theirs in `destroy()`.
 
 #### Parameters
 
 ##### listener
 
 `MutationCacheListener`
+
+Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
@@ -308,6 +260,16 @@ Defined in: [packages/query-core/src/subscribable.ts:8](https://github.com/TanSt
 ##### Returns
 
 `void`
+
+#### Example
+
+```ts
+const unsubscribe = subscribable.subscribe(() => {
+  // react to the update
+})
+
+unsubscribe()
+```
 
 #### Inherited from
 
