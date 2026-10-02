@@ -56,7 +56,10 @@ export type {
 export { Mutation } from './mutation'
 export type { MutationState } from './mutation'
 export type { MutationCacheConfig } from './mutationCache'
-export type { QueriesObserverOptions } from './queriesObserver'
+export type {
+  QueriesObserverOptions,
+  QueriesObserverResultReader,
+} from './queriesObserver'
 export { Query } from './query'
 export type { QueryState } from './query'
 export type { QueryCacheConfig } from './queryCache'

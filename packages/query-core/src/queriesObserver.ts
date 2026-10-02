@@ -8,10 +8,22 @@ import type {
   QueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
+import type { QueryObserverResultReader } from './queryObserver'
 
 function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   const excludeSet = new Set(array2)
   return array1.filter((x) => !excludeSet.has(x))
+}
+
+function equalResults(
+  result: Array<QueryObserverResult>,
+  previous: Array<QueryObserverResult> | undefined,
+): boolean {
+  return (
+    !!previous &&
+    result.length === previous.length &&
+    result.every((value, index) => shallowEqualObjects(value, previous[index]))
+  )
 }
 
 type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
@@ -19,6 +31,20 @@ type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 type CombineFn<TCombinedResult> = (
   result: Array<QueryObserverResult>,
 ) => TCombinedResult
+
+export interface QueriesObserverResultReader<
+  TCombinedResult,
+> extends QueryObserverResultReader<Array<QueryObserverResult>> {
+  /** Track result properties and combine the results with this reader's options. */
+  combineResult: (result: Array<QueryObserverResult>) => TCombinedResult
+}
+
+type CombineContext<TCombinedResult> = {
+  result?: Array<QueryObserverResult>
+  combine?: CombineFn<TCombinedResult>
+  value?: TCombinedResult
+  queryHashes?: Array<string>
+}
 
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
@@ -58,14 +84,12 @@ export class QueriesObserver<
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
   #result!: Array<QueryObserverResult>
-  #queries: Array<QueryObserverOptions>
   #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
-  #combinedResult!: TCombinedResult
-  #lastCombine?: CombineFn<TCombinedResult>
-  #lastResult?: Array<QueryObserverResult>
-  #lastQueryHashes?: Array<string>
+  #combinedResult?: TCombinedResult
+  #combineContext: CombineContext<TCombinedResult> = {}
   #observerMatches: Array<QueryObserverMatch> = []
+  #updatingQueries = false
 
   constructor(
     client: QueryClient,
@@ -76,7 +100,6 @@ export class QueriesObserver<
 
     this.#client = client
     this.#options = options
-    this.#queries = []
     this.#observers = []
     this.#result = []
 
@@ -128,12 +151,18 @@ export class QueriesObserver<
     queries: Array<QueryObserverOptions>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): void {
-    this.#queries = queries
+    this.#setQueries(this.#findMatchingObservers(queries), options)
+  }
+
+  #setQueries(
+    newObserverMatches: Array<QueryObserverMatch>,
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ): void {
     this.#options = options
 
     if (process.env.NODE_ENV !== 'production') {
-      const queryHashes = queries.map(
-        (query) => this.#client.defaultQueryOptions(query).queryHash,
+      const queryHashes = newObserverMatches.map(
+        (match) => match.defaultedQueryOptions.queryHash,
       )
       if (new Set(queryHashes).size !== queryHashes.length) {
         console.warn(
@@ -145,12 +174,19 @@ export class QueriesObserver<
     notifyManager.batch(() => {
       const prevObservers = this.#observers
 
-      const newObserverMatches = this.#findMatchingObservers(this.#queries)
-
-      // set options for the new observers to notify of changes
-      newObserverMatches.forEach((match) =>
-        match.observer.setOptions(match.defaultedQueryOptions),
-      )
+      // Apply all options before combining or notifying with the new results.
+      this.#updatingQueries = true
+      try {
+        newObserverMatches.forEach((match) => {
+          if (match.reader) {
+            match.reader.commit()
+          } else {
+            match.observer.setOptions(match.defaultedQueryOptions)
+          }
+        })
+      } finally {
+        this.#updatingQueries = false
+      }
 
       const newObservers = newObserverMatches.map((match) => match.observer)
       const newResult = newObservers.map((observer) =>
@@ -173,7 +209,12 @@ export class QueriesObserver<
       if (!hasStructuralChange && !hasResultChange) return
 
       if (hasStructuralChange) {
-        this.#observerMatches = newObserverMatches
+        this.#observerMatches = newObserverMatches.map(
+          ({ defaultedQueryOptions, observer }) => ({
+            defaultedQueryOptions,
+            observer,
+          }),
+        )
         this.#observers = newObservers
       }
 
@@ -229,11 +270,73 @@ export class QueriesObserver<
   }
 
   /**
+   * Creates a reader for the supplied queries and combine function. Reads keep
+   * result and combine caches local until commit applies the queries and reuses
+   * their computation state. Abandoned readers do not change active observers.
+   */
+  createResultReader(
+    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ): QueriesObserverResultReader<TCombinedResult> {
+    const matches = this.#findMatchingObservers(queries).map((match) => ({
+      ...match,
+      reader: match.observer.createResultReader(match.defaultedQueryOptions),
+    }))
+    const queryHashes = matches.map(
+      (match) => match.defaultedQueryOptions.queryHash,
+    )
+    const combine = options?.combine
+    const context = { ...this.#combineContext }
+    let result = this.#result
+
+    const getSnapshot = () => {
+      const nextResult = matches.map((match) => match.reader.getSnapshot())
+      if (!shallowEqualObjects(nextResult, result)) {
+        result = nextResult
+      }
+      return result
+    }
+
+    return {
+      getSnapshot,
+      combineResult: (input) => {
+        // Notifications may have already combined these results.
+        const committed = this.#combineContext
+        if (
+          committed.combine === combine &&
+          equalResults(input, committed.result) &&
+          shallowEqualObjects(queryHashes, committed.queryHashes)
+        ) {
+          Object.assign(context, committed)
+        }
+        return this.#combineResult(
+          this.#trackResult(input, matches),
+          combine,
+          queryHashes,
+          context,
+          input,
+        )
+      },
+      commit: () => {
+        this.#combineContext = { ...context }
+        this.#setQueries(matches, { combine })
+        if (
+          this.#options?.combine === combine &&
+          equalResults(this.#result, context.result)
+        ) {
+          this.#combinedResult = context.value
+        }
+      },
+    }
+  }
+
+  /**
    * The `QueriesObserver` counterpart of {@link QueryObserver#getOptimisticResult} — computes
    * the result for the given (already-defaulted) queries right now, synchronously. Called by
    * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
    * per-query results, a function to compute the combined result from them, and a function to
    * wrap the results for property-access tracking.
+   * @deprecated Use `createResultReader` instead.
    */
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
@@ -245,7 +348,9 @@ export class QueriesObserver<
   ] {
     const matches = this.#findMatchingObservers(queries)
     const result = matches.map((match) =>
-      match.observer.getOptimisticResult(match.defaultedQueryOptions),
+      match.observer
+        .createResultReader(match.defaultedQueryOptions)
+        .getSnapshot(),
     )
     const queryHashes = matches.map(
       (match) => match.defaultedQueryOptions.queryHash,
@@ -254,7 +359,9 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result, combine, queryHashes)
+        const combined = this.#combineResult(r ?? result, combine, queryHashes)
+        this.#combinedResult = combined
+        return combined
       },
       () => {
         return this.#trackResult(result, matches)
@@ -288,33 +395,29 @@ export class QueriesObserver<
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
     queryHashes?: Array<string>,
+    context = this.#combineContext,
+    result = this.#result,
   ): TCombinedResult {
     if (combine) {
-      const lastHashes = this.#lastQueryHashes
       const queryHashesChanged =
         queryHashes !== undefined &&
-        lastHashes !== undefined &&
-        (lastHashes.length !== queryHashes.length ||
-          queryHashes.some((hash, i) => hash !== lastHashes[i]))
+        context.queryHashes !== undefined &&
+        !shallowEqualObjects(queryHashes, context.queryHashes)
 
       if (
-        this.#result !== this.#lastResult ||
+        !equalResults(result, context.result) ||
         queryHashesChanged ||
-        combine !== this.#lastCombine
+        combine !== context.combine
       ) {
-        this.#lastCombine = combine
-        this.#lastResult = this.#result
-
+        context.value = replaceEqualDeep(context.value, combine(input))
+        context.combine = combine
+        context.result = result
         if (queryHashes !== undefined) {
-          this.#lastQueryHashes = queryHashes
+          context.queryHashes = queryHashes
         }
-        this.#combinedResult = replaceEqualDeep(
-          this.#combinedResult,
-          combine(input),
-        )
       }
 
-      return this.#combinedResult
+      return context.value as TCombinedResult
     }
     return input as any
   }
@@ -366,6 +469,8 @@ export class QueriesObserver<
   }
 
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
+    if (this.#updatingQueries) return
+
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
       this.#result = this.#result.slice()
@@ -385,6 +490,7 @@ export class QueriesObserver<
             this.#options?.combine,
           )
 
+      this.#combinedResult = newResult
       if (shouldSkipCombine || previousResult !== newResult) {
         notifyManager.batch(() => {
           this.listeners.forEach((listener) => {
@@ -399,4 +505,5 @@ export class QueriesObserver<
 type QueryObserverMatch = {
   defaultedQueryOptions: DefaultedQueryObserverOptions
   observer: QueryObserver
+  reader?: QueryObserverResultReader<QueryObserverResult>
 }

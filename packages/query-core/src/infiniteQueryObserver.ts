@@ -127,6 +127,7 @@ export class InfiniteQueryObserver<
    * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}.
    * Computes the result through a separate result reader without changing the
    * observer's committed result, options, or selection state.
+   * @deprecated Use `createResultReader(options).getSnapshot()` instead.
    */
   getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<

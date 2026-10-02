@@ -375,38 +375,18 @@ export function useQueries<
       ),
   )
 
-  // note: this must be called before useSyncExternalStore
-  const [optimisticResult, getCombinedResult, trackResult] =
-    observer.getOptimisticResult(
-      defaultedQueries,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    )
-
-  const shouldSubscribe = !isRestoring && subscribed
-  useSyncExternalStore(
-    useCallback(
-      (onStoreChange) =>
-        shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop,
-      [observer, shouldSubscribe],
-    ),
-    () => observer.getCurrentResult(),
+  const reader = observer.createResultReader(
+    defaultedQueries,
+    options as QueriesObserverOptions<TCombinedResult>,
   )
+  const snapshot = reader.getSnapshot()
 
-  useEffect(() => {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-  }, [defaultedQueries, options, observer])
-
-  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
+  const shouldAtLeastOneSuspend = snapshot.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
   )
 
   const suspensePromises = shouldAtLeastOneSuspend
-    ? optimisticResult.flatMap((result, index) => {
+    ? snapshot.flatMap((result, index) => {
         const opts = defaultedQueries[index]
 
         if (opts && shouldSuspend(opts, result)) {
@@ -420,25 +400,47 @@ export function useQueries<
   if (suspensePromises.length > 0) {
     throw Promise.all(suspensePromises)
   }
-  const firstSingleResultWhichShouldThrow = optimisticResult.find(
-    (result, index) => {
-      const query = defaultedQueries[index]
-      return (
-        query &&
-        getHasError({
-          result,
-          errorResetBoundary,
-          throwOnError: query.throwOnError,
-          query: client.getQueryCache().get(query.queryHash),
-          suspense: query.suspense,
-        })
-      )
-    },
+  // Commit the combine cache before subscription can start a fetch.
+  useEffect(() => {
+    reader.commit()
+  }, [reader])
+
+  const shouldSubscribe = !isRestoring && subscribed
+  const result = useSyncExternalStore(
+    useCallback(
+      (onStoreChange) => {
+        const unsubscribe = shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop
+
+        // Include cache updates that occurred before subscription.
+        observer
+          .getObservers()
+          .forEach((queryObserver) => queryObserver.updateResult())
+        return unsubscribe
+      },
+      [observer, shouldSubscribe],
+    ),
+    reader.getSnapshot,
   )
+
+  const firstSingleResultWhichShouldThrow = result.find((result, index) => {
+    const query = defaultedQueries[index]
+    return (
+      query &&
+      getHasError({
+        result,
+        errorResetBoundary,
+        throwOnError: query.throwOnError,
+        query: client.getQueryCache().get(query.queryHash),
+        suspense: query.suspense,
+      })
+    )
+  })
 
   if (firstSingleResultWhichShouldThrow) {
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return getCombinedResult(trackResult())
+  return reader.combineResult(result)
 }

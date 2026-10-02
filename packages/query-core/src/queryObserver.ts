@@ -306,6 +306,7 @@ export class QueryObserver<
    * right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
    * subscription callback. Uses a separate result reader, so reading does not change the
    * observer's committed result, options, or selection state.
+   * @deprecated Use `createResultReader(options).getSnapshot()` instead.
    */
   getOptimisticResult(
     options: DefaultedQueryObserverOptions<
