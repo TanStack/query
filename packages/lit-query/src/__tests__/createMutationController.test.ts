@@ -996,6 +996,47 @@ describe('createMutationController', () => {
     provider.remove()
   })
 
+  it('should not apply updates from the previous client mutation after switching clients', async () => {
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = clientA
+    container.append(provider)
+    await provider.updateComplete
+
+    class Consumer extends LitElement {
+      readonly mutation = createMutationController(this, {
+        mutationFn: (value: number) => sleep(10).then(() => value + 1),
+      })
+
+      override render() {
+        return html`status: ${this.mutation().status}`
+      }
+    }
+    customElements.define(generateElementName(), Consumer)
+    const consumer = new Consumer()
+    provider.append(consumer)
+
+    await vi.advanceTimersByTimeAsync(0)
+    consumer.mutation.mutate(1)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('status: pending')
+
+    provider.client = clientB
+    await provider.updateComplete
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
+
+    consumer.mutation.destroy()
+    provider.remove()
+  })
+
   it('should reparent mutation controller under a different provider and bind the new nearest client', async () => {
     const key = queryKey()
     const clientA = new QueryClient()
