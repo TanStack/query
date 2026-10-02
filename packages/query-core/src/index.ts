@@ -22,6 +22,7 @@ export { QueryCache } from './queryCache'
 export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
+export type { QueryObserverResultReader } from './queryObserver'
 export { CancelledError, isCancelledError } from './retryer'
 export {
   timeoutManager,

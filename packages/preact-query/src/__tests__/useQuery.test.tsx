@@ -52,6 +52,59 @@ describe('useQuery', () => {
     vi.useRealTimers()
   })
 
+  it('should read updated cache data on an unrelated render when unsubscribed', () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, { value: 1 })
+    const queryFn = vi.fn(() => Promise.resolve({ value: 3 }))
+
+    function Page({ label }: { label: string }) {
+      const { data } = useQuery({ queryKey: key, queryFn, subscribed: false })
+      return (
+        <div>
+          {label}: {data?.value}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page label="first" />)
+    rendered.getByText('first: 1')
+    act(() => {
+      queryClient.setQueryData(key, { value: 2 })
+    })
+    rendered.getByText('first: 1')
+
+    rendered.rerender(<Page label="second" />)
+    rendered.getByText('second: 2')
+    expect(queryFn).not.toHaveBeenCalled()
+  })
+
+  it('should preserve selected data from the first render of a cached key through commit', () => {
+    const key = queryKey()
+    queryClient.setQueryData([key, 1], { value: 1 })
+    queryClient.setQueryData([key, 2], { value: 2 })
+    const select = (data: { value: number }) => ({ selected: data.value })
+    const results: Array<{ selected: number } | undefined> = []
+
+    function Page({ id }: { id: number }) {
+      const { data } = useQuery({
+        queryKey: [key, id],
+        queryFn: () => Promise.resolve({ value: id }),
+        staleTime: Infinity,
+        select,
+      })
+      results.push(data)
+      return <div>{data?.selected}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page id={1} />)
+    results.length = 0
+    rendered.rerender(<Page id={2} />)
+    expect(results[0]).toEqual({ selected: 2 })
+    const firstResult = results[0]
+    rendered.rerender(<Page id={2} />)
+    expect(results.every((result) => result === firstResult)).toBe(true)
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
     const key = queryKey()

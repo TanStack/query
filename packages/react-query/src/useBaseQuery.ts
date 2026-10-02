@@ -88,11 +88,15 @@ export function useBaseQuery<
       ),
   )
 
-  // note: this must be called before useSyncExternalStore
-  const result = observer.getOptimisticResult(defaultedOptions)
+  const reader = observer.createResultReader(defaultedOptions)
+
+  // Suspend before registering external-store effects for this render.
+  if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
+    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  }
 
   const shouldSubscribe = !isRestoring && subscribed
-  React.useSyncExternalStore(
+  const result = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = shouldSubscribe
@@ -107,18 +111,13 @@ export function useBaseQuery<
       },
       [observer, shouldSubscribe],
     ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    reader.getSnapshot,
+    reader.getSnapshot,
   )
 
   React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
-
-  // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-  }
+    reader.commit()
+  }, [reader])
 
   // Handle error boundary
   if (

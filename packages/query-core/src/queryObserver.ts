@@ -34,6 +34,50 @@ interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
+/** A cached view of an observer for one set of render options. */
+export interface QueryObserverResultReader<TResult> {
+  /** Read the result, retaining its reference while all fields are unchanged. */
+  getSnapshot: () => TResult
+  /** Apply this reader's options and reusable computation state after commit. */
+  commit: () => void
+}
+
+/** @internal */
+export interface QueryObserverResultContext<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> {
+  result: QueryObserverResult<TData, TError>
+  options?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >
+  selectFn?: (data: TQueryData) => TData
+  selectData?: TQueryData
+  selectResult?: TData
+  selectError: TError | null
+  selectErrorUpdatedAt?: number
+  placeholder?: {
+    options: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+    previousQuery:
+      Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
+    previousData: TQueryData | undefined
+    data: TData | undefined
+  }
+}
+
 /**
  * A `QueryObserver` watches a single query in the `QueryCache` and computes a
  * `QueryObserverResult` from its state, recomputing and notifying subscribers
@@ -64,18 +108,20 @@ export class QueryObserver<
   #client: QueryClient
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
-  #currentResult: QueryObserverResult<TData, TError> = undefined!
-  #currentResultState?: QueryState<TQueryData, TError>
-  #currentResultOptions?: QueryObserverOptions<
+  #resultContext: QueryObserverResultContext<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > = { result: undefined!, selectError: null }
+  #pendingResultContext?: QueryObserverResultContext<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
     TQueryKey
   >
-  #selectError: TError | null
-  #selectFn?: (data: TQueryData) => TData
-  #selectResult?: TData
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -97,7 +143,6 @@ export class QueryObserver<
     super()
 
     this.#client = client
-    this.#selectError = null
 
     this.bindMethods()
     this.setOptions(options)
@@ -266,8 +311,8 @@ export class QueryObserver<
   /**
    * Computes the result the observer would produce for the given (already-defaulted) options
    * right now, building the underlying `Query` if it doesn't exist yet, without waiting for a
-   * subscription callback. Called by framework adapters on every render (e.g. `useQuery`) so the
-   * returned value is available synchronously, ahead of `setOptions` triggering an actual fetch.
+   * subscription callback. Uses a separate result reader, so reading does not change the
+   * observer's committed result, options, or selection state.
    */
   getOptimisticResult(
     options: DefaultedQueryObserverOptions<
@@ -278,32 +323,70 @@ export class QueryObserver<
       TQueryKey
     >,
   ): QueryObserverResult<TData, TError> {
-    const query = this.#client.getQueryCache().build(this.#client, options)
+    return this.createResultReader(options).getSnapshot()
+  }
 
-    const result = this.createResult(query, options)
+  /**
+   * Creates a result reader that captures the supplied query options.
+   * Reads cache the complete result locally and retain its reference while its
+   * fields are unchanged. They do not update this observer's committed result,
+   * options, or selection state. Missing queries are built in the query cache.
+   * Call `commit` after the render commits to apply the options and reuse the
+   * reader's computation. An abandoned reader needs no cleanup.
+   */
+  createResultReader(
+    options: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
+    options = { ...options }
+    const context = { ...this.#resultContext }
 
-    if (!shallowEqualObjects(this.getCurrentResult(), result)) {
-      // this assigns the optimistic result to the current Observer
-      // because if the query function changes, useQuery will be performing
-      // an effect where it would fetch again.
-      // When the fetch finishes, we perform a deep data cloning in order
-      // to reuse objects references. This deep data clone is performed against
-      // the `observer.currentResult.data` property
-      // When QueryKey changes, we refresh the query and get new `optimistic`
-      // result, while we leave the `observer.currentResult`, so when new data
-      // arrives, it finds the old `observer.currentResult` which is related
-      // to the old QueryKey. Which means that currentResult and selectData are
-      // out of sync already.
-      // To solve this, we move the cursor of the currentResult every time
-      // an observer reads an optimistic value.
+    const getSnapshot = () => {
+      const query = this.#client.getQueryCache().build(this.#client, options)
+      const committed = this.#resultContext
 
-      // When keeping the previous data, the result doesn't change until new
-      // data arrives.
-      this.#currentResult = result
-      this.#currentResultOptions = this.options
-      this.#currentResultState = this.#currentQuery.state
+      // A query update may already have selected this data. Copy its memo,
+      // without sharing the mutable computation context with this reader.
+      if (
+        query.state.data !== undefined &&
+        committed.selectData === query.state.data &&
+        committed.selectFn === options.select &&
+        committed.options?.structuralSharing === options.structuralSharing
+      ) {
+        context.selectFn = committed.selectFn
+        context.selectData = committed.selectData
+        context.selectResult = committed.selectResult
+        context.selectError = committed.selectError
+        context.selectErrorUpdatedAt = committed.selectErrorUpdatedAt
+      }
+
+      const result = this.createResult(query, options, context)
+      if (!shallowEqualObjects(result, context.result)) {
+        context.result = result
+      }
+      context.options = options
+      return context.result
     }
-    return result
+
+    return {
+      getSnapshot,
+      commit: () => {
+        // Recheck the source before adopting a render's memo: the cache may
+        // have changed between the render and the options effect.
+        getSnapshot()
+        this.#pendingResultContext = { ...context }
+        try {
+          this.setOptions(options)
+        } finally {
+          this.#pendingResultContext = undefined
+        }
+      },
+    }
   }
 
   /**
@@ -319,7 +402,7 @@ export class QueryObserver<
    * ```
    */
   getCurrentResult(): QueryObserverResult<TData, TError> {
-    return this.#currentResult
+    return this.#resultContext.result
   }
 
   /**
@@ -452,7 +535,7 @@ export class QueryObserver<
       cancelRefetch: fetchOptions.cancelRefetch ?? true,
     }).then(() => {
       this.updateResult()
-      return this.#currentResult
+      return this.#resultContext.result
     })
   }
 
@@ -490,18 +573,24 @@ export class QueryObserver<
       this.#currentQuery,
     )
 
-    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
+    if (
+      this.#resultContext.result.isStale ||
+      !this.#shouldScheduleTimer(staleTime)
+    ) {
       return
     }
 
-    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
+    const time = timeUntilStale(
+      this.#resultContext.result.dataUpdatedAt,
+      staleTime,
+    )
 
     // The timeout is sometimes triggered 1 ms before the stale time expiration.
     // To mitigate this issue we always add 1 ms to the timeout.
     const timeout = time + 1
 
     this.#staleTimeoutId = timeoutManager.setTimeout(() => {
-      if (!this.#currentResult.isStale) {
+      if (!this.#resultContext.result.isStale) {
         this.updateResult()
       }
     }, timeout)
@@ -564,13 +653,12 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    context = this.#resultContext,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
-    const prevResult = this.#currentResult as
+    const prevResult = context.result as
       QueryObserverResult<TData, TError> | undefined
-    const prevResultState = this.#currentResultState
-    const prevResultOptions = this.#currentResultOptions
     const queryChange = query !== prevQuery
     const queryInitialState = queryChange
       ? query.state
@@ -605,80 +693,93 @@ export class QueryObserver<
 
     // Per default, use query data
     data = newState.data as unknown as TData
-    let skipSelect = false
 
-    // use placeholderData if needed
+    // Cache the unselected placeholder, including when selection throws. The
+    // result's isPlaceholderData flag is false after a selection error, so it
+    // cannot serve as the memo's validity check.
     if (
       options.placeholderData !== undefined &&
       data === undefined &&
       status === 'pending'
     ) {
-      let placeholderData
+      const previousQuery = this.#lastQueryWithDefinedData
+      const previousData = previousQuery?.state.data
+      const placeholder = context.placeholder
 
-      // Memoize placeholder data
       if (
-        prevResult?.isPlaceholderData &&
-        options.placeholderData === prevResultOptions?.placeholderData
+        placeholder &&
+        placeholder.options.placeholderData === options.placeholderData &&
+        placeholder.options.structuralSharing === options.structuralSharing &&
+        placeholder.previousQuery === previousQuery &&
+        placeholder.previousData === previousData
       ) {
-        placeholderData = prevResult.data
-        // we have to skip select when reading this memoization
-        // because prevResult.data is already "selected"
-        skipSelect = true
+        data = placeholder.data
       } else {
-        // compute placeholderData
-        placeholderData =
+        const placeholderData =
           typeof options.placeholderData === 'function'
             ? (
                 options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(
-                this.#lastQueryWithDefinedData?.state.data,
-                this.#lastQueryWithDefinedData as any,
-              )
+              )(previousData, previousQuery as any)
             : options.placeholderData
+
+        data =
+          placeholderData === undefined
+            ? undefined
+            : (replaceData(
+                prevResult?.data,
+                placeholderData as unknown,
+                options,
+              ) as TData)
+        context.placeholder =
+          data === undefined
+            ? undefined
+            : { options, previousQuery, previousData, data }
       }
 
-      if (placeholderData !== undefined) {
+      if (data !== undefined) {
         status = 'success'
-        data = replaceData(
-          prevResult?.data,
-          placeholderData as unknown,
-          options,
-        ) as TData
         isPlaceholderData = true
       }
+    } else {
+      context.placeholder = undefined
     }
 
     // Select data if needed
     // this also runs placeholderData through the select function
-    if (options.select && data !== undefined && !skipSelect) {
+    if (options.select && data !== undefined) {
       // Memoize select result
       if (
         prevResult &&
-        data === prevResultState?.data &&
-        options.select === this.#selectFn
+        data === context.selectData &&
+        options.select === context.selectFn
       ) {
-        data = this.#selectResult
+        data = context.selectResult
       } else {
         try {
-          this.#selectFn = options.select
+          context.selectFn = options.select
+          context.selectData = data as unknown as TQueryData
           data = options.select(data as any)
           data = replaceData(prevResult?.data, data, options)
-          this.#selectResult = data
-          this.#selectError = null
+          context.selectResult = data
+          context.selectError = null
+          context.selectErrorUpdatedAt = undefined
         } catch (selectError) {
-          this.#selectError = selectError as TError
+          context.selectError = selectError as TError
+          context.selectErrorUpdatedAt = Date.now()
         }
       }
     } else if (data === undefined) {
       // a stored select error belongs to previously selected data; once that
       // data is gone (query switch or reset), it must not leak into this result
-      this.#selectError = null
+      context.selectError = null
+      context.selectErrorUpdatedAt = undefined
+      context.selectData = undefined
     }
 
-    if (this.#selectError) {
-      error = this.#selectError
-      data = this.#selectResult
-      errorUpdatedAt = Date.now()
+    if (context.selectError) {
+      error = context.selectError
+      data = context.selectResult
+      errorUpdatedAt = context.selectErrorUpdatedAt ?? Date.now()
       status = 'error'
       isPlaceholderData = false
     }
@@ -731,15 +832,25 @@ export class QueryObserver<
    * update was missed in the gap between creating the observer and subscribing to it.
    */
   updateResult(): void {
-    const prevResult = this.#currentResult as
+    const prevResult = this.#resultContext.result as
       QueryObserverResult<TData, TError> | undefined
 
-    const nextResult = this.createResult(this.#currentQuery, this.options)
+    const context = this.#pendingResultContext ?? this.#resultContext
+    const nextResult = this.createResult(
+      this.#currentQuery,
+      this.options,
+      context,
+    )
 
-    this.#currentResultState = this.#currentQuery.state
-    this.#currentResultOptions = this.options
+    // Consume a committed reader's memo without replacing the result before
+    // comparing it with the result already delivered to subscribers.
+    this.#resultContext = context
+    this.#resultContext.result = prevResult!
+    this.#pendingResultContext = undefined
 
-    if (this.#currentResultState.data !== undefined) {
+    this.#resultContext.options = this.options
+
+    if (this.#currentQuery.state.data !== undefined) {
       this.#lastQueryWithDefinedData = this.#currentQuery
     }
 
@@ -748,7 +859,7 @@ export class QueryObserver<
       return
     }
 
-    this.#currentResult = nextResult
+    this.#resultContext.result = nextResult
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -776,9 +887,10 @@ export class QueryObserver<
         includedProps.add('error')
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
+      return Object.keys(this.#resultContext.result).some((key) => {
         const typedKey = key as keyof QueryObserverResult
-        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+        const changed =
+          this.#resultContext.result[typedKey] !== prevResult[typedKey]
 
         return changed && includedProps.has(typedKey)
       })
@@ -790,7 +902,7 @@ export class QueryObserver<
       // First, trigger the listeners
       if (notifyListeners) {
         this.listeners.forEach((listener) => {
-          listener(this.#currentResult)
+          listener(this.#resultContext.result)
         })
       }
 
