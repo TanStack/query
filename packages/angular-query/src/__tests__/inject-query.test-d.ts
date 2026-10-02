@@ -1,6 +1,7 @@
+import { signal } from '@angular/core'
 import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
-import { injectQuery, queryOptions, toResource } from '..'
+import { injectQuery, queryOptions, skipToken, toResource } from '..'
 import type { CreateQueryOptions, CreateQueryResult } from '..'
 import type { Resource, Signal } from '@angular/core'
 
@@ -253,5 +254,20 @@ describe('Discriminated union return type', () => {
 describe('injectQuery options', () => {
   it('omits observer error reporting options', () => {
     expectTypeOf<CreateQueryOptions>().not.toHaveProperty('throwOnError')
+  })
+})
+
+describe('skipToken', () => {
+  it('should narrow data to string | undefined for a conditional skipToken inside a whole-options getter', () => {
+    const postId = signal<number | undefined>(undefined)
+    const query = injectQuery(() => ({
+      queryKey: ['posts', postId()],
+      queryFn:
+        postId() != null
+          ? () => Promise.resolve(`post ${postId()}`)
+          : skipToken,
+    }))
+
+    expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
   })
 })
