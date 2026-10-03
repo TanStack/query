@@ -1,5 +1,10 @@
 type Box<T> = { current: T }
 
+/**
+ * Creates a reactive box: an object whose `current` property is backed by `$state`.
+ * @param initial - The initial value of `current`.
+ * @returns The box.
+ */
 export function box<T>(initial: T): Box<T> {
   let current = $state(initial)
 

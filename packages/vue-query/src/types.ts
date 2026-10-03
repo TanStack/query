@@ -53,10 +53,16 @@ export type MaybeRefDeep<T> = MaybeRef<
       : T
 >
 
-/** @internal Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening. */
+/**
+ * Rejects `unknown`, collapsing it to `never` — used to keep generic inference from silently widening.
+ * @internal
+ */
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
-/** @internal Type-level equality check between `TTargetA` and `TTargetB`. */
+/**
+ * Type-level equality check between `TTargetA` and `TTargetB`.
+ * @internal
+ */
 export type Equal<TTargetA, TTargetB> =
   (<T>() => T extends TTargetA ? 1 : 2) extends <T>() => T extends TTargetB
     ? 1

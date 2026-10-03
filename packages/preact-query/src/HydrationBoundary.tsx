@@ -47,6 +47,8 @@ export interface HydrationBoundaryProps {
  * update timestamp.
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
+ * @param props - The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
+ * `queryClient`, and the `children` to render.
  * @returns The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
  * cache during render; for queries already in the cache, only newer dehydrated data is hydrated, in an effect
  * after commit.

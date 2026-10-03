@@ -7,7 +7,7 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/solid-query/src/QueryClientProvider.tsx:62](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L62)
+Defined in: [packages/solid-query/src/QueryClientProvider.tsx:63](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L63)
 
 The props accepted by `QueryClientProvider`.
 
