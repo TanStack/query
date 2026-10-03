@@ -66,7 +66,8 @@ export function createHydrationStreamProvider<TShape>() {
     null as any,
   )
   /**
-   * 1. (Happens on server): `useServerInsertedHTML()` is called **on the server** whenever a `Suspense`-boundary completes
+   * 1. (Happens on server): the callback registered with `useServerInsertedHTML()` is called **on the server** whenever
+   *    Next.js inserts HTML into the streamed response
    *    - This means that we might have some new entries in the cache that needs to be flushed
    *    - We pass these to the client by inserting a `<script>`-tag where we do `window[id].push(serializedVersionOfCache)`
    * 2. (Happens in browser) In `useEffect()`:
