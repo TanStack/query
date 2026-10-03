@@ -25,6 +25,7 @@ export default defineConfig([
       'jsdoc/require-param': ['error', { checkDestructured: false }],
       'jsdoc/check-template-names': 'error',
       'jsdoc/informative-docs': 'error',
+      'jsdoc/match-description': 'error',
       'jsdoc/no-bad-blocks': 'error',
       'jsdoc/no-blank-block-descriptions': 'error',
       'jsdoc/no-blank-blocks': 'error',
