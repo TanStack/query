@@ -157,9 +157,9 @@ defaultMutationOptions<T>(options?: T): T;
 Defined in: [packages/query-core/src/queryClient.ts:1143](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1143)
 
 The mutation counterpart of [QueryClient#defaultQueryOptions](#defaultqueryoptions). Called by framework
-adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
-given `mutationKey`, then the client's `defaultOptions.mutations`, then the caller's options
-on top. A no-op if the options are already defaulted (`_defaulted: true`).
+adapters (e.g. inside `useMutation`) to merge the client's `defaultOptions.mutations`, then
+`queryClient.setMutationDefaults` for the given `mutationKey`, then the caller's options on
+top. A no-op if the options are already defaulted (`_defaulted: true`).
 
 #### Type Parameters
 
@@ -200,9 +200,9 @@ defaultQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPagePar
 Defined in: [packages/query-core/src/queryClient.ts:1054](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1054)
 
 Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
-caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
-given `queryKey`, then the client's own `defaultOptions.queries`, then the caller's options
-on top. A no-op if the options are already defaulted (`_defaulted: true`).
+caller into their final, defaulted form: merging the client's own `defaultOptions.queries`,
+then `queryClient.setQueryDefaults` for the given `queryKey`, then the caller's options on
+top. A no-op if the options are already defaulted (`_defaulted: true`).
 
 #### Type Parameters
 

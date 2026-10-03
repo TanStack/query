@@ -1044,9 +1044,9 @@ export class QueryClient {
 
   /**
    * Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
-   * caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
-   * given `queryKey`, then the client's own `defaultOptions.queries`, then the caller's options
-   * on top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * caller into their final, defaulted form: merging the client's own `defaultOptions.queries`,
+   * then `queryClient.setQueryDefaults` for the given `queryKey`, then the caller's options on
+   * top. A no-op if the options are already defaulted (`_defaulted: true`).
    * @param options - The query options passed by the caller.
    * @returns The defaulted options, with `queryHash` and dependent defaults (e.g.
    * `refetchOnReconnect`) filled in.
@@ -1134,9 +1134,9 @@ export class QueryClient {
 
   /**
    * The mutation counterpart of {@link QueryClient#defaultQueryOptions}. Called by framework
-   * adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
-   * given `mutationKey`, then the client's `defaultOptions.mutations`, then the caller's options
-   * on top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * adapters (e.g. inside `useMutation`) to merge the client's `defaultOptions.mutations`, then
+   * `queryClient.setMutationDefaults` for the given `mutationKey`, then the caller's options on
+   * top. A no-op if the options are already defaulted (`_defaulted: true`).
    * @param options - The mutation options passed by the caller.
    * @returns The defaulted options.
    */
