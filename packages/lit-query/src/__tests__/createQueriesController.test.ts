@@ -75,7 +75,6 @@ describe('createQueriesController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
@@ -137,7 +136,6 @@ describe('createQueriesController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
@@ -186,10 +184,10 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const queries = host.queries
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('data: none, none')
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['alpha', 'beta'])
@@ -231,9 +229,9 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     host.count = 0
     container.append(host)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.shadowRoot).toHaveTextContent('data: 0 result')
 
@@ -284,7 +282,6 @@ describe('createQueriesController', () => {
 
     try {
       container.append(host)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(queries()[0].isSuccess).toBe(true)
 
@@ -294,7 +291,6 @@ describe('createQueriesController', () => {
         host.count = i
         await host.updateComplete
       }
-
       expect(host.updatesRequested).toBe(5)
       expect(queries()[0].data).toBe('stable-result')
       expect(callCount).toBe(1)
@@ -342,7 +338,6 @@ describe('createQueriesController', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       expect(queries()[0].data).toBe('stable-data')
       await vi.advanceTimersByTimeAsync(0)
 
@@ -400,7 +395,6 @@ describe('createQueriesController', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       expect(queries()[0].isFetching).toBe(false)
       await vi.advanceTimersByTimeAsync(0)
 
@@ -458,14 +452,12 @@ describe('createQueriesController', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       expect(queries()[0].status).toBe('success')
       await vi.advanceTimersByTimeAsync(0)
 
       host.updatesRequested = 0
 
       queryClient.setQueryData(key, 'updated-data')
-
       await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
 
@@ -495,9 +487,9 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const queries = host.queries
-
     await vi.advanceTimersByTimeAsync(10)
     const result = queries()
     expect(queries()).toBe(result)
@@ -563,9 +555,9 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const queries = host.queries
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toHaveLength(2)
     expect(queries()[0]).toMatchObject({ status: 'success', data: 'alpha' })
@@ -576,7 +568,6 @@ describe('createQueriesController', () => {
 
     includeThird = true
     host.requestUpdate()
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toHaveLength(3)
     expect(queries()[0]?.status).toBe('success')
@@ -589,7 +580,6 @@ describe('createQueriesController', () => {
     includeFailing = false
     host.requestUpdate()
     await host.updateComplete
-
     expect(queries()).toHaveLength(2)
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('success')
@@ -623,9 +613,9 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const queries = host.queries
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['first', 'second'])
     expect(host.shadowRoot).toHaveTextContent('data: first, second')
@@ -633,7 +623,6 @@ describe('createQueriesController', () => {
     order = ['second', 'first']
     host.requestUpdate()
     await host.updateComplete
-
     expect(queries()).toEqual(['second', 'first'])
     expect(host.shadowRoot).toHaveTextContent('data: second, first')
   })
@@ -682,9 +671,9 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const queries = host.queries
-
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toHaveLength(2)
     expect(queries()[0]?.status).toBe('success')
@@ -732,7 +721,6 @@ describe('createQueriesController', () => {
     host.remove()
     await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
@@ -768,7 +756,6 @@ describe('createQueriesController', () => {
     ])
 
     container.append(consumer)
-
     expect(() => consumer.queries()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.queries()).toThrow(/No QueryClient available/)
@@ -782,7 +769,6 @@ describe('createQueriesController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
@@ -819,7 +805,6 @@ describe('createQueriesController', () => {
     expect(firstQuery?.status).toBe('pending')
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.queries()).toThrow(/No QueryClient available/)
     await expect(firstQuery?.refetch()).rejects.toThrow(
@@ -987,7 +972,6 @@ describe('createQueriesController', () => {
     expect(host.queries()).toEqual(['pending', 'pending'])
 
     container.append(host)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.queries()).toEqual(['success', 'success'])
 
@@ -1028,7 +1012,6 @@ describe('createQueriesController', () => {
     expect(host.queries()).toEqual(['alpha:pending'])
 
     container.append(host)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.queries()).toEqual(['alpha:success'])
 
@@ -1103,7 +1086,6 @@ describe('createQueriesController', () => {
       queryClient,
     )
     const queries = host.queries
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queries()[0]?.data).toBe('hydrated-value')
     expect(queryFnCalls).toBe(0)
@@ -1152,7 +1134,6 @@ describe('createQueriesController', () => {
       queryClient,
     )
     const queries = host.queries
-
     expect(queries()).toEqual([
       { status: 'success', data: 'alpha' },
       { status: 'success', data: 'beta' },
@@ -1202,8 +1183,8 @@ describe('createQueriesController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-    provider.append(consumer)
 
+    provider.append(consumer)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
     expect(consumer.shadowRoot).toHaveTextContent('data: q-1')
@@ -1277,7 +1258,6 @@ describe('createQueriesController', () => {
 
     container.append(providerA)
     await providerA.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
 
@@ -1294,7 +1274,6 @@ describe('createQueriesController', () => {
     providerB.append(consumer)
     container.append(providerB)
     await providerB.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-2')
     expect(consumer.queryCalls).toBe(2)
