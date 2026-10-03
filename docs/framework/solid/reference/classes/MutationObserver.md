@@ -102,7 +102,7 @@ built yet, e.g. before the first `mutate()` call or after `reset()`).
 
 [`MutationObserverResult`](../type-aliases/MutationObserverResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
-The current result.
+The observer's latest result.
 
 ***
 

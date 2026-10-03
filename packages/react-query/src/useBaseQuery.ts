@@ -26,7 +26,7 @@ import type { UseBaseQueryOptions } from './types'
 /**
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
  * `useSuspenseInfiniteQuery`.
- * @param options - The query options.
+ * @param options - The options passed to the calling hook.
  * @param Observer - The observer class from query-core (`QueryObserver` or
  * `InfiniteQueryObserver`).
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest

@@ -40,7 +40,7 @@ export type ValueAccessor<T> = (() => T) & {
  * Creates a {@link ValueAccessor} that reads its value from `getter`, both when called and through
  * its `current` property.
  * @param getter - Returns the latest value.
- * @returns The value accessor.
+ * @returns A function that returns the latest value, which is also available on `current`.
  */
 export function createValueAccessor<T>(getter: () => T): ValueAccessor<T> {
   const accessor = (() => getter()) as ValueAccessor<T>

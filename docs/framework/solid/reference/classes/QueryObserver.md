@@ -190,7 +190,7 @@ as they happen, subscribe to the observer instead (its inherited
 
 [`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>
 
-The current result.
+The observer's latest result.
 
 #### Example
 

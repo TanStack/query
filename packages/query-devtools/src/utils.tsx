@@ -7,7 +7,7 @@ import type { DevtoolsPosition } from './contexts'
  * Returns the status label of a query: fetching, inactive (no observers), paused, stale, or fresh,
  * checked in that order.
  * @param query - The query to label.
- * @returns The status label.
+ * @returns One of `'fetching'`, `'inactive'`, `'paused'`, `'stale'`, or `'fresh'`.
  */
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
@@ -90,7 +90,7 @@ export function getMutationStatusColor({
 
 /**
  * Returns the color of a query status label.
- * @param label - The status label.
+ * @param label - A label returned by {@link getQueryStatusLabel}.
  * @returns The color name.
  */
 export function getQueryStatusColorByLabel(label: QueryStatusLabel) {

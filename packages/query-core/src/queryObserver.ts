@@ -316,7 +316,7 @@ export class QueryObserver<
    * observed query. This is a point-in-time read; to be notified of updates
    * as they happen, subscribe to the observer instead (its inherited
    * `subscribe` method).
-   * @returns The current result.
+   * @returns The observer's latest result.
    * @example
    * ```ts
    * const result = observer.getCurrentResult()

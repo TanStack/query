@@ -134,7 +134,7 @@ export const rule = createRule({
     /**
      * Returns the name of the TanStack Query hook a call expression calls directly. `useQueries` and
      * `useSuspenseQueries` with `combine` are ignored, since their result can be stable.
-     * @param callExpression - The call expression.
+     * @param callExpression - The call to check.
      * @returns The hook name, or `undefined` if the call is not a tracked query hook.
      */
     function getDirectQueryHook(
@@ -162,7 +162,7 @@ export const rule = createRule({
     /**
      * Returns the query hook behind a call expression: a direct query hook call, or a custom hook that
      * returns one.
-     * @param callExpression - The call expression.
+     * @param callExpression - The call to check.
      * @returns The query hook name, or `undefined` if there is none.
      */
     function getTrackedQueryHook(
