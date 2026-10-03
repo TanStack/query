@@ -51,6 +51,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -99,6 +100,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -142,6 +144,7 @@ describe('useMutationState', () => {
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -152,7 +155,6 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -196,10 +198,10 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -223,6 +225,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -239,6 +242,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -264,6 +268,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -279,6 +284,7 @@ describe('useMutationState', () => {
         return html`<p>pending: ${this.mutationStates().length}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -304,6 +310,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -324,6 +331,7 @@ describe('useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -352,6 +360,7 @@ describe('useMutationState', () => {
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -364,6 +373,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses || 'none'}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -372,9 +382,9 @@ describe('useMutationState', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('statuses: none')
 
     producer.mutation1.mutate()
@@ -426,6 +436,7 @@ describe('useMutationState', () => {
         return html`<p>statuses: ${statuses}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -434,6 +445,7 @@ describe('useMutationState', () => {
     const promiseA = mutationA.mutateAsync(undefined)
     await vi.advanceTimersByTimeAsync(10)
     await expect(promiseA).resolves.toBe('ok')
+
     await Promise.all([
       expect(mutationB.mutateAsync(undefined)).rejects.toThrow(
         'state-b-failure',
@@ -480,6 +492,7 @@ describe('useMutationState', () => {
         return html`<p>labels: ${labels}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -512,6 +525,7 @@ describe('useMutationState', () => {
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -528,10 +542,10 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.mutationStatuses()).toEqual([])
 
     consumer.mutationStatuses.destroy()
@@ -551,6 +565,7 @@ describe('useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -561,6 +576,7 @@ describe('useMutationState', () => {
     class Host extends LitElement {
       mutationStatuses?: MutationStateAccessor<string>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

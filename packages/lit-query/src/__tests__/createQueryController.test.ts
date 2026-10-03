@@ -49,11 +49,12 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     query.destroy()
     await vi.advanceTimersByTimeAsync(0)
     expect(host.updatesRequested).toBe(0)
@@ -72,12 +73,13 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
     await host.updateComplete
+
     expect(
       queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
     ).toBe(1)
@@ -102,10 +104,10 @@ describe('createQueryController', () => {
           queryClient,
         )
       }
+
       customElements.define(generateElementName(), Host)
       const host = new Host()
       const query = host.query
-
       container.append(host)
       await vi.advanceTimersByTimeAsync(10)
       expect(query().isSuccess).toBe(true)
@@ -141,12 +143,13 @@ describe('createQueryController', () => {
         return html`name: ${this.query().data?.name ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('name: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
@@ -187,6 +190,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -238,6 +242,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -288,6 +293,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -324,11 +330,12 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const query = host.query
+
     await vi.advanceTimersByTimeAsync(10)
     const result = query()
     expect(query()).toBe(result)
@@ -352,6 +359,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -394,11 +402,12 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(callCount).toBe(0)
     expect(query().isSuccess).toBe(false)
@@ -439,6 +448,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -473,6 +483,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -482,7 +493,6 @@ describe('createQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(firstQuery().isSuccess).toBe(true)
     expect(firstHost.shadowRoot).toHaveTextContent('data: value-1')
-
     const firstCacheEntry = queryClient.getQueryCache().find({ queryKey: key })
     expect(firstCacheEntry?.getObserversCount()).toBe(1)
     expect(callCount).toBe(1)
@@ -505,7 +515,6 @@ describe('createQueryController', () => {
     expect(secondQuery().isSuccess).toBe(true)
     expect(secondQuery().data).toBe('value-2')
     expect(secondHost.shadowRoot).toHaveTextContent('data: value-2')
-
     const secondCacheEntry = queryClient.getQueryCache().find({ queryKey: key })
     expect(secondCacheEntry?.getObserversCount()).toBe(1)
     expect(callCount).toBe(2)
@@ -536,11 +545,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('user-1')
@@ -594,11 +604,12 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     await host.updateComplete
@@ -606,6 +617,7 @@ describe('createQueryController', () => {
 
     host.count = 1
     await host.updateComplete
+
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
     expect(host.updatesRequested).toBe(updatesAfterSuccess + 1)
@@ -630,6 +642,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -675,6 +688,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -717,11 +731,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe(20)
@@ -749,11 +764,12 @@ describe('createQueryController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isError).toBe(true)
     expect(query().error).toEqual(new Error('select-failed'))
@@ -796,11 +812,12 @@ describe('createQueryController', () => {
         `
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('value-1')
@@ -846,11 +863,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('v1')
@@ -895,11 +913,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(resolveOld).toBeTypeOf('function')
 
@@ -950,11 +969,12 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(oldSignal).toBeInstanceOf(AbortSignal)
     expect(oldSignal?.aborted).toBe(false)
@@ -992,10 +1012,10 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
     await host.updateComplete
 
@@ -1008,7 +1028,6 @@ describe('createQueryController', () => {
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe('result-20')
     expect(host.shadowRoot).toHaveTextContent('data: result-20')
-
     const latestCacheEntry = queryClient
       .getQueryCache()
       .find({ queryKey: [...key, 20] })
@@ -1042,12 +1061,13 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
     await host.updateComplete
+
     expect(query().isFetching).toBe(true)
 
     host.remove()
@@ -1081,11 +1101,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(query().isFetching).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('data: none')
@@ -1121,11 +1142,12 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
     expect(query().data).toBe(2)
@@ -1171,17 +1193,17 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(consumer.queryCalls).toBe(1)
-
     const oldCacheQueryBeforeSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
@@ -1189,15 +1211,14 @@ describe('createQueryController', () => {
 
     provider.client = clientB
     await provider.updateComplete
-    await vi.advanceTimersByTimeAsync(10)
 
+    await vi.advanceTimersByTimeAsync(10)
     const oldCacheQueryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
     const newCacheQueryAfterSwitch = clientB
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
-
     expect(oldCacheQueryAfterSwitch?.getObserversCount() ?? 0).toBe(0)
     expect(newCacheQueryAfterSwitch?.getObserversCount()).toBe(1)
 
@@ -1237,11 +1258,12 @@ describe('createQueryController', () => {
         return html`failureCount: ${failureCount}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().failureCount).toBe(1)
     expect(query().failureReason).toBeInstanceOf(Error)
@@ -1267,14 +1289,14 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(query().isSuccess).toBe(true)
-
     const cacheQuery = queryClient.getQueryCache().find({ queryKey: key })
     expect(cacheQuery?.state.data).toEqual(['a', 'b'])
     expect(cacheQuery?.getObserversCount()).toBe(1)
@@ -1312,6 +1334,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -1322,10 +1345,10 @@ describe('createQueryController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(consumer.queryCalls).toBe(1)
@@ -1361,10 +1384,11 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
+
     expect(() => consumer.query()).not.toThrow()
 
     container.append(provider)
@@ -1396,6 +1420,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -1432,11 +1457,12 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     const placeholderResult = consumer.query()
-
     container.append(consumer)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.query()).toThrow(/No QueryClient available/)
     await expect(consumer.query.refetch()).rejects.toThrow(
@@ -1471,13 +1497,14 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(
@@ -1531,13 +1558,14 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)
-
     container.append(providerA)
     await providerA.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
 
@@ -1593,6 +1621,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query?.().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1648,6 +1677,7 @@ describe('createQueryController', () => {
       readonly firstRead = this.query()
       readonly id = 'alpha'
     }
+
     customElements.define(generateElementName(), DeferredExplicitQueryHost)
 
     expect(() => new DeferredExplicitQueryHost()).not.toThrow()
@@ -1684,11 +1714,12 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
 
     const suspensePromise = host.query.suspense()
@@ -1724,11 +1755,12 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('status: success, data: initial')
 
     await expect(host.query.suspense()).resolves.toMatchObject({
@@ -1758,11 +1790,12 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
 
     await expect(host.query.suspense()).resolves.toMatchObject({
@@ -1799,14 +1832,16 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(host.shadowRoot).toHaveTextContent('status: success, data: data-1')
 
     host.userId = 2
+
     const suspensePromise = host.query.suspense()
     await vi.advanceTimersByTimeAsync(10)
     await expect(suspensePromise).resolves.toMatchObject({

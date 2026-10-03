@@ -58,10 +58,11 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -85,10 +86,11 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -121,10 +123,11 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -162,10 +165,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -189,10 +193,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(queryClient.isMutating(mutationOpts)).toBe(0)
 
     host.mutation1.mutate()
@@ -213,10 +218,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(queryClient.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -246,10 +252,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(queryClient.isMutating()).toBe(0)
 
     host.mutation1.mutate()
@@ -280,10 +287,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(
       queryClient.isMutating({ mutationKey: mutationOpts1.mutationKey }),
     ).toBe(0)
@@ -320,10 +328,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.mutationStates()).toHaveLength(0)
 
     host.mutation1.mutate()
@@ -350,10 +359,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.mutationStates()).toHaveLength(0)
 
     host.mutation1.mutate()
@@ -389,10 +399,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.mutationStates()).toHaveLength(0)
 
     host.mutation1.mutate()
@@ -435,10 +446,11 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(host.mutationStates()).toHaveLength(0)
 
     host.mutation1.mutate()

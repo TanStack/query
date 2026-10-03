@@ -42,6 +42,7 @@ describe('createMutationController', () => {
         return html`status: ${this.mutation().status}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -58,10 +59,10 @@ describe('createMutationController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
     const mutatePromise = consumer.mutation.mutateAsync(1)
@@ -95,17 +96,16 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
 
     const mutatePromise = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(3)
-
     expect(
       queryClient
         .getMutationCache()
@@ -135,11 +135,13 @@ describe('createMutationController', () => {
         return html`data: ${this.mutation().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
     const mutation = host.mutation
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('data: none')
 
     const resultPromise = mutation.mutateAsync(1)
@@ -164,6 +166,7 @@ describe('createMutationController', () => {
         return html`data: ${this.mutation().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -196,11 +199,12 @@ describe('createMutationController', () => {
         return html`status: ${status}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
 
     host.mutation.mutate('todo')
@@ -232,6 +236,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -273,6 +278,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -309,6 +315,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -346,6 +353,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -374,6 +382,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -408,6 +417,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -439,6 +449,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -469,6 +480,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -497,6 +509,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -522,6 +535,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -547,6 +561,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -575,6 +590,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -602,6 +618,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -632,6 +649,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -674,6 +692,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -728,6 +747,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -768,10 +788,10 @@ describe('createMutationController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const { mutation } = host
-
     container.append(host)
     await host.updateComplete
 
@@ -794,6 +814,7 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     const placeholderResult = consumer.mutation()
@@ -833,10 +854,11 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     container.append(consumer)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
 
@@ -845,7 +867,6 @@ describe('createMutationController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
 
@@ -864,6 +885,7 @@ describe('createMutationController', () => {
     class Host extends LitElement {
       mutation?: MutationResultAccessor<number, Error, number, unknown>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -913,6 +935,7 @@ describe('createMutationController', () => {
       readonly id = 'alpha'
       readonly offset = 1
     }
+
     customElements.define(generateElementName(), DeferredExplicitMutationHost)
 
     expect(() => new DeferredExplicitMutationHost()).not.toThrow()
@@ -955,15 +978,15 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
+
     await vi.advanceTimersByTimeAsync(0)
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(firstMutation).resolves.toBe(2)
-
     const countAAfterFirst = clientA
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
@@ -971,17 +994,16 @@ describe('createMutationController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
-
     const countAAfterSecond = clientA
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
     const countBAfterSecond = clientB
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
-
     expect(countAAfterSecond).toBe(countAAfterFirst)
     expect(countBAfterSecond).toBeGreaterThan(0)
 
@@ -1009,6 +1031,7 @@ describe('createMutationController', () => {
         return html`status: ${this.mutation().status}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1020,6 +1043,7 @@ describe('createMutationController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
     await vi.advanceTimersByTimeAsync(10)
@@ -1051,10 +1075,10 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)
-
     container.append(providerA)
     await providerA.updateComplete
 

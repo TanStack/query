@@ -110,7 +110,6 @@ describe('Server Side Rendering', () => {
     await renderToString(Page)
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
-
     expect(keys).toEqual([[key, 1]])
   })
 

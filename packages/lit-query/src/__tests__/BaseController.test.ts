@@ -60,7 +60,6 @@ describe('BaseController', () => {
     customElements.define(generateElementName(), Host)
     const host = new Host()
     provider.append(host)
-
     container.append(provider)
     await provider.updateComplete
     await host.updateComplete
@@ -86,6 +85,7 @@ describe('BaseController', () => {
 
     const controller = new RecordingController(host)
     controller.hostConnected()
+
     await vi.advanceTimersByTimeAsync(0)
     expect(controller.lifecycle).toEqual([
       'connected:missing',

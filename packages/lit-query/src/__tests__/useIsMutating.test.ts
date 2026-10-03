@@ -43,6 +43,7 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -53,7 +54,6 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -95,10 +95,10 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -133,6 +133,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -142,13 +143,14 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
-
     container.append(producer, host)
     const { mutation } = producer
     const { isMutating } = host
+
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate(1)
     expect(isMutating()).toBe(1)
@@ -169,6 +171,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -183,6 +186,7 @@ describe('useIsMutating', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -211,6 +215,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -220,6 +225,7 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -228,9 +234,9 @@ describe('useIsMutating', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('mutating: 0')
 
     producer.mutation1.mutate()
@@ -277,6 +283,7 @@ describe('useIsMutating', () => {
         return html`<p>all: ${all}, filtered: ${filtered}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -335,6 +342,7 @@ describe('useIsMutating', () => {
         return html`<p>filtered: ${this.isMutatingFiltered()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -375,6 +383,7 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -389,10 +398,10 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.isMutating()).toBe(0)
 
     consumer.isMutating.destroy()
@@ -412,6 +421,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -423,6 +433,7 @@ describe('useIsMutating', () => {
     class Host extends LitElement {
       isMutating?: IsMutatingAccessor
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

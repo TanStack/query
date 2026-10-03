@@ -34,9 +34,9 @@ describe('QueryClientProvider/context', () => {
   it('should register and unregister the default query client for public helpers', async () => {
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = queryClient
-
     container.append(provider)
     await provider.updateComplete
+
     expect(useQueryClient()).toBe(queryClient)
     expect(resolveQueryClient()).toBe(queryClient)
 
@@ -53,11 +53,11 @@ describe('QueryClientProvider/context', () => {
     const providerB = document.createElement(tagName) as QueryClientProvider
     providerA.client = queryClient
     providerB.client = queryClient
-
     container.append(providerA)
     container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
+
     expect(useQueryClient()).toBe(queryClient)
 
     providerB.remove()
@@ -75,11 +75,11 @@ describe('QueryClientProvider/context', () => {
     const providerB = document.createElement(tagName) as QueryClientProvider
     providerA.client = clientA
     providerB.client = clientB
-
     container.append(providerA)
     container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
+
     expect(getDefaultQueryClient()).toBeUndefined()
     expect(() => useQueryClient()).toThrow(/Multiple QueryClients are mounted/)
     expect(() => resolveQueryClient()).toThrow(
@@ -112,9 +112,9 @@ describe('QueryClientProvider/context', () => {
 
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
-
     container.append(provider)
     await provider.updateComplete
+
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(0)
     expect(mountB).toHaveBeenCalledTimes(0)
@@ -127,6 +127,7 @@ describe('QueryClientProvider/context', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
@@ -158,11 +159,11 @@ describe('QueryClientProvider/context', () => {
 
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
-
     container.append(provider)
 
     provider.client = clientB
     await provider.updateComplete
+
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(1)
@@ -182,12 +183,12 @@ describe('QueryClientProvider/context', () => {
   it('should not throw when the client is cleared on a disconnected provider', async () => {
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = queryClient
-
     container.append(provider)
     await provider.updateComplete
 
     provider.remove()
     provider.client = undefined as unknown as QueryClient
+
     await expect(provider.updateComplete).resolves.toBe(true)
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
@@ -204,16 +205,17 @@ describe('QueryClientProvider/context', () => {
         retry: false,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
 
     const provider = document.createElement(tagName) as QueryClientProvider
     const consumer = new Consumer()
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(mount).toHaveBeenCalledTimes(1)
@@ -221,6 +223,7 @@ describe('QueryClientProvider/context', () => {
     expect(consumer.query().data).toBe('ok')
 
     provider.client = undefined as unknown as QueryClient
+
     await expect(provider.updateComplete).rejects.toThrow(
       /No QueryClient available/,
     )
