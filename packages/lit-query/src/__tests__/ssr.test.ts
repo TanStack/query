@@ -54,7 +54,6 @@ describe('Server Side Rendering', () => {
         return html`<div>status ${this.query().status}</div>`
       }
     }
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status pending')
@@ -76,10 +75,8 @@ describe('Server Side Rendering', () => {
         return html`<div>status ${this.query().status}</div>`
       }
     }
-
     queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status success')
@@ -106,11 +103,9 @@ describe('Server Side Rendering', () => {
         return html`<h1>${this.query().data}</h1>`
       }
     }
-
     await renderToString(Page)
 
     const keys = queryCache.getAll().map((query) => query.queryKey)
-
     expect(keys).toEqual([[key, 1]])
   })
 
@@ -136,7 +131,6 @@ describe('Server Side Rendering', () => {
         </ul>`
       }
     }
-
     queryClient
       .infiniteQuery({
         queryKey: key,
@@ -145,7 +139,6 @@ describe('Server Side Rendering', () => {
       })
       .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('page 1')
@@ -170,10 +163,8 @@ describe('Server Side Rendering', () => {
           <div>isFetching: ${this.isFetching()}</div>`
       }
     }
-
     queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('data')
@@ -206,11 +197,9 @@ describe('Server Side Rendering', () => {
           <div>data2: ${query2.data}</div>`
       }
     }
-
     queryClient.query({ queryKey: key1, queryFn: queryFn1 }).catch(noop)
     queryClient.query({ queryKey: key2, queryFn: queryFn2 }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status1: success')
@@ -231,7 +220,6 @@ describe('Server Side Rendering', () => {
         return html`<div>status: ${this.mutation().status}</div>`
       }
     }
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status: idle')
@@ -245,7 +233,6 @@ describe('Server Side Rendering', () => {
         return html`<div>mutationState: ${this.mutationState().length}</div>`
       }
     }
-
     const markup = await renderToString(Page)
 
     expect(markup).toContain('mutationState: 0')
