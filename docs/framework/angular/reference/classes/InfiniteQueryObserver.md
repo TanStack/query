@@ -202,7 +202,7 @@ query it was observing.
 fetchNextPage(options?: FetchNextPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:158](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L158)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:165](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L165)
 
 Fetches the next page of the infinite query and returns a promise that
 resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -216,9 +216,15 @@ receives the current pages/page params and whose result also determines
 
 [`FetchNextPageOptions`](../interfaces/FetchNextPageOptions.md)
 
+Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+and `throwOnError` to `true` to reject when the fetch fails.
+
 #### Returns
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result after the next page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
 
 #### Example
 
@@ -286,7 +292,7 @@ console.log(result.data)
 fetchPreviousPage(options?: FetchPreviousPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:185](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L185)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:196](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L196)
 
 Fetches the previous page of the infinite query and returns a promise
 that resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -300,9 +306,15 @@ receives the current pages/page params and whose result also determines
 
 [`FetchPreviousPageOptions`](../interfaces/FetchPreviousPageOptions.md)
 
+Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+and `throwOnError` to `true` to reject when the fetch fails.
+
 #### Returns
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
+
+A promise that resolves with the result after the previous page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
 
 #### Example
 
@@ -348,7 +360,7 @@ The observed query.
 getOptimisticResult(options: DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L126)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L129)
 
 The infinite-query counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult), marking the
 options as an infinite query before delegating to it. Called by framework adapters (e.g.
@@ -361,9 +373,13 @@ synchronously.
 
 [`DefaultedInfiniteQueryObserverOptions`](../type-aliases/DefaultedInfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
+The defaulted infinite query observer options to compute the result for.
+
 #### Returns
 
 [`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
+
+The result for the given options.
 
 #### Overrides
 
@@ -436,7 +452,7 @@ console.log(result.data)
 setOptions(options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): void;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L107)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:108](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L108)
 
 Updates the observer's options. Behaves the same as
 `QueryObserver.setOptions`, additionally marking the options as
@@ -448,6 +464,8 @@ implementation.
 ##### options
 
 [`InfiniteQueryObserverOptions`](../interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The new infinite query observer options.
 
 #### Returns
 
