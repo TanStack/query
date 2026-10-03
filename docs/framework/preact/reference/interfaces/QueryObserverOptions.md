@@ -3,7 +3,7 @@ id: QueryObserverOptions
 title: QueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:432](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L432)
+Defined in: [packages/query-core/src/types.ts:430](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L430)
 
 ## Extends
 

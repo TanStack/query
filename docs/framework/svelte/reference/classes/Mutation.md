@@ -3,7 +3,7 @@ id: Mutation
 title: Mutation
 ---
 
-Defined in: [packages/query-core/src/mutation.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L135)
+Defined in: [packages/query-core/src/mutation.ts:134](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L134)
 
 Represents a single mutation attempt. A `Mutation` holds the mutation's
 options, state (data/error/status), and the `MutationObserver`s currently
@@ -52,7 +52,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 new Mutation<TData, TError, TVariables, TOnMutateResult>(config: MutationConfig<TData, TError, TVariables, TOnMutateResult>): Mutation<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:152](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L152)
+Defined in: [packages/query-core/src/mutation.ts:151](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L151)
 
 #### Parameters
 
@@ -94,7 +94,7 @@ Removable.gcTime
 readonly mutationId: number;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:143](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L143)
+Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L142)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: [packages/query-core/src/mutation.ts:143](https://github.com/TanStac
 options: MutationOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L142)
+Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L141)
 
 ***
 
@@ -114,7 +114,7 @@ Defined in: [packages/query-core/src/mutation.ts:142](https://github.com/TanStac
 state: MutationState<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L141)
+Defined in: [packages/query-core/src/mutation.ts:140](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L140)
 
 ## Accessors
 
@@ -126,7 +126,7 @@ Defined in: [packages/query-core/src/mutation.ts:141](https://github.com/TanStac
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:179](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L179)
+Defined in: [packages/query-core/src/mutation.ts:178](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L178)
 
 The `meta` object passed in the mutation's options, if any.
 
@@ -142,7 +142,7 @@ The `meta` object passed in the mutation's options, if any.
 continue(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:243](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L243)
+Defined in: [packages/query-core/src/mutation.ts:240](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L240)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -203,7 +203,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:284](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L284)
+Defined in: [packages/query-core/src/mutation.ts:279](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L279)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.

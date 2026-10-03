@@ -3,7 +3,7 @@ id: UseBaseQueryOptions
 title: UseBaseQueryOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:47](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L47)
+Defined in: [packages/react-query/src/types.ts:46](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L46)
 
 The options shared by `useQuery` and `useSuspenseQuery`. Extends [QueryObserverOptions](QueryObserverOptions.md) from
 `@tanstack/query-core` with the `react-query`-specific `subscribed` option.

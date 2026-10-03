@@ -11,7 +11,7 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryDefinedReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:67](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L67)
+Defined in: [packages/vue-query/src/useQuery.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L65)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
 a `select` changes `TData` to include `undefined`).
@@ -92,7 +92,7 @@ const { data, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:212](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L212)
+Defined in: [packages/vue-query/src/useQuery.ts:204](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L204)
 
 `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
 (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
@@ -265,7 +265,7 @@ const { data, isPlaceholderData, isError, error } = useQuery({
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefOrGetter<UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>>, queryClient?: QueryClient): UseQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useQuery.ts:288](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L288)
+Defined in: [packages/vue-query/src/useQuery.ts:277](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQuery.ts#L277)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

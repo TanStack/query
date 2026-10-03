@@ -9,7 +9,7 @@ redirect_from:
 function useQueryClient(queryClient?: QueryClient): QueryClient;
 ```
 
-Defined in: [packages/react-query/src/QueryClientProvider.tsx:21](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L21)
+Defined in: [packages/react-query/src/QueryClientProvider.tsx:20](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L20)
 
 The `useQueryClient` hook returns the current `QueryClient` instance.
 

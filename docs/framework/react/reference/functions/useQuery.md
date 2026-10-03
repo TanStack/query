@@ -11,7 +11,7 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L51)
+Defined in: [packages/react-query/src/useQuery.ts:49](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L49)
 
 This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
 a `select` changes `TData` to include `undefined`).
@@ -92,7 +92,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:118](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L118)
+Defined in: [packages/react-query/src/useQuery.ts:114](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L114)
 
 ### Type Parameters
 
@@ -193,7 +193,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L286)
+Defined in: [packages/react-query/src/useQuery.ts:276](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L276)
 
 ### Type Parameters
 
