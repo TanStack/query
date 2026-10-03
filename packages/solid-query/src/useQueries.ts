@@ -1,10 +1,9 @@
-import { QueriesObserver, noop } from '@tanstack/query-core'
+import { QueriesObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
 import {
   batch,
   createComputed,
   createMemo,
-  createRenderEffect,
   createResource,
   mergeProps,
   on,
@@ -42,9 +41,9 @@ type UseQueryOptionsForUseQueries<
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQueries is a plain object and not a SolidJS Resource.
-   * It will not suspend when the data is loading.
-   * Setting `suspense` to `true` will be a no-op.
+   * It does not control suspending: reading `data` of a query that has no data yet suspends the nearest
+   * `<Suspense>` boundary until none of the queries are loading, whether or not this option is set. Setting it
+   * to `true` still makes `throwOnError` default to `true`.
    */
   suspense?: boolean
 }
@@ -195,8 +194,13 @@ type QueriesResults<
  * between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
  * structure.
  *
- * The `combine` option can be used to combine the results of the queries into a single value. The result will
- * be structurally shared to be as referentially stable as possible.
+ * The `combine` option can be used to combine the results of the queries into a single value, such as an
+ * array or an object. The result will be structurally shared to be as referentially stable as possible.
+ *
+ * Inside a `<Suspense>` boundary, reading `data` of a query that has no data yet suspends until none of the
+ * queries are loading, so the boundary waits for all of them. When `throwOnError` asks to throw, reading
+ * `data` throws the error to the nearest `<ErrorBoundary>`. With `combine`, reading any value of the combined
+ * result does the same instead, since the result can have any shape.
  *
  * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
  * previously rendered queries, because the number of queries can differ between renders.
@@ -273,7 +277,7 @@ type QueriesResults<
  */
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult extends object = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -300,76 +304,150 @@ export function useQueries<
     ),
   )
 
+  const getObserverOptions = () => {
+    const combine = (
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>
+    ).combine
+    return combine ? { combine } : undefined
+  }
+
   const observer = new QueriesObserver(
     client(),
     defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+    getObserverOptions(),
   )
 
-  const [state, setState] = createStore<TCombinedResult>(
+  const getOptimisticResult = () =>
     observer.getOptimisticResult(
       defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+      getObserverOptions()?.combine,
+    )
+
+  const [initialResults, getInitialCombinedResult] = getOptimisticResult()
+
+  // The raw results drive Suspense and error handling, while the store holds
+  // what is returned (the combined result when `combine` is set). Both are
+  // only ever updated together through `commit`
+  let observerResults = initialResults
+  const [state, setState] = createStore<TCombinedResult>(
+    getInitialCombinedResult(),
   )
 
-  createRenderEffect(
-    on(
-      () => queriesOptions().queries.length,
-      () =>
-        setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
-    ),
-  )
+  const setStore = setState as (...args: Array<unknown>) => void
 
-  const dataResources = createMemo(
-    on(
-      () => state.length,
-      () =>
-        state.map((queryRes) => {
-          const dataPromise = () =>
-            new Promise((resolve) => {
-              if (queryRes.isFetching && queryRes.isLoading) return
-              resolve(unwrap(queryRes.data))
-            })
-          return createResource(dataPromise)
-        }),
-    ),
-  )
+  const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+    if (typeof value !== 'object' || value === null) return false
+    const prototype: unknown = Object.getPrototypeOf(value)
+    return prototype === Object.prototype || prototype === null
+  }
 
-  batch(() => {
-    const dataResources_ = dataResources()
-    for (let index = 0; index < dataResources_.length; index++) {
-      const dataResource = dataResources_[index]!
-      dataResource[1].mutate(() => unwrap(state[index]!.data))
-      dataResource[1].refetch()
+  // Merges `next` into the store node `current` and drops the keys that `next`
+  // no longer has (setting a store key to `undefined` deletes it)
+  const toMerge = (current: unknown, next: Record<string, unknown>) => {
+    if (!isPlainObject(current)) return next
+    const merged = { ...next }
+    for (const key of Object.keys(current)) {
+      if (!(key in merged)) merged[key] = undefined
     }
-  })
+    return merged
+  }
+
+  // Merges the next state into the existing store nodes instead of replacing
+  // them, so a result read once (e.g. `const [query] = useQueries(...)`) keeps
+  // tracking later updates. `combine` may return any object, not only an array
+  // of results
+  const commit = (
+    results: Array<QueryObserverResult>,
+    nextState: TCombinedResult,
+  ) => {
+    observerResults = results
+    const current: unknown = unwrap(state)
+    batch(() => {
+      if (!Array.isArray(nextState) || !Array.isArray(current)) {
+        setStore(
+          isPlainObject(nextState) ? toMerge(current, nextState) : nextState,
+        )
+        return
+      }
+      nextState.forEach((item: unknown, index) => {
+        setStore(
+          index,
+          isPlainObject(item) ? toMerge(current[index], item) : item,
+        )
+      })
+      if (current.length > nextState.length) {
+        setStore((items: Array<unknown>) => items.slice(0, nextState.length))
+      }
+    })
+  }
+
+  const needsSuspend = () =>
+    observerResults.some((result) => result.isFetching && result.isLoading)
+
+  const getThrowableError = () => {
+    const queries = observer.getQueries()
+    for (let index = 0; index < observerResults.length; index++) {
+      const result = observerResults[index]!
+      if (
+        result.isError &&
+        !result.isFetching &&
+        shouldThrowError(defaultedQueries()[index]?.throwOnError, [
+          result.error,
+          queries[index]!,
+        ])
+      ) {
+        return { error: result.error }
+      }
+    }
+    return undefined
+  }
+
+  // A single resource used only as a Suspense signal: it stays pending while
+  // any query is loading, and rejects with the first error that `throwOnError`
+  // asks to throw, like `useBaseQuery`
+  let resolver: {
+    resolve: (value: true) => void
+    reject: (reason: unknown) => void
+  } | null = null
+
+  const settle = () => {
+    if (!resolver || needsSuspend()) return
+    const { resolve, reject } = resolver
+    resolver = null
+    const throwable = getThrowableError()
+    if (throwable) {
+      reject(throwable.error)
+    } else {
+      resolve(true)
+    }
+  }
+
+  const [queryResource, { refetch }] = createResource<true>(
+    () =>
+      new Promise((resolve, reject) => {
+        resolver = { resolve, reject }
+        settle()
+      }),
+    needsSuspend() ? {} : { initialValue: true },
+  )
 
   let taskQueue: Array<() => void> = []
   const subscribeToObserver = () =>
     observer.subscribe((result) => {
       taskQueue.push(() => {
-        batch(() => {
-          const dataResources_ = dataResources()
-          for (let index = 0; index < dataResources_.length; index++) {
-            const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unwrap(result[index]) }
-            // @ts-expect-error typescript pedantry regarding the possible range of index
-            setState(index, unwrap(unwrappedResult))
-            dataResource[1].mutate(() => unwrap(state[index]!.data))
-            dataResource[1].refetch()
-          }
-        })
+        commit(
+          result,
+          getObserverOptions()
+            ? getOptimisticResult()[1](result)
+            : (result as unknown as TCombinedResult),
+        )
+        if (resolver) {
+          settle()
+        } else if (needsSuspend() || getThrowableError()) {
+          // Re-run the resource when a query falls back into a hard loading
+          // state (e.g. after `resetQueries`) or has an error to throw
+          refetch()
+        }
       })
 
       queueMicrotask(() => {
@@ -386,46 +464,100 @@ export function useQueries<
     // cleanup needs to be scheduled after synchronous effects take place
     return () => queueMicrotask(unsubscribe)
   })
-  onCleanup(unsubscribe)
+  onCleanup(() => {
+    unsubscribe()
+    // Resolve a pending resource on unmount so Suspense does not hang
+    if (resolver) {
+      resolver.resolve(true)
+      resolver = null
+    }
+  })
 
   onMount(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
+    observer.setQueries(defaultedQueries(), getObserverOptions())
   })
 
-  createComputed(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
+  // Applies the optimistic results right away, and suspends again when a query
+  // starts loading without data, instead of waiting for the observer to notify
+  const commitOptimisticResult = () => {
+    const [results, getCombinedResult] = getOptimisticResult()
+    commit(results, getCombinedResult())
+    if (needsSuspend()) {
+      refetch()
+    }
+  }
 
-  const handler = (index: number) => ({
-    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+  createComputed(
+    on(
+      defaultedQueries,
+      () => {
+        observer.setQueries(defaultedQueries(), getObserverOptions())
+        commitOptimisticResult()
+      },
+      { defer: true },
+    ),
+  )
+
+  createComputed(
+    on(
+      isRestoring,
+      (restoring) => {
+        if (!restoring) {
+          commitOptimisticResult()
+        }
+      },
+      { defer: true },
+    ),
+  )
+
+  const handler: ProxyHandler<QueryObserverResult> = {
+    get(target, prop) {
       if (prop === 'data') {
-        return dataResources()[index]![0]()
+        if (target.data !== undefined) {
+          // Rethrow an error the resource rejected with, without subscribing
+          // to its loading state
+          const error: unknown = queryResource.error
+          if (error !== undefined) throw error
+          return target.data
+        }
+        // Reading the resource suspends while any query is loading
+        queryResource()
+        return target.data
       }
       return Reflect.get(target, prop)
     },
-  })
+  }
 
-  const getProxies = () =>
-    state.map((s, index) => {
-      return new Proxy(s, handler(index))
+  // Cache one proxy per store node so a result keeps its identity across reads
+  const proxies = new WeakMap<object, QueryObserverResult>()
+
+  // With `combine`, the result can have any shape, so reading any of its
+  // values suspends while any query is loading, and throws an error that
+  // `throwOnError` asks to throw
+  if (getObserverOptions()) {
+    return new Proxy(state, {
+      get(target, prop, receiver) {
+        if (typeof prop === 'string') queryResource()
+        return Reflect.get(target, prop, receiver)
+      },
     })
+  }
 
-  const [proxyState, setProxyState] = createStore(getProxies())
-  createRenderEffect(() => setProxyState(getProxies()))
-
-  return proxyState as TCombinedResult
+  // Without `combine`, each query's `data` is read through `handler`
+  return new Proxy(state, {
+    get(target, prop, receiver) {
+      const value: unknown = Reflect.get(target, prop, receiver)
+      // Only the items of the results array are objects (its methods are
+      // functions and `length` is a number)
+      if (typeof value !== 'object' || !value) {
+        return value
+      }
+      let proxy = proxies.get(value)
+      if (!proxy) {
+        proxy = new Proxy(value as QueryObserverResult, handler)
+        proxies.set(value, proxy)
+      }
+      return proxy
+    },
+  })
 }
