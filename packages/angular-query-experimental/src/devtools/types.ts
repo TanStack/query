@@ -105,8 +105,16 @@ export interface DevtoolsOptions {
   loadDevtools?: 'auto' | boolean
 }
 
+/**
+ * A function that returns the devtools options. It receives the `deps` of
+ * {@link WithDevtoolsOptions} and runs inside a `computed`, so the devtools update when the signals
+ * it reads change.
+ */
 export type WithDevtoolsFn = (...deps: Array<any>) => DevtoolsOptions
 
+/**
+ * The signature of `withDevtools`, which creates the devtools feature for `provideTanStackQuery`.
+ */
 export type WithDevtools = (
   withDevtoolsFn?: WithDevtoolsFn,
   options?: WithDevtoolsOptions,

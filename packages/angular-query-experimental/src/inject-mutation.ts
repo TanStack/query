@@ -25,6 +25,9 @@ import type {
   CreateMutationResult,
 } from './types'
 
+/**
+ * Options for `injectMutation`, passed after the function that returns the mutation options.
+ */
 export interface InjectMutationOptions {
   /**
    * The `Injector` in which to create the mutation.

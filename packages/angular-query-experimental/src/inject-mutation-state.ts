@@ -44,6 +44,10 @@ function getResult<TResult = MutationState>(
     )
 }
 
+/**
+ * Options for `injectMutationState`, passed after the function that returns the mutation state
+ * options.
+ */
 export interface InjectMutationStateOptions {
   /**
    * The `Injector` in which to create the mutation state signal.
