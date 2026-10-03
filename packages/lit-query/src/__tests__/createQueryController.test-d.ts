@@ -4,7 +4,11 @@ import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createQueryController } from '../createQueryController.js'
 import { queryOptions } from '../queryOptions.js'
-import type { OmitKeyof, QueryFunction } from '@tanstack/query-core'
+import type {
+  OmitKeyof,
+  QueryFunction,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateQueryOptions } from '../createQueryController.js'
 
 class Host extends LitElement {}
@@ -209,6 +213,30 @@ describe('createQueryController', () => {
 
     expectTypeOf(state.data).toEqualTypeOf<string>()
     expectTypeOf(state.error).toEqualTypeOf<Error | null>()
+  })
+
+  it('should type refetch with correct return type', () => {
+    const query = createQueryController(
+      new Host(),
+      { queryKey: queryKey(), queryFn: () => Promise.resolve('test') },
+      new QueryClient(),
+    )
+
+    expectTypeOf(query.refetch()).toEqualTypeOf<
+      Promise<QueryObserverResult<string, Error>>
+    >()
+  })
+
+  it('should type suspense with correct return type', () => {
+    const query = createQueryController(
+      new Host(),
+      { queryKey: queryKey(), queryFn: () => Promise.resolve('test') },
+      new QueryClient(),
+    )
+
+    expectTypeOf(query.suspense()).toEqualTypeOf<
+      Promise<QueryObserverResult<string, Error>>
+    >()
   })
 
   describe('initialData', () => {
