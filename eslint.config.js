@@ -11,7 +11,7 @@ export default defineConfig([
   ...tanstackConfig,
   {
     ...pluginJsdoc.configs['flat/recommended-typescript'],
-    name: 'tanstack/jsdoc',
+    name: 'tanstack/query/jsdoc',
     files: ['**/src/**/*.{ts,tsx}'],
     ignores: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.test-d.{ts,tsx}'],
     rules: {
@@ -20,7 +20,7 @@ export default defineConfig([
     },
   },
   {
-    name: 'tanstack/temp',
+    name: 'tanstack/query',
     plugins: {
       cspell: pluginCspell,
     },
@@ -105,6 +105,7 @@ export default defineConfig([
     },
   },
   {
+    name: 'tanstack/query/vitest',
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
     rules: {
