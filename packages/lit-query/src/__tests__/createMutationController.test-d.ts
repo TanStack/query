@@ -102,6 +102,18 @@ describe('createMutationController', () => {
     expectTypeOf(mutation.mutateAsync('test')).toEqualTypeOf<Promise<number>>()
   })
 
+  it('should type reset with correct type', () => {
+    const mutation = createMutationController(
+      new Host(),
+      {
+        mutationFn: (id: string) => Promise.resolve(id.length),
+      },
+      new QueryClient(),
+    )
+
+    expectTypeOf(mutation.reset).toEqualTypeOf<() => void>()
+  })
+
   it('should default TVariables to void when mutationFn has no parameters', () => {
     const mutation = createMutationController(
       new Host(),
