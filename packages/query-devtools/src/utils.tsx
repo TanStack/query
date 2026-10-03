@@ -106,7 +106,7 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 }
 
 /**
- * Displays a string regardless of the type of the data
+ * Displays a string regardless of the type of the data.
  * @param value - Value to be stringified
  * @param beautify - Formats json to multiline
  * @returns The value serialized with `superjson`, as a JSON string.
@@ -198,7 +198,7 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
- * updates nested data by path
+ * Updates nested data by path.
  * @param oldData - Data to be updated
  * @param updatePath - Path to the data to be updated
  * @param value - New value
@@ -272,7 +272,7 @@ export const updateNestedDataByPath = (
 }
 
 /**
- * Deletes nested data by path
+ * Deletes nested data by path.
  * @param oldData - Data to be updated
  * @param deletePath - Path to the data to be deleted
  * @returns newData without the deleted items by path

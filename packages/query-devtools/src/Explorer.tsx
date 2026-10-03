@@ -30,10 +30,10 @@ import { useQueryDevtoolsContext, useTheme } from './contexts'
 import type { Query } from '@tanstack/query-core'
 
 /**
- * Chunk elements in the array by size
+ * Chunk elements in the array by size.
  *
- * when the array cannot be chunked evenly by size, the last chunk will be
- * filled with the remaining elements
+ * When the array cannot be chunked evenly by size, the last chunk will be
+ * filled with the remaining elements.
  * @param array - The elements to chunk.
  * @param size - The number of elements per chunk. Below `1`, no chunks are returned.
  * @returns The chunks.

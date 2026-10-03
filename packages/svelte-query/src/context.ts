@@ -46,7 +46,7 @@ export const setQueryClientContext = (client: QueryClient): void => {
 const _isRestoringContextKey = Symbol('isRestoring')
 
 /**
- * Retrieves a `isRestoring` from Svelte's context
+ * Retrieves a `isRestoring` from Svelte's context.
  * @returns The `isRestoring` box set on context, or a box holding `false` if none was set or the
  * context is unavailable.
  */
@@ -62,7 +62,7 @@ export const getIsRestoringContext = (): Box<boolean> => {
 }
 
 /**
- * Sets a `isRestoring` on Svelte's context
+ * Sets a `isRestoring` on Svelte's context.
  * @param isRestoring - The box holding whether the cache is being restored, e.g. by a persister.
  */
 export const setIsRestoringContext = (isRestoring: Box<boolean>): void => {
