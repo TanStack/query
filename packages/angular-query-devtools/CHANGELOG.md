@@ -1,5 +1,14 @@
 # @tanstack/angular-query-devtools
 
+## 5.0.0-rc.1
+
+### Patch Changes
+
+- [#11786](https://github.com/TanStack/query/pull/11786) [`afdf617`](https://github.com/TanStack/query/commit/afdf6173ea7d5e3e89827e3b6209036447303eb1) - Support the theme option in injectDevtoolsPanel
+
+- Updated dependencies []:
+  - @tanstack/angular-query@5.0.0-rc.1
+
 ## 5.0.0-rc.0
 
 ### Major Changes
