@@ -48,8 +48,8 @@ interface BroadcastQueryClientOptions {
 
 /**
  * Syncs a client's query cache with the caches of other tabs and windows through a
- * `BroadcastChannel`: added, updated, and removed queries are broadcast, and those received from
- * other tabs are applied.
+ * `BroadcastChannel`: added queries, successful updates, and removals of queries that have
+ * observers are broadcast, and those received from other tabs are applied.
  * @param options - The `queryClient` to sync, the `broadcastChannel` name, the channel `options`,
  * and the `onBroadcastError` callback.
  * @returns A function that stops syncing and closes the channel.

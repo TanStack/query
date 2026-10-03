@@ -77,8 +77,9 @@ function isCacheEventType(eventType: NotifyEventType) {
  * If data is expired, busted, empty, or throws, it runs persister.removeClient
  * @param options - The `queryClient` to restore into, the `persister`, and the `maxAge`, `buster`,
  * and `hydrateOptions` that decide whether and how the persisted data is restored.
- * @returns A promise that resolves once the data is restored or removed. It rejects if restoring
- * throws, after removing the persisted data.
+ * @returns A promise that resolves once the data is restored or removed. If restoring throws, it
+ * attempts to remove the persisted data and then rejects with the restore error, or with the removal
+ * error if the removal fails too.
  */
 export async function persistQueryClientRestore({
   queryClient,
