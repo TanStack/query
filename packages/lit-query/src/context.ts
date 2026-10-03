@@ -76,7 +76,7 @@ export function getDefaultQueryClient(): QueryClient | undefined {
 
 /**
  * Creates the error thrown when no `QueryClient` is available.
- * @returns The error.
+ * @returns A new `Error` explaining that no `QueryClient` is available.
  */
 export function createMissingQueryClientError(): Error {
   return new Error(missingQueryClientMessage)
@@ -85,7 +85,7 @@ export function createMissingQueryClientError(): Error {
 /**
  * Creates the error thrown when multiple `QueryClient`s are mounted and the default one would be
  * ambiguous.
- * @returns The error.
+ * @returns A new `Error` explaining that the default `QueryClient` is ambiguous.
  */
 function createAmbiguousQueryClientError(): Error {
   return new Error(ambiguousQueryClientMessage)

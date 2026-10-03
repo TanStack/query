@@ -98,7 +98,7 @@ as they happen, subscribe to the observer instead (its inherited
 
 #### Returns
 
-The current result.
+The observer's latest result.
 
 #### Example
 

@@ -155,7 +155,7 @@ export class MutationObserver<
    * Returns the observer's current result, derived from the observed
    * mutation's state (or the default, `idle` state if no mutation has been
    * built yet, e.g. before the first `mutate()` call or after `reset()`).
-   * @returns The current result.
+   * @returns The observer's latest result.
    */
   getCurrentResult(): MutationObserverResult<
     TData,

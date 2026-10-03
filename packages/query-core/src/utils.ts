@@ -295,7 +295,7 @@ export function matchMutation(
  * Hashes a query key with the query's `queryKeyHashFn` option, falling back to {@link hashKey}.
  * @param queryKey - The query key to hash.
  * @param options - The query options that may provide a custom `queryKeyHashFn`.
- * @returns The hash of the query key.
+ * @returns The query hash, a string that identifies the query in the cache.
  */
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
@@ -586,7 +586,7 @@ export function keepPreviousData<T>(
  * the first item is dropped. Only one item is dropped, so the result can still exceed `max` if
  * `items` already did.
  * @param items - The current items.
- * @param item - The item to add.
+ * @param item - The value to append.
  * @param max - The length above which an item is dropped. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */
@@ -600,7 +600,7 @@ export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
  * the last item is dropped. Only one item is dropped, so the result can still exceed `max` if
  * `items` already did.
  * @param items - The current items.
- * @param item - The item to add.
+ * @param item - The value to prepend.
  * @param max - The length above which an item is dropped. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */

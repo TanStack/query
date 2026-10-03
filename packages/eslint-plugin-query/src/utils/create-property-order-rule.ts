@@ -14,7 +14,7 @@ const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
  * @param targetFunctions - The names of the functions whose first argument is checked.
  * @param orderRules - Pairs of property groups: the properties of the first group must come before
  * those of the second.
- * @returns The rule.
+ * @returns An ESLint rule that reports out-of-order properties and fixes them.
  */
 export function createPropertyOrderRule<
   TFunc extends string,
