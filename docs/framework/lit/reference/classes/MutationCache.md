@@ -67,7 +67,7 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:234](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L234)
+Defined in: [packages/query-core/src/mutationCache.ts:257](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L257)
 
 Removes all mutations from the cache.
 
@@ -93,7 +93,7 @@ find<TData, TError, TVariables, TOnMutateResult>(filters: MutationFilters):
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
+Defined in: [packages/query-core/src/mutationCache.ts:300](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L300)
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -125,10 +125,14 @@ information about a mutation in rare scenarios.
 
 [`MutationFilters`](../interfaces/MutationFilters.md)
 
+The filters to match. `exact` defaults to `true`.
+
 #### Returns
 
   \| [`Mutation`](Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
   \| `undefined`
+
+The first matching mutation, or `undefined`.
 
 #### See
 
@@ -150,7 +154,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:303](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L303)
+Defined in: [packages/query-core/src/mutationCache.ts:331](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L331)
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -164,9 +168,13 @@ information about mutations in rare scenarios.
 
 [`MutationFilters`](../interfaces/MutationFilters.md) = `{}`
 
+The filters to match. Without filters, every mutation is returned.
+
 #### Returns
 
 [`Mutation`](Mutation.md)\<`unknown`, `Error`, `unknown`, `unknown`\>[]
+
+The matching mutations.
 
 #### See
 
@@ -188,7 +196,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:256](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L256)
+Defined in: [packages/query-core/src/mutationCache.ts:280](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L280)
 
 Returns all mutations within the cache.
 
@@ -198,6 +206,8 @@ information about a mutation in rare scenarios.
 #### Returns
 
 [`Mutation`](Mutation.md)\<`unknown`, `Error`, `unknown`, `unknown`\>[]
+
+Every mutation in the cache.
 
 #### Example
 
