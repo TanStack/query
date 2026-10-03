@@ -54,7 +54,7 @@
     "@cspell/eslint-plugin": "^9.2.1",
     "@size-limit/preset-small-lib": "^14.0.0",
     "@tanstack/eslint-config": "0.3.2",
-    "@tanstack/typedoc-config": "0.3.1",
+    "@tanstack/typedoc-config": "0.3.4",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@vitest/coverage-istanbul": "4.1.11",
