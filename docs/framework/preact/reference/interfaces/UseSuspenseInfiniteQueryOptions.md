@@ -3,7 +3,7 @@ id: UseSuspenseInfiniteQueryOptions
 title: UseSuspenseInfiniteQueryOptions
 ---
 
-Defined in: [packages/preact-query/src/types.ts:279](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L279)
+Defined in: [packages/preact-query/src/types.ts:270](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L270)
 
 The options accepted by `useSuspenseInfiniteQuery`. Same as [UseInfiniteQueryOptions](UseInfiniteQueryOptions.md), minus `enabled`,
 `throwOnError`, and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so

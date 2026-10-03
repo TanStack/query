@@ -6,7 +6,7 @@ redirect_from:
   - framework/react/reference/QueriesObserver
 ---
 
-Defined in: [packages/query-core/src/queriesObserver.ts:56](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L56)
+Defined in: [packages/query-core/src/queriesObserver.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L55)
 
 A `QueriesObserver` watches an array of queries at once, exposing them as
 a single array of `QueryObserverResult`s (or, when a `combine` option is
@@ -48,7 +48,7 @@ new QueriesObserver<TCombinedResult>(
 options?: QueriesObserverOptions<TCombinedResult>): QueriesObserver<TCombinedResult>;
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:70](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L70)
+Defined in: [packages/query-core/src/queriesObserver.ts:69](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L69)
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Subscribable<QueriesObserverListener>.constructor
 destroy(): void;
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L106)
+Defined in: [packages/query-core/src/queriesObserver.ts:105](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L105)
 
 Stops observing all queries: clears all listeners and destroys every
 underlying `QueryObserver` this observer manages.
@@ -99,7 +99,7 @@ underlying `QueryObserver` this observer manages.
 getCurrentResult(): QueryObserverResult[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:210](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L210)
+Defined in: [packages/query-core/src/queriesObserver.ts:207](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L207)
 
 Returns the most recently computed array of `QueryObserverResult`s, one
 per observed query, in the same order as the queries passed to the
@@ -124,7 +124,7 @@ const data = results.map((result) => result.data)
 getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:227](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L227)
+Defined in: [packages/query-core/src/queriesObserver.ts:224](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L224)
 
 Returns the underlying `QueryObserver` instances this observer manages,
 in the same order as the queries passed to the constructor or
@@ -142,7 +142,7 @@ in the same order as the queries passed to the constructor or
 getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [QueryObserverResult[], (r?: QueryObserverResult[]) => TCombinedResult, () => QueryObserverResult[]];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:238](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L238)
+Defined in: [packages/query-core/src/queriesObserver.ts:235](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L235)
 
 The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
 the result for the given (already-defaulted) queries right now, synchronously. Called by
@@ -172,7 +172,7 @@ wrap the results for property-access tracking.
 getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:218](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L218)
+Defined in: [packages/query-core/src/queriesObserver.ts:215](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L215)
 
 Returns the underlying `Query` instances currently being observed, in
 the same order as the queries passed to the constructor or `setQueries`.
@@ -211,7 +211,7 @@ Subscribable.hasListeners
 setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L127)
+Defined in: [packages/query-core/src/queriesObserver.ts:125](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L125)
 
 Replaces the set of queries being observed. Existing `QueryObserver`s
 are reused for queries that match an already-observed query hash;

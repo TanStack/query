@@ -9,7 +9,7 @@ redirect_from:
 function usePrefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<MaybeRefDeep<UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:94](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L94)
+Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchInfiniteQuery.ts#L92)
 
 `usePrefetchInfiniteQuery` does not return anything — it fires a prefetch as a reactive side effect, useful
 for kicking off a fetch ahead of the component that will actually render the data with `useInfiniteQuery`.

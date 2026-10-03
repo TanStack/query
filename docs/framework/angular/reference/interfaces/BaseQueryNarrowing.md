@@ -3,7 +3,7 @@ id: BaseQueryNarrowing
 title: BaseQueryNarrowing
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:83](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L83)
+Defined in: [packages/angular-query-experimental/src/types.ts:80](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L80)
 
 The `isSuccess`/`isError`/`isPending` methods on a query result. Unlike `react-query`'s derived booleans,
 these are type-guard methods you call — `if (query.isSuccess())` — so that `query.data` narrows away
