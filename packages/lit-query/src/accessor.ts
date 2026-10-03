@@ -11,6 +11,11 @@
  */
 export type Accessor<T> = T | (() => T)
 
+/**
+ * Reads an {@link Accessor}: calls it if it is a function, otherwise returns it as is.
+ * @param value - The value, or a getter that returns it.
+ * @returns The value.
+ */
 export function readAccessor<T>(value: Accessor<T>): T {
   return typeof value === 'function' ? (value as () => T)() : value
 }
@@ -31,6 +36,12 @@ export type ValueAccessor<T> = (() => T) & {
   readonly current: T
 }
 
+/**
+ * Creates a {@link ValueAccessor} that reads its value from `getter`, both when called and through
+ * its `current` property.
+ * @param getter - Returns the latest value.
+ * @returns The value accessor.
+ */
 export function createValueAccessor<T>(getter: () => T): ValueAccessor<T> {
   const accessor = (() => getter()) as ValueAccessor<T>
   Object.defineProperty(accessor, 'current', {

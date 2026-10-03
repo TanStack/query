@@ -30,6 +30,13 @@ type MutationStateOptions<
   select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =

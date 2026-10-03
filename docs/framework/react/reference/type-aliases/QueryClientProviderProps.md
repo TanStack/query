@@ -7,7 +7,7 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/react-query/src/QueryClientProvider.tsx:37](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L37)
+Defined in: [packages/react-query/src/QueryClientProvider.tsx:38](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryClientProvider.tsx#L38)
 
 The props accepted by `QueryClientProvider`.
 
