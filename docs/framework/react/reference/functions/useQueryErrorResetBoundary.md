@@ -9,7 +9,7 @@ redirect_from:
 function useQueryErrorResetBoundary(): QueryErrorResetBoundaryValue;
 ```
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:76](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L76)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:74](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L74)
 
 This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
 defined it will reset them globally.

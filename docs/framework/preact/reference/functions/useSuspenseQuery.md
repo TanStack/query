@@ -7,7 +7,7 @@ title: useSuspenseQuery
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQuery.ts:95](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L95)
+Defined in: [packages/preact-query/src/useSuspenseQuery.ts:93](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQuery.ts#L93)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData`.

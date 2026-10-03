@@ -21,7 +21,7 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 new MutationCache(config: MutationCacheConfig): MutationCache;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
+Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L128)
 
 #### Parameters
 
@@ -47,7 +47,7 @@ MC.constructor
 config: MutationCacheConfig = {};
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
+Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L128)
 
 #### Inherited from
 
@@ -63,7 +63,7 @@ MC.config
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L236)
+Defined in: [packages/query-core/src/mutationCache.ts:257](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L257)
 
 Removes all mutations from the cache.
 
@@ -127,10 +127,14 @@ information about a mutation in rare scenarios.
 
 `MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\>
 
+The filters to match. `exact` defaults to `true`.
+
 #### Returns
 
   \| [`Mutation`](Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
   \| `undefined`
+
+The first matching mutation, or `undefined`.
 
 #### See
 
@@ -172,9 +176,13 @@ information about mutations in rare scenarios.
 
 `MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
+The filters to match. Without filters, every mutation is returned.
+
 #### Returns
 
 [`Mutation`](Mutation.md)\<`unknown`, `Error`, `unknown`, `unknown`\>[]
+
+The matching mutations.
 
 #### See
 
@@ -202,7 +210,7 @@ MC.findAll
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:259](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L259)
+Defined in: [packages/query-core/src/mutationCache.ts:280](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L280)
 
 Returns all mutations within the cache.
 
@@ -212,6 +220,8 @@ information about a mutation in rare scenarios.
 #### Returns
 
 [`Mutation`](Mutation.md)\<`unknown`, `Error`, `unknown`, `unknown`\>[]
+
+Every mutation in the cache.
 
 #### Example
 

@@ -7,7 +7,7 @@ title: mutationOptions
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/lit-query/src/mutationOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/lit-query/src/mutationOptions.ts#L22)
+Defined in: [packages/lit-query/src/mutationOptions.ts:20](https://github.com/TanStack/query/blob/main/packages/lit-query/src/mutationOptions.ts#L20)
 
 Preserves and types mutation options for reuse across Lit Query APIs.
 

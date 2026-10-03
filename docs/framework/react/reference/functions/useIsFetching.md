@@ -9,7 +9,7 @@ redirect_from:
 function useIsFetching(filters?: QueryFilters<readonly unknown[]>, queryClient?: QueryClient): number;
 ```
 
-Defined in: [packages/react-query/src/useIsFetching.ts:44](https://github.com/TanStack/query/blob/main/packages/react-query/src/useIsFetching.ts#L44)
+Defined in: [packages/react-query/src/useIsFetching.ts:41](https://github.com/TanStack/query/blob/main/packages/react-query/src/useIsFetching.ts#L41)
 
 The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in
 the background (useful for app-wide loading indicators).

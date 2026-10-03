@@ -3,7 +3,7 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: [packages/solid-query/src/types.ts:69](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L69)
+Defined in: [packages/solid-query/src/types.ts:66](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L66)
 
 The options accepted by `useQuery` and `queryOptions`.
 
