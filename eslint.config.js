@@ -11,6 +11,7 @@ export default defineConfig([
   ...tanstackConfig,
   {
     ...pluginJsdoc.configs['flat/recommended-typescript'],
+    name: 'tanstack/jsdoc',
     files: ['**/src/**/*.{ts,tsx}'],
     ignores: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.test-d.{ts,tsx}'],
     rules: {
