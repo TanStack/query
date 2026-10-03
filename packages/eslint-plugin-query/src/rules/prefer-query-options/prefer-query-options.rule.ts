@@ -75,6 +75,10 @@ export const rule = createRule({
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context, _, helpers) => {
+    /**
+     * Reports an object literal passed as query options that defines `queryKey` or `queryFn` inline.
+     * @param node - The options node.
+     */
     function reportInlineQueryOptions(node: TSESTree.Node): void {
       if (ASTUtils.isObjectExpression(node) && hasInlineQueryOptions(node)) {
         context.report({
@@ -84,6 +88,10 @@ export const rule = createRule({
       }
     }
 
+    /**
+     * Reports an object literal passed as query filters whose `queryKey` is an inline array.
+     * @param node - The filters node.
+     */
     function reportInlineFilterQueryKey(node: TSESTree.Node): void {
       if (ASTUtils.isObjectExpression(node) && hasInlineFilterQueryKey(node)) {
         context.report({
@@ -185,6 +193,11 @@ export const rule = createRule({
   }),
 })
 
+/**
+ * Checks whether an object literal defines `queryKey` or `queryFn` inline.
+ * @param node - The object literal.
+ * @returns `true` if it has a `queryKey` or `queryFn` property.
+ */
 function hasInlineQueryOptions(node: TSESTree.ObjectExpression): boolean {
   return (
     ASTUtils.findPropertyWithIdentifierKey(node.properties, 'queryKey') !==
@@ -194,6 +207,11 @@ function hasInlineQueryOptions(node: TSESTree.ObjectExpression): boolean {
   )
 }
 
+/**
+ * Checks whether an object literal has a `queryKey` written as an inline array.
+ * @param node - The object literal.
+ * @returns `true` if its `queryKey` is an array literal, ignoring type assertions.
+ */
 function hasInlineFilterQueryKey(node: TSESTree.ObjectExpression): boolean {
   const queryKey = ASTUtils.findPropertyWithIdentifierKey(
     node.properties,
@@ -203,10 +221,21 @@ function hasInlineFilterQueryKey(node: TSESTree.ObjectExpression): boolean {
   return queryKey !== undefined && isInlineArrayExpression(queryKey)
 }
 
+/**
+ * Checks whether a node is an array literal, ignoring type assertions.
+ * @param node - The node to check.
+ * @returns `true` if the node is an array literal.
+ */
 function isInlineArrayExpression(node: TSESTree.Node): boolean {
   return unwrapTypeAssertions(node).type === AST_NODE_TYPES.ArrayExpression
 }
 
+/**
+ * Collects the object literals a node can evaluate to, following function bodies, `return`
+ * statements, and conditional, logical, and sequence expressions.
+ * @param node - The node to collect from.
+ * @returns The object literals the node can evaluate to.
+ */
 function getReturnedObjectExpressions(
   node: TSESTree.Node,
 ): Array<TSESTree.ObjectExpression> {
@@ -257,6 +286,12 @@ function getReturnedObjectExpressions(
   return []
 }
 
+/**
+ * Collects the query option objects of a `queries` array: the object literals in an array literal,
+ * or those returned by the callback of a `.map()` call.
+ * @param node - The `queries` value.
+ * @returns The query option object literals.
+ */
 function getQueryObjects(
   node: TSESTree.Node,
 ): Array<TSESTree.ObjectExpression> {
@@ -288,6 +323,14 @@ function getQueryObjects(
   return []
 }
 
+/**
+ * Checks whether a node refers to a TanStack Query client, created with `useQueryClient()` or
+ * `new QueryClient()`.
+ * @param node - The node to check.
+ * @param context - The rule context, used to resolve variables.
+ * @param helpers - The helpers that check TanStack Query imports.
+ * @returns `true` if the node comes from `useQueryClient()` or `new QueryClient()`.
+ */
 function isTanstackQueryClient(
   node: TSESTree.Node,
   context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
@@ -317,6 +360,13 @@ function isTanstackQueryClient(
   return false
 }
 
+/**
+ * Returns the name an identifier was imported under from TanStack Query.
+ * @param context - The rule context.
+ * @param helpers - The helpers that check TanStack Query imports.
+ * @param node - The identifier.
+ * @returns The imported name, or `null` if the identifier isn't a named TanStack Query import.
+ */
 function getTanstackImportName(
   context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
   helpers: Helpers,
@@ -341,6 +391,13 @@ function getTanstackImportName(
   return definition.imported.name
 }
 
+/**
+ * Follows variable references, optional chains, and type assertions from a node to the expression it
+ * comes from.
+ * @param node - The node to start from.
+ * @param context - The rule context, used to resolve variables.
+ * @returns The innermost node that can't be resolved further.
+ */
 function resolveQueryClientSource(
   node: TSESTree.Node,
   context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
@@ -376,6 +433,11 @@ function resolveQueryClientSource(
   return node
 }
 
+/**
+ * Removes `as`, `satisfies`, and angle-bracket type assertions around a node.
+ * @param node - The node to unwrap.
+ * @returns The node inside the type assertions.
+ */
 function unwrapTypeAssertions(node: TSESTree.Node): TSESTree.Node {
   while (
     node.type === AST_NODE_TYPES.TSAsExpression ||
