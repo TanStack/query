@@ -17,7 +17,7 @@ function resolvePort(name, fallback) {
 
   const parsedPort = Number.parseInt(value, 10)
   const isValidPort =
-    Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65_535
+    Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65535
 
   if (!isValidPort) {
     throw new Error(

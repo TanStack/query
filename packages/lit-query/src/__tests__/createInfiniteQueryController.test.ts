@@ -701,6 +701,48 @@ describe('createInfiniteQueryController', () => {
     consumer.remove()
   })
 
+  it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
+    const key = queryKey()
+    let queryFnCalls = 0
+
+    queryClient.setQueryData(key, { pages: [0], pageParams: [0] })
+
+    class Host extends LitElement {
+      infinite?: InfiniteQueryResultAccessor<InfiniteData<number>, Error>
+
+      override render() {
+        return html`pages: ${this.infinite?.().data?.pages.join(', ') ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.infinite = createInfiniteQueryController(
+      host,
+      {
+        queryKey: key,
+        queryFn: ({ pageParam }) => {
+          queryFnCalls += 1
+          return sleep(10).then(() => pageParam)
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        staleTime: 30000,
+      },
+      queryClient,
+    )
+    const infinite = host.infinite
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(infinite().data?.pages).toEqual([0])
+    expect(queryFnCalls).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('pages: 0')
+
+    infinite.destroy()
+  })
+
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
     const key = queryKey()
     queryClient.setQueryData(key, {
@@ -724,7 +766,7 @@ describe('createInfiniteQueryController', () => {
         queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam) + 1),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
-        staleTime: 30_000,
+        staleTime: 30000,
       },
       queryClient,
     )

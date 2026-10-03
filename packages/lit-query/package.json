@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.25",
+  "version": "0.2.26",
   "description": "Lit adapter for TanStack Query Core",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -64,7 +64,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@tanstack/query-core": "^5.104.0",
+    "@tanstack/query-core": "^5.104.1",
     "lit": ">=2.8.0 <4"
   }
 }

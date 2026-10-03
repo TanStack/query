@@ -1,4 +1,14 @@
-import type { Query, QueryClient, onlineManager } from '@tanstack/query-core'
+import type {
+  MutationCache,
+  MutationCacheNotifyEvent,
+  Query,
+  QueryCache,
+  QueryCacheNotifyEvent,
+  QueryClient,
+  onlineManager,
+} from '@tanstack/query-core'
+import type { Accessor, Setter } from 'solid-js'
+import type { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
 
 type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'
@@ -32,4 +42,30 @@ export interface QueryDevtoolsProps {
   onClose?: () => void
   hideDisabledQueries?: boolean
   theme?: Theme
+}
+
+export interface DevtoolsState {
+  selectedQueryHash: Accessor<string | null>
+  setSelectedQueryHash: Setter<string | null>
+  selectedMutationId: Accessor<number | null>
+  setSelectedMutationId: Setter<number | null>
+  panelWidth: Accessor<number>
+  setPanelWidth: Setter<number>
+}
+
+export interface DevtoolsSubscriptions {
+  queryCacheSubscriptions: ReturnType<
+    typeof createCacheSubscriptionRegistry<QueryCache, QueryCacheNotifyEvent>
+  >
+  mutationCacheSubscriptions: ReturnType<
+    typeof createCacheSubscriptionRegistry<
+      MutationCache,
+      MutationCacheNotifyEvent
+    >
+  >
+}
+
+export interface DevtoolsOfflineState {
+  offline: Accessor<boolean>
+  toggleOffline: () => void
 }
