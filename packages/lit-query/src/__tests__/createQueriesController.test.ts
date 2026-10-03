@@ -7,7 +7,7 @@ import { createQueriesController } from '../createQueriesController.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './utils.js'
 import type { QueriesResultAccessor } from '../createQueriesController.js'
-import type { QueryStatus } from '@tanstack/query-core'
+import type { QueryObserverResult, QueryStatus } from '@tanstack/query-core'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -50,6 +50,13 @@ describe('createQueriesController', () => {
             data: result.data,
           })),
       })
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -76,6 +83,9 @@ describe('createQueriesController', () => {
       'alpha',
       'beta',
     ])
+    expect(consumer.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:beta',
+    )
 
     consumer.queries.destroy()
     provider.remove()
@@ -112,6 +122,13 @@ describe('createQueriesController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -124,6 +141,9 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]?.status).toBe('success')
     expect(consumer.queries()[1]?.status).toBe('success')
+    expect(consumer.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:beta',
+    )
     expect(
       queryClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
         ?.state.data,
@@ -174,6 +194,52 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['alpha', 'beta'])
     expect(host.shadowRoot).toHaveTextContent('data: alpha, beta')
+  })
+
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
+      readonly queries = createQueriesController(
+        this,
+        () => {
+          const { count } = this
+          return {
+            queries: [
+              {
+                queryKey: key,
+                queryFn: () => sleep(10).then(() => 'result'),
+              },
+            ],
+            combine: (results) => ({
+              count,
+              res: results.map((result) => result.data).join(','),
+            }),
+          }
+        },
+        queryClient,
+      )
+
+      override render() {
+        const { count, res } = this.queries()
+        return html`data: ${String(count)} ${res}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    host.count = 0
+    container.append(host)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('data: 0 result')
+
+    host.count = 1
+    await host.updateComplete
+    expect(host.shadowRoot).toHaveTextContent('data: 1 result')
   })
 
   it('should not request another update when stable function query options refresh during host update', async () => {
@@ -410,6 +476,33 @@ describe('createQueriesController', () => {
     }
   })
 
+  it('should return the same result between reads when nothing changed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => sleep(10).then(() => 'data'),
+            },
+          ],
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const queries = host.queries
+
+    await vi.advanceTimersByTimeAsync(10)
+    const result = queries()
+    expect(queries()).toBe(result)
+  })
+
   it('should support dynamic add/remove and keep partial failure stability', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -457,6 +550,16 @@ describe('createQueriesController', () => {
         }),
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map(
+            (result) =>
+              `${result.status}:${result.data ?? result.error ?? 'none'}`,
+          )
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -467,6 +570,9 @@ describe('createQueriesController', () => {
     expect(queries()).toHaveLength(2)
     expect(queries()[0]).toMatchObject({ status: 'success', data: 'alpha' })
     expect(queries()[1]).toMatchObject({ status: 'error', error: 'm13-fail' })
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, error:m13-fail',
+    )
 
     includeThird = true
     host.requestUpdate()
@@ -476,6 +582,9 @@ describe('createQueriesController', () => {
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('error')
     expect(queries()[2]).toMatchObject({ status: 'success', data: 'gamma' })
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, error:m13-fail, success:gamma',
+    )
 
     includeFailing = false
     host.requestUpdate()
@@ -485,6 +594,9 @@ describe('createQueriesController', () => {
     expect(queries()[0]?.status).toBe('success')
     expect(queries()[1]?.status).toBe('success')
     expect(queries().map((item) => item.data)).toEqual(['alpha', 'gamma'])
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:alpha, success:gamma',
+    )
   })
 
   it('should preserve the documented result order mapping when queries are reordered', async () => {
@@ -503,6 +615,11 @@ describe('createQueriesController', () => {
         }),
         queryClient,
       )
+
+      override render() {
+        const data = this.queries().map((result) => result ?? 'none')
+        return html`data: ${data.join(', ')}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -511,12 +628,14 @@ describe('createQueriesController', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(queries()).toEqual(['first', 'second'])
+    expect(host.shadowRoot).toHaveTextContent('data: first, second')
 
     order = ['second', 'first']
     host.requestUpdate()
     await host.updateComplete
 
     expect(queries()).toEqual(['second', 'first'])
+    expect(host.shadowRoot).toHaveTextContent('data: second, first')
   })
 
   it('should return stable per-index results for duplicate query keys', async () => {
@@ -553,6 +672,13 @@ describe('createQueriesController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const results = this.queries()
+          .map((result) => `${result.status}:${result.data ?? 'none'}`)
+          .join(', ')
+        return html`results: ${results}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -565,7 +691,50 @@ describe('createQueriesController', () => {
     expect(queries()[1]?.status).toBe('success')
     expect(queries()[0]?.data).toBe('shared-value')
     expect(queries()[1]?.data).toBe('shared-value')
+    expect(host.shadowRoot).toHaveTextContent(
+      'results: success:shared-value, success:shared-value',
+    )
     expect(callCount).toBeGreaterThan(0)
+  })
+
+  it('should not process detached updates when disconnected while in-flight', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => sleep(10).then(() => 'data'),
+            },
+          ],
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+
+    container.append(host)
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
 
   it('should fail after the handshake when the provider is missing and recover when a provider is adopted later', async () => {
@@ -899,6 +1068,50 @@ describe('createQueriesController', () => {
     expect(() => host.queries()).toThrow('invalid combine')
   })
 
+  it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
+    const key = queryKey()
+    let queryFnCalls = 0
+
+    queryClient.setQueryData(key, 'hydrated-value')
+
+    class Host extends LitElement {
+      queries?: QueriesResultAccessor<Array<QueryObserverResult<string>>>
+
+      override render() {
+        return html`data: ${this.queries?.()[0]?.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.queries = createQueriesController(
+      host,
+      {
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => {
+              queryFnCalls += 1
+              return sleep(10).then(() => 'fetched-value')
+            },
+            staleTime: 30000,
+          },
+        ],
+      },
+      queryClient,
+    )
+    const queries = host.queries
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queries()[0]?.data).toBe('hydrated-value')
+    expect(queryFnCalls).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('data: hydrated-value')
+
+    queries.destroy()
+  })
+
   it('should not throw for a queries controller on an already-connected host with an explicit client', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -922,12 +1135,12 @@ describe('createQueriesController', () => {
           {
             queryKey: key1,
             queryFn: () => sleep(10).then(() => 'fetched-alpha'),
-            staleTime: 30_000,
+            staleTime: 30000,
           },
           {
             queryKey: key2,
             queryFn: () => sleep(10).then(() => 'fetched-beta'),
-            staleTime: 30_000,
+            staleTime: 30000,
           },
         ],
         combine: (results) =>

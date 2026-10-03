@@ -41,6 +41,10 @@ describe('useIsFetching', () => {
       })
 
       readonly isFetching = useIsFetching(this, { queryKey: this.queryKey })
+
+      override render() {
+        return html`<p>fetching: ${this.isFetching()}</p>`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -59,9 +63,12 @@ describe('useIsFetching', () => {
     await consumer.updateComplete
 
     expect(consumer.isFetching()).toBe(1)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(consumer.isFetching()).toBe(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
 
     consumer.query.destroy()
     consumer.isFetching.destroy()
@@ -95,6 +102,10 @@ describe('useIsFetching', () => {
         { queryKey: this.queryKey },
         queryClient,
       )
+
+      override render() {
+        return html`<p>fetching: ${this.isFetching()}</p>`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -105,8 +116,11 @@ describe('useIsFetching', () => {
     await consumer.updateComplete
 
     expect(consumer.isFetching()).toBe(1)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
+    expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
     expect(
       queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
         .data,
@@ -158,6 +172,48 @@ describe('useIsFetching', () => {
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
 
+  it('should not process query cache updates while disconnected', async () => {
+    const key = queryKey()
+
+    class Producer extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly isFetching = useIsFetching(this, {}, queryClient)
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    container.append(new Producer())
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should count all fetching queries when filters are omitted', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -199,14 +255,9 @@ describe('useIsFetching', () => {
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
 
-  it('should track filters and filter reactivity in useIsFetching', async () => {
+  it('should be able to filter', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const unmatchedKey = queryKey()
-
-    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
-      queryKey: key1,
-    }
 
     class Host extends LitElement {
       readonly query1 = createQueryController(
@@ -230,9 +281,15 @@ describe('useIsFetching', () => {
       readonly isFetchingAll = useIsFetching(this, {}, queryClient)
       readonly isFetchingFiltered = useIsFetching(
         this,
-        () => activeFilter,
+        { queryKey: key1 },
         queryClient,
       )
+
+      override render() {
+        const all = this.isFetchingAll()
+        const filtered = this.isFetchingFiltered()
+        return html`<p>all: ${all}, filtered: ${filtered}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -242,24 +299,82 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingAll()).toBe(2)
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('all: 2, filtered: 1')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isFetchingAll()).toBe(1)
+    expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 1, filtered: 0')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isFetchingAll()).toBe(0)
+    expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 0, filtered: 0')
+  })
+
+  it('should apply updated filters on host updates', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const unmatchedKey = queryKey()
+    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
+      queryKey: key1,
+    }
+
+    class Host extends LitElement {
+      readonly query1 = createQueryController(
+        this,
+        {
+          queryKey: key1,
+          queryFn: () => sleep(10).then(() => 'a'),
+        },
+        queryClient,
+      )
+
+      readonly query2 = createQueryController(
+        this,
+        {
+          queryKey: key2,
+          queryFn: () => sleep(20).then(() => 'b'),
+        },
+        queryClient,
+      )
+
+      readonly isFetchingFiltered = useIsFetching(
+        this,
+        () => activeFilter,
+        queryClient,
+      )
+
+      override render() {
+        return html`<p>filtered: ${this.isFetchingFiltered()}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const { isFetchingFiltered } = host
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
 
     activeFilter = { queryKey: unmatchedKey }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
 
     activeFilter = { queryKey: key2 }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(1)
     expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(0)
     expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
   })
 
   it('should fail after the handshake and recover under a provider', async () => {

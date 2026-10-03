@@ -55,8 +55,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -119,8 +119,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
@@ -177,8 +177,8 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <div>
-          {state.data.pages.map((page, index) => (
-            <div key={index}>data: {page}</div>
+          {state.data.pages.map((page) => (
+            <div key={page}>data: {page}</div>
           ))}
           <button onClick={() => state.fetchNextPage()}>Next Page</button>
         </div>
