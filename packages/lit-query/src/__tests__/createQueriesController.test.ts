@@ -58,6 +58,7 @@ describe('createQueriesController', () => {
         return html`results: ${results}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -129,6 +130,7 @@ describe('createQueriesController', () => {
         return html`results: ${results}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -182,6 +184,7 @@ describe('createQueriesController', () => {
         return html`data: ${data.join(', ')}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -227,6 +230,7 @@ describe('createQueriesController', () => {
         return html`data: ${String(count)} ${res}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
 
@@ -276,6 +280,7 @@ describe('createQueriesController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -331,6 +336,7 @@ describe('createQueriesController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -388,6 +394,7 @@ describe('createQueriesController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -445,6 +452,7 @@ describe('createQueriesController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -485,6 +493,7 @@ describe('createQueriesController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -553,6 +562,7 @@ describe('createQueriesController', () => {
         return html`results: ${results}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -611,6 +621,7 @@ describe('createQueriesController', () => {
         return html`data: ${data.join(', ')}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -669,6 +680,7 @@ describe('createQueriesController', () => {
         return html`results: ${results}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -712,6 +724,7 @@ describe('createQueriesController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -746,6 +759,7 @@ describe('createQueriesController', () => {
           })),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -796,6 +810,7 @@ describe('createQueriesController', () => {
         })),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -829,6 +844,7 @@ describe('createQueriesController', () => {
       readonly firstRead = this.queries()
       readonly ids = ['alpha', 'beta']
     }
+
     customElements.define(generateElementName(), DeferredFieldsQueriesHost)
 
     expect(() => new DeferredFieldsQueriesHost()).not.toThrow()
@@ -856,6 +872,7 @@ describe('createQueriesController', () => {
 
       readonly firstRead = this.queries()
     }
+
     customElements.define(generateElementName(), Host)
 
     expect(() => new Host()).not.toThrow()
@@ -880,6 +897,7 @@ describe('createQueriesController', () => {
         combine: (result) => result[0].data.name,
       })
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -908,6 +926,7 @@ describe('createQueriesController', () => {
         }),
       })
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -933,6 +952,7 @@ describe('createQueriesController', () => {
         combine: (result) => result[0].data,
       })
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const queries = host.queries
@@ -962,6 +982,7 @@ describe('createQueriesController', () => {
       readonly firstRead = this.queries()
       readonly ids = ['alpha', 'beta']
     }
+
     customElements.define(generateElementName(), DeferredExplicitQueriesHost)
 
     expect(() => new DeferredExplicitQueriesHost()).not.toThrow()
@@ -999,6 +1020,7 @@ describe('createQueriesController', () => {
       readonly firstRead = this.queries()
       readonly ids = ['alpha']
     }
+
     customElements.define(
       generateElementName(),
       DeferredExplicitCombineQueriesHost,
@@ -1037,6 +1059,7 @@ describe('createQueriesController', () => {
         queryClient,
       )
     }
+
     customElements.define(
       generateElementName(),
       InvalidExplicitCombineQueriesHost,
@@ -1062,6 +1085,7 @@ describe('createQueriesController', () => {
         return html`data: ${this.queries?.()[0]?.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1103,6 +1127,7 @@ describe('createQueriesController', () => {
         Array<{ status: QueryStatus; data: string | undefined }>
       >
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1179,6 +1204,7 @@ describe('createQueriesController', () => {
         return html`data: ${this.queries()[0] ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1248,6 +1274,7 @@ describe('createQueriesController', () => {
         combine: (results) => results.map((result) => result.data),
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)

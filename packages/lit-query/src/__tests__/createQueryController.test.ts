@@ -49,6 +49,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -72,6 +73,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -101,6 +103,7 @@ describe('createQueryController', () => {
           queryClient,
         )
       }
+
       customElements.define(generateElementName(), Host)
       const host = new Host()
       const query = host.query
@@ -139,6 +142,7 @@ describe('createQueryController', () => {
         return html`name: ${this.query().data?.name ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -185,6 +189,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -236,6 +241,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -286,6 +292,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -322,6 +329,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -350,6 +358,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -391,6 +400,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -436,6 +446,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -470,6 +481,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -531,6 +543,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -589,6 +602,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -625,6 +639,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -670,6 +685,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
 
     const firstHost = new Host()
@@ -712,6 +728,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -744,6 +761,7 @@ describe('createQueryController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -791,6 +809,7 @@ describe('createQueryController', () => {
         `
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -841,6 +860,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -890,6 +910,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -945,6 +966,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -987,6 +1009,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1035,6 +1058,7 @@ describe('createQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1073,6 +1097,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1113,6 +1138,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1163,6 +1189,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1226,6 +1253,7 @@ describe('createQueryController', () => {
         return html`failureCount: ${failureCount}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1256,6 +1284,7 @@ describe('createQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const query = host.query
@@ -1300,6 +1329,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -1349,6 +1379,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1384,6 +1415,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -1419,6 +1451,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     const placeholderResult = consumer.query()
@@ -1458,6 +1491,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1518,6 +1552,7 @@ describe('createQueryController', () => {
         retry: false,
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)
@@ -1580,6 +1615,7 @@ describe('createQueryController', () => {
         return html`data: ${this.query?.().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1635,6 +1671,7 @@ describe('createQueryController', () => {
       readonly firstRead = this.query()
       readonly id = 'alpha'
     }
+
     customElements.define(generateElementName(), DeferredExplicitQueryHost)
 
     expect(() => new DeferredExplicitQueryHost()).not.toThrow()
@@ -1671,6 +1708,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1710,6 +1748,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1744,6 +1783,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -1785,6 +1825,7 @@ describe('createQueryController', () => {
         return html`status: ${query.status}, data: ${query.data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

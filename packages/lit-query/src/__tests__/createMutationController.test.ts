@@ -42,6 +42,7 @@ describe('createMutationController', () => {
         return html`status: ${this.mutation().status}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -94,6 +95,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -132,6 +134,7 @@ describe('createMutationController', () => {
         return html`data: ${this.mutation().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -161,6 +164,7 @@ describe('createMutationController', () => {
         return html`data: ${this.mutation().data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -193,6 +197,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -228,6 +233,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, data: ${data ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -268,6 +274,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -304,6 +311,7 @@ describe('createMutationController', () => {
         return html`status: ${status}, error: ${error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -341,6 +349,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -369,6 +378,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -403,6 +413,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -434,6 +445,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -464,6 +476,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -492,6 +505,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -517,6 +531,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -542,6 +557,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -570,6 +586,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -597,6 +614,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -627,6 +645,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -669,6 +688,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -723,6 +743,7 @@ describe('createMutationController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -763,6 +784,7 @@ describe('createMutationController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const { mutation } = host
@@ -788,6 +810,7 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     const placeholderResult = consumer.mutation()
@@ -826,6 +849,7 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     container.append(consumer)
@@ -856,6 +880,7 @@ describe('createMutationController', () => {
     class Host extends LitElement {
       mutation?: MutationResultAccessor<number, Error, number, unknown>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -905,6 +930,7 @@ describe('createMutationController', () => {
       readonly id = 'alpha'
       readonly offset = 1
     }
+
     customElements.define(generateElementName(), DeferredExplicitMutationHost)
 
     expect(() => new DeferredExplicitMutationHost()).not.toThrow()
@@ -947,6 +973,7 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -998,6 +1025,7 @@ describe('createMutationController', () => {
         return html`status: ${this.mutation().status}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -1040,6 +1068,7 @@ describe('createMutationController', () => {
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       }))
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)

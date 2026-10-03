@@ -46,6 +46,7 @@ describe('useIsFetching', () => {
         return html`<p>fetching: ${this.isFetching()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -106,6 +107,7 @@ describe('useIsFetching', () => {
         return html`<p>fetching: ${this.isFetching()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -145,6 +147,7 @@ describe('useIsFetching', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -154,6 +157,7 @@ describe('useIsFetching', () => {
         return html`<p>fetching: ${this.isFetching()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -183,6 +187,7 @@ describe('useIsFetching', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -197,6 +202,7 @@ describe('useIsFetching', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -225,6 +231,7 @@ describe('useIsFetching', () => {
         queryFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -234,6 +241,7 @@ describe('useIsFetching', () => {
         return html`<p>fetching: ${this.isFetching()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -287,6 +295,7 @@ describe('useIsFetching', () => {
         return html`<p>all: ${all}, filtered: ${filtered}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -343,6 +352,7 @@ describe('useIsFetching', () => {
         return html`<p>filtered: ${this.isFetchingFiltered()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -385,6 +395,7 @@ describe('useIsFetching', () => {
 
       readonly isFetching = useIsFetching(this, { queryKey: this.queryKey })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -428,6 +439,7 @@ describe('useIsFetching', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -438,6 +450,7 @@ describe('useIsFetching', () => {
     class Host extends LitElement {
       isFetching?: IsFetchingAccessor
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

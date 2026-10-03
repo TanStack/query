@@ -43,6 +43,7 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -94,6 +95,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -131,6 +133,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -140,6 +143,7 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -167,6 +171,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -181,6 +186,7 @@ describe('useIsMutating', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
@@ -209,6 +215,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(10).then(() => 'data2'),
       })
     }
+
     customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
@@ -218,6 +225,7 @@ describe('useIsMutating', () => {
         return html`<p>mutating: ${this.isMutating()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const provider = document.createElement(
       providerTagName,
@@ -274,6 +282,7 @@ describe('useIsMutating', () => {
         return html`<p>all: ${all}, filtered: ${filtered}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -332,6 +341,7 @@ describe('useIsMutating', () => {
         return html`<p>filtered: ${this.isMutatingFiltered()}</p>`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -372,6 +382,7 @@ describe('useIsMutating', () => {
         mutationKey: this.mutationKey,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -408,6 +419,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
@@ -419,6 +431,7 @@ describe('useIsMutating', () => {
     class Host extends LitElement {
       isMutating?: IsMutatingAccessor
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

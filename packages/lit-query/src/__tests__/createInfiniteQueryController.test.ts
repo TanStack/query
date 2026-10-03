@@ -50,6 +50,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
@@ -113,6 +114,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -158,6 +160,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -193,6 +196,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -229,6 +233,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -277,6 +282,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -345,6 +351,7 @@ describe('createInfiniteQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const infinite = host.infinite
@@ -401,6 +408,7 @@ describe('createInfiniteQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const infinite = host.infinite
@@ -456,6 +464,7 @@ describe('createInfiniteQueryController', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const infinite = host.infinite
@@ -495,6 +504,7 @@ describe('createInfiniteQueryController', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -535,6 +545,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${pages}, error: ${infinite.error?.message ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -587,6 +598,7 @@ describe('createInfiniteQueryController', () => {
         return html`status: ${this.infinite().status}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -625,6 +637,7 @@ describe('createInfiniteQueryController', () => {
         return html`isFetching: ${String(infinite.isFetching)}, pages: ${pages}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -658,6 +671,7 @@ describe('createInfiniteQueryController', () => {
         retry: false,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     const placeholderResult = consumer.infinite()
@@ -703,6 +717,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite?.().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -741,6 +756,7 @@ describe('createInfiniteQueryController', () => {
     class Host extends LitElement {
       infinite?: InfiniteQueryResultAccessor<InfiniteData<number>, Error>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -787,6 +803,7 @@ describe('createInfiniteQueryController', () => {
       readonly firstRead = this.infinite()
       readonly id = 'alpha'
     }
+
     customElements.define(generateElementName(), DeferredExplicitInfiniteHost)
 
     expect(() => new DeferredExplicitInfiniteHost()).not.toThrow()
@@ -839,6 +856,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
@@ -915,6 +933,7 @@ describe('createInfiniteQueryController', () => {
         return html`pages: ${this.infinite().data?.pages.join(', ') ?? 'none'}`
       }
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)

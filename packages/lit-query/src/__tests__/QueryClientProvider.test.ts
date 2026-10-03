@@ -198,6 +198,7 @@ describe('QueryClientProvider/context', () => {
         retry: false,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
 
     const provider = document.createElement(tagName) as QueryClientProvider
