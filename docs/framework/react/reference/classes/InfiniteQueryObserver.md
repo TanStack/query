@@ -231,6 +231,10 @@ and `throwOnError` to `true` to reject when the fetch fails.
 A promise that resolves with the result after the next page is fetched. With
 `cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
 
+#### See
+
+[InfiniteQueryObserver#fetchPreviousPage](#fetchpreviouspage)
+
 #### Example
 
 ```ts
@@ -240,10 +244,6 @@ if (hasNextPage) {
   await observer.fetchNextPage()
 }
 ```
-
-#### See
-
-[InfiniteQueryObserver#fetchPreviousPage](#fetchpreviouspage)
 
 ***
 
@@ -321,6 +321,10 @@ and `throwOnError` to `true` to reject when the fetch fails.
 A promise that resolves with the result after the previous page is fetched. With
 `cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
 
+#### See
+
+[InfiniteQueryObserver#fetchNextPage](#fetchnextpage)
+
 #### Example
 
 ```ts
@@ -330,10 +334,6 @@ if (hasPreviousPage) {
   await observer.fetchPreviousPage()
 }
 ```
-
-#### See
-
-[InfiniteQueryObserver#fetchNextPage](#fetchnextpage)
 
 ***
 

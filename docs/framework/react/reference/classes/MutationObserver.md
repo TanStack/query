@@ -198,15 +198,15 @@ will build a brand new mutation.
 
 `void`
 
+#### See
+
+[MutationObserver#mutate](#mutate)
+
 #### Example
 
 ```ts
 observer.reset()
 ```
-
-#### See
-
-[MutationObserver#mutate](#mutate)
 
 ***
 

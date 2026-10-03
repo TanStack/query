@@ -202,13 +202,13 @@ The mutation options to use, identical to what you'd pass to `useMutation`, with
 
 The same options object, unchanged.
 
-### See
-
-[useMutation](useMutation.md) to run the mutation these options describe.
-
 ### Remarks
 
 See the other overload's example for looking a mutation up via `useMutationState`.
+
+### See
+
+[useMutation](useMutation.md) to run the mutation these options describe.
 
 ### Example
 

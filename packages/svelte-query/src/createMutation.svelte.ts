@@ -13,8 +13,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `createMutation` is the function for that.
- * @see {@link mutationOptions} to share these options across multiple `createMutation` call sites, or to look
- * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link CreateMutationOptions} to use, wrapped in an {@link Accessor} so options can be
  * reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
@@ -23,6 +21,8 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
  * mutation definition. If you make multiple requests, `onSuccess` will fire only after the latest call you've
  * made.
+ * @see {@link mutationOptions} to share these options across multiple `createMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```svelte
  * <script lang="ts">

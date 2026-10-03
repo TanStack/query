@@ -83,6 +83,11 @@ will be used.
 The combined result. Without `combine`, this is an array with all the query results, in the same
 order as the input. When `combine` is provided, this is the value returned by `combine` instead.
 
+## Throws
+
+The error of the first query that should be thrown to the nearest error boundary (see
+`throwOnError`). While suspending, it throws a promise instead.
+
 ## Remarks
 
 The `combine` function only re-runs if it changed referentially, or if any of the query results
@@ -100,11 +105,6 @@ limitation applies to [useSuspenseQueries](useSuspenseQueries.md).
 
 `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
 previously rendered queries, because the number of queries can differ between renders.
-
-## Throws
-
-The error of the first query that should be thrown to the nearest error boundary (see
-`throwOnError`). While suspending, it throws a promise instead.
 
 ## Examples
 

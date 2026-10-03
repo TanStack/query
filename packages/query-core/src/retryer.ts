@@ -99,9 +99,9 @@ export class CancelledError extends Error {
 }
 
 /**
- * @deprecated Use instanceof `CancelledError` instead.
  * @param value - The value to check.
  * @returns `true` if `value` is a `CancelledError`.
+ * @deprecated Use instanceof `CancelledError` instead.
  */
 export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError

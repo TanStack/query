@@ -237,6 +237,13 @@ export type QueriesResults<
  *
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
+ * @param options - The `queries` array to run, and the optional `combine` and `subscribed` options.
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
+ * will be used.
+ * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
+ * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+ * @throws {Error} The error of the first query that should be thrown to the nearest error boundary (see
+ * `throwOnError`). While suspending, it throws a promise instead.
  * @remarks The `combine` function only re-runs if it changed referentially, or if any of the query results
  * changed. An inlined `combine` function, as shown in the example below, therefore runs on every render — wrap
  * it in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies, to
@@ -252,13 +259,6 @@ export type QueriesResults<
  *
  * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
  * previously rendered queries, because the number of queries can differ between renders.
- * @param options - The `queries` array to run, and the optional `combine` and `subscribed` options.
- * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
- * will be used.
- * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
- * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
- * @throws {Error} The error of the first query that should be thrown to the nearest error boundary (see
- * `throwOnError`). While suspending, it throws a promise instead.
  * @example
  * ```tsx
  * import { useQueries } from '@tanstack/react-query'

@@ -34,11 +34,11 @@ import type { Query } from '@tanstack/query-core'
  *
  * when the array cannot be chunked evenly by size, the last chunk will be
  * filled with the remaining elements
- * @example
- * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  * @param array - The elements to chunk.
  * @param size - The number of elements per chunk. Below `1`, no chunks are returned.
  * @returns The chunks.
+ * @example
+ * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
 function chunkArray<T extends { label: string; value: unknown }>(
   array: Array<T>,
