@@ -20,6 +20,41 @@ describe('InfiniteQueryBehavior', () => {
     vi.useRealTimers()
   })
 
+  it.each(['refetch', 'fetchNextPage'])(
+    'should not cancel an unconsumed %s because a previous fetch consumed the signal',
+    async (method) => {
+      const key = queryKey()
+      let consumeSignal = true
+      const observer = new InfiniteQueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: (context) => {
+          if (consumeSignal) {
+            void context.signal
+            return Promise.resolve('initial')
+          }
+          return sleep(10).then(() => 'fresh')
+        },
+        initialPageParam: 0,
+        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+          lastPageParam + 1,
+      })
+      const unsubscribe = observer.subscribe(vi.fn())
+      await vi.advanceTimersByTimeAsync(0)
+      consumeSignal = false
+
+      const result =
+        method === 'refetch' ? observer.refetch() : observer.fetchNextPage()
+      unsubscribe()
+      await vi.advanceTimersByTimeAsync(10)
+      await result
+
+      expect(queryClient.getQueryData(key)).toEqual({
+        pages: method === 'refetch' ? ['fresh'] : ['initial', 'fresh'],
+        pageParams: method === 'refetch' ? [0] : [0, 1],
+      })
+    },
+  )
+
   it('should throw an error if the queryFn is not defined', async () => {
     const key = queryKey()
 

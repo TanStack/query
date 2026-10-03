@@ -632,6 +632,8 @@ export class Query<
     }
 
     const abortController = new AbortController()
+    // Behaviors can replace fetchFn, so reset consumption for every new fetch here too.
+    this.#abortSignalConsumed = false
 
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
