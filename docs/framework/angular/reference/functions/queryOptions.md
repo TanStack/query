@@ -204,14 +204,14 @@ The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
+### Remarks
+
+This is the only overload that accepts `queryFn: skipToken`, shown below.
+
 ### See
 
  - [injectQuery](injectQuery.md) to run a query with these options.
  - [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
-
-### Remarks
-
-This is the only overload that accepts `queryFn: skipToken`, shown below.
 
 ### Examples
 

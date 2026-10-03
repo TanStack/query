@@ -174,11 +174,11 @@ export class MutationObserver<
    * running to completion and its own callbacks still fire, but this
    * observer stops reflecting its state and a subsequent `mutate()` call
    * will build a brand new mutation.
+   * @see {@link MutationObserver#mutate}
    * @example
    * ```ts
    * observer.reset()
    * ```
-   * @see {@link MutationObserver#mutate}
    */
   reset(): void {
     // reset needs to remove the observer from the mutation because there is no way to "get it back"

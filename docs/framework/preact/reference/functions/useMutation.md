@@ -55,15 +55,15 @@ mutation definition. Hook-level callbacks (passed to `options`) fire for every m
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
 
-## See
-
-[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look
-the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
-
 ## Throws
 
 The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
 thrown to the nearest error boundary.
+
+## See
+
+[mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look
+the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
 
 ## Examples
 

@@ -20,8 +20,6 @@ import { useSyncExternalStore } from './utils'
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `useMutation` is the hook for that.
- * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
- * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
@@ -32,6 +30,8 @@ import { useSyncExternalStore } from './utils'
  * the mutation settles removes the subscription and prevents them from firing.
  * @throws {Error} The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
  * thrown to the nearest error boundary.
+ * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'

@@ -125,13 +125,13 @@ The mutation options to use, identical to what you'd pass to `injectMutation`, w
 
 The same options object, unchanged.
 
-### See
-
-[injectMutation](injectMutation.md) to run the mutation these options describe.
-
 ### Remarks
 
 See the other overload's example for looking a mutation up via `injectMutationState`.
+
+### See
+
+[injectMutation](injectMutation.md) to run the mutation these options describe.
 
 ### Example
 

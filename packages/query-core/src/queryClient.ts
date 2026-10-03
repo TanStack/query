@@ -196,11 +196,11 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    * @param options - The query options. If the query has no cached data yet, it is fetched with
    * these options.
    * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
    * cached yet.
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   ensureQueryData<
     TQueryFnData,
@@ -634,11 +634,11 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
    * error.
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
    */
   fetchQuery<
     TQueryFnData,
@@ -672,10 +672,10 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves once the fetch settles. It never rejects.
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchQuery<
     TQueryFnData = unknown,
@@ -737,11 +737,11 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
    * the fetch error.
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
    */
   fetchInfiniteQuery<
     TQueryFnData,
@@ -764,10 +764,10 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchInfiniteQuery<
     TQueryFnData,
@@ -789,11 +789,11 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    * @param options - The infinite query options. If the query has no cached data yet, it is fetched
    * with these options.
    * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if
    * nothing was cached yet.
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   ensureInfiniteQueryData<
     TQueryFnData,

@@ -129,11 +129,11 @@ export type DefinedInitialDataInfiniteOptions<
  * `options.queryKey` is required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is set.
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @example
  * ```tsx
  * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
@@ -189,9 +189,11 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
  * automatically as the user scrolls.
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```tsx
@@ -218,8 +220,6 @@ export function infiniteQueryOptions<
  *   )
  * }
  * ```
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -248,9 +248,11 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
+ * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
  * @remarks See {@link useInfiniteQuery} for examples that fetch further pages (from a button click or
  * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```tsx
@@ -277,8 +279,6 @@ export function infiniteQueryOptions<
  *   )
  * }
  * ```
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
  */
 export function infiniteQueryOptions<
   TQueryFnData,

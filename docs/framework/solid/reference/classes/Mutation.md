@@ -164,6 +164,10 @@ dehydrated, still-`pending` state.
 A promise that settles with the resumed mutation: it rejects if the mutation fails.
 It resolves immediately if the mutation has already settled.
 
+#### See
+
+[Mutation#execute](#execute)
+
 #### Example
 
 ```ts
@@ -171,10 +175,6 @@ It resolves immediately if the mutation has already settled.
 const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 await mutation?.continue()
 ```
-
-#### See
-
-[Mutation#execute](#execute)
 
 ***
 
@@ -244,6 +244,10 @@ The variables passed to the `mutationFn`.
 
 A promise that resolves with the mutation's data, or rejects with its error.
 
+#### See
+
+[Mutation#continue](#continue)
+
 #### Example
 
 ```ts
@@ -251,7 +255,3 @@ A promise that resolves with the mutation's data, or rejects with its error.
 // applications normally trigger mutations through those, not this method.
 const data = await mutation.execute(variables)
 ```
-
-#### See
-
-[Mutation#continue](#continue)

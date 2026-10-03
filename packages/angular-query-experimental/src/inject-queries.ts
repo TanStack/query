@@ -240,13 +240,6 @@ export interface InjectQueriesOptions<
  *
  * The `combine` option can be used to combine the results of the queries into a single value. The result
  * will be structurally shared to be as referentially stable as possible.
- * @remarks Unlike `injectQuery`, `injectQueries` cannot infer the `data` argument of an _inline_ `select`
- * from its sibling `queryFn`. Because `injectQueries` infers the type of the whole `queries` array at once,
- * the `select` parameter of a query object written inline cannot be contextually typed from that same
- * object's `queryFn`, so it falls back to `unknown` — a
- * [known TypeScript limitation](https://github.com/TanStack/query/issues/6556). Annotate the `select`
- * parameter explicitly, or define the query with {@link queryOptions}, which resolves its types in a single
- * object _before_ it reaches `injectQueries`, to work around this — see the example below.
  * @param optionsFn - A function returning the queries' options — an array of query option objects under
  * `queries`, and an optional `combine`. Similar to `computed` from Angular, this function runs in the
  * reactive context, so signals read inside it (e.g. to build the `queries` array) drive the queries.
@@ -255,6 +248,13 @@ export interface InjectQueriesOptions<
  * @returns A `Signal` with the combined result. Without `combine`, this is an array with all the query
  * results, in the same order as the input. When `combine` is provided, this is the value returned by
  * `combine` instead.
+ * @remarks Unlike `injectQuery`, `injectQueries` cannot infer the `data` argument of an _inline_ `select`
+ * from its sibling `queryFn`. Because `injectQueries` infers the type of the whole `queries` array at once,
+ * the `select` parameter of a query object written inline cannot be contextually typed from that same
+ * object's `queryFn`, so it falls back to `unknown` — a
+ * [known TypeScript limitation](https://github.com/TanStack/query/issues/6556). Annotate the `select`
+ * parameter explicitly, or define the query with {@link queryOptions}, which resolves its types in a single
+ * object _before_ it reaches `injectQueries`, to work around this — see the example below.
  * @example
  * ```angular-ts
  * @Component({
