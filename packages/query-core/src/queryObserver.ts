@@ -174,6 +174,7 @@ export class QueryObserver<
    * refetch-interval timers as needed.
    * @param options - The new observer options. They are defaulted with {@link
    * QueryClient#defaultQueryOptions} before being applied.
+   * @throws {Error} If `enabled` is neither a boolean nor a function.
    * @example
    * ```ts
    * observer.setOptions({ queryKey: ['posts', 1], queryFn: () => fetchPost(1) })

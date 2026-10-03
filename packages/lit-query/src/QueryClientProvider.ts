@@ -102,6 +102,7 @@ export class QueryClientProvider extends LitElement {
    * @internal
    * @param changedProperties - The properties that changed. When `client` changes, the previous
    * client is unmounted and the new one is provided and mounted.
+   * @throws {Error} If `client` is unset while the provider is connected.
    */
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (!changedProperties.has('client')) {

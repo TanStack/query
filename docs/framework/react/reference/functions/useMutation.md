@@ -9,7 +9,7 @@ redirect_from:
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: QueryClient): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/react-query/src/useMutation.ts:185](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutation.ts#L185)
+Defined in: [packages/react-query/src/useMutation.ts:187](https://github.com/TanStack/query/blob/main/packages/react-query/src/useMutation.ts#L187)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -61,6 +61,11 @@ the mutation settles removes the subscription and prevents them from firing.
 
 [mutationOptions](mutationOptions.md) to share these options across multiple `useMutation` call sites, or to look
 the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
+
+## Throws
+
+The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
+thrown to the nearest error boundary.
 
 ## Examples
 

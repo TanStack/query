@@ -29,6 +29,8 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
  * fire only for the latest call you've made, and only while the component is still mounted — unmounting before
  * the mutation settles removes the subscription and prevents them from firing.
+ * @throws {Error} The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
+ * thrown to the nearest error boundary.
  * @example
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/react-query'
