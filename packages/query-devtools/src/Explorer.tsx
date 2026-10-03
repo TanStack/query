@@ -36,6 +36,9 @@ import type { Query } from '@tanstack/query-core'
  * filled with the remaining elements
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
+ * @param array - The elements to chunk.
+ * @param size - The number of elements per chunk. Below `1`, no chunks are returned.
+ * @returns The chunks.
  */
 function chunkArray<T extends { label: string; value: unknown }>(
   array: Array<T>,
@@ -261,10 +264,22 @@ type ExplorerProps = {
   onEdit?: () => void
 }
 
+/**
+ * Checks whether a value is iterable.
+ * @param x - The value to check.
+ * @returns `true` if `x` has a `Symbol.iterator` method.
+ */
 function isIterable(x: any): x is Iterable<unknown> {
   return Symbol.iterator in x
 }
 
+/**
+ * Renders an expandable tree view of a value, used to explore a query's data in the devtools. It
+ * can also edit and delete entries in the query's data.
+ * @param props - The value to show and its label, plus the options for expanding, editing, and
+ * deleting entries.
+ * @returns The tree view.
+ */
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
