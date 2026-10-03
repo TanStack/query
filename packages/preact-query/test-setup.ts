@@ -4,8 +4,11 @@ import { act, cleanup as cleanupRTL } from '@testing-library/preact'
 import { afterEach } from 'vitest'
 
 // https://testing-library.com/docs/preact-testing-library/api#cleanup
+// Wrap in act so effect cleanups Preact defers on unmount run synchronously
 afterEach(() => {
-  cleanupRTL()
+  act(() => {
+    cleanupRTL()
+  })
 })
 
 // Wrap notifications with act to make sure React knows about React Query updates

@@ -67,7 +67,7 @@ export function useSyncExternalStoreWithSelector<TSnapshot, TSelected>(
   selector: (snapshot: TSnapshot) => TSelected,
   isEqual: (a: TSelected, b: TSelected) => boolean,
 ): TSelected {
-  const selectedSnapshotRef = useRef<TSelected | undefined>()
+  const selectedSnapshotRef = useRef<TSelected | undefined>(undefined)
 
   const getSelectedSnapshot = () => {
     const snapshot = getSnapshot()
