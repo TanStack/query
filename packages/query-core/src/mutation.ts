@@ -246,8 +246,8 @@ export class Mutation<
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
-   * @returns A promise that resolves once the resumed mutation settles, or immediately if it has
-   * already settled.
+   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
+   * It resolves immediately if the mutation has already settled.
    * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {

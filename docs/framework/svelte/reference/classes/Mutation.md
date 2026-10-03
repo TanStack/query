@@ -161,8 +161,8 @@ dehydrated, still-`pending` state.
 
 `Promise`\<`unknown`\>
 
-A promise that resolves once the resumed mutation settles, or immediately if it has
-already settled.
+A promise that settles with the resumed mutation: it rejects if the mutation fails.
+It resolves immediately if the mutation has already settled.
 
 #### Example
 
