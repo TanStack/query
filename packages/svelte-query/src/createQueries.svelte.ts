@@ -294,6 +294,10 @@ export function createQueries<
     ),
   )
 
+  /**
+   * Computes the combined result of the observer's queries for the resolved options.
+   * @returns The combined result, built from the tracked per-query results.
+   */
   function createResult() {
     const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
       resolvedQueryOptions,

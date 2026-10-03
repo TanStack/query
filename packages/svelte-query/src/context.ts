@@ -7,7 +7,7 @@ const _contextKey = Symbol('QueryClient')
 /**
  * Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider` (or by
  * {@link setQueryClientContext} directly). This is what {@link useQueryClient} calls internally.
- * @throws If no `QueryClient` was found in context.
+ * @throws {Error} If no `QueryClient` was found in context.
  * @returns The `QueryClient` set on context, whether by `QueryClientProvider` or {@link setQueryClientContext}.
  */
 export const getQueryClientContext = (): QueryClient => {
@@ -45,7 +45,11 @@ export const setQueryClientContext = (client: QueryClient): void => {
 
 const _isRestoringContextKey = Symbol('isRestoring')
 
-/** Retrieves a `isRestoring` from Svelte's context */
+/**
+ * Retrieves a `isRestoring` from Svelte's context
+ * @returns The `isRestoring` box set on context, or a box holding `false` if none was set or the
+ * context is unavailable.
+ */
 export const getIsRestoringContext = (): Box<boolean> => {
   try {
     const isRestoring = getContext<Box<boolean> | undefined>(
@@ -57,7 +61,10 @@ export const getIsRestoringContext = (): Box<boolean> => {
   }
 }
 
-/** Sets a `isRestoring` on Svelte's context */
+/**
+ * Sets a `isRestoring` on Svelte's context
+ * @param isRestoring - The box holding whether the cache is being restored, e.g. by a persister.
+ */
 export const setIsRestoringContext = (isRestoring: Box<boolean>): void => {
   setContext(_isRestoringContextKey, isRestoring)
 }

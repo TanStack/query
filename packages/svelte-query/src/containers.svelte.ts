@@ -25,6 +25,8 @@ export class ReactiveValue<T> implements Box<T> {
  * are the same as in the original object. Does not mutate the original object. Provides an `update`
  * function that _can_ (but does not have to be) be used to replace all of the object's top-level keys
  * with the values of the new object, while maintaining the original root object's reference.
+ * @param init - The object or array whose top-level keys become the initial fields.
+ * @returns A tuple of the reactive object and the `update` function.
  */
 export function createRawRef<T extends {} | Array<unknown>>(
   init: T,
@@ -99,6 +101,11 @@ export function createRawRef<T extends {} | Array<unknown>>(
     },
   })
 
+  /**
+   * Replaces the top-level keys of the reactive object with those of `newValue`, removing keys that
+   * `newValue` doesn't have, while keeping the object's reference.
+   * @param newValue - The object or array to take the new keys and values from.
+   */
   function update(newValue: T) {
     const existingKeys = Object.keys(out)
     const newKeys = Object.keys(newValue)
@@ -138,12 +145,23 @@ export function createRawRef<T extends {} | Array<unknown>>(
 const lazyBrand = Symbol('LazyValue')
 type Branded<T extends () => unknown> = T & { [lazyBrand]: true }
 
+/**
+ * Marks a function as a lazy value, so that reading the property it is stored in calls it instead of
+ * returning the function.
+ * @param fn - The function that returns the value.
+ * @returns The same function, marked as lazy.
+ */
 function brand<T extends () => unknown>(fn: T): Branded<T> {
   // @ts-expect-error
   fn[lazyBrand] = true
   return fn as Branded<T>
 }
 
+/**
+ * Checks whether a function was marked as a lazy value with {@link brand}.
+ * @param fn - The function to check.
+ * @returns `true` if the function is marked as lazy.
+ */
 function isBranded<T extends () => unknown>(fn: T): fn is Branded<T> {
   return Boolean((fn as Branded<T>)[lazyBrand])
 }

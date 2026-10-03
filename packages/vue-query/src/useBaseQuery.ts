@@ -62,6 +62,7 @@ type UseQueryOptionsGeneric<
  * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
+ * @returns The query result as `ref`s, plus the `suspense` function.
  */
 export function useBaseQuery<
   TQueryFnData,
