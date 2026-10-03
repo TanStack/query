@@ -7,7 +7,7 @@ title: useQueries
 function useQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useQueries.ts:302](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L302)
+Defined in: [packages/preact-query/src/useQueries.ts:304](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQueries.ts#L304)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -80,6 +80,11 @@ will be used.
 
 The combined result. Without `combine`, this is an array with all the query results, in the same
 order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+
+## Throws
+
+The error of the first query that should be thrown to the nearest error boundary (see
+`throwOnError`). While suspending, it throws a promise instead.
 
 ## Examples
 

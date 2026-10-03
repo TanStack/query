@@ -9,7 +9,7 @@ redirect_from:
 function useQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L354)
+Defined in: [packages/react-query/src/useQueries.ts:356](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L356)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -100,6 +100,11 @@ limitation applies to [useSuspenseQueries](useSuspenseQueries.md).
 
 `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
 previously rendered queries, because the number of queries can differ between renders.
+
+## Throws
+
+The error of the first query that should be thrown to the nearest error boundary (see
+`throwOnError`). While suspending, it throws a promise instead.
 
 ## Examples
 

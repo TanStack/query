@@ -99,6 +99,8 @@ function createAmbiguousQueryClientError(): Error {
  * provider is mounted. It throws if no client is registered or if multiple
  * clients are mounted and the default would be ambiguous.
  * @returns The single registered query client.
+ * @throws {Error} If no `QueryClient` is registered, or if multiple are
+ * mounted and the default is ambiguous.
  */
 export function useQueryClient(): QueryClient {
   const client = getDefaultQueryClient()

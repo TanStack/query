@@ -33,6 +33,8 @@ import type { UseBaseQueryOptions } from './types'
  * context will be used.
  * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
  * set.
+ * @throws {Error} If `options` is not an object (outside production), or the query error when it should be
+ * thrown to the nearest error boundary (see `throwOnError`). While suspending, it throws a promise instead.
  */
 export function useBaseQuery<
   TQueryFnData,

@@ -532,6 +532,8 @@ export function sleep(timeout: number): Promise<void> {
  * @param options - The query options, whose `structuralSharing` decides how the data is merged.
  * @returns The result of a custom `structuralSharing` function, `data` with its unchanged parts
  * replaced by those of `prevData` by default, or `data` as is if `structuralSharing` is `false`.
+ * @throws {Error} The error from the default structural sharing, e.g. when the data is not JSON serializable.
+ * Outside production, it is also logged to the console.
  */
 export function replaceData<
   TData,

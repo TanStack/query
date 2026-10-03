@@ -242,6 +242,8 @@ export type QueriesResults<
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
  * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+ * @throws {Error} The error of the first query that should be thrown to the nearest error boundary (see
+ * `throwOnError`). While suspending, it throws a promise instead.
  * @example
  * ```tsx
  * import { useQueries } from '@tanstack/preact-query'
