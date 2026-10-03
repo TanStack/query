@@ -64,7 +64,6 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "catalog:",
     "@testing-library/dom": "^10.4.0",
-    "eslint-plugin-jsdoc": "^65.0.1",
     "typescript": "catalog:"
   },
   "peerDependencies": {
