@@ -240,121 +240,123 @@ describe('createQueryController', () => {
   })
 
   describe('initialData', () => {
-    it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into createQueryController', () => {
-      const options = queryOptions({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve(1),
+    describe('Config object overload', () => {
+      it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into createQueryController', () => {
+        const options = queryOptions({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(1),
+        })
+        const query = createQueryController(
+          new Host(),
+          { ...options, select: (data) => data > 1 },
+          new QueryClient(),
+        )
+
+        expectTypeOf(query().data).toEqualTypeOf<boolean | undefined>()
       })
-      const query = createQueryController(
-        new Host(),
-        { ...options, select: (data) => data > 1 },
-        new QueryClient(),
-      )
 
-      expectTypeOf(query().data).toEqualTypeOf<boolean | undefined>()
-    })
+      it('TData should have undefined in the union when initialData is NOT provided', () => {
+        const query = createQueryController(
+          new Host(),
+          { queryKey: queryKey(), queryFn: () => ({ wow: true }) },
+          new QueryClient(),
+        )
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
-      const query = createQueryController(
-        new Host(),
-        { queryKey: queryKey(), queryFn: () => ({ wow: true }) },
-        new QueryClient(),
-      )
+        expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
+      })
 
-      expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
-    })
-
-    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
-      const query = createQueryController(
-        new Host(),
-        {
-          queryKey: queryKey(),
-          queryFn: () => ({ wow: true }),
-          initialData: () => undefined as { wow: boolean } | undefined,
-        },
-        new QueryClient(),
-      )
-
-      expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
-    })
-
-    it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-      const query = createQueryController(
-        new Host(),
-        {
-          queryKey: queryKey(),
-          queryFn: () => ({ wow: true }),
-          initialData: () => undefined as { wow: boolean } | undefined,
-        },
-        new QueryClient(),
-      )
-      const { data, isSuccess } = query()
-
-      if (isSuccess) {
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
-      }
-    })
-
-    it('should preserve discriminated-union narrowing', () => {
-      type Result =
-        { type: 'first'; first: string } | { type: 'second'; second: string }
-
-      const query = createQueryController(
-        new Host(),
-        {
-          queryKey: queryKey(),
-          queryFn: (): Result => ({ type: 'first', first: 'a' }),
-        },
-        new QueryClient(),
-      )
-      const data = query().data
-
-      const second = data?.type === 'first' ? undefined : data
-
-      expectTypeOf(second).toEqualTypeOf<
-        { type: 'second'; second: string } | undefined
-      >()
-    })
-  })
-
-  describe('custom controller', () => {
-    it('should allow custom controllers using CreateQueryOptions', () => {
-      type Data = string
-
-      const createCustomQuery = (
-        options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
-      ) =>
-        createQueryController(
+      it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+        const query = createQueryController(
           new Host(),
           {
-            ...options,
             queryKey: queryKey(),
-            queryFn: () => Promise.resolve('data'),
+            queryFn: () => ({ wow: true }),
+            initialData: () => undefined as { wow: boolean } | undefined,
           },
           new QueryClient(),
         )
 
-      const query = createCustomQuery()
+        expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
+      })
 
-      expectTypeOf(query().data).toEqualTypeOf<Data | undefined>()
-    })
-  })
-
-  describe('structuralSharing', () => {
-    it('should be able to use structuralSharing with unknown types', () => {
-      createQueryController(
-        new Host(),
-        {
-          queryKey: queryKey(),
-          queryFn: () => 5,
-          structuralSharing: (oldData, newData) => {
-            expectTypeOf(oldData).toBeUnknown()
-            expectTypeOf(newData).toBeUnknown()
-            return newData
+      it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+        const query = createQueryController(
+          new Host(),
+          {
+            queryKey: queryKey(),
+            queryFn: () => ({ wow: true }),
+            initialData: () => undefined as { wow: boolean } | undefined,
           },
-        },
-        new QueryClient(),
-      )
+          new QueryClient(),
+        )
+        const { data, isSuccess } = query()
+
+        if (isSuccess) {
+          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        }
+      })
+
+      it('should preserve discriminated-union narrowing', () => {
+        type Result =
+          { type: 'first'; first: string } | { type: 'second'; second: string }
+
+        const query = createQueryController(
+          new Host(),
+          {
+            queryKey: queryKey(),
+            queryFn: (): Result => ({ type: 'first', first: 'a' }),
+          },
+          new QueryClient(),
+        )
+        const data = query().data
+
+        const second = data?.type === 'first' ? undefined : data
+
+        expectTypeOf(second).toEqualTypeOf<
+          { type: 'second'; second: string } | undefined
+        >()
+      })
+    })
+
+    describe('custom controller', () => {
+      it('should allow custom controllers using CreateQueryOptions', () => {
+        type Data = string
+
+        const createCustomQuery = (
+          options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+        ) =>
+          createQueryController(
+            new Host(),
+            {
+              ...options,
+              queryKey: queryKey(),
+              queryFn: () => Promise.resolve('data'),
+            },
+            new QueryClient(),
+          )
+
+        const query = createCustomQuery()
+
+        expectTypeOf(query().data).toEqualTypeOf<Data | undefined>()
+      })
+    })
+
+    describe('structuralSharing', () => {
+      it('should be able to use structuralSharing with unknown types', () => {
+        createQueryController(
+          new Host(),
+          {
+            queryKey: queryKey(),
+            queryFn: () => 5,
+            structuralSharing: (oldData, newData) => {
+              expectTypeOf(oldData).toBeUnknown()
+              expectTypeOf(newData).toBeUnknown()
+              return newData
+            },
+          },
+          new QueryClient(),
+        )
+      })
     })
   })
 
