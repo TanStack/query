@@ -44,6 +44,11 @@ export interface DevtoolsPanelOptions {
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export function PreactQueryDevtoolsPanel(
   props: DevtoolsPanelOptions,
 ): VNode | null {

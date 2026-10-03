@@ -7,7 +7,7 @@ title: useQueryErrorResetBoundary
 function useQueryErrorResetBoundary(): QueryErrorResetBoundaryValue;
 ```
 
-Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:83](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L83)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:88](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L88)
 
 This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
 defined it will reset them globally.
