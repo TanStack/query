@@ -71,7 +71,7 @@ describe('UseSuspenseQueries config object overload', () => {
     expectTypeOf(query2Data).toEqualTypeOf<boolean>()
   })
 
-  it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
+  it('should not have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const queryResults = useSuspenseQueries({
       queries: [
         {
