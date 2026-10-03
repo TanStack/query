@@ -158,7 +158,8 @@ export class InfiniteQueryObserver<
    * ```
    * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
    * and `throwOnError` to `true` to reject when the fetch fails.
-   * @returns A promise that resolves with the result after the next page is fetched.
+   * @returns A promise that resolves with the result after the next page is fetched. With
+   * `cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
    * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    */
   fetchNextPage(
@@ -188,7 +189,8 @@ export class InfiniteQueryObserver<
    * ```
    * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
    * and `throwOnError` to `true` to reject when the fetch fails.
-   * @returns A promise that resolves with the result after the previous page is fetched.
+   * @returns A promise that resolves with the result after the previous page is fetched. With
+   * `cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
    * @see {@link InfiniteQueryObserver#fetchNextPage}
    */
   fetchPreviousPage(

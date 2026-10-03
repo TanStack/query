@@ -198,7 +198,7 @@ query it was observing.
 fetchNextPage(options?: FetchNextPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:164](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L164)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:165](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L165)
 
 Fetches the next page of the infinite query and returns a promise that
 resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -219,7 +219,8 @@ and `throwOnError` to `true` to reject when the fetch fails.
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
 
-A promise that resolves with the result after the next page is fetched.
+A promise that resolves with the result after the next page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the next page may not be fetched.
 
 #### Example
 
@@ -283,7 +284,7 @@ console.log(result.data)
 fetchPreviousPage(options?: FetchPreviousPageOptions): Promise<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:194](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L194)
+Defined in: [packages/query-core/src/infiniteQueryObserver.ts:196](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L196)
 
 Fetches the previous page of the infinite query and returns a promise
 that resolves with the resulting `InfiniteQueryObserverResult`. The page
@@ -304,7 +305,8 @@ and `throwOnError` to `true` to reject when the fetch fails.
 
 `Promise`\<[`InfiniteQueryObserverResult`](../type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\>
 
-A promise that resolves with the result after the previous page is fetched.
+A promise that resolves with the result after the previous page is fetched. With
+`cancelRefetch: false`, a running fetch is reused instead, so the previous page may not be fetched.
 
 #### Example
 
