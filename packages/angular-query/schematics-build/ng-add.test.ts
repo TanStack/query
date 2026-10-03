@@ -1,20 +1,18 @@
-import { createRequire } from 'node:module'
-import { dirname, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { SchematicTestRunner } from '@angular-devkit/schematics/testing'
 import angularQueryPackage from '../package.json' with { type: 'json' }
+import {
+  SchematicTestRunner,
+  angularCollection,
+  queryCollection,
+} from './test-utils'
 
-const require = createRequire(import.meta.url)
 const angularRunner = new SchematicTestRunner(
   '@schematics/angular',
-  resolve(
-    dirname(require.resolve('@schematics/angular/package.json')),
-    'collection.json',
-  ),
+  angularCollection,
 )
 const queryRunner = new SchematicTestRunner(
   angularQueryPackage.name,
-  resolve('dist/schematics/collection.json'),
+  queryCollection,
 )
 
 async function createAngularApplication(standalone = true) {

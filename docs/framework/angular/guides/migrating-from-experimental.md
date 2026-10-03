@@ -7,14 +7,29 @@ The stable package keeps the callback-based query, mutation, and signal result A
 experimental adapter. Most application queries therefore only need an import change. The following
 sections cover the breaking configuration and entrypoint changes.
 
+Angular 20.1 or newer is required by the stable package. Upgrade Angular first if your
+application is on an older version. Save your work and confirm the application builds before
+running the migration.
+
+## Run the migration schematic
+
+Install the stable package, then preview the bundled migration:
+
+```bash
+npm install @tanstack/angular-query
+ng generate @tanstack/angular-query:migrate-from-experimental --dry-run
+ng generate @tanstack/angular-query:migrate-from-experimental
+```
+
+The schematic handles common migration steps.
+Review the remaining sections for changes that require manual updates.
+
 ## Replace the experimental package
 
 ```bash
 npm uninstall @tanstack/angular-query-experimental
 npm install @tanstack/angular-query
 ```
-
-Angular 20.1 or newer is required by the stable package.
 
 ```ts
 import { injectQuery } from '@tanstack/angular-query-experimental' // [!code --]
@@ -119,6 +134,44 @@ readonly summary = injectQueries(() => ({
   }),
 }))
 ```
+
+## Move explicit injectors into an injection context
+
+All stable injection helpers must run in an Angular injection context. The
+experimental `injectQuery`, `injectInfiniteQuery`, `injectMutation`,
+`injectMutationState`, `injectIsFetching`, and `injectIsMutating` accepted a second
+`{ injector }` options argument. `injectIsRestoring` accepted that options object
+as its first argument. The experimental `injectDevtoolsPanel` also accepted a second
+`{ injector }` options argument. These arguments have been removed.
+
+```ts
+injectQuery(options, { injector }) // [!code --]
+runInInjectionContext(injector, () => injectQuery(options)) // [!code ++]
+
+injectMutation(options, { injector }) // [!code --]
+runInInjectionContext(injector, () => injectMutation(options)) // [!code ++]
+
+injectIsFetching({ queryKey: ['todos'] }, { injector }) // [!code --]
+runInInjectionContext(injector, () =>
+  injectIsFetching(() => ({ queryKey: ['todos'] })),
+) // [!code ++]
+
+injectIsRestoring({ injector }) // [!code --]
+runInInjectionContext(injector, () => injectIsRestoring()) // [!code ++]
+```
+
+Import `runInInjectionContext` from `@angular/core`. Unlike these helpers,
+`injectQueries` previously took the injector directly, as shown above. When the
+old argument is `undefined` or an empty options object, remove it and ensure the
+call already runs in an injection context.
+
+The `InjectQueryOptions`, `InjectInfiniteQueryOptions`, `InjectMutationOptions`,
+`InjectMutationStateOptions`, `InjectIsFetchingOptions`, and
+`InjectIsMutatingOptions` types have also been removed, along with the devtools
+`InjectDevtoolsPanelOptions` type. Update wrappers that use
+these types. The schematic reports explicit arguments, spread arguments, and
+imports of these removed types for manual review; it does not infer injector
+handling through custom wrappers.
 
 ## Review SSR hydration
 
