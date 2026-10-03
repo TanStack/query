@@ -33,6 +33,9 @@ interface HydrationStreamContext<TShape> {
   }
 }
 
+/**
+ * The props of the `Provider` returned by `createHydrationStreamProvider`.
+ */
 export interface HydrationStreamProviderProps<TShape> {
   children: React.ReactNode
   /**
