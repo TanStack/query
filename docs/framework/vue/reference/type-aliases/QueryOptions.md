@@ -7,7 +7,7 @@ title: QueryOptions
 type QueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = { [Property in keyof QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>]: Property extends "enabled" ? MaybeRefOrGetter<boolean | undefined> | (() => QueryBooleanOption<TQueryFnData, TError, TQueryData, DeepUnwrapRef<TQueryKey>>) : Property extends "queryKey" ? MaybeRefOrGetter<TQueryKey> : QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, DeepUnwrapRef<TQueryKey>>[Property] } & ShallowOption;
 ```
 
-Defined in: [packages/vue-query/src/queryOptions.ts:30](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L30)
+Defined in: [packages/vue-query/src/queryOptions.ts:29](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L29)
 
 The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
 `queryClient` methods see once `ref`s have been resolved. To pass options in, use

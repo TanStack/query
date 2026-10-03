@@ -7,7 +7,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/lit-query/src/infiniteQueryOptions.ts:28](https://github.com/TanStack/query/blob/main/packages/lit-query/src/infiniteQueryOptions.ts#L28)
+Defined in: [packages/lit-query/src/infiniteQueryOptions.ts:26](https://github.com/TanStack/query/blob/main/packages/lit-query/src/infiniteQueryOptions.ts#L26)
 
 Brands infinite query options so the `queryKey` carries the infinite query
 data and error types across TanStack Query APIs.

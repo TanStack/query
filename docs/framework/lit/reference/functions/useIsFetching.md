@@ -10,7 +10,7 @@ function useIsFetching(
    queryClient?: QueryClient): IsFetchingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsFetching.ts:143](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L143)
+Defined in: [packages/lit-query/src/useIsFetching.ts:141](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L141)
 
 Creates a Lit reactive controller that tracks how many matching queries are
 currently fetching.
