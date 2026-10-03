@@ -1,9 +1,10 @@
 // @ts-check
 
 import pluginJsdoc from 'eslint-plugin-jsdoc'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
@@ -28,4 +29,4 @@ export default [
       ],
     },
   },
-]
+])

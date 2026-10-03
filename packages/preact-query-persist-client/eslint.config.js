@@ -3,9 +3,10 @@
 // @ts-ignore: no types for eslint-config-preact
 import preact from 'eslint-config-preact'
 import tsParser from '@typescript-eslint/parser'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   ...preact,
   {
@@ -27,4 +28,4 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
-]
+])
