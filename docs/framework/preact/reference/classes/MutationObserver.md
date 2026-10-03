@@ -3,7 +3,7 @@ id: MutationObserver
 title: MutationObserver
 ---
 
-Defined in: [packages/query-core/src/mutationObserver.ts:38](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L38)
+Defined in: [packages/query-core/src/mutationObserver.ts:37](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L37)
 
 Observes a single mutation and derives a `MutationObserverResult` from it.
 A framework hook like `useMutation` creates one `MutationObserver` per hook
@@ -50,7 +50,7 @@ const observer = new MutationObserver(queryClient, {
 new MutationObserver<TData, TError, TVariables, TOnMutateResult>(client: QueryClient, options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): MutationObserver<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:58](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L58)
+Defined in: [packages/query-core/src/mutationObserver.ts:57](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L57)
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Subscribable<
 options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L46)
+Defined in: [packages/query-core/src/mutationObserver.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L45)
 
 ## Methods
 
@@ -92,7 +92,7 @@ Defined in: [packages/query-core/src/mutationObserver.ts:46](https://github.com/
 getCurrentResult(): MutationObserverResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:155](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L155)
+Defined in: [packages/query-core/src/mutationObserver.ts:153](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L153)
 
 Returns the observer's current result, derived from the observed
 mutation's state (or the default, `idle` state if no mutation has been
@@ -132,7 +132,7 @@ Subscribable.hasListeners
 mutate(variables: TVariables, options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:207](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L207)
+Defined in: [packages/query-core/src/mutationObserver.ts:202](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L202)
 
 Builds a new `Mutation` in the `MutationCache` using the observer's
 current options, detaches this observer from any previously observed
@@ -174,7 +174,7 @@ await observer.mutate(
 reset(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:180](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L180)
+Defined in: [packages/query-core/src/mutationObserver.ts:176](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L176)
 
 Detaches the observer from the mutation it is currently observing (if
 any) and resets the observed result back to its default, `idle` state.
@@ -206,7 +206,7 @@ observer.reset()
 setOptions(options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>): void;
 ```
 
-Defined in: [packages/query-core/src/mutationObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L96)
+Defined in: [packages/query-core/src/mutationObserver.ts:94](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L94)
 
 Updates the observer's options.
 
