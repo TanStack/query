@@ -13,9 +13,9 @@ type InternalStore = {
 type StoreRef = {
   _instance: InternalStore
 }
-export function useSyncExternalStore(
+export function useSyncExternalStore<T>(
   subscribe: (onStoreChange: () => void) => () => void,
-  getSnapshot: () => any,
+  getSnapshot: () => T,
 ) {
   const value = getSnapshot()
 

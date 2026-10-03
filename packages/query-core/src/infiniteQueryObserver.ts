@@ -1,5 +1,9 @@
 import { QueryObserver } from './queryObserver'
 import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
+import type {
+  QueryObserverResultContext,
+  QueryObserverResultReader,
+} from './queryObserver'
 import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
@@ -11,6 +15,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
+  QueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
@@ -118,10 +123,10 @@ export class InfiniteQueryObserver<
   }
 
   /**
-   * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}, marking the
-   * options as an infinite query before delegating to it. Called by framework adapters (e.g.
-   * `useInfiniteQuery`) ahead of subscribing, to compute the current `InfiniteQueryObserverResult`
-   * synchronously.
+   * The infinite-query counterpart of {@link QueryObserver#getOptimisticResult}.
+   * Computes the result through a separate result reader without changing the
+   * observer's committed result, options, or selection state.
+   * @deprecated Use `createResultReader(options).getSnapshot()` instead.
    */
   getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<
@@ -132,11 +137,23 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
-    options._type = 'infinite'
-    return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
+    return this.createResultReader(options).getSnapshot()
+  }
+
+  /** Creates a cached snapshot reader for an infinite query. */
+  createResultReader(
+    options: DefaultedInfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
       TData,
-      TError
-    >
+      TQueryKey,
+      TPageParam
+    >,
+  ): QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>> {
+    return super.createResultReader({
+      ...options,
+      _type: 'infinite',
+    }) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
   }
 
   /**
@@ -207,9 +224,17 @@ export class InfiniteQueryObserver<
       TQueryKey,
       TPageParam
     >,
+    context?: QueryObserverResultContext<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >,
+    prevResult?: QueryObserverResult<TData, TError>,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
-    const parentResult = super.createResult(query, options)
+    const parentResult = super.createResult(query, options, context, prevResult)
 
     const { isFetching, isRefetching, isError, isRefetchError } = parentResult
     const fetchDirection = state.fetchMeta?.fetchMore?.direction

@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git+https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@12.4.2",
+  "packageManager": "pnpm@12.8.1",
   "engines": {
     "pnpm": ">=12.4.2"
   },
