@@ -149,6 +149,16 @@ describe('PreactQueryDevtools', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <PreactQueryDevtools client={queryClient} position="bottom" />,
+    )
+
+    rerender(<PreactQueryDevtools client={queryClient} position="top" />)
+
+    expect(TanstackQueryDevtools).toHaveBeenCalledTimes(1)
+  })
+
   it('should forward a "buttonPosition" change to the devtools instance after mount', () => {
     const { rerender } = render(
       <PreactQueryDevtools

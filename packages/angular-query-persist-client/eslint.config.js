@@ -1,11 +1,10 @@
 // @ts-check
 
-import pluginJsdoc from 'eslint-plugin-jsdoc'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
-  pluginJsdoc.configs['flat/recommended-typescript'],
   {
     rules: {
       'cspell/spellchecker': [
@@ -16,6 +15,12 @@ export default [
           },
         },
       ],
+    },
+  },
+  {
+    files: ['src/**/*.ts'],
+    ignores: ['src/__tests__/**'],
+    rules: {
       'jsdoc/require-hyphen-before-param-description': 1,
       'jsdoc/sort-tags': 1,
       'jsdoc/require-throws': 1,
@@ -28,4 +33,4 @@ export default [
       ],
     },
   },
-]
+])

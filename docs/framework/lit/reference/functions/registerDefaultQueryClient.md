@@ -7,7 +7,7 @@ title: registerDefaultQueryClient
 function registerDefaultQueryClient(client: QueryClient): void;
 ```
 
-Defined in: [packages/lit-query/src/context.ts:32](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L32)
+Defined in: [packages/lit-query/src/context.ts:31](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L31)
 
 Registers a `QueryClient` as a process-local fallback for APIs that resolve a
 client without an explicit argument.

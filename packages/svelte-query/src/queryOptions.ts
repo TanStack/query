@@ -36,12 +36,10 @@ export type DefinedInitialDataOptions<
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- *
  * @see {@link createQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -82,11 +80,9 @@ export function queryOptions<
  * You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
  * can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
  * is required and is the query key to generate options for.
- *
  * @see {@link createQuery} to run a query with these options.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
  * @example
  * A parameterized factory, so the same options object can be reused per `id`:
  * ```svelte

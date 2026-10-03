@@ -7,7 +7,6 @@ const _contextKey = Symbol('QueryClient')
 /**
  * Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider` (or by
  * {@link setQueryClientContext} directly). This is what {@link useQueryClient} calls internally.
- *
  * @throws If no `QueryClient` was found in context.
  * @returns The `QueryClient` set on context, whether by `QueryClientProvider` or {@link setQueryClientContext}.
  */
@@ -26,9 +25,7 @@ export const getQueryClientContext = (): QueryClient => {
  * Sets a `QueryClient` on Svelte's context, so it can be read with {@link getQueryClientContext} (or
  * {@link useQueryClient}) from any descendant component. `QueryClientProvider` wraps this — use it directly
  * only if you need to set the client from your own component instead.
- *
  * @param client - The `QueryClient` to make available to descendant components.
- *
  * @example
  * ```svelte
  * <script lang="ts">

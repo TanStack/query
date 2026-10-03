@@ -7,7 +7,7 @@ title: useMutationState
 function useMutationState<TResult, TMutation>(options: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
-Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:100](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L100)
+Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:96](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L96)
 
 `useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
 `filters` ([MutationFilters](../interfaces/MutationFilters.md)) to narrow down your mutations, and `select` to transform the mutation

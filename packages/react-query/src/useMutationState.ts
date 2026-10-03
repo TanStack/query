@@ -14,12 +14,10 @@ import type {
 /**
  * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be the `number` of the mutations that your application currently has `pending`.
- *
  * @example
  * ```tsx
  * import { useIsMutating } from '@tanstack/react-query'
@@ -85,13 +83,11 @@ function getResult<
  * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
  * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
  * state.
- *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be an Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```tsx
@@ -106,7 +102,6 @@ function getResult<
  *   return <>{pendingVariables.length} posts saving...</>
  * }
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```tsx
@@ -134,7 +129,6 @@ function getResult<
  *   )
  * }
  * ```
- *
  * @example
  * Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
  * entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the
@@ -164,9 +158,9 @@ export function useMutationState<
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
-  const result = React.useRef<Array<TResult>>(null)
-  if (result.current === null) {
-    result.current = getResult(mutationCache, options)
+  const resultRef = React.useRef<Array<TResult>>(null)
+  if (resultRef.current === null) {
+    resultRef.current = getResult(mutationCache, options)
   }
 
   React.useEffect(() => {
@@ -178,17 +172,17 @@ export function useMutationState<
       (onStoreChange) =>
         mutationCache.subscribe(() => {
           const nextResult = replaceEqualDeep(
-            result.current,
+            resultRef.current,
             getResult(mutationCache, optionsRef.current),
           )
-          if (result.current !== nextResult) {
-            result.current = nextResult
+          if (resultRef.current !== nextResult) {
+            resultRef.current = nextResult
             notifyManager.schedule(onStoreChange)
           }
         }),
       [mutationCache],
     ),
-    () => result.current,
-    () => result.current,
+    () => resultRef.current,
+    () => resultRef.current,
   )!
 }

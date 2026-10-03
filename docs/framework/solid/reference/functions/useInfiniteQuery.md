@@ -11,7 +11,7 @@ redirect_from:
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): DefinedUseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useInfiniteQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L70)
+Defined in: [packages/solid-query/src/useInfiniteQuery.ts:68](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L68)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -111,7 +111,7 @@ function Projects() {
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: Accessor<QueryClient>): UseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useInfiniteQuery.ts:189](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L189)
+Defined in: [packages/solid-query/src/useInfiniteQuery.ts:184](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useInfiniteQuery.ts#L184)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.

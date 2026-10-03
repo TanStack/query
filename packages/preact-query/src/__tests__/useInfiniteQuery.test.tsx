@@ -1431,11 +1431,11 @@ describe('useInfiniteQuery', () => {
             <>
               <div>Data:</div>
               {data.pages.map((page, i) => (
-                <div key={i}>
+                <div key={page.ts}>
                   <div>
                     Page {i}: {page.ts}
                   </div>
-                  <div key={i}>
+                  <div>
                     {page.items.map((item) => (
                       <p key={item}>Item: {item}</p>
                     ))}
@@ -1567,11 +1567,11 @@ describe('useInfiniteQuery', () => {
             <>
               <div>Data:</div>
               {data.pages.map((page, i) => (
-                <div key={i}>
+                <div key={page.ts}>
                   <div>
                     Page {i}: {page.ts}
                   </div>
-                  <div key={i}>
+                  <div>
                     {page.items.map((item) => (
                       <p key={item}>Item: {item}</p>
                     ))}

@@ -3,7 +3,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:403](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L403)
+Defined in: [packages/query-core/src/types.ts:401](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L401)
 
 ## Extends
 

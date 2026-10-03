@@ -46,11 +46,9 @@ export interface HydrationBoundaryProps {
  * update timestamp.
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
- *
  * @returns The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
  * cache during render; for queries already in the cache, only newer dehydrated data is hydrated, in an effect
  * after commit.
- *
  * @example
  * ```tsx
  * import { HydrationBoundary } from '@tanstack/react-query'
@@ -59,7 +57,6 @@ export interface HydrationBoundaryProps {
  *   return <HydrationBoundary state={dehydratedState}>...</HydrationBoundary>
  * }
  * ```
- *
  * @example
  * Server-side prefetch handed off to the client via `dehydrate`:
  * ```tsx

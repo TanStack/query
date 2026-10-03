@@ -14,7 +14,7 @@ import type {
 import type { QueryOptions } from '../types'
 
 describe('useQueries', () => {
-  it('TData should have undefined in the union even when initialData is provided as an object', () => {
+  it('should have undefined in the TData union even when initialData is provided as an object', () => {
     const query1 = {
       queryKey: queryKey(),
       queryFn: () => {
@@ -51,7 +51,7 @@ describe('useQueries', () => {
     expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
   })
 
-  it('TData should have undefined in the union when passed through queryOptions', () => {
+  it('should have undefined in the TData union when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: queryKey(),
       queryFn: () => {
@@ -70,7 +70,7 @@ describe('useQueries', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {
@@ -216,7 +216,7 @@ describe('useQueries', () => {
     expectTypeOf(queryResults[0].error).toEqualTypeOf<CustomError | null>()
   })
 
-  it('TData should have correct type when conditional skipToken is passed', () => {
+  it('should have correct TData type when conditional skipToken is passed', () => {
     const queryResults = useQueries(() => ({
       queries: [
         {

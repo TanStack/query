@@ -3,7 +3,7 @@ id: QueryObserverRefetchErrorResult
 title: QueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:998](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L998)
+Defined in: [packages/query-core/src/types.ts:982](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L982)
 
 ## Extends
 

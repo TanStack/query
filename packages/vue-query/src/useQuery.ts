@@ -33,7 +33,6 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
  * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
  * reactive when passed as a `ref` or a `computed`.
- *
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
  * `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -41,7 +40,6 @@ export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
  * @returns The current query result, typed so that `data` is never `undefined` (unless a `select` changes
  * `TData` to include `undefined`). `status` never resolves to `pending` in this overload's type, since
  * `initialData` guarantees data upfront.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -79,13 +77,11 @@ export function useQuery<
  * (`() => ...`). `queryKey` reacts through a `ref` or a reactive getter for the array itself, or `ref`s and
  * reactive getters as individual entries. Other options are read once when passed as a plain value, and stay
  * reactive when passed as a `ref` or a `computed`.
- *
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
  * the last fetch attempt failed, or `success` if the query has data to display.
- *
  * @example
  * A query key built from a reactive `ref` — the query refetches whenever `postId` changes:
  * ```vue
@@ -106,7 +102,6 @@ export function useQuery<
  *   <h1 v-else>{{ data.title }}</h1>
  * </template>
  * ```
- *
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
@@ -127,7 +122,6 @@ export function useQuery<
  *   <span v-else>{{ data }} posts</span>
  * </template>
  * ```
- *
  * @example
  * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
  * loading state doesn't show while the query is disabled:
@@ -152,7 +146,6 @@ export function useQuery<
  *   <h1 v-else>{{ data?.title }}</h1>
  * </template>
  * ```
- *
  * @example
  * Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
  * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
@@ -181,7 +174,6 @@ export function useQuery<
  *   <h1 v-else>{{ data?.title }}</h1>
  * </template>
  * ```
- *
  * @example
  * Paginated data, keeping the previous page's data visible while the next page loads:
  * ```vue
@@ -230,12 +222,10 @@ export function useQuery<
  *
  * When `options` itself is a reactive getter, the whole object is re-evaluated on every change to its
  * dependencies, so any option inside it — not just `queryKey` and `enabled` — can change over time.
- *
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UseQueryOptions} to use.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns The current query result, with `data` typed as possibly `undefined`.
- *
  * @example
  * Passing a whole-options getter so `staleTime` reacts to a setting stored elsewhere, not just `queryKey`:
  * ```vue
@@ -255,7 +245,6 @@ export function useQuery<
  *   <h1 v-if="data">{{ data.title }}</h1>
  * </template>
  * ```
- *
  * @example
  * `skipToken` disables the query in a type-safe way, without a non-null assertion on `props.postId` —
  * `queryFn` is only ever called when it's defined. The whole-options getter re-evaluates `queryFn` on every

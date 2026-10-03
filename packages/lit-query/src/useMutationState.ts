@@ -1,18 +1,14 @@
-import {
-  replaceEqualDeep,
-  type Mutation,
-  type MutationFilters,
-  type MutationState,
-  type QueryClient,
+import { replaceEqualDeep } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
+import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  Mutation,
+  MutationFilters,
+  MutationState,
+  QueryClient,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
-import { BaseController } from './controllers/BaseController.js'
 
 /**
  * Options accepted by `useMutationState`.
@@ -30,12 +26,12 @@ export type MutationStateOptions<TResult> = {
  * Call the accessor or read its `current` property to get the selected state for
  * matching mutations.
  */
-export type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & {
+export type MutationStateAccessor<TResult> = ValueAccessor<Array<TResult>> & {
   /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
 }
 
-class MutationStateController<TResult> extends BaseController<TResult[]> {
+class MutationStateController<TResult> extends BaseController<Array<TResult>> {
   private queryClient: QueryClient | undefined
   private unsubscribe: (() => void) | undefined
 
@@ -123,7 +119,7 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
     })
   }
 
-  private setMutationState(next: TResult[]): void {
+  private setMutationState(next: Array<TResult>): void {
     this.setResult(replaceEqualDeep(this.result, next))
   }
 
@@ -134,7 +130,7 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
     )
   }
 
-  private computeState(): TResult[] {
+  private computeState(): Array<TResult> {
     if (!this.queryClient) {
       return []
     }
@@ -164,14 +160,12 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
  * the selection can follow reactive host state. If `queryClient` is omitted,
  * the controller resolves the client from the nearest connected
  * `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the mutation cache
  * subscription.
  * @param options - Mutation state filters and optional selector.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the selected mutation state array.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

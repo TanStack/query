@@ -5,11 +5,9 @@ import type { CreateMutationOptions } from './types.js'
  * You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`. This
  * overload requires `mutationKey`, so the resulting options can be looked up elsewhere (e.g. with
  * `useMutationState`).
- *
  * @see {@link createMutation} to run a mutation with these options.
  * @param options - The options to use — everything you can pass to `createMutation`, with `mutationKey` set.
  * @returns The same options object.
- *
  * @example
  * Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
  * ```svelte
@@ -48,11 +46,9 @@ export function mutationOptions<
 
 /**
  * You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`.
- *
  * @see {@link createMutation} to run a mutation with these options.
  * @param options - The options to use — everything you can pass to `createMutation`.
  * @returns The same options object.
- *
  * @example
  * ```svelte
  * <script lang="ts">

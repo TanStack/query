@@ -169,7 +169,6 @@ export const getPreferredColorScheme = () => {
 
 /**
  * updates nested data by path
- *
  * @param {unknown} oldData Data to be updated
  * @param {Array<string>} updatePath Path to the data to be updated
  * @param {unknown} value New value
@@ -243,7 +242,6 @@ export const updateNestedDataByPath = (
 
 /**
  * Deletes nested data by path
- *
  * @param {unknown} oldData Data to be updated
  * @param {Array<string>} deletePath Path to the data to be deleted
  * @returns newData without the deleted items by path

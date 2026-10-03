@@ -29,7 +29,6 @@ export interface InjectQueryOptions {
 /**
  * This overload is selected when `initialData` is set on the options returned by `injectQueryFn`, so the
  * resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
- *
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
  * `queryClient.fetchQuery`.
@@ -39,7 +38,6 @@ export interface InjectQueryOptions {
  * @param options - Additional configuration
  * @returns The query result, typed so that `data` is never `undefined` (unless a `select` changes `TData` to
  * include `undefined`).
- *
  * @example
  * ```angular-ts
  * @Component({
@@ -83,7 +81,6 @@ export function injectQuery<
 
 /**
  * Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
- *
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
  * `queryClient.fetchQuery`.
@@ -94,7 +91,6 @@ export function injectQuery<
  * @returns The query result. `status()` is `'pending'` if there is no cached data to display, `'error'` if
  * the last fetch attempt failed, or `'success'` if the query has data to display. `isPending`/`isSuccess`/
  * `isError` are type-guard methods for convenience.
- *
  * @example
  * ```angular-ts
  * @Component({
@@ -120,7 +116,6 @@ export function injectQuery<
  *   }))
  * }
  * ```
- *
  * @example
  * Similar to `computed` from Angular, the function passed to `injectQuery` runs in the reactive context. In
  * the example below, the query is automatically enabled and executed when the filter signal changes to a
@@ -174,7 +169,6 @@ export function injectQuery<
  * This overload accepts the general {@link CreateQueryOptions} shape rather than the `initialData`-aware
  * overloads above, so whether `data` is defined can't be inferred from the call site — useful when wrapping
  * `injectQuery` in your own helper function that forwards caller-provided options.
- *
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @param injectQueryFn - A function that returns query options. Similar to `computed` from Angular, this
  * function runs in the reactive context, so signals read inside it (in `queryKey`, `enabled`, etc.) drive
