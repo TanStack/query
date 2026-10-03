@@ -160,6 +160,26 @@ describe('error booleans', () => {
   })
 })
 
+describe('CreateInfiniteQueryOptions', () => {
+  it('should default TData to InfiniteData<TQueryFnData>', () => {
+    const options: CreateInfiniteQueryOptions<number, Error> = {
+      queryKey: queryKey(),
+      queryFn: () => 5,
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+    }
+    const infiniteQuery = createInfiniteQueryController(
+      new Host(),
+      options,
+      new QueryClient(),
+    )
+
+    expectTypeOf(infiniteQuery().data).toEqualTypeOf<
+      InfiniteData<number, unknown> | undefined
+    >()
+  })
+})
+
 describe('refetch / fetchNextPage / fetchPreviousPage', () => {
   it('should type refetch with correct return type', () => {
     const infiniteQuery = createInfiniteQueryController(
@@ -212,26 +232,6 @@ describe('refetch / fetchNextPage / fetchPreviousPage', () => {
 
     expectTypeOf(infiniteQuery.fetchPreviousPage()).toEqualTypeOf<
       Promise<InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>>
-    >()
-  })
-})
-
-describe('CreateInfiniteQueryOptions', () => {
-  it('should default TData to InfiniteData<TQueryFnData>', () => {
-    const options: CreateInfiniteQueryOptions<number, Error> = {
-      queryKey: queryKey(),
-      queryFn: () => 5,
-      initialPageParam: 1,
-      getNextPageParam: () => undefined,
-    }
-    const infiniteQuery = createInfiniteQueryController(
-      new Host(),
-      options,
-      new QueryClient(),
-    )
-
-    expectTypeOf(infiniteQuery().data).toEqualTypeOf<
-      InfiniteData<number, unknown> | undefined
     >()
   })
 })
