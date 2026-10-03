@@ -28,25 +28,13 @@ describe('createInfiniteQuery', () => {
       }))
     })
 
-    it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
+    it('initialPageParam should define type of param passed to queryFunctionContext for infiniteQuery', () => {
       const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
-      queryClient.fetchInfiniteQuery({
+      queryClient.infiniteQuery({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
-        },
-        initialPageParam: 1,
-      })
-    })
-
-    it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
-      const queryClient = new QueryClient()
-      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
-      queryClient.prefetchInfiniteQuery({
-        queryKey: queryKey(),
-        queryFn: ({ pageParam }) => {
-          expectTypeOf(pageParam).toEqualTypeOf<number>()
+          return pageParam
         },
         initialPageParam: 1,
       })
