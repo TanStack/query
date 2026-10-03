@@ -15,6 +15,9 @@ import type {
 } from './contexts/types'
 import type { Signal } from 'solid-js'
 
+/**
+ * The options for `TanstackQueryDevtools`, which mounts the floating devtools.
+ */
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
