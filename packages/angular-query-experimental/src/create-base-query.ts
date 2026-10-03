@@ -25,8 +25,10 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
- * @param optionsFn
- * @param Observer
+ * @param optionsFn - A function that returns the query options. It is re-run when the signals it
+ * reads change.
+ * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
+ * @returns The query result, with each field exposed as a computed signal.
  */
 export function createBaseQuery<
   TQueryFnData,
