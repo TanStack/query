@@ -31,6 +31,7 @@ export default defineConfig([
       'jsdoc/require-hyphen-before-param-description': 'error',
       'jsdoc/require-next-description': 'error',
       'jsdoc/require-template-description': 'error',
+      'jsdoc/require-throws': 'error',
       'jsdoc/require-throws-description': 'error',
       'jsdoc/require-yields-description': 'error',
     },
