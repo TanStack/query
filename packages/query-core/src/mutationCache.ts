@@ -132,7 +132,14 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.#mutationId = 0
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param client - The client the mutation belongs to, used to default its options.
+   * @param options - The mutation options. They are defaulted with {@link
+   * QueryClient#defaultMutationOptions}.
+   * @param state - The initial state of the mutation, e.g. when restoring a dehydrated mutation.
+   * @returns The new mutation, already added to the cache.
+   */
   build<TData, TError, TVariables, TOnMutateResult>(
     client: QueryClient,
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
@@ -151,7 +158,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return mutation
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param mutation - The mutation to add. If it has a `scope`, it is queued in that scope.
+   */
   add(mutation: Mutation<any, any, any, any>): void {
     this.#mutations.add(mutation)
     const scope = scopeFor(mutation)
@@ -166,7 +176,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.notify({ type: 'added', mutation })
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param mutation - The mutation to remove, also from its scope's queue.
+   */
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
       const scope = scopeFor(mutation)
@@ -190,7 +203,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.notify({ type: 'removed', mutation })
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param mutation - The mutation to check.
+   * @returns `true` if the mutation has no `scope`, or no other mutation in its scope is pending
+   * ahead of it.
+   */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
     const scope = scopeFor(mutation)
     if (typeof scope === 'string') {
@@ -208,7 +226,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     }
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param mutation - The mutation that finished.
+   * @returns A promise that resolves once the next paused mutation in the same scope has continued,
+   * or immediately if there is none.
+   */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
     const scope = scopeFor(mutation)
     if (typeof scope === 'string') {
@@ -246,6 +269,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a mutation in rare scenarios.
+   * @returns Every mutation in the cache.
    * @example
    * ```ts
    * const mutationCache = queryClient.getMutationCache()
@@ -263,6 +287,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a mutation in rare scenarios.
+   * @param filters - The filters to match. `exact` defaults to `true`.
+   * @returns The first matching mutation, or `undefined`.
    * @see {@link MutationCache#findAll}
    * @example
    * ```ts
@@ -292,6 +318,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about mutations in rare scenarios.
+   * @param filters - The filters to match. Without filters, every mutation is returned.
+   * @returns The matching mutations.
    * @see {@link MutationCache#find}
    * @example
    * ```ts
@@ -304,7 +332,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return this.getAll().filter((mutation) => matchMutation(filters, mutation))
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param event - The event passed to every listener.
+   */
   notify(event: MutationCacheNotifyEvent) {
     notifyManager.batch(() => {
       this.listeners.forEach((listener) => {
@@ -313,7 +344,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     })
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @returns A promise that resolves once every paused mutation has continued and settled.
+   */
   resumePausedMutations(): Promise<unknown> {
     const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
 
@@ -325,6 +359,11 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 }
 
+/**
+ * Returns the scope id of a mutation, used to run mutations with the same scope one after another.
+ * @param mutation - The mutation to read the scope of.
+ * @returns The mutation's `scope.id`, or `undefined` if it has no scope.
+ */
 function scopeFor(mutation: Mutation<any, any, any, any>) {
   return mutation.options.scope?.id
 }

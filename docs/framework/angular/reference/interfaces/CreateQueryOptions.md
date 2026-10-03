@@ -3,7 +3,7 @@ id: CreateQueryOptions
 title: CreateQueryOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:58](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L58)
+Defined in: [packages/angular-query-experimental/src/types.ts:56](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L56)
 
 The options accepted by `injectQuery`. Same as [CreateBaseQueryOptions](CreateBaseQueryOptions.md), minus `suspense` — which
 `angular-query-experimental` doesn't support, unlike `react-query`.

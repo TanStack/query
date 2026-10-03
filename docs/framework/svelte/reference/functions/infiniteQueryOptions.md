@@ -9,7 +9,7 @@ title: infiniteQueryOptions
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L92)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:90](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L90)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
@@ -95,7 +95,7 @@ visible alongside the error:
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:159](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L159)
+Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:155](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L155)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
 These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
