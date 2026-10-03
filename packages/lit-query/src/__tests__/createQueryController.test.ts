@@ -83,6 +83,7 @@ describe('createQueryController', () => {
     expect(
       queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
     ).toBe(1)
+
     query.destroy()
     expect(
       queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
@@ -365,6 +366,7 @@ describe('createQueryController', () => {
 
     expect(query().status).toBe('pending')
     expect(query().isSuccess).toBe(false)
+
     container.append(host)
     await host.updateComplete
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
@@ -615,6 +617,7 @@ describe('createQueryController', () => {
 
     host.count = 1
     await host.updateComplete
+
     expect(query().data).toBe('stable')
     expect(callCount).toBe(1)
     expect(host.updatesRequested).toBe(updatesAfterSuccess + 1)
@@ -1066,6 +1069,7 @@ describe('createQueryController', () => {
     await host.updateComplete
 
     expect(query().isFetching).toBe(true)
+
     host.remove()
     await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
@@ -1207,6 +1211,7 @@ describe('createQueryController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     const oldCacheQueryAfterSwitch = clientA
       .getQueryCache()
@@ -1420,6 +1425,7 @@ describe('createQueryController', () => {
     const consumer = new Consumer()
 
     expect(consumer.query().status).toBe('pending')
+
     container.append(consumer)
     expect(() => consumer.query()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -1715,6 +1721,7 @@ describe('createQueryController', () => {
     await host.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+
     const suspensePromise = host.query.suspense()
     await vi.advanceTimersByTimeAsync(10)
     await expect(suspensePromise).resolves.toMatchObject({
@@ -1834,6 +1841,7 @@ describe('createQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('status: success, data: data-1')
 
     host.userId = 2
+
     const suspensePromise = host.query.suspense()
     await vi.advanceTimersByTimeAsync(10)
     await expect(suspensePromise).resolves.toMatchObject({

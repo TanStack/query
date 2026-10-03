@@ -401,6 +401,7 @@ describe('useIsFetching', () => {
 
     expect(consumer.query().status).toBe('pending')
     expect(consumer.isFetching()).toBe(0)
+
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.query()).toThrow(/No QueryClient available/)

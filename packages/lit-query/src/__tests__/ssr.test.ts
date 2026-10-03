@@ -79,6 +79,7 @@ describe('Server Side Rendering', () => {
 
     queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
+
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status success')
@@ -143,6 +144,7 @@ describe('Server Side Rendering', () => {
       })
       .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
+
     const markup = await renderToString(Page)
 
     expect(markup).toContain('page 1')
@@ -170,6 +172,7 @@ describe('Server Side Rendering', () => {
 
     queryClient.query({ queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
+
     const markup = await renderToString(Page)
 
     expect(markup).toContain('data')
@@ -206,6 +209,7 @@ describe('Server Side Rendering', () => {
     queryClient.query({ queryKey: key1, queryFn: queryFn1 }).catch(noop)
     queryClient.query({ queryKey: key2, queryFn: queryFn2 }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
+
     const markup = await renderToString(Page)
 
     expect(markup).toContain('status1: success')

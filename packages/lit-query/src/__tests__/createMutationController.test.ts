@@ -64,6 +64,7 @@ describe('createMutationController', () => {
     await consumer.updateComplete
 
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
+
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
@@ -142,6 +143,7 @@ describe('createMutationController', () => {
     await host.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('data: none')
+
     const resultPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(resultPromise).resolves.toBe(2)
@@ -204,6 +206,7 @@ describe('createMutationController', () => {
     await host.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
+
     host.mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
@@ -242,6 +245,7 @@ describe('createMutationController', () => {
 
     expect(mutation().isIdle).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
+
     const successPromise = mutation.mutateAsync(10)
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isPending).toBe(true)
@@ -817,6 +821,7 @@ describe('createMutationController', () => {
 
     expect(placeholderResult.isIdle).toBe(true)
     expect(placeholderResult.isPaused).toBe(false)
+
     container.append(consumer)
     expect(() => consumer.mutation()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -989,6 +994,7 @@ describe('createMutationController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
@@ -1037,6 +1043,7 @@ describe('createMutationController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
     await vi.advanceTimersByTimeAsync(10)

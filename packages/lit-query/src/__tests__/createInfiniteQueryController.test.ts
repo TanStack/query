@@ -605,6 +605,7 @@ describe('createInfiniteQueryController', () => {
     await host.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('status: pending')
+
     host.remove()
     expect(cancelFn).toHaveBeenCalled()
   })
@@ -649,6 +650,7 @@ describe('createInfiniteQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent('isFetching: false, pages: none')
 
     host.postId = '1'
+
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(host.shadowRoot).toHaveTextContent('pages: comments for 1 page 0')
@@ -677,6 +679,7 @@ describe('createInfiniteQueryController', () => {
     const placeholderResult = consumer.infinite()
 
     expect(placeholderResult.status).toBe('pending')
+
     container.append(consumer)
     expect(() => consumer.infinite()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -872,6 +875,7 @@ describe('createInfiniteQueryController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)

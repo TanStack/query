@@ -238,6 +238,7 @@ describe('useIsMutating', () => {
     await provider.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('mutating: 0')
+
     producer.mutation1.mutate()
     producer.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -387,6 +388,7 @@ describe('useIsMutating', () => {
     const consumer = new Consumer()
 
     expect(consumer.isMutating()).toBe(0)
+
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.isMutating()).toThrow(/No QueryClient available/)

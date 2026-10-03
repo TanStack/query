@@ -386,6 +386,7 @@ describe('useMutationState', () => {
     await provider.updateComplete
 
     expect(host.shadowRoot).toHaveTextContent('statuses: none')
+
     producer.mutation1.mutate()
     producer.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -529,6 +530,7 @@ describe('useMutationState', () => {
     const consumer = new Consumer()
 
     expect(consumer.mutationStatuses()).toEqual([])
+
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutationStatuses()).toThrow(

@@ -241,6 +241,7 @@ describe('createQueriesController', () => {
 
     host.count = 1
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('data: 1 result')
   })
 
@@ -767,6 +768,7 @@ describe('createQueriesController', () => {
       { status: 'pending', data: undefined },
       { status: 'pending', data: undefined },
     ])
+
     container.append(consumer)
     expect(() => consumer.queries()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -1219,6 +1221,7 @@ describe('createQueriesController', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(
       clientB

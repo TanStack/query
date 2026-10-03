@@ -39,6 +39,7 @@ describe('QueryClientProvider/context', () => {
 
     expect(useQueryClient()).toBe(queryClient)
     expect(resolveQueryClient()).toBe(queryClient)
+
     provider.remove()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
@@ -58,6 +59,7 @@ describe('QueryClientProvider/context', () => {
     await providerB.updateComplete
 
     expect(useQueryClient()).toBe(queryClient)
+
     providerB.remove()
     await vi.advanceTimersByTimeAsync(0)
     expect(useQueryClient()).toBe(queryClient)
@@ -83,6 +85,7 @@ describe('QueryClientProvider/context', () => {
     expect(() => resolveQueryClient()).toThrow(
       /Multiple QueryClients are mounted/,
     )
+
     providerB.remove()
     expect(getDefaultQueryClient()).toBe(clientA)
     expect(useQueryClient()).toBe(clientA)
@@ -116,6 +119,7 @@ describe('QueryClientProvider/context', () => {
     expect(unmountA).toHaveBeenCalledTimes(0)
     expect(mountB).toHaveBeenCalledTimes(0)
     expect(unmountB).toHaveBeenCalledTimes(0)
+
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
     expect(unmountA).toHaveBeenCalledTimes(1)
@@ -123,6 +127,7 @@ describe('QueryClientProvider/context', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
@@ -158,6 +163,7 @@ describe('QueryClientProvider/context', () => {
 
     provider.client = clientB
     await provider.updateComplete
+
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(1)
@@ -182,6 +188,7 @@ describe('QueryClientProvider/context', () => {
 
     provider.remove()
     provider.client = undefined as unknown as QueryClient
+
     await expect(provider.updateComplete).resolves.toBe(true)
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
@@ -216,6 +223,7 @@ describe('QueryClientProvider/context', () => {
     expect(consumer.query().data).toBe('ok')
 
     provider.client = undefined as unknown as QueryClient
+
     await expect(provider.updateComplete).rejects.toThrow(
       /No QueryClient available/,
     )
