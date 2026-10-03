@@ -9,7 +9,7 @@ title: createInfiniteQuery
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:36](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L36)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:35](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L35)
 
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -72,7 +72,7 @@ like `queryClient.infiniteQuery`.
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:70](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L70)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:68](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L68)
 
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -135,7 +135,7 @@ like `queryClient.infiniteQuery`.
 function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: Accessor<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: Accessor<QueryClient>): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:185](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L185)
+Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:180](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L180)
 
 The options for `createInfiniteQuery` are identical to `createQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.

@@ -47,7 +47,7 @@ Subscribable.hasListeners
 isOnline(): boolean;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L109)
+Defined in: [packages/query-core/src/onlineManager.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L107)
 
 `isOnline` can be used to get the current online state.
 
@@ -63,7 +63,7 @@ Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/Ta
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L75)
+Defined in: [packages/query-core/src/onlineManager.ts:74](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L74)
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the online state. The provided `setup` function
@@ -101,7 +101,7 @@ onlineManager.setEventListener((setOnline) => {
 setOnline(online: boolean): void;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:95](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L95)
+Defined in: [packages/query-core/src/onlineManager.ts:93](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L93)
 
 `setOnline` can be used to manually set the online state.
 

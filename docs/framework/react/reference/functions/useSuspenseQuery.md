@@ -9,7 +9,7 @@ redirect_from:
 function useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseSuspenseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQuery.ts:75](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQuery.ts#L75)
+Defined in: [packages/react-query/src/useSuspenseQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQuery.ts#L73)
 
 The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError`, `enabled`, and
 `placeholderData` — and `queryFn` may not be `skipToken`, since Suspense hooks can't render a "disabled" state.

@@ -7,7 +7,7 @@ title: UseQueryResult
 type UseQueryResult<TData, TError> = UseBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:325](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L325)
+Defined in: [packages/react-query/src/types.ts:314](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L314)
 
 The result of `useQuery`. Same as [UseBaseQueryResult](UseBaseQueryResult.md).
 

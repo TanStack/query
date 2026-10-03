@@ -7,7 +7,7 @@ title: AnyUseMutationOptions
 type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:402](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L402)
+Defined in: [packages/react-query/src/types.ts:386](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L386)
 
 [UseMutationOptions](../interfaces/UseMutationOptions.md) with all type parameters set to `any`, useful when the specific types aren't
 relevant, e.g. when accepting options for any mutation in a helper function.

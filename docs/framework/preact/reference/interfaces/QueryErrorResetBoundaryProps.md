@@ -3,7 +3,7 @@ id: QueryErrorResetBoundaryProps
 title: QueryErrorResetBoundaryProps
 ---
 
-Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:103](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L103)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:100](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L100)
 
 The props accepted by `QueryErrorResetBoundary`.
 

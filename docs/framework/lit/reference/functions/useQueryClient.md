@@ -7,7 +7,7 @@ title: useQueryClient
 function useQueryClient(): QueryClient;
 ```
 
-Defined in: [packages/lit-query/src/context.ts:98](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L98)
+Defined in: [packages/lit-query/src/context.ts:94](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L94)
 
 Resolves the current default `QueryClient` registered by a connected
 `QueryClientProvider`.
