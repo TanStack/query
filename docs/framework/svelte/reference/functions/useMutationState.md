@@ -32,6 +32,15 @@ state.
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="options-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
+| <a id="options-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

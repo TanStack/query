@@ -20,6 +20,17 @@ running (useful for app-wide loading indicators).
 
 [MutationFilters](../interfaces/MutationFilters.md) to narrow down which mutations to count.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="filters-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
+| <a id="filters-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
+| <a id="filters-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
+| <a id="filters-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

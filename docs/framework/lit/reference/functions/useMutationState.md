@@ -41,6 +41,15 @@ subscription.
 
 Mutation state filters and optional selector.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-filters"></a> `filters?` | [`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
+| <a id="options-select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

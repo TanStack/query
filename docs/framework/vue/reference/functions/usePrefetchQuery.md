@@ -54,6 +54,12 @@ Fire this during render, before a suspense boundary that wraps a component using
 A `ref`, plain value, or reactive getter resolving to the [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to
 use — everything you can pass to `queryClient.query`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryExecuteOptions`](../interfaces/QueryExecuteOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

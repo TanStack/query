@@ -3,6 +3,22 @@ id: queryOptions
 title: queryOptions
 ---
 
+## Overview
+
+```ts
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never> & object & object;
+```
+
+- [`DefinedInitialDataOptions` → `Omit`](#call-signature-1): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+- [`UnusedSkipTokenOptions` → `OmitKeyof`](#call-signature-2): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+- [`UndefinedInitialDataOptions` → `QueryObserverOptions`](#call-signature-3): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -58,6 +74,8 @@ const todosOptions = queryOptions({
 })
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -101,6 +119,8 @@ Query options to preserve and brand.
 
 The same options object with a typed `queryKey`.
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
@@ -143,3 +163,33 @@ Query options to preserve and brand.
 [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\> & `object` & `object`
 
 The same options object with a typed `queryKey`.
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+Query options to preserve and brand.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `never`\> & `object` & `object`
+
+The same options object with a typed `queryKey`.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md#properties). See the type above for what it changes.

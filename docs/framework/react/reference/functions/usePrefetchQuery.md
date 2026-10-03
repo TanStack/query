@@ -50,6 +50,12 @@ already there or already in flight.
 
 The [UsePrefetchQueryOptions](../type-aliases/UsePrefetchQueryOptions.md) to use — everything you can pass to `queryClient.query`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryExecuteOptions`](../interfaces/QueryExecuteOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

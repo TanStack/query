@@ -5,6 +5,24 @@ redirect_from:
   - framework/vue/reference/mutationOptions
 ---
 
+## Overview
+
+```ts
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): () => Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+- [`WithRequired` → `WithRequired`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `useMutationState`.
+- [`WithRequired` → `WithRequired`](#call-signature-2): Same as the plain-object overload with a required `mutationKey`, but for options that close over reactive state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers always read the current values instead of the ones captured when the options were created.
+- [`Omit` → `Omit`](#call-signature-3): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters, such as `status`.
+- [`Omit` → `Omit`](#call-signature-4): Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers always read the current values instead of the ones captured when the options were created.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -78,6 +96,8 @@ const creatingPosts = useMutationState({
 const isCreatingPost = computed(() => creatingPosts.value.length > 0)
 </script>
 ```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
@@ -156,6 +176,8 @@ const mutation = useMutation(createPostOptions)
 </template>
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
@@ -227,6 +249,8 @@ const mutation = useMutation(createPostOptions)
   <button @click="mutation.mutate({ title: 'Hello' })">Create</button>
 </template>
 ```
+
+<a id="call-signature-4"></a>
 
 ## Call Signature
 
@@ -303,3 +327,28 @@ const mutation = useMutation(createPostOptions)
   <button @click="mutation.mutate('Hello')">Create</button>
 </template>
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+A function returning the mutation options to use, without a `mutationKey`, re-evaluated on
+demand.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+A function that returns the same options object, unchanged.
+
+```ts
+(): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+#### Returns
+
+`Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
