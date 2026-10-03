@@ -3,7 +3,11 @@ id: QueryObserverOptions
 title: QueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:430](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L430)
+Defined in: [packages/query-core/src/types.ts:501](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L501)
+
+The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: the
+[QueryOptions](../type-aliases/QueryOptions.md) of the query, plus options that control the observer, such as `enabled`,
+`staleTime`, `refetchInterval`, `select`, and `placeholderData`.
 
 ## Extends
 

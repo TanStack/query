@@ -3,7 +3,9 @@ id: QueryObserverPendingResult
 title: QueryObserverPendingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:935](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L935)
+Defined in: [packages/query-core/src/types.ts:1065](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1065)
+
+A query result in the `pending` state: the query has no data yet.
 
 ## Extends
 
