@@ -9,6 +9,11 @@ import type {
 import type { DevtoolsSubscriptions } from '../contexts/types'
 import type { ParentProps } from 'solid-js'
 
+/**
+ * Provides the query and mutation cache subscription registries to its children.
+ * @param props - The `children` to render.
+ * @returns The `children`, wrapped in the context provider.
+ */
 export function DevtoolsSubscriptionsProvider(props: ParentProps) {
   const queryCacheSubscriptions = createCacheSubscriptionRegistry<
     QueryCache,

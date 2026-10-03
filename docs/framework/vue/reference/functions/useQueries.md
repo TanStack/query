@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(__namedParameters: ShallowOption & object, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
+function useQueries<T, TCombinedResult>(options: ShallowOption & object, queryClient?: QueryClient): Readonly<Ref<TCombinedResult>>;
 ```
 
-Defined in: [packages/vue-query/src/useQueries.ts:357](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L357)
+Defined in: [packages/vue-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueries.ts#L354)
 
 The `useQueries` composable can be used to fetch a variable number of queries.
 
@@ -39,9 +39,11 @@ previously rendered queries, because the number of queries can differ between re
 
 ## Parameters
 
-### \_\_namedParameters
+### options
 
 `ShallowOption` & `object`
+
+The `queries` array to run, and the optional `combine` and `shallow` options.
 
 ### queryClient?
 

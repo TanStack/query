@@ -13,7 +13,7 @@ function useQueries<T, TCombinedResult>(queriesOptions: Accessor<{
 }>, queryClient?: Accessor<QueryClient>): TCombinedResult;
 ```
 
-Defined in: [packages/solid-query/src/useQueries.ts:274](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L274)
+Defined in: [packages/solid-query/src/useQueries.ts:272](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQueries.ts#L272)
 
 The `useQueries` primitive can be used to fetch a variable number of queries.
 

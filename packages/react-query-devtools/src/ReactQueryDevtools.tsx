@@ -18,14 +18,12 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
-   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the React Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -51,12 +49,17 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export function ReactQueryDevtools(
   props: DevtoolsOptions,
 ): React.ReactElement | null {

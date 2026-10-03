@@ -24,18 +24,24 @@ export interface PersistedClient {
 export interface PersistQueryClientRootOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
-  /** The Persister interface for storing and restoring the cache
-   * to/from a persisted location */
+  /**
+   * The Persister interface for storing and restoring the cache
+   * to/from a persisted location
+   */
   persister: Persister
-  /** A unique string that can be used to forcefully
-   * invalidate existing caches if they do not share the same buster string */
+  /**
+   * A unique string that can be used to forcefully
+   * invalidate existing caches if they do not share the same buster string
+   */
   buster?: string
 }
 
 export interface PersistedQueryClientRestoreOptions extends PersistQueryClientRootOptions {
-  /** The max-allowed age of the cache in milliseconds.
+  /**
+   * The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
-   * time, it will be discarded */
+   * time, it will be discarded
+   */
   maxAge?: number
   /** The options passed to the hydrate function */
   hydrateOptions?: HydrateOptions
@@ -52,12 +58,14 @@ export interface PersistQueryClientOptions
     PersistedQueryClientSaveOptions,
     PersistQueryClientRootOptions {}
 
+const cacheEventTypes: Array<NotifyEventType> = ['added', 'removed', 'updated']
+
 /**
  * Checks if emitted event is about cache change and not about observers.
  * Useful for persist, where we only want to trigger save when cache is changed.
+ * @param eventType - The type of the emitted event.
+ * @returns `true` if the event is `'added'`, `'removed'`, or `'updated'`.
  */
-const cacheEventTypes: Array<NotifyEventType> = ['added', 'removed', 'updated']
-
 function isCacheEventType(eventType: NotifyEventType) {
   return cacheEventTypes.includes(eventType)
 }
@@ -67,6 +75,11 @@ function isCacheEventType(eventType: NotifyEventType) {
  *  - data obtained from persister.restoreClient
  *  - data is hydrated using hydrateOptions
  * If data is expired, busted, empty, or throws, it runs persister.removeClient
+ * @param options - The `queryClient` to restore into, the `persister`, and the `maxAge`, `buster`,
+ * and `hydrateOptions` that decide whether and how the persisted data is restored.
+ * @returns A promise that resolves once the data is restored or removed. If restoring throws, it
+ * attempts to remove the persisted data and then rejects with the restore error, or with the removal
+ * error if the removal fails too.
  */
 export async function persistQueryClientRestore({
   queryClient,
@@ -109,6 +122,8 @@ export async function persistQueryClientRestore({
  * Persists data from the QueryCache
  *  - data dehydrated using dehydrateOptions
  *  - data is persisted using persister.persistClient
+ * @param options - The `queryClient` to persist, the `persister`, the `buster`, and the
+ * `dehydrateOptions`.
  */
 export async function persistQueryClientSave({
   queryClient,
@@ -127,6 +142,8 @@ export async function persistQueryClientSave({
 
 /**
  * Subscribe to QueryCache and MutationCache updates (for persisting)
+ * @param props - The `queryClient` to monitor, the `persister`, the `buster`, and the
+ * `dehydrateOptions` used for each save.
  * @returns an unsubscribe function (to discontinue monitoring)
  */
 export function persistQueryClientSubscribe(
@@ -156,6 +173,9 @@ export function persistQueryClientSubscribe(
 
 /**
  * Restores persisted data to QueryCache and persists further changes.
+ * @param props - The options for both restoring and saving.
+ * @returns A tuple of a function that stops persisting, and a promise that resolves once the
+ * restore is done.
  */
 export function persistQueryClient(
   props: PersistQueryClientOptions,

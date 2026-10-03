@@ -3,7 +3,7 @@ id: UseSuspenseInfiniteQueryOptions
 title: UseSuspenseInfiniteQueryOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:280](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L280)
+Defined in: [packages/react-query/src/types.ts:271](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L271)
 
 The options accepted by `useSuspenseInfiniteQuery`. Same as [UseInfiniteQueryOptions](UseInfiniteQueryOptions.md), minus `enabled`,
 `throwOnError`, and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so

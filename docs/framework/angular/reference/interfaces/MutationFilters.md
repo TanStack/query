@@ -3,7 +3,7 @@ id: MutationFilters
 title: MutationFilters
 ---
 
-Defined in: [packages/query-core/src/utils.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L64)
+Defined in: [packages/query-core/src/utils.ts:63](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L63)
 
 Filters used to select mutations, for example in `mutationCache.findAll` or `queryClient.isMutating`.
 All provided filters must match; filters that are left unspecified are ignored.

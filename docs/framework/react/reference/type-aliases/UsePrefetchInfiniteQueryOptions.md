@@ -7,7 +7,7 @@ title: UsePrefetchInfiniteQueryOptions
 type UsePrefetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = DistributiveOmit<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
-Defined in: [packages/react-query/src/types.ts:118](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L118)
+Defined in: [packages/react-query/src/types.ts:114](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L114)
 
 The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
 except `queryFn` is required unless a default query function has been defined.

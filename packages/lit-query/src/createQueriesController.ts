@@ -216,6 +216,11 @@ export type QueriesResultAccessor<TCombinedResult> =
     destroy: () => void
   }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns The pending result.
+ */
 function createPendingQueryObserverResult(): QueryObserverResult {
   return {
     data: undefined,
@@ -249,6 +254,12 @@ function createPendingQueryObserverResult(): QueryObserverResult {
   } as unknown as QueryObserverResult
 }
 
+/**
+ * Returns the result of a query used while no `QueryClient` is available: a `'success'` result with
+ * the query's `initialData` (after `select`), or the pending result if there is no `initialData`.
+ * @param query - The query options.
+ * @returns The placeholder result.
+ */
 function createPlaceholderQueryObserverResult(
   query: QueryObserverOptions,
 ): QueryObserverResult {
@@ -279,6 +290,12 @@ function createPlaceholderQueryObserverResult(
   } as QueryObserverResult
 }
 
+/**
+ * Reads the controller's options and defaults each query with the client.
+ * @param optionsAccessor - The options, or a getter that returns them.
+ * @param client - The client used to default the query options.
+ * @returns The defaulted query options and the `combine` function.
+ */
 function resolveQueriesOptions<TCombinedResult>(
   optionsAccessor: Accessor<
     CreateQueriesControllerOptions<any, TCombinedResult>
@@ -659,7 +676,6 @@ class QueriesController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the queries
  * subscription.
  * @param options - Queries controller options, or a getter that returns options.
@@ -667,7 +683,6 @@ class QueriesController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query results, or the value returned by
  * `combine`.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

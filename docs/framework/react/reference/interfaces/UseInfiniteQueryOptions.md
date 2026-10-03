@@ -3,7 +3,7 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:238](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L238)
+Defined in: [packages/react-query/src/types.ts:231](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L231)
 
 The options accepted by `useInfiniteQuery`. Extends [InfiniteQueryObserverOptions](InfiniteQueryObserverOptions.md) from
 `@tanstack/query-core` with the `react-query`-specific `subscribed` option, minus `suspense` (which

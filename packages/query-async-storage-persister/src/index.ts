@@ -15,15 +15,18 @@ export type AsyncPersistRetryer = (props: {
 }) => Promisable<PersistedClient | undefined>
 
 interface CreateAsyncStoragePersisterOptions {
-  /** The storage client used for setting and retrieving items from cache.
+  /**
+   * The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`. Note that window.localStorage can be
    * `null` in Android WebViews depending on how they are configured.
    */
   storage: AsyncStorage<string> | undefined | null
   /** The key to use when storing the cache */
   key?: string
-  /** To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk */
+  /**
+   * To avoid spamming,
+   * pass a time in ms to throttle saving the cache to disk
+   */
   throttleTime?: number
   /**
    * How to serialize the data to storage.

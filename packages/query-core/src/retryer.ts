@@ -50,10 +50,20 @@ type RetryDelayFunction<TError = DefaultError> = (
   error: TError,
 ) => number
 
+/**
+ * The default `retryDelay`: doubles with every failure, starting at 1 second, up to 30 seconds.
+ * @param failureCount - The number of failures so far.
+ * @returns The delay before the next retry, in milliseconds.
+ */
 function defaultRetryDelay(failureCount: number) {
   return Math.min(1000 * 2 ** failureCount, 30000)
 }
 
+/**
+ * Checks whether a fetch can run for the given network mode.
+ * @param networkMode - The `networkMode` option. Defaults to `'online'`.
+ * @returns `true` if the network mode is not `'online'`, or if it is and the client is online.
+ */
 export function canFetch(networkMode: NetworkMode | undefined): boolean {
   return (networkMode ?? 'online') === 'online'
     ? onlineManager.isOnline()
@@ -90,11 +100,22 @@ export class CancelledError extends Error {
 
 /**
  * @deprecated Use instanceof `CancelledError` instead.
+ * @param value - The value to check.
+ * @returns `true` if `value` is a `CancelledError`.
  */
 export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
+/**
+ * Creates a retryer, which runs a function and retries it on failure according to the `retry` and
+ * `retryDelay` options. It pauses while the network mode doesn't allow fetching or `canRun` returns
+ * `false`, and can be cancelled. Queries and mutations use it to run their `queryFn` and
+ * `mutationFn`.
+ * @param config - The function to run, the retry options, and the callbacks for failures, pausing,
+ * continuing, and cancellation.
+ * @returns The retryer, whose `promise` settles with the result of the function.
+ */
 export function createRetryer<TData = unknown, TError = DefaultError>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
@@ -152,10 +173,10 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     }
   }
 
-  const pause = () => {
+  const pause = (canResume: () => boolean) => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved() || canContinue()) {
+        if (isResolved() || canResume()) {
           continueResolve(value)
         }
       }
@@ -223,7 +244,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         sleep(delay)
           // Pause if the document is not visible or when the device is offline
           .then(() => {
-            return canContinue() ? undefined : pause()
+            return canContinue() ? undefined : pause(canContinue)
           })
           .then(() => {
             if (isRetryCancelled) {
@@ -251,7 +272,9 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       if (canStart()) {
         run()
       } else {
-        pause().then(run)
+        // Waiting to start (e.g. queued behind a scope) does not depend on focus,
+        // only on the same conditions that allow starting in the first place
+        pause(canStart).then(run)
       }
       return promise
     },

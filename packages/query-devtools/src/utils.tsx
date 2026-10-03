@@ -3,6 +3,12 @@ import { createSignal, onCleanup, onMount } from 'solid-js'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
+/**
+ * Returns the status label of a query: fetching, inactive (no observers), paused, stale, or fresh,
+ * checked in that order.
+ * @param query - The query to label.
+ * @returns The status label.
+ */
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
@@ -17,6 +23,12 @@ export function getQueryStatusLabel(query: Query) {
 
 type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'
 
+/**
+ * Appends a capitalized side to a CSS property name, e.g. `border` and `left` to `borderLeft`.
+ * @param prop - The property name.
+ * @param side - The side to append.
+ * @returns The sided property name.
+ */
 export function getSidedProp<T extends string>(
   prop: T,
   side: DevtoolsPosition,
@@ -26,6 +38,12 @@ export function getSidedProp<T extends string>(
   }` as `${T}${Capitalize<DevtoolsPosition>}`
 }
 
+/**
+ * Returns the color of a query's status: blue while fetching, gray without observers, purple while
+ * paused, yellow when stale, otherwise green.
+ * @param params - The query's `queryState`, `observerCount`, and `isStale`.
+ * @returns The color name.
+ */
 export function getQueryStatusColor({
   queryState,
   observerCount,
@@ -46,6 +64,12 @@ export function getQueryStatusColor({
           : 'green'
 }
 
+/**
+ * Returns the color of a mutation's status: purple while paused, red on error, yellow while pending,
+ * green on success, otherwise gray.
+ * @param params - The mutation's `status` and `isPaused`.
+ * @returns The color name.
+ */
 export function getMutationStatusColor({
   status,
   isPaused,
@@ -64,6 +88,11 @@ export function getMutationStatusColor({
           : 'gray'
 }
 
+/**
+ * Returns the color of a query status label.
+ * @param label - The status label.
+ * @returns The color name.
+ */
 export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
@@ -78,8 +107,9 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 
 /**
  * Displays a string regardless of the type of the data
- * @param {unknown} value Value to be stringified
- * @param {boolean} beautify Formats json to multiline
+ * @param value - Value to be stringified
+ * @param beautify - Formats json to multiline
+ * @returns The value serialized with `superjson`, as a JSON string.
  */
 export const displayValue = (value: unknown, beautify: boolean = false) => {
   const { json } = serialize(value)
@@ -169,10 +199,10 @@ export const getPreferredColorScheme = () => {
 
 /**
  * updates nested data by path
- *
- * @param {unknown} oldData Data to be updated
- * @param {Array<string>} updatePath Path to the data to be updated
- * @param {unknown} value New value
+ * @param oldData - Data to be updated
+ * @param updatePath - Path to the data to be updated
+ * @param value - New value
+ * @returns A copy of `oldData` with the value at `updatePath` replaced.
  */
 export const updateNestedDataByPath = (
   oldData: unknown,
@@ -243,9 +273,8 @@ export const updateNestedDataByPath = (
 
 /**
  * Deletes nested data by path
- *
- * @param {unknown} oldData Data to be updated
- * @param {Array<string>} deletePath Path to the data to be deleted
+ * @param oldData - Data to be updated
+ * @param deletePath - Path to the data to be deleted
  * @returns newData without the deleted items by path
  */
 export const deleteNestedDataByPath = (

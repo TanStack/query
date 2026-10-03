@@ -3,7 +3,7 @@ id: QueryObserverOptions
 title: QueryObserverOptions
 ---
 
-Defined in: [packages/solid-query/src/QueryClient.ts:23](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L23)
+Defined in: [packages/solid-query/src/QueryClient.ts:22](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L22)
 
 The core `QueryObserverOptions`, with Solid's `reconcile` option added.
 

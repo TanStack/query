@@ -25,6 +25,13 @@ type MutationStateOptions<TResult = MutationState> = {
   select?: (mutation: Mutation) => TResult
 }
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<TResult = MutationState>(
   mutationCache: MutationCache,
   options: MutationStateOptions<TResult>,
@@ -49,13 +56,11 @@ export interface InjectMutationStateOptions {
 /**
  * Injects a signal that gives you access to all mutations in the `MutationCache`. You can pass `filters`
  * ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation state.
- *
  * @param injectMutationStateFn - A function returning the `filters` to narrow down matched mutations, and an
  * optional `select` to transform the mutation state. Similar to `computed` from Angular, this function runs
  * in the reactive context, so signals read inside it re-narrow the matched mutations.
  * @param options - Additional configuration
  * @returns A `Signal` with an Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```angular-ts
@@ -70,7 +75,6 @@ export interface InjectMutationStateOptions {
  *   }))
  * }
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```angular-ts

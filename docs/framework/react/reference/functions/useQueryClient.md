@@ -30,4 +30,5 @@ The current `QueryClient` instance.
 
 ## Throws
 
-If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+component tree.

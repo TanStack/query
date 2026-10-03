@@ -27,9 +27,12 @@ installed in the same app.
 
 [`QueryClient`](../classes/QueryClient.md)
 
+The installed `QueryClient`.
+
 ## Throws
 
-If called outside an injection context, or if no `QueryClient` was installed via `VueQueryPlugin`.
+If called outside an injection context, or if no `QueryClient` was installed via
+`VueQueryPlugin`.
 
 ## Example
 

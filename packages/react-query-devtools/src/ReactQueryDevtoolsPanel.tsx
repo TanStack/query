@@ -41,12 +41,16 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export function ReactQueryDevtoolsPanel(
   props: DevtoolsPanelOptions,
 ): React.ReactElement | null {

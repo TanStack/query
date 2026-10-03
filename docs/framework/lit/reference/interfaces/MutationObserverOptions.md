@@ -3,7 +3,7 @@ id: MutationObserverOptions
 title: MutationObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1381](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1381)
+Defined in: [packages/query-core/src/types.ts:1363](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1363)
 
 ## Extends
 

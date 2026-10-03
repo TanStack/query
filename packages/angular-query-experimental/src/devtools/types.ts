@@ -47,14 +47,12 @@ export interface DevtoolsOptions {
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * `top-left` | `top-right` | `bottom-left` | `bottom-right` | `relative`
-   *
    * @defaultValue bottom-right
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Angular Query devtools panel.
    * `top` | `bottom` | `left` | `right`
-   *
    * @defaultValue bottom
    */
   position?: DevtoolsPosition
@@ -80,7 +78,6 @@ export interface DevtoolsOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme

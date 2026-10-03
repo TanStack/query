@@ -3,7 +3,7 @@ id: QueriesObserverOptions
 title: QueriesObserverOptions
 ---
 
-Defined in: [packages/query-core/src/queriesObserver.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L23)
+Defined in: [packages/query-core/src/queriesObserver.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L29)
 
 ## Type Parameters
 

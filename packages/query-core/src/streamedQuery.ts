@@ -54,7 +54,9 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * Data will be an Array of all the chunks received.
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
  * The query will stay in fetchStatus 'fetching' until the stream ends.
- * @param streamFn - The function that returns an AsyncIterable to stream data from.
+ * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional
+ * `refetchMode`, `reducer`, and `initialValue` options.
+ * @returns A query function to pass as `queryFn`.
  * @example
  * ```ts
  * await queryClient.query({

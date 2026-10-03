@@ -7,6 +7,15 @@ import type { ExtraRuleDocs } from '../types'
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
+/**
+ * Creates a rule that reports when the properties of the options object passed to the target
+ * functions are not in the required order.
+ * @param options - The rule's metadata, such as `name`, `meta`, and `defaultOptions`.
+ * @param targetFunctions - The names of the functions whose first argument is checked.
+ * @param orderRules - Pairs of property groups: the properties of the first group must come before
+ * those of the second.
+ * @returns The rule.
+ */
 export function createPropertyOrderRule<
   TFunc extends string,
   TProp extends string,
@@ -18,6 +27,11 @@ export function createPropertyOrderRule<
   >,
 ) {
   const targetFunctionSet = new Set(targetFunctions)
+  /**
+   * Checks whether a function name is one of the target functions.
+   * @param node - The function name.
+   * @returns `true` if the name is a target function.
+   */
   function isTargetFunction(node: any): node is TFunc {
     return targetFunctionSet.has(node)
   }

@@ -9,6 +9,12 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * Returns the items of `array1` that are not in `array2`.
+ * @param array1 - The items to filter.
+ * @param array2 - The items to exclude.
+ * @returns A new array with the items of `array1` that are not in `array2`.
+ */
 function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   const excludeSet = new Set(array2)
   return array1.filter((x) => !excludeSet.has(x))
@@ -40,7 +46,6 @@ export interface QueriesObserverOptions<
  * given, as a combined value derived from that array). It manages one
  * internal `QueryObserver` per query, and is the primitive that framework
  * adapters (e.g. `useQueries`) build their hooks on top of.
- *
  * @example
  * ```ts
  * const observer = new QueriesObserver(queryClient, [
@@ -115,7 +120,8 @@ export class QueriesObserver<
    * are reused for queries that match an already-observed query hash;
    * observers for queries that are no longer present are destroyed, and new
    * observers are created and subscribed to for newly added queries.
-   *
+   * @param queries - The options of the queries to observe.
+   * @param options - Replaces the observer's options, e.g. its `combine` function.
    * @example
    * ```ts
    * observer.setQueries([
@@ -200,7 +206,7 @@ export class QueriesObserver<
    * Returns the most recently computed array of `QueryObserverResult`s, one
    * per observed query, in the same order as the queries passed to the
    * constructor or `setQueries`.
-   *
+   * @returns The current results.
    * @example
    * ```ts
    * const results = observer.getCurrentResult()
@@ -214,6 +220,7 @@ export class QueriesObserver<
   /**
    * Returns the underlying `Query` instances currently being observed, in
    * the same order as the queries passed to the constructor or `setQueries`.
+   * @returns The observed queries.
    */
   getQueries() {
     return this.#observers.map((observer) => observer.getCurrentQuery())
@@ -223,6 +230,7 @@ export class QueriesObserver<
    * Returns the underlying `QueryObserver` instances this observer manages,
    * in the same order as the queries passed to the constructor or
    * `setQueries`.
+   * @returns The managed query observers.
    */
   getObservers() {
     return this.#observers
@@ -234,6 +242,10 @@ export class QueriesObserver<
    * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
    * per-query results, a function to compute the combined result from them, and a function to
    * wrap the results for property-access tracking.
+   * @param queries - The defaulted options of the queries to compute the result for.
+   * @param combine - The `combine` function used by the returned `combineResult`, if any.
+   * @returns A tuple of the per-query results, a function that computes the combined result, and a
+   * function that returns the results wrapped for property-access tracking.
    */
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,

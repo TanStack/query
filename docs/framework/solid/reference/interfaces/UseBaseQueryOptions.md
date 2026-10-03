@@ -3,7 +3,7 @@ id: UseBaseQueryOptions
 title: UseBaseQueryOptions
 ---
 
-Defined in: [packages/solid-query/src/types.ts:34](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L34)
+Defined in: [packages/solid-query/src/types.ts:33](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L33)
 
 The options accepted by `useQuery`. Extends [QueryObserverOptions](QueryObserverOptions.md) from `@tanstack/query-core` with
 the `solid-query`-specific `deferStream` and `suspense` options.

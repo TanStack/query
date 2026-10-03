@@ -9,7 +9,7 @@ function provideQueryClient(queryClient:
   | InjectionToken<QueryClient>): Provider;
 ```
 
-Defined in: [packages/angular-query-experimental/src/providers.ts:22](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L22)
+Defined in: [packages/angular-query-experimental/src/providers.ts:21](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L21)
 
 Usually [provideTanStackQuery](provideTanStackQuery.md) is used once to set up TanStack Query and the
 [`QueryClient`](https://tanstack.com/query/latest/docs/reference/QueryClient) for the entire application —

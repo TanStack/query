@@ -32,6 +32,8 @@ Returns whether the current runtime should be treated as a server environment.
 
 `boolean`
 
+`true` if the runtime is treated as a server.
+
 ### setIsServer()
 
 ```ts
@@ -45,6 +47,9 @@ Overrides the server check globally.
 ##### isServerValue
 
 `IsServerValue`
+
+A function that returns whether the runtime should be treated as a
+server.
 
 #### Returns
 

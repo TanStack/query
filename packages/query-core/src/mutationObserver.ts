@@ -27,7 +27,6 @@ type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
  * passed to the hook change, subscribes to it to re-render on updates, and
  * reads `getCurrentResult()` for the value to return. Calling `mutate()`
  * builds a new underlying `Mutation` in the `MutationCache` and executes it.
- *
  * @example
  * ```ts
  * const observer = new MutationObserver(queryClient, {
@@ -84,7 +83,8 @@ export class MutationObserver<
    * defined), the observer is reset, detaching it from the mutation it was
    * observing. Otherwise, if the currently observed mutation is still
    * `pending`, its options are updated in place as well.
-   *
+   * @param options - The new mutation observer options. They are defaulted with {@link
+   * QueryClient#defaultMutationOptions} before being applied.
    * @example
    * ```ts
    * observer.setOptions({
@@ -138,7 +138,11 @@ export class MutationObserver<
     }
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param action - The action that updated the observed mutation, passed on to the observer's
+   * callbacks.
+   */
   onMutationUpdate(
     action: Action<TData, TError, TVariables, TOnMutateResult>,
   ): void {
@@ -151,6 +155,7 @@ export class MutationObserver<
    * Returns the observer's current result, derived from the observed
    * mutation's state (or the default, `idle` state if no mutation has been
    * built yet, e.g. before the first `mutate()` call or after `reset()`).
+   * @returns The current result.
    */
   getCurrentResult(): MutationObserverResult<
     TData,
@@ -169,12 +174,10 @@ export class MutationObserver<
    * running to completion and its own callbacks still fire, but this
    * observer stops reflecting its state and a subsequent `mutate()` call
    * will build a brand new mutation.
-   *
    * @example
    * ```ts
    * observer.reset()
    * ```
-   *
    * @see {@link MutationObserver#mutate}
    */
   reset(): void {
@@ -195,7 +198,9 @@ export class MutationObserver<
    * The optional per-call `options` (`onSuccess`/`onError`/`onSettled`) are
    * invoked once the mutation settles, in addition to any callbacks defined
    * on the observer's own options.
-   *
+   * @param variables - The variables passed to the `mutationFn`.
+   * @param options - Per-call `onSuccess`, `onError`, and `onSettled` callbacks.
+   * @returns A promise that resolves with the mutation's data, or rejects with its error.
    * @example
    * ```ts
    * await observer.mutate(

@@ -7,7 +7,7 @@ title: UndefinedInitialDataOptions
 type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
 ```
 
-Defined in: [packages/preact-query/src/queryOptions.ts:23](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L23)
+Defined in: [packages/preact-query/src/queryOptions.ts:22](https://github.com/TanStack/query/blob/main/packages/preact-query/src/queryOptions.ts#L22)
 
 The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
 `undefined` while the query is `pending`.

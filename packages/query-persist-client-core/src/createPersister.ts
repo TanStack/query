@@ -30,7 +30,8 @@ export interface AsyncStorage<TStorageValue = string> {
 }
 
 export interface StoragePersisterOptions<TStorageValue = string> {
-  /** The storage client used for setting and retrieving items from cache.
+  /**
+   * The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
    */
   storage: AsyncStorage<TStorageValue> | undefined | null
@@ -66,7 +67,6 @@ export interface StoragePersisterOptions<TStorageValue = string> {
    * If set to `true`, the query will refetch on successful query restoration if the data is stale.
    * If set to `false`, the query will not refetch on successful query restoration.
    * If set to `'always'`, the query will always refetch on successful query restoration.
-   *
    * @defaultValue true
    */
   refetchOnRestore?: boolean | 'always'
@@ -85,13 +85,17 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
  *
  * ```
  * useQuery({
-     queryKey: ['myKey'],
-     queryFn: fetcher,
-     persister: createPersister({
-       storage: localStorage,
-     }),
-   })
-   ```
+ *   queryKey: ['myKey'],
+ *   queryFn: fetcher,
+ *   persister: createPersister({
+ *     storage: localStorage,
+ *   }),
+ * })
+ * ```
+ * @param options - The storage to persist to, and the options for serializing, expiring, and
+ * filtering persisted queries.
+ * @returns The `persisterFn` to pass as a query's `persister`, plus functions to persist, retrieve,
+ * restore, remove, and garbage collect persisted queries manually.
  */
 export function experimental_createQueryPersister<TStorageValue = string>({
   storage,
@@ -107,6 +111,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   refetchOnRestore = true,
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
+  /**
+   * Checks whether a persisted query should be discarded.
+   * @param persistedQuery - The persisted query to check.
+   * @returns `true` if it has no `dataUpdatedAt`, is older than `maxAge`, or has a different
+   * `buster`.
+   */
   function isExpiredOrBusted(persistedQuery: PersistedQuery) {
     if (persistedQuery.state.dataUpdatedAt) {
       const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
@@ -123,6 +133,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return true
   }
 
+  /**
+   * Reads the persisted data of a query from storage. Expired, busted, or unreadable entries are
+   * removed instead.
+   * @param queryHash - The hash of the query to read.
+   * @param afterRestoreMacroTask - Scheduled with the persisted query after it is restored.
+   * @returns A promise that resolves with the persisted data, or `undefined` if nothing was
+   * restored.
+   */
   async function retrieveQuery<T>(
     queryHash: string,
     afterRestoreMacroTask?: (persistedQuery: PersistedQuery) => void,
@@ -167,6 +185,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return
   }
 
+  /**
+   * Persists the query with the given key, if it exists in the client's cache.
+   * @param queryKey - The key of the query to persist.
+   * @param queryClient - The client whose cache holds the query.
+   * @returns A promise that resolves once the query is persisted.
+   */
   async function persistQueryByKey(
     queryKey: QueryKey,
     queryClient: QueryClient,
@@ -186,6 +210,11 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Writes a query's state, key, hash, and `buster` to storage.
+   * @param query - The query to persist.
+   * @returns A promise that resolves once the entry is serialized and written.
+   */
   async function persistQuery(query: Query) {
     if (storage != null) {
       const storageKey = `${prefix}-${query.queryHash}`
@@ -201,6 +230,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * The `persister` of a query: restores its data from storage if the query has none yet, otherwise
+   * runs `queryFn` and persists the result.
+   * @param queryFn - The query's own query function.
+   * @param ctx - The context passed to `queryFn`.
+   * @param query - The query being fetched.
+   * @returns A promise that resolves with the restored or fetched data.
+   */
   async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
     ctx: QueryFunctionContext<TQueryKey>,
@@ -246,6 +283,11 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return Promise.resolve(queryFnResult)
   }
 
+  /**
+   * Removes expired, busted, or unreadable entries from storage. Requires the storage to implement
+   * `entries`.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function persisterGc() {
     if (storage?.entries) {
       const storageKeyPrefix = `${prefix}-`
@@ -271,6 +313,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Restores every persisted query matching `filters` into the client's cache with
+   * `queryClient.setQueryData`. Requires the storage to implement `entries`.
+   * @param queryClient - The client to restore the queries into.
+   * @param filters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * restored.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function restoreQueries(
     queryClient: QueryClient,
     filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
@@ -320,6 +370,13 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  /**
+   * Removes every persisted query matching `filters` from storage. Requires the storage to implement
+   * `entries`.
+   * @param filters - The `queryKey` and `exact` filters to match. Without them, every query is
+   * removed.
+   * @returns A promise that resolves once every entry is checked.
+   */
   async function removeQueries(
     filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {

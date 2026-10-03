@@ -3,7 +3,7 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:165](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L165)
+Defined in: [packages/react-query/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L160)
 
 The options accepted by `useQuery`. Same as [UseBaseQueryOptions](UseBaseQueryOptions.md), minus `suspense` (which
 `react-query` derives from which hook you call rather than exposing as an option).

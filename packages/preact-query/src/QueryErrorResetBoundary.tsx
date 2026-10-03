@@ -34,6 +34,11 @@ export interface QueryErrorResetBoundaryValue {
   reset: QueryErrorResetFunction
 }
 
+/**
+ * Creates the value shared through the boundary's context, which tracks whether a reset was
+ * requested.
+ * @returns The `clearReset`, `isReset`, and `reset` functions of the boundary.
+ */
 function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
   return {
@@ -56,9 +61,7 @@ const QueryErrorResetBoundaryContext = createContext(createValue())
 /**
  * This hook will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary
  * defined it will reset them globally.
- *
  * @returns The boundary's {@link QueryErrorResetBoundaryValue}.
- *
  * @example
  * ```tsx
  * import { useErrorBoundary } from 'preact/hooks'
@@ -89,7 +92,6 @@ export const useQueryErrorResetBoundary = () =>
 
 /**
  * A render-prop function usable as `children` on `QueryErrorResetBoundary`.
- *
  * @param value - The boundary's {@link QueryErrorResetBoundaryValue}.
  * @returns The children to render.
  */
@@ -112,10 +114,9 @@ export interface QueryErrorResetBoundaryProps {
  * When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
  * try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
  * reset any query errors within the boundaries of the component.
- *
+ * @param props - The `children` to render.
  * @returns The `children`, rendered as-is, or called with the boundary's {@link QueryErrorResetBoundaryValue}
  * if `children` is a function.
- *
  * @example
  * ```tsx
  * import { useErrorBoundary } from 'preact/hooks'

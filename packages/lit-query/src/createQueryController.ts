@@ -46,6 +46,11 @@ export type QueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns The pending result.
+ */
 function createPendingQueryResult<TData, TError>(): QueryObserverResult<
   TData,
   TError
@@ -312,14 +317,12 @@ class QueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the query
  * subscription.
  * @param options - Query observer options, or a getter that returns options.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query result with query helper methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

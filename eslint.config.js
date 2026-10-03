@@ -4,11 +4,29 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import pluginJsdoc from 'eslint-plugin-jsdoc'
+import { defineConfig } from 'eslint/config'
 
-export default [
+export default defineConfig([
   ...tanstackConfig,
   {
-    name: 'tanstack/temp',
+    name: 'tanstack/query/jsdoc',
+    files: ['**/src/**/*.{ts,tsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/__testfixtures__/**',
+      '**/*.test.{ts,tsx}',
+      '**/*.test-d.{ts,tsx}',
+    ],
+    extends: [pluginJsdoc.configs['flat/recommended-typescript-error']],
+    rules: {
+      'jsdoc/check-tag-names': ['error', { definedTags: ['defaultValue'] }],
+      'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      'jsdoc/require-param': ['error', { checkDestructured: false }],
+    },
+  },
+  {
+    name: 'tanstack/query',
     plugins: {
       cspell: pluginCspell,
     },
@@ -93,6 +111,7 @@ export default [
     },
   },
   {
+    name: 'tanstack/query/vitest',
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
     rules: {
@@ -110,4 +129,4 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
-]
+])
