@@ -4,10 +4,21 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import pluginJsdoc from 'eslint-plugin-jsdoc'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
   ...tanstackConfig,
+  {
+    ...pluginJsdoc.configs['flat/recommended-typescript'],
+    name: 'tanstack/jsdoc',
+    files: ['**/src/**/*.{ts,tsx}'],
+    ignores: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.test-d.{ts,tsx}'],
+    rules: {
+      ...pluginJsdoc.configs['flat/recommended-typescript'].rules,
+      'jsdoc/check-tag-names': ['warn', { definedTags: ['defaultValue'] }],
+    },
+  },
   {
     name: 'tanstack/temp',
     plugins: {
