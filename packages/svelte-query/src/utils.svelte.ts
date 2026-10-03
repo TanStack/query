@@ -1,5 +1,10 @@
 import { untrack } from 'svelte'
 // modified from the great https://github.com/svecosystem/runed
+/**
+ * Runs an effect after (`'post'`) or before (`'pre'`) the DOM updates.
+ * @param flush - When to run the effect: `'post'` uses `$effect`, `'pre'` uses `$effect.pre`.
+ * @param effect - The effect to run. It may return a cleanup function.
+ */
 function runEffect(
   flush: 'post' | 'pre',
   effect: () => void | VoidFunction,

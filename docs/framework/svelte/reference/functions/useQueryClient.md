@@ -7,7 +7,7 @@ title: useQueryClient
 function useQueryClient(queryClient?: QueryClient): QueryClient;
 ```
 
-Defined in: [packages/svelte-query/src/useQueryClient.ts:23](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useQueryClient.ts#L23)
+Defined in: [packages/svelte-query/src/useQueryClient.ts:24](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useQueryClient.ts#L24)
 
 The `useQueryClient` function returns the current `QueryClient` instance.
 
@@ -28,7 +28,8 @@ The current `QueryClient` instance.
 
 ## Throws
 
-If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+component tree.
 
 ## Example
 
