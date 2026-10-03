@@ -59,6 +59,34 @@ describe('createQueryController', () => {
     expect(host.updatesRequested).toBe(0)
   })
 
+  it('should remove the observer from the query when destroyed', async () => {
+    const key = queryKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'done'),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const query = host.query
+    container.append(host)
+    await host.updateComplete
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(1)
+
+    query.destroy()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })?.getObserversCount(),
+    ).toBe(0)
+  })
+
   it('should return observer count to baseline after 100 lifecycle cycles', async () => {
     const key = queryKey()
 
@@ -394,6 +422,42 @@ describe('createQueryController', () => {
     expect(host.shadowRoot).toHaveTextContent(
       'status: success, data: enabled-result',
     )
+  })
+
+  it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: async () => {
+            fetchCount++
+            await sleep(10)
+            return 'data'
+          },
+          enabled: false,
+          initialData: 'initialData',
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`data: ${this.query().data}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.query.refetch()
+    host.query.refetch({ cancelRefetch: false })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(fetchCount).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('data: data')
   })
 
   it('should not leak observers and should refetch on remount with gcTime=0', async () => {
