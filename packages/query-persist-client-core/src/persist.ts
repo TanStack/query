@@ -132,11 +132,22 @@ export async function persistQueryClientSave({
 export function persistQueryClientSubscribe(
   props: PersistedQueryClientSaveOptions,
 ) {
+  const save = () => {
+    persistQueryClientSave(props).catch((err) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(err)
+        console.warn(
+          'Encountered an error attempting to persist client cache to persisted location.',
+        )
+      }
+    })
+  }
+
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
     .subscribe((event) => {
       if (isCacheEventType(event.type)) {
-        persistQueryClientSave(props)
+        save()
       }
     })
 
@@ -144,7 +155,7 @@ export function persistQueryClientSubscribe(
     .getMutationCache()
     .subscribe((event) => {
       if (isCacheEventType(event.type)) {
-        persistQueryClientSave(props)
+        save()
       }
     })
 
