@@ -9,7 +9,7 @@ function provideTanStackQuery(queryClient:
   | InjectionToken<QueryClient>, ...features: QueryFeatures[]): Provider[];
 ```
 
-Defined in: [packages/angular-query-experimental/src/providers.ts:102](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L102)
+Defined in: [packages/angular-query-experimental/src/providers.ts:96](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L96)
 
 Sets up providers necessary to enable TanStack Query functionality for Angular applications. Allows
 configuring a `QueryClient` and optional features such as developer tools.

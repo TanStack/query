@@ -3,7 +3,7 @@ id: UseSuspenseQueryOptions
 title: UseSuspenseQueryOptions
 ---
 
-Defined in: [packages/preact-query/src/types.ts:195](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L195)
+Defined in: [packages/preact-query/src/types.ts:189](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L189)
 
 The options accepted by `useSuspenseQuery`. Same as [UseQueryOptions](UseQueryOptions.md), minus `enabled`, `throwOnError`,
 and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so those options

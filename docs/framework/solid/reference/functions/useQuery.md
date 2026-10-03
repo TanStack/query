@@ -11,7 +11,7 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:185](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L185)
+Defined in: [packages/solid-query/src/useQuery.ts:178](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L178)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -219,7 +219,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: () => QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/useQuery.ts:237](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L237)
+Defined in: [packages/solid-query/src/useQuery.ts:228](https://github.com/TanStack/query/blob/main/packages/solid-query/src/useQuery.ts#L228)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
