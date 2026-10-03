@@ -1091,12 +1091,12 @@ describe('createQueriesController', () => {
           {
             queryKey: key1,
             queryFn: () => sleep(10).then(() => 'fetched-alpha'),
-            staleTime: 30_000,
+            staleTime: 30000,
           },
           {
             queryKey: key2,
             queryFn: () => sleep(10).then(() => 'fetched-beta'),
-            staleTime: 30_000,
+            staleTime: 30000,
           },
         ],
         combine: (results) =>

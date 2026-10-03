@@ -1652,7 +1652,7 @@ describe('createQueryController', () => {
           queryFnCalls += 1
           return sleep(10).then(() => 'fetched-value')
         },
-        staleTime: 30_000,
+        staleTime: 30000,
       },
       queryClient,
     )
