@@ -56,19 +56,26 @@ export interface HydrationStreamProviderProps<TShape> {
   nonce?: string
 }
 
+/**
+ * Creates a provider that streams entries (e.g. dehydrated query state) from the server to the
+ * client while the page streams in, and the context it shares the stream through.
+ * @returns The `Provider` component and its `context`.
+ */
 export function createHydrationStreamProvider<TShape>() {
   const StreamContext = React.createContext<HydrationStreamContext<TShape>>(
     null as any,
   )
   /**
-
    * 1. (Happens on server): `useServerInsertedHTML()` is called **on the server** whenever a `Suspense`-boundary completes
    *    - This means that we might have some new entries in the cache that needs to be flushed
    *    - We pass these to the client by inserting a `<script>`-tag where we do `window[id].push(serializedVersionOfCache)`
    * 2. (Happens in browser) In `useEffect()`:
    *   - We check if `window[id]` is set to an array and call `push()` on all the entries which will call `onEntries()` with the new entries
    *   - We replace `window[id]` with a `push()`-method that will be called whenever new entries are received
-   **/
+   * @param props - The `children` to render, the `onEntries`/`onFlush` callbacks, and the optional
+   * `transformer` and `nonce`.
+   * @returns The `children`, wrapped in the stream context provider.
+   */
   function UseClientHydrationStreamProvider(props: {
     children: React.ReactNode
     /**

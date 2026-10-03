@@ -23,6 +23,9 @@ const stream = createHydrationStreamProvider<DehydratedState>()
  * This component is responsible for:
  * - hydrating the query client on the server
  * - dehydrating the query client on the server
+ * @param props - The `children` to render, an optional custom `queryClient`, the `nonce` for the
+ * inline script, the hydrate and dehydrate `options`, and the data `transformer`.
+ * @returns The `children`, wrapped in the hydration stream provider.
  */
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
