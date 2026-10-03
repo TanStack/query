@@ -159,6 +159,46 @@ describe('useIsMutating', () => {
     expect(host.shadowRoot).toHaveTextContent('mutating: 0')
   })
 
+  it('should not process mutation cache updates while disconnected', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly isMutating = useIsMutating(this, {}, queryClient)
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const producer = new Producer()
+    const host = new Host()
+    container.append(producer, host)
+    const { mutation } = producer
+    await host.updateComplete
+
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    mutation.mutate(1)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
   it('should count all mutating mutations when filters are omitted', async () => {
     class Producer extends LitElement {
       readonly mutation1 = createMutationController(this, {
@@ -202,7 +242,64 @@ describe('useIsMutating', () => {
     expect(host.shadowRoot).toHaveTextContent('mutating: 0')
   })
 
-  it('should track mutation filters and reactivity in useIsMutating', async () => {
+  it('should be able to filter', async () => {
+    const mutationKey1 = queryKey()
+    const mutationKey2 = queryKey()
+
+    class Host extends LitElement {
+      readonly mutationA = createMutationController(
+        this,
+        {
+          mutationKey: mutationKey1,
+          mutationFn: () => sleep(10).then(() => 1),
+        },
+        queryClient,
+      )
+
+      readonly mutationB = createMutationController(
+        this,
+        {
+          mutationKey: mutationKey2,
+          mutationFn: () => sleep(20).then(() => 2),
+        },
+        queryClient,
+      )
+
+      readonly isMutatingAll = useIsMutating(this, {}, queryClient)
+      readonly isMutatingFiltered = useIsMutating(
+        this,
+        { mutationKey: mutationKey1 },
+        queryClient,
+      )
+
+      override render() {
+        const all = this.isMutatingAll()
+        const filtered = this.isMutatingFiltered()
+        return html`<p>all: ${all}, filtered: ${filtered}</p>`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const { mutationA, mutationB, isMutatingAll, isMutatingFiltered } = host
+
+    mutationA.mutate()
+    mutationB.mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutatingAll()).toBe(2)
+    expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('all: 2, filtered: 1')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutatingAll()).toBe(1)
+    expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 1, filtered: 0')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutatingAll()).toBe(0)
+    expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('all: 0, filtered: 0')
+  })
+
+  it('should apply updated filters on host updates', async () => {
     const mutationKey1 = queryKey()
     const mutationKey2 = queryKey()
     const unmatchedMutationKey = queryKey()
@@ -229,41 +326,46 @@ describe('useIsMutating', () => {
         queryClient,
       )
 
-      readonly isMutatingAll = useIsMutating(this, {}, queryClient)
       readonly isMutatingFiltered = useIsMutating(
         this,
         () => activeFilter,
         queryClient,
       )
+
+      override render() {
+        return html`<p>filtered: ${this.isMutatingFiltered()}</p>`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
-    const { mutationA, mutationB, isMutatingAll, isMutatingFiltered } = host
+    const { mutationA, mutationB, isMutatingFiltered } = host
 
     mutationA.mutate()
     mutationB.mutate()
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingAll()).toBe(2)
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
 
     activeFilter = { mutationKey: unmatchedMutationKey }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
 
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutatingAll()).toBe(1)
     expect(isMutatingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutatingAll()).toBe(0)
     expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('filtered: 0')
   })
 
   it('should fail after the handshake and recover under a provider', async () => {
