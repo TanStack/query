@@ -60,10 +60,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.isMutating()).toBe(0)
 
+    expect(host.isMutating()).toBe(0)
     host.mutation1.mutate()
     await vi.advanceTimersByTimeAsync(0)
     expect(host.isMutating()).toBe(1)
@@ -87,10 +86,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.isMutating()).toBe(0)
 
+    expect(host.isMutating()).toBe(0)
     host.mutation1.mutate()
     await vi.advanceTimersByTimeAsync(0)
     expect(host.isMutating()).toBe(1)
@@ -123,10 +121,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.isMutating()).toBe(0)
 
+    expect(host.isMutating()).toBe(0)
     host.mutation1.mutate()
     host.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -164,10 +161,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.isMutating()).toBe(0)
 
+    expect(host.isMutating()).toBe(0)
     host.mutation1.mutate()
     host.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -191,10 +187,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(queryClient.isMutating(mutationOpts)).toBe(0)
 
+    expect(queryClient.isMutating(mutationOpts)).toBe(0)
     host.mutation1.mutate()
     expect(queryClient.isMutating(mutationOpts)).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
@@ -215,10 +210,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(queryClient.isMutating()).toBe(0)
 
+    expect(queryClient.isMutating()).toBe(0)
     host.mutation1.mutate()
     expect(queryClient.isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
@@ -248,10 +242,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(queryClient.isMutating()).toBe(0)
 
+    expect(queryClient.isMutating()).toBe(0)
     host.mutation1.mutate()
     host.mutation2.mutate()
     expect(queryClient.isMutating()).toBe(2)
@@ -282,12 +275,11 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
+
     expect(
       queryClient.isMutating({ mutationKey: mutationOpts1.mutationKey }),
     ).toBe(0)
-
     host.mutation1.mutate()
     host.mutation2.mutate()
     expect(
@@ -322,10 +314,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.mutationStates()).toHaveLength(0)
 
+    expect(host.mutationStates()).toHaveLength(0)
     host.mutation1.mutate()
     await vi.advanceTimersByTimeAsync(10)
     expect(host.mutationStates()).toHaveLength(1)
@@ -352,10 +343,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.mutationStates()).toHaveLength(0)
 
+    expect(host.mutationStates()).toHaveLength(0)
     host.mutation1.mutate()
     await vi.advanceTimersByTimeAsync(10)
     expect(host.mutationStates()).toHaveLength(1)
@@ -391,10 +381,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.mutationStates()).toHaveLength(0)
 
+    expect(host.mutationStates()).toHaveLength(0)
     host.mutation1.mutate()
     host.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(10)
@@ -437,10 +426,9 @@ describe('mutationOptions', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
-    expect(host.mutationStates()).toHaveLength(0)
 
+    expect(host.mutationStates()).toHaveLength(0)
     host.mutation1.mutate()
     host.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(10)

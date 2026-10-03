@@ -69,10 +69,10 @@ describe('createInfiniteQueryController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -116,10 +116,10 @@ describe('createInfiniteQueryController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -160,10 +160,10 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const infinite = host.infinite
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
@@ -198,8 +198,8 @@ describe('createInfiniteQueryController', () => {
     container.append(host)
     const infinite = host.infinite
     await host.updateComplete
-    await vi.advanceTimersByTimeAsync(10)
 
+    await vi.advanceTimersByTimeAsync(10)
     const fetchNextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchNextPagePromise
@@ -234,8 +234,8 @@ describe('createInfiniteQueryController', () => {
     container.append(host)
     const infinite = host.infinite
     await host.updateComplete
-    await vi.advanceTimersByTimeAsync(10)
 
+    await vi.advanceTimersByTimeAsync(10)
     const fetchPreviousPagePromise = infinite.fetchPreviousPage()
     await vi.advanceTimersByTimeAsync(10)
     await fetchPreviousPagePromise
@@ -280,14 +280,13 @@ describe('createInfiniteQueryController', () => {
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
-    await vi.advanceTimersByTimeAsync(50)
 
+    await vi.advanceTimersByTimeAsync(50)
     host.infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     host.infinite.fetchNextPage({ cancelRefetch: false })
     await vi.advanceTimersByTimeAsync(40)
     expect(host.shadowRoot).toHaveTextContent('pages: 10, 11')
-
     const expectedCallCount = 2
     expect(fetchPage).toHaveBeenCalledTimes(expectedCallCount)
     expect(onAborts).toHaveLength(expectedCallCount)
@@ -498,9 +497,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const infinite = host.infinite
+
     await vi.advanceTimersByTimeAsync(10)
     const result = infinite()
     expect(infinite()).toBe(result)
@@ -538,9 +537,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const infinite = host.infinite
+
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
@@ -590,11 +589,10 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
-    expect(host.shadowRoot).toHaveTextContent('status: pending')
 
+    expect(host.shadowRoot).toHaveTextContent('status: pending')
     host.remove()
     expect(cancelFn).toHaveBeenCalled()
   })
@@ -629,9 +627,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
+
     expect(host.shadowRoot).toHaveTextContent('isFetching: false')
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
@@ -665,7 +663,6 @@ describe('createInfiniteQueryController', () => {
     const placeholderResult = consumer.infinite()
 
     expect(placeholderResult.status).toBe('pending')
-
     container.append(consumer)
     expect(() => consumer.infinite()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -844,13 +841,12 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
-
     const cacheAEntryBeforeSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
@@ -871,7 +867,6 @@ describe('createInfiniteQueryController', () => {
     expect(consumer.infinite().data?.pages).toEqual([0])
     expect(consumer.infinite().hasNextPage).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
-
     const cacheAEntryAfterSwitch = clientA
       .getQueryCache()
       .find({ queryKey: consumer.queryKey })
@@ -923,9 +918,9 @@ describe('createInfiniteQueryController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)
-
     container.append(providerA)
     await providerA.updateComplete
+
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')

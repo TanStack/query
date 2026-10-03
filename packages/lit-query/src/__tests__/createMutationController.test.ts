@@ -58,12 +58,11 @@ describe('createMutationController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
+    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
@@ -98,14 +97,12 @@ describe('createMutationController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
 
     const mutatePromise = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(3)
-
     expect(
       queryClient
         .getMutationCache()
@@ -140,8 +137,8 @@ describe('createMutationController', () => {
     container.append(host)
     const mutation = host.mutation
     await host.updateComplete
-    expect(host.shadowRoot).toHaveTextContent('data: none')
 
+    expect(host.shadowRoot).toHaveTextContent('data: none')
     const resultPromise = mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(resultPromise).resolves.toBe(2)
@@ -198,11 +195,10 @@ describe('createMutationController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     await host.updateComplete
-    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
 
+    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
     host.mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
@@ -240,7 +236,6 @@ describe('createMutationController', () => {
 
     expect(mutation().isIdle).toBe(true)
     expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
-
     const successPromise = mutation.mutateAsync(10)
     await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isPending).toBe(true)
@@ -771,7 +766,6 @@ describe('createMutationController', () => {
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const { mutation } = host
-
     container.append(host)
     await host.updateComplete
 
@@ -800,7 +794,6 @@ describe('createMutationController', () => {
 
     expect(placeholderResult.isIdle).toBe(true)
     expect(placeholderResult.isPaused).toBe(false)
-
     container.append(consumer)
     expect(() => consumer.mutation()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
@@ -835,8 +828,8 @@ describe('createMutationController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     container.append(consumer)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
 
@@ -845,7 +838,6 @@ describe('createMutationController', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
 
@@ -957,13 +949,12 @@ describe('createMutationController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-
     provider.append(consumer)
+
     await vi.advanceTimersByTimeAsync(0)
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(firstMutation).resolves.toBe(2)
-
     const countAAfterFirst = clientA
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
@@ -974,14 +965,12 @@ describe('createMutationController', () => {
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
-
     const countAAfterSecond = clientA
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
     const countBAfterSecond = clientB
       .getMutationCache()
       .findAll({ mutationKey: consumer.mutationKey }).length
-
     expect(countAAfterSecond).toBe(countAAfterFirst)
     expect(countBAfterSecond).toBeGreaterThan(0)
 
@@ -1054,7 +1043,6 @@ describe('createMutationController', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     providerA.append(consumer)
-
     container.append(providerA)
     await providerA.updateComplete
 

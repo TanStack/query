@@ -57,10 +57,10 @@ describe('useIsFetching', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.isFetching()).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
@@ -109,10 +109,10 @@ describe('useIsFetching', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.isFetching()).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
@@ -157,10 +157,10 @@ describe('useIsFetching', () => {
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
-
     container.append(producer, host)
     const { query } = producer
     const { isFetching } = host
+
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetching()).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('fetching: 1')
@@ -205,7 +205,6 @@ describe('useIsFetching', () => {
     host.remove()
     await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
-
     container.append(new Producer())
     await vi.advanceTimersByTimeAsync(10)
     expect(host.updatesRequested).toBe(updatesAfterDisconnect)
@@ -243,9 +242,9 @@ describe('useIsFetching', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
+
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('fetching: 2')
     await vi.advanceTimersByTimeAsync(10)
@@ -290,9 +289,9 @@ describe('useIsFetching', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const { isFetchingAll, isFetchingFiltered } = host
+
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingAll()).toBe(2)
     expect(isFetchingFiltered()).toBe(1)
@@ -346,9 +345,9 @@ describe('useIsFetching', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
-
     container.append(host)
     const { isFetchingFiltered } = host
+
     await vi.advanceTimersByTimeAsync(0)
     expect(isFetchingFiltered()).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('filtered: 1')
@@ -391,7 +390,6 @@ describe('useIsFetching', () => {
 
     expect(consumer.query().status).toBe('pending')
     expect(consumer.isFetching()).toBe(0)
-
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.query()).toThrow(/No QueryClient available/)
@@ -402,10 +400,10 @@ describe('useIsFetching', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.isFetching()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
@@ -432,8 +430,8 @@ describe('useIsFetching', () => {
     }
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
-
     container.append(producer)
+
     await vi.advanceTimersByTimeAsync(0)
     expect(queryClient.isFetching()).toBe(1)
 

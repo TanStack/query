@@ -53,7 +53,6 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -98,7 +97,6 @@ describe('useIsMutating', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -145,10 +143,10 @@ describe('useIsMutating', () => {
     customElements.define(generateElementName(), Host)
     const producer = new Producer()
     const host = new Host()
-
     container.append(producer, host)
     const { mutation } = producer
     const { isMutating } = host
+
     await vi.advanceTimersByTimeAsync(0)
     mutation.mutate(1)
     expect(isMutating()).toBe(1)
@@ -228,11 +226,10 @@ describe('useIsMutating', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
-    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
 
+    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
     producer.mutation1.mutate()
     producer.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -379,7 +376,6 @@ describe('useIsMutating', () => {
     const consumer = new Consumer()
 
     expect(consumer.isMutating()).toBe(0)
-
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.isMutating()).toThrow(/No QueryClient available/)
@@ -389,10 +385,10 @@ describe('useIsMutating', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.isMutating()).toBe(0)
 
     consumer.isMutating.destroy()

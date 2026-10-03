@@ -152,7 +152,6 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -199,7 +198,6 @@ describe('useMutationState', () => {
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -372,11 +370,10 @@ describe('useMutationState', () => {
     const producer = new Producer()
     const host = new Host()
     provider.append(producer, host)
-
     container.append(provider)
     await provider.updateComplete
-    expect(host.shadowRoot).toHaveTextContent('statuses: none')
 
+    expect(host.shadowRoot).toHaveTextContent('statuses: none')
     producer.mutation1.mutate()
     producer.mutation2.mutate()
     await vi.advanceTimersByTimeAsync(0)
@@ -434,6 +431,7 @@ describe('useMutationState', () => {
     const promiseA = mutationA.mutateAsync(undefined)
     await vi.advanceTimersByTimeAsync(10)
     await expect(promiseA).resolves.toBe('ok')
+
     await Promise.all([
       expect(mutationB.mutateAsync(undefined)).rejects.toThrow(
         'state-b-failure',
@@ -516,7 +514,6 @@ describe('useMutationState', () => {
     const consumer = new Consumer()
 
     expect(consumer.mutationStatuses()).toEqual([])
-
     container.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutationStatuses()).toThrow(
@@ -528,10 +525,10 @@ describe('useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
+
     expect(consumer.mutationStatuses()).toEqual([])
 
     consumer.mutationStatuses.destroy()
