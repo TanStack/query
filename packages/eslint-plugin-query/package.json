@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "catalog:",
-    "@typescript-eslint/rule-tester": "^8.71.0",
+    "@typescript-eslint/rule-tester": "catalog:",
     "combinate": "^1.1.11",
     "eslint": "catalog:",
     "typescript": "catalog:"
