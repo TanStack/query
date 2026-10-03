@@ -29,6 +29,7 @@ export default defineConfig([
       'jsdoc/no-blank-block-descriptions': 'error',
       'jsdoc/no-blank-blocks': 'error',
       'jsdoc/require-asterisk-prefix': 'error',
+      'jsdoc/require-description': 'error',
       'jsdoc/require-hyphen-before-param-description': 'error',
       'jsdoc/require-next-description': 'error',
       'jsdoc/require-template-description': 'error',

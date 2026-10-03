@@ -833,7 +833,11 @@ export class QueryObserver<
     }
   }
 
-  /** @internal */
+  /**
+   * Updates the observer's result when the observed query changes, and reschedules its timers if it
+   * has listeners.
+   * @internal
+   */
   onQueryUpdate(): void {
     this.updateResult()
 

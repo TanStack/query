@@ -139,6 +139,7 @@ export class MutationObserver<
   }
 
   /**
+   * Updates the observer's result when the observed mutation changes, and notifies its listeners.
    * @internal
    * @param action - The action that updated the observed mutation, passed on to the observer's
    * callbacks.

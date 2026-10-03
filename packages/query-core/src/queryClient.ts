@@ -196,6 +196,8 @@ export class QueryClient {
   }
 
   /**
+   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
+   * stale cached data is also refetched in the background.
    * @param options - The query options. If the query has no cached data yet, it is fetched with
    * these options.
    * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
@@ -634,6 +636,8 @@ export class QueryClient {
   }
 
   /**
+   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
+   * the fetch isn't retried unless `retry` is set.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
@@ -672,6 +676,8 @@ export class QueryClient {
   }
 
   /**
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
+   * error.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves once the fetch settles. It never rejects.
@@ -737,6 +743,7 @@ export class QueryClient {
   }
 
   /**
+   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
@@ -764,6 +771,8 @@ export class QueryClient {
   }
 
   /**
+   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
+   * the result and any error.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
@@ -789,6 +798,8 @@ export class QueryClient {
   }
 
   /**
+   * Returns the cached data of an infinite query, or fetches it if there is none. With
+   * `revalidateIfStale`, stale cached data is also refetched in the background.
    * @param options - The infinite query options. If the query has no cached data yet, it is fetched
    * with these options.
    * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if

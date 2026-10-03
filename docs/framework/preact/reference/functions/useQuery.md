@@ -90,7 +90,10 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:114](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L114)
+Defined in: [packages/preact-query/src/useQuery.ts:116](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L116)
+
+This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data`
+can be `undefined`.
 
 ### Type Parameters
 
@@ -191,7 +194,11 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/preact-query/src/useQuery.ts:276](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L276)
+Defined in: [packages/preact-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useQuery.ts#L281)
+
+Fallback overload for options whose `initialData` presence isn't statically known — for example, an
+object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads
+when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 ### Type Parameters
 

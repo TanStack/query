@@ -182,6 +182,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   /**
+   * Adds a query to the cache.
    * @internal
    * @param query - The query to add. If a query with the same hash is already cached, nothing
    * happens.
@@ -335,6 +336,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   /**
+   * Notifies every cache listener of an event, in one batch.
    * @internal
    * @param event - The event passed to every listener.
    */
@@ -346,7 +348,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     })
   }
 
-  /** @internal */
+  /**
+   * Calls {@link Query#onFocus} on every cached query, in one batch.
+   * @internal
+   */
   onFocus(): void {
     notifyManager.batch(() => {
       this.getAll().forEach((query) => {
@@ -355,7 +360,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     })
   }
 
-  /** @internal */
+  /**
+   * Calls {@link Query#onOnline} on every cached query, in one batch.
+   * @internal
+   */
   onOnline(): void {
     notifyManager.batch(() => {
       this.getAll().forEach((query) => {

@@ -200,7 +200,11 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:246](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L246)
+Defined in: [packages/svelte-query/src/createQuery.ts:249](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L249)
+
+Fallback overload for options whose `initialData` presence isn't statically known — for example, an
+object typed as [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) rather than an object literal. Prefer one of the other
+overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 ### Type Parameters
 

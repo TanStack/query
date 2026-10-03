@@ -266,6 +266,7 @@ export class Query<
   }
 
   /**
+   * `'infinite'` for an infinite query, otherwise `undefined`.
    * @internal
    * @returns The type of the query, set from the `_type` option (e.g. `'infinite'`).
    */
@@ -283,6 +284,8 @@ export class Query<
   }
 
   /**
+   * Replaces the query's options and applies their `gcTime`. If the query has no data yet, it gets
+   * the `initialData` from the new options, if any.
    * @internal
    * @param options - The new query options, merged on top of the query's default options.
    */
@@ -316,6 +319,7 @@ export class Query<
   }
 
   /**
+   * Writes new data to the query and marks it as successfully fetched.
    * @internal
    * @param newData - The data to write. Structural sharing with the current data is applied.
    * @param options - Set `updatedAt` to override the timestamp, and `manual` to mark the write as
@@ -380,6 +384,7 @@ export class Query<
   }
 
   /**
+   * The state the query was created with.
    * @internal
    * @returns The state the query had when it was first created, used by {@link Query#reset}.
    */
@@ -511,7 +516,11 @@ export class Query<
     return !timeUntilStale(this.state.dataUpdatedAt, staleTime)
   }
 
-  /** @internal */
+  /**
+   * Refetches the query when the window regains focus, if an observer wants that, and continues a
+   * paused fetch.
+   * @internal
+   */
   onFocus(): void {
     const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
 
@@ -521,7 +530,11 @@ export class Query<
     this.#retryer?.continue()
   }
 
-  /** @internal */
+  /**
+   * Refetches the query when the app reconnects, if an observer wants that, and continues a paused
+   * fetch.
+   * @internal
+   */
   onOnline(): void {
     const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
 
@@ -532,6 +545,7 @@ export class Query<
   }
 
   /**
+   * Subscribes an observer to the query and stops its garbage collection.
    * @internal
    * @param observer - The observer to add. Adding an observer that is already subscribed does
    * nothing.
@@ -548,6 +562,7 @@ export class Query<
   }
 
   /**
+   * Unsubscribes an observer from the query.
    * @internal
    * @param observer - The observer to remove. When the last observer is removed, the in-flight
    * fetch is cancelled if its abort signal was consumed (otherwise only its retries are stopped),

@@ -7,7 +7,9 @@ title: isCancelledError
 function isCancelledError(value: any): value is CancelledError;
 ```
 
-Defined in: [packages/query-core/src/retryer.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L106)
+Defined in: [packages/query-core/src/retryer.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L107)
+
+Checks whether a value is a `CancelledError`.
 
 ## Parameters
 

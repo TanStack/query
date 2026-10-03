@@ -164,6 +164,7 @@ export class Mutation<
   }
 
   /**
+   * Replaces the mutation's options and applies their `gcTime`.
    * @internal
    * @param options - The new mutation options.
    */
@@ -184,6 +185,7 @@ export class Mutation<
   }
 
   /**
+   * Subscribes an observer to the mutation and stops its garbage collection.
    * @internal
    * @param observer - The observer to add. Adding an observer that is already subscribed does
    * nothing.
@@ -204,6 +206,7 @@ export class Mutation<
   }
 
   /**
+   * Unsubscribes an observer from the mutation.
    * @internal
    * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
    */
