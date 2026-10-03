@@ -15,6 +15,10 @@ import type {
   QueryClientProviderProps,
 } from '@tanstack/preact-query'
 
+/**
+ * The props of `PersistQueryClientProvider`: the props of `QueryClientProvider`, plus the
+ * `persistOptions` and callbacks for when restoring succeeds or fails.
+ */
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => Promise<unknown> | unknown
