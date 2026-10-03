@@ -132,6 +132,12 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * builds and adds a new one to the cache if none exists yet. Used by framework adapters and
    * plugins (e.g. broadcast/persistence) that need to get-or-create a `Query` directly, bypassing
    * the reactive `QueryObserver` machinery.
+   * @param client - The client the query belongs to, used to default its options.
+   * @param options - The query options, including the `queryKey`. A new query is created with the
+   * options defaulted by {@link QueryClient#defaultQueryOptions}.
+   * @param state - The initial state of a newly created query, e.g. when hydrating. Ignored if the
+   * query already exists.
+   * @returns The existing or newly created query.
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -175,7 +181,11 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return query
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param query - The query to add. If a query with the same hash is already cached, nothing
+   * happens.
+   */
   add(query: Query<any, any, any, any>): void {
     if (!this.#queries.has(query.queryHash)) {
       this.#queries.set(query.queryHash, query)
@@ -192,6 +202,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * `'removed'` event. A no-op if the query is no longer the one currently stored under its hash
    * (e.g. it was already replaced). Used by plugins (e.g. the broadcast client) that mirror
    * removals across `QueryCache` instances.
+   * @param query - The query to remove.
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -234,6 +245,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * exists. Unlike {@link QueryCache#find}, this looks up by the already-computed hash rather
    * than by `QueryFilters`. Used by plugins (e.g. broadcast/hydration) that already have a hash
    * to look up directly.
+   * @param queryHash - The hash of the query to look up.
+   * @returns The query stored under the hash, or `undefined`.
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -256,6 +269,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   /**
    * Returns all queries within the cache.
+   * @returns Every query in the cache.
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -276,6 +290,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a query in rare scenarios (e.g. looking at `query.state.dataUpdatedAt` to
    * decide whether a query is fresh enough to be used as an initial value).
+   * @param filters - The filters to match, including the required `queryKey`. `exact` defaults to
+   * `true`.
+   * @returns The first matching query, or `undefined`.
    * @see {@link QueryCache#findAll}
    * @example
    * ```ts
@@ -300,6 +317,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about queries in rare scenarios.
+   * @param filters - The filters to match. Without filters, every query is returned.
+   * @returns The matching queries.
    * @see {@link QueryCache#find}
    * @example
    * ```ts
@@ -315,7 +334,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       : queries
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param event - The event passed to every listener.
+   */
   notify(event: QueryCacheNotifyEvent): void {
     notifyManager.batch(() => {
       this.listeners.forEach((listener) => {
