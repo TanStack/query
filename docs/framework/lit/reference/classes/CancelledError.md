@@ -3,7 +3,7 @@ id: CancelledError
 title: CancelledError
 ---
 
-Defined in: [packages/query-core/src/retryer.ts:81](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L81)
+Defined in: [packages/query-core/src/retryer.ts:91](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L91)
 
 The error thrown by a `Retryer` (and surfaced to `query.promise`/`mutation`) when a fetch is cancelled, e.g. via
 `query.cancel()`. `revert`, if `true`, tells the caller to restore the state the query was in before the fetch
@@ -36,7 +36,7 @@ try {
 new CancelledError(options?: CancelOptions): CancelledError;
 ```
 
-Defined in: [packages/query-core/src/retryer.ts:84](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L84)
+Defined in: [packages/query-core/src/retryer.ts:94](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L94)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Error.constructor
 optional revert: boolean;
 ```
 
-Defined in: [packages/query-core/src/retryer.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L82)
+Defined in: [packages/query-core/src/retryer.ts:92](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L92)
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: [packages/query-core/src/retryer.ts:82](https://github.com/TanStack/
 optional silent: boolean;
 ```
 
-Defined in: [packages/query-core/src/retryer.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L83)
+Defined in: [packages/query-core/src/retryer.ts:93](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L93)

@@ -163,7 +163,10 @@ export class Mutation<
     this.scheduleGc()
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param options - The new mutation options.
+   */
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
@@ -174,12 +177,17 @@ export class Mutation<
 
   /**
    * The `meta` object passed in the mutation's options, if any.
+   * @returns The mutation's `meta`, or `undefined` if none was set.
    */
   get meta(): MutationMeta | undefined {
     return this.options.meta
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param observer - The observer to add. Adding an observer that is already subscribed does
+   * nothing.
+   */
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (!this.#observers.includes(observer)) {
       this.#observers.push(observer)
@@ -195,7 +203,10 @@ export class Mutation<
     }
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
+   */
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
@@ -235,6 +246,8 @@ export class Mutation<
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
+   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
+   * It resolves immediately if the mutation has already settled.
    * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {
@@ -274,6 +287,8 @@ export class Mutation<
    * // applications normally trigger mutations through those, not this method.
    * const data = await mutation.execute(variables)
    * ```
+   * @param variables - The variables passed to the `mutationFn`.
+   * @returns A promise that resolves with the mutation's data, or rejects with its error.
    * @see {@link Mutation#continue}
    */
   async execute(variables: TVariables): Promise<TData> {
@@ -510,6 +525,10 @@ export class Mutation<
   }
 }
 
+/**
+ * Returns the initial state of a mutation: `'idle'`, with no data, error, or variables.
+ * @returns The initial mutation state.
+ */
 export function getDefaultState<
   TData,
   TError,

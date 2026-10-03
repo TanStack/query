@@ -126,13 +126,15 @@ Defined in: [packages/query-core/src/mutation.ts:140](https://github.com/TanStac
 get meta(): Record<string, unknown> | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:178](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L178)
+Defined in: [packages/query-core/src/mutation.ts:182](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L182)
 
 The `meta` object passed in the mutation's options, if any.
 
 ##### Returns
 
 `Record`\<`string`, `unknown`\> \| `undefined`
+
+The mutation's `meta`, or `undefined` if none was set.
 
 ## Methods
 
@@ -142,7 +144,7 @@ The `meta` object passed in the mutation's options, if any.
 continue(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:240](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L240)
+Defined in: [packages/query-core/src/mutation.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L253)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -158,6 +160,9 @@ dehydrated, still-`pending` state.
 #### Returns
 
 `Promise`\<`unknown`\>
+
+A promise that settles with the resumed mutation: it rejects if the mutation fails.
+It resolves immediately if the mutation has already settled.
 
 #### Example
 
@@ -203,7 +208,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:279](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L279)
+Defined in: [packages/query-core/src/mutation.ts:294](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L294)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
@@ -231,9 +236,13 @@ the original error is re-thrown.
 
 `TVariables`
 
+The variables passed to the `mutationFn`.
+
 #### Returns
 
 `Promise`\<`TData`\>
+
+A promise that resolves with the mutation's data, or rejects with its error.
 
 #### Example
 

@@ -18,6 +18,11 @@ type ScheduleFunction = (callback: () => void) => void
  */
 export const defaultScheduler: ScheduleFunction = systemSetTimeoutZero
 
+/**
+ * Creates a notify manager, which schedules and batches notifications to subscribers. Query uses a
+ * single instance of it, exported as {@link notifyManager}.
+ * @returns A new notify manager.
+ */
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
   let transactions = 0
@@ -58,6 +63,8 @@ export function createNotifyManager() {
      * This is mainly used internally to optimize query client updating.
      * Batches can be nested; the queue is only flushed once the outermost `batch` call finishes.
      * The return value of `callback` is passed through.
+     * @param callback - The function to run in the batch.
+     * @returns The return value of `callback`.
      */
     batch: <T>(callback: () => T): T => {
       let result
@@ -74,6 +81,8 @@ export function createNotifyManager() {
     },
     /**
      * All calls to the wrapped function will be batched.
+     * @param callback - The function to wrap.
+     * @returns A function that schedules a call to `callback` with the given arguments.
      */
     batchCalls: <T extends Array<unknown>>(
       callback: BatchCallsCallback<T>,
@@ -92,6 +101,7 @@ export function createNotifyManager() {
     /**
      * Use this method to set a custom notify function.
      * This can be used to for example wrap notifications with `React.act` while running tests.
+     * @param fn - Receives each notification callback and must call it.
      */
     setNotifyFunction: (fn: NotifyFunction) => {
       notifyFn = fn
@@ -100,6 +110,7 @@ export function createNotifyManager() {
      * Use this method to set a custom function to batch notifications together into a single tick.
      * Framework adapters use this to plug in their own batching primitive, so that a single query
      * update only triggers one re-render instead of one per subscriber.
+     * @param fn - Receives a function that runs a batch of notifications and must call it.
      * @example
      * ```ts
      * import { notifyManager } from '@tanstack/query-core'
@@ -114,6 +125,7 @@ export function createNotifyManager() {
     /**
      * Configures a custom callback that schedules when the next batch runs.
      * The default behavior is `setTimeout(callback, 0)`.
+     * @param fn - Receives a callback that runs the next batch, and schedules it.
      * @example
      * ```ts
      * import { notifyManager } from '@tanstack/query-core'

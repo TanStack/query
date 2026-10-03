@@ -6,6 +6,7 @@ let isServerFn: IsServerValue = () => defaultIsServer
 
 /**
  * Returns whether the current runtime should be treated as a server environment.
+ * @returns `true` if the runtime is treated as a server.
  */
 export const isServer = (): boolean => isServerFn()
 
@@ -29,6 +30,8 @@ export const environmentManager = {
   isServer,
   /**
    * Overrides the server check globally.
+   * @param isServerValue - A function that returns whether the runtime should be treated as a
+   * server.
    */
   setIsServer(isServerValue: IsServerValue): void {
     isServerFn = isServerValue

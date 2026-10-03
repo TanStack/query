@@ -151,6 +151,8 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
+A function that removes the listener.
+
 ```ts
 (): void;
 ```
@@ -396,13 +398,15 @@ The result for the given options.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 

@@ -56,6 +56,7 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * The query will stay in fetchStatus 'fetching' until the stream ends.
  * @param options - The `streamFn` that returns an AsyncIterable to stream data from, and the optional
  * `refetchMode`, `reducer`, and `initialValue` options.
+ * @returns A query function to pass as `queryFn`.
  * @example
  * ```ts
  * await queryClient.query({

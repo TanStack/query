@@ -15,6 +15,7 @@ export class Subscribable<TListener extends Function> {
    * that removes the listener again — call it to stop listening. The base class never drops a listener
    * on its own, though some subclasses clear all of theirs in `destroy()`.
    * @param listener - Called on each update, with whatever the subclass passes to its subscribers.
+   * @returns A function that removes the listener.
    * @example
    * ```ts
    * const unsubscribe = subscribable.subscribe(() => {
@@ -37,6 +38,7 @@ export class Subscribable<TListener extends Function> {
 
   /**
    * Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
+   * @returns `true` if at least one listener is registered.
    */
   hasListeners(): boolean {
     return this.listeners.size > 0
