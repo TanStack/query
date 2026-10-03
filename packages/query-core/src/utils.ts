@@ -580,11 +580,12 @@ export function keepPreviousData<T>(
 }
 
 /**
- * Returns a new array with `item` added at the end, dropping the first item if the result would
- * exceed `max`.
+ * Returns a new array with `item` added at the end. If that makes the array longer than `max`,
+ * the first item is dropped. Only one item is dropped, so the result can still exceed `max` if
+ * `items` already did.
  * @param items - The current items.
  * @param item - The item to add.
- * @param max - The maximum number of items to keep. `0` (the default) keeps every item.
+ * @param max - The length above which an item is dropped. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */
 export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
@@ -593,11 +594,12 @@ export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
 }
 
 /**
- * Returns a new array with `item` added at the start, dropping the last item if the result would
- * exceed `max`.
+ * Returns a new array with `item` added at the start. If that makes the array longer than `max`,
+ * the last item is dropped. Only one item is dropped, so the result can still exceed `max` if
+ * `items` already did.
  * @param items - The current items.
  * @param item - The item to add.
- * @param max - The maximum number of items to keep. `0` (the default) keeps every item.
+ * @param max - The length above which an item is dropped. `0` (the default) means no limit.
  * @returns A new array with `item` added.
  */
 export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
