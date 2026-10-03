@@ -3,7 +3,9 @@ id: InjectIsMutatingOptions
 title: InjectIsMutatingOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/inject-is-mutating.ts:13](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L13)
+Defined in: [packages/angular-query-experimental/src/inject-is-mutating.ts:16](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L16)
+
+Options for `injectIsMutating`, passed after the mutation filters.
 
 ## Properties
 

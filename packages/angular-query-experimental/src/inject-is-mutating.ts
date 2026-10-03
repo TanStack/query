@@ -10,6 +10,9 @@ import { QueryClient, notifyManager } from '@tanstack/query-core'
 import type { MutationFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 
+/**
+ * Options for `injectIsMutating`, passed after the mutation filters.
+ */
 export interface InjectIsMutatingOptions {
   /**
    * The `Injector` in which to create the isMutating signal.

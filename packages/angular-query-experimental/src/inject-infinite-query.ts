@@ -22,6 +22,10 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
 
+/**
+ * Options for `injectInfiniteQuery`, passed after the function that returns the infinite
+ * query options.
+ */
 export interface InjectInfiniteQueryOptions {
   /**
    * The `Injector` in which to create the infinite query.
