@@ -786,8 +786,8 @@ The infinite query options, including the `queryKey`, the `queryFn`, and the
 
 `Promise`\<`TData`[] *extends* [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `unknown`\>[] ? [`InfiniteData`](../interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> : `TData`\>
 
-A promise that resolves to the [InfiniteData](../interfaces/InfiniteData.md) (after `select`, if provided), or
-rejects with the fetch error.
+A promise that resolves to the [InfiniteData](../interfaces/InfiniteData.md), or to the result of `select` if
+provided. It rejects with the error from the fetch or from `select`.
 
 #### Example
 
@@ -1124,8 +1124,8 @@ query needs to fetch.
 
 `Promise`\<`TData`\>
 
-A promise that resolves to the data (after `select`, if provided), or rejects with the
-fetch error.
+A promise that resolves to the data, or to the result of `select` if provided. It
+rejects with the error from the fetch or from `select`.
 
 #### Example
 

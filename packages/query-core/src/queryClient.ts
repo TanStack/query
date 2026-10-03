@@ -579,8 +579,8 @@ export class QueryClient {
    * `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
-   * @returns A promise that resolves to the data (after `select`, if provided), or rejects with the
-   * fetch error.
+   * @returns A promise that resolves to the data, or to the result of `select` if provided. It
+   * rejects with the error from the fetch or from `select`.
    * @example
    * ```ts
    * try {
@@ -701,8 +701,8 @@ export class QueryClient {
    * `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
-   * @returns A promise that resolves to the {@link InfiniteData} (after `select`, if provided), or
-   * rejects with the fetch error.
+   * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
+   * provided. It rejects with the error from the fetch or from `select`.
    * @example
    * ```ts
    * try {
