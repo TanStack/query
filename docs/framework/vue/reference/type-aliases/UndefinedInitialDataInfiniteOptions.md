@@ -17,7 +17,7 @@ may be `undefined` while the query is `pending`.
 ### initialData?
 
 ```ts
-optional initialData: undefined;
+optional initialData?: undefined;
 ```
 
 ## Type Parameters

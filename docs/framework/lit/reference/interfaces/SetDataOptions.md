@@ -13,4 +13,4 @@ omit it to use the current time.
 
 | Property | Type |
 | ------ | ------ |
-| <a id="updatedat"></a> `updatedAt?` | `number` |
+| <a id="property-updatedat"></a> `updatedAt?` | `number` |

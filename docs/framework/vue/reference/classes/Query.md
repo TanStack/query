@@ -407,7 +407,7 @@ if (query.isStale()) {
 ### isStaleByTime()
 
 ```ts
-isStaleByTime(staleTime: number | "static"): boolean;
+isStaleByTime(staleTime?: number | "static"): boolean;
 ```
 
 Defined in: [packages/query-core/src/query.ts:473](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L473)
@@ -421,9 +421,9 @@ Returns `true` if the query's data is stale relative to the given
 
 #### Parameters
 
-##### staleTime
+##### staleTime?
 
-`number` | `"static"`
+`number` \| `"static"`
 
 #### Returns
 

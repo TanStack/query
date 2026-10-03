@@ -158,7 +158,7 @@ wrap the results for property-access tracking.
 
 ##### combine
 
-`CombineFn`\<`TCombinedResult`\> | `undefined`
+`CombineFn`\<`TCombinedResult`\> \| `undefined`
 
 #### Returns
 
@@ -265,13 +265,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

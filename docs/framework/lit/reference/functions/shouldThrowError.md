@@ -25,7 +25,7 @@ resolves to `false`).
 
 ### throwOnError
 
-`boolean` | `T` | `undefined`
+`boolean` \| `T` \| `undefined`
 
 ### params
 

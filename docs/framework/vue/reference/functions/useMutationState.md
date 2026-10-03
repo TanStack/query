@@ -6,9 +6,9 @@ redirect_from:
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: 
+function useMutationState<TResult, TMutation>(options?: 
   | MutationStateOptions<TResult, TMutation>
-| () => MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): Readonly<Ref<TResult[]>>;
+| (() => MutationStateOptions<TResult, TMutation>), queryClient?: QueryClient): Readonly<Ref<TResult[]>>;
 ```
 
 Defined in: [packages/vue-query/src/useMutationState.ts:195](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L195)
@@ -32,12 +32,13 @@ themselves depend on other reactive state.
 
 ## Parameters
 
-### options
+### options?
+
+  \| [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
+  \| (() => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>)
 
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
-
-[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> | () => [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\>
 
 ### queryClient?
 

@@ -246,7 +246,7 @@ Subscribable.hasListeners
 ### refetch()
 
 ```ts
-refetch(__namedParameters: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
+refetch(__namedParameters?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:371](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L371)
@@ -256,7 +256,7 @@ the resulting `QueryObserverResult`.
 
 #### Parameters
 
-##### \_\_namedParameters
+##### \_\_namedParameters?
 
 [`RefetchOptions`](../interfaces/RefetchOptions.md) = `{}`
 
@@ -365,13 +365,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 
@@ -433,7 +427,31 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 
 ##### key
 
-`"error"` | `"data"` | `"isError"` | `"isPending"` | `"isLoading"` | `"isLoadingError"` | `"isRefetchError"` | `"isSuccess"` | `"isPlaceholderData"` | `"status"` | `"dataUpdatedAt"` | `"errorUpdatedAt"` | `"failureCount"` | `"failureReason"` | `"errorUpdateCount"` | `"isFetched"` | `"isFetchedAfterMount"` | `"isFetching"` | `"isInitialLoading"` | `"isPaused"` | `"isRefetching"` | `"isStale"` | `"isEnabled"` | `"refetch"` | `"fetchStatus"`
+  \| `"error"`
+  \| `"data"`
+  \| `"isError"`
+  \| `"isPending"`
+  \| `"isLoading"`
+  \| `"isLoadingError"`
+  \| `"isRefetchError"`
+  \| `"isSuccess"`
+  \| `"isPlaceholderData"`
+  \| `"status"`
+  \| `"dataUpdatedAt"`
+  \| `"errorUpdatedAt"`
+  \| `"failureCount"`
+  \| `"failureReason"`
+  \| `"errorUpdateCount"`
+  \| `"isFetched"`
+  \| `"isFetchedAfterMount"`
+  \| `"isFetching"`
+  \| `"isInitialLoading"`
+  \| `"isPaused"`
+  \| `"isRefetching"`
+  \| `"isStale"`
+  \| `"isEnabled"`
+  \| `"refetch"`
+  \| `"fetchStatus"`
 
 #### Returns
 

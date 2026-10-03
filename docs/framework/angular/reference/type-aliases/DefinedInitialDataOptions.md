@@ -19,7 +19,7 @@ The options accepted by the `queryOptions` overload selected when `initialData` 
 ```ts
 initialData: 
   | NonUndefinedGuard<TQueryFnData>
-| () => NonUndefinedGuard<TQueryFnData>;
+  | (() => NonUndefinedGuard<TQueryFnData>);
 ```
 
 If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
@@ -31,7 +31,7 @@ cache.
 ### queryFn?
 
 ```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
+optional queryFn?: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
 Optional here, but omitting it is only safe when no fetch will be attempted — for example with

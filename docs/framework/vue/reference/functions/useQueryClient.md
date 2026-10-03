@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useQueryClient(id: string): QueryClient;
+function useQueryClient(id?: string): QueryClient;
 ```
 
 Defined in: [packages/vue-query/src/useQueryClient.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useQueryClient.ts#L27)
@@ -16,7 +16,7 @@ Retrieves the `QueryClient` installed by `VueQueryPlugin`, via Vue's `inject`. M
 
 ## Parameters
 
-### id
+### id?
 
 `string` = `''`
 

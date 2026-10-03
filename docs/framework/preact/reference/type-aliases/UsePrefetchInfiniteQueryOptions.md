@@ -17,7 +17,7 @@ except `queryFn` is required unless a default query function has been defined.
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
+optional queryFn?: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
 ```
 
 `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,

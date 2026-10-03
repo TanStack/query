@@ -23,7 +23,7 @@ query key is fetching, it keeps displaying the previously fetched data until the
 
 ### previousData
 
-`T` | `undefined`
+`T` \| `undefined`
 
 ## Returns
 

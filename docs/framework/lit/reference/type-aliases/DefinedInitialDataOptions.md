@@ -18,13 +18,13 @@ Query options with `initialData` that guarantees defined query data.
 ```ts
 initialData:
   | NonUndefinedGuard<TQueryFnData>
-| () => NonUndefinedGuard<TQueryFnData>;
+  | (() => NonUndefinedGuard<TQueryFnData>);
 ```
 
 ### queryFn?
 
 ```ts
-optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
+optional queryFn?: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
 ## Type Parameters

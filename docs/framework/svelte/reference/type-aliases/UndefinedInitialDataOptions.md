@@ -14,7 +14,7 @@ Defined in: [packages/svelte-query/src/queryOptions.ts:10](https://github.com/Ta
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData?: 
   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
 | NonUndefinedGuard<TQueryFnData>;
 ```

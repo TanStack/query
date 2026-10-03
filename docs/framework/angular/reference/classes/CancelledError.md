@@ -59,7 +59,7 @@ Error.constructor
 ### cause?
 
 ```ts
-optional cause: unknown;
+optional cause?: unknown;
 ```
 
 Defined in: node\_modules/.pnpm/typescript@6.0.3/node\_modules/typescript/lib/lib.es2022.error.d.ts:24
@@ -107,7 +107,7 @@ Error.name
 ### revert?
 
 ```ts
-optional revert: boolean;
+optional revert?: boolean;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L82)
@@ -117,7 +117,7 @@ Defined in: [packages/query-core/src/retryer.ts:82](https://github.com/TanStack/
 ### silent?
 
 ```ts
-optional silent: boolean;
+optional silent?: boolean;
 ```
 
 Defined in: [packages/query-core/src/retryer.ts:83](https://github.com/TanStack/query/blob/main/packages/query-core/src/retryer.ts#L83)
@@ -127,7 +127,7 @@ Defined in: [packages/query-core/src/retryer.ts:83](https://github.com/TanStack/
 ### stack?
 
 ```ts
-optional stack: string;
+optional stack?: string;
 ```
 
 Defined in: node\_modules/.pnpm/typescript@6.0.3/node\_modules/typescript/lib/lib.es5.d.ts:1076

@@ -4,7 +4,7 @@ title: useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
+function useMutationState<TResult, TMutation>(options?: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
 Defined in: [packages/preact-query/src/useMutationState.ts:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutationState.ts#L157)
@@ -25,7 +25,7 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 `MutationStateOptions`\<`TResult`, `TMutation`\> = `{}`
 

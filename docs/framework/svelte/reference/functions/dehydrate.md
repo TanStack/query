@@ -4,7 +4,7 @@ title: dehydrate
 ---
 
 ```ts
-function dehydrate(client: QueryClient, options: DehydrateOptions): DehydratedState;
+function dehydrate(client: QueryClient, options?: DehydrateOptions): DehydratedState;
 ```
 
 Defined in: [packages/query-core/src/hydration.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L208)
@@ -21,7 +21,7 @@ falling back to the client's `dehydrate` default options, and finally to `defaul
 
 [`QueryClient`](../classes/QueryClient.md)
 
-### options
+### options?
 
 [`DehydrateOptions`](../interfaces/DehydrateOptions.md) = `{}`
 

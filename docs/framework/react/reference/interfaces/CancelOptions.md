@@ -12,5 +12,5 @@ They are carried on the [CancelledError](../classes/CancelledError.md) that the 
 
 | Property | Type |
 | ------ | ------ |
-| <a id="revert"></a> `revert?` | `boolean` |
-| <a id="silent"></a> `silent?` | `boolean` |
+| <a id="property-revert"></a> `revert?` | `boolean` |
+| <a id="property-silent"></a> `silent?` | `boolean` |

@@ -9,4 +9,4 @@ Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:25
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="injector"></a> `injector?` | `Injector` | The `Injector` in which to create the infinite query. If this is not provided, the current injection context will be used instead (via `inject`). |
+| <a id="property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the infinite query. If this is not provided, the current injection context will be used instead (via `inject`). |

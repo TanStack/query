@@ -9,4 +9,4 @@ Defined in: [packages/query-core/src/types.ts:1663](https://github.com/TanStack/
 
 | Property | Type |
 | ------ | ------ |
-| <a id="type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` |
+| <a id="property-type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` |

@@ -31,14 +31,14 @@ const unsubscribe = queryCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new QueryCache(config: QueryCacheConfig): QueryCache;
+new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
@@ -214,7 +214,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 ### findAll()
 
 ```ts
-findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters?: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L319)
@@ -227,7 +227,7 @@ information about queries in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 [`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\> = `{}`
 
@@ -408,13 +408,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

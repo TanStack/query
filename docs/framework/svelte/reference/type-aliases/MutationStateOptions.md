@@ -25,5 +25,5 @@ Options for useMutationState
 
 | Property | Type |
 | ------ | ------ |
-| <a id="filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
-| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+| <a id="property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

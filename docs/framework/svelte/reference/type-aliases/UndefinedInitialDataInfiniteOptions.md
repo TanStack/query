@@ -14,7 +14,7 @@ Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:11](https://githu
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData?: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
 | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```

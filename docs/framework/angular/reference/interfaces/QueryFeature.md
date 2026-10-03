@@ -17,5 +17,5 @@ Helper type to represent a Query feature.
 
 | Property | Type |
 | ------ | ------ |
-| <a id="ɵkind"></a> `ɵkind` | `TFeatureKind` |
-| <a id="ɵproviders"></a> `ɵproviders` | `Provider`[] |
+| <a id="property-ɵkind"></a> `ɵkind` | `TFeatureKind` |
+| <a id="property-ɵproviders"></a> `ɵproviders` | `Provider`[] |

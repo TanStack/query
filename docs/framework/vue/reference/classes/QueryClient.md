@@ -27,14 +27,14 @@ Install one on your app with `VueQueryPlugin`, or retrieve it with `useQueryClie
 ### Constructor
 
 ```ts
-new QueryClient(config: QueryClientConfig): QueryClient;
+new QueryClient(config?: QueryClientConfig): QueryClient;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:52](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L52)
 
 #### Parameters
 
-##### config
+##### config?
 
 `QueryClientConfig` = `{}`
 
@@ -53,7 +53,7 @@ QC.constructor
 ### isRestoring?
 
 ```ts
-optional isRestoring: Ref<boolean, boolean>;
+optional isRestoring?: Ref<boolean, boolean>;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:65](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L65)
@@ -225,7 +225,8 @@ on top. A no-op if the options are already defaulted (`_defaulted: true`).
 
 ##### options
 
-[`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\> | [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
+  \| [`QueryObserverOptions`](../interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\>
+  \| [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
 #### Returns
 
@@ -548,7 +549,7 @@ QC.fetchQuery
 ```ts
 fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: 
   | MaybeRefDeep<FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>
-| () => FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData>;
+| (() => FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>)): Promise<TData>;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:336](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L336)
@@ -579,7 +580,8 @@ Defined in: [packages/vue-query/src/queryClient.ts:336](https://github.com/TanSt
 
 ###### options
 
-`MaybeRefDeep`\<[`FetchQueryOptions`](../interfaces/FetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\> | () => [`FetchQueryOptions`](../interfaces/FetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+  \| `MaybeRefDeep`\<[`FetchQueryOptions`](../interfaces/FetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+  \| (() => [`FetchQueryOptions`](../interfaces/FetchQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>)
 
 ##### Returns
 
@@ -1073,7 +1075,7 @@ QC.infiniteQuery
 ```ts
 invalidateQueries<TTaggedQueryKey>(filters?: 
   | InvalidateQueryFilters<TTaggedQueryKey>
-| () => InvalidateQueryFilters<TTaggedQueryKey>, options?: MaybeRefDeep<InvalidateOptions>): Promise<void>;
+| (() => InvalidateQueryFilters<TTaggedQueryKey>), options?: MaybeRefDeep<InvalidateOptions>): Promise<void>;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:204](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L204)
@@ -1095,7 +1097,8 @@ Unless `filters.refetchType` is `'none'`, matching queries are then refetched vi
 
 ##### filters?
 
-[`InvalidateQueryFilters`](../interfaces/InvalidateQueryFilters.md)\<`TTaggedQueryKey`\> | () => [`InvalidateQueryFilters`](../interfaces/InvalidateQueryFilters.md)\<`TTaggedQueryKey`\>
+  \| [`InvalidateQueryFilters`](../interfaces/InvalidateQueryFilters.md)\<`TTaggedQueryKey`\>
+  \| (() => [`InvalidateQueryFilters`](../interfaces/InvalidateQueryFilters.md)\<`TTaggedQueryKey`\>)
 
 ##### options?
 
@@ -1122,7 +1125,7 @@ QC.invalidateQueries
 ### isFetching()
 
 ```ts
-isFetching(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): number;
+isFetching(filters?: MaybeRefDeep<QueryFilters<readonly unknown[]>>): number;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:67](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L67)
@@ -1133,7 +1136,7 @@ loading more infinite query results.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 `MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
@@ -1160,7 +1163,7 @@ QC.isFetching
 ### isMutating()
 
 ```ts
-isMutating(filters: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): number;
+isMutating(filters?: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): number;
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:71](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L71)
@@ -1170,7 +1173,7 @@ matching a set of filters.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 `MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
@@ -1840,7 +1843,7 @@ QC.setMutationDefaults
 setQueriesData<TData>(
    filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>, 
    updater: Updater<TData | undefined, TData | undefined>, 
-   options: MaybeRefDeep<SetDataOptions>): [readonly unknown[], TData | undefined][];
+   options?: MaybeRefDeep<SetDataOptions>): [readonly unknown[], TData | undefined][];
 ```
 
 Defined in: [packages/vue-query/src/queryClient.ts:157](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L157)
@@ -1866,7 +1869,7 @@ filters are updated; no new cache entries are created. Internally this calls
 
 [`Updater`](../type-aliases/Updater.md)\<`TData` \| `undefined`, `TData` \| `undefined`\>
 
-##### options
+##### options?
 
 `MaybeRefDeep`\<[`SetDataOptions`](../interfaces/SetDataOptions.md)\> = `{}`
 

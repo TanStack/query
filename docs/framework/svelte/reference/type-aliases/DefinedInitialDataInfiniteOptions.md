@@ -16,7 +16,7 @@ Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:32](https://githu
 ```ts
 initialData: 
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
-| () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
 ```
 
 ## Type Parameters

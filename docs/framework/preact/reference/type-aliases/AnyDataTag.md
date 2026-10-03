@@ -13,5 +13,5 @@ Defined in: [packages/query-core/src/types.ts:93](https://github.com/TanStack/qu
 
 | Property | Type |
 | ------ | ------ |
-| <a id="datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` |
-| <a id="datatagsymbol"></a> `[dataTagSymbol]` | `any` |
+| <a id="property-datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` |
+| <a id="property-datatagsymbol"></a> `[dataTagSymbol]` | `any` |

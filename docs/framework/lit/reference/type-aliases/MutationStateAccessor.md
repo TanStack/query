@@ -16,7 +16,7 @@ matching mutations.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;

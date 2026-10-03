@@ -6,7 +6,7 @@ title: useMutationState
 ```ts
 function useMutationState<TResult>(
    host: ReactiveControllerHost,
-   options: MutationStateOptions<TResult>,
+   options?: MutationStateOptions<TResult>,
 queryClient?: QueryClient): MutationStateAccessor<TResult>;
 ```
 
@@ -35,7 +35,7 @@ the controller resolves the client from the nearest connected
 The Lit reactive controller host that owns the mutation cache
 subscription.
 
-### options
+### options?
 
 [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`\> = `{}`
 

@@ -14,7 +14,7 @@ Defined in: [packages/vue-query/src/usePrefetchQuery.ts:15](https://github.com/T
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, never>["queryFn"], SkipToken>;
+optional queryFn?: Exclude<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, never>["queryFn"], SkipToken>;
 ```
 
 ## Type Parameters
