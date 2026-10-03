@@ -235,11 +235,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    */
   clear(): void {
     notifyManager.batch(() => {
-      this.#mutations.forEach((mutation) => {
-        this.notify({ type: 'removed', mutation })
-      })
+      const mutations = this.getAll()
       this.#mutations.clear()
       this.#scopes.clear()
+      mutations.forEach((mutation) => {
+        this.notify({ type: 'removed', mutation })
+      })
     })
   }
 
