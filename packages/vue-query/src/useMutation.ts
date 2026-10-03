@@ -22,7 +22,7 @@ import type {
 import type { MaybeRefDeep, MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 
-type MutationResult<TData, TError, TVariables, TOnMutateResult> =
+export type MutationResult<TData, TError, TVariables, TOnMutateResult> =
   DistributiveOmit<
     MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
     'mutate' | 'reset'
