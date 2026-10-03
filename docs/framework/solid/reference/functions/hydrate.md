@@ -10,7 +10,7 @@ function hydrate(
    options?: HydrateOptions): void;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:265](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L265)
+Defined in: [packages/query-core/src/hydration.ts:300](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L300)
 
 Restores a `DehydratedState` (as produced by `dehydrate`) into a `QueryClient`'s cache, typically to seed the
 client with data already fetched on the server. `mutations` and `queries` are each optional on `dehydratedState`.
@@ -26,13 +26,20 @@ promise, it is resumed via `query.fetch()` (reusing that promise as `initialProm
 
 `QueryClient`
 
+The client whose cache is restored into.
+
 ### dehydratedState
 
 `Partial`\<[`DehydratedState`](../interfaces/DehydratedState.md)\>
 
+The dehydrated state, e.g. produced by `dehydrate` on the server.
+
 ### options?
 
 [`HydrateOptions`](../interfaces/HydrateOptions.md)
+
+`defaultOptions` merged into every restored query and mutation (on top of the
+client's `defaultOptions.hydrate`), and `deserializeData` to reverse `serializeData`.
 
 ## Returns
 
