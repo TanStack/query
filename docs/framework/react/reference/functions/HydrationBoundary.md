@@ -4,10 +4,10 @@ title: HydrationBoundary
 ---
 
 ```ts
-function HydrationBoundary(__namedParameters: HydrationBoundaryProps): ReactElement<unknown, string | JSXElementConstructor<any>>;
+function HydrationBoundary(props: HydrationBoundaryProps): ReactElement<unknown, string | JSXElementConstructor<any>>;
 ```
 
-Defined in: [packages/react-query/src/HydrationBoundary.tsx:83](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L83)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:85](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L85)
 
 `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by
 `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on
@@ -17,9 +17,12 @@ Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`HydrationBoundaryProps`](../interfaces/HydrationBoundaryProps.md)
+
+The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
+`queryClient`, and the `children` to render.
 
 ## Returns
 

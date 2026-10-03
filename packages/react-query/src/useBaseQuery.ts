@@ -23,6 +23,17 @@ import type {
 } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
 
+/**
+ * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
+ * `useSuspenseInfiniteQuery`.
+ * @param options - The query options.
+ * @param Observer - The observer class from query-core (`QueryObserver` or
+ * `InfiniteQueryObserver`).
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
+ * context will be used.
+ * @returns The query result, tracking which properties are read unless `notifyOnChangeProps` is
+ * set.
+ */
 export function useBaseQuery<
   TQueryFnData,
   TError,
