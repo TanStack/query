@@ -58,6 +58,7 @@ export default defineConfig([
               'datatag', // Query options tagging
               'extralight', // Our public interface
               'jscodeshift',
+              'refetched', // Query refetch operations
               'refetches', // Query refetch operations
               'retryer', // Our public interface
               'solidjs', // Our target framework
