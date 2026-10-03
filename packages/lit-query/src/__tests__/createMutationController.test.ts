@@ -1029,7 +1029,6 @@ describe('createMutationController', () => {
     await provider.updateComplete
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
