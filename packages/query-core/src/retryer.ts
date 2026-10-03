@@ -19,6 +19,10 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   canRun: () => boolean
 }
 
+/**
+ * Runs a function with retries, and can pause, continue, or cancel it. Queries and mutations use
+ * one for each fetch or execution.
+ */
 export interface Retryer<TData = unknown> {
   promise: Promise<TData>
   cancel: (cancelOptions?: CancelOptions) => void
