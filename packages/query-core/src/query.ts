@@ -486,7 +486,7 @@ export class Query<
    * - An invalidated query is always stale.
    * - Otherwise, staleness is based on elapsed time since `dataUpdatedAt`.
    * @param staleTime - The time, in milliseconds, after which data is considered stale, or
-   * `'static'` for data that is never stale.
+   * `'static'` to never treat existing data as stale. A query without data is stale either way.
    * @returns `true` if the query's data is stale.
    * @see {@link Query#isStale}
    * @example
@@ -618,10 +618,13 @@ export class Query<
    *   cancelled first.
    * - If `options` is passed, it replaces the query's current options
    *   before fetching.
-   * @param options - Query options that replace the query's current options before fetching.
-   * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch first, and `meta` to
-   * pass extra information to the query's behavior.
-   * @returns A promise that resolves with the fetched data, or rejects with the fetch error.
+   * @param options - Query options that replace the query's current options before fetching. They
+   * are not applied when an in-flight fetch is reused.
+   * @param fetchOptions - Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
+   * already has data), and `meta` to pass extra information to the query's behavior.
+   * @returns A promise that resolves with the fetched data, or rejects with the fetch error. If the
+   * fetch is cancelled with `revert` while the query has data, it resolves with the restored data
+   * instead.
    */
   async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,

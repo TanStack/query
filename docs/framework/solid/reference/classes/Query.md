@@ -250,7 +250,7 @@ Removable.destroy
 fetch(options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey, never>, fetchOptions?: FetchOptions<TQueryFnData>): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/query.ts:626](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L626)
+Defined in: [packages/query-core/src/query.ts:629](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L629)
 
 Fetches the query, i.e. runs its `queryFn` (through any configured
 retryer/behavior) and updates the query's state with the result.
@@ -267,20 +267,23 @@ retryer/behavior) and updates the query's state with the result.
 
 `QueryOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `never`\>
 
-Query options that replace the query's current options before fetching.
+Query options that replace the query's current options before fetching. They
+are not applied when an in-flight fetch is reused.
 
 ##### fetchOptions?
 
 `FetchOptions`\<`TQueryFnData`\>
 
-Set `cancelRefetch` to cancel an in-flight fetch first, and `meta` to
-pass extra information to the query's behavior.
+Set `cancelRefetch` to cancel an in-flight fetch first (only if the query
+already has data), and `meta` to pass extra information to the query's behavior.
 
 #### Returns
 
 `Promise`\<`TData`\>
 
-A promise that resolves with the fetched data, or rejects with the fetch error.
+A promise that resolves with the fetched data, or rejects with the fetch error. If the
+fetch is cancelled with `revert` while the query has data, it resolves with the restored data
+instead.
 
 ***
 
@@ -450,7 +453,7 @@ Returns `true` if the query's data is stale relative to the given
 ##### staleTime
 
 The time, in milliseconds, after which data is considered stale, or
-`'static'` for data that is never stale.
+`'static'` to never treat existing data as stale. A query without data is stale either way.
 
 `number` | `"static"`
 
