@@ -724,7 +724,7 @@ describe('createInfiniteQueryController', () => {
         queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam) + 1),
         getNextPageParam: (lastPage) =>
           lastPage < 1 ? lastPage + 1 : undefined,
-        staleTime: 30_000,
+        staleTime: 30000,
       },
       queryClient,
     )
