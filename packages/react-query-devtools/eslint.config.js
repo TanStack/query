@@ -2,9 +2,10 @@
 
 import pluginReact from '@eslint-react/eslint-plugin'
 import reactHooks from 'eslint-plugin-react-hooks'
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   reactHooks.configs.flat.recommended,
   pluginReact.configs.recommended,
@@ -30,4 +31,4 @@ export default [
       '@eslint-react/use-memo': 'off',
     },
   },
-]
+])

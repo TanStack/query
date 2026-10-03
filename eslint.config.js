@@ -4,8 +4,9 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import { defineConfig } from 'eslint/config'
 
-export default [
+export default defineConfig([
   ...tanstackConfig,
   {
     name: 'tanstack/temp',
@@ -110,4 +111,4 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
-]
+])
