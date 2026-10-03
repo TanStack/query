@@ -237,6 +237,7 @@ export type QueriesResults<
  *
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
+ * @param options - The `queries` array to run, and the optional `combine` and `subscribed` options.
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same

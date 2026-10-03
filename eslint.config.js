@@ -17,6 +17,8 @@ export default defineConfig([
     rules: {
       ...pluginJsdoc.configs['flat/recommended-typescript'].rules,
       'jsdoc/check-tag-names': ['warn', { definedTags: ['defaultValue'] }],
+      'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      'jsdoc/require-param': ['warn', { checkDestructured: false }],
       'jsdoc/tag-lines': 'error',
     },
   },
