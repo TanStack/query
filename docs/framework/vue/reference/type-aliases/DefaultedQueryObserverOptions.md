@@ -7,7 +7,10 @@ title: DefaultedQueryObserverOptions
 type DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = WithRequired<QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: [packages/query-core/src/types.ts:569](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L569)
+Defined in: [packages/query-core/src/types.ts:647](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L647)
+
+The [QueryObserverOptions](../interfaces/QueryObserverOptions.md) after `QueryClient#defaultQueryOptions` has applied the
+defaults, so `throwOnError`, `refetchOnReconnect`, and `queryHash` are always set.
 
 ## Type Parameters
 

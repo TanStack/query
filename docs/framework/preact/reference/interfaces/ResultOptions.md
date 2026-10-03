@@ -3,7 +3,10 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:739](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L739)
+Defined in: [packages/query-core/src/types.ts:839](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L839)
+
+Options shared by the `QueryClient` and observer methods that refetch queries, controlling
+whether a failed refetch makes the returned promise reject.
 
 ## Extended by
 
