@@ -3,7 +3,11 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
-import type { InfiniteData } from '@tanstack/query-core'
+import type {
+  InfiniteData,
+  InfiniteQueryObserverResult,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from '../createInfiniteQueryController.js'
 
 class Host extends LitElement {}
@@ -153,6 +157,62 @@ describe('error booleans', () => {
     expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
     expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
     expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+  })
+})
+
+describe('refetch / fetchNextPage / fetchPreviousPage', () => {
+  it('should type refetch with correct return type', () => {
+    const infiniteQuery = createInfiniteQueryController(
+      new Host(),
+      {
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }) => pageParam,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+      },
+      new QueryClient(),
+    )
+
+    expectTypeOf(infiniteQuery.refetch()).toEqualTypeOf<
+      Promise<QueryObserverResult<InfiniteData<number, unknown>, Error>>
+    >()
+  })
+
+  it('should type fetchNextPage with correct return type', () => {
+    const infiniteQuery = createInfiniteQueryController(
+      new Host(),
+      {
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }) => pageParam,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+      },
+      new QueryClient(),
+    )
+
+    expectTypeOf(infiniteQuery.fetchNextPage()).toEqualTypeOf<
+      Promise<InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>>
+    >()
+  })
+
+  it('should type fetchPreviousPage with correct return type', () => {
+    const infiniteQuery = createInfiniteQueryController(
+      new Host(),
+      {
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }) => pageParam,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+      },
+      new QueryClient(),
+    )
+
+    expectTypeOf(infiniteQuery.fetchPreviousPage()).toEqualTypeOf<
+      Promise<InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>>
+    >()
   })
 })
 
