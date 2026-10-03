@@ -11,7 +11,7 @@ redirect_from:
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/solid-query/src/mutationOptions.ts:33](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L33)
+Defined in: [packages/solid-query/src/mutationOptions.ts:31](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L31)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -80,7 +80,7 @@ function SavingIndicator() {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/solid-query/src/mutationOptions.ts:73](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L73)
+Defined in: [packages/solid-query/src/mutationOptions.ts:69](https://github.com/TanStack/query/blob/main/packages/solid-query/src/mutationOptions.ts#L69)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a

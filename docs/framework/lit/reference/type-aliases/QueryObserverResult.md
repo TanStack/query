@@ -12,7 +12,7 @@ type QueryObserverResult<TData, TError> =
 | QueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1050](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1050)
+Defined in: [packages/query-core/src/types.ts:1034](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1034)
 
 ## Type Parameters
 
