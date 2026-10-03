@@ -12,6 +12,10 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
 
+/**
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except that
+ * `queryFn` can't be `skipToken`.
+ */
 export type UsePrefetchQueryOptions<
   TQueryFnData,
   TError,

@@ -6,6 +6,9 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/vue-query'
 
+/**
+ * The props of `VueQueryDevtools`, which renders the devtools with a toggle button that opens them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -50,6 +53,9 @@ export interface DevtoolsOptions {
   theme?: Theme
 }
 
+/**
+ * The props of `VueQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient

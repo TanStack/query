@@ -24,6 +24,11 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The options accepted by `useInfiniteQuery`. Same as {@link InfiniteQueryObserverOptions} from
+ * `@tanstack/query-core`, plus the `shallow` option, where each option can also be a `ref` (and `enabled` a
+ * reactive getter).
+ */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -62,6 +67,10 @@ export type UseInfiniteQueryOptions<
   } & ShallowOption
 >
 
+/**
+ * The result of `useInfiniteQuery`: {@link InfiniteQueryObserverResult} from `@tanstack/query-core`, with
+ * its properties wrapped in `Ref`s as in {@link UseBaseQueryReturnType}.
+ */
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
