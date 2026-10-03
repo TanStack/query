@@ -42,6 +42,8 @@ interface CreateSyncStoragePersisterOptions {
 }
 
 /**
+ * Creates a persister that stores the client in a synchronous storage such as
+ * `window.localStorage`.
  * @param options - The `storage` to persist to, the `key`, `throttleTime`, `serialize`,
  * `deserialize`, and `retry` options.
  * @returns A persister that saves, restores, and removes the client in `storage`. Without

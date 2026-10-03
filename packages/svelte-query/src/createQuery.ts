@@ -134,6 +134,9 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 
 /**
+ * Fallback overload for options whose `initialData` presence isn't statically known — for example, an
+ * object typed as {@link CreateQueryOptions} rather than an object literal. Prefer one of the other
+ * overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
  * @param options - The {@link CreateQueryOptions} to use — everything you can pass to `createQuery`, wrapped
  * in an {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will

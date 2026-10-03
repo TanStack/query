@@ -99,6 +99,7 @@ export class CancelledError extends Error {
 }
 
 /**
+ * Checks whether a value is a `CancelledError`.
  * @param value - The value to check.
  * @returns `true` if `value` is a `CancelledError`.
  * @deprecated Use instanceof `CancelledError` instead.

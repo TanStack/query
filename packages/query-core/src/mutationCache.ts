@@ -133,6 +133,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Creates a mutation and adds it to the cache.
    * @internal
    * @param client - The client the mutation belongs to, used to default its options.
    * @param options - The mutation options. They are defaulted with {@link
@@ -159,6 +160,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Adds a mutation to the cache.
    * @internal
    * @param mutation - The mutation to add. If it has a `scope`, it is queued in that scope.
    */
@@ -177,6 +179,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Removes a mutation from the cache.
    * @internal
    * @param mutation - The mutation to remove, also from its scope's queue.
    */
@@ -204,6 +207,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Checks whether a mutation can run now, given the other mutations in its `scope`.
    * @internal
    * @param mutation - The mutation to check.
    * @returns `true` if the mutation has no `scope`, or no other mutation in its scope is pending
@@ -227,6 +231,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Continues the next paused mutation in the same `scope` after a mutation finishes.
    * @internal
    * @param mutation - The mutation that finished.
    * @returns A promise that resolves once the next paused mutation in the same scope has continued,
@@ -333,6 +338,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Notifies every cache listener of an event, in one batch.
    * @internal
    * @param event - The event passed to every listener.
    */
@@ -345,6 +351,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   /**
+   * Continues every paused mutation, e.g. when the app comes back online.
    * @internal
    * @returns A promise that resolves once every paused mutation has continued and settled.
    */
