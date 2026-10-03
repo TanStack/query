@@ -432,6 +432,17 @@ export function getQueryClient() {
 
 > Note: This works in NextJs and Server Components because React can serialize Promises over the wire when you pass them down to Client Components.
 
+By default, `dehydrate` records the current time on each dehydrated query. If your framework provides a stable timestamp for a cached data snapshot, pass it as `dehydratedAt` so hydration uses the same timestamp without reading the current time again:
+
+```tsx
+const { data, updatedAt } = await getCachedPostsSnapshot()
+const queryClient = new QueryClient()
+
+queryClient.setQueryData(['posts'], data, { updatedAt })
+
+const dehydratedState = dehydrate(queryClient, { dehydratedAt })
+```
+
 Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
 
 ```tsx
