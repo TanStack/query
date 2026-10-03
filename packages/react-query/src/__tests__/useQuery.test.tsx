@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -43,6 +43,85 @@ describe('useQuery', () => {
     queryClient.clear()
     vi.useRealTimers()
   })
+
+  it.each([false, true])(
+    'should report a re-added placeholder selector error (StrictMode: %s)',
+    (strict) => {
+      const key = queryKey()
+      const error = new Error('selection failed')
+      let shouldThrow = false
+      const select = (value: number) => {
+        if (shouldThrow) throw error
+        return value * 2
+      }
+      const view = renderHook(
+        ({ selected }) =>
+          useQuery(
+            {
+              queryKey: key,
+              queryFn: () => 2,
+              enabled: false,
+              placeholderData: 2,
+              select: selected ? select : undefined,
+            },
+            queryClient,
+          ),
+        {
+          initialProps: { selected: true },
+          wrapper: strict ? React.StrictMode : undefined,
+        },
+      )
+      expect(view.result.current.data).toBe(4)
+      view.rerender({ selected: false })
+      expect(view.result.current.data).toBe(2)
+      shouldThrow = true
+      view.rerender({ selected: true })
+      expect(view.result.current).toMatchObject({
+        status: 'error',
+        error,
+        isPlaceholderData: false,
+      })
+      view.unmount()
+    },
+  )
+
+  it.each([false, true])(
+    'should recover when a throwing selector is removed (StrictMode: %s)',
+    (strict) => {
+      const key = queryKey()
+      queryClient.setQueryData(key, 2)
+      const error = new Error('selection failed')
+      const select = (_value: number): number => {
+        throw error
+      }
+      const view = renderHook(
+        ({ selected }) =>
+          useQuery(
+            {
+              queryKey: key,
+              queryFn: () => 2,
+              enabled: false,
+              select: selected ? select : undefined,
+            },
+            queryClient,
+          ),
+        {
+          initialProps: { selected: true },
+          wrapper: strict ? React.StrictMode : undefined,
+        },
+      )
+      expect(view.result.current.error).toBe(error)
+      view.rerender({ selected: false })
+      expect(view.result.current).toMatchObject({
+        status: 'success',
+        data: 2,
+        error: null,
+      })
+      view.rerender({ selected: true })
+      expect(view.result.current).toMatchObject({ status: 'error', error })
+      view.unmount()
+    },
+  )
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
