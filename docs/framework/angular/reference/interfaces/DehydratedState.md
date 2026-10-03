@@ -13,5 +13,5 @@ that has already been fetched, avoiding a redundant fetch on the client.
 
 | Property | Type |
 | ------ | ------ |
-| <a id="mutations"></a> `mutations` | `DehydratedMutation`[] |
-| <a id="queries"></a> `queries` | `DehydratedQuery`[] |
+| <a id="property-mutations"></a> `mutations` | `DehydratedMutation`[] |
+| <a id="property-queries"></a> `queries` | `DehydratedQuery`[] |

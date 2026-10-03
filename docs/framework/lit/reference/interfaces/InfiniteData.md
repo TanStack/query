@@ -22,5 +22,5 @@ The data shape of an infinite query: every page fetched so far, plus the page pa
 
 | Property | Type |
 | ------ | ------ |
-| <a id="pageparams"></a> `pageParams` | `TPageParam`[] |
-| <a id="pages"></a> `pages` | `TData`[] |
+| <a id="property-pageparams"></a> `pageParams` | `TPageParam`[] |
+| <a id="property-pages"></a> `pages` | `TData`[] |

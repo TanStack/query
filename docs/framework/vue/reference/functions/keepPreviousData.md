@@ -23,9 +23,9 @@ query key is fetching, it keeps displaying the previously fetched data until the
 
 ### previousData
 
-The data of the previous query key, passed by the observer.
+`T` \| `undefined`
 
-`T` | `undefined`
+The data of the previous query key, passed by the observer.
 
 ## Returns
 

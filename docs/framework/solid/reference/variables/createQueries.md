@@ -7,7 +7,7 @@ title: createQueries
 const createQueries: <T, TCombinedResult>(queriesOptions: Accessor<{
   combine?: (result: T extends [] ? [] : T extends [Head] ? [GetResults<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : { [K in string | number | symbol]: GetResults<(...)[(...)]> }) => TCombinedResult;
   queries:   | readonly [T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...(...)[]] extends [...] ? [..., ...] : ... extends ... ? ... : ... : readonly unknown[] extends T ? T : T extends ...[] ? ...[] : ...[]]
-     | readonly [{ [K in string | number | symbol]: GetOptions<T[K<K>]> }];
+     | readonly [{ [K in string | number | symbol]: GetOptions<T[K]> }];
 }>, queryClient?: Accessor<QueryClient>) => TCombinedResult = useQueries;
 ```
 
@@ -64,7 +64,7 @@ previously rendered queries, because the number of queries can differ between re
   \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
   \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
+  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\]\> \}
 
 ## Parameters
 
@@ -73,7 +73,7 @@ previously rendered queries, because the number of queries can differ between re
 `Accessor`\<\{
   `combine?`: (`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : \{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ...\] : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* ...[] ? ...[] : ...[]\]
-     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\<K\>\]\> \}\];
+     \| readonly \[\{ \[K in string \| number \| symbol\]: GetOptions\<T\[K\]\> \}\];
 \}\>
 
 An accessor returning the `queries` array to run, and an optional `combine`

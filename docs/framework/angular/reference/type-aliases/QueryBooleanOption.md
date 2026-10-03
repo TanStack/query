@@ -6,7 +6,7 @@ title: QueryBooleanOption
 ```ts
 type QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey> = 
   | boolean
-  | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean;
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean);
 ```
 
 Defined in: [packages/query-core/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L149)

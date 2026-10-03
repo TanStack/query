@@ -13,6 +13,6 @@ Defined in: [packages/query-core/src/types.ts:1243](https://github.com/TanStack/
 
 | Property | Type |
 | ------ | ------ |
-| <a id="client"></a> `client` | `QueryClient` |
-| <a id="meta"></a> `meta` | [`MutationMeta`](MutationMeta.md) \| `undefined` |
-| <a id="mutationkey"></a> `mutationKey?` | [`MutationKey`](MutationKey.md) |
+| <a id="property-client"></a> `client` | `QueryClient` |
+| <a id="property-meta"></a> `meta` | [`MutationMeta`](MutationMeta.md) \| `undefined` |
+| <a id="property-mutationkey"></a> `mutationKey?` | [`MutationKey`](MutationKey.md) |

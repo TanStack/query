@@ -15,4 +15,4 @@ Defined in: [packages/query-core/src/queriesObserver.ts:29](https://github.com/T
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="combine"></a> `combine?` | `CombineFn`\<`TCombinedResult`\> | A function that combines the array of `QueryObserverResult`s (one per observed query) into a single value. The combined value is memoized and only recomputed when one of the underlying results, the query hashes, or the `combine` function itself changes. Defaults to returning the array of `QueryObserverResult`s unchanged. |
+| <a id="property-combine"></a> `combine?` | `CombineFn`\<`TCombinedResult`\> | A function that combines the array of `QueryObserverResult`s (one per observed query) into a single value. The combined value is memoized and only recomputed when one of the underlying results, the query hashes, or the `combine` function itself changes. Defaults to returning the array of `QueryObserverResult`s unchanged. |

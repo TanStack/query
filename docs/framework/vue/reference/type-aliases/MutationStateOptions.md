@@ -23,5 +23,5 @@ Defined in: [packages/vue-query/src/useMutationState.ts:89](https://github.com/T
 
 | Property | Type |
 | ------ | ------ |
-| <a id="filters"></a> `filters?` | `VueMutationFilters` |
-| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+| <a id="property-filters"></a> `filters?` | `VueMutationFilters` |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |

@@ -18,14 +18,14 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new MutationCache(config: MutationCacheConfig): MutationCache;
+new MutationCache(config?: MutationCacheConfig): MutationCache;
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L128)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`MutationCacheConfig`](../interfaces/MutationCacheConfig.md) = `{}`
 
@@ -159,7 +159,7 @@ MC.find
 ### findAll()
 
 ```ts
-findAll(filters: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): Mutation<unknown, Error, unknown, unknown>[];
+findAll(filters?: MaybeRefDeep<MutationFilters<unknown, Error, unknown, unknown>>): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
 Defined in: [packages/vue-query/src/mutationCache.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/mutationCache.ts#L27)
@@ -172,7 +172,7 @@ information about mutations in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 `MaybeRefDeep`\<[`MutationFilters`](../interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>\> = `{}`
 
@@ -287,13 +287,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

@@ -122,13 +122,7 @@ re-evaluated on demand.
 
 A function that returns the same options object, unchanged.
 
-```ts
-(): WithRequired<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
-```
-
-#### Returns
-
-[`WithRequired`](../type-aliases/WithRequired.md)\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+() => [`WithRequired`](../type-aliases/WithRequired.md)\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 ### See
 
@@ -271,13 +265,7 @@ demand.
 
 A function that returns the same options object, unchanged.
 
-```ts
-(): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
-```
-
-#### Returns
-
-`Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 ### See
 

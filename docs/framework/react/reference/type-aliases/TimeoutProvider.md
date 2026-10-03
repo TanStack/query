@@ -27,7 +27,7 @@ also support delays longer than the ~24-day maximum of the global `setTimeout`.
 
 | Property | Modifier | Type |
 | ------ | ------ | ------ |
-| <a id="clearinterval"></a> `clearInterval` | `readonly` | (`intervalId`: `TTimerId` \| `undefined`) => `void` |
-| <a id="cleartimeout"></a> `clearTimeout` | `readonly` | (`timeoutId`: `TTimerId` \| `undefined`) => `void` |
-| <a id="setinterval"></a> `setInterval` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |
-| <a id="settimeout"></a> `setTimeout` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |
+| <a id="property-clearinterval"></a> `clearInterval` | `readonly` | (`intervalId`: `TTimerId` \| `undefined`) => `void` |
+| <a id="property-cleartimeout"></a> `clearTimeout` | `readonly` | (`timeoutId`: `TTimerId` \| `undefined`) => `void` |
+| <a id="property-setinterval"></a> `setInterval` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |
+| <a id="property-settimeout"></a> `setTimeout` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |

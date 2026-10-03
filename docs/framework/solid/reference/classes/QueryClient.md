@@ -17,14 +17,14 @@ The core `@tanstack/query-core` `QueryClient`, typed so its `defaultOptions.quer
 ### Constructor
 
 ```ts
-new QueryClient(config: QueryClientConfig): QueryClient;
+new QueryClient(config?: QueryClientConfig): QueryClient;
 ```
 
 Defined in: [packages/solid-query/src/QueryClient.ts:107](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClient.ts#L107)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryClientConfig`](../interfaces/QueryClientConfig.md) = `{}`
 
@@ -214,9 +214,10 @@ on top. A no-op if the options are already defaulted (`_defaulted: true`).
 
 ##### options
 
-The query options passed by the caller.
+  \| `QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\>
+  \| [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
 
-`QueryObserverOptions`\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`, `TPageParam`\> | [`DefaultedQueryObserverOptions`](../type-aliases/DefaultedQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
+The query options passed by the caller.
 
 #### Returns
 

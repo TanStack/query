@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsFetching(fetchingFilters: UseIsFetchingFilters, queryClient?: QueryClient): Ref<number>;
+function useIsFetching(fetchingFilters?: UseIsFetchingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
 Defined in: [packages/vue-query/src/useIsFetching.ts:50](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useIsFetching.ts#L50)
@@ -19,7 +19,7 @@ getter if the filters themselves depend on other reactive state.
 
 ## Parameters
 
-### fetchingFilters
+### fetchingFilters?
 
 [`UseIsFetchingFilters`](../type-aliases/UseIsFetchingFilters.md) = `{}`
 

@@ -4,7 +4,7 @@ title: injectMutationState
 ---
 
 ```ts
-function injectMutationState<TResult>(injectMutationStateFn: () => MutationStateOptions<TResult>, options?: InjectMutationStateOptions): Signal<TResult[]>;
+function injectMutationState<TResult>(injectMutationStateFn?: () => MutationStateOptions<TResult>, options?: InjectMutationStateOptions): Signal<TResult[]>;
 ```
 
 Defined in: [packages/angular-query-experimental/src/inject-mutation-state.ts:110](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L110)
@@ -20,7 +20,7 @@ Injects a signal that gives you access to all mutations in the `MutationCache`. 
 
 ## Parameters
 
-### injectMutationStateFn
+### injectMutationStateFn?
 
 () => `MutationStateOptions`\<`TResult`\>
 

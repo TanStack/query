@@ -27,4 +27,4 @@ Defined in: [packages/query-core/src/types.ts:108](https://github.com/TanStack/q
 
 | Property | Type |
 | ------ | ------ |
-| <a id="querykey"></a> `queryKey` | [`DataTag`](DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\> |
+| <a id="property-querykey"></a> `queryKey` | [`DataTag`](DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\> |

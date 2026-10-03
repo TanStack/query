@@ -14,7 +14,7 @@ Defined in: [packages/vue-query/src/usePrefetchInfiniteQuery.ts:16](https://gith
 ### queryFn?
 
 ```ts
-optional queryFn: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
+optional queryFn?: Exclude<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken>;
 ```
 
 ## Type Parameters

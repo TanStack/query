@@ -18,14 +18,14 @@ MaybeRefDeep filters object, so `ref`s can be passed directly without unwrapping
 ### Constructor
 
 ```ts
-new QueryCache(config: QueryCacheConfig): QueryCache;
+new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:125](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L125)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
@@ -240,7 +240,7 @@ QC.find
 ### findAll()
 
 ```ts
-findAll(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters?: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
@@ -253,7 +253,7 @@ information about queries in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 `MaybeRefDeep`\<[`QueryFilters`](../interfaces/QueryFilters.md)\<readonly `unknown`[]\>\> = `{}`
 
@@ -474,13 +474,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 
