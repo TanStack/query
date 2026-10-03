@@ -247,6 +247,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *
  * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
  * previously rendered queries, because the number of queries can differ between renders.
+ * @param options - The `queries` array to run, and the optional `combine` and `shallow` options.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the combined result. Without `combine`, this is an array with all the query results, in

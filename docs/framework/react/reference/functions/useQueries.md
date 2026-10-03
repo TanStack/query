@@ -6,10 +6,10 @@ redirect_from:
 ---
 
 ```ts
-function useQueries<T, TCombinedResult>(__namedParameters: object, queryClient?: QueryClient): TCombinedResult;
+function useQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:359](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L359)
+Defined in: [packages/react-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L354)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -36,7 +36,9 @@ be structurally shared to be as referentially stable as possible.
 
 ## Parameters
 
-### \_\_namedParameters
+### options
+
+The `queries` array to run, and the optional `combine` and `subscribed` options.
 
 #### combine?
 
