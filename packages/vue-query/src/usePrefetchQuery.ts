@@ -42,6 +42,11 @@ export type UsePrefetchQueryOptions<
   >
 }
 
+/**
+ * Checks whether an option was passed as a getter function.
+ * @param value - The option value.
+ * @returns `true` if `value` is a function.
+ */
 function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
   return typeof value === 'function'
 }
@@ -62,7 +67,6 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  * use — everything you can pass to `queryClient.query`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
- * @returns `void` — nothing is returned.
  * @example
  * ```vue
  * <script setup lang="ts">

@@ -53,6 +53,12 @@ interface DevtoolsOptions {
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools, with a toggle button that opens them, for the given or
+ * nearest `QueryClient`.
+ * @param props - The devtools options.
+ * @returns The element the devtools are mounted in.
+ */
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
