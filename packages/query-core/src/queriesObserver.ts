@@ -40,7 +40,6 @@ export interface QueriesObserverOptions<
  * given, as a combined value derived from that array). It manages one
  * internal `QueryObserver` per query, and is the primitive that framework
  * adapters (e.g. `useQueries`) build their hooks on top of.
- *
  * @example
  * ```ts
  * const observer = new QueriesObserver(queryClient, [
@@ -115,7 +114,6 @@ export class QueriesObserver<
    * are reused for queries that match an already-observed query hash;
    * observers for queries that are no longer present are destroyed, and new
    * observers are created and subscribed to for newly added queries.
-   *
    * @example
    * ```ts
    * observer.setQueries([
@@ -200,7 +198,6 @@ export class QueriesObserver<
    * Returns the most recently computed array of `QueryObserverResult`s, one
    * per observed query, in the same order as the queries passed to the
    * constructor or `setQueries`.
-   *
    * @example
    * ```ts
    * const results = observer.getCurrentResult()

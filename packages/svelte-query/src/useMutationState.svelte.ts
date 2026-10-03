@@ -30,13 +30,11 @@ function getResult<
  * `useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
  * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
  * state.
- *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns An Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```svelte
@@ -51,7 +49,6 @@ function getResult<
  *
  * {pendingVariables.length} posts saving...
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```svelte
@@ -77,7 +74,6 @@ function getResult<
  *   Create post ({savedPosts.length} saved so far)
  * </button>
  * ```
- *
  * @example
  * Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
  * mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the

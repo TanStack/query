@@ -3,7 +3,6 @@ import type { QueryClient } from '@tanstack/query-core'
 
 /**
  * The `useQueryClient` function returns the current `QueryClient` instance.
- *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current `QueryClient` instance.

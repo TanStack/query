@@ -92,7 +92,6 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * QueryClient or queries, so that the same provider is used consistently
    * for all timers in the application, since different TimeoutProviders
    * cannot cancel each others' timers.
-   *
    * @example
    * ```ts
    * import { timeoutManager, QueryClient } from '@tanstack/query-core'
@@ -139,7 +138,6 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    *
    * It returns a timer ID, which may be a number or an object that can be
    * coerced to a number via `Symbol.toPrimitive`.
-   *
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'
@@ -163,7 +161,6 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * `clearTimeout` cancels a timeout callback scheduled with `setTimeout`,
    * like the global `clearTimeout` function. It should be called with a
    * timer ID returned by `setTimeout`.
-   *
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'
@@ -186,7 +183,6 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    *
    * Like `setTimeout`, it returns a timer ID, which may be a number or an
    * object that can be coerced to a number via `Symbol.toPrimitive`.
-   *
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'
@@ -208,7 +204,6 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * `clearInterval` can be used to cancel an interval, like the global
    * `clearInterval` function. It should be called with an interval ID
    * returned by `setInterval`.
-   *
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'

@@ -55,7 +55,6 @@ export class FocusManager extends Subscribable<Listener> {
    * receives a `setFocused` callback: call it with a `boolean` to manually
    * set the focus state, or with no arguments to re-evaluate the current
    * focus state and notify subscribers.
-   *
    * @example
    * ```ts
    * import { focusManager } from '@tanstack/query-core'
@@ -89,7 +88,6 @@ export class FocusManager extends Subscribable<Listener> {
   /**
    * `setFocused` can be used to manually set the focus state. Set `undefined`
    * to fall back to the default focus check.
-   *
    * @example
    * ```ts
    * import { focusManager } from '@tanstack/query-core'

@@ -124,7 +124,6 @@ export type Action<TData, TError, TVariables, TOnMutateResult> =
  * code typically interacts with mutations indirectly through `QueryClient` or
  * a framework hook like `useMutation`. Direct access to a `Mutation` instance
  * is possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
- *
  * @example
  * ```ts
  * const mutationCache = queryClient.getMutationCache()
@@ -230,14 +229,12 @@ export class Mutation<
    *   this instance), `execute` is called again with the last known variables.
    * - Otherwise the mutation has already settled and this resolves immediately
    *   without running anything again.
-   *
    * @example
    * ```ts
    * // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
-   *
    * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {
@@ -271,14 +268,12 @@ export class Mutation<
    * those four callbacks is individually caught so that a throwing callback
    * cannot mask the original error; an `error` action is then dispatched and
    * the original error is re-thrown.
-   *
    * @example
    * ```ts
    * // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
    * // applications normally trigger mutations through those, not this method.
    * const data = await mutation.execute(variables)
    * ```
-   *
    * @see {@link Mutation#continue}
    */
   async execute(variables: TVariables): Promise<TData> {

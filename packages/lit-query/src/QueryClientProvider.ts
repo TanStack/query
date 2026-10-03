@@ -21,7 +21,6 @@ import type { TemplateResult } from 'lit'
  * This class is not registered as a custom element by the package. Applications
  * must register either a subclass or the class itself with
  * `customElements.define`.
- *
  * @example
  * ```ts
  * import { html, LitElement } from 'lit'
@@ -44,7 +43,6 @@ import type { TemplateResult } from 'lit'
  *   }
  * }
  * ```
- *
  * @example
  * ```ts
  * import { html } from 'lit'

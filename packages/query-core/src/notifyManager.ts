@@ -100,7 +100,6 @@ export function createNotifyManager() {
      * Use this method to set a custom function to batch notifications together into a single tick.
      * Framework adapters use this to plug in their own batching primitive, so that a single query
      * update only triggers one re-render instead of one per subscriber.
-     *
      * @example
      * ```ts
      * import { notifyManager } from '@tanstack/query-core'
@@ -115,7 +114,6 @@ export function createNotifyManager() {
     /**
      * Configures a custom callback that schedules when the next batch runs.
      * The default behavior is `setTimeout(callback, 0)`.
-     *
      * @example
      * ```ts
      * import { notifyManager } from '@tanstack/query-core'

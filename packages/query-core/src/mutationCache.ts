@@ -113,7 +113,6 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  * Normally, you will not interact with the `MutationCache` directly and instead use a
  * `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
  * safe/known updates to the cache, such as mutations being added, removed, or updated.
- *
  * @example
  * ```ts
  * const unsubscribe = mutationCache.subscribe((event) => {
@@ -225,7 +224,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   /**
    * Removes all mutations from the cache.
-   *
    * @example
    * ```ts
    * const mutationCache = queryClient.getMutationCache()
@@ -248,7 +246,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a mutation in rare scenarios.
-   *
    * @example
    * ```ts
    * const mutationCache = queryClient.getMutationCache()
@@ -266,7 +263,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a mutation in rare scenarios.
-   *
    * @see {@link MutationCache#findAll}
    * @example
    * ```ts
@@ -296,7 +292,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about mutations in rare scenarios.
-   *
    * @see {@link MutationCache#find}
    * @example
    * ```ts

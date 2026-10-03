@@ -3,7 +3,6 @@
  *
  * Lit Query APIs read function accessors during host updates, so the getter can
  * depend on reactive host state.
- *
  * @example
  * ```ts
  * const staticKey: Accessor<readonly unknown[]> = ['todos']
@@ -22,7 +21,6 @@ export function readAccessor<T>(value: Accessor<T>): T {
  *
  * Controller creators and cache state helpers return this shape so render code
  * can use either `result()` or `result.current`.
- *
  * @example
  * ```ts
  * const query = this.todos()

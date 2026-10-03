@@ -150,7 +150,6 @@ type GetUseQueryResult<T> =
  * matches a query options object is mapped per-element instead, still inferring each entry individually; any
  * other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
  * that same homogeneous options type too.
- *
  * @template T - The type of the `queries` array as written at the call site.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -201,7 +200,6 @@ export type QueriesOptions<
  * tuple element's result type is inferred individually, up to 20 elements. A non-tuple array is mapped
  * per-element instead, still inferring each entry individually; only past 20 elements does this fall back to a
  * single homogeneous {@link UseQueryResult} type.
- *
  * @template T - The type of the `queries` array, as inferred by {@link QueriesOptions}.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -239,7 +237,6 @@ export type QueriesResults<
  *
  * The `combine` option can be used to combine the results of the queries into a single value. The result will
  * be structurally shared to be as referentially stable as possible.
- *
  * @remarks The `combine` function only re-runs if it changed referentially, or if any of the query results
  * changed. An inlined `combine` function, as shown in the example below, therefore runs on every render — wrap
  * it in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies, to
@@ -259,7 +256,6 @@ export type QueriesResults<
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
  * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
- *
  * @example
  * ```tsx
  * import { useQueries } from '@tanstack/react-query'
@@ -284,7 +280,6 @@ export type QueriesResults<
  *   )
  * }
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```tsx
@@ -317,7 +312,6 @@ export type QueriesResults<
  *   )
  * }
  * ```
- *
  * @example
  * Typing `select` via {@link queryOptions}. Note that spreading a `queryOptions` result and overriding
  * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
@@ -380,7 +374,6 @@ export function useQueries<
     combine?: (result: QueriesResults<T>) => TCombinedResult
     /**
      * Set this to `false` to unsubscribe this observer from updates to the query cache.
-     *
      * @defaultValue true
      */
     subscribed?: boolean

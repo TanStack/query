@@ -18,7 +18,6 @@ import type {
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- *
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * with `initialData` set, wrapped in an {@link Accessor} so options can be reactive.
@@ -27,7 +26,6 @@ import type {
  * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
  * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
  * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -67,7 +65,6 @@ export function createQuery<
 /**
  * Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * The query runs when the options call for it — `enabled: false` skips the initial fetch.
- *
  * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * wrapped in an {@link Accessor} so options can be reactive.
@@ -76,7 +73,6 @@ export function createQuery<
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
  * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -100,7 +96,6 @@ export function createQuery<
  *   </ul>
  * {/if}
  * ```
- *
  * @example
  * The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
  * ```svelte
@@ -147,7 +142,6 @@ export function createQuery<
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
  * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- *
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
@@ -170,7 +164,6 @@ export function createQuery<
  *   <span>{query.data} posts</span>
  * {/if}
  * ```
- *
  * @example
  * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
  * loading state doesn't show while the query is disabled:
@@ -197,7 +190,6 @@ export function createQuery<
  *   <h1>{query.data?.title}</h1>
  * {/if}
  * ```
- *
  * @example
  * Seeding a detail query from an already-cached list, to skip the loading state:
  * ```svelte
@@ -223,7 +215,6 @@ export function createQuery<
  * {/if}
  * <h1>{query.data?.title}</h1>
  * ```
- *
  * @example
  * Paginated data, keeping the previous page's data visible while the next page loads:
  * ```svelte

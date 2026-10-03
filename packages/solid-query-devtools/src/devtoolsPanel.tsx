@@ -41,7 +41,6 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
-   *
    * @defaultValue system
    */
   theme?: Theme

@@ -188,14 +188,12 @@ export type QueriesResults<
 
 /**
  * The `createQueries` function can be used to fetch a variable number of queries.
- *
  * @param createQueriesOptions - The `queries` array to run, and an optional `combine` function, wrapped in an
  * {@link Accessor} so options can be reactive.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns An array with one result per query, in the same order as `queries` — or, if `combine` is provided,
  * whatever `combine` returns.
- *
  * @example
  * ```svelte
  * <script lang="ts">
@@ -224,7 +222,6 @@ export type QueriesResults<
  *   {/each}
  * </ul>
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```svelte

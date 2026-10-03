@@ -15,7 +15,6 @@ import { useBaseQuery } from './useBaseQuery'
 /**
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- *
  * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
@@ -23,7 +22,6 @@ import { useBaseQuery } from './useBaseQuery'
  * @returns The current query result, typed so that `status` is `success` — or `error` if a fetch attempt
  * fails while keeping the existing data (`status` never resolves to `pending` in this overload's type,
  * since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived booleans for convenience.
- *
  * @example
  * ```tsx
  * import { useQuery } from '@tanstack/preact-query'
@@ -66,7 +64,6 @@ export function useQuery<
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
  * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- *
  * @example
  * ```tsx
  * import { useQuery } from '@tanstack/preact-query'
@@ -92,7 +89,6 @@ export function useQuery<
  *   )
  * }
  * ```
- *
  * @example
  * The same query, checking `isPending`/`isError` instead of `status` — pick whichever reads better to you:
  * ```tsx
@@ -133,7 +129,6 @@ export function useQuery<
  * @returns The current query result. `status` is `pending` if there is no cached data to display, `error` if
  * the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- *
  * @example
  * ```tsx
  * import { useQuery } from '@tanstack/preact-query'
@@ -159,7 +154,6 @@ export function useQuery<
  *   )
  * }
  * ```
- *
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
@@ -179,7 +173,6 @@ export function useQuery<
  *   return <span>{data} posts</span>
  * }
  * ```
- *
  * @example
  * A dependent query, only enabled once `postId` is set — use `isLoading`, not `isPending`, so the
  * loading state doesn't show while the query is disabled:
@@ -200,7 +193,6 @@ export function useQuery<
  *   return <h1>{data?.title}</h1>
  * }
  * ```
- *
  * @example
  * The same dependent query, type safe: `skipToken` disables the query without needing the
  * non-null assertion above, since `queryFn` is only ever called when `postId` is defined.
@@ -222,7 +214,6 @@ export function useQuery<
  *   return <h1>{data?.title}</h1>
  * }
  * ```
- *
  * @example
  * Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
  * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
@@ -249,7 +240,6 @@ export function useQuery<
  *   return <h1>{data?.title}</h1>
  * }
  * ```
- *
  * @example
  * Paginated data, keeping the previous page's data visible while the next page loads:
  * ```tsx

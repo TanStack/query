@@ -659,7 +659,6 @@ class QueriesController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the queries
  * subscription.
  * @param options - Queries controller options, or a getter that returns options.
@@ -667,7 +666,6 @@ class QueriesController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query results, or the value returned by
  * `combine`.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

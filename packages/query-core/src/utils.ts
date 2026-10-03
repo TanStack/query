@@ -31,7 +31,6 @@ type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
-   *
    * @defaultValue 'all'
    */
   type?: QueryTypeFilter
@@ -91,7 +90,6 @@ export interface MutationFilters<
  * Either a plain value of type `TOutput`, or a function that receives `TInput` and returns `TOutput`.
  * Used for example by `setQueryData`-style updaters, which accept either the new data directly or a
  * function that computes it from the previous data. See {@link functionalUpdate}.
- *
  * @example
  * ```ts
  * queryClient.setQueryData(['posts'], newPosts)
@@ -162,7 +160,6 @@ export function resolveQueryValue<
 /**
  * Checks whether a query matches the given {@link QueryFilters}.
  * Every filter that is specified must match; filters that are left unspecified are ignored.
- *
  * @example
  * ```ts
  * const queryCache = queryClient.getQueryCache()
@@ -224,7 +221,6 @@ export function matchQuery(
  * Checks whether a mutation matches the given {@link MutationFilters}.
  * Every filter that is specified must match; filters that are left unspecified are ignored.
  * If a `mutationKey` filter is provided but the mutation has no `mutationKey` of its own, it does not match.
- *
  * @example
  * ```ts
  * const mutationCache = queryClient.getMutationCache()
@@ -274,7 +270,6 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
 /**
  * Default query & mutation keys hash function.
  * Hashes the value into a stable hash.
- *
  * @example
  * ```ts
  * // Object keys are sorted, so key order doesn't affect the hash:
@@ -486,7 +481,6 @@ export function replaceData<
  * Intended to be passed as a query's `placeholderData` option, for example
  * `placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
  * query key is fetching, it keeps displaying the previously fetched data until the new data arrives.
- *
  * @example
  * ```ts
  * new QueryObserver(queryClient, {
@@ -516,7 +510,6 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
  * Sentinel value that can be passed as a query's `queryFn` to conditionally disable the query (equivalent
  * to `enabled: false`) while preserving full type inference for the query's data. Unlike `enabled: false`,
  * a query disabled via `skipToken` cannot be triggered with `refetch`.
- *
  * @example
  * ```ts
  * new QueryObserver(queryClient, {
@@ -570,7 +563,6 @@ export function ensureQueryFn<
  * additional context such as the query or mutation) and its result is returned, allowing the throwing
  * behavior to be decided per error. Otherwise, `throwOnError` itself is coerced to a boolean (`undefined`
  * resolves to `false`).
- *
  * @example
  * ```ts
  * const throwOnError =

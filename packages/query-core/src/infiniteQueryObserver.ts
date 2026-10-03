@@ -25,7 +25,6 @@ type InfiniteQueryObserverListener<TData, TError> = (
  * infinite-query-specific fields and methods, such as `hasNextPage` and
  * `fetchNextPage`, and is the primitive that framework adapters (e.g.
  * `useInfiniteQuery`) build their hooks on top of.
- *
  * @example
  * ```ts
  * const observer = new InfiniteQueryObserver(queryClient, {
@@ -146,7 +145,6 @@ export class InfiniteQueryObserver<
    * param used for the fetch is determined by `getNextPageParam`, which
    * receives the current pages/page params and whose result also determines
    * `hasNextPage`.
-   *
    * @example
    * ```ts
    * const { hasNextPage } = observer.getCurrentResult()
@@ -155,7 +153,6 @@ export class InfiniteQueryObserver<
    *   await observer.fetchNextPage()
    * }
    * ```
-   *
    * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    */
   fetchNextPage(
@@ -175,7 +172,6 @@ export class InfiniteQueryObserver<
    * param used for the fetch is determined by `getPreviousPageParam`, which
    * receives the current pages/page params and whose result also determines
    * `hasPreviousPage`.
-   *
    * @example
    * ```ts
    * const { hasPreviousPage } = observer.getCurrentResult()
@@ -184,7 +180,6 @@ export class InfiniteQueryObserver<
    *   await observer.fetchPreviousPage()
    * }
    * ```
-   *
    * @see {@link InfiniteQueryObserver#fetchNextPage}
    */
   fetchPreviousPage(

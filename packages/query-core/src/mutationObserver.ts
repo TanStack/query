@@ -27,7 +27,6 @@ type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
  * passed to the hook change, subscribes to it to re-render on updates, and
  * reads `getCurrentResult()` for the value to return. Calling `mutate()`
  * builds a new underlying `Mutation` in the `MutationCache` and executes it.
- *
  * @example
  * ```ts
  * const observer = new MutationObserver(queryClient, {
@@ -84,7 +83,6 @@ export class MutationObserver<
    * defined), the observer is reset, detaching it from the mutation it was
    * observing. Otherwise, if the currently observed mutation is still
    * `pending`, its options are updated in place as well.
-   *
    * @example
    * ```ts
    * observer.setOptions({
@@ -169,12 +167,10 @@ export class MutationObserver<
    * running to completion and its own callbacks still fire, but this
    * observer stops reflecting its state and a subsequent `mutate()` call
    * will build a brand new mutation.
-   *
    * @example
    * ```ts
    * observer.reset()
    * ```
-   *
    * @see {@link MutationObserver#mutate}
    */
   reset(): void {
@@ -195,7 +191,6 @@ export class MutationObserver<
    * The optional per-call `options` (`onSuccess`/`onError`/`onSettled`) are
    * invoked once the mutation settles, in addition to any callbacks defined
    * on the observer's own options.
-   *
    * @example
    * ```ts
    * await observer.mutate(
