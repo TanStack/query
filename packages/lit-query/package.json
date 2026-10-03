@@ -60,6 +60,7 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@lit-labs/ssr": "^3.3.1",
     "@tanstack/query-test-utils": "workspace:*",
     "typescript": "catalog:"
   },
