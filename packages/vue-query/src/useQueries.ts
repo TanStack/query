@@ -247,12 +247,10 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *
  * `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
  * previously rendered queries, because the number of queries can differ between renders.
- *
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the combined result. Without `combine`, this is an array with all the query results, in
  * the same order as the input. When `combine` is provided, this is the value returned by `combine` instead.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -280,7 +278,6 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *   </ul>
  * </template>
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```vue
@@ -311,7 +308,6 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *   </ul>
  * </template>
  * ```
- *
  * @example
  * Typing `select` via {@link queryOptions}. Note that spreading a `queryOptions` result and overriding
  * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is

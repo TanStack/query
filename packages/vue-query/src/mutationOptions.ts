@@ -9,12 +9,10 @@ import type { MutationOptions } from './types'
  * Unlike a `queryKey` property on a query's options (e.g. `queryOptions({ queryKey: [...] })`), `mutationKey`
  * entries that are reactive getters (`() => id.value`) are never unwrapped — the getter function itself is
  * stored as the entry, rather than its current value. `ref` entries are still unwrapped normally.
- *
  * @see {@link useMutation} to run the mutation these options describe.
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, with a
  * required `mutationKey`.
  * @returns The same options object, unchanged.
- *
  * @example
  * Looking the mutation up elsewhere via its `mutationKey`, e.g. for a global "saving…" indicator:
  * ```vue
@@ -54,12 +52,10 @@ export function mutationOptions<
  * Same as the plain-object overload with a required `mutationKey`, but for options that close over reactive
  * state (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
  * always read the current values instead of the ones captured when the options were created.
- *
  * @see {@link useMutation} to run the mutation these options describe.
  * @param options - A function returning the mutation options to use, with a required `mutationKey`,
  * re-evaluated on demand.
  * @returns A function that returns the same options object, unchanged.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -101,13 +97,11 @@ export function mutationOptions<
  * `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
  * `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters,
  * such as `status`.
- *
  * @see {@link useMutation} to run the mutation these options describe.
  * @param options - The mutation options to use, identical to what you'd pass to `useMutation`, without a
  * `mutationKey`.
  * @returns The same options object, unchanged.
  * @remarks See the other overload's example for looking a mutation up via `useMutationState`.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -144,12 +138,10 @@ export function mutationOptions<
  * Same as the plain-object overload without a `mutationKey`, but for options that close over reactive state
  * (`ref`s read inside the function body). Wrap them in a getter so `useMutation` and the other consumers
  * always read the current values instead of the ones captured when the options were created.
- *
  * @see {@link useMutation} to run the mutation these options describe.
  * @param options - A function returning the mutation options to use, without a `mutationKey`, re-evaluated on
  * demand.
  * @returns A function that returns the same options object, unchanged.
- *
  * @example
  * ```vue
  * <script setup lang="ts">

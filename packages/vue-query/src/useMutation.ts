@@ -73,7 +73,6 @@ export type UseMutationReturnType<
  *
  * `options` may be a plain object, a `ref`, or a reactive getter (`() => ({ ... })`) — pass a getter
  * if the options themselves depend on other reactive state.
- *
  * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
  * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
@@ -83,7 +82,6 @@ export type UseMutationReturnType<
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
  * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call
  * callbacks fire only for the latest call you've made.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -107,7 +105,6 @@ export type UseMutationReturnType<
  *   <button @click="onAdd">Add</button>
  * </template>
  * ```
- *
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```vue
@@ -130,7 +127,6 @@ export type UseMutationReturnType<
  *   </div>
  * </template>
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```vue
@@ -166,7 +162,6 @@ export type UseMutationReturnType<
  *   <button @click="addMutation.mutate('Item')">Add</button>
  * </template>
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
@@ -194,7 +189,6 @@ export type UseMutationReturnType<
  *   <button @click="handleAddAll(['Todo 1', 'Todo 2', 'Todo 3'])">Add all</button>
  * </template>
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for

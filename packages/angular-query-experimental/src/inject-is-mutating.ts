@@ -22,11 +22,9 @@ export interface InjectIsMutatingOptions {
 /**
  * Injects a signal that tracks the number of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param options - Additional configuration
  * @returns A `Signal` with the number of mutations that your application currently has `pending`.
- *
  * @example
  * ```angular-ts
  * @Component({

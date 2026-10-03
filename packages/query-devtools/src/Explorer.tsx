@@ -34,7 +34,6 @@ import type { Query } from '@tanstack/query-core'
  *
  * when the array cannot be chunked evenly by size, the last chunk will be
  * filled with the remaining elements
- *
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */

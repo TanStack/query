@@ -20,7 +20,6 @@ import { useSyncExternalStore } from './utils'
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `useMutation` is the hook for that.
- *
  * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
  * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
@@ -31,7 +30,6 @@ import { useSyncExternalStore } from './utils'
  * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
  * fire only for the latest call you've made, and only while the component is still mounted — unmounting before
  * the mutation settles removes the subscription and prevents them from firing.
- *
  * @example
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/preact-query'
@@ -57,7 +55,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```tsx
@@ -87,7 +84,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
@@ -123,7 +119,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
@@ -153,7 +148,6 @@ import { useSyncExternalStore } from './utils'
  *   )
  * }
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for

@@ -41,7 +41,6 @@ interface ObserverFetchOptions extends FetchOptions {
  * the primitive that framework adapters (e.g. `useQuery`) build their hooks
  * on top of, but it can also be used directly to observe and switch between
  * queries outside of any framework.
- *
  * @example
  * ```ts
  * const observer = new QueryObserver(queryClient, {
@@ -171,7 +170,6 @@ export class QueryObserver<
    * trigger a fetch if the new options require one and the observer has
    * subscribers, recompute the current result, and reschedule the stale and
    * refetch-interval timers as needed.
-   *
    * @example
    * ```ts
    * observer.setOptions({ queryKey: ['posts', 1], queryFn: () => fetchPost(1) })
@@ -311,7 +309,6 @@ export class QueryObserver<
    * observed query. This is a point-in-time read; to be notified of updates
    * as they happen, subscribe to the observer instead (its inherited
    * `subscribe` method).
-   *
    * @example
    * ```ts
    * const result = observer.getCurrentResult()
@@ -361,7 +358,6 @@ export class QueryObserver<
   /**
    * Refetches the observed query and returns a promise that resolves with
    * the resulting `QueryObserverResult`.
-   *
    * @example
    * ```ts
    * const result = await observer.refetch({ cancelRefetch: false })
@@ -382,7 +378,6 @@ export class QueryObserver<
    * resolves with the `QueryObserverResult` for that fetch. This is useful
    * for prefetching data that another observer (e.g. a query about to be
    * navigated to) will need, ahead of time.
-   *
    * @example
    * ```ts
    * const result = await observer.fetchOptimistic({

@@ -360,7 +360,6 @@ class InfiniteQueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the infinite query
  * subscription.
  * @param options - Infinite query observer options, or a getter that returns
@@ -369,7 +368,6 @@ class InfiniteQueryController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest infinite query result with page helper
  * methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

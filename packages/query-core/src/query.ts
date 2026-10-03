@@ -211,7 +211,6 @@ export type Action<TData, TError> =
  * code typically interacts with queries indirectly through `QueryClient` or
  * a framework hook like `useQuery`. Direct access to a `Query` instance is
  * possible via `queryCache.find()`/`findAll()` for inspecting cache state.
- *
  * @example
  * ```ts
  * const queryCache = queryClient.getQueryCache()
@@ -339,7 +338,6 @@ export class Query<
    * Cancels the query's currently in-flight fetch, if any.
    * - Returns a promise that resolves once the cancellation has settled.
    * - If no fetch is in progress, resolves immediately.
-   *
    * @example
    * ```ts
    * await query.cancel()
@@ -355,7 +353,6 @@ export class Query<
    * Clears the query's garbage collection timeout and silently cancels any
    * in-flight fetch. Called by `QueryCache` when the query is removed from
    * the cache.
-   *
    * @see {@link Query#cancel}
    */
   destroy(): void {
@@ -435,7 +432,6 @@ export class Query<
    *   `staleTime` and `enabled` state).
    * - If the query has no observers, it is considered stale when it has no
    *   data or has been invalidated.
-   *
    * @see {@link Query#isStaleByTime}
    * @example
    * ```ts
@@ -463,7 +459,6 @@ export class Query<
    * - `staleTime: 'static'` is never stale.
    * - An invalidated query is always stale.
    * - Otherwise, staleness is based on elapsed time since `dataUpdatedAt`.
-   *
    * @see {@link Query#isStale}
    * @example
    * ```ts
@@ -549,7 +544,6 @@ export class Query<
 
   /**
    * Returns the number of observers currently subscribed to this query.
-   *
    * @example
    * ```ts
    * if (query.getObserversCount() === 0) {
@@ -565,7 +559,6 @@ export class Query<
    * Marks the query as invalidated, unless it is already invalidated. This
    * updates `state.isInvalidated` and notifies observers, but does not by
    * itself trigger a refetch.
-   *
    * @example
    * ```ts
    * query.invalidate()

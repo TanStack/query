@@ -24,7 +24,6 @@ import type {
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
  *
  * This overload is selected when `initialData` is set.
- *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
@@ -37,7 +36,6 @@ import type {
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
  * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
- *
  * @example
  * ```tsx
  * import { For } from 'solid-js'
@@ -87,7 +85,6 @@ export function useInfiniteQuery<
 /**
  * The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
  * `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
- *
  * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
  * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
  * actions, or add conditions like `hasNextPage && !isFetching`.
@@ -100,7 +97,6 @@ export function useInfiniteQuery<
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
  * `data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
- *
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```tsx
@@ -140,7 +136,6 @@ export function useInfiniteQuery<
  *   )
  * }
  * ```
- *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a
  * sentinel element after the list:

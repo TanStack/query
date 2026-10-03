@@ -18,7 +18,6 @@ export const isServer = (): boolean => isServerFn()
  * Override this for runtimes where that default detection would give the wrong answer — for
  * example, a Service Worker, where `window` is undefined even though the environment should
  * behave like a client.
- *
  * @example
  * ```ts
  * import { environmentManager } from '@tanstack/query-core'

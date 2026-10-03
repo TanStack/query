@@ -112,7 +112,6 @@ export interface QueryStore {
  * safe/known updates to the cache, such as queries being added, removed, or updated — updates made
  * outside of the cache's own tracked mechanisms (e.g. mutating a query's state object directly) do
  * not notify subscribers.
- *
  * @example
  * ```ts
  * const unsubscribe = queryCache.subscribe((event) => {
@@ -133,7 +132,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * builds and adds a new one to the cache if none exists yet. Used by framework adapters and
    * plugins (e.g. broadcast/persistence) that need to get-or-create a `Query` directly, bypassing
    * the reactive `QueryObserver` machinery.
-   *
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -194,7 +192,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * `'removed'` event. A no-op if the query is no longer the one currently stored under its hash
    * (e.g. it was already replaced). Used by plugins (e.g. the broadcast client) that mirror
    * removals across `QueryCache` instances.
-   *
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -217,7 +214,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   /**
    * Removes all queries from the cache.
-   *
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -238,7 +234,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * exists. Unlike {@link QueryCache#find}, this looks up by the already-computed hash rather
    * than by `QueryFilters`. Used by plugins (e.g. broadcast/hydration) that already have a hash
    * to look up directly.
-   *
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -261,7 +256,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   /**
    * Returns all queries within the cache.
-   *
    * @example
    * ```ts
    * const queryCache = queryClient.getQueryCache()
@@ -282,7 +276,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about a query in rare scenarios (e.g. looking at `query.state.dataUpdatedAt` to
    * decide whether a query is fresh enough to be used as an initial value).
-   *
    * @see {@link QueryCache#findAll}
    * @example
    * ```ts
@@ -307,7 +300,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    *
    * This is not typically needed for most applications, but can come in handy when needing more
    * information about queries in rare scenarios.
-   *
    * @see {@link QueryCache#find}
    * @example
    * ```ts

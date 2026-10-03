@@ -19,7 +19,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `useMutation` is the hook for that.
- *
  * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
  * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
@@ -30,7 +29,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
  * fire only for the latest call you've made, and only while the component is still mounted — unmounting before
  * the mutation settles removes the subscription and prevents them from firing.
- *
  * @example
  * ```tsx
  * import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -56,7 +54,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   )
  * }
  * ```
- *
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```tsx
@@ -86,7 +83,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   )
  * }
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
@@ -122,7 +118,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   )
  * }
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
@@ -152,7 +147,6 @@ import type { DefaultError, QueryClient } from '@tanstack/query-core'
  *   )
  * }
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for

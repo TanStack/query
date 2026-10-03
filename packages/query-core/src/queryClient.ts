@@ -62,7 +62,6 @@ interface MutationDefaults {
  * `QueryClient` is used to interact with a cache of queries and mutations. It owns a
  * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
  * the default options that are applied to queries and mutations created through it.
- *
  * @example
  * ```ts
  * const queryClient = new QueryClient({
@@ -139,7 +138,6 @@ export class QueryClient {
    * Returns the number of queries in the cache that are currently fetching, optionally
    * matching a set of filters. This includes background-fetching, loading new pages, and
    * loading more infinite query results.
-   *
    * @example
    * ```ts
    * if (queryClient.isFetching()) {
@@ -157,7 +155,6 @@ export class QueryClient {
   /**
    * Returns the number of mutations in the cache that are currently pending, optionally
    * matching a set of filters.
-   *
    * @example
    * ```ts
    * if (queryClient.isMutating()) {
@@ -177,7 +174,6 @@ export class QueryClient {
    *
    * Hint: Do not use this function inside a component, because it won't receive updates.
    * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
-   *
    * @returns The cached data for the query, or `undefined` if no query with this key has been observed yet.
    * @see {@link QueryClient#getQueriesData}
    */
@@ -233,7 +229,6 @@ export class QueryClient {
    * than being inferred. Passing a more specific type is a convenience for call sites that know
    * every matched query holds the same shape — it is not checked against the actual cache
    * contents.
-   *
    * @returns An array of query key and data pairs. The data is `undefined` for a query with no cached data.
    * @see {@link QueryClient#getQueryData}
    * @example
@@ -259,14 +254,12 @@ export class QueryClient {
    *
    * Updates must be performed immutably: do not mutate `oldData`, or data previously retrieved
    * via {@link QueryClient#getQueryData}, in place.
-   *
    * @param queryKey - The query key to set data for.
    * @param updater - Either the new data, or a function that receives the current data (which
    * may be `undefined`) and returns the new data.
    * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
    * @returns The data that was written, or `undefined` if the updater returned `undefined` — in that case
    * the write is skipped and the cache is left unchanged.
-   *
    * @example
    * ```ts
    * queryClient.setQueryData(['posts'], newPosts)
@@ -315,7 +308,6 @@ export class QueryClient {
    * filters or partial query key matching. Only queries that already exist and match the given
    * filters are updated; no new cache entries are created. Internally this calls
    * {@link QueryClient#setQueryData} for each matching query.
-   *
    * @returns One `[queryKey, data]` tuple per matched query, in the same shape and with the same
    * `undefined` case as {@link QueryClient#setQueryData}.
    * @example
@@ -349,7 +341,6 @@ export class QueryClient {
   /**
    * Imperative (non-reactive) way to retrieve an existing query's state. If the query does not
    * exist, `undefined` is returned.
-   *
    * @example
    * ```ts
    * const state = queryClient.getQueryState(['posts'])
@@ -376,7 +367,6 @@ export class QueryClient {
    * {@link QueryClient#invalidateQueries} or {@link QueryClient#refetchQueries}, this removes
    * matching queries from the cache instead of refetching them. Without filters, every query in
    * the cache is removed.
-   *
    * @example
    * ```ts
    * queryClient.removeQueries({ queryKey: ['posts'], exact: true })
@@ -397,7 +387,6 @@ export class QueryClient {
    * Resets queries matching the given filters back to their initial state (e.g. any
    * `initialData`), notifying subscribers rather than removing them. Active queries among the
    * matched set are then refetched, and the returned promise resolves once that refetch settles.
-   *
    * @example
    * ```ts
    * await queryClient.resetQueries({ queryKey: ['posts'], exact: true })
@@ -432,7 +421,6 @@ export class QueryClient {
    * reverted to its state before the outgoing fetch started.
    *
    * The returned promise never rejects, even if individual cancellations fail.
-   *
    * @example
    * ```ts
    * await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
@@ -460,7 +448,6 @@ export class QueryClient {
    * Unless `filters.refetchType` is `'none'`, matching queries are then refetched via
    * {@link QueryClient#refetchQueries}, using `filters.refetchType` if set, otherwise
    * `filters.type`, otherwise `'active'`.
-   *
    * @example
    * ```ts
    * await queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'active' })
@@ -496,7 +483,6 @@ export class QueryClient {
    * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
    * one starts. The returned promise resolves once all matching queries have settled; it does
    * not reject on individual query failures unless `throwOnError` is set.
-   *
    * @example
    * ```ts
    * // refetch all active queries partially matching a query key:
@@ -550,7 +536,6 @@ export class QueryClient {
    *
    * This method replaces the deprecated `fetchQuery`, and — combined with
    * `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
-   *
    * @example
    * ```ts
    * try {
@@ -662,7 +647,6 @@ export class QueryClient {
    *
    * This method replaces the deprecated `fetchInfiniteQuery`, and — combined with
    * `{ staleTime: 'static' }` — the deprecated `ensureInfiniteQueryData`.
-   *
    * @example
    * ```ts
    * try {
@@ -768,7 +752,6 @@ export class QueryClient {
   /**
    * Resumes mutations that were paused because there was no network connection. Does nothing
    * (resolving immediately) if the client is currently offline.
-   *
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'
@@ -786,7 +769,6 @@ export class QueryClient {
 
   /**
    * Returns the query cache this client is connected to.
-   *
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'
@@ -802,7 +784,6 @@ export class QueryClient {
 
   /**
    * Returns the mutation cache this client is connected to.
-   *
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'
@@ -819,7 +800,6 @@ export class QueryClient {
   /**
    * Returns the default options that were set when creating the client, or via
    * {@link QueryClient#setDefaultOptions}.
-   *
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'
@@ -835,7 +815,6 @@ export class QueryClient {
   /**
    * Dynamically sets the default options for this client, overwriting any previously defined
    * default options.
-   *
    * @see {@link QueryClient#getDefaultOptions}
    * @example
    * ```ts
@@ -860,7 +839,6 @@ export class QueryClient {
    * registration order by {@link QueryClient#getQueryDefaults}, so register defaults from the
    * most generic key to the least generic one — more specific defaults should be registered
    * after more generic ones so they take precedence.
-   *
    * @example
    * ```ts
    * queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
@@ -892,7 +870,6 @@ export class QueryClient {
    * Returns the default options registered for queries whose query key partially matches the
    * given `queryKey`, via {@link QueryClient#setQueryDefaults}. If multiple registered defaults
    * match, they are merged together in registration order.
-   *
    * @example
    * ```ts
    * const defaultOptions = queryClient.getQueryDefaults(['posts'])
@@ -920,7 +897,6 @@ export class QueryClient {
    * Sets default options for mutations whose mutation key partially matches the given
    * `mutationKey`. As with {@link QueryClient#setQueryDefaults}, the order of registration
    * matters when several registered defaults match the same mutation key.
-   *
    * @see {@link QueryClient#getMutationDefaults}
    * @example
    * ```ts
@@ -949,7 +925,6 @@ export class QueryClient {
    * Returns the default options registered for mutations whose mutation key partially matches
    * the given `mutationKey`, via {@link QueryClient#setMutationDefaults}. If multiple registered
    * defaults match, they are merged together in registration order.
-   *
    * @example
    * ```ts
    * const defaultOptions = queryClient.getMutationDefaults(['addPost'])
@@ -1084,7 +1059,6 @@ export class QueryClient {
 
   /**
    * Clears both the query cache and the mutation cache this client is connected to.
-   *
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'
