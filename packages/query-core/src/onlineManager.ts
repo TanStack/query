@@ -59,6 +59,8 @@ export class OnlineManager extends Subscribable<Listener> {
    * be used to determine the online state. The provided `setup` function
    * receives a `setOnline` callback that should be called with a `boolean`
    * whenever the online state changes.
+   * @param setup - Receives the `setOnline` callback, registers the event listener, and may return
+   * a cleanup function that is called when the listener is replaced or no longer needed.
    * @example
    * ```ts
    * import NetInfo from '@react-native-community/netinfo'
@@ -79,6 +81,7 @@ export class OnlineManager extends Subscribable<Listener> {
 
   /**
    * `setOnline` can be used to manually set the online state.
+   * @param online - The online state.
    * @example
    * ```ts
    * import { onlineManager } from '@tanstack/query-core'
@@ -103,6 +106,7 @@ export class OnlineManager extends Subscribable<Listener> {
 
   /**
    * `isOnline` can be used to get the current online state.
+   * @returns `true` if online.
    */
   isOnline(): boolean {
     return this.#online
