@@ -13,7 +13,12 @@ export default defineConfig([
     ...pluginJsdoc.configs['flat/recommended-typescript'],
     name: 'tanstack/query/jsdoc',
     files: ['**/src/**/*.{ts,tsx}'],
-    ignores: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.test-d.{ts,tsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/__testfixtures__/**',
+      '**/*.test.{ts,tsx}',
+      '**/*.test-d.{ts,tsx}',
+    ],
     rules: {
       ...pluginJsdoc.configs['flat/recommended-typescript'].rules,
       'jsdoc/check-tag-names': ['warn', { definedTags: ['defaultValue'] }],
