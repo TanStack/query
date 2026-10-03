@@ -292,10 +292,13 @@ export const ExhaustiveDepsUtils = {
   /**
    * Normalizes a chain by removing optional chaining operators
    *
-   * Example: `a?.b.c!` -> `a.b.c`
+   * Example: `a?.b.c!` -> `a.b.c`, `a?.[0]` -> `a[0]`
    */
   normalizeChain(text: string): string {
-    return text.replace(/(?:\?(\.)|!)/g, '$1').replace(/\s+/g, '')
+    return text
+      .replace(/\?\.(?=\s*\[)/g, '')
+      .replace(/(?:\?(\.)|!)/g, '$1')
+      .replace(/\s+/g, '')
   },
 
   /**
