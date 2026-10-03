@@ -21,13 +21,15 @@ It can be used to change the default event listeners or to manually change the f
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 
@@ -43,13 +45,15 @@ Subscribable.hasListeners
 isFocused(): boolean;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L128)
+Defined in: [packages/query-core/src/focusManager.ts:130](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L130)
 
 `isFocused` can be used to get the current focus state.
 
 #### Returns
 
 `boolean`
+
+The focus state set with `setFocused`, or otherwise whether the document is visible.
 
 ***
 
@@ -59,7 +63,7 @@ Defined in: [packages/query-core/src/focusManager.ts:128](https://github.com/Tan
 onFocus(): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L118)
+Defined in: [packages/query-core/src/focusManager.ts:119](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L119)
 
 `onFocus` notifies all subscribed listeners with the current focus state.
 
@@ -75,7 +79,7 @@ Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/Tan
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L77)
+Defined in: [packages/query-core/src/focusManager.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L78)
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the focus state. The provided `setup` function
@@ -88,6 +92,9 @@ focus state and notify subscribers.
 ##### setup
 
 `SetupFn`
+
+Receives the `setFocused` callback, registers the event listener, and may return
+a cleanup function that is called when the listener is replaced or no longer needed.
 
 #### Returns
 
@@ -120,7 +127,7 @@ focusManager.setEventListener((handleFocus) => {
 setFocused(focused?: boolean): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L107)
+Defined in: [packages/query-core/src/focusManager.ts:108](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L108)
 
 `setFocused` can be used to manually set the focus state. Set `undefined`
 to fall back to the default focus check.
@@ -130,6 +137,8 @@ to fall back to the default focus check.
 ##### focused?
 
 `boolean`
+
+The focus state, or `undefined` to use the default focus check.
 
 #### Returns
 
@@ -158,7 +167,7 @@ focusManager.setFocused(undefined)
 subscribe(listener: Listener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -173,6 +182,8 @@ on its own, though some subclasses clear all of theirs in `destroy()`.
 Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
+
+A function that removes the listener.
 
 () => `void`
 

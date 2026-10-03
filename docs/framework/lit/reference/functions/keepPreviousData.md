@@ -7,7 +7,7 @@ title: keepPreviousData
 function keepPreviousData<T>(previousData: T | undefined): T | undefined;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:499](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L499)
+Defined in: [packages/query-core/src/utils.ts:576](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L576)
 
 Intended to be passed as a query's `placeholderData` option, for example
 `placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
@@ -25,9 +25,13 @@ query key is fetching, it keeps displaying the previously fetched data until the
 
 `T` \| `undefined`
 
+The data of the previous query key, passed by the observer.
+
 ## Returns
 
 `T` \| `undefined`
+
+The previous data, unchanged.
 
 ## Example
 
