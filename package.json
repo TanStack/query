@@ -53,7 +53,7 @@
     "@changesets/cli": "^3.0.3",
     "@cspell/eslint-plugin": "^9.2.1",
     "@size-limit/preset-small-lib": "^14.0.0",
-    "@tanstack/eslint-config": "0.3.2",
+    "@tanstack/eslint-config": "0.4.0",
     "@tanstack/typedoc-config": "0.3.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
