@@ -979,11 +979,11 @@ Unlike a reactive observer, retries are disabled by default here (`retry: false`
 explicitly configured, since there is no component to catch a thrown error and retry through
 re-render.
 
-The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
-reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
-`refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
-`notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
-method's options.
+`QueryExecuteOptions` omits observer-only fields such as `enabled`, `refetchInterval`,
+`refetchIntervalInBackground`, `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`,
+`retryOnMount`, `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData`.
+Shared options can still contain these fields; this imperative method ignores them.
+In particular, `enabled: false` does not prevent a fetch.
 
 This method replaces the deprecated `fetchQuery`, and — combined with
 `{ staleTime: 'static' }` — the deprecated `ensureQueryData`.
