@@ -7,7 +7,7 @@ title: CreateBaseQueryResult
 type CreateBaseQueryResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:34](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L34)
+Defined in: [packages/svelte-query/src/types.ts:38](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L38)
 
 Result from createBaseQuery
 
