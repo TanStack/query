@@ -71,10 +71,10 @@ function isCacheEventType(eventType: NotifyEventType) {
 }
 
 /**
- * Restores persisted data to the QueryCache
- *  - data obtained from persister.restoreClient
- *  - data is hydrated using hydrateOptions
- * If data is expired, busted, empty, or throws, it runs persister.removeClient
+ * Restores persisted data to the QueryCache.
+ *  - data obtained from persister.restoreClient.
+ *  - data is hydrated using hydrateOptions.
+ * If data is expired, busted, empty, or throws, it runs persister.removeClient.
  * @param options - The `queryClient` to restore into, the `persister`, and the `maxAge`, `buster`,
  * and `hydrateOptions` that decide whether and how the persisted data is restored.
  * @returns A promise that resolves once the data is restored or removed. If restoring throws, it
@@ -119,9 +119,9 @@ export async function persistQueryClientRestore({
 }
 
 /**
- * Persists data from the QueryCache
- *  - data dehydrated using dehydrateOptions
- *  - data is persisted using persister.persistClient
+ * Persists data from the QueryCache.
+ *  - data dehydrated using dehydrateOptions.
+ *  - data is persisted using persister.persistClient.
  * @param options - The `queryClient` to persist, the `persister`, the `buster`, and the
  * `dehydrateOptions`.
  */
@@ -141,7 +141,7 @@ export async function persistQueryClientSave({
 }
 
 /**
- * Subscribe to QueryCache and MutationCache updates (for persisting)
+ * Subscribe to QueryCache and MutationCache updates (for persisting).
  * @param props - The `queryClient` to monitor, the `persister`, the `buster`, and the
  * `dehydrateOptions` used for each save.
  * @returns an unsubscribe function (to discontinue monitoring)
