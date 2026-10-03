@@ -136,4 +136,23 @@ describe('infiniteQueryOptions', () => {
       }>
     >()
   })
+
+  it('should allow optional initialData object', () => {
+    const initialData = { wow: true } as { wow: boolean } | undefined
+    const options = infiniteQueryOptions({
+      queryKey: queryKey(),
+      queryFn: () => initialData,
+      initialData: initialData
+        ? { pages: [initialData], pageParams: [] }
+        : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      | InfiniteData<{ wow: boolean } | undefined, number>
+      | (() => InfiniteData<{ wow: boolean } | undefined, number>)
+      | undefined
+    >()
+  })
 })
