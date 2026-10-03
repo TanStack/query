@@ -62,7 +62,6 @@ describe('createMutationController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
     const mutatePromise = consumer.mutation.mutateAsync(1)
@@ -141,7 +140,6 @@ describe('createMutationController', () => {
     container.append(host)
     const mutation = host.mutation
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('data: none')
 
     const resultPromise = mutation.mutateAsync(1)
@@ -200,15 +198,14 @@ describe('createMutationController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
 
     host.mutation.mutate('todo')
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.mutation().data).toBe('todo')
     expect(host.shadowRoot).toHaveTextContent('status: success, data: todo')
@@ -692,7 +689,6 @@ describe('createMutationController', () => {
       ),
       vi.advanceTimersByTimeAsync(10),
     ])
-
     expect(callbackEvents).toEqual([
       'success:1',
       'settled:1',
@@ -783,7 +779,6 @@ describe('createMutationController', () => {
     host.remove()
     await host.updateComplete
     const updatesAfterDisconnect = host.updatesRequested
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
@@ -807,7 +802,6 @@ describe('createMutationController', () => {
     expect(placeholderResult.isPaused).toBe(false)
 
     container.append(consumer)
-
     expect(() => consumer.mutation()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
@@ -843,7 +837,6 @@ describe('createMutationController', () => {
     const consumer = new Consumer()
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutation()).toThrow(/No QueryClient available/)
 
@@ -964,8 +957,8 @@ describe('createMutationController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-    provider.append(consumer)
 
+    provider.append(consumer)
     await vi.advanceTimersByTimeAsync(0)
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)

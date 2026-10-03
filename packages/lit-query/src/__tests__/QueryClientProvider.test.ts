@@ -37,7 +37,6 @@ describe('QueryClientProvider/context', () => {
 
     container.append(provider)
     await provider.updateComplete
-
     expect(useQueryClient()).toBe(queryClient)
     expect(resolveQueryClient()).toBe(queryClient)
 
@@ -59,7 +58,6 @@ describe('QueryClientProvider/context', () => {
     container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
-
     expect(useQueryClient()).toBe(queryClient)
 
     providerB.remove()
@@ -82,7 +80,6 @@ describe('QueryClientProvider/context', () => {
     container.append(providerB)
     await providerA.updateComplete
     await providerB.updateComplete
-
     expect(getDefaultQueryClient()).toBeUndefined()
     expect(() => useQueryClient()).toThrow(/Multiple QueryClients are mounted/)
     expect(() => resolveQueryClient()).toThrow(
@@ -118,7 +115,6 @@ describe('QueryClientProvider/context', () => {
 
     container.append(provider)
     await provider.updateComplete
-
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(0)
     expect(mountB).toHaveBeenCalledTimes(0)
@@ -136,7 +132,6 @@ describe('QueryClientProvider/context', () => {
 
     container.append(provider)
     await provider.updateComplete
-
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(1)
@@ -219,7 +214,6 @@ describe('QueryClientProvider/context', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.query().isSuccess).toBe(true)
     expect(mount).toHaveBeenCalledTimes(1)

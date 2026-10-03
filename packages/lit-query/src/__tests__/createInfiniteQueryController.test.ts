@@ -73,7 +73,6 @@ describe('createInfiniteQueryController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -121,7 +120,6 @@ describe('createInfiniteQueryController', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -162,10 +160,10 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const infinite = host.infinite
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
@@ -354,7 +352,6 @@ describe('createInfiniteQueryController', () => {
 
     try {
       container.append(host)
-
       await vi.advanceTimersByTimeAsync(10)
       expect(infinite().isSuccess).toBe(true)
 
@@ -364,7 +361,6 @@ describe('createInfiniteQueryController', () => {
         host.count = i
         await host.updateComplete
       }
-
       expect(host.updatesRequested).toBe(5)
       expect(infinite().data?.pages).toEqual([0])
       expect(callCount).toBe(1)
@@ -413,7 +409,6 @@ describe('createInfiniteQueryController', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       expect(infinite().data?.pages).toEqual(['stable-page'])
       await vi.advanceTimersByTimeAsync(0)
 
@@ -469,7 +464,6 @@ describe('createInfiniteQueryController', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       expect(infinite().status).toBe('success')
       await vi.advanceTimersByTimeAsync(0)
 
@@ -479,7 +473,6 @@ describe('createInfiniteQueryController', () => {
         pages: ['updated-page'],
         pageParams: [0],
       })
-
       await vi.advanceTimersByTimeAsync(0)
       expect(infinite().data?.pages).toEqual(['updated-page'])
       expect(host.updatesRequested).toBe(0)
@@ -505,9 +498,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const infinite = host.infinite
-
     await vi.advanceTimersByTimeAsync(10)
     const result = infinite()
     expect(infinite()).toBe(result)
@@ -545,9 +538,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     const infinite = host.infinite
-
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
@@ -597,9 +590,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('status: pending')
 
     host.remove()
@@ -636,9 +629,9 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
+
     container.append(host)
     await host.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('isFetching: false')
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
@@ -674,7 +667,6 @@ describe('createInfiniteQueryController', () => {
     expect(placeholderResult.status).toBe('pending')
 
     container.append(consumer)
-
     expect(() => consumer.infinite()).not.toThrow()
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.infinite()).toThrow(/No QueryClient available/)
@@ -734,7 +726,6 @@ describe('createInfiniteQueryController', () => {
       queryClient,
     )
     const infinite = host.infinite
-
     await vi.advanceTimersByTimeAsync(0)
     expect(infinite().data?.pages).toEqual([0])
     expect(queryFnCalls).toBe(0)
@@ -771,7 +762,6 @@ describe('createInfiniteQueryController', () => {
       queryClient,
     )
     const infinite = host.infinite
-
     expect(infinite().isSuccess).toBe(true)
     expect(infinite().data?.pages).toEqual([0])
     await vi.advanceTimersByTimeAsync(10)
@@ -808,7 +798,6 @@ describe('createInfiniteQueryController', () => {
     expect(host.infinite().status).toBe('pending')
 
     container.append(host)
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.infinite().data?.pages).toEqual([0])
     expect(
@@ -855,8 +844,8 @@ describe('createInfiniteQueryController', () => {
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
-    provider.append(consumer)
 
+    provider.append(consumer)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])
@@ -871,7 +860,6 @@ describe('createInfiniteQueryController', () => {
     await provider.updateComplete
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(
       clientB
@@ -938,7 +926,6 @@ describe('createInfiniteQueryController', () => {
 
     container.append(providerA)
     await providerA.updateComplete
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
@@ -957,7 +944,6 @@ describe('createInfiniteQueryController', () => {
     container.append(providerB)
     await providerB.updateComplete
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.infinite().isSuccess).toBe(true)
     expect(consumer.infinite().data?.pages).toEqual([0])

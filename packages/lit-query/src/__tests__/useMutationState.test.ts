@@ -58,7 +58,6 @@ describe('useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual([])
 
@@ -68,7 +67,6 @@ describe('useMutationState', () => {
         host.count = i
         await host.updateComplete
       }
-
       expect(host.updatesRequested).toBe(5)
       expect(mutationStates()).toEqual([])
     } finally {
@@ -108,7 +106,6 @@ describe('useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
       await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual(['idle'])
 
@@ -122,7 +119,6 @@ describe('useMutationState', () => {
         })
         await vi.advanceTimersByTimeAsync(0)
       }
-
       expect(host.updatesRequested).toBe(0)
       expect(mutationStates()).toEqual(['idle'])
     } finally {
@@ -292,10 +288,8 @@ describe('useMutationState', () => {
 
     mutation.mutate(1)
     container.append(host)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(host.shadowRoot).toHaveTextContent('pending: 1')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(host.shadowRoot).toHaveTextContent('pending: 0')
   })
@@ -381,7 +375,6 @@ describe('useMutationState', () => {
 
     container.append(provider)
     await provider.updateComplete
-
     expect(host.shadowRoot).toHaveTextContent('statuses: none')
 
     producer.mutation1.mutate()
@@ -453,7 +446,6 @@ describe('useMutationState', () => {
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationStatuses()).toEqual(['error'])
     expect(host.shadowRoot).toHaveTextContent('statuses: error')
   })
@@ -502,7 +494,6 @@ describe('useMutationState', () => {
     label = 'after'
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationLabels()).toEqual(['after'])
     expect(host.shadowRoot).toHaveTextContent('labels: after')
 
@@ -527,7 +518,6 @@ describe('useMutationState', () => {
     expect(consumer.mutationStatuses()).toEqual([])
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
     expect(() => consumer.mutationStatuses()).toThrow(
       /No QueryClient available/,
@@ -542,7 +532,6 @@ describe('useMutationState', () => {
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
-
     expect(consumer.mutationStatuses()).toEqual([])
 
     consumer.mutationStatuses.destroy()
@@ -588,7 +577,6 @@ describe('useMutationState', () => {
       queryClient,
     )
     const { mutationStatuses } = host
-
     expect(mutationStatuses()).toContain('pending')
     await vi.advanceTimersByTimeAsync(10)
     expect(mutationStatuses()).toContain('success')
