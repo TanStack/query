@@ -103,6 +103,7 @@ export class InfiniteQueryObserver<
    * `QueryObserver.setOptions`, additionally marking the options as
    * belonging to an infinite query before delegating to the base
    * implementation.
+   * @param options - The new infinite query observer options.
    */
   setOptions(
     options: InfiniteQueryObserverOptions<
@@ -122,6 +123,8 @@ export class InfiniteQueryObserver<
    * options as an infinite query before delegating to it. Called by framework adapters (e.g.
    * `useInfiniteQuery`) ahead of subscribing, to compute the current `InfiniteQueryObserverResult`
    * synchronously.
+   * @param options - The defaulted infinite query observer options to compute the result for.
+   * @returns The result for the given options.
    */
   getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<
@@ -153,6 +156,9 @@ export class InfiniteQueryObserver<
    *   await observer.fetchNextPage()
    * }
    * ```
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * and `throwOnError` to `true` to reject when the fetch fails.
+   * @returns A promise that resolves with the result after the next page is fetched.
    * @see {@link InfiniteQueryObserver#fetchPreviousPage}
    */
   fetchNextPage(
@@ -180,6 +186,9 @@ export class InfiniteQueryObserver<
    *   await observer.fetchPreviousPage()
    * }
    * ```
+   * @param options - Set `cancelRefetch` to `false` to ignore the call while a fetch is running,
+   * and `throwOnError` to `true` to reject when the fetch fails.
+   * @returns A promise that resolves with the result after the previous page is fetched.
    * @see {@link InfiniteQueryObserver#fetchNextPage}
    */
   fetchPreviousPage(
