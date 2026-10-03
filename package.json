@@ -59,7 +59,7 @@
     "@types/node": "^22.15.3",
     "@vitest/coverage-istanbul": "4.1.11",
     "@vitest/eslint-plugin": "^1.6.27",
-    "eslint": "^9.36.0",
+    "eslint": "catalog:",
     "jsdom": "^27.0.0",
     "knip": "6.38.0",
     "markdown-link-extractor": "^4.0.4",

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, noop } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
@@ -37,6 +37,10 @@ describe('createMutationController', () => {
         mutationKey: this.mutationKey,
         mutationFn: (value: number) => sleep(10).then(() => value + 1),
       })
+
+      override render() {
+        return html`status: ${this.mutation().status}`
+      }
     }
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
@@ -57,11 +61,15 @@ describe('createMutationController', () => {
 
     container.append(provider)
     await provider.updateComplete
+    await consumer.updateComplete
+
+    expect(consumer.shadowRoot).toHaveTextContent('status: idle')
 
     const mutatePromise = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
     expect(consumer.mutation().isSuccess).toBe(true)
+    expect(consumer.shadowRoot).toHaveTextContent('status: success')
 
     consumer.mutation.destroy()
     provider.remove()
@@ -114,7 +122,7 @@ describe('createMutationController', () => {
     provider.remove()
   })
 
-  it('should support mutate and mutateAsync paths', async () => {
+  it('should resolve mutateAsync with the mutation data', async () => {
     class Host extends LitElement {
       readonly mutation = createMutationController(
         this,
@@ -142,6 +150,27 @@ describe('createMutationController', () => {
     expect(mutation().isSuccess).toBe(true)
     expect(mutation().data).toBe(2)
     expect(host.shadowRoot).toHaveTextContent('data: 2')
+  })
+
+  it('should update the result when mutate succeeds', async () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 1),
+        },
+        queryClient,
+      )
+
+      override render() {
+        return html`data: ${this.mutation().data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
+    await host.updateComplete
 
     mutation.mutate(2)
     await vi.advanceTimersByTimeAsync(10)
@@ -150,7 +179,42 @@ describe('createMutationController', () => {
     expect(host.shadowRoot).toHaveTextContent('data: 3')
   })
 
-  it('should cover idle/pending/success/error mutation state transitions', async () => {
+  it('should be able to use mutation defaults', async () => {
+    const key = queryKey()
+
+    queryClient.setMutationDefaults(key, {
+      mutationFn: (text: string) => sleep(10).then(() => text),
+    })
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController<string, unknown, string>(
+        this,
+        { mutationKey: key },
+        queryClient,
+      )
+
+      override render() {
+        const { status, data } = this.mutation()
+        return html`status: ${status}, data: ${data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
+
+    host.mutation.mutate('todo')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.mutation().data).toBe('todo')
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: todo')
+  })
+
+  it('should transition from idle to pending to success', async () => {
     class Host extends LitElement {
       readonly mutation = createMutationController(
         this,
@@ -165,30 +229,71 @@ describe('createMutationController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const { status, data } = this.mutation()
+        return html`status: ${status}, data: ${data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    const mutation = host.mutation
+    await host.updateComplete
+
+    expect(mutation().isIdle).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: idle, data: none')
+
+    const successPromise = mutation.mutateAsync(10)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(mutation().isPending).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, data: none')
+    await vi.advanceTimersByTimeAsync(10)
+    await expect(successPromise).resolves.toBe(11)
+    expect(mutation().isSuccess).toBe(true)
+    expect(mutation().data).toBe(11)
+    expect(host.shadowRoot).toHaveTextContent('status: success, data: 11')
+  })
+
+  it('should transition from pending to error when the mutation fails', async () => {
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) =>
+            sleep(10).then(() => {
+              if (value < 0) {
+                throw new Error('negative-not-allowed')
+              }
+              return value + 1
+            }),
+        },
+        queryClient,
+      )
+
+      override render() {
+        const { status, error } = this.mutation()
+        return html`status: ${status}, error: ${error?.message ?? 'none'}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
     const mutation = host.mutation
 
-    expect(mutation().isIdle).toBe(true)
-
-    const successPromise = mutation.mutateAsync(10)
-    await vi.advanceTimersByTimeAsync(0)
-    expect(mutation().isPending).toBe(true)
-    await vi.advanceTimersByTimeAsync(10)
-    await expect(successPromise).resolves.toBe(11)
-    expect(mutation().isSuccess).toBe(true)
-    expect(mutation().data).toBe(11)
-
     const errorPromise = mutation
       .mutateAsync(-1)
       .catch((error: unknown) => error)
+    await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isPending).toBe(true)
+    expect(host.shadowRoot).toHaveTextContent('status: pending, error: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(await errorPromise).toEqual(new Error('negative-not-allowed'))
     expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('negative-not-allowed'))
+    expect(host.shadowRoot).toHaveTextContent(
+      'status: error, error: negative-not-allowed',
+    )
   })
 
   it('should reset mutation state back to the idle baseline', async () => {
@@ -201,6 +306,11 @@ describe('createMutationController', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const { status, error } = this.mutation()
+        return html`status: ${status}, error: ${error?.message ?? 'none'}`
+      }
     }
     customElements.define(generateElementName(), Host)
     const host = new Host()
@@ -213,13 +323,299 @@ describe('createMutationController', () => {
     ])
     expect(mutation().isError).toBe(true)
     expect(mutation().error).toEqual(new Error('reset-target'))
+    expect(host.shadowRoot).toHaveTextContent(
+      'status: error, error: reset-target',
+    )
 
     mutation.reset()
+    await vi.advanceTimersByTimeAsync(0)
     expect(mutation().isIdle).toBe(true)
     expect(mutation().isPaused).toBe(false)
     expect(mutation().isError).toBe(false)
     expect(mutation().error).toBeNull()
     expect(mutation().data).toBeUndefined()
+    expect(host.shadowRoot).toHaveTextContent('status: idle, error: none')
+  })
+
+  it('should call mutate callbacks when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutate('todo', {
+      onSuccess: () => {
+        callbacks.push('mutate.onSuccess')
+      },
+      onSettled: () => {
+        callbacks.push('mutate.onSettled')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync callbacks when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutateAsync('todo', {
+      onSuccess: () => {
+        callbacks.push('mutateAsync.onSuccess')
+      },
+      onSettled: () => {
+        callbacks.push('mutateAsync.onSettled')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual([
+      'mutateAsync.onSuccess',
+      'mutateAsync.onSettled',
+    ])
+  })
+
+  it('should call mutate error callbacks when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => {
+              throw new Error('oops')
+            }),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutate('todo', {
+      onError: () => {
+        callbacks.push('mutate.onError')
+      },
+      onSettled: () => {
+        callbacks.push('mutate.onSettled')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync error callbacks when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => {
+              throw new Error('oops')
+            }),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation
+      .mutateAsync('todo', {
+        onError: () => {
+          callbacks.push('mutateAsync.onError')
+        },
+        onSettled: () => {
+          callbacks.push('mutateAsync.onSettled')
+        },
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+  })
+
+  it('should call only mutate onSuccess when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutate('todo', {
+      onSuccess: () => {
+        callbacks.push('mutate.onSuccess')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutate.onSuccess'])
+  })
+
+  it('should call only mutate onError when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => {
+              throw new Error('oops')
+            }),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutate('todo', {
+      onError: () => {
+        callbacks.push('mutate.onError')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutate.onError'])
+  })
+
+  it('should call only mutate onSettled when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutate('todo', {
+      onSettled: () => {
+        callbacks.push('mutate.onSettled')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutate.onSettled'])
+  })
+
+  it('should call only mutateAsync onSuccess when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutateAsync('todo', {
+      onSuccess: () => {
+        callbacks.push('mutateAsync.onSuccess')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+  })
+
+  it('should call only mutateAsync onError when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (_text: string) =>
+            sleep(10).then(() => {
+              throw new Error('oops')
+            }),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation
+      .mutateAsync('todo', {
+        onError: () => {
+          callbacks.push('mutateAsync.onError')
+        },
+      })
+      .catch(noop)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutateAsync.onError'])
+  })
+
+  it('should call only mutateAsync onSettled when createMutationController has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    class Host extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (text: string) => sleep(10).then(() => text),
+        },
+        queryClient,
+      )
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+
+    host.mutation.mutateAsync('todo', {
+      onSettled: () => {
+        callbacks.push('mutateAsync.onSettled')
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(callbacks).toEqual(['mutateAsync.onSettled'])
   })
 
   it('should not throw from mutate while mutateAsync rejects on error', async () => {
@@ -355,6 +751,41 @@ describe('createMutationController', () => {
       vi.advanceTimersByTimeAsync(10),
     ])
     expect(callbackEvents.slice(2)).toEqual(['error:v2', 'settled:v2'])
+  })
+
+  it('should not process detached updates when disconnected while in-flight', async () => {
+    class Host extends LitElement {
+      updatesRequested = 0
+
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
+
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    const { mutation } = host
+
+    container.append(host)
+    await host.updateComplete
+
+    mutation.mutate(1)
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
   })
 
   it('should become a deterministic missing-client state when the provider is missing', async () => {
