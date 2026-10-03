@@ -48,7 +48,7 @@ describe('useQueries with persist and memoized combine (preact)', () => {
     vi.useRealTimers()
   })
 
-  it('updates UI when combine is memoized with persisted results', async () => {
+  it('should update UI when combine is memoized with persisted results', async () => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: {

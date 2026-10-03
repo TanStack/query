@@ -113,7 +113,7 @@ describe('Server Side Rendering', () => {
     expect(keys).toEqual([[key, 1]])
   })
 
-  it('createInfiniteQueryController should return the correct state', async () => {
+  it('should return the correct state from createInfiniteQueryController', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
 
@@ -151,7 +151,7 @@ describe('Server Side Rendering', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  it('useIsFetching should return 0 after prefetch completes', async () => {
+  it('should return 0 from useIsFetching after prefetch completes', async () => {
     const key = queryKey()
     const queryFn = () => sleep(10).then(() => 'data')
 
@@ -179,7 +179,7 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('isFetching: 0')
   })
 
-  it('createQueriesController should return existing data from the cache', async () => {
+  it('should return existing data from the cache with createQueriesController', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queryFn1 = () => sleep(10).then(() => 'data1')
@@ -218,7 +218,7 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('data2: data2')
   })
 
-  it('createMutationController should return idle status', async () => {
+  it('should return idle status from createMutationController', async () => {
     class Page extends LitElement {
       readonly mutation = createMutationController(
         this,
@@ -236,7 +236,7 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('status: idle')
   })
 
-  it('useMutationState should return empty array', async () => {
+  it('should return empty array from useMutationState', async () => {
     class Page extends LitElement {
       readonly mutationState = useMutationState(this, {}, queryClient)
 

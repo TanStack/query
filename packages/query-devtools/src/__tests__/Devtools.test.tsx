@@ -164,7 +164,7 @@ describe('Devtools', () => {
     })
   }
 
-  it('keeps measured panel widths independent', () => {
+  it('should keep measured panel widths independent', () => {
     let firstState!: ReturnType<typeof useDevtoolsState>
     let secondState!: ReturnType<typeof useDevtoolsState>
     const first = renderDevtools({ initialIsOpen: true }, {}, (state) => {
@@ -218,7 +218,7 @@ describe('Devtools', () => {
               />
             ))
       }
-      it('keeps cache notifications and cleanup independent for the same query key', () => {
+      it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
         secondClient.setQueryData(['shared-key'], 'second-data')
@@ -242,7 +242,7 @@ describe('Devtools', () => {
         secondClient.clear()
       })
 
-      it('keeps mutation selection, notifications, and cleanup independent', async () => {
+      it('should keep mutation selection, notifications, and cleanup independent', async () => {
         const secondClient = new QueryClient()
         const firstMutation = queryClient
           .getMutationCache()
@@ -281,7 +281,7 @@ describe('Devtools', () => {
         secondClient.clear()
       })
 
-      it('keeps offline indicators independent for different online managers', () => {
+      it('should keep offline indicators independent for different online managers', () => {
         const Manager =
           onlineManager.constructor as new () => typeof onlineManager
         const firstManager = new Manager()
@@ -306,7 +306,7 @@ describe('Devtools', () => {
         secondRender.unmount()
       })
 
-      it('reflects the supplied online manager in both instances', () => {
+      it('should reflect the supplied online manager in both instances', () => {
         const firstRender = mount()
         const secondRender = mount()
         const first = within(firstRender.container)
@@ -326,7 +326,7 @@ describe('Devtools', () => {
         )
       })
 
-      it('switches cache subscriptions when the client changes', () => {
+      it('should switch cache subscriptions when the client changes', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['switch-key'], 'old-client')
         secondClient.setQueryData(['switch-key'], 'new-client')
@@ -355,7 +355,7 @@ describe('Devtools', () => {
         secondClient.clear()
       })
 
-      it('keeps query selection independent between clients', () => {
+      it('should keep query selection independent between clients', () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['isolation-a'], 'a')
         secondClient.setQueryData(['isolation-b'], 'b')

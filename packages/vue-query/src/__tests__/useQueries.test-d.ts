@@ -7,7 +7,7 @@ import type { OmitKeyof, QueryObserverResult } from '..'
 import type { UseQueryOptions } from '../queryOptions'
 
 describe('UseQueries config object overload', () => {
-  it('TData should always be defined when initialData is provided as an object', () => {
+  it('should always define TData when initialData is provided as an object', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -43,7 +43,7 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(queriesState[2].data).toEqualTypeOf<string | undefined>()
   })
 
-  it('TData should be defined when passed through queryOptions', () => {
+  it('should define TData when passed through queryOptions', () => {
     const key = queryKey()
     const options = queryOptions({
       queryKey: key,
@@ -87,7 +87,7 @@ describe('UseQueries config object overload', () => {
     >()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const key = queryKey()
     const { value: queriesState } = useQueries({
       queries: [
@@ -108,7 +108,7 @@ describe('UseQueries config object overload', () => {
     >()
   })
 
-  it('TData should have correct type when conditional skipToken is passed', () => {
+  it('should have correct TData type when conditional skipToken is passed', () => {
     const key = queryKey()
     const { value: queriesState } = useQueries({
       queries: [

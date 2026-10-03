@@ -170,7 +170,7 @@ describe('queryOptions', () => {
     expectTypeOf(data2).toEqualTypeOf<Promise<number>>()
   })
 
-  it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+  it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -191,7 +191,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('TData should have undefined in the union when initialData is NOT provided', () => {
+  it('should have undefined in the TData union when initialData is NOT provided', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -209,7 +209,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -228,7 +228,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
-  it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+  it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
     const key = queryKey()
     const { data, isSuccess } = reactive(
       useQuery(
@@ -249,7 +249,7 @@ describe('queryOptions', () => {
     }
   })
 
-  it('data should not have undefined when initialData is provided', () => {
+  it('should not have undefined in data when initialData is provided', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
