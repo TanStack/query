@@ -98,7 +98,11 @@ export class QueryClientProvider extends LitElement {
     super.disconnectedCallback()
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @param changedProperties - The properties that changed. When `client` changes, the previous
+   * client is unmounted and the new one is provided and mounted.
+   */
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (!changedProperties.has('client')) {
       return
@@ -130,7 +134,10 @@ export class QueryClientProvider extends LitElement {
     }
   }
 
-  /** @internal */
+  /**
+   * @internal
+   * @returns A `<slot>` that renders the provider's children.
+   */
   render(): TemplateResult {
     return html`<slot></slot>`
   }

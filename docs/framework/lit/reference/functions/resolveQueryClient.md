@@ -7,7 +7,7 @@ title: resolveQueryClient
 function resolveQueryClient(explicit?: QueryClient): QueryClient;
 ```
 
-Defined in: [packages/lit-query/src/context.ts:113](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L113)
+Defined in: [packages/lit-query/src/context.ts:122](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L122)
 
 Resolves an explicit `QueryClient` or falls back to `useQueryClient`.
 

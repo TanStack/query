@@ -4,10 +4,10 @@ title: HydrationBoundary
 ---
 
 ```ts
-function HydrationBoundary(__namedParameters: HydrationBoundaryProps): Element;
+function HydrationBoundary(props: HydrationBoundaryProps): Element;
 ```
 
-Defined in: [packages/preact-query/src/HydrationBoundary.tsx:84](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L84)
+Defined in: [packages/preact-query/src/HydrationBoundary.tsx:86](https://github.com/TanStack/query/blob/main/packages/preact-query/src/HydrationBoundary.tsx#L86)
 
 `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by
 `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on
@@ -17,9 +17,12 @@ Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`HydrationBoundaryProps`](../interfaces/HydrationBoundaryProps.md)
+
+The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
+`queryClient`, and the `children` to render.
 
 ## Returns
 

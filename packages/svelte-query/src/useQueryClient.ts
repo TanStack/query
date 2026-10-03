@@ -6,7 +6,8 @@ import type { QueryClient } from '@tanstack/query-core'
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The current `QueryClient` instance.
- * @throws If no `queryClient` argument is passed and no `QueryClientProvider` is found in the component tree.
+ * @throws {Error} If no `queryClient` argument is passed and no `QueryClientProvider` is found in the
+ * component tree.
  * @example
  * ```svelte
  * <script lang="ts">
