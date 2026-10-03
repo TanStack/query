@@ -34,6 +34,11 @@ export interface QueryErrorResetBoundaryValue {
   reset: QueryErrorResetFunction
 }
 
+/**
+ * Creates the value shared through the boundary's context, which tracks whether a reset was
+ * requested.
+ * @returns The `clearReset`, `isReset`, and `reset` functions of the boundary.
+ */
 function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
   return {
@@ -109,6 +114,7 @@ export interface QueryErrorResetBoundaryProps {
  * When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
  * try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
  * reset any query errors within the boundaries of the component.
+ * @param props - The `children` to render.
  * @returns The `children`, rendered as-is, or called with the boundary's {@link QueryErrorResetBoundaryValue}
  * if `children` is a function.
  * @example

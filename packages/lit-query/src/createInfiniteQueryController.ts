@@ -58,6 +58,11 @@ export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns The pending result.
+ */
 function createPendingInfiniteQueryResult<
   TData,
   TError,

@@ -21,7 +21,6 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
  * @param options - The {@link UsePrefetchInfiniteQueryOptions} to use — everything you can pass to `queryClient.infiniteQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns `void` — nothing is returned.
  * @example
  * ```tsx
  * import { Suspense } from 'preact/compat'

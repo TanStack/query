@@ -67,6 +67,11 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     destroy: () => void
   }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'idle'`, with a `mutate` that
+ * rejects with the missing client error.
+ * @returns The idle result.
+ */
 function createIdleMutationResult<
   TData,
   TError,
