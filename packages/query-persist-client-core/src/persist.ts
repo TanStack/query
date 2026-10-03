@@ -7,20 +7,33 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 
+/**
+ * A value, or a promise-like that resolves to it.
+ */
 export type Promisable<T> = T | PromiseLike<T>
 
+/**
+ * Saves, restores, and removes a {@link PersistedClient} in a storage.
+ */
 export interface Persister {
   persistClient: (persistClient: PersistedClient) => Promisable<void>
   restoreClient: () => Promisable<PersistedClient | undefined>
   removeClient: () => Promisable<void>
 }
 
+/**
+ * The dehydrated state of a `QueryClient` as it is persisted, with the time it was saved and its
+ * `buster`.
+ */
 export interface PersistedClient {
   timestamp: number
   buster: string
   clientState: DehydratedState
 }
 
+/**
+ * The options shared by restoring and saving a persisted `QueryClient`.
+ */
 export interface PersistQueryClientRootOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
@@ -36,6 +49,9 @@ export interface PersistQueryClientRootOptions {
   buster?: string
 }
 
+/**
+ * Options for restoring a persisted `QueryClient` with {@link persistQueryClientRestore}.
+ */
 export interface PersistedQueryClientRestoreOptions extends PersistQueryClientRootOptions {
   /**
    * The max-allowed age of the cache in milliseconds.
@@ -47,11 +63,17 @@ export interface PersistedQueryClientRestoreOptions extends PersistQueryClientRo
   hydrateOptions?: HydrateOptions
 }
 
+/**
+ * Options for saving a `QueryClient` with {@link persistQueryClientSave}.
+ */
 export interface PersistedQueryClientSaveOptions extends PersistQueryClientRootOptions {
   /** The options passed to the dehydrate function */
   dehydrateOptions?: DehydrateOptions
 }
 
+/**
+ * Options for {@link persistQueryClient}, which both restores and saves a `QueryClient`.
+ */
 export interface PersistQueryClientOptions
   extends
     PersistedQueryClientRestoreOptions,
