@@ -8,6 +8,10 @@ import type {
   Promisable,
 } from '@tanstack/query-persist-client-core'
 
+/**
+ * Called when saving the persisted client fails. Returns, or resolves to, a smaller client to try
+ * saving again, or `undefined` to give up.
+ */
 export type AsyncPersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error

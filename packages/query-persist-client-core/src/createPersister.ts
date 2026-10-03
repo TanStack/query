@@ -13,6 +13,9 @@ import type {
   QueryState,
 } from '@tanstack/query-core'
 
+/**
+ * A single query as stored by {@link experimental_createQueryPersister}.
+ */
 export interface PersistedQuery {
   buster: string
   queryHash: string
@@ -20,8 +23,15 @@ export interface PersistedQuery {
   state: QueryState
 }
 
+/**
+ * A value, or a promise that resolves to it.
+ */
 export type MaybePromise<T> = T | Promise<T>
 
+/**
+ * A key-value storage, such as `localStorage` or `AsyncStorage`, whose methods may be synchronous
+ * or return promises.
+ */
 export interface AsyncStorage<TStorageValue = string> {
   getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
   setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
@@ -29,6 +39,9 @@ export interface AsyncStorage<TStorageValue = string> {
   entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 
+/**
+ * Options for {@link experimental_createQueryPersister}.
+ */
 export interface StoragePersisterOptions<TStorageValue = string> {
   /**
    * The storage client used for setting and retrieving items from cache.
