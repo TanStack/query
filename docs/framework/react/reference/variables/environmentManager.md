@@ -9,7 +9,7 @@ redirect_from:
 const environmentManager: object;
 ```
 
-Defined in: [packages/query-core/src/environmentManager.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L28)
+Defined in: [packages/query-core/src/environmentManager.ts:29](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L29)
 
 Manages how TanStack Query detects whether the current runtime should be treated as
 server-side, which disables scheduling refetch timers and changes the default `retry` count
