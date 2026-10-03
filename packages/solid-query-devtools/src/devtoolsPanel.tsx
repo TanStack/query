@@ -46,6 +46,11 @@ export interface DevtoolsPanelOptions {
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient(props.client)
   const client = createMemo(() => queryClient)
