@@ -7,7 +7,7 @@ import { createQueriesController } from '../createQueriesController.js'
 import { queryOptions } from '../queryOptions.js'
 import { generateElementName } from './utils.js'
 import type { QueriesResultAccessor } from '../createQueriesController.js'
-import type { QueryStatus } from '@tanstack/query-core'
+import type { QueryObserverResult, QueryStatus } from '@tanstack/query-core'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
@@ -1066,6 +1066,50 @@ describe('createQueriesController', () => {
     const host = new InvalidExplicitCombineQueriesHost()
     await vi.advanceTimersByTimeAsync(0)
     expect(() => host.queries()).toThrow('invalid combine')
+  })
+
+  it('should reuse hydrated data on an already-connected host without an eager refetch', async () => {
+    const key = queryKey()
+    let queryFnCalls = 0
+
+    queryClient.setQueryData(key, 'hydrated-value')
+
+    class Host extends LitElement {
+      queries?: QueriesResultAccessor<Array<QueryObserverResult<string>>>
+
+      override render() {
+        return html`data: ${this.queries?.()[0]?.data ?? 'none'}`
+      }
+    }
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    host.queries = createQueriesController(
+      host,
+      {
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => {
+              queryFnCalls += 1
+              return sleep(10).then(() => 'fetched-value')
+            },
+            staleTime: 30000,
+          },
+        ],
+      },
+      queryClient,
+    )
+    const queries = host.queries
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queries()[0]?.data).toBe('hydrated-value')
+    expect(queryFnCalls).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('data: hydrated-value')
+
+    queries.destroy()
   })
 
   it('should not throw for a queries controller on an already-connected host with an explicit client', async () => {
