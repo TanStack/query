@@ -13,7 +13,7 @@ import type { CreateInfiniteQueryOptions } from '../createInfiniteQueryControlle
 class Host extends LitElement {}
 
 describe('pageParam', () => {
-  it('initialPageParam should define type of param passed to queryFunctionContext', () => {
+  it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
     createInfiniteQueryController(
       new Host(),
       {
@@ -28,7 +28,7 @@ describe('pageParam', () => {
     )
   })
 
-  it('direction should be passed to queryFn of createInfiniteQueryController', () => {
+  it('should pass direction to queryFn of createInfiniteQueryController', () => {
     createInfiniteQueryController(
       new Host(),
       {

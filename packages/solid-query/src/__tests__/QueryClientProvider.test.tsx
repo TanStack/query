@@ -15,7 +15,7 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  it('sets a specific cache for all queries to use', async () => {
+  it('should set a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -46,7 +46,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
   })
 
-  it('allows multiple caches to be partitioned', async () => {
+  it('should allow multiple caches to be partitioned', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -102,7 +102,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
   })
 
-  it("uses defaultOptions for queries when they don't provide their own config", async () => {
+  it("should use defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()

@@ -255,7 +255,7 @@ describe('createQueryController', () => {
         expectTypeOf(query().data).toEqualTypeOf<boolean | undefined>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('should have undefined in the TData union when initialData is NOT provided', () => {
         const query = createQueryController(
           new Host(),
           { queryKey: queryKey(), queryFn: () => ({ wow: true }) },
@@ -265,7 +265,7 @@ describe('createQueryController', () => {
         expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
-      it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+      it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
         const query = createQueryController(
           new Host(),
           {
@@ -279,7 +279,7 @@ describe('createQueryController', () => {
         expectTypeOf(query().data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
-      it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+      it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
         const query = createQueryController(
           new Host(),
           {

@@ -875,7 +875,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleErrorMock.mockRestore()
     })
 
-    it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
+    it('should retry fetch with suspense if the reset error boundary has been reset', async () => {
       const key = queryKey()
       const consoleErrorMock = vi
         .spyOn(console, 'error')
