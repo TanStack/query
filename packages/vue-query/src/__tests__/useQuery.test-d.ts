@@ -238,7 +238,7 @@ describe('useQuery', () => {
   })
 
   describe('Discriminated union return type', () => {
-    it('data should be possibly undefined by default', () => {
+    it('should have possibly undefined data by default', () => {
       const key = queryKey()
 
       const query = reactive(
@@ -251,7 +251,7 @@ describe('useQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<string | undefined>()
     })
 
-    it('data should be defined when query is success', () => {
+    it('should have defined data when query is success', () => {
       const key = queryKey()
 
       const query = reactive(
@@ -266,7 +266,7 @@ describe('useQuery', () => {
       }
     })
 
-    it('error should be null when query is success', () => {
+    it('should have null error when query is success', () => {
       const key = queryKey()
 
       const query = reactive(
@@ -281,7 +281,7 @@ describe('useQuery', () => {
       }
     })
 
-    it('data should be undefined when query is pending', () => {
+    it('should have undefined data when query is pending', () => {
       const key = queryKey()
 
       const query = reactive(
@@ -296,7 +296,7 @@ describe('useQuery', () => {
       }
     })
 
-    it('error should be defined when query is error', () => {
+    it('should have defined error when query is error', () => {
       const key = queryKey()
 
       const query = reactive(
@@ -311,7 +311,7 @@ describe('useQuery', () => {
       }
     })
 
-    it('data should be a union of refs without reactive()', () => {
+    it('should have data as a union of refs without reactive()', () => {
       const key = queryKey()
 
       const query = useQuery({
@@ -322,7 +322,7 @@ describe('useQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<Ref<string> | Ref<undefined>>()
     })
 
-    it('data.value should narrow on an undefined check without reactive()', () => {
+    it('should narrow data.value on an undefined check without reactive()', () => {
       const key = queryKey()
 
       const { data } = useQuery({

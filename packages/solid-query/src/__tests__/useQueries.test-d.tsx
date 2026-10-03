@@ -14,7 +14,7 @@ import type {
 import type { QueryOptions } from '../types'
 
 describe('useQueries', () => {
-  it('TData should have undefined in the union even when initialData is provided as an object', () => {
+  it('should have undefined in the TData union even when initialData is provided as an object', () => {
     const query1 = {
       queryKey: queryKey(),
       queryFn: () => {

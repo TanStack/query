@@ -296,7 +296,7 @@ describe('injectQuery', () => {
   })
 
   describe('Discriminated union return type', () => {
-    it('data should be possibly undefined by default', () => {
+    it('should have possibly undefined data by default', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -306,7 +306,7 @@ describe('injectQuery', () => {
       expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
     })
 
-    it('data should be defined when query is success', () => {
+    it('should have defined data when query is success', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -318,7 +318,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('error should be null when query is success', () => {
+    it('should have null error when query is success', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -330,7 +330,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('data should be undefined when query is pending', () => {
+    it('should have undefined data when query is pending', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,
@@ -342,7 +342,7 @@ describe('injectQuery', () => {
       }
     })
 
-    it('error should be defined when query is error', () => {
+    it('should have defined error when query is error', () => {
       const key = queryKey()
       const query = injectQuery(() => ({
         queryKey: key,

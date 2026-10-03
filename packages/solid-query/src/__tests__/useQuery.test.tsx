@@ -3213,7 +3213,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/TanStack/query/issues/7711
-  it('race condition: should cleanup observers after component that created the query is unmounted #1', async () => {
+  it('should cleanup observers after component that created the query is unmounted in race condition #1', async () => {
     const key = queryKey()
 
     function Component() {
@@ -3273,7 +3273,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/TanStack/query/issues/7711
-  it('race condition: should cleanup observers after component that created the query is unmounted #2', async () => {
+  it('should cleanup observers after component that created the query is unmounted in race condition #2', async () => {
     const key = queryKey()
 
     function Component() {
@@ -4084,7 +4084,7 @@ describe('useQuery', () => {
     expect(states).toHaveLength(1)
   })
 
-  it('The reconcile fn callback should correctly maintain referential equality', async () => {
+  it('should correctly maintain referential equality in the reconcile fn callback', async () => {
     const key1 = queryKey()
     const states: Array<Array<number>> = []
 

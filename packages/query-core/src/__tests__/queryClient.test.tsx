@@ -611,7 +611,7 @@ describe('queryClient', () => {
       expect(queryFn).not.toHaveBeenCalled()
     })
 
-    it('supports manual background revalidation via a second query call', async () => {
+    it('should support manual background revalidation via a second query call', async () => {
       const key = queryKey()
       let value = 'data-1'
       const queryFn = vi.fn(() => Promise.resolve(value))

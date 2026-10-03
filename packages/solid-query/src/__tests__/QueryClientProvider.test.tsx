@@ -177,7 +177,7 @@ describe('QueryClientProvider', () => {
     consoleErrorMock.mockRestore()
   })
 
-  it('creates a query client resolver that is safe to call in reactive callbacks', () => {
+  it('should create a query client resolver that is safe to call in reactive callbacks', () => {
     const queryClient = new QueryClient()
     let resolveClient!: () => QueryClient
 
@@ -200,7 +200,7 @@ describe('QueryClientProvider', () => {
     })
   })
 
-  it('defers missing provider errors until a resolver is called', () => {
+  it('should defer missing provider errors until a resolver is called', () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
