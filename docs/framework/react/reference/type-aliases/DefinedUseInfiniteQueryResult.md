@@ -7,7 +7,7 @@ title: DefinedUseInfiniteQueryResult
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:378](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L378)
+Defined in: [packages/react-query/src/types.ts:363](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L363)
 
 The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
 `select` changes `TData` to include `undefined`). Re-exports [DefinedInfiniteQueryObserverResult](DefinedInfiniteQueryObserverResult.md)

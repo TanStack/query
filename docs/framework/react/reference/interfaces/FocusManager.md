@@ -46,7 +46,7 @@ Subscribable.hasListeners
 isFocused(): boolean;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:128](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L128)
+Defined in: [packages/query-core/src/focusManager.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L126)
 
 `isFocused` can be used to get the current focus state.
 
@@ -62,7 +62,7 @@ Defined in: [packages/query-core/src/focusManager.ts:128](https://github.com/Tan
 onFocus(): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L118)
+Defined in: [packages/query-core/src/focusManager.ts:116](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L116)
 
 `onFocus` notifies all subscribed listeners with the current focus state.
 
@@ -78,7 +78,7 @@ Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/Tan
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L77)
+Defined in: [packages/query-core/src/focusManager.ts:76](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L76)
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the focus state. The provided `setup` function
@@ -123,7 +123,7 @@ focusManager.setEventListener((handleFocus) => {
 setFocused(focused?: boolean): void;
 ```
 
-Defined in: [packages/query-core/src/focusManager.ts:107](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L107)
+Defined in: [packages/query-core/src/focusManager.ts:105](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L105)
 
 `setFocused` can be used to manually set the focus state. Set `undefined`
 to fall back to the default focus check.
