@@ -10,7 +10,6 @@ import { defineConfig } from 'eslint/config'
 export default defineConfig([
   ...tanstackConfig,
   {
-    ...pluginJsdoc.configs['flat/recommended-typescript'],
     name: 'tanstack/query/jsdoc',
     files: ['**/src/**/*.{ts,tsx}'],
     ignores: [
@@ -19,8 +18,8 @@ export default defineConfig([
       '**/*.test.{ts,tsx}',
       '**/*.test-d.{ts,tsx}',
     ],
+    extends: [pluginJsdoc.configs['flat/recommended-typescript']],
     rules: {
-      ...pluginJsdoc.configs['flat/recommended-typescript'].rules,
       'jsdoc/check-tag-names': ['error', { definedTags: ['defaultValue'] }],
       'jsdoc/check-param-names': ['error', { checkDestructured: false }],
       'jsdoc/empty-tags': 'error',
