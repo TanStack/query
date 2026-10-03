@@ -34,6 +34,7 @@ export default defineConfig([
       'jsdoc/require-throws': 'error',
       'jsdoc/require-throws-description': 'error',
       'jsdoc/require-yields-description': 'error',
+      'jsdoc/sort-tags': 'error',
     },
   },
   {
