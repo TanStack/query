@@ -2806,6 +2806,9 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@lit-labs/ssr':
+        specifier: ^3.3.1
+        version: 3.3.1
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
