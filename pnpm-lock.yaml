@@ -209,6 +209,9 @@ catalogs:
     '@typescript-eslint/parser':
       specifier: ^8.71.0
       version: 8.71.0
+    '@typescript-eslint/rule-tester':
+      specifier: ^8.71.0
+      version: 8.71.0
     '@vitejs/plugin-react':
       specifier: ^6.1.1
       version: 6.1.1
@@ -2782,7 +2785,7 @@ importers:
         specifier: 'catalog:'
         version: 8.71.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       '@typescript-eslint/rule-tester':
-        specifier: ^8.71.0
+        specifier: 'catalog:'
         version: 8.71.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       combinate:
         specifier: ^1.1.11
