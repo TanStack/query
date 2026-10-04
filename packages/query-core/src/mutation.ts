@@ -105,6 +105,10 @@ interface ContinueAction {
   type: 'continue'
 }
 
+/**
+ * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
+ * succeeds.
+ */
 export type Action<TData, TError, TVariables, TOnMutateResult> =
   | ContinueAction
   | ErrorAction<TError>

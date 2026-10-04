@@ -102,6 +102,10 @@ export interface MutationFilters<
  */
 export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
 
+/**
+ * Which queries a filter matches: all of them, only active ones (with enabled observers), or only
+ * inactive ones.
+ */
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
