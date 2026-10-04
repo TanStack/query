@@ -3,7 +3,7 @@ id: MutationObserverBaseResult
 title: MutationObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:2079](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2079)
+Defined in: [packages/query-core/src/types.ts:2086](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2086)
 
 The properties shared by every state of a mutation result, like `data`, `error`, `variables`,
 `status`, the `is*` flags, `mutate`, and `reset`.
