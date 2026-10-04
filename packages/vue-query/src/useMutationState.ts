@@ -20,6 +20,10 @@ import type { MutationCache } from './mutationCache'
 
 type VueMutationFilters = MaybeRefDeep<MutationFilters>
 
+/**
+ * The filters accepted by `useIsMutating`: {@link MutationFilters} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseIsMutatingFilters =
   VueMutationFilters | (() => VueMutationFilters)
 
@@ -29,12 +33,10 @@ export type UseIsMutatingFilters =
  *
  * `filters` may be a plain object, `MaybeRefDeep`, or a reactive getter (`() => ({ ... })`) — pass a getter if
  * the filters themselves depend on other reactive state.
- *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to the `number` of the mutations that your application currently has `pending`.
- *
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -88,15 +90,32 @@ type MutationTypeFromResult<TResult> = [TResult] extends [
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation
 
+/**
+ * The options accepted by `useMutationState`: the `filters` matching the mutations, and `select` to map each
+ * one (to its state, by default).
+ */
 export type MutationStateOptions<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
     MutationTypeFromResult<TResult>,
 > = {
+  /**
+   * The filters that select the mutations to return the state of.
+   */
   filters?: VueMutationFilters
+  /**
+   * Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`.
+   */
   select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
@@ -122,13 +141,11 @@ function getResult<
  *
  * `options` may be a plain object or a reactive getter (`() => ({ ... })`) — pass a getter if the filters
  * themselves depend on other reactive state.
- *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @returns A `ref` to an Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```vue
@@ -143,7 +160,6 @@ function getResult<
  *
  * <template>{{ pendingVariables.length }} posts saving...</template>
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```vue
@@ -171,7 +187,6 @@ function getResult<
  *   </button>
  * </template>
  * ```
- *
  * @example
  * Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
  * entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the

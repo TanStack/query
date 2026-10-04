@@ -66,7 +66,6 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
-
     expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
@@ -107,7 +106,6 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
-
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -151,7 +149,6 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
-
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -224,7 +221,6 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
 
     setClient(queryClient2)
-
     expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
@@ -234,10 +230,8 @@ describe('useIsMutating', () => {
     const secondMutationPromise = secondMutation.execute(undefined)
 
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(20)
     await Promise.all([firstMutationPromise, secondMutationPromise])
-
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
@@ -246,7 +240,7 @@ describe('useIsMutating', () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

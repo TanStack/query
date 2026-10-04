@@ -25,13 +25,15 @@ detect changes.
 hasListeners(): boolean;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L41)
+Defined in: [packages/query-core/src/subscribable.ts:43](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L43)
 
 Returns `true` while at least one listener is registered, `false` once they have all unsubscribed.
 
 #### Returns
 
 `boolean`
+
+`true` if at least one listener is registered.
 
 #### Inherited from
 
@@ -47,13 +49,15 @@ Subscribable.hasListeners
 isOnline(): boolean;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L109)
+Defined in: [packages/query-core/src/onlineManager.ts:111](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L111)
 
 `isOnline` can be used to get the current online state.
 
 #### Returns
 
 `boolean`
+
+`true` if online.
 
 ***
 
@@ -63,7 +67,7 @@ Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/Ta
 setEventListener(setup: SetupFn): void;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L75)
+Defined in: [packages/query-core/src/onlineManager.ts:76](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L76)
 
 `setEventListener` can be used to set a custom event listener that will
 be used to determine the online state. The provided `setup` function
@@ -75,6 +79,9 @@ whenever the online state changes.
 ##### setup
 
 `SetupFn`
+
+Receives the `setOnline` callback, registers the event listener, and may return
+a cleanup function that is called when the listener is replaced or no longer needed.
 
 #### Returns
 
@@ -101,7 +108,7 @@ onlineManager.setEventListener((setOnline) => {
 setOnline(online: boolean): void;
 ```
 
-Defined in: [packages/query-core/src/onlineManager.ts:95](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L95)
+Defined in: [packages/query-core/src/onlineManager.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L96)
 
 `setOnline` can be used to manually set the online state.
 
@@ -110,6 +117,8 @@ Defined in: [packages/query-core/src/onlineManager.ts:95](https://github.com/Tan
 ##### online
 
 `boolean`
+
+The online state.
 
 #### Returns
 
@@ -135,7 +144,7 @@ onlineManager.setOnline(false)
 subscribe(listener: Listener): () => void;
 ```
 
-Defined in: [packages/query-core/src/subscribable.ts:27](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L27)
+Defined in: [packages/query-core/src/subscribable.ts:28](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L28)
 
 Registers a listener to be called on every update this object notifies about. Returns a function
 that removes the listener again — call it to stop listening. The base class never drops a listener
@@ -150,6 +159,8 @@ on its own, though some subclasses clear all of theirs in `destroy()`.
 Called on each update, with whatever the subclass passes to its subscribers.
 
 #### Returns
+
+A function that removes the listener.
 
 ```ts
 (): void;

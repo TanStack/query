@@ -462,7 +462,6 @@ describe('PiPContext', () => {
 
         gooberStyle.textContent = '.next { color: blue; }'
         fire()
-
         expect(pipGooberStyle.textContent).toBe('.next { color: blue; }')
       } finally {
         gooberStyle.remove()

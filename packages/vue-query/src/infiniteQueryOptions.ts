@@ -11,7 +11,6 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
  * be `undefined` — `data` may be `undefined` while the query is `pending`.
- *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -43,7 +42,6 @@ export type UndefinedInitialDataInfiniteOptions<
 /**
  * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
  * defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
- *
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -83,12 +81,10 @@ export type DefinedInitialDataInfiniteOptions<
  *
  * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
  * `undefined` (unless a `select` changes `TData` to include `undefined`).
- *
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -135,12 +131,10 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
  * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
  * `options.queryKey` is required and is the query key to generate options for.
- *
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link useInfiniteQuery} to run an infinite query with these options.
  * @example
  * ```vue
  * <script setup lang="ts">

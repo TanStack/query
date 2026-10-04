@@ -11,7 +11,7 @@ redirect_from:
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:120](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L120)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:127](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L127)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -109,7 +109,7 @@ const { data, isError, error } = useInfiniteQuery({
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:254](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L254)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:258](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L258)
 
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
@@ -272,7 +272,7 @@ onUnmounted(() => observer?.disconnect())
 function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefOrGetter<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>, queryClient?: QueryClient): UseInfiniteQueryReturnType<TData, TError>;
 ```
 
-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:350](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L350)
+Defined in: [packages/vue-query/src/useInfiniteQuery.ts:351](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L351)
 
 Fallback overload for options whose `initialData` presence isn't statically known — for example, a
 `ref`/reactive object built up conditionally, rather than a plain object literal. Prefer one of the other

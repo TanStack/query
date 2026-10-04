@@ -122,7 +122,6 @@ describe('usePrefetchInfiniteQuery', () => {
 
     keyRef.value = 'second'
     await nextTick()
-
     expect(infiniteQuerySpy).toHaveBeenCalledTimes(2)
     expect(infiniteQuerySpy).toHaveBeenNthCalledWith(2, {
       queryKey: [...key, 'second'],

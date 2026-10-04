@@ -3,7 +3,10 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:276](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L276)
+Defined in: [packages/query-core/src/types.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L350)
+
+The options of a query itself — its `queryKey`, `queryFn`, retries, `gcTime`, `initialData`,
+`meta`, and so on — shared by observers and the `QueryClient` methods that fetch queries.
 
 ## Type Parameters
 

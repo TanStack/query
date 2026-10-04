@@ -1,8 +1,9 @@
 // @ts-check
 
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   {
     rules: {
@@ -22,4 +23,4 @@ export default [
       'no-restricted-syntax': 'off',
     },
   },
-]
+])

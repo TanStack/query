@@ -102,7 +102,6 @@ describe('useSuspenseQueries', () => {
     )
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
-
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
   })
@@ -181,7 +180,6 @@ describe('useSuspenseQueries', () => {
     )
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
-
     expect(onSuspend).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
@@ -232,7 +230,6 @@ describe('useSuspenseQueries', () => {
     )
 
     await act(() => vi.advanceTimersByTimeAsync(1000))
-
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
@@ -267,7 +264,6 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
     expect(spy).not.toHaveBeenCalled()
-
     await act(() => vi.advanceTimersByTimeAsync(30))
     expect(rendered.getByText('data')).toBeInTheDocument()
 
@@ -322,7 +318,6 @@ describe('useSuspenseQueries', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: DATA')).toBeInTheDocument()
 
@@ -331,7 +326,6 @@ describe('useSuspenseQueries', () => {
     expect(() => {
       fireEvent.click(rendered.getByText('reset'))
     }).not.toThrow()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
@@ -396,12 +390,9 @@ describe('useSuspenseQueries', () => {
     )
 
     await act(() => vi.advanceTimersByTimeAsync(localDuration))
-
     expect(onSuspend).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
-
     await vi.advanceTimersByTimeAsync(100)
-
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith({
       data: 'John Doe',
@@ -466,7 +457,7 @@ describe('useSuspenseQueries', () => {
     expect(results).toEqual(['loading', '1', '2'])
   })
 
-  it("shouldn't unmount before all promises fetched", async () => {
+  it('should not unmount before all promises fetched', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const results: Array<string> = []
@@ -478,7 +469,6 @@ describe('useSuspenseQueries', () => {
     }
 
     function Page() {
-      // eslint-disable-next-line react-hooks/purity
       const ref = React.useRef(Math.random())
       const result = useSuspenseQueries({
         queries: [
@@ -518,7 +508,6 @@ describe('useSuspenseQueries', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(20))
     expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
 
@@ -607,7 +596,6 @@ describe('useSuspenseQueries', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     consoleErrorMock.mockRestore()
@@ -922,7 +910,6 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: key,
             // @ts-expect-error
-            // eslint-disable-next-line react-hooks/purity
             queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
           },
         ],
@@ -1056,7 +1043,6 @@ describe('useSuspenseQueries', () => {
 
     // key2 resolves: suspend lifts, key1 shows cached data, key2 shows fresh data
     await act(() => vi.advanceTimersByTimeAsync(1000))
-
     expect(rendered.getByText('data1: cached')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
@@ -1065,7 +1051,6 @@ describe('useSuspenseQueries', () => {
 
     // key1 background refetch completes: key1 updates to fresh data
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
@@ -1109,7 +1094,6 @@ describe('useSuspenseQueries', () => {
 
     // key1 resolves: suspend lifts, key1 shows fresh data, key2 shows cached data
     await act(() => vi.advanceTimersByTimeAsync(2000))
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached')).toBeInTheDocument()
 
@@ -1118,7 +1102,6 @@ describe('useSuspenseQueries', () => {
 
     // key2 background refetch completes: key2 updates to fresh data
     await vi.advanceTimersByTimeAsync(1000)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
@@ -1224,7 +1207,6 @@ describe('useSuspenseQueries', () => {
 
     // key2 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
@@ -1233,7 +1215,6 @@ describe('useSuspenseQueries', () => {
 
     // after key2 refetch completes, key1 is still fresh with no refetch triggered
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
     expect(queryFn1).toHaveBeenCalledTimes(0)
@@ -1292,7 +1273,6 @@ describe('useSuspenseQueries', () => {
 
     // key1 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
 
@@ -1301,7 +1281,6 @@ describe('useSuspenseQueries', () => {
 
     // after key1 refetch completes, key2 is still fresh with no refetch triggered
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
     expect(queryFn2).toHaveBeenCalledTimes(0)
@@ -1352,13 +1331,11 @@ describe('useSuspenseQueries', () => {
 
     // key2 background refetch completes
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
 
     // key1 background refetch completes
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })

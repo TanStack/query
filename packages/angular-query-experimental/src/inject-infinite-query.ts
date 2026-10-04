@@ -22,6 +22,10 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
 
+/**
+ * Options for `injectInfiniteQuery`, passed after the function that returns the infinite
+ * query options.
+ */
 export interface InjectInfiniteQueryOptions {
   /**
    * The `Injector` in which to create the infinite query.
@@ -39,12 +43,6 @@ export interface InjectInfiniteQueryOptions {
  * This overload is selected when `initialData` is known to be defined on the options returned by
  * `injectInfiniteQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
  * `TData` to include `undefined`).
- *
- * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
- * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
- * actions, or add conditions like `hasNextPage() && !isFetching()`.
- * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.fetchInfiniteQuery`.
  * @param injectInfiniteQueryFn - A function returning the {@link DefinedInitialDataInfiniteOptions} to use —
  * everything you can pass to `injectInfiniteQuery`, with `initialData` set. Similar to `computed` from
  * Angular, this function runs in the reactive context, so signals read inside it drive the query.
@@ -53,7 +51,11 @@ export interface InjectInfiniteQueryOptions {
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data().pages` and
  * `data().pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
- *
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage() && !isFetching()`.
+ * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
+ * like `queryClient.fetchInfiniteQuery`.
  * @example
  * ```angular-ts
  * @Component({
@@ -102,13 +104,6 @@ export function injectInfiniteQuery<
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a
  * unique key. Infinite queries can additively "load more" data onto an existing set of data, or
  * "infinite scroll".
- *
- * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
- * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
- * actions, or add conditions like `hasNextPage() && !isFetching()`. This is the only overload that accepts
- * `queryFn: skipToken`, shown below.
- * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.fetchInfiniteQuery`.
  * @param injectInfiniteQueryFn - A function returning the {@link UndefinedInitialDataInfiniteOptions} to use
  * — everything you can pass to `injectInfiniteQuery`. Similar to `computed` from Angular, this function runs
  * in the reactive context, so signals read inside it drive the query.
@@ -117,7 +112,12 @@ export function injectInfiniteQuery<
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data().pages` and
  * `data().pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
- *
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage() && !isFetching()`. This is the only overload that accepts
+ * `queryFn: skipToken`, shown below.
+ * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
+ * like `queryClient.fetchInfiniteQuery`.
  * @example
  * Fetching the next page from a button click:
  * ```angular-ts
@@ -148,7 +148,6 @@ export function injectInfiniteQuery<
  *   }))
  * }
  * ```
- *
  * @example
  * Fetching the next page automatically as the user scrolls, using an `IntersectionObserver` on a sentinel
  * element after the list:
@@ -197,7 +196,6 @@ export function injectInfiniteQuery<
  *   }
  * }
  * ```
- *
  * @example
  * A query that's disabled, type safe, until `postId` is set — pass `skipToken` as `queryFn` instead of
  * setting `enabled: false`:
@@ -259,7 +257,6 @@ export function injectInfiniteQuery<
  * `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site —
  * useful when wrapping `injectInfiniteQuery` in your own helper function that forwards caller-provided
  * options.
- *
  * @param injectInfiniteQueryFn - A function that returns infinite query options. Similar to `computed` from
  * Angular, this function runs in the reactive context, so signals read inside it drive the query.
  * @param options - Additional configuration.

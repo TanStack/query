@@ -3,7 +3,10 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1271](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1271)
+Defined in: [packages/query-core/src/types.ts:1874](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1874)
+
+The options of a mutation: its `mutationFn`, `mutationKey`, callbacks, retries, `scope`, and so
+on.
 
 ## Extended by
 

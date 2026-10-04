@@ -7,7 +7,7 @@ title: QueriesResultAccessor
 type QueriesResultAccessor<TCombinedResult> = ValueAccessor<TCombinedResult> & object;
 ```
 
-Defined in: [packages/lit-query/src/createQueriesController.ts:218](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L218)
+Defined in: [packages/lit-query/src/createQueriesController.ts:213](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L213)
 
 Accessor returned by `createQueriesController`.
 

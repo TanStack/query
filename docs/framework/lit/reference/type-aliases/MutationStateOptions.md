@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult> = object;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:20](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L20)
+Defined in: [packages/lit-query/src/useMutationState.ts:16](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L16)
 
 Options accepted by `useMutationState`.
 

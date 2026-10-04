@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<
     this.state = initialState
   }
 
-  static getDerivedStateFromError(error: Error) {
+  static override getDerivedStateFromError(error: Error) {
     return { didCatch: true, error }
   }
 
@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<
     }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  override componentDidCatch(error: Error, info: ErrorInfo) {
     /**
      * To emulate the react behavior of console.error
      * we add one here to show that the errors bubble up
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<
     this.props.onError?.(error, info)
   }
 
-  componentDidUpdate(
+  override componentDidUpdate(
     prevProps: ErrorBoundaryProps,
     prevState: ErrorBoundaryState,
   ) {
