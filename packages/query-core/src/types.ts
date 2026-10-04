@@ -648,8 +648,9 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 
   /**
-   * Internal flag to indicate this query is pending hydration.
-   * When true, the observer will skip fetching on mount unless refetchOnMount is 'always'.
+   * Whether this query is pending hydration. When `true`, the observer skips fetching on mount unless
+   * `refetchOnMount` is `'always'`.
+   * @internal
    */
   _isHydrating?: boolean
 }

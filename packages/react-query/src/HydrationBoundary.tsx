@@ -106,6 +106,10 @@ export interface HydrationBoundaryProps {
  * update timestamp.
  *
  * Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
+ *
+ * Queries being hydrated don't refetch on mount while their data is still fresh (within `staleTime`). If the
+ * hydrated data is stale (e.g. from cached markup), they refetch as usual. Set `refetchOnMount` to `'always'`
+ * to always refetch.
  * @param props - The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
  * `queryClient`, and the `children` to render.
  * @returns The provided `children`, rendered unconditionally. New queries in `state` are hydrated into the
