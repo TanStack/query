@@ -5,6 +5,9 @@ import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/preact-query'
 import type { CSSProperties, VNode } from 'preact'
 
+/**
+ * The props of `PreactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Use this to provide a custom QueryClient. Otherwise, the one from the

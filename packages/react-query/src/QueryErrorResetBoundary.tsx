@@ -2,10 +2,26 @@
 import * as React from 'react'
 
 // CONTEXT
+
+/**
+ * Resets any query errors within the boundary, so queries know they can try again.
+ */
 export type QueryErrorResetFunction = () => void
+
+/**
+ * Returns whether the boundary has been reset and not yet cleared.
+ */
 export type QueryErrorIsResetFunction = () => boolean
+
+/**
+ * Clears the reset state, so queries know not to try again until the boundary is reset again.
+ */
 export type QueryErrorClearResetFunction = () => void
 
+/**
+ * The value a `QueryErrorResetBoundary` shares through context, used to reset query errors within
+ * it and to check whether a reset was requested.
+ */
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
   isReset: QueryErrorIsResetFunction
