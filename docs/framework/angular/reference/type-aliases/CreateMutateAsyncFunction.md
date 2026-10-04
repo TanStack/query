@@ -7,7 +7,7 @@ title: CreateMutateAsyncFunction
 type CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> = MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:254](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L254)
+Defined in: [packages/angular-query-experimental/src/types.ts:255](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L255)
 
 The type of `mutateAsync`, as returned by `injectMutation`. Similar to [CreateMutateFunction](CreateMutateFunction.md), but
 returns a promise which can be awaited.
