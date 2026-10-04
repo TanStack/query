@@ -3,7 +3,7 @@ id: CreateBaseQueryOptions
 title: CreateBaseQueryOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:34](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L34)
+Defined in: [packages/angular-query-experimental/src/types.ts:33](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L33)
 
 The options shared across `angular-query-experimental`'s query functions. Extends
 [QueryObserverOptions](QueryObserverOptions.md) from `@tanstack/query-core` as-is — unlike `react-query`,

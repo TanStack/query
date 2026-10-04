@@ -3,7 +3,7 @@ import { LitElement } from 'lit'
 import { QueryClient } from '@tanstack/query-core'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { BaseController } from '../controllers/BaseController.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 import type { ReactiveControllerHost } from 'lit'
 
 const providerTagName = generateElementName()
@@ -60,14 +60,12 @@ describe('BaseController', () => {
     customElements.define(generateElementName(), Host)
     const host = new Host()
     provider.append(host)
-
     container.append(provider)
     await provider.updateComplete
     await host.updateComplete
 
     const controller = new RecordingController(host)
-    await Promise.resolve()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(controller.lifecycle).toEqual([
       'connected:missing',
       'changed:client',
@@ -75,6 +73,28 @@ describe('BaseController', () => {
 
     controller.destroy()
     provider.remove()
-    await Promise.resolve()
+  })
+
+  it('should resolve to a missing client without throwing when the host cannot dispatch events', async () => {
+    const host: ReactiveControllerHost = {
+      addController: () => {},
+      removeController: () => {},
+      requestUpdate: () => {},
+      updateComplete: Promise.resolve(true),
+    }
+
+    const controller = new RecordingController(host)
+    controller.hostConnected()
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(controller.lifecycle).toEqual([
+      'connected:missing',
+      'changed:missing',
+    ])
+    expect(() => controller.current).toThrow(
+      'No QueryClient available. Pass one explicitly or render within QueryClientProvider.',
+    )
+
+    controller.destroy()
   })
 })

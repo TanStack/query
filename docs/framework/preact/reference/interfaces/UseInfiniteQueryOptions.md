@@ -3,7 +3,7 @@ id: UseInfiniteQueryOptions
 title: UseInfiniteQueryOptions
 ---
 
-Defined in: [packages/preact-query/src/types.ts:237](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L237)
+Defined in: [packages/preact-query/src/types.ts:230](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L230)
 
 The options accepted by `useInfiniteQuery`. Extends [InfiniteQueryObserverOptions](InfiniteQueryObserverOptions.md) from
 `@tanstack/query-core` with the `preact-query`-specific `subscribed` option, minus `suspense` (which

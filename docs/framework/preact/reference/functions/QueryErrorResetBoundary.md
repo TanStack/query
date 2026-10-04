@@ -4,10 +4,10 @@ title: QueryErrorResetBoundary
 ---
 
 ```ts
-function QueryErrorResetBoundary(__namedParameters: QueryErrorResetBoundaryProps): Element;
+function QueryErrorResetBoundary(props: QueryErrorResetBoundaryProps): Element;
 ```
 
-Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L159)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L164)
 
 When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
 try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
@@ -15,9 +15,11 @@ reset any query errors within the boundaries of the component.
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`QueryErrorResetBoundaryProps`](../interfaces/QueryErrorResetBoundaryProps.md)
+
+The `children` to render.
 
 ## Returns
 

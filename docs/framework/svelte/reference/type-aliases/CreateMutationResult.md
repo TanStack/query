@@ -7,7 +7,7 @@ title: CreateMutationResult
 type CreateMutationResult<TData, TError, TVariables, TOnMutateResult> = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L139)
+Defined in: [packages/svelte-query/src/types.ts:157](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L157)
 
 Result from createMutation
 

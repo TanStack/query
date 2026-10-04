@@ -42,7 +42,7 @@ function getMockStorage(limitSize?: number) {
 }
 
 describe('create persister', () => {
-  it('basic store and recover', async () => {
+  it('should store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })

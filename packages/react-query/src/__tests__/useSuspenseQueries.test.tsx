@@ -457,7 +457,7 @@ describe('useSuspenseQueries', () => {
     expect(results).toEqual(['loading', '1', '2'])
   })
 
-  it("shouldn't unmount before all promises fetched", async () => {
+  it('should not unmount before all promises fetched', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const results: Array<string> = []
@@ -469,7 +469,6 @@ describe('useSuspenseQueries', () => {
     }
 
     function Page() {
-      // eslint-disable-next-line react-hooks/purity
       const ref = React.useRef(Math.random())
       const result = useSuspenseQueries({
         queries: [
@@ -911,7 +910,6 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: key,
             // @ts-expect-error
-            // eslint-disable-next-line react-hooks/purity
             queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
           },
         ],

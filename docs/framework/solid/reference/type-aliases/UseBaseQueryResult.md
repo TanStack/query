@@ -7,7 +7,7 @@ title: UseBaseQueryResult
 type UseBaseQueryResult<TData, TError> = QueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:109](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L109)
+Defined in: [packages/solid-query/src/types.ts:104](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L104)
 
 The object `useQuery` returns when `initialData` isn't set — `data`/`error` may still be `undefined`/`null`
 while the query is `pending`. Re-exports [QueryObserverResult](QueryObserverResult.md) from `@tanstack/query-core`.
