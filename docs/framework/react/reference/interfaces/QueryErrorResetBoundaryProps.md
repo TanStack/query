@@ -3,7 +3,7 @@ id: QueryErrorResetBoundaryProps
 title: QueryErrorResetBoundaryProps
 ---
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:94](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L94)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:110](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L110)
 
 The props accepted by `QueryErrorResetBoundary`.
 
