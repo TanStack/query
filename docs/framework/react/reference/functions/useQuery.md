@@ -14,8 +14,8 @@ function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptio
 ```
 
 - [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](#call-signature-1): This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
-- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2)
-- [`UseQueryOptions` → `UseQueryResult`](#call-signature-3)
+- [`UndefinedInitialDataOptions` → `UseQueryResult`](#call-signature-2): This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data` can be `undefined`.
+- [`UseQueryOptions` → `UseQueryResult`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, an object typed as [UseQueryOptions](../interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

@@ -41,7 +41,7 @@ A Query feature.
 
 ### Result properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="result-ɵkind"></a> `ɵkind` | `TFeatureKind` |
-| <a id="result-ɵproviders"></a> `ɵproviders` | `Provider`[] |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
+| <a id="result-ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |

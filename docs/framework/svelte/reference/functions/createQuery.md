@@ -13,7 +13,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<C
 
 - [`DefinedInitialDataOptions` → `DefinedCreateQueryResult`](#call-signature-1): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
 - [`UndefinedInitialDataOptions` → `CreateQueryResult`](#call-signature-2): Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key. The query runs when the options call for it — `enabled: false` skips the initial fetch.
-- [`CreateQueryOptions` → `CreateQueryResult`](#call-signature-3)
+- [`CreateQueryOptions` → `CreateQueryResult`](#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, an object typed as [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) rather than an object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

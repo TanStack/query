@@ -7,7 +7,7 @@ title: dehydrate
 function dehydrate(client: QueryClient, options: DehydrateOptions): DehydratedState;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:208](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L208)
+Defined in: [packages/query-core/src/hydration.ts:245](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L245)
 
 Dehydrates a `QueryClient`'s cache (queries and mutations) into a plain, serializable `DehydratedState`,
 typically to embed in server-rendered markup and later restore into a client-side `QueryClient` via `hydrate`.
@@ -21,9 +21,14 @@ falling back to the client's `dehydrate` default options, and finally to `defaul
 
 [`QueryClient`](../classes/QueryClient.md)
 
+The client whose cache is dehydrated.
+
 ### options
 
 [`DehydrateOptions`](../interfaces/DehydrateOptions.md) = `{}`
+
+Controls which queries and mutations are included and how their data and errors
+are transformed. Each option falls back to the client's `defaultOptions.dehydrate`.
 
 <a id="options-properties"></a>
 
@@ -40,14 +45,16 @@ falling back to the client's `dehydrate` default options, and finally to `defaul
 
 [`DehydratedState`](../interfaces/DehydratedState.md)
 
+The dehydrated state, with the included `queries` and `mutations`.
+
 <a id="result-properties"></a>
 
 ### Result properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="result-mutations"></a> `mutations` | `DehydratedMutation`[] |
-| <a id="result-queries"></a> `queries` | `DehydratedQuery`[] |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-mutations"></a> `mutations` | `DehydratedMutation`[] | The dehydrated mutations, by default only the paused ones. |
+| <a id="result-queries"></a> `queries` | `DehydratedQuery`[] | The dehydrated queries, by default only the successful ones. |
 
 ## Example
 

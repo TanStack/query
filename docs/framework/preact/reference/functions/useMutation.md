@@ -7,7 +7,7 @@ title: useMutation
 function useMutation<TData, TError, TVariables, TOnMutateResult>(options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, queryClient?: QueryClient): UseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/preact-query/src/useMutation.ts:192](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L192)
+Defined in: [packages/preact-query/src/useMutation.ts:188](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useMutation.ts#L188)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `useMutation` is the hook for that.
@@ -80,6 +80,11 @@ the mutation settles removes the subscription and prevents them from firing.
 ### Result properties
 
 Built from [`MutationObserverBaseResult`](../interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
+
+## Throws
+
+The mutation error, when `throwOnError` is `true` or returns `true` for it, so that it is
+thrown to the nearest error boundary.
 
 ## See
 

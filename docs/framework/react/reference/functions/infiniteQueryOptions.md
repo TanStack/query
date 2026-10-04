@@ -27,7 +27,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/react-query/src/infiniteQueryOptions.ts:170](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L170)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:165](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L165)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -69,14 +69,14 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
-
 ### Remarks
 
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
 automatically as the user scrolls.
+
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
 ### Example
 
@@ -115,7 +115,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/react-query/src/infiniteQueryOptions.ts:232](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L232)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:224](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L224)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -160,6 +160,10 @@ The same options object, typed so that `queryKey` carries the inferred data type
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
 automatically as the user scrolls.
 
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
+
 ### Example
 
 A parameterized factory, so the same options object can be reused per `postId`:
@@ -188,10 +192,6 @@ function Comments({ postId }: { postId: string }) {
 }
 ```
 
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
-
 <a id="call-signature-3"></a>
 
 ## Call Signature
@@ -200,7 +200,7 @@ function Comments({ postId }: { postId: string }) {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/react-query/src/infiniteQueryOptions.ts:294](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L294)
+Defined in: [packages/react-query/src/infiniteQueryOptions.ts:283](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L283)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -245,6 +245,10 @@ The same options object, typed so that `queryKey` carries the inferred data type
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages (from a button click or
 automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
 
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
+
 ### Example
 
 A parameterized factory, so the same options object can be reused per `postId`:
@@ -272,10 +276,6 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 ```
-
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
 <a id="parameters-summary"></a>
 
