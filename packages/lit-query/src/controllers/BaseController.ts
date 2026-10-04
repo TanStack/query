@@ -336,7 +336,8 @@ export abstract class BaseController<TResult> implements ReactiveController {
 
   /**
    * Called in a microtask after the host connects, once the subclass fields
-   * are initialized. Subclasses subscribe to the `QueryClient` here.
+   * are initialized. Subclasses subscribe to the `QueryClient` here, if one is
+   * available.
    */
   protected abstract onConnected(): void
   /**
