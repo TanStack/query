@@ -119,7 +119,13 @@ export type UnsetMarker = typeof unsetMarker
  * Matches any type that has been tagged with {@link DataTag}, whatever its data and error types.
  */
 export type AnyDataTag = {
+  /**
+   * The data type the key was tagged with.
+   */
   [dataTagSymbol]: any
+  /**
+   * The error type the key was tagged with.
+   */
   [dataTagErrorSymbol]: any
 }
 /**
@@ -147,6 +153,9 @@ export type QueryKeyWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
 > = {
+  /**
+   * The query key, tagged with the query's data and error types.
+   */
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
@@ -302,7 +311,13 @@ export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
  * `pages` and `pageParams` are index-aligned — `pageParams[i]` is the param that produced `pages[i]`.
  */
 export interface InfiniteData<TData, TPageParam = unknown> {
+  /**
+   * The data of every page fetched so far, in order.
+   */
   pages: Array<TData>
+  /**
+   * The page param each page was fetched with, aligned by index with `pages`.
+   */
   pageParams: Array<TPageParam>
 }
 
@@ -714,6 +729,9 @@ export interface QueryExecuteOptions<
   QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
   'queryKey'
 > {
+  /**
+   * Not allowed here, since `initialPageParam` only applies to infinite queries.
+   */
   initialPageParam?: never
   /**
    * This option can be used to transform or select a part of the data returned by the query function. It affects
@@ -738,6 +756,9 @@ export interface FetchQueryOptions<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryKey'
 > {
+  /**
+   * Not allowed here, since `initialPageParam` only applies to infinite queries.
+   */
   initialPageParam?: never
   /**
    * The time in milliseconds after data is considered stale.
@@ -760,6 +781,9 @@ export interface EnsureQueryDataOptions<
   TQueryKey,
   TPageParam
 > {
+  /**
+   * If `true`, stale cached data is returned and also refetched in the background.
+   */
   revalidateIfStale?: boolean
 }
 
@@ -1066,14 +1090,41 @@ export interface QueryObserverPendingResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the query has no data yet.
+   */
   data: undefined
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `true`, since there's no cached data and no query attempt has finished yet.
+   */
   isPending: true
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'pending'`, since there's no cached data and no query attempt has finished yet.
+   */
   status: 'pending'
 }
 
@@ -1085,15 +1136,45 @@ export interface QueryObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the query has no data yet.
+   */
   data: undefined
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `true`, since there's no cached data and no query attempt has finished yet.
+   */
   isPending: true
+  /**
+   * `true`, since the first fetch is in flight.
+   */
   isLoading: true
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'pending'`, since there's no cached data and no query attempt has finished yet.
+   */
   status: 'pending'
 }
 
@@ -1104,15 +1185,45 @@ export interface QueryObserverLoadingErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the first fetch failed before any data was cached.
+   */
   data: undefined
+  /**
+   * The error the first fetch failed with.
+   */
   error: TError
+  /**
+   * `true`, since the query is in the `error` state.
+   */
   isError: true
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `true`, since the query failed while fetching for the first time.
+   */
   isLoadingError: true
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'error'`, since the query attempt resulted in an error.
+   */
   status: 'error'
 }
 
@@ -1123,15 +1234,45 @@ export interface QueryObserverRefetchErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * The data from before the failed refetch, which is kept.
+   */
   data: TData
+  /**
+   * The error the refetch failed with.
+   */
   error: TError
+  /**
+   * `true`, since the query is in the `error` state.
+   */
   isError: true
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `true`, since the query failed while refetching.
+   */
   isRefetchError: true
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'error'`, since the query attempt resulted in an error.
+   */
   status: 'error'
 }
 
@@ -1142,15 +1283,46 @@ export interface QueryObserverSuccessResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * The last successfully resolved data for the query.
+   */
   data: TData
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `true`, since the query is in the `success` state.
+   */
   isSuccess: true
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'success'`, since the query has received a response with no errors and is ready to display its
+   * data.
+   */
   status: 'success'
 }
 
@@ -1162,15 +1334,46 @@ export interface QueryObserverPlaceholderResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * The `placeholderData` shown while the query has no data yet.
+   */
   data: TData
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `true`, since the query is in the `success` state.
+   */
   isSuccess: true
+  /**
+   * `true`, since the data shown is the `placeholderData`.
+   */
   isPlaceholderData: true
+  /**
+   * `'success'`, since the query has received a response with no errors and is ready to display its
+   * data.
+   */
   status: 'success'
 }
 
@@ -1246,16 +1449,49 @@ export interface InfiniteQueryObserverPendingResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the query has no data yet.
+   */
   data: undefined
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `true`, since there's no cached data and no query attempt has finished yet.
+   */
   isPending: true
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since fetching the next page didn't fail.
+   */
   isFetchNextPageError: false
+  /**
+   * `false`, since fetching the previous page didn't fail.
+   */
   isFetchPreviousPageError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'pending'`, since there's no cached data and no query attempt has finished yet.
+   */
   status: 'pending'
 }
 
@@ -1267,17 +1503,53 @@ export interface InfiniteQueryObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the query has no data yet.
+   */
   data: undefined
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `true`, since there's no cached data and no query attempt has finished yet.
+   */
   isPending: true
+  /**
+   * `true`, since the first fetch is in flight.
+   */
   isLoading: true
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since fetching the next page didn't fail.
+   */
   isFetchNextPageError: false
+  /**
+   * `false`, since fetching the previous page didn't fail.
+   */
   isFetchPreviousPageError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'pending'`, since there's no cached data and no query attempt has finished yet.
+   */
   status: 'pending'
 }
 
@@ -1288,17 +1560,53 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * `undefined`, since the first fetch failed before any data was cached.
+   */
   data: undefined
+  /**
+   * The error the first fetch failed with.
+   */
   error: TError
+  /**
+   * `true`, since the query is in the `error` state.
+   */
   isError: true
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `true`, since the query failed while fetching for the first time.
+   */
   isLoadingError: true
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since fetching the next page didn't fail.
+   */
   isFetchNextPageError: false
+  /**
+   * `false`, since fetching the previous page didn't fail.
+   */
   isFetchPreviousPageError: false
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'error'`, since the query attempt resulted in an error.
+   */
   status: 'error'
 }
 
@@ -1310,15 +1618,45 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * The data from before the failed refetch, which is kept.
+   */
   data: TData
+  /**
+   * The error the refetch failed with.
+   */
   error: TError
+  /**
+   * `true`, since the query is in the `error` state.
+   */
   isError: true
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `true`, since the query failed while refetching.
+   */
   isRefetchError: true
+  /**
+   * `false`, since the query isn't in the `success` state.
+   */
   isSuccess: false
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'error'`, since the query attempt resulted in an error.
+   */
   status: 'error'
 }
 
@@ -1329,17 +1667,54 @@ export interface InfiniteQueryObserverSuccessResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * The last successfully resolved data for the query.
+   */
   data: TData
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `false`, since fetching the next page didn't fail.
+   */
   isFetchNextPageError: false
+  /**
+   * `false`, since fetching the previous page didn't fail.
+   */
   isFetchPreviousPageError: false
+  /**
+   * `true`, since the query is in the `success` state.
+   */
   isSuccess: true
+  /**
+   * `false`, since the data shown isn't the `placeholderData`.
+   */
   isPlaceholderData: false
+  /**
+   * `'success'`, since the query has received a response with no errors and is ready to display its
+   * data.
+   */
   status: 'success'
 }
 
@@ -1351,17 +1726,54 @@ export interface InfiniteQueryObserverPlaceholderResult<
   TData = unknown,
   TError = DefaultError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
+  /**
+   * The `placeholderData` shown while the query has no data yet.
+   */
   data: TData
+  /**
+   * `false`, since the query isn't in the `error` state.
+   */
   isError: false
+  /**
+   * `null`, since the query isn't in the `error` state.
+   */
   error: null
+  /**
+   * `false`, since the query has data or a query attempt has finished.
+   */
   isPending: false
+  /**
+   * `false`, since the first fetch isn't in flight.
+   */
   isLoading: false
+  /**
+   * `false`, since the query didn't fail while fetching for the first time.
+   */
   isLoadingError: false
+  /**
+   * `false`, since the query didn't fail while refetching.
+   */
   isRefetchError: false
+  /**
+   * `true`, since the query is in the `success` state.
+   */
   isSuccess: true
+  /**
+   * `true`, since the data shown is the `placeholderData`.
+   */
   isPlaceholderData: true
+  /**
+   * `false`, since fetching the next page didn't fail.
+   */
   isFetchNextPageError: false
+  /**
+   * `false`, since fetching the previous page didn't fail.
+   */
   isFetchPreviousPageError: false
+  /**
+   * `'success'`, since the query has received a response with no errors and is ready to display its
+   * data.
+   */
   status: 'success'
 }
 
@@ -1412,6 +1824,9 @@ export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
  * state and resume automatically when their turn comes. Mutations with no scope always run in parallel.
  */
 export type MutationScope = {
+  /**
+   * The scope's identifier. Mutations with the same `id` run one after another.
+   */
   id: string
 }
 
@@ -1432,8 +1847,17 @@ export type MutationMeta = Register extends {
  * `meta`, and its `mutationKey`.
  */
 export type MutationFunctionContext = {
+  /**
+   * The `QueryClient` the mutation runs in.
+   */
   client: QueryClient
+  /**
+   * The `meta` of the mutation options.
+   */
   meta: MutationMeta | undefined
+  /**
+   * The `mutationKey` of the mutation options, if set.
+   */
   mutationKey?: MutationKey
 }
 
@@ -1585,18 +2009,28 @@ export interface MutateOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > {
+  /**
+   * Called when the mutation of this call succeeds, after the `onSuccess` of the mutation options.
+   */
   onSuccess?: (
     data: TData,
     variables: TVariables,
     onMutateResult: TOnMutateResult | undefined,
     context: MutationFunctionContext,
   ) => void
+  /**
+   * Called when the mutation of this call fails, after the `onError` of the mutation options.
+   */
   onError?: (
     error: TError,
     variables: TVariables,
     onMutateResult: TOnMutateResult | undefined,
     context: MutationFunctionContext,
   ) => void
+  /**
+   * Called when the mutation of this call succeeds or fails, after the `onSettled` of the mutation
+   * options.
+   */
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
@@ -1721,13 +2155,37 @@ export interface MutationObserverIdleResult<
   TVariables,
   TOnMutateResult
 > {
+  /**
+   * `undefined`, since the mutation hasn't run.
+   */
   data: undefined
+  /**
+   * `undefined`, since the mutation hasn't run.
+   */
   variables: undefined
+  /**
+   * `null`, since the mutation hasn't failed.
+   */
   error: null
+  /**
+   * `false`, since the mutation hasn't failed.
+   */
   isError: false
+  /**
+   * `true`, since the mutation hasn't run yet or was reset.
+   */
   isIdle: true
+  /**
+   * `false`, since the mutation isn't running.
+   */
   isPending: false
+  /**
+   * `false`, since the mutation hasn't succeeded.
+   */
   isSuccess: false
+  /**
+   * `'idle'`, since the mutation hasn't run yet or was reset.
+   */
   status: 'idle'
 }
 
@@ -1745,13 +2203,37 @@ export interface MutationObserverLoadingResult<
   TVariables,
   TOnMutateResult
 > {
+  /**
+   * `undefined`, since the mutation hasn't succeeded.
+   */
   data: undefined
+  /**
+   * The variables passed to `mutate` for this mutation.
+   */
   variables: TVariables
+  /**
+   * `null`, since the mutation hasn't failed.
+   */
   error: null
+  /**
+   * `false`, since the mutation hasn't failed.
+   */
   isError: false
+  /**
+   * `false`, since the mutation has run.
+   */
   isIdle: false
+  /**
+   * `true`, since the mutation is running.
+   */
   isPending: true
+  /**
+   * `false`, since the mutation hasn't succeeded.
+   */
   isSuccess: false
+  /**
+   * `'pending'`, since the mutation is running.
+   */
   status: 'pending'
 }
 
@@ -1769,13 +2251,37 @@ export interface MutationObserverErrorResult<
   TVariables,
   TOnMutateResult
 > {
+  /**
+   * `undefined`, since the mutation hasn't succeeded.
+   */
   data: undefined
+  /**
+   * The error the mutation failed with.
+   */
   error: TError
+  /**
+   * The variables passed to `mutate` for this mutation.
+   */
   variables: TVariables
+  /**
+   * `true`, since the mutation failed.
+   */
   isError: true
+  /**
+   * `false`, since the mutation has run.
+   */
   isIdle: false
+  /**
+   * `false`, since the mutation isn't running.
+   */
   isPending: false
+  /**
+   * `false`, since the mutation hasn't succeeded.
+   */
   isSuccess: false
+  /**
+   * `'error'`, since the mutation failed.
+   */
   status: 'error'
 }
 
@@ -1793,13 +2299,37 @@ export interface MutationObserverSuccessResult<
   TVariables,
   TOnMutateResult
 > {
+  /**
+   * The data the mutation resolved with.
+   */
   data: TData
+  /**
+   * `null`, since the mutation hasn't failed.
+   */
   error: null
+  /**
+   * The variables passed to `mutate` for this mutation.
+   */
   variables: TVariables
+  /**
+   * `false`, since the mutation hasn't failed.
+   */
   isError: false
+  /**
+   * `false`, since the mutation has run.
+   */
   isIdle: false
+  /**
+   * `false`, since the mutation isn't running.
+   */
   isPending: false
+  /**
+   * `true`, since the mutation succeeded.
+   */
   isSuccess: true
+  /**
+   * `'success'`, since the mutation succeeded.
+   */
   status: 'success'
 }
 
@@ -1846,7 +2376,7 @@ export interface DefaultOptions<TError = DefaultError> {
   >
   /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
-  /** Default options used when hydrating queries; see {@link HydrateOptions}. */
+  /** Default options used when hydrating queries and mutations; see {@link HydrateOptions}. */
   hydrate?: HydrateOptions['defaultOptions']
   /** Default options used when dehydrating the client's caches; see {@link DehydrateOptions}. */
   dehydrate?: DehydrateOptions
@@ -1857,7 +2387,15 @@ export interface DefaultOptions<TError = DefaultError> {
  * They are carried on the {@link CancelledError} that the cancelled fetch rejects with.
  */
 export interface CancelOptions {
+  /**
+   * If `true`, the query goes back to the state it had before the fetch started, instead of getting
+   * the cancellation error.
+   */
   revert?: boolean
+  /**
+   * If `true`, the cancellation error isn't surfaced, e.g. because another fetch replaces the
+   * cancelled one.
+   */
   silent?: boolean
 }
 
@@ -1867,6 +2405,10 @@ export interface CancelOptions {
  * omit it to use the current time.
  */
 export interface SetDataOptions {
+  /**
+   * The timestamp to record the data with, instead of the current time. Staleness is measured from
+   * it.
+   */
   updatedAt?: number
 }
 
@@ -1884,5 +2426,8 @@ export type NotifyEventType =
  * The base shape of the events that the query and mutation caches send to their listeners.
  */
 export interface NotifyEvent {
+  /**
+   * The kind of event, e.g. `'added'`, `'removed'`, or `'updated'`.
+   */
   type: NotifyEventType
 }

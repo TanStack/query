@@ -3,7 +3,7 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1309](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1309)
+Defined in: [packages/query-core/src/types.ts:1617](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1617)
 
 An infinite query result in the `error` state when a refetch failed, so the data from before is
 kept.
@@ -26,9 +26,9 @@ kept.
 
 | Property | Type | Description | Overrides |
 | ------ | ------ | ------ | ------ |
-| <a id="data"></a> `data` | `TData` | The last successfully resolved data for the query. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#data) |
+| <a id="data"></a> `data` | `TData` | The data from before the failed refetch, which is kept. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`data`](InfiniteQueryObserverBaseResult.md#data) |
 | <a id="dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. | - |
-| <a id="error"></a> `error` | `TError` | The error object for the query, if an error was thrown. - Defaults to `null`. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`error`](InfiniteQueryObserverBaseResult.md#error) |
+| <a id="error"></a> `error` | `TError` | The error the refetch failed with. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`error`](InfiniteQueryObserverBaseResult.md#error) |
 | <a id="errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. | - |
 | <a id="errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. | - |
 | <a id="failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. | - |
@@ -39,7 +39,7 @@ kept.
 | <a id="hasnextpage"></a> `hasNextPage` | `boolean` | Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option). | - |
 | <a id="haspreviouspage"></a> `hasPreviousPage` | `boolean` | Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option). | - |
 | <a id="isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. | - |
-| <a id="iserror"></a> `isError` | `true` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isError`](InfiniteQueryObserverBaseResult.md#iserror) |
+| <a id="iserror"></a> `isError` | `true` | `true`, since the query is in the `error` state. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isError`](InfiniteQueryObserverBaseResult.md#iserror) |
 | <a id="isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. | - |
 | <a id="isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. | - |
 | <a id="isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. | - |
@@ -48,14 +48,14 @@ kept.
 | <a id="isfetchnextpageerror"></a> `isFetchNextPageError` | `boolean` | Will be `true` if the query failed while fetching the next page. | - |
 | <a id="isfetchpreviouspageerror"></a> `isFetchPreviousPageError` | `boolean` | Will be `true` if the query failed while fetching the previous page. | - |
 | <a id="isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. | - |
-| <a id="isloading"></a> `isLoading` | `false` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoading`](InfiniteQueryObserverBaseResult.md#isloading) |
-| <a id="isloadingerror"></a> `isLoadingError` | `false` | Will be `true` if the query failed while fetching for the first time. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoadingError`](InfiniteQueryObserverBaseResult.md#isloadingerror) |
+| <a id="isloading"></a> `isLoading` | `false` | `false`, since the first fetch isn't in flight. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoading`](InfiniteQueryObserverBaseResult.md#isloading) |
+| <a id="isloadingerror"></a> `isLoadingError` | `false` | `false`, since the query didn't fail while fetching for the first time. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isLoadingError`](InfiniteQueryObserverBaseResult.md#isloadingerror) |
 | <a id="ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. | - |
-| <a id="ispending"></a> `isPending` | `false` | Will be `pending` if there's no cached data and no query attempt was finished yet. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#ispending) |
-| <a id="isplaceholderdata"></a> `isPlaceholderData` | `false` | Will be `true` if the data shown is the placeholder data. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPlaceholderData`](InfiniteQueryObserverBaseResult.md#isplaceholderdata) |
-| <a id="isrefetcherror"></a> `isRefetchError` | `true` | Will be `true` if the query failed while refetching. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isRefetchError`](InfiniteQueryObserverBaseResult.md#isrefetcherror) |
+| <a id="ispending"></a> `isPending` | `false` | `false`, since the query has data or a query attempt has finished. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPending`](InfiniteQueryObserverBaseResult.md#ispending) |
+| <a id="isplaceholderdata"></a> `isPlaceholderData` | `false` | `false`, since the data shown isn't the `placeholderData`. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isPlaceholderData`](InfiniteQueryObserverBaseResult.md#isplaceholderdata) |
+| <a id="isrefetcherror"></a> `isRefetchError` | `true` | `true`, since the query failed while refetching. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isRefetchError`](InfiniteQueryObserverBaseResult.md#isrefetcherror) |
 | <a id="isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. | - |
 | <a id="isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. | - |
-| <a id="issuccess"></a> `isSuccess` | `false` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isSuccess`](InfiniteQueryObserverBaseResult.md#issuccess) |
+| <a id="issuccess"></a> `isSuccess` | `false` | `false`, since the query isn't in the `success` state. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`isSuccess`](InfiniteQueryObserverBaseResult.md#issuccess) |
 | <a id="refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](../type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. | - |
-| <a id="status"></a> `status` | `"error"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`status`](InfiniteQueryObserverBaseResult.md#status) |
+| <a id="status"></a> `status` | `"error"` | `'error'`, since the query attempt resulted in an error. | [`InfiniteQueryObserverBaseResult`](InfiniteQueryObserverBaseResult.md).[`status`](InfiniteQueryObserverBaseResult.md#status) |

@@ -3,7 +3,7 @@ id: RefetchOptions
 title: RefetchOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:851](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L851)
+Defined in: [packages/query-core/src/types.ts:875](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L875)
 
 Options of the methods that refetch queries, like `refetch` and `queryClient.refetchQueries`.
 

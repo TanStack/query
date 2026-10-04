@@ -3,7 +3,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [packages/query-core/src/types.ts:1825](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1825)
+Defined in: [packages/query-core/src/types.ts:2355](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2355)
 
 The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
 `defaultOptions` for its queries and mutations.
