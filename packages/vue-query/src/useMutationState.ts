@@ -20,6 +20,10 @@ import type { MutationCache } from './mutationCache'
 
 type VueMutationFilters = MaybeRefDeep<MutationFilters>
 
+/**
+ * The filters accepted by `useIsMutating`: {@link MutationFilters} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseIsMutatingFilters =
   VueMutationFilters | (() => VueMutationFilters)
 
@@ -86,6 +90,10 @@ type MutationTypeFromResult<TResult> = [TResult] extends [
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation
 
+/**
+ * The options accepted by `useMutationState`: the `filters` matching the mutations, and `select` to map each
+ * one (to its state, by default).
+ */
 export type MutationStateOptions<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =

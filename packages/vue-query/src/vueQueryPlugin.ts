@@ -35,6 +35,10 @@ interface ClientOptions extends CommonOptions {
   queryClient?: QueryClient
 }
 
+/**
+ * The options accepted by `VueQueryPlugin`: either a `queryClient` to install, or a `queryClientConfig` for the
+ * client the plugin creates, plus the shared options.
+ */
 export type VueQueryPluginOptions = ConfigOptions | ClientOptions
 
 /**
