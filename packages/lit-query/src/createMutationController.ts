@@ -67,6 +67,11 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     destroy: () => void
   }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'idle'`, with a `mutate` that
+ * rejects with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createIdleMutationResult<
   TData,
   TError,
@@ -287,7 +292,6 @@ class MutationController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the mutation
  * subscription.
  * @param options - Mutation observer options, or a getter that returns options.
@@ -295,7 +299,6 @@ class MutationController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest mutation result with mutation helper
  * methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

@@ -5,13 +5,7 @@ export default {
   ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],
   treatConfigHintsAsErrors: true,
   treatTagHintsAsErrors: true,
-  ignoreDependencies: [
-    '@oxc-project/runtime',
-    '@types/react',
-    '@types/react-dom',
-    'react',
-    'react-dom',
-  ],
+  ignoreDependencies: ['@oxc-project/runtime'],
   ignoreWorkspaces: ['examples/**', 'integrations/**'],
   rules: { duplicates: 'warn' },
   workspaces: {
@@ -19,13 +13,23 @@ export default {
       ignore: ['scripts/prepack.js'],
       // Strict mode excludes optional dependencies. Read the declared names
       // so removing a declaration still causes an unlisted dependency error.
-      ignoreDependencies: Object.keys(
-        angularQuery.optionalDependencies ?? {},
-      ).map((dependency) => `${dependency}!`),
+      ignoreDependencies: Object.keys(angularQuery.optionalDependencies).map(
+        (dependency) => `${dependency}!`,
+      ),
     },
     'packages/query-codemods': {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],
       ignore: ['**/__testfixtures__/**'],
+    },
+    // Built types import 'react', which the consumer's '@types/react' provides.
+    'packages/react-query': {
+      ignoreDependencies: ['@types/react!'],
+    },
+    'packages/react-query-next-experimental': {
+      ignoreDependencies: ['@types/react!'],
+    },
+    'packages/react-query-persist-client': {
+      ignoreDependencies: ['@types/react!'],
     },
     'packages/vue-query': {
       ignoreDependencies: ['vue2', 'vue2.7'],

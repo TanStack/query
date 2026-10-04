@@ -4,11 +4,61 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import pluginJsdoc from 'eslint-plugin-jsdoc'
+import { defineConfig } from 'eslint/config'
 
-export default [
+export default defineConfig([
   ...tanstackConfig,
   {
-    name: 'tanstack/temp',
+    name: 'tanstack/query/jsdoc',
+    files: ['**/src/**/*.{ts,tsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/__testfixtures__/**',
+      '**/*.test.{ts,tsx}',
+      '**/*.test-d.{ts,tsx}',
+    ],
+    extends: [pluginJsdoc.configs['flat/recommended-typescript-error']],
+    rules: {
+      'jsdoc/check-tag-names': ['error', { definedTags: ['defaultValue'] }],
+      'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          contexts: [
+            'ExportDefaultDeclaration > ArrowFunctionExpression',
+            'ExportDefaultDeclaration > ClassDeclaration',
+            'ExportDefaultDeclaration > ClassDeclaration > ClassBody > MethodDefinition:not([accessibility="private"]):not([key.type="PrivateIdentifier"]):not([kind="constructor"]):not([override=true])',
+            'ExportNamedDeclaration > ClassDeclaration',
+            'ExportNamedDeclaration > ClassDeclaration > ClassBody > MethodDefinition:not([accessibility="private"]):not([key.type="PrivateIdentifier"]):not([kind="constructor"]):not([override=true])',
+            'ExportNamedDeclaration > TSInterfaceDeclaration',
+            'ExportNamedDeclaration > TSInterfaceDeclaration > TSInterfaceBody > TSPropertySignature',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration > TSTypeLiteral > TSPropertySignature',
+            'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > ArrowFunctionExpression',
+          ],
+        },
+      ],
+      'jsdoc/require-param': ['error', { checkDestructured: false }],
+      'jsdoc/check-template-names': 'error',
+      'jsdoc/informative-docs': 'error',
+      'jsdoc/match-description': 'error',
+      'jsdoc/no-bad-blocks': 'error',
+      'jsdoc/no-blank-block-descriptions': 'error',
+      'jsdoc/no-blank-blocks': 'error',
+      'jsdoc/require-asterisk-prefix': 'error',
+      'jsdoc/require-description': 'error',
+      'jsdoc/require-hyphen-before-param-description': 'error',
+      'jsdoc/require-next-description': 'error',
+      'jsdoc/require-template-description': 'error',
+      'jsdoc/require-throws': 'error',
+      'jsdoc/require-throws-description': 'error',
+      'jsdoc/require-yields-description': 'error',
+      'jsdoc/sort-tags': 'error',
+    },
+  },
+  {
+    name: 'tanstack/query',
     plugins: {
       cspell: pluginCspell,
     },
@@ -25,6 +75,7 @@ export default [
               'datatag', // Query options tagging
               'extralight', // Our public interface
               'jscodeshift',
+              'refetched', // Query refetch operations
               'refetches', // Query refetch operations
               'retryer', // Our public interface
               'solidjs', // Our target framework
@@ -93,6 +144,7 @@ export default [
     },
   },
   {
+    name: 'tanstack/query/vitest',
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
     rules: {
@@ -110,4 +162,4 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
-]
+])

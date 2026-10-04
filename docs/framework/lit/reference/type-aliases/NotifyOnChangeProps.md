@@ -14,4 +14,4 @@ type NotifyOnChangeProps =
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:270](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L270)
+Defined in: [packages/query-core/src/types.ts:340](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L340)

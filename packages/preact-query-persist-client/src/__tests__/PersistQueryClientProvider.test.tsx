@@ -48,7 +48,7 @@ describe('PersistQueryClientProvider (preact)', () => {
     vi.useRealTimers()
   })
 
-  it('restores cache from persister and refetches', async () => {
+  it('should restore cache from persister and refetch', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 

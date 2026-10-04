@@ -1,3 +1,4 @@
+import { createSignal } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
@@ -7,8 +8,14 @@ import {
   noop,
   onlineManager,
 } from '@tanstack/query-core'
-import { fireEvent, render } from '@solidjs/testing-library'
+import { fireEvent, render, within } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
+import { DevtoolsOfflineProvider } from '../providers/DevtoolsOfflineProvider'
+import { DevtoolsSubscriptionsProvider } from '../providers/DevtoolsSubscriptionsProvider'
+import DevtoolsComponent from '../DevtoolsComponent'
+import { DevtoolsStateProvider } from '../providers/DevtoolsStateProvider'
+import { useDevtoolsState } from '../contexts/DevtoolsStateContext'
+import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
@@ -37,8 +44,10 @@ describe('Devtools', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient
   let previousRootFontSize = ''
+  let resizeObservers: Array<ResizeObserver> = []
 
   beforeEach(() => {
+    resizeObservers = []
     vi.useFakeTimers()
     previousRootFontSize = document.documentElement.style.fontSize
     vi.stubGlobal('localStorage', {
@@ -75,6 +84,7 @@ describe('Devtools', () => {
         callback: ResizeObserverCallback
         constructor(callback: ResizeObserverCallback) {
           this.callback = callback
+          resizeObservers.push(this)
         }
         observe = vi.fn((target: Element) => {
           this.callback(
@@ -108,10 +118,15 @@ describe('Devtools', () => {
   function renderDevtools(
     overrides: Partial<QueryDevtoolsProps> = {},
     initialStorage: Record<string, string> = {},
+    onState?: (state: ReturnType<typeof useDevtoolsState>) => void,
   ) {
     Object.entries(initialStorage).forEach(([key, value]) => {
       localStorage.setItem(key, value)
     })
+    function StateProbe() {
+      onState?.(useDevtoolsState())
+      return null
+    }
     return render(() => {
       const [localStore, setLocalStore] = createLocalStorage({
         prefix: 'TanstackQueryDevtools',
@@ -126,15 +141,240 @@ describe('Devtools', () => {
             ...overrides,
           }}
         >
-          <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-            <ThemeContext.Provider value={() => 'dark'}>
-              <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-            </ThemeContext.Provider>
-          </PiPProvider>
+          <DevtoolsStateProvider>
+            <DevtoolsOfflineProvider>
+              <DevtoolsSubscriptionsProvider>
+                <StateProbe />
+                <PiPProvider
+                  localStore={localStore}
+                  setLocalStore={setLocalStore}
+                >
+                  <ThemeContext.Provider value={() => 'dark'}>
+                    <Devtools
+                      localStore={localStore}
+                      setLocalStore={setLocalStore}
+                    />
+                  </ThemeContext.Provider>
+                </PiPProvider>
+              </DevtoolsSubscriptionsProvider>
+            </DevtoolsOfflineProvider>
+          </DevtoolsStateProvider>
         </QueryDevtoolsContext.Provider>
       )
     })
   }
+
+  it('should keep measured panel widths independent', () => {
+    let firstState!: ReturnType<typeof useDevtoolsState>
+    let secondState!: ReturnType<typeof useDevtoolsState>
+    const first = renderDevtools({ initialIsOpen: true }, {}, (state) => {
+      firstState = state
+    })
+    renderDevtools({ initialIsOpen: true }, {}, (state) => {
+      secondState = state
+    })
+    const panel = first.container.querySelector('aside')!
+    for (const observer of resizeObservers) {
+      const observed = vi
+        .mocked(observer.observe)
+        .mock.calls.some(([target]) => target === panel)
+      if (observed) {
+        ;(
+          observer as ResizeObserver & { callback: ResizeObserverCallback }
+        ).callback(
+          [
+            {
+              target: panel,
+              contentRect: new DOMRectReadOnly(0, 0, 400, 500),
+              borderBoxSize: [],
+              contentBoxSize: [],
+              devicePixelContentBoxSize: [],
+            },
+          ],
+          observer,
+        )
+      }
+    }
+    expect(firstState.panelWidth()).toBe(400)
+    expect(secondState.panelWidth()).toBe(1000)
+  })
+
+  describe.each(['full', 'embedded'] as const)(
+    '%s instance isolation',
+    (mode) => {
+      function mount(client = queryClient, manager = onlineManager) {
+        return mode === 'full'
+          ? renderDevtools({
+              client,
+              onlineManager: manager,
+              initialIsOpen: true,
+            })
+          : render(() => (
+              <DevtoolsPanelComponent
+                client={client}
+                onlineManager={manager}
+                queryFlavor="TanStack Query"
+                version="5"
+              />
+            ))
+      }
+      it('should keep cache notifications and cleanup independent for the same query key', () => {
+        const secondClient = new QueryClient()
+        queryClient.setQueryData(['shared-key'], 'first-data')
+        secondClient.setQueryData(['shared-key'], 'second-data')
+        const firstRender = mount()
+        const secondRender = mount(secondClient)
+        const first = within(firstRender.container)
+        const second = within(secondRender.container)
+        fireEvent.click(first.getByLabelText('Query key ["shared-key"]'))
+        fireEvent.click(second.getByLabelText('Query key ["shared-key"]'))
+
+        secondClient.setQueryData(['shared-key'], 'updated-second')
+        expect(first.getByDisplayValue('first-data')).toBeInTheDocument()
+        expect(
+          first.queryByDisplayValue('updated-second'),
+        ).not.toBeInTheDocument()
+        expect(second.getByDisplayValue('updated-second')).toBeInTheDocument()
+
+        secondRender.unmount()
+        queryClient.setQueryData(['shared-key'], 'updated-first')
+        expect(first.getByDisplayValue('updated-first')).toBeInTheDocument()
+        secondClient.clear()
+      })
+
+      it('should keep mutation selection, notifications, and cleanup independent', async () => {
+        const secondClient = new QueryClient()
+        const firstMutation = queryClient
+          .getMutationCache()
+          .build(queryClient, {
+            mutationKey: ['mutation-a'],
+            mutationFn: () => Promise.resolve('first-result'),
+          })
+        const secondMutation = secondClient
+          .getMutationCache()
+          .build(secondClient, {
+            mutationKey: ['mutation-b'],
+            mutationFn: () => Promise.resolve('second-result'),
+          })
+        const firstRender = mount()
+        const secondRender = mount(secondClient)
+        const first = within(firstRender.container)
+        const second = within(secondRender.container)
+        fireEvent.click(first.getByText('Mutations'))
+        fireEvent.click(second.getByText('Mutations'))
+        await firstMutation.execute({})
+        await secondMutation.execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        fireEvent.click(first.getByLabelText(/Mutation submitted at/))
+        expect(second.queryByText('Mutation Details')).not.toBeInTheDocument()
+        fireEvent.click(second.getByLabelText(/Mutation submitted at/))
+        expect(first.getByText('Mutation Details')).toBeInTheDocument()
+        expect(second.getByText('Mutation Details')).toBeInTheDocument()
+        await secondMutation.execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        expect(firstRender.container).toHaveTextContent('first-result')
+        expect(firstRender.container).not.toHaveTextContent('second-result')
+        secondRender.unmount()
+        await firstMutation.execute({})
+        await vi.advanceTimersByTimeAsync(0)
+        expect(first.getByText('Mutation Details')).toBeInTheDocument()
+        secondClient.clear()
+      })
+
+      it('should keep offline indicators independent for different online managers', () => {
+        const Manager =
+          onlineManager.constructor as new () => typeof onlineManager
+        const firstManager = new Manager()
+        const secondManager = new Manager()
+        firstManager.setOnline(false)
+        const firstRender = mount(queryClient, firstManager)
+        const secondRender = mount(queryClient, secondManager)
+        const first = within(firstRender.container)
+        const second = within(secondRender.container)
+        expect(
+          first.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
+        expect(second.getByLabelText('Mock offline behavior')).toHaveAttribute(
+          'aria-pressed',
+          'false',
+        )
+        firstManager.setOnline(true)
+        expect(first.getByLabelText('Mock offline behavior')).toHaveAttribute(
+          'aria-pressed',
+          'false',
+        )
+        secondRender.unmount()
+      })
+
+      it('should reflect the supplied online manager in both instances', () => {
+        const firstRender = mount()
+        const secondRender = mount()
+        const first = within(firstRender.container)
+        const second = within(secondRender.container)
+        fireEvent.click(first.getByLabelText('Mock offline behavior'))
+        expect(
+          first.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
+        expect(
+          second.getByLabelText('Unset offline mocking behavior'),
+        ).toHaveAttribute('aria-pressed', 'true')
+        secondRender.unmount()
+        onlineManager.setOnline(true)
+        expect(first.getByLabelText('Mock offline behavior')).toHaveAttribute(
+          'aria-pressed',
+          'false',
+        )
+      })
+
+      it('should switch cache subscriptions when the client changes', () => {
+        const secondClient = new QueryClient()
+        queryClient.setQueryData(['switch-key'], 'old-client')
+        secondClient.setQueryData(['switch-key'], 'new-client')
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByLabelText('Query key ["switch-key"]'))
+        expect(panel.getByDisplayValue('old-client')).toBeInTheDocument()
+        setClient(secondClient)
+        expect(panel.getByDisplayValue('new-client')).toBeInTheDocument()
+        secondClient.setQueryData(['switch-key'], 'new-update')
+        expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
+        queryClient.setQueryData(['switch-key'], 'old-update')
+        expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
+        rendered.unmount()
+        secondClient.clear()
+      })
+
+      it('should keep query selection independent between clients', () => {
+        const secondClient = new QueryClient()
+        queryClient.setQueryData(['isolation-a'], 'a')
+        secondClient.setQueryData(['isolation-b'], 'b')
+        const first = within(mount().container)
+        const secondRender = mount(secondClient)
+        const second = within(secondRender.container)
+
+        fireEvent.click(first.getByLabelText('Query key ["isolation-a"]'))
+        expect(first.getByText('Query Details')).toBeInTheDocument()
+        expect(second.queryByText('Query Details')).not.toBeInTheDocument()
+
+        fireEvent.click(second.getByLabelText('Query key ["isolation-b"]'))
+        expect(second.getByText('Query Details')).toBeInTheDocument()
+        expect(first.getByText('Query Details')).toBeInTheDocument()
+        secondRender.unmount()
+        secondClient.clear()
+      })
+    },
+  )
 
   describe('initial state', () => {
     it('should render the open devtools button', () => {

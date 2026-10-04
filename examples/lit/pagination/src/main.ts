@@ -37,7 +37,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-      staleTime: 5_000,
+      staleTime: 5000,
     },
     mutations: {
       retry: false,

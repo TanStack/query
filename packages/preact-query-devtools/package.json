@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/preact-query-devtools",
-  "version": "5.104.0",
+  "version": "5.104.1",
   "description": "Developer tools to interact with and visualize the TanStack/preact-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -79,14 +79,13 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.6",
+    "@preact/preset-vite": "catalog:",
     "@tanstack/preact-query": "workspace:*",
-    "@testing-library/preact": "^3.2.4",
-    "eslint-config-preact": "^2.0.0",
-    "npm-run-all2": "^9.0.3",
-    "preact": "^10.29.8",
-    "typescript": "6.0.3",
-    "typescript-eslint": "^8.54.0"
+    "@testing-library/preact": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint-config-preact": "catalog:",
+    "preact": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/preact-query": "workspace:^",

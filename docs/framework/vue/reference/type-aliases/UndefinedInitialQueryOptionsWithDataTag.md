@@ -9,6 +9,9 @@ type UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQuery
 
 Defined in: [packages/vue-query/src/queryOptions.ts:199](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L199)
 
+The options returned by the `queryOptions` overload selected when `initialData` is omitted or may be
+`undefined`, with the `queryKey` tagged with the query's data and error types.
+
 ## Type Parameters
 
 ### TQueryFnData

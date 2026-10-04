@@ -7,6 +7,10 @@ import type {
 } from '@tanstack/query-core'
 import type { CreateQueryOptions } from './types.js'
 
+/**
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
+ * `undefined` — `data` may be `undefined` while the query is `pending`.
+ */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -19,6 +23,10 @@ export type UndefinedInitialDataOptions<
     | NonUndefinedGuard<TQueryFnData>
 }
 
+/**
+ * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -36,12 +44,10 @@ export type DefinedInitialDataOptions<
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- *
- * @see {@link createQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `createQuery`,
  * with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link createQuery} to run a query with these options.
  * @example
  * ```svelte
  * <script lang="ts">
@@ -82,11 +88,9 @@ export function queryOptions<
  * You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options
  * can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey`
  * is required and is the query key to generate options for.
- *
- * @see {@link createQuery} to run a query with these options.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `createQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link createQuery} to run a query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `id`:
  * ```svelte

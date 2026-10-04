@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.104.0",
+  "version": "5.104.1",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -74,9 +74,9 @@
     "superjson": "^2.2.6"
   },
   "devDependencies": {
-    "@solidjs/testing-library": "^0.8.10",
-    "npm-run-all2": "^9.0.3",
-    "unplugin-solid": "^2.0.0",
-    "vite-plugin-solid": "^2.11.14"
+    "@solidjs/testing-library": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-solid": "catalog:",
+    "vite-plugin-solid": "catalog:"
   }
 }
