@@ -9,14 +9,18 @@ import * as React from 'react'
 export type QueryErrorResetFunction = () => void
 
 /**
- * Returns whether the boundary has been reset and not yet cleared.
+ * Returns whether the boundary has been reset and not yet cleared. When a `queryHash` is
+ * given, only checks whether the boundary has been reset since that query last cleared its
+ * own reset state.
  */
-export type QueryErrorIsResetFunction = () => boolean
+export type QueryErrorIsResetFunction = (queryHash?: string) => boolean
 
 /**
  * Clears the reset state, so queries know not to try again until the boundary is reset again.
+ * When a `queryHash` is given, only that query's view of the reset state is cleared, so
+ * sibling queries can still observe the reset.
  */
-export type QueryErrorClearResetFunction = () => void
+export type QueryErrorClearResetFunction = (queryHash?: string) => void
 
 /**
  * The value a `QueryErrorResetBoundary` shares through context, used to reset query errors within
@@ -43,26 +47,38 @@ export interface QueryErrorResetBoundaryValue {
  * @returns The `clearReset`, `isReset`, and `reset` functions of the boundary.
  */
 function createValue(): QueryErrorResetBoundaryValue {
-  let isReset = false
+  // Each `reset()` starts a new reset generation and every query tracks the
+  // generation it last cleared, so one mounted query cannot consume the reset
+  // signal before other queries have seen it.
+  let resetId = 0
+  let resetPending = false
+  const clearedQueries = new Map<string, number>()
   return {
-    /**
-     * Clears the reset state, so queries know not to try again until the boundary is reset again.
-     */
-    clearReset: () => {
-      isReset = false
+    clearReset: (queryHash) => {
+      if (queryHash === undefined) {
+        resetId = 0
+        resetPending = false
+        clearedQueries.clear()
+      } else {
+        clearedQueries.set(queryHash, resetId)
+        resetPending = false
+      }
     },
-    /**
-     * Resets any query errors within the boundary, so queries know they can try again.
-     */
     reset: () => {
-      isReset = true
+      resetId += 1
+      resetPending = true
     },
-    /**
-     * Returns whether the boundary has been reset and not yet cleared.
-     * @returns `true` if the boundary has been reset and not yet cleared.
-     */
-    isReset: () => {
-      return isReset
+    isReset: (queryHash) => {
+      if (queryHash === undefined) {
+        return resetPending
+      }
+      const clearedResetId = clearedQueries.get(queryHash)
+      // Queries that never cleared their own reset state follow the shared
+      // reset wave (cleared by the first mounted query), while queries that
+      // did clear it keep their own pending state until they observe it.
+      return clearedResetId === undefined
+        ? resetPending
+        : resetId > clearedResetId
     },
   }
 }

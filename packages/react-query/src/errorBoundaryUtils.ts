@@ -42,7 +42,7 @@ export const ensurePreventErrorBoundaryRetry = <
 
   if (options.suspense || throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
+    if (!errorResetBoundary.isReset(options.queryHash)) {
       options.retryOnMount = false
     }
   }
@@ -52,13 +52,16 @@ export const ensurePreventErrorBoundaryRetry = <
  * Clears the reset state of the error boundary after the component mounts, so later errors are
  * thrown to the boundary again.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
+ * @param queryHash - The hash(es) of the queries to clear the reset state for.
  */
 export const useClearResetErrorBoundary = (
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  queryHash: string | Array<string>,
 ) => {
   React.useEffect(() => {
-    errorResetBoundary.clearReset()
-  }, [errorResetBoundary])
+    const queryHashes = Array.isArray(queryHash) ? queryHash : [queryHash]
+    queryHashes.forEach((hash) => errorResetBoundary.clearReset(hash))
+  }, [errorResetBoundary, queryHash])
 }
 
 /**
@@ -90,7 +93,7 @@ export const getHasError = <
 }) => {
   return (
     result.isError &&
-    !errorResetBoundary.isReset() &&
+    !errorResetBoundary.isReset(query?.queryHash) &&
     !result.isFetching &&
     query &&
     ((suspense && result.data === undefined) ||

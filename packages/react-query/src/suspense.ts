@@ -97,5 +97,5 @@ export const fetchOptimistic = <
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) =>
   observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset()
+    errorResetBoundary.clearReset(defaultedOptions.queryHash)
   })

@@ -361,7 +361,10 @@ export function useQueries<
     ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
+  useClearResetErrorBoundary(
+    errorResetBoundary,
+    defaultedQueries.map((queryOptions) => queryOptions.queryHash),
+  )
 
   const [observer] = useState(
     () =>

@@ -1,5 +1,5 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { fireEvent } from '@testing-library/preact'
+import { act, fireEvent } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { useEffect, useState } from 'preact/hooks'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -730,6 +730,95 @@ describe('QueryErrorResetBoundary', () => {
 
       consoleErrorMock.mockRestore()
     })
+  })
+
+  it('should retry an errored query that mounts after a sibling query already consumed the reset', async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    const siblingKey = queryKey()
+
+    let succeed = false
+    let showPage!: (show: boolean) => void
+
+    function ErroredPage() {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Error')
+            return 'data'
+          }),
+        retry: false,
+        throwOnError: true,
+      })
+
+      return <div>{data}</div>
+    }
+
+    function Sibling() {
+      useQuery({
+        queryKey: siblingKey,
+        queryFn: () => sleep(10).then(() => 'sibling'),
+      })
+
+      return null
+    }
+
+    function App() {
+      const [show, setShow] = useState(true)
+      showPage = setShow
+
+      return (
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <div>
+                  <div>error boundary</div>
+                  <button
+                    onClick={() => {
+                      resetErrorBoundary()
+                    }}
+                  >
+                    retry
+                  </button>
+                </div>
+              )}
+            >
+              <Sibling />
+              {show ? <ErroredPage /> : null}
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    // Reset the boundary while the errored query is not rendered, so the
+    // sibling's mount is the only query that observes the reset.
+    act(() => {
+      showPage(false)
+    })
+    fireEvent.click(rendered.getByText('retry'))
+    await vi.advanceTimersByTimeAsync(11)
+
+    // Mounting the errored query again must still retry it: the sibling
+    // must not have consumed the reset on its behalf.
+    succeed = true
+    act(() => {
+      showPage(true)
+    })
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data')).toBeInTheDocument()
+
+    consoleErrorMock.mockRestore()
   })
 
   describe('useQueries', () => {
