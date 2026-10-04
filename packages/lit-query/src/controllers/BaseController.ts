@@ -349,8 +349,10 @@ export abstract class BaseController<TResult> implements ReactiveController {
    */
   protected abstract onHostUpdate(): void
   /**
-   * Called in a microtask when the resolved `QueryClient` changes. Subclasses
-   * resubscribe to the new client here.
+   * Called in a microtask when the `QueryClient` from context changes, or when
+   * resolving it finishes without finding one (`tryGetQueryClient` then returns
+   * `undefined`). Subclasses resubscribe to the new client here, if there is
+   * one.
    */
   protected abstract onQueryClientChanged(): void
 }
