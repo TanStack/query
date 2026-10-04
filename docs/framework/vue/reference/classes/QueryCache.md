@@ -243,7 +243,7 @@ QC.find
 findAll(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/vue-query/src/queryCache.ts:23](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L23)
+Defined in: [packages/vue-query/src/queryCache.ts:27](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryCache.ts#L27)
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.

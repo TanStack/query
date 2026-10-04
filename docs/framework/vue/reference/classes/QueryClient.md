@@ -69,7 +69,7 @@ while this is `true`. Defaults to `false` if no persister is configured.
 cancelQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, options?: MaybeRefDeep<CancelOptions>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:193](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L193)
+Defined in: [packages/vue-query/src/queryClient.ts:196](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L196)
 
 Cancels outgoing fetches for queries matching the given filters. Most useful when performing
 optimistic updates, since any outgoing refetch that resolves afterwards would otherwise
@@ -322,7 +322,7 @@ QC.ensureInfiniteQueryData
 ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:90](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L90)
+Defined in: [packages/vue-query/src/queryClient.ts:93](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L93)
 
 ##### Type Parameters
 
@@ -368,7 +368,7 @@ QC.ensureQueryData
 ensureQueryData<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefDeep<EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, never>>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:98](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L98)
+Defined in: [packages/vue-query/src/queryClient.ts:101](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L101)
 
 ##### Type Parameters
 
@@ -418,7 +418,7 @@ QC.ensureQueryData
 fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:474](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L474)
+Defined in: [packages/vue-query/src/queryClient.ts:477](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L477)
 
 ##### Type Parameters
 
@@ -468,7 +468,7 @@ QC.fetchInfiniteQuery
 fetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefDeep<FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>): Promise<InfiniteData<TData, TPageParam>>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:489](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L489)
+Defined in: [packages/vue-query/src/queryClient.ts:492](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L492)
 
 ##### Type Parameters
 
@@ -522,7 +522,7 @@ QC.fetchInfiniteQuery
 fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:321](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L321)
+Defined in: [packages/vue-query/src/queryClient.ts:324](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L324)
 
 ##### Type Parameters
 
@@ -574,7 +574,7 @@ fetchQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options:
 | () => FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:336](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L336)
+Defined in: [packages/vue-query/src/queryClient.ts:339](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L339)
 
 ##### Type Parameters
 
@@ -694,7 +694,7 @@ QC.getMutationCache
 getMutationDefaults(mutationKey: MaybeRefDeep<readonly unknown[]>): MutationObserverOptions<any, any, any, any>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:624](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L624)
+Defined in: [packages/vue-query/src/queryClient.ts:627](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L627)
 
 Returns the default options registered for mutations whose mutation key partially matches
 the given `mutationKey`, via [QueryClient#setMutationDefaults](#setmutationdefaults). If multiple registered
@@ -735,7 +735,7 @@ QC.getMutationDefaults
 getQueriesData<TData>(filters: MaybeRefDeep<QueryFilters<readonly unknown[]>>): [readonly unknown[], TData | undefined][];
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:122](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L122)
+Defined in: [packages/vue-query/src/queryClient.ts:125](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L125)
 
 Imperative (non-reactive) way to retrieve the cached data of multiple queries at once.
 Only queries matching the given filters are returned; if none match, an empty array is
@@ -878,7 +878,7 @@ QC.getQueryData
 getQueryData<TData>(queryKey: MaybeRefDeep<readonly unknown[]>): TData | undefined;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:78](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L78)
+Defined in: [packages/vue-query/src/queryClient.ts:81](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L81)
 
 ##### Type Parameters
 
@@ -910,7 +910,7 @@ QC.getQueryData
 getQueryDefaults(queryKey: MaybeRefDeep<readonly unknown[]>): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, "queryKey">;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:601](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L601)
+Defined in: [packages/vue-query/src/queryClient.ts:604](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L604)
 
 Returns the default options registered for queries whose query key partially matches the
 given `queryKey`, via [QueryClient#setQueryDefaults](#setquerydefaults). If multiple registered defaults
@@ -953,7 +953,7 @@ getQueryState<TData, TError>(queryKey: MaybeRefDeep<readonly unknown[]>):
   | undefined;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:169](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L169)
+Defined in: [packages/vue-query/src/queryClient.ts:172](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L172)
 
 Imperative (non-reactive) way to retrieve an existing query's state. If the query does not
 exist, `undefined` is returned.
@@ -1006,7 +1006,7 @@ QC.getQueryState
 infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:407](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L407)
+Defined in: [packages/vue-query/src/queryClient.ts:410](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L410)
 
 Asynchronous method to fetch and cache an infinite query, resolving with an
 [InfiniteData](../interfaces/InfiniteData.md) object or throwing with the error.
@@ -1079,7 +1079,7 @@ QC.infiniteQuery
 infiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefDeep<InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>): Promise<TData[] extends InfiniteData<TQueryFnData, unknown>[] ? InfiniteData<TQueryFnData, TPageParam> : TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:426](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L426)
+Defined in: [packages/vue-query/src/queryClient.ts:429](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L429)
 
 ##### Type Parameters
 
@@ -1129,7 +1129,7 @@ invalidateQueries<TTaggedQueryKey>(filters?:
 | () => InvalidateQueryFilters<TTaggedQueryKey>, options?: MaybeRefDeep<InvalidateOptions>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:204](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L204)
+Defined in: [packages/vue-query/src/queryClient.ts:207](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L207)
 
 Marks queries matching the given filters as invalidated. Unlike
 [QueryClient#removeQueries](#removequeries), invalidated queries stay in the cache.
@@ -1299,7 +1299,7 @@ QC.mount
 prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:530](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L530)
+Defined in: [packages/vue-query/src/queryClient.ts:533](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L533)
 
 ##### Type Parameters
 
@@ -1349,7 +1349,7 @@ QC.prefetchInfiniteQuery
 prefetchInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: MaybeRefDeep<FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:545](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L545)
+Defined in: [packages/vue-query/src/queryClient.ts:548](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L548)
 
 ##### Type Parameters
 
@@ -1403,7 +1403,7 @@ QC.prefetchInfiniteQuery
 prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:373](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L373)
+Defined in: [packages/vue-query/src/queryClient.ts:376](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L376)
 
 ##### Type Parameters
 
@@ -1449,7 +1449,7 @@ QC.prefetchQuery
 prefetchQuery<TQueryFnData, TError, TData, TQueryKey>(options: MaybeRefDeep<FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, never>>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:381](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L381)
+Defined in: [packages/vue-query/src/queryClient.ts:384](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L384)
 
 ##### Type Parameters
 
@@ -1499,7 +1499,7 @@ QC.prefetchQuery
 query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options: QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:260](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L260)
+Defined in: [packages/vue-query/src/queryClient.ts:263](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L263)
 
 Asynchronous method to fetch and cache a query, resolving with the data or throwing with
 the error.
@@ -1586,7 +1586,7 @@ QC.query
 query<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>(options: MaybeRefDeep<QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey, TPageParam>>): Promise<TData>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:277](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L277)
+Defined in: [packages/vue-query/src/queryClient.ts:280](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L280)
 
 ##### Type Parameters
 
@@ -1638,7 +1638,7 @@ QC.query
 refetchQueries<TTaggedQueryKey>(filters?: RefetchQueryFilters<TTaggedQueryKey>, options?: MaybeRefDeep<RefetchOptions>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:244](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L244)
+Defined in: [packages/vue-query/src/queryClient.ts:247](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L247)
 
 Refetches queries matching the given filters, regardless of whether they are stale. Without
 filters, every query in the cache is refetched. Queries that are disabled, or static (only
@@ -1697,7 +1697,7 @@ QC.refetchQueries
 removeQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>): void;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:175](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L175)
+Defined in: [packages/vue-query/src/queryClient.ts:178](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L178)
 
 Removes queries from the cache that match the given filters. Unlike
 [QueryClient#invalidateQueries](#invalidatequeries) or [QueryClient#refetchQueries](#refetchqueries), this removes
@@ -1743,7 +1743,7 @@ QC.removeQueries
 resetQueries<TTaggedQueryKey>(filters?: QueryFilters<TTaggedQueryKey>, options?: MaybeRefDeep<ResetOptions>): Promise<void>;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:182](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L182)
+Defined in: [packages/vue-query/src/queryClient.ts:185](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L185)
 
 Resets queries matching the given filters back to their initial state (e.g. any
 `initialData`), notifying subscribers rather than removing them. Active queries among the
@@ -1831,7 +1831,7 @@ QC.resumePausedMutations
 setDefaultOptions(options: MaybeRefDeep<DefaultOptions<Error>>): void;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:583](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L583)
+Defined in: [packages/vue-query/src/queryClient.ts:586](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L586)
 
 Dynamically sets the default options for this client, overwriting any previously defined
 default options.
@@ -1879,7 +1879,7 @@ QC.setDefaultOptions
 setMutationDefaults<TData, TError, TVariables, TOnMutateResult>(mutationKey: MaybeRefDeep<readonly unknown[]>, options: MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>>): void;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:607](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L607)
+Defined in: [packages/vue-query/src/queryClient.ts:610](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L610)
 
 Sets default options for mutations whose mutation key partially matches the given
 `mutationKey`. As with [QueryClient#setQueryDefaults](#setquerydefaults), the order of registration
@@ -1948,7 +1948,7 @@ setQueriesData<TData>(
    options: MaybeRefDeep<SetDataOptions>): [readonly unknown[], TData | undefined][];
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:157](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L157)
+Defined in: [packages/vue-query/src/queryClient.ts:160](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L160)
 
 Synchronous way to immediately update the cached data of multiple queries at once, using
 filters or partial query key matching. Only queries that already exist and match the given
@@ -2016,7 +2016,7 @@ setQueryData<TQueryFnData, TTaggedQueryKey, TInferredQueryFnData>(
    options?: MaybeRefDeep<SetDataOptions>): NoInfer<TInferredQueryFnData> | undefined;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:128](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L128)
+Defined in: [packages/vue-query/src/queryClient.ts:131](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L131)
 
 Synchronous way to immediately update a query's cached data. If the updater (or the value
 passed) resolves to `undefined`, the cache is left untouched and no query is created;
@@ -2092,7 +2092,7 @@ setQueryData<TQueryFnData, TData>(
    options?: MaybeRefDeep<SetDataOptions>): NoInfer<TData> | undefined;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:140](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L140)
+Defined in: [packages/vue-query/src/queryClient.ts:143](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L143)
 
 ##### Type Parameters
 
@@ -2136,7 +2136,7 @@ QC.setQueryData
 setQueryDefaults<TQueryFnData, TError, TData, TQueryData>(queryKey: MaybeRefDeep<readonly unknown[]>, options: MaybeRefDeep<Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryData>, "queryKey">>): void;
 ```
 
-Defined in: [packages/vue-query/src/queryClient.ts:587](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L587)
+Defined in: [packages/vue-query/src/queryClient.ts:590](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryClient.ts#L590)
 
 Sets default options for queries whose query key partially matches the given `queryKey`.
 
