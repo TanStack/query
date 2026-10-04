@@ -3,7 +3,7 @@ id: QueryExecuteOptions
 title: QueryExecuteOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:706](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L706)
+Defined in: [packages/query-core/src/types.ts:721](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L721)
 
 The options of `queryClient.query`: the [QueryOptions](QueryOptions.md) of the query, plus a `staleTime`
 that decides whether cached data is returned instead of fetching, and a `select` that only
@@ -46,7 +46,7 @@ transforms the value the call resolves with.
 | <a id="gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used. Setting it to `Infinity` will disable garbage collection. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see `timeoutManager.setTimeoutProvider` for a workaround. |
 | <a id="initialdata"></a> `initialData?` | `TQueryData` \| () => `TQueryData` \| `undefined` | `undefined` | If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet). If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initial data. Initial data is considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the cache. |
 | <a id="initialdataupdatedat"></a> `initialDataUpdatedAt?` | `number` \| () => `number` \| `undefined` | `undefined` | If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated. |
-| <a id="initialpageparam"></a> `initialPageParam?` | `undefined` | `undefined` | - |
+| <a id="initialpageparam"></a> `initialPageParam?` | `undefined` | `undefined` | Not allowed here, since `initialPageParam` only applies to infinite queries. |
 | <a id="maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
 | <a id="meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
 | <a id="networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
