@@ -334,8 +334,23 @@ export abstract class BaseController<TResult> implements ReactiveController {
     return true
   }
 
+  /**
+   * Called in a microtask after the host connects, once the subclass fields
+   * are initialized. Subclasses subscribe to the `QueryClient` here.
+   */
   protected abstract onConnected(): void
+  /**
+   * Called when the host disconnects or the controller is destroyed.
+   * Subclasses unsubscribe here.
+   */
   protected abstract onDisconnected(): void
+  /**
+   * Called before each host update. Subclasses refresh their options here.
+   */
   protected abstract onHostUpdate(): void
+  /**
+   * Called in a microtask when the resolved `QueryClient` changes. Subclasses
+   * resubscribe to the new client here.
+   */
   protected abstract onQueryClientChanged(): void
 }
