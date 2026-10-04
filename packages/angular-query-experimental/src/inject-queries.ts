@@ -218,6 +218,10 @@ export type QueriesResults<
           >
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
+/**
+ * The options for `injectQueries`: the `queries` to run, and an optional `combine` function that
+ * derives a single result from all the query results.
+ */
 export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,

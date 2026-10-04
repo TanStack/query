@@ -15,6 +15,9 @@ import type {
 } from './contexts/types'
 import type { Signal } from 'solid-js'
 
+/**
+ * The options for `TanstackQueryDevtoolsPanel`, which mounts the devtools as an embedded panel.
+ */
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot

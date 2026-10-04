@@ -5,6 +5,9 @@ import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
+/**
+ * The props of `ReactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient

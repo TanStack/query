@@ -1,5 +1,9 @@
 import type { PersistedClient } from './persist'
 
+/**
+ * Called when saving the persisted client fails. Returns a smaller client to try saving again, or
+ * `undefined` to give up.
+ */
 export type PersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error

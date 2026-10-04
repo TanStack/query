@@ -8,6 +8,10 @@ import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-c
 import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
+/**
+ * The props of `PersistQueryClientProvider`: the props of `QueryClientProvider`, plus the
+ * `persistOptions` and callbacks for when restoring succeeds or fails.
+ */
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void

@@ -9,7 +9,7 @@ redirect_from:
 function usePrefetchQuery<TQueryFnData, TError, TData, TQueryData, TQueryKey>(options: MaybeRefOrGetter<MaybeRefDeep<UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>>, queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/vue-query/src/usePrefetchQuery.ts:88](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L88)
+Defined in: [packages/vue-query/src/usePrefetchQuery.ts:92](https://github.com/TanStack/query/blob/main/packages/vue-query/src/usePrefetchQuery.ts#L92)
 
 `usePrefetchQuery` does not return anything — it fires a prefetch as a reactive side effect, useful for
 kicking off a fetch ahead of the component that will actually render the data with `useQuery`. You can pass

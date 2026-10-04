@@ -192,6 +192,10 @@ export type DefinedInitialQueryOptions<
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
   WithDefinedInitialData<TQueryFnData>
 
+/**
+ * The options returned by the `queryOptions` overload selected when `initialData` is omitted or may be
+ * `undefined`, with the `queryKey` tagged with the query's data and error types.
+ */
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -201,6 +205,10 @@ export type UndefinedInitialQueryOptionsWithDataTag<
   WithUndefinedInitialData<TQueryFnData> &
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
+/**
+ * The options returned by the `queryOptions` overload selected when `initialData` is set, with the
+ * `queryKey` tagged with the query's data and error types.
+ */
 export type DefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,

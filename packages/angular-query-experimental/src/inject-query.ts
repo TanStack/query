@@ -17,6 +17,9 @@ import type {
   UndefinedInitialDataOptions,
 } from './query-options'
 
+/**
+ * Options for `injectQuery`, passed after the function that returns the query options.
+ */
 export interface InjectQueryOptions {
   /**
    * The `Injector` in which to create the query.
