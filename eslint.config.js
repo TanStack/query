@@ -22,7 +22,31 @@ export default defineConfig([
     rules: {
       'jsdoc/check-tag-names': ['error', { definedTags: ['defaultValue'] }],
       'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          contexts: [
+            'ExportNamedDeclaration > TSInterfaceDeclaration',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration',
+          ],
+        },
+      ],
       'jsdoc/require-param': ['error', { checkDestructured: false }],
+      'jsdoc/check-template-names': 'error',
+      'jsdoc/informative-docs': 'error',
+      'jsdoc/match-description': 'error',
+      'jsdoc/no-bad-blocks': 'error',
+      'jsdoc/no-blank-block-descriptions': 'error',
+      'jsdoc/no-blank-blocks': 'error',
+      'jsdoc/require-asterisk-prefix': 'error',
+      'jsdoc/require-description': 'error',
+      'jsdoc/require-hyphen-before-param-description': 'error',
+      'jsdoc/require-next-description': 'error',
+      'jsdoc/require-template-description': 'error',
+      'jsdoc/require-throws': 'error',
+      'jsdoc/require-throws-description': 'error',
+      'jsdoc/require-yields-description': 'error',
+      'jsdoc/sort-tags': 'error',
     },
   },
   {
@@ -43,6 +67,7 @@ export default defineConfig([
               'datatag', // Query options tagging
               'extralight', // Our public interface
               'jscodeshift',
+              'refetched', // Query refetch operations
               'refetches', // Query refetch operations
               'retryer', // Our public interface
               'solidjs', // Our target framework

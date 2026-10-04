@@ -19,6 +19,10 @@ export type QueryErrorIsResetFunction = () => boolean
  */
 export type QueryErrorClearResetFunction = () => void
 
+/**
+ * The value a `QueryErrorResetBoundary` shares through context, used to reset query errors within
+ * it and to check whether a reset was requested.
+ */
 export interface QueryErrorResetBoundaryValue {
   /**
    * Clears the reset state, so queries know not to try again until the boundary is reset again.

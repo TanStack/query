@@ -7,6 +7,6 @@ title: SkipToken
 type SkipToken = typeof skipToken;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:626](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L626)
+Defined in: [packages/query-core/src/utils.ts:632](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L632)
 
 The type of the [skipToken](../variables/skipToken.md) sentinel value.

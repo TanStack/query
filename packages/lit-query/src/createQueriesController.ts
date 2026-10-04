@@ -219,7 +219,7 @@ export type QueriesResultAccessor<TCombinedResult> =
 /**
  * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
  * that reject with the missing client error.
- * @returns The pending result.
+ * @returns A new result object in that state.
  */
 function createPendingQueryObserverResult(): QueryObserverResult {
   return {
@@ -258,7 +258,7 @@ function createPendingQueryObserverResult(): QueryObserverResult {
  * Returns the result of a query used while no `QueryClient` is available: a `'success'` result with
  * the query's `initialData` (after `select`), or the pending result if there is no `initialData`.
  * @param query - The query options.
- * @returns The placeholder result.
+ * @returns The `'success'` result with `initialData`, or a pending one.
  */
 function createPlaceholderQueryObserverResult(
   query: QueryObserverOptions,

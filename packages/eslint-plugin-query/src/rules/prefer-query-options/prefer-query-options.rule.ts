@@ -77,7 +77,7 @@ export const rule = createRule({
   create: detectTanstackQueryImports((context, _, helpers) => {
     /**
      * Reports an object literal passed as query options that defines `queryKey` or `queryFn` inline.
-     * @param node - The options node.
+     * @param node - The argument passed as query options.
      */
     function reportInlineQueryOptions(node: TSESTree.Node): void {
       if (ASTUtils.isObjectExpression(node) && hasInlineQueryOptions(node)) {

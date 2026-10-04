@@ -12,7 +12,10 @@ type QueryObserverResult<TData, TError> =
 | QueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1034](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1034)
+Defined in: [packages/query-core/src/types.ts:1188](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1188)
+
+The result of a `QueryObserver`, and of the hooks built on it like `useQuery`. Narrow it by
+`status` or the `is*` flags to get the type of each state.
 
 ## Type Parameters
 

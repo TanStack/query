@@ -10,6 +10,9 @@ import { QueryClient, notifyManager } from '@tanstack/query-core'
 import type { QueryFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 
+/**
+ * Options for `injectIsFetching`, passed after the query filters.
+ */
 export interface InjectIsFetchingOptions {
   /**
    * The `Injector` in which to create the isFetching signal.

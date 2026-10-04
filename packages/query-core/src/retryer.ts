@@ -19,6 +19,10 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   canRun: () => boolean
 }
 
+/**
+ * Runs a function with retries, and can pause, continue, or cancel it. Queries and mutations use
+ * one for each fetch or execution.
+ */
 export interface Retryer<TData = unknown> {
   promise: Promise<TData>
   cancel: (cancelOptions?: CancelOptions) => void
@@ -99,9 +103,10 @@ export class CancelledError extends Error {
 }
 
 /**
- * @deprecated Use instanceof `CancelledError` instead.
+ * Checks whether a value is a `CancelledError`.
  * @param value - The value to check.
  * @returns `true` if `value` is a `CancelledError`.
+ * @deprecated Use instanceof `CancelledError` instead.
  */
 export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError

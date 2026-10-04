@@ -28,6 +28,10 @@ type MutationResult<TData, TError, TVariables, TOnMutateResult> =
     'mutate' | 'reset'
   >
 
+/**
+ * The options accepted by `useMutation`: {@link MutationOptions} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -50,6 +54,10 @@ type MutateSyncFunction<
   >
 ) => void
 
+/**
+ * The result of `useMutation`: the {@link MutationObserverResult} properties wrapped in `Ref`s, plus the
+ * fire-and-forget `mutate`, the awaitable `mutateAsync`, and `reset`.
+ */
 export type UseMutationReturnType<
   TData,
   TError,
@@ -73,8 +81,6 @@ export type UseMutationReturnType<
  *
  * `options` may be a plain object, a `ref`, or a reactive getter (`() => ({ ... })`) — pass a getter
  * if the options themselves depend on other reactive state.
- * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
- * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @param options - The {@link UseMutationOptions} to use — everything you can pass to `useMutation`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
@@ -82,6 +88,8 @@ export type UseMutationReturnType<
  * argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to the shared
  * mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call
  * callbacks fire only for the latest call you've made.
+ * @see {@link mutationOptions} to share these options across multiple `useMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```vue
  * <script setup lang="ts">

@@ -44,10 +44,18 @@ export class Subscribable<TListener extends Function> {
     return this.listeners.size > 0
   }
 
+  /**
+   * Called after a listener is added. Does nothing here; subclasses override it, e.g. to start
+   * tracking what they observe once the first listener subscribes.
+   */
   protected onSubscribe(): void {
     // Do nothing
   }
 
+  /**
+   * Called after a listener is removed. Does nothing here; subclasses override it, e.g. to clean up
+   * once the last listener unsubscribes.
+   */
   protected onUnsubscribe(): void {
     // Do nothing
   }

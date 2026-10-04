@@ -3,7 +3,10 @@ id: QueryObserverPlaceholderResult
 title: QueryObserverPlaceholderResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1014](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1014)
+Defined in: [packages/query-core/src/types.ts:1161](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1161)
+
+A query result in the `success` state that shows `placeholderData` while the query has no data
+yet.
 
 ## Extends
 

@@ -7,7 +7,7 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L158)
+Defined in: [packages/svelte-query/src/types.ts:180](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L180)
 
 Options for useMutationState
 

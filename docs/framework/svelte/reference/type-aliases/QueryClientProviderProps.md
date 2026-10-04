@@ -7,7 +7,9 @@ title: QueryClientProviderProps
 type QueryClientProviderProps = object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:167](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L167)
+Defined in: [packages/svelte-query/src/types.ts:192](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L192)
+
+The props accepted by `QueryClientProvider`.
 
 ## Properties
 

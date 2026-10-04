@@ -102,6 +102,10 @@ export class QueryObserver<
     this.setOptions(options)
   }
 
+  /**
+   * Binds the methods of the result (`refetch`) to the observer, so they keep working when destructured
+   * from it. Subclasses override it to bind their own result methods as well.
+   */
   protected bindMethods(): void {
     this.refetch = this.refetch.bind(this)
   }
@@ -174,6 +178,7 @@ export class QueryObserver<
    * refetch-interval timers as needed.
    * @param options - The new observer options. They are defaulted with {@link
    * QueryClient#defaultQueryOptions} before being applied.
+   * @throws {Error} If `enabled` is neither a boolean nor a function.
    * @example
    * ```ts
    * observer.setOptions({ queryKey: ['posts', 1], queryFn: () => fetchPost(1) })
@@ -315,7 +320,7 @@ export class QueryObserver<
    * observed query. This is a point-in-time read; to be notified of updates
    * as they happen, subscribe to the observer instead (its inherited
    * `subscribe` method).
-   * @returns The current result.
+   * @returns The observer's latest result.
    * @example
    * ```ts
    * const result = observer.getCurrentResult()
@@ -456,6 +461,12 @@ export class QueryObserver<
     ])
   }
 
+  /**
+   * Fetches the observed query and updates the result once the fetch settles. Used by `refetch` and,
+   * in `InfiniteQueryObserver`, to fetch more pages.
+   * @param fetchOptions - Options for this fetch. `cancelRefetch` defaults to `true`.
+   * @returns A promise that resolves with the updated result.
+   */
   protected fetch(
     fetchOptions: ObserverFetchOptions,
   ): Promise<QueryObserverResult<TData, TError>> {
@@ -567,6 +578,13 @@ export class QueryObserver<
     }
   }
 
+  /**
+   * Computes the result for a query and options from the query's state, applying `select`,
+   * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
+   * @param query - The query to compute the result for.
+   * @param options - The observer options to compute the result with.
+   * @returns The computed result.
+   */
   protected createResult(
     query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
     options: QueryObserverOptions<
@@ -832,7 +850,11 @@ export class QueryObserver<
     }
   }
 
-  /** @internal */
+  /**
+   * Updates the observer's result when the observed query changes, and reschedules its timers if it
+   * has listeners.
+   * @internal
+   */
   onQueryUpdate(): void {
     this.updateResult()
 

@@ -3,7 +3,10 @@ id: InfiniteQueryObserverPlaceholderResult
 title: InfiniteQueryObserverPlaceholderResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1170](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1170)
+Defined in: [packages/query-core/src/types.ts:1350](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1350)
+
+An infinite query result in the `success` state that shows `placeholderData` while the query has
+no data yet.
 
 ## Extends
 

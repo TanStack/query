@@ -24,6 +24,11 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The options accepted by `useInfiniteQuery`. Same as {@link InfiniteQueryObserverOptions} from
+ * `@tanstack/query-core`, plus the `shallow` option. Each option except `shallow` can also be a `ref` (and
+ * `enabled` a reactive getter).
+ */
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -62,6 +67,10 @@ export type UseInfiniteQueryOptions<
   } & ShallowOption
 >
 
+/**
+ * The result of `useInfiniteQuery`: {@link InfiniteQueryObserverResult} from `@tanstack/query-core`, with
+ * its properties wrapped in `Ref`s as in {@link UseBaseQueryReturnType}.
+ */
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
@@ -78,9 +87,6 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
  * individual entries — the array itself can't be a bare getter.
- * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
- * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
- * actions, or add conditions like `hasNextPage && !isFetching`.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`, with `initialData` set.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -89,6 +95,9 @@ export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
  * `data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -141,9 +150,6 @@ export function useInfiniteQuery<
  * `enabled` tracks reactive dependencies automatically as a `ref`, a plain value, or a reactive getter
  * (`() => ...`). `queryKey` reacts through a `ref` for the array itself, or `ref`s and reactive getters as
  * individual entries — the array itself can't be a bare getter.
- * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
- * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
- * actions, or add conditions like `hasNextPage && !isFetching`.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `useInfiniteQuery`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
@@ -152,6 +158,9 @@ export function useInfiniteQuery<
  * `hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.value.pages` and
  * `data.value.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
  * `InfiniteData<TQueryFnData>` shape.
+ * @remarks Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default
+ * refetch behavior, resulting in outdated data. Make sure to call these functions only in response to user
+ * actions, or add conditions like `hasNextPage && !isFetching`.
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```vue

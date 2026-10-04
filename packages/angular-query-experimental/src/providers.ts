@@ -39,11 +39,11 @@ export function provideQueryClient(
 /**
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications. Allows
  * configuring a `QueryClient` and optional features such as developer tools.
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @see {@link withDevtools}
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @param features - Optional features to configure additional Query functionality.
  * @returns A set of providers to set up TanStack Query.
+ * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
+ * @see {@link withDevtools}
  * @example
  * ```ts
  * import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental'
@@ -107,9 +107,9 @@ export function provideTanStackQuery(
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
  *
  * Allows configuring a `QueryClient`.
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @param queryClient - A `QueryClient` instance.
  * @returns A set of providers to set up TanStack Query.
+ * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @deprecated Use `provideTanStackQuery` instead.
  */
 export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {

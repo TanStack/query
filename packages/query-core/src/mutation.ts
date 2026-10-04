@@ -105,6 +105,10 @@ interface ContinueAction {
   type: 'continue'
 }
 
+/**
+ * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
+ * succeeds.
+ */
 export type Action<TData, TError, TVariables, TOnMutateResult> =
   | ContinueAction
   | ErrorAction<TError>
@@ -164,6 +168,7 @@ export class Mutation<
   }
 
   /**
+   * Replaces the mutation's options and applies their `gcTime`.
    * @internal
    * @param options - The new mutation options.
    */
@@ -184,6 +189,7 @@ export class Mutation<
   }
 
   /**
+   * Subscribes an observer to the mutation and stops its garbage collection.
    * @internal
    * @param observer - The observer to add. Adding an observer that is already subscribed does
    * nothing.
@@ -204,6 +210,7 @@ export class Mutation<
   }
 
   /**
+   * Unsubscribes an observer from the mutation.
    * @internal
    * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
    */
@@ -240,15 +247,15 @@ export class Mutation<
    *   this instance), `execute` is called again with the last known variables.
    * - Otherwise the mutation has already settled and this resolves immediately
    *   without running anything again.
+   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
+   * It resolves immediately if the mutation has already settled.
+   * @see {@link Mutation#execute}
    * @example
    * ```ts
    * // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
-   * @returns A promise that settles with the resumed mutation: it rejects if the mutation fails.
-   * It resolves immediately if the mutation has already settled.
-   * @see {@link Mutation#execute}
    */
   continue(): Promise<unknown> {
     return (
@@ -281,15 +288,15 @@ export class Mutation<
    * those four callbacks is individually caught so that a throwing callback
    * cannot mask the original error; an `error` action is then dispatched and
    * the original error is re-thrown.
+   * @param variables - The variables passed to the `mutationFn`.
+   * @returns A promise that resolves with the mutation's data, or rejects with its error.
+   * @see {@link Mutation#continue}
    * @example
    * ```ts
    * // Called internally by `MutationObserver.mutate` and `Mutation.continue` —
    * // applications normally trigger mutations through those, not this method.
    * const data = await mutation.execute(variables)
    * ```
-   * @param variables - The variables passed to the `mutationFn`.
-   * @returns A promise that resolves with the mutation's data, or rejects with its error.
-   * @see {@link Mutation#continue}
    */
   async execute(variables: TVariables): Promise<TData> {
     const onContinue = () => {

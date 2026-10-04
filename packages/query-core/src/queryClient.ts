@@ -196,11 +196,13 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * Returns the cached data of a query, or fetches it if there is none. With `revalidateIfStale`,
+   * stale cached data is also refetched in the background.
    * @param options - The query options. If the query has no cached data yet, it is fetched with
    * these options.
    * @returns A promise that resolves to the cached data, or to the fetched data if nothing was
    * cached yet.
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   ensureQueryData<
     TQueryFnData,
@@ -634,11 +636,13 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   * Fetches and caches a query, or returns its cached data if it isn't stale. Unlike in observers,
+   * the fetch isn't retried unless `retry` is set.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the cached or fetched data, or rejects with the fetch
    * error.
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
    */
   fetchQuery<
     TQueryFnData,
@@ -672,10 +676,12 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   * Fetches and caches a query like {@link QueryClient#fetchQuery}, but ignores the result and any
+   * error.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves once the fetch settles. It never rejects.
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchQuery<
     TQueryFnData = unknown,
@@ -737,11 +743,12 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   * Fetches and caches an infinite query, or returns its cached data if it isn't stale.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves to the cached or fetched {@link InfiniteData}, or rejects with
    * the fetch error.
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
    */
   fetchInfiniteQuery<
     TQueryFnData,
@@ -764,10 +771,12 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   * Fetches and caches an infinite query like {@link QueryClient#fetchInfiniteQuery}, but ignores
+   * the result and any error.
    * @param options - The infinite query options, including the `queryKey`, the `queryFn`, and the
    * `initialPageParam`.
    * @returns A promise that resolves once the fetch settles. It never rejects.
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
    */
   prefetchInfiniteQuery<
     TQueryFnData,
@@ -789,11 +798,13 @@ export class QueryClient {
   }
 
   /**
-   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   * Returns the cached data of an infinite query, or fetches it if there is none. With
+   * `revalidateIfStale`, stale cached data is also refetched in the background.
    * @param options - The infinite query options. If the query has no cached data yet, it is fetched
    * with these options.
    * @returns A promise that resolves to the cached {@link InfiniteData}, or to the fetched data if
    * nothing was cached yet.
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
    */
   ensureInfiniteQueryData<
     TQueryFnData,
@@ -1033,9 +1044,9 @@ export class QueryClient {
 
   /**
    * Called by framework adapters (e.g. inside `useQuery`) to resolve the options passed by the
-   * caller into their final, defaulted form: merging `queryClient.setQueryDefaults` for the
-   * given `queryKey`, then the client's own `defaultOptions.queries`, then the caller's options
-   * on top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * caller into their final, defaulted form: merging the client's own `defaultOptions.queries`,
+   * then `queryClient.setQueryDefaults` for the given `queryKey`, then the caller's options on
+   * top. A no-op if the options are already defaulted (`_defaulted: true`).
    * @param options - The query options passed by the caller.
    * @returns The defaulted options, with `queryHash` and dependent defaults (e.g.
    * `refetchOnReconnect`) filled in.
@@ -1123,9 +1134,9 @@ export class QueryClient {
 
   /**
    * The mutation counterpart of {@link QueryClient#defaultQueryOptions}. Called by framework
-   * adapters (e.g. inside `useMutation`) to merge `queryClient.setMutationDefaults` for the
-   * given `mutationKey`, then the client's `defaultOptions.mutations`, then the caller's options
-   * on top. A no-op if the options are already defaulted (`_defaulted: true`).
+   * adapters (e.g. inside `useMutation`) to merge the client's `defaultOptions.mutations`, then
+   * `queryClient.setMutationDefaults` for the given `mutationKey`, then the caller's options on
+   * top. A no-op if the options are already defaulted (`_defaulted: true`).
    * @param options - The mutation options passed by the caller.
    * @returns The defaulted options.
    */

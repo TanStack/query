@@ -8,6 +8,10 @@ import type {
   Promisable,
 } from '@tanstack/query-persist-client-core'
 
+/**
+ * Called when saving the persisted client fails. Returns, or resolves to, a smaller client to try
+ * saving again, or `undefined` to give up.
+ */
 export type AsyncPersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error
@@ -42,6 +46,14 @@ interface CreateAsyncStoragePersisterOptions {
   retry?: AsyncPersistRetryer
 }
 
+/**
+ * Creates a persister that saves the client to an asynchronous storage such as `AsyncStorage`,
+ * throttled by `throttleTime`. If saving fails, `retry` can return a smaller client to try again.
+ * @param options - The `storage` to persist to, the `key`, `throttleTime`, `serialize`,
+ * `deserialize`, and `retry` options.
+ * @returns A persister that saves, restores, and removes the client in `storage`. Without
+ * `storage`, its methods do nothing.
+ */
 export const createAsyncStoragePersister = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,

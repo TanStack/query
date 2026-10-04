@@ -9,7 +9,7 @@ redirect_from:
 function useQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:354](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L354)
+Defined in: [packages/react-query/src/useQueries.ts:356](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L356)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -82,6 +82,11 @@ will be used.
 
 The combined result. Without `combine`, this is an array with all the query results, in the same
 order as the input. When `combine` is provided, this is the value returned by `combine` instead.
+
+## Throws
+
+The error of the first query that should be thrown to the nearest error boundary (see
+`throwOnError`). While suspending, it throws a promise instead.
 
 ## Remarks
 

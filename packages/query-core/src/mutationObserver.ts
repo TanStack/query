@@ -71,6 +71,10 @@ export class MutationObserver<
     this.#updateResult()
   }
 
+  /**
+   * Binds the methods of the result (`mutate` and `reset`) to the observer, so they keep working when
+   * destructured from it.
+   */
   protected bindMethods(): void {
     this.mutate = this.mutate.bind(this)
     this.reset = this.reset.bind(this)
@@ -139,6 +143,7 @@ export class MutationObserver<
   }
 
   /**
+   * Updates the observer's result when the observed mutation changes, and notifies its listeners.
    * @internal
    * @param action - The action that updated the observed mutation, passed on to the observer's
    * callbacks.
@@ -155,7 +160,7 @@ export class MutationObserver<
    * Returns the observer's current result, derived from the observed
    * mutation's state (or the default, `idle` state if no mutation has been
    * built yet, e.g. before the first `mutate()` call or after `reset()`).
-   * @returns The current result.
+   * @returns The observer's latest result.
    */
   getCurrentResult(): MutationObserverResult<
     TData,
@@ -174,11 +179,11 @@ export class MutationObserver<
    * running to completion and its own callbacks still fire, but this
    * observer stops reflecting its state and a subsequent `mutate()` call
    * will build a brand new mutation.
+   * @see {@link MutationObserver#mutate}
    * @example
    * ```ts
    * observer.reset()
    * ```
-   * @see {@link MutationObserver#mutate}
    */
   reset(): void {
     // reset needs to remove the observer from the mutation because there is no way to "get it back"

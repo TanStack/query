@@ -283,7 +283,7 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Checks whether the resolved variable is allowlisted by its type annotation
+   * Checks whether the resolved variable is allowlisted by its type annotation.
    * @param params - The allowlisted type names, and the variable to check.
    * @returns `true` if a type referenced in the variable's type annotation is allowlisted.
    */
@@ -428,7 +428,7 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Recursively collects type identifiers from a type annotation
+   * Recursively collects type identifiers from a type annotation.
    * @param typeNode - The type to collect from: type references, unions, intersections, arrays, and
    * tuples are handled.
    * @param out - The set the type names are added to.

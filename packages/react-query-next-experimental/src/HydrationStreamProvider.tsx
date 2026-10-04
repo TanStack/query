@@ -33,6 +33,9 @@ interface HydrationStreamContext<TShape> {
   }
 }
 
+/**
+ * The props of the `Provider` returned by `createHydrationStreamProvider`.
+ */
 export interface HydrationStreamProviderProps<TShape> {
   children: React.ReactNode
   /**
@@ -67,12 +70,12 @@ export function createHydrationStreamProvider<TShape>() {
   )
   /**
    * 1. (Happens on server): the callback registered with `useServerInsertedHTML()` is called **on the server** whenever
-   *    Next.js inserts HTML into the streamed response
-   *    - This means that we might have some new entries in the cache that needs to be flushed
-   *    - We pass these to the client by inserting a `<script>`-tag where we do `window[id].push(serializedVersionOfCache)`
+   *    Next.js inserts HTML into the streamed response.
+   *    - This means that we might have some new entries in the cache that needs to be flushed.
+   *    - We pass these to the client by inserting a `<script>`-tag where we do `window[id].push(serializedVersionOfCache)`.
    * 2. (Happens in browser) In `useEffect()`:
-   *   - We check if `window[id]` is set to an array and call `push()` on all the entries which will call `onEntries()` with the new entries
-   *   - We replace `window[id]` with a `push()`-method that will be called whenever new entries are received
+   *   - We check if `window[id]` is set to an array and call `push()` on all the entries which will call `onEntries()` with the new entries.
+   *   - We replace `window[id]` with a `push()`-method that will be called whenever new entries are received.
    * @param props - The `children` to render, the `onEntries`/`onFlush` callbacks, and the optional
    * `transformer` and `nonce`.
    * @returns The `children`, wrapped in the stream context provider.

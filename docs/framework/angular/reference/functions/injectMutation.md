@@ -7,7 +7,7 @@ title: injectMutation
 function injectMutation<TData, TError, TVariables, TOnMutateResult>(injectMutationFn: () => CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, options?: InjectMutationOptions): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-mutation.ts:169](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L169)
+Defined in: [packages/angular-query-experimental/src/inject-mutation.ts:172](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L172)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `injectMutation` is the function for that. Unlike queries, mutations are not run automatically.

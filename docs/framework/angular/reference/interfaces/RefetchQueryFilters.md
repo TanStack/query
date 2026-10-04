@@ -3,10 +3,9 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:773](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L773)
+Defined in: [packages/query-core/src/types.ts:883](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L883)
 
-Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
-All provided filters must match; filters that are left unspecified are ignored.
+The filters of `queryClient.refetchQueries`, which select the queries to refetch.
 
 ## Extends
 

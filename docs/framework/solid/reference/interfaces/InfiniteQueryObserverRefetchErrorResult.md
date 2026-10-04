@@ -3,7 +3,10 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1136](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1136)
+Defined in: [packages/query-core/src/types.ts:1309](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1309)
+
+An infinite query result in the `error` state when a refetch failed, so the data from before is
+kept.
 
 ## Extends
 

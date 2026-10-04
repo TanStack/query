@@ -9,9 +9,9 @@ export const VUE_QUERY_CLIENT = 'VUE_QUERY_CLIENT'
 
 /**
  * Builds the injection key `useQueryClient`/`VueQueryPlugin` use for a given `queryClientKey`.
+ * @internal
  * @param key - The `queryClientKey`. Without it, the base key is used.
  * @returns The injection key.
- * @internal
  */
 export function getClientKey(key?: string) {
   const suffix = key ? `:${key}` : ''
@@ -20,9 +20,9 @@ export function getClientKey(key?: string) {
 
 /**
  * Copies each property from `update` onto `state`, in place, for every key already on `state`.
+ * @internal
  * @param state - The object to update.
  * @param update - The object to copy the values from.
- * @internal
  */
 export function updateState(
   state: Record<string, any>,
@@ -84,11 +84,11 @@ function _cloneDeep<T>(
  * Deep-clones `value`, recursing into arrays and plain objects. `customize`, if provided, can
  * intercept any node (by key and nesting level) and substitute its own return value instead of recursing
  * further.
+ * @internal
  * @param value - The value to clone.
  * @param customize - Called for every node with its key and nesting level. If it returns a value
  * other than `undefined`, that value is used instead of recursing.
  * @returns The cloned value.
- * @internal
  */
 export function cloneDeep<T>(
   value: MaybeRefDeep<T>,
@@ -106,10 +106,10 @@ export function cloneDeep<T>(
  * if `unrefGetters` is `true`, calling any functions it encounters and unwrapping their result too). Always
  * resolves `queryKey` this way, regardless of `unrefGetters` — this is what lets a `queryKey` containing `ref`s
  * be passed straight through to `@tanstack/query-core`.
+ * @internal
  * @param obj - The value to clone.
  * @param unrefGetters - Whether to also call functions and unwrap their result.
  * @returns The cloned value, with `ref`s unwrapped.
- * @internal
  */
 export function cloneDeepUnref<T>(
   obj: MaybeRefDeep<T>,
@@ -167,9 +167,9 @@ function isFunction(value: unknown): value is Function {
 
 /**
  * Resolves `source` to a plain value — calls it if it's a function, otherwise deep-unwraps it.
+ * @internal
  * @param source - A getter, or a value that may contain `ref`s.
  * @returns The resolved plain value.
- * @internal
  */
 export function toValueDeep<T>(source: (() => T) | MaybeRefDeep<T>): T {
   return isFunction(source) ? source() : cloneDeepUnref(source)

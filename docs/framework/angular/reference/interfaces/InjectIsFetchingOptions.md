@@ -3,7 +3,9 @@ id: InjectIsFetchingOptions
 title: InjectIsFetchingOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:13](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L13)
+Defined in: [packages/angular-query-experimental/src/inject-is-fetching.ts:16](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-fetching.ts#L16)
+
+Options for `injectIsFetching`, passed after the query filters.
 
 ## Properties
 

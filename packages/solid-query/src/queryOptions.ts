@@ -53,9 +53,9 @@ export type DefinedInitialDataOptions<
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * ```tsx
  * import { For } from 'solid-js'
@@ -101,9 +101,9 @@ export function queryOptions<
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
- * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `id`:
  * ```tsx

@@ -51,14 +51,14 @@ The [DefinedInitialDataInfiniteOptions](../type-aliases/DefinedInitialDataInfini
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
-
 ### Remarks
 
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
 automatically as the user scrolls.
+
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
 ### Example
 
@@ -140,6 +140,10 @@ The same options object, typed so that `queryKey` carries the inferred data type
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages, from a button click or
 automatically as the user scrolls.
 
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
+
 ### Example
 
 A parameterized factory, so the same options object can be reused per `postId`:
@@ -167,10 +171,6 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 ```
-
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
 
 ## Call Signature
 
@@ -223,6 +223,10 @@ The same options object, typed so that `queryKey` carries the inferred data type
 See [useInfiniteQuery](useInfiniteQuery.md) for examples that fetch further pages (from a button click or
 automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
 
+### See
+
+[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.
+
 ### Example
 
 A parameterized factory, so the same options object can be reused per `postId`:
@@ -250,7 +254,3 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 ```
-
-### See
-
-[useInfiniteQuery](useInfiniteQuery.md) to run an infinite query with these options.

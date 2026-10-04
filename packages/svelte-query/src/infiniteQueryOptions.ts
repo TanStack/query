@@ -8,6 +8,10 @@ import type {
 } from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from './types.js'
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
+ * be `undefined` — `data` may be `undefined` while the query is `pending`.
+ */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -29,6 +33,10 @@ export type UndefinedInitialDataInfiniteOptions<
       >
 }
 
+/**
+ * The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
+ * defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ */
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -53,10 +61,10 @@ export type DefinedInitialDataInfiniteOptions<
  * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined.
- * @see {@link createInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `createInfiniteQuery`, with `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @see {@link createInfiniteQuery} to run an infinite query with these options.
  * @example
  * `initialData` skips the loading state on first render — even if a refetch fails, the list stays
  * visible alongside the error:
@@ -114,10 +122,10 @@ export function infiniteQueryOptions<
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `createInfiniteQuery`.
  * These options can be shared across `createInfiniteQuery` calls and imperative APIs such as
  * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
- * @see {@link createInfiniteQuery} to run an infinite query with these options.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `createInfiniteQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+ * @see {@link createInfiniteQuery} to run an infinite query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `postId`:
  * ```svelte

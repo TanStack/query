@@ -9,7 +9,7 @@ type QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey> =
   | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean);
 ```
 
-Defined in: [packages/query-core/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L149)
+Defined in: [packages/query-core/src/types.ts:194](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L194)
 
 ## Type Parameters
 

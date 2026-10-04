@@ -3,10 +3,10 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:758](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L758)
+Defined in: [packages/query-core/src/types.ts:865](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L865)
 
-Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
-All provided filters must match; filters that are left unspecified are ignored.
+The filters of `queryClient.invalidateQueries`: the [QueryFilters](QueryFilters.md) that select the queries
+to invalidate, plus `refetchType` to choose which of them are refetched.
 
 ## Extends
 

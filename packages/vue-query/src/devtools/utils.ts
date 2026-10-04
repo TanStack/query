@@ -14,7 +14,7 @@ enum QueryState {
  * Returns the devtools state of a query: fetching, paused, inactive (no observers), stale, or fresh,
  * checked in that order.
  * @param query - The query to check.
- * @returns The state of the query.
+ * @returns A `QueryState` value, used to label, color, and sort the query.
  */
 export function getQueryState(query: Query): QueryState {
   if (query.state.fetchStatus === 'fetching') {

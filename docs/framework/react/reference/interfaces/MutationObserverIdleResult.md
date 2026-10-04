@@ -3,10 +3,9 @@ id: MutationObserverIdleResult
 title: MutationObserverIdleResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1495](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1495)
+Defined in: [packages/query-core/src/types.ts:1713](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1713)
 
-The raw state stored on a `Mutation` instance. This is the underlying state
-that observer results (e.g. `MutationObserverResult`) are derived from.
+A mutation result in the `idle` state: the mutation hasn't run yet, or was reset.
 
 ## Extends
 

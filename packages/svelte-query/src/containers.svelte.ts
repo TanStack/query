@@ -3,8 +3,15 @@ import { SvelteSet, createSubscriber } from 'svelte/reactivity'
 type VoidFn = () => void
 type Subscriber = (update: VoidFn) => void | VoidFn
 
+/**
+ * An object holding a value in its `current` property, e.g. a reactive value backed by `$state`.
+ */
 export type Box<T> = { current: T }
 
+/**
+ * A {@link Box} whose `current` value is computed on each read, and that notifies the reactive
+ * contexts reading it through the given subscriber.
+ */
 export class ReactiveValue<T> implements Box<T> {
   #fn
   #subscribe
@@ -14,6 +21,10 @@ export class ReactiveValue<T> implements Box<T> {
     this.#subscribe = createSubscriber((update) => onSubscribe(update))
   }
 
+  /**
+   * Subscribes the reactive context reading it, then computes the value.
+   * @returns The value returned by the compute function.
+   */
   get current() {
     this.#subscribe()
     return this.#fn()

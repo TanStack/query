@@ -7,7 +7,10 @@ title: MutationStateOptions
 type MutationStateOptions<TResult, TMutation> = object;
 ```
 
-Defined in: [packages/vue-query/src/useMutationState.ts:89](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L89)
+Defined in: [packages/vue-query/src/useMutationState.ts:97](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L97)
+
+The options accepted by `useMutationState`: the `filters` matching the mutations, and `select` to map each
+one (to its state, by default).
 
 ## Type Parameters
 

@@ -3,7 +3,7 @@ id: EnsureQueryDataOptions
 title: EnsureQueryDataOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:659](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L659)
+Defined in: [packages/query-core/src/types.ts:750](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L750)
 
 ## Deprecated
 

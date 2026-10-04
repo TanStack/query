@@ -7,7 +7,7 @@ import type { DevtoolsPosition } from './contexts'
  * Returns the status label of a query: fetching, inactive (no observers), paused, stale, or fresh,
  * checked in that order.
  * @param query - The query to label.
- * @returns The status label.
+ * @returns One of `'fetching'`, `'inactive'`, `'paused'`, `'stale'`, or `'fresh'`.
  */
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
@@ -90,7 +90,7 @@ export function getMutationStatusColor({
 
 /**
  * Returns the color of a query status label.
- * @param label - The status label.
+ * @param label - A label returned by {@link getQueryStatusLabel}.
  * @returns The color name.
  */
 export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
@@ -106,7 +106,7 @@ export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
 }
 
 /**
- * Displays a string regardless of the type of the data
+ * Displays a string regardless of the type of the data.
  * @param value - Value to be stringified
  * @param beautify - Formats json to multiline
  * @returns The value serialized with `superjson`, as a JSON string.
@@ -177,10 +177,20 @@ export const mutationSortFns: Record<string, MutationSortFn> = {
   'last updated': mutationDateSort,
 }
 
+/**
+ * Converts a length in `rem` to pixels, using the root element's font size.
+ * @param rem - The length in `rem`.
+ * @returns The length in pixels.
+ */
 export const convertRemToPixels = (rem: number) => {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
+/**
+ * Tracks the user's `prefers-color-scheme` setting.
+ * @returns An accessor of `'light'` or `'dark'`, updated when the setting
+ * changes.
+ */
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
 
@@ -198,7 +208,7 @@ export const getPreferredColorScheme = () => {
 }
 
 /**
- * updates nested data by path
+ * Updates nested data by path.
  * @param oldData - Data to be updated
  * @param updatePath - Path to the data to be updated
  * @param value - New value
@@ -272,7 +282,7 @@ export const updateNestedDataByPath = (
 }
 
 /**
- * Deletes nested data by path
+ * Deletes nested data by path.
  * @param oldData - Data to be updated
  * @param deletePath - Path to the data to be deleted
  * @returns newData without the deleted items by path
@@ -333,8 +343,12 @@ export const deleteNestedDataByPath = (
   return oldData
 }
 
-// Sets up the goober stylesheet
-// Adds a nonce to the style tag if needed
+/**
+ * Sets up the goober stylesheet with a `nonce`, for pages with a Content Security Policy. Without a
+ * `nonce`, it does nothing and goober creates the stylesheet itself.
+ * @param nonce - The nonce to set on the style tag.
+ * @param target - The shadow root to add the style tag to, instead of `document.head`.
+ */
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce) return // Goober reads window.__nonce__ every time it creates or accesses its style
   // element (el.nonce = window.__nonce__). Without this, goober overwrites the

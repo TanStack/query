@@ -84,7 +84,11 @@ export class QueryClientProvider extends LitElement {
     })
   }
 
-  /** @internal */
+  /**
+   * Provides the client to descendants and mounts it when the element is
+   * connected.
+   * @internal
+   */
   connectedCallback(): void {
     super.connectedCallback()
     const client = this.requireClient()
@@ -92,16 +96,21 @@ export class QueryClientProvider extends LitElement {
     this.mountClient(client)
   }
 
-  /** @internal */
+  /**
+   * Unmounts the client when the element is disconnected.
+   * @internal
+   */
   disconnectedCallback(): void {
     this.unmountClient(this.mountedClient)
     super.disconnectedCallback()
   }
 
   /**
+   * Swaps the provided and mounted client when `client` changes.
    * @internal
    * @param changedProperties - The properties that changed. When `client` changes, the previous
    * client is unmounted and the new one is provided and mounted.
+   * @throws {Error} If `client` is unset while the provider is connected.
    */
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (!changedProperties.has('client')) {
@@ -135,6 +144,7 @@ export class QueryClientProvider extends LitElement {
   }
 
   /**
+   * Renders the provider's children.
    * @internal
    * @returns A `<slot>` that renders the provider's children.
    */
