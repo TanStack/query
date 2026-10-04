@@ -19,6 +19,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": false,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
