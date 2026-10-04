@@ -210,6 +210,29 @@ describe('queryClient', () => {
       expectTypeOf(data).toEqualTypeOf<string | undefined>()
     })
 
+    it('should preserve discriminated union narrowing when spreading the narrowed updater value', () => {
+      type Data =
+        | { kind: 'a'; value: number; requiredA: number }
+        | { kind: 'b'; value: number; requiredB: number }
+
+      const key = ['probe'] as DataTag<Array<string>, Data>
+      const queryClient = new QueryClient()
+
+      queryClient.setQueryData(key, (prev) => {
+        if (!prev || prev.kind !== 'a') {
+          return prev
+        }
+
+        expectTypeOf(prev).toEqualTypeOf<{
+          kind: 'a'
+          value: number
+          requiredA: number
+        }>()
+
+        return { ...prev, value: prev.value + 1 }
+      })
+    })
+
     it('should preserve updater parameter type inference when used in functions with explicit return types', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()

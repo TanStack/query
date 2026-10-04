@@ -289,7 +289,7 @@ export class QueryClient {
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
+      TInferredQueryFnData | undefined,
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: SetDataOptions,
