@@ -1,12 +1,8 @@
+import { createValueAccessor, readAccessor } from './accessor.js'
+import { BaseController } from './controllers/BaseController.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
-import { BaseController } from './controllers/BaseController.js'
 
 /**
  * Accessor returned by `useIsFetching`.
@@ -120,14 +116,12 @@ class IsFetchingController extends BaseController<number> {
  * When `filters` is a function, it is re-read during host updates so the count
  * can follow reactive host state. If `queryClient` is omitted, the controller
  * resolves the client from the nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the cache
  * subscription.
  * @param filters - Query filters, or a getter that returns query filters.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the current number of matching fetching queries.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

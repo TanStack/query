@@ -1,5 +1,93 @@
 # @tanstack/solid-query-devtools
 
+## 5.104.1
+
+### Patch Changes
+
+- Updated dependencies [[`ec060b6`](https://github.com/TanStack/query/commit/ec060b6f74b2e51f4b0c78932beec656ef6f6878)]:
+  - @tanstack/query-devtools@5.104.1
+  - @tanstack/solid-query@5.104.1
+
+## 5.104.0
+
+### Patch Changes
+
+- Updated dependencies [[`5279b05`](https://github.com/TanStack/query/commit/5279b05211223dd719803ca22a9d1fa46c98638e)]:
+  - @tanstack/query-devtools@5.104.0
+  - @tanstack/solid-query@5.104.0
+
+## 5.103.3
+
+### Patch Changes
+
+- Updated dependencies [[`6ebffac`](https://github.com/TanStack/query/commit/6ebffacbe7451ab330574dcf0ec6a139546548e3), [`d86ac36`](https://github.com/TanStack/query/commit/d86ac36663e3757a0ad35b5ead5f1d25dfb1b15d)]:
+  - @tanstack/solid-query@5.103.3
+  - @tanstack/query-devtools@5.103.3
+
+## 5.103.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.2
+  - @tanstack/solid-query@5.103.2
+
+## 5.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.103.1
+  - @tanstack/solid-query@5.103.1
+
+## 5.103.0
+
+### Patch Changes
+
+- Updated dependencies [[`9567367`](https://github.com/TanStack/query/commit/9567367dd916fda01fc0d491348827225a011c49)]:
+  - @tanstack/query-devtools@5.103.0
+  - @tanstack/solid-query@5.103.0
+
+## 5.102.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.8
+  - @tanstack/solid-query@5.102.8
+
+## 5.102.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.7
+  - @tanstack/solid-query@5.102.7
+
+## 5.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.6
+  - @tanstack/solid-query@5.102.6
+
+## 5.102.5
+
+### Patch Changes
+
+- Updated dependencies [[`ef1eff1`](https://github.com/TanStack/query/commit/ef1eff1b62a657d6ff6f2af819c1cb8b73ad2af5)]:
+  - @tanstack/query-devtools@5.102.5
+  - @tanstack/solid-query@5.102.5
+
+## 5.102.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.102.4
+  - @tanstack/solid-query@5.102.4
+
 ## 5.102.3
 
 ### Patch Changes

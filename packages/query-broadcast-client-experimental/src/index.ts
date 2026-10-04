@@ -8,8 +8,17 @@ import type { QueryClient, QueryKey } from '@tanstack/query-core'
  * can correlate failures with the originating query.
  */
 export interface BroadcastErrorEvent {
+  /**
+   * The kind of cache event that was being broadcast.
+   */
   type: 'updated' | 'removed' | 'added'
+  /**
+   * The hash of the query the broadcast was about.
+   */
   queryHash: string
+  /**
+   * The key of the query the broadcast was about.
+   */
   queryKey: QueryKey
 }
 
@@ -46,6 +55,14 @@ interface BroadcastQueryClientOptions {
   ) => void | Promise<void>
 }
 
+/**
+ * Syncs a client's query cache with the caches of other tabs and windows through a
+ * `BroadcastChannel`: added queries, successful updates, and removals of queries that have
+ * observers are broadcast, and those received from other tabs are applied.
+ * @param options - The `queryClient` to sync, the `broadcastChannel` name, the channel `options`,
+ * and the `onBroadcastError` callback.
+ * @returns A function that stops syncing and closes the channel.
+ */
 export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
@@ -175,7 +192,9 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
-          query.setState(state)
+          if (query.state.data === undefined) {
+            query.setState(state)
+          }
           return
         }
         queryCache.build(

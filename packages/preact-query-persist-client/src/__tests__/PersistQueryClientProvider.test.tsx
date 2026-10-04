@@ -7,7 +7,7 @@ import type {
   Persister,
 } from '../../../query-persist-client-core/src'
 import { persistQueryClientSave } from '../../../query-persist-client-core/src'
-import { notifyManager } from '../../../query-core/src'
+import { notifyManager, noop } from '../../../query-core/src'
 import { act, cleanup, render } from '@testing-library/preact'
 import type { UseQueryResult } from '../../../preact-query/src'
 import { QueryClient, useQuery } from '../../../preact-query/src'
@@ -48,15 +48,17 @@ describe('PersistQueryClientProvider (preact)', () => {
     vi.useRealTimers()
   })
 
-  it('restores cache from persister and refetches', async () => {
+  it('should restore cache from persister and refetch', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'hydrated'),
-    })
+    void queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'hydrated'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -92,12 +94,10 @@ describe('PersistQueryClientProvider (preact)', () => {
     )
 
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
-
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10)
     })
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
-
     await act(async () => {
       await vi.advanceTimersByTimeAsync(11)
     })

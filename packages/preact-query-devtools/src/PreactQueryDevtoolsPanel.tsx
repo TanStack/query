@@ -5,6 +5,9 @@ import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/preact-query'
 import type { CSSProperties, VNode } from 'preact'
 
+/**
+ * The props of `PreactQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Use this to provide a custom QueryClient. Otherwise, the one from the
@@ -22,7 +25,8 @@ export interface DevtoolsPanelOptions {
    */
   styleNonce?: string
   /**
-   * Use this to render the devtools inside a Shadow DOM.
+   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
+   * within the shadow DOM instead of within the head tag in the light DOM.
    */
   shadowDOMTarget?: ShadowRoot
   /**
@@ -39,11 +43,16 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
   /**
    * Use this to set the theme of the devtools panel.
-   * Defaults to 'system'.
+   * @defaultValue system
    */
   theme?: Theme
 }
 
+/**
+ * Renders the TanStack Query devtools panel inline, for the given or nearest `QueryClient`.
+ * @param props - The devtools panel options.
+ * @returns The element the devtools panel is mounted in.
+ */
 export function PreactQueryDevtoolsPanel(
   props: DevtoolsPanelOptions,
 ): VNode | null {

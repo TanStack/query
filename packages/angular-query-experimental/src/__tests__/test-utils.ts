@@ -36,9 +36,9 @@ export const expectSignals = <T extends Record<string, any>>(
 }
 
 type ToSignalInputUpdatableMap<T> = {
-  [K in keyof T as T[K] extends InputSignal<any>
-    ? K
-    : never]: T[K] extends InputSignal<infer Value> ? Value : never
+  [
+    K in keyof T as T[K] extends InputSignal<any> ? K : never
+  ]: T[K] extends InputSignal<infer Value> ? Value : never
 }
 
 function componentHasSignalInputProperty<TProperty extends string>(

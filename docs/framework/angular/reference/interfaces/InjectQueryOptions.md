@@ -3,18 +3,12 @@ id: InjectQueryOptions
 title: InjectQueryOptions
 ---
 
-Defined in: [inject-query.ts:20](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L20)
+Defined in: [packages/angular-query-experimental/src/inject-query.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L23)
+
+Options for `injectQuery`, passed after the function that returns the query options.
 
 ## Properties
 
-### injector?
-
-```ts
-optional injector: Injector;
-```
-
-Defined in: [inject-query.ts:26](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L26)
-
-The `Injector` in which to create the query.
-
-If this is not provided, the current injection context will be used instead (via `inject`).
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="injector"></a> `injector?` | `Injector` | The `Injector` in which to create the query. If this is not provided, the current injection context will be used instead (via `inject`). |

@@ -106,10 +106,13 @@ type GetUseSuspenseQueryResult<T> =
 
 /**
  * The `queries` array accepted by `useSuspenseQueries`. Recursively unwraps each tuple element so every
- * entry's `queryFn`/`select` are inferred individually, up to 20 elements. An opaque array (e.g. `unknown[]`)
- * is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls back to a
- * single homogeneous {@link UseSuspenseQueryOptions} type.
+ * entry's `queryFn`/`select` are inferred individually, up to 20 elements — past that, a tuple falls back to
+ * a single homogeneous {@link UseSuspenseQueryOptions} type.
  *
+ * An opaque array (e.g. `unknown[]`) is returned as-is; a non-tuple array whose element type structurally
+ * matches a query options object is mapped per-element instead, still inferring each entry individually; any
+ * other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
+ * that same homogeneous options type too.
  * @template T - The type of the `queries` array as written at the call site.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -155,7 +158,6 @@ export type SuspenseQueriesOptions<
  * {@link SuspenseQueriesOptions}: each tuple element's result type is inferred individually, up to 20 elements.
  * A non-tuple array is mapped per-element instead, still inferring each entry individually; only past 20
  * elements does this fall back to a single homogeneous {@link UseSuspenseQueryResult} type.
- *
  * @template T - The type of the `queries` array, as inferred by {@link SuspenseQueriesOptions}.
  * @template TResults - The internal accumulator that this type builds during recursion. It is not meant
  * to be set explicitly.
@@ -181,11 +183,10 @@ export type SuspenseQueriesResults<
         : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
 
 /**
- * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
- * `throwOnError`, `enabled`, or `placeholderData`.
- *
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+ * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
- * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
@@ -194,15 +195,22 @@ export type SuspenseQueriesResults<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
- *
  * @example
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+ * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
- *   const results = useSuspenseQueries({
+ *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -211,8 +219,8 @@ export type SuspenseQueriesResults<
  *
  *   return (
  *     <ul>
- *       {results.map((result) => (
- *         <li key={result.data.id}>{result.data.title}</li>
+ *       {postQueries.map((query) => (
+ *         <li key={query.data.id}>{query.data.title}</li>
  *       ))}
  *     </ul>
  *   )
@@ -220,10 +228,179 @@ export type SuspenseQueriesResults<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading posts...</h1>}>
- *       <Posts ids={[1, 2, 3]} />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading posts...</h1>}>
+ *             <Posts ids={[1, 2, 3]} />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
+ * }
+ * ```
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Dashboard />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
+ *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
+ * }
+ * ```
+ * @example
+ * `combine`s the results into a single boolean, so `Refresh` only re-renders when that boolean changes,
+ * not on every individual query update. This overload is the only one that accepts `combine`:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
+ *
+ * function Refresh() {
+ *   const anyFetching = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *     ],
+ *     combine: (results) => results.some((result) => result.isFetching),
+ *   })
+ *
+ *   return anyFetching ? <span>Refreshing…</span> : null
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Refresh />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
+ *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  */
@@ -248,11 +425,10 @@ export function useSuspenseQueries<
 ): TCombinedResult
 
 /**
- * The options for `useSuspenseQueries` are the same as for `useQueries`, except that each `query` can't have
- * `throwOnError`, `enabled`, or `placeholderData`.
- *
+ * The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
+ * option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
  * @param options - The `queries` array to run in Suspense, and an optional `combine` function.
- * @param queryClient - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context
+ * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
  * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
@@ -261,15 +437,22 @@ export function useSuspenseQueries<
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
  * this, make sure to set a high enough `staleTime`. Cancellation does not work.
- *
  * @example
+ * The query error is thrown if a fetch fails and no cached data exists yet, so an error boundary is
+ * required around `<Suspense>`. A failed background refetch instead continues to render the cached data.
+ * Use {@link QueryErrorResetBoundary} to let the user retry after such an error:
  * ```tsx
  * import { Suspense } from 'preact/compat'
- * import { useSuspenseQueries } from '@tanstack/preact-query'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
  *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
- *   const results = useSuspenseQueries({
+ *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
  *       queryFn: () => fetchPost(id),
@@ -278,8 +461,8 @@ export function useSuspenseQueries<
  *
  *   return (
  *     <ul>
- *       {results.map((result) => (
- *         <li key={result.data.id}>{result.data.title}</li>
+ *       {postQueries.map((query) => (
+ *         <li key={query.data.id}>{query.data.title}</li>
  *       ))}
  *     </ul>
  *   )
@@ -287,10 +470,114 @@ export function useSuspenseQueries<
  *
  * function App() {
  *   return (
- *     <Suspense fallback={<h1>Loading posts...</h1>}>
- *       <Posts ids={[1, 2, 3]} />
- *     </Suspense>
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading posts...</h1>}>
+ *             <Posts ids={[1, 2, 3]} />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
  *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
+ * }
+ * ```
+ * @example
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * they fetch in parallel rather than suspending one after another:
+ * ```tsx
+ * import { Suspense } from 'preact/compat'
+ * import { useErrorBoundary } from 'preact/hooks'
+ * import {
+ *   QueryErrorResetBoundary,
+ *   useSuspenseQueries,
+ * } from '@tanstack/preact-query'
+ * import type { ComponentChildren } from 'preact'
+ *
+ * function Dashboard() {
+ *   const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+ *     queries: [
+ *       { queryKey: ['users'], queryFn: fetchUsers },
+ *       { queryKey: ['teams'], queryFn: fetchTeams },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *   })
+ *
+ *   return (
+ *     <div>
+ *       <UserList users={usersQuery.data} />
+ *       <TeamList teams={teamsQuery.data} />
+ *       <ProjectList projects={projectsQuery.data} />
+ *     </div>
+ *   )
+ * }
+ *
+ * function App() {
+ *   return (
+ *     <QueryErrorResetBoundary>
+ *       {({ reset }) => (
+ *         <ErrorBoundary
+ *           onReset={reset}
+ *           fallbackRender={({ resetErrorBoundary }) => (
+ *             <div>
+ *               There was an error!
+ *               <button onClick={() => resetErrorBoundary()}>Try again</button>
+ *             </div>
+ *           )}
+ *         >
+ *           <Suspense fallback={<h1>Loading dashboard...</h1>}>
+ *             <Dashboard />
+ *           </Suspense>
+ *         </ErrorBoundary>
+ *       )}
+ *     </QueryErrorResetBoundary>
+ *   )
+ * }
+ *
+ * function ErrorBoundary({
+ *   children,
+ *   onReset,
+ *   fallbackRender,
+ * }: {
+ *   children: ComponentChildren
+ *   onReset: () => void
+ *   fallbackRender: (props: {
+ *     error: Error
+ *     resetErrorBoundary: () => void
+ *   }) => ComponentChildren
+ * }) {
+ *   const [error, resetErrorBoundary] = useErrorBoundary(() => onReset())
+ *
+ *   if (error) return fallbackRender({ error, resetErrorBoundary })
+ *
+ *   return children
  * }
  * ```
  */

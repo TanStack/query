@@ -73,9 +73,7 @@ describe('useMutationState', () => {
     expect(mutationState.value).toEqual([])
 
     keyRef.value = key[0]!
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(mutationState.value).toEqual([variables])
   })
 })

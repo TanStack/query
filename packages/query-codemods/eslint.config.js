@@ -1,8 +1,9 @@
 // @ts-check
 
+import { defineConfig } from 'eslint/config'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+export default defineConfig([
   ...rootConfig,
   {
     rules: {
@@ -15,4 +16,11 @@ export default [
       'sort-imports': 'off',
     },
   },
-]
+  {
+    files: ['src/**/__testfixtures__/**'],
+    rules: {
+      // Codemod fixtures intentionally preserve historical QueryClient syntax.
+      'no-restricted-syntax': 'off',
+    },
+  },
+])

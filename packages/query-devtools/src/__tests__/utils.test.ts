@@ -31,7 +31,6 @@ describe('Utils tests', () => {
         const oldData = ['one', 'two', 'three']
 
         const newData = updateNestedDataByPath(oldData, ['1'], 'new')
-
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
@@ -60,7 +59,6 @@ describe('Utils tests', () => {
           ['title'],
           'Brave new world',
         )
-
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
@@ -85,7 +83,6 @@ describe('Utils tests', () => {
         const oldData = new Set([123, 321, 'hello', 'world'])
 
         const newData = updateNestedDataByPath(oldData, ['2'], 'hi')
-
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
@@ -116,7 +113,6 @@ describe('Utils tests', () => {
 
         /* eslint-disable cspell/spellchecker */
         const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
-
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
@@ -155,7 +151,6 @@ describe('Utils tests', () => {
           ['1', 'title'],
           'updated',
         )
-
         expect(newData).not.toBe(oldData)
         expect(newData).toMatchInlineSnapshot(`
           [
@@ -239,7 +234,6 @@ describe('Utils tests', () => {
           ['pumpkin-pie', 'translations', 'en'],
           'Best pie ever',
         )
-
         expect(oldData).toMatchInlineSnapshot(`
           Map {
             "pumpkin-pie" => {
@@ -449,7 +443,6 @@ describe('Utils tests', () => {
       const oldData = ['one', 'two', 'three']
 
       const newData = deleteNestedDataByPath(oldData, ['1'])
-
       expect(newData).not.toBe(oldData) // should not be the same reference
 
       expect(oldData).toMatchInlineSnapshot(`
@@ -471,7 +464,6 @@ describe('Utils tests', () => {
       const oldData = { title: 'Hello world', id: 1, createdAt: '2021-01-01' }
 
       const newData = deleteNestedDataByPath(oldData, ['createdAt'])
-
       expect(newData).not.toBe(oldData) // should not be the same reference
 
       expect(oldData).toMatchInlineSnapshot(`
@@ -493,7 +485,6 @@ describe('Utils tests', () => {
       const oldData = new Set([123, 321, false, true])
 
       const newData = deleteNestedDataByPath(oldData, ['1'])
-
       expect(newData).not.toBe(oldData) // should not be the same reference
 
       expect(oldData).toMatchInlineSnapshot(`
@@ -521,7 +512,6 @@ describe('Utils tests', () => {
       ])
 
       const newData = deleteNestedDataByPath(oldData, ['world'])
-
       expect(newData).not.toBe(oldData) // should not be the same reference
 
       expect(oldData).toMatchInlineSnapshot(`
@@ -547,7 +537,6 @@ describe('Utils tests', () => {
         ]
 
         const newData = deleteNestedDataByPath(oldData, ['1', 'title'])
-
         expect(newData).not.toBe(oldData)
         expect(newData).toMatchInlineSnapshot(`
           [
@@ -629,7 +618,6 @@ describe('Utils tests', () => {
           'translations',
           'fr',
         ])
-
         expect(oldData).toMatchInlineSnapshot(`
           Map {
             "pumpkin-pie" => {

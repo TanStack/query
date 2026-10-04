@@ -157,6 +157,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -170,6 +171,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -267,19 +269,28 @@ describe('infiniteQueryOptions', () => {
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.query(options),
+    )
+
+    // deprecated methods to be removed in v6
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery(options),
     )
   })
 
-  it('allow optional initialData function', () => {
+  it('should allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -297,7 +308,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('allow optional initialData object', () => {
+  it('should allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),

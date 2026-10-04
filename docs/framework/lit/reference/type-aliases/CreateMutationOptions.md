@@ -7,7 +7,7 @@ title: CreateMutationOptions
 type CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> = MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:25](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L25)
+Defined in: [packages/lit-query/src/createMutationController.ts:21](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L21)
 
 Options accepted by `createMutationController`.
 
@@ -22,7 +22,7 @@ or through an `Accessor` when the options depend on Lit host state.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

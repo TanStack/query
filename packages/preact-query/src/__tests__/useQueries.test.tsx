@@ -64,6 +64,34 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  it('should not optimistically show fetching when unsubscribed', () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.resolve('data'))
+
+    function Page() {
+      const [query] = useQueries({
+        queries: [{ queryKey: key, queryFn }],
+        subscribed: false,
+      })
+
+      return (
+        <div>
+          <span>isFetching: {String(query.isFetching)}</span>
+          <span>fetchStatus: {query.fetchStatus}</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(
+      queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+    ).toBe(0)
+    rendered.getByText('isFetching: false')
+    rendered.getByText('fetchStatus: idle')
+  })
+
   it('should track results', async () => {
     const key1 = queryKey()
     const results: Array<Array<UseQueryResult>> = []
@@ -102,7 +130,6 @@ describe('useQueries', () => {
     expect(results[1]).toMatchObject([{ data: 1 }])
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
@@ -113,7 +140,7 @@ describe('useQueries', () => {
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key1 = queryKey()
@@ -175,11 +202,11 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key1 = queryKey()
@@ -243,7 +270,44 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('single query error')).toBeInTheDocument()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
+  })
+
+  it("should throw error if in one of queries' queryFn rejects with a falsy error and throwOnError is in use", async () => {
+    const consoleErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key,
+            // Preact's error path dereferences the thrown value (`if (e.then)`), so a
+            // literal `undefined` error crashes the framework. `0` is just an arbitrary
+            // falsy value that's safe to dereference (`(0).then` is `undefined`, not a
+            // crash) — any falsy primitive other than `null`/`undefined` would do.
+            queryFn: () => Promise.reject(0),
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    consoleErrorMock.mockRestore()
   })
 
   it('should use provided custom queryClient', async () => {
@@ -364,7 +428,6 @@ describe('useQueries', () => {
     expect(resultChanged).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
     // there should be no further effect calls because the returned object is structurally shared
@@ -503,7 +566,6 @@ describe('useQueries', () => {
     count++
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(51)
     expect(
       rendered.getByText('data: true first result 1,second result 1'),
@@ -520,7 +582,6 @@ describe('useQueries', () => {
     })
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
@@ -562,7 +623,6 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('Loading Status: Loading...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument()
   })
@@ -606,7 +666,6 @@ describe('useQueries', () => {
     expect(rendered.getByText('data: 0 result')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: 1 result')).toBeInTheDocument()
   })
@@ -921,7 +980,6 @@ describe('useQueries', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /update/i }))
-
     await vi.advanceTimersByTimeAsync(21)
     expect(
       rendered.getByText(
@@ -989,18 +1047,14 @@ describe('useQueries', () => {
     expect(spy).toHaveBeenCalledTimes(3)
 
     fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('unrelated: 1')).toBeInTheDocument()
 
     // combine should NOT re-run for unrelated re-render with stable reference
     expect(spy).toHaveBeenCalledTimes(3)
 
     fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByText('unrelated: 2')).toBeInTheDocument()
 
     // still no extra calls to combine
@@ -1066,7 +1120,6 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
     await vi.advanceTimersByTimeAsync(100)
-
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
 
@@ -1074,7 +1127,6 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
     await vi.advanceTimersByTimeAsync(100)
-
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
   })
@@ -1113,7 +1165,6 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1122,9 +1173,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1169,7 +1218,6 @@ describe('useQueries', () => {
     )
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1178,9 +1226,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
@@ -1189,9 +1235,7 @@ describe('useQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
     expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')

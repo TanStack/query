@@ -37,7 +37,7 @@ describe('getQueryData', () => {
 })
 
 describe('setQueryData', () => {
-  it('updater should be typed if key is tagged', () => {
+  it('should type updater if key is tagged', () => {
     const key = ['key'] as DataTag<Array<string>, number>
     const queryClient = new QueryClient()
     const data = queryClient.setQueryData(key, (prev) => {
@@ -47,7 +47,7 @@ describe('setQueryData', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
-  it('value should be typed if key is tagged', () => {
+  it('should type value if key is tagged', () => {
     const key = ['key'] as DataTag<Array<string>, number>
     const queryClient = new QueryClient()
 
@@ -115,6 +115,7 @@ describe('setQueryData', () => {
 describe('fetchInfiniteQuery', () => {
   it('should allow passing pages', async () => {
     const key = queryKey()
+    // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),

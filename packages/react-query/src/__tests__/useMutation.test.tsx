@@ -53,12 +53,10 @@ describe('useMutation', () => {
     expect(getByRole('heading').textContent).toBe('empty')
 
     fireEvent.click(getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('mutation')
 
     fireEvent.click(getByRole('button', { name: /reset/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('empty')
   })
@@ -87,14 +85,12 @@ describe('useMutation', () => {
     expect(queryByRole('heading')).toBeNull()
 
     fireEvent.click(getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe(
       'Expected mock error. All is well!',
     )
 
     fireEvent.click(getByRole('button', { name: /reset/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByRole('heading')).toBeNull()
   })
@@ -129,7 +125,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
   })
 
@@ -160,7 +155,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'mutateAsync.onSuccess',
       'mutateAsync.onSettled',
@@ -200,7 +194,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
   })
 
@@ -236,7 +229,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
   })
 
@@ -267,7 +259,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutate.onSuccess'])
   })
 
@@ -301,7 +292,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutate.onError'])
   })
 
@@ -332,7 +322,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutate.onSettled'])
   })
 
@@ -360,7 +349,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutateAsync.onSuccess'])
   })
 
@@ -393,7 +381,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutateAsync.onError'])
   })
 
@@ -421,7 +408,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['mutateAsync.onSettled'])
   })
 
@@ -457,7 +443,6 @@ describe('useMutation', () => {
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     fireEvent.click(getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('3')
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
@@ -508,7 +493,6 @@ describe('useMutation', () => {
     expect(rendered.getByText('Data')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Status error')).toBeInTheDocument()
     expect(rendered.getByText('Failed 1 times')).toBeInTheDocument()
@@ -563,7 +547,6 @@ describe('useMutation', () => {
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     fireEvent.click(getByRole('button', { name: /mutate/i }))
     fireEvent.click(getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByRole('heading').textContent).toBe('3')
     expect(onErrorMock).toHaveBeenCalledTimes(3)
@@ -625,7 +608,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
   })
 
@@ -662,7 +644,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['useMutation.onError', 'mutate.onError'])
   })
 
@@ -696,7 +677,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['useMutation.onSettled', 'mutate.onSettled'])
   })
 
@@ -727,7 +707,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onSuccess',
       'mutateAsync.onSuccess',
@@ -766,7 +745,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
   })
 
@@ -797,7 +775,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onSettled',
       'mutateAsync.onSettled',
@@ -844,7 +821,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onSuccess',
       'useMutation.onSettled',
@@ -895,7 +871,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onError',
       'useMutation.onSettled',
@@ -942,7 +917,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onError',
       'useMutation.onSettled',
@@ -987,7 +961,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-
     expect(callbacks).toEqual([
       'useMutation.onSuccess',
       'useMutation.onSettled',
@@ -1024,7 +997,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(21)
-
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({ data: undefined, isPending: false })
     expect(states[1]).toMatchObject({ data: undefined, isPending: true })
@@ -1056,7 +1028,6 @@ describe('useMutation', () => {
     renderWithClient(queryClient, <Page />)
 
     await vi.advanceTimersByTimeAsync(15)
-
     expect(count).toBe(2)
   })
 
@@ -1094,7 +1065,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('error: null, status: pending, isPaused: true'),
@@ -1147,7 +1117,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('data: null, status: pending, isPaused: true'),
@@ -1162,6 +1131,7 @@ describe('useMutation', () => {
 
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
+
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
@@ -1207,7 +1177,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('data: null, status: pending, isPaused: true'),
@@ -1262,6 +1231,7 @@ describe('useMutation', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('status: idle')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(16)
     expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
@@ -1322,7 +1292,7 @@ describe('useMutation', () => {
     const err = new Error('Expected mock error. All is well!')
     err.stack = ''
 
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     function Page() {
@@ -1354,17 +1324,16 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(getByText('mutate'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('error')).not.toBeNull()
 
-    expect(consoleMock.mock.calls[0]?.[1]).toBe(err)
+    expect(consoleErrorMock.mock.calls[0]?.[1]).toBe(err)
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     let boundary = false
@@ -1411,7 +1380,7 @@ describe('useMutation', () => {
     fireEvent.click(getByText('mutate'))
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('error boundary')).not.toBeNull()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not throw an error when throwOnError is set to false', async () => {
@@ -1436,7 +1405,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
   })
 
@@ -1462,7 +1430,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
   })
 
@@ -1487,7 +1454,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
   })
 
@@ -1524,7 +1490,6 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(getByText('succeed'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('successTest')).not.toBeNull()
 
@@ -1567,7 +1532,6 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(getByText('error'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(queryByText('errorTest')).not.toBeNull()
 
@@ -1631,9 +1595,9 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('data: null, status: idle, isPaused: false'),
     ).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
-
     await vi.advanceTimersByTimeAsync(10)
     expect(
       queryClient.getMutationCache().findAll({ mutationKey }),
@@ -1701,7 +1665,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: result-todo2, status: success'),
@@ -1782,7 +1745,6 @@ describe('useMutation', () => {
     expect(rendered.getByText('status: idle')).toBeInTheDocument()
 
     rendered.getByRole('button', { name: /mutate/i }).click()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('status: error')).toBeInTheDocument()
 
@@ -1797,7 +1759,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
@@ -1831,7 +1793,6 @@ describe('useMutation', () => {
     expect(rendered.getByText('error: null, status: idle')).toBeInTheDocument()
 
     rendered.getByRole('button', { name: /mutate/i }).click()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('error: mutateFnError, status: error'),
@@ -1842,7 +1803,7 @@ describe('useMutation', () => {
     onTestFinished,
   }) => {
     const unhandledRejectionFn = vi.fn()
-    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+    process.on('unhandledRejection', unhandledRejectionFn)
     onTestFinished(() => {
       process.off('unhandledRejection', unhandledRejectionFn)
     })
@@ -1878,7 +1839,6 @@ describe('useMutation', () => {
     expect(rendered.getByText('error: null, status: idle')).toBeInTheDocument()
 
     rendered.getByRole('button', { name: /mutate/i }).click()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('error: mutateFnError, status: error'),
@@ -1918,7 +1878,6 @@ describe('useMutation', () => {
     expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('data: custom client, status: success'),
@@ -1959,7 +1918,6 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
     await vi.advanceTimersByTimeAsync(10)
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('result: profile updated for 1'),
     ).toBeInTheDocument()
@@ -2005,7 +1963,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('result: error: create failed'),
     ).toBeInTheDocument()
@@ -2047,7 +2004,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('message: success: submitted successfully'),
     ).toBeInTheDocument()
@@ -2089,7 +2045,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('message: error: submission failed'),
     ).toBeInTheDocument()
@@ -2134,14 +2089,12 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('message: failed, retrying...'),
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(rendered.getByText('message: result: success')).toBeInTheDocument()
   })
 
@@ -2194,7 +2147,6 @@ describe('useMutation', () => {
 
     // optimistic update: item2 removed immediately
     expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
 
     // success: item2 stays removed and onSuccess called
@@ -2256,12 +2208,79 @@ describe('useMutation', () => {
 
     // optimistic update: item2 removed immediately
     expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
 
     // rollback: item2 restored after error, onSuccess not called
     expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
     expect(rendered.getByText('message: rollback')).toBeInTheDocument()
+  })
+
+  it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+        onError: (_err, _newTodo, onMutateResult) => {
+          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+        },
+      })
+
+      return <button onClick={() => mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    // The optimistic value lands after onMutate's first await, so flush
+    // microtasks before asserting.
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1'])
+  })
+
+  it('should keep the optimistic update in place when the mutation succeeds', async () => {
+    const key = queryKey()
+    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
+        onMutate: async (newTodo: string) => {
+          await queryClient.cancelQueries({ queryKey: key })
+          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+
+          queryClient.setQueryData<Array<string>>(key, (old) => [
+            ...(old ?? []),
+            newTodo,
+          ])
+
+          return { previousTodos }
+        },
+      })
+
+      return <button onClick={() => mutate('Todo 2')}>add</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /add/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryClient.getQueryData(key)).toEqual(['Todo 1', 'Todo 2'])
   })
 
   it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
@@ -2295,7 +2314,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText(
         'result: uploaded: file1, uploaded: file2, uploaded: file3',
@@ -2345,7 +2363,6 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText('result: error: upload failed'),
     ).toBeInTheDocument()
@@ -2396,11 +2413,107 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
     await vi.advanceTimersByTimeAsync(11)
-
     expect(
       rendered.getByText(
         'result: uploaded: file1, error: upload failed, uploaded: file3',
       ),
     ).toBeInTheDocument()
+  })
+
+  it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
+    const onSuccess = vi.fn()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text.toUpperCase()),
+        onMutate: (text: string) => ({ startedWith: text }),
+        onSuccess,
+      })
+
+      return <button onClick={() => mutate('todo')}>mutate</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    const [data, variables, onMutateResult, context] = onSuccess.mock.calls[0]!
+    expect(data).toBe('TODO')
+    expect(variables).toBe('todo')
+    expect(onMutateResult).toEqual({ startedWith: 'todo' })
+    expect(context.client).toBe(queryClient)
+    expect(context.meta).toBeUndefined()
+    expect(context.mutationKey).toBeUndefined()
+  })
+
+  it('should give mutationFn the same QueryClient instance via context', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'tag-from-this-client')
+
+    function Page() {
+      const { mutate, data } = useMutation({
+        mutationFn: (_text: string, context) =>
+          sleep(10).then(() => context.client.getQueryData(key)),
+      })
+
+      return (
+        <div>
+          <div>data: {String(data)}</div>
+          <button onClick={() => mutate('todo')}>mutate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: tag-from-this-client')).toBeInTheDocument()
+  })
+
+  it('should include mutationKey in the context passed to hook-level callbacks', async () => {
+    const onSuccess = vi.fn()
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationKey: ['todos', 'add'],
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess,
+      })
+
+      return <button onClick={() => mutate('todo')}>mutate</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess.mock.calls[0]?.[3].mutationKey).toEqual(['todos', 'add'])
+  })
+
+  it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data')
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: () => sleep(10).then(() => 'mutated'),
+        onSuccess: (_data, _variables, _onMutateResult, context) => {
+          context.client.invalidateQueries({ queryKey: key })
+        },
+      })
+
+      return <button onClick={() => mutate()}>mutate</button>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
   })
 })

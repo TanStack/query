@@ -68,15 +68,6 @@ describe('useQuery', () => {
   expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
   expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
-  const fromGenericOptionsQueryFn = useQuery({
-    queryKey: key,
-    queryFn: () => queryFn(),
-  })
-  expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-    string | undefined
-  >()
-  expectTypeOf(fromGenericOptionsQueryFn.error).toEqualTypeOf<Error | null>()
-
   type MyData = number
   type MyQueryKey = readonly ['my-data', number]
 
@@ -177,7 +168,7 @@ describe('useQuery', () => {
 
   describe('initialData', () => {
     describe('Config object overload', () => {
-      it('TData should always be defined when initialData is provided as an object', () => {
+      it('should always define TData when initialData is provided as an object', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
           queryFn: () => ({ wow: true }),
@@ -187,7 +178,7 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should be defined when passed through queryOptions', () => {
+      it('should define TData when passed through queryOptions', () => {
         const options = queryOptions({
           queryKey: queryKey(),
           queryFn: () => {
@@ -218,7 +209,7 @@ describe('useQuery', () => {
         expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
       })
 
-      it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+      it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
           queryFn: () => {
@@ -234,7 +225,7 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
-      it('TData should have undefined in the union when initialData is NOT provided', () => {
+      it('should have undefined in the TData union when initialData is NOT provided', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
           queryFn: () => {
@@ -247,7 +238,7 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
-      it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+      it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
           queryFn: () => {
@@ -261,7 +252,7 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
-      it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+      it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
         const { data, isSuccess } = useQuery({
           queryKey: queryKey(),
           queryFn: () => {
@@ -279,8 +270,7 @@ describe('useQuery', () => {
 
       it('should preserve discriminated-union narrowing', () => {
         type Result =
-          | { type: 'first'; first: string }
-          | { type: 'second'; second: string }
+          { type: 'first'; first: string } | { type: 'second'; second: string }
 
         const query = useQuery({
           queryKey: queryKey(),
@@ -294,7 +284,7 @@ describe('useQuery', () => {
         >()
       })
 
-      it('data should not have undefined when initialData is provided', () => {
+      it('should not have undefined in data when initialData is provided', () => {
         const { data } = useQuery({
           queryKey: queryKey(),
           initialData: 42,
@@ -370,6 +360,7 @@ describe('useQuery', () => {
         _data: DataTypeToEntity[TDataType],
       ) => 'test'
 
+      // eslint-disable-next-line @eslint-react/no-nested-component-definitions
       function Test<TDataType extends DataType>(props: {
         dataType: TDataType
       }) {

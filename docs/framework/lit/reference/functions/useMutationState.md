@@ -5,12 +5,12 @@ title: useMutationState
 
 ```ts
 function useMutationState<TResult>(
-   host,
-   options,
-queryClient?): MutationStateAccessor<TResult>;
+   host: ReactiveControllerHost,
+   options: MutationStateOptions<TResult>,
+queryClient?: QueryClient): MutationStateAccessor<TResult>;
 ```
 
-Defined in: [packages/lit-query/src/useMutationState.ts:192](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L192)
+Defined in: [packages/lit-query/src/useMutationState.ts:186](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L186)
 
 Creates a Lit reactive controller that selects state from matching mutations
 in the mutation cache.
@@ -24,7 +24,7 @@ the controller resolves the client from the nearest connected
 
 ### TResult
 
-`TResult` = `MutationState`\<`unknown`, `unknown`, `unknown`, `unknown`\>
+`TResult` = [`MutationState`](../interfaces/MutationState.md)\<`unknown`, `unknown`, `unknown`, `unknown`\>
 
 ## Parameters
 
@@ -43,7 +43,7 @@ Mutation state filters and optional selector.
 
 ### queryClient?
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 Optional explicit query client. Provide this for
 controllers that should not resolve a client from Lit context.

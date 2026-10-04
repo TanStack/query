@@ -13,18 +13,19 @@ describe('onlineManager', () => {
     vi.useRealTimers()
   })
 
-  it('isOnline should return true if navigator is undefined', () => {
+  it('should return true from isOnline if navigator is undefined', () => {
     const navigatorSpy = vi.spyOn(globalThis, 'navigator', 'get')
 
     // Force navigator to be undefined
     // @ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
+
     expect(onlineManager.isOnline()).toBe(true)
 
     navigatorSpy.mockRestore()
   })
 
-  it('isOnline should return true if navigator.onLine is true', () => {
+  it('should return true from isOnline if navigator.onLine is true', () => {
     const navigatorSpy = vi.spyOn(navigator, 'onLine', 'get')
     navigatorSpy.mockImplementation(() => true)
 
@@ -33,7 +34,7 @@ describe('onlineManager', () => {
     navigatorSpy.mockRestore()
   })
 
-  it('setEventListener should use online boolean arg', () => {
+  it('should use online boolean arg in setEventListener', () => {
     let count = 0
 
     const setup = (setOnline: (online: boolean) => void) => {
@@ -51,7 +52,7 @@ describe('onlineManager', () => {
     expect(onlineManager.isOnline()).toBe(false)
   })
 
-  it('setEventListener should call previous remove handler when replacing an event listener', () => {
+  it('should call previous remove handler when replacing an event listener with setEventListener', () => {
     const remove1Spy = vi.fn()
     const remove2Spy = vi.fn()
 
@@ -62,7 +63,7 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  it('cleanup (removeEventListener) should not be called if window is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
     windowSpy.mockImplementation(
       () => undefined as unknown as Window & typeof globalThis,
@@ -73,13 +74,12 @@ describe('onlineManager', () => {
     expect(unsubscribe).toBeInstanceOf(Function)
 
     unsubscribe()
-
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
     windowSpy.mockRestore()
   })
 
-  it('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -90,7 +90,6 @@ describe('onlineManager', () => {
     const unsubscribe = onlineManager.subscribe(() => undefined)
 
     unsubscribe()
-
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
     globalThis.window.addEventListener = addEventListener
@@ -135,6 +134,7 @@ describe('onlineManager', () => {
 
     unsubscribe1()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+
     unsubscribe2()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
   })
@@ -145,13 +145,11 @@ describe('onlineManager', () => {
     onlineManager.setEventListener(setupSpy)
 
     const unsubscribe1 = onlineManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe1()
 
     const unsubscribe2 = onlineManager.subscribe(() => undefined)
-
     expect(setupSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
@@ -159,7 +157,6 @@ describe('onlineManager', () => {
 
   it('should update online status from window online and offline events', () => {
     const unsubscribe = onlineManager.subscribe(() => undefined)
-
     expect(onlineManager.isOnline()).toBe(true)
 
     window.dispatchEvent(new Event('offline'))
@@ -178,12 +175,10 @@ describe('onlineManager', () => {
 
     onlineManager.setOnline(false)
     onlineManager.setOnline(false)
-
     expect(listener).toHaveBeenNthCalledWith(1, false)
 
     onlineManager.setOnline(true)
     onlineManager.setOnline(true)
-
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenNthCalledWith(2, true)
   })

@@ -1,12 +1,12 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
-import { createInfiniteQuery } from '../../src/index.js'
+import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
   describe('pageParam', () => {
-    it('initialPageParam should define type of param passed to queryFunctionContext', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam', () => {
       createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -17,7 +17,7 @@ describe('createInfiniteQuery', () => {
       }))
     })
 
-    it('direction should be passed to queryFn of createInfiniteQuery', () => {
+    it('should pass direction to queryFn of createInfiniteQuery', () => {
       createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ direction }) => {
@@ -28,8 +28,9 @@ describe('createInfiniteQuery', () => {
       }))
     })
 
-    it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -39,8 +40,9 @@ describe('createInfiniteQuery', () => {
       })
     })
 
-    it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
+    it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
+      // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -52,7 +54,7 @@ describe('createInfiniteQuery', () => {
   })
 
   describe('initialData', () => {
-    it('TData should have undefined in the union even when initialData is provided', () => {
+    it('should always define TData when initialData is provided', () => {
       const { data } = createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {
@@ -64,12 +66,26 @@ describe('createInfiniteQuery', () => {
       }))
 
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
-      expectTypeOf(data).toEqualTypeOf<
-        InfiniteData<number, unknown> | undefined
-      >()
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
     })
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
+    it('should always define TData when initialData is provided through infiniteQueryOptions', () => {
+      const options = infiniteQueryOptions({
+        queryKey: queryKey(),
+        queryFn: ({ pageParam }: { pageParam: number }) => {
+          return pageParam * 5
+        },
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        initialData: { pages: [5], pageParams: [1] },
+      })
+      const { data } = createInfiniteQuery(() => options)
+
+      // known issue: type of pageParams is unknown when returned from createInfiniteQuery
+      expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    })
+
+    it('should have undefined in the TData union when initialData is NOT provided', () => {
       const { data } = createInfiniteQuery(() => ({
         queryKey: queryKey(),
         queryFn: ({ pageParam }) => {

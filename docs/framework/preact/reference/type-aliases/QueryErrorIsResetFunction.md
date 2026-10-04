@@ -7,7 +7,7 @@ title: QueryErrorIsResetFunction
 type QueryErrorIsResetFunction = () => boolean;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L15)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:15](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L15)
 
 Returns whether the boundary has been reset and not yet cleared.
 

@@ -1,9 +1,13 @@
 ---
 id: ssr
 title: Server Rendering & Hydration
+redirect_from:
+  - framework/react/reference/hydration
 ---
 
 In this guide you'll learn how to use React Query with server rendering.
+
+For TanStack Start, use the [Start + TanStack Query guide](https://tanstack.com/start/latest/docs/framework/react/guide/tanstack-query) for its SSR integration, request-scoped QueryClient setup, and mutation invalidation example.
 
 See the guide on [Prefetching & Router Integration](./prefetching.md) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls.md) before that.
 
@@ -34,7 +38,7 @@ With a client rendered application, these are the minimum 3 server roundtrips yo
 
 As soon as **1.** is complete, the user can see the content and when **2.** finishes, the page is interactive and clickable. Because the markup also contains the initial data we need, step **3.** does not need to run on the client at all, at least until you want to revalidate the data for some reason.
 
-This is all from the clients perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
+This is all from the client's perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
 
 Read on to learn how to implement these three steps with React Query.
 
@@ -46,7 +50,7 @@ If you do forget to prefetch a query when you are using `useSuspenseQuery`, the 
 
 ## Initial setup
 
-The first steps of using React Query is always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
+The first steps of using React Query are always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
 
 Next.js pages router:
 
@@ -158,7 +162,7 @@ function Posts() {
 The setup is minimal and this can be a quick solution for some cases, but there are a **few tradeoffs to consider** when compared to the full approach:
 
 - If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
-- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes since. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that needs it can also be cumbersome.
+- If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that need it can also be cumbersome.
 - There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
 - If there is already data in the cache for a query, `initialData` will never overwrite this data, **even if the new data is fresher than the old one**.
   - To understand why this is especially bad, consider the `getServerSideProps` example above. If you navigate back and forth to a page several times, `getServerSideProps` would get called each time and fetch new data, but because we are using the `initialData` option, the client cache and data would never be updated.
@@ -172,7 +176,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
 - In the loader function, do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
-  - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
+  - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
 - Wrap your tree with `<HydrationBoundary state={dehydratedState}>` where `dehydratedState` comes from the framework loader. How you get `dehydratedState` also differs between frameworks.
   - This can be done for each route, or at the top of the application to avoid boilerplate, see examples
@@ -220,6 +224,7 @@ In each route:
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -305,6 +310,7 @@ import { json } from '@remix-run/node'
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -428,9 +434,9 @@ export async function getServerSideProps() {
     queryFn: getUserByEmail,
   })
 
-  if (user?.userId) {
+  if (user?.id) {
     await queryClient.query({
-      queryKey: ['projects', userId],
+      queryKey: ['projects', user.id],
       queryFn: getProjectsByUser,
     })
   }
@@ -488,7 +494,7 @@ If you are using a custom SSR setup, you need to take care of this step yourself
 
 ## A note about request waterfalls
 
-In the [Performance & Request Waterfalls guide](./request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](./request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
+In the [Performance & Request Waterfalls guide](./request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](./request-waterfalls.md#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetch their own data. With client rendering, this leads to the following request waterfall:
 
 ```
 1. |> Markup (without content)
@@ -552,9 +558,9 @@ In case you are creating the `QueryClient` for every request, React Query create
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/hydration.md#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient.md#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
 

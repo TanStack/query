@@ -143,6 +143,16 @@ describe('PreactQueryDevtoolsPanel', () => {
     )
   })
 
+  it('should create the devtools instance only once across re-renders', () => {
+    const { rerender } = render(
+      <PreactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />,
+    )
+
+    rerender(<PreactQueryDevtoolsPanel client={queryClient} errorTypes={[]} />)
+
+    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+  })
+
   it('should preserve the default container height when "style" omits "height"', () => {
     const { container } = render(
       <PreactQueryDevtoolsPanel

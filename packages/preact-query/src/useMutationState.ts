@@ -12,22 +12,22 @@ import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 
 /**
- * `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching
+ * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`
  * (useful for app-wide loading indicators).
- *
  * @param filters - The {@link MutationFilters} to narrow down the matched mutations.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
- * @returns Will be the `number` of the mutations that your application is currently fetching.
- *
+ * @returns Will be the `number` of the mutations that your application currently has `pending`.
  * @example
  * ```tsx
  * import { useIsMutating } from '@tanstack/preact-query'
  *
- * // How many mutations are fetching?
- * const isMutating = useIsMutating()
- * // How many mutations matching the posts prefix are fetching?
- * const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
+ * function PostsMutatingIndicator() {
+ *   // How many mutations matching the posts prefix are in progress?
+ *   const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
+ *
+ *   return isMutatingPosts ? <span>Saving posts...</span> : null
+ * }
  * ```
  */
 export function useIsMutating(
@@ -61,6 +61,13 @@ type MutationStateOptions<
   select?: (mutation: TMutation) => TResult
 }
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
@@ -83,24 +90,25 @@ function getResult<
  * `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass
  * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
  * state.
- *
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
- * @param queryClient - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will
+ * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns Will be an Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```tsx
  * import { useMutationState } from '@tanstack/preact-query'
  *
- * const variables = useMutationState({
- *   filters: { status: 'pending' },
- *   select: (mutation) => mutation.state.variables,
- * })
- * ```
+ * function PendingPosts() {
+ *   const pendingVariables = useMutationState({
+ *     filters: { status: 'pending' },
+ *     select: (mutation) => mutation.state.variables,
+ *   })
  *
+ *   return <>{pendingVariables.length} posts saving...</>
+ * }
+ * ```
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```tsx
@@ -108,30 +116,43 @@ function getResult<
  *
  * const mutationKey = ['posts']
  *
- * // Some mutation that we want to get the state for
- * const mutation = useMutation({
- *   mutationKey,
- *   mutationFn: createPosts,
- * })
+ * function Posts() {
+ *   // Some mutation that we want to get the state for
+ *   const mutation = useMutation({
+ *     mutationKey,
+ *     mutationFn: createPosts,
+ *   })
  *
- * const data = useMutationState({
- *   // this mutation key needs to match the mutation key of the given mutation (see above)
- *   filters: { mutationKey },
- *   select: (mutation) => mutation.state.data,
- * })
+ *   const savedPosts = useMutationState({
+ *     // this mutation key needs to match the mutation key of the given mutation (see above)
+ *     filters: { mutationKey, status: 'success' },
+ *     select: (mutation) => mutation.state.data,
+ *   })
+ *
+ *   return (
+ *     <button onClick={() => mutation.mutate(['New Post'])}>
+ *       Create post ({savedPosts.length} saved so far)
+ *     </button>
+ *   )
+ * }
  * ```
- *
  * @example
- * Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
- * mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the
- * latest invocation:
+ * Access the latest successful mutation data via the `mutationKey`. Each invocation of `mutate` adds a new
+ * entry to the mutation cache for `gcTime` milliseconds — with the `status: 'success'` filter below, check the
+ * last item that `useMutationState` returns to get the latest successful invocation:
  * ```tsx
- * const data = useMutationState({
- *   filters: { mutationKey: ['posts'] },
- *   select: (mutation) => mutation.state.data,
- * })
+ * import { useMutationState } from '@tanstack/preact-query'
  *
- * const latest = data[data.length - 1]
+ * function LatestPost() {
+ *   const savedPosts = useMutationState({
+ *     filters: { mutationKey: ['posts'], status: 'success' },
+ *     select: (mutation) => mutation.state.data,
+ *   })
+ *
+ *   const latestSavedPost = savedPosts[savedPosts.length - 1]
+ *
+ *   return <>{latestSavedPost ? 'Saved' : 'Nothing saved yet'}</>
+ * }
  * ```
  */
 export function useMutationState<
@@ -144,9 +165,9 @@ export function useMutationState<
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = useRef(options)
-  const result = useRef<Array<TResult>>(null)
-  if (result.current === null) {
-    result.current = getResult(mutationCache, options)
+  const resultRef = useRef<Array<TResult>>(null)
+  if (resultRef.current === null) {
+    resultRef.current = getResult(mutationCache, options)
   }
 
   useEffect(() => {
@@ -158,16 +179,16 @@ export function useMutationState<
       (onStoreChange) =>
         mutationCache.subscribe(() => {
           const nextResult = replaceEqualDeep(
-            result.current,
+            resultRef.current,
             getResult(mutationCache, optionsRef.current),
           )
-          if (result.current !== nextResult) {
-            result.current = nextResult
+          if (resultRef.current !== nextResult) {
+            resultRef.current = nextResult
             notifyManager.schedule(onStoreChange)
           }
         }),
       [mutationCache],
     ),
-    () => result.current,
+    () => resultRef.current,
   )!
 }

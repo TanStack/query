@@ -4,20 +4,22 @@ title: QueryErrorResetBoundary
 ---
 
 ```ts
-function QueryErrorResetBoundary(__namedParameters): Element;
+function QueryErrorResetBoundary(props: QueryErrorResetBoundaryProps): Element;
 ```
 
-Defined in: [preact-query/src/QueryErrorResetBoundary.tsx:157](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L157)
+Defined in: [packages/preact-query/src/QueryErrorResetBoundary.tsx:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/QueryErrorResetBoundary.tsx#L164)
 
-When using **suspense** or **throwOnError** in your queries, you need a way to let queries know that you want to
+When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
 try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can
 reset any query errors within the boundaries of the component.
 
 ## Parameters
 
-### \_\_namedParameters
+### props
 
 [`QueryErrorResetBoundaryProps`](../interfaces/QueryErrorResetBoundaryProps.md)
+
+The `children` to render.
 
 ## Returns
 
@@ -32,6 +34,18 @@ if `children` is a function.
 import { useErrorBoundary } from 'preact/hooks'
 import type { ComponentChildren } from 'preact'
 import { QueryErrorResetBoundary } from '@tanstack/preact-query'
+
+function App() {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary reset={reset}>
+          <Page />
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  )
+}
 
 function ErrorBoundary({
   children,
@@ -53,14 +67,4 @@ function ErrorBoundary({
 
   return children
 }
-
-const App = () => (
-  <QueryErrorResetBoundary>
-    {({ reset }) => (
-      <ErrorBoundary reset={reset}>
-        <Page />
-      </ErrorBoundary>
-    )}
-  </QueryErrorResetBoundary>
-)
 ```
