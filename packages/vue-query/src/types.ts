@@ -125,7 +125,7 @@ export interface DefaultOptions<TError = DefaultError> {
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
     ShallowOption
   /**
-   * Default options used when hydrating queries; see {@link HydrateOptions}.
+   * Default options used when hydrating queries and mutations; see {@link HydrateOptions}.
    */
   hydrate?: HydrateOptions['defaultOptions']
   /**
