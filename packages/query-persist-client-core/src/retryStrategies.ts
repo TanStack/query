@@ -10,6 +10,12 @@ export type PersistRetryer = (props: {
   errorCount: number
 }) => PersistedClient | undefined
 
+/**
+ * A {@link PersistRetryer} that drops the query with the oldest `dataUpdatedAt` and tries again, until
+ * no queries are left.
+ * @param props - The `persistedClient` that failed to save.
+ * @returns A copy of the client without its oldest query, or `undefined` if it has no queries.
+ */
 export const removeOldestQuery: PersistRetryer = ({ persistedClient }) => {
   const mutations = [...persistedClient.clientState.mutations]
   const queries = [...persistedClient.clientState.queries]
