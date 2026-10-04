@@ -18,6 +18,14 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   onError?: () => void
 }
 
+/**
+ * Provides the `QueryClient` like `QueryClientProvider`, and restores the persisted client first:
+ * while restoring, `useIsRestoring` returns `true` and queries don't fetch. Once restored, the client
+ * is saved with the persister whenever the cache changes.
+ * @param props - The `QueryClientProvider` props, the `persistOptions`, and the `onSuccess` and
+ * `onError` callbacks called when restoring succeeds or fails.
+ * @returns The `QueryClientProvider` wrapping the children.
+ */
 export const PersistQueryClientProvider = (
   props: PersistQueryClientProviderProps,
 ): JSX.Element => {
