@@ -19,8 +19,18 @@ import type { Signal } from 'solid-js'
  * The options for `TanstackQueryDevtoolsPanel`, which mounts the devtools as an embedded panel.
  */
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if
+   * you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
   styleNonce?: string
+  /**
+   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Callback function that is called when the devtools panel is closed.
+   */
   onClose?: () => void
 }
 
