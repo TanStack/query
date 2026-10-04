@@ -101,6 +101,10 @@ interface QueryStatusProps {
   count: number
 }
 
+/**
+ * The devtools component that `TanstackQueryDevtools` and `TanstackQueryDevtoolsPanel` lazily load
+ * and render.
+ */
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
