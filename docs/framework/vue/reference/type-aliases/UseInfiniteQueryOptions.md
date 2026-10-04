@@ -10,8 +10,8 @@ type UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 Defined in: [packages/vue-query/src/useInfiniteQuery.ts:32](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L32)
 
 The options accepted by `useInfiniteQuery`. Same as [InfiniteQueryObserverOptions](../interfaces/InfiniteQueryObserverOptions.md) from
-`@tanstack/query-core`, plus the `shallow` option, where each option can also be a `ref` (and `enabled` a
-reactive getter).
+`@tanstack/query-core`, plus the `shallow` option. Each option except `shallow` can also be a `ref` (and
+`enabled` a reactive getter).
 
 ## Type Parameters
 
