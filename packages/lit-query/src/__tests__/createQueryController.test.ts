@@ -1675,7 +1675,7 @@ describe('createQueryController', () => {
       )
 
       readonly firstRead = this.query()
-      readonly id = 'alpha'
+      override readonly id = 'alpha'
     }
 
     customElements.define(generateElementName(), DeferredExplicitQueryHost)

@@ -804,7 +804,7 @@ describe('createInfiniteQueryController', () => {
       )
 
       readonly firstRead = this.infinite()
-      readonly id = 'alpha'
+      override readonly id = 'alpha'
     }
 
     customElements.define(generateElementName(), DeferredExplicitInfiniteHost)
