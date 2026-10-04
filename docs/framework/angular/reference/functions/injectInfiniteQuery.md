@@ -9,14 +9,15 @@ title: injectInfiniteQuery
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:85](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L85)
+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:86](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L86)
 
 The options for `injectInfiniteQuery` are identical to `injectQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`. Infinite queries can
 additively "load more" data onto an existing set of data, or "infinite scroll".
 
-This overload is selected when `initialData` is set on the options returned by `injectInfiniteQueryFn`,
-so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+This overload is selected when `initialData` is known to be defined on the options returned by
+`injectInfiniteQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
+`TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -110,7 +111,7 @@ export class Projects {
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:237](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L237)
+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:238](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L238)
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a
 unique key. Infinite queries can additively "load more" data onto an existing set of data, or
@@ -299,7 +300,7 @@ export class Comments {
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn: () => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:264](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L264)
+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:265](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L265)
 
 This overload accepts the general [CreateInfiniteQueryOptions](../interfaces/CreateInfiniteQueryOptions.md) shape rather than the
 `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site —

@@ -16,7 +16,7 @@ You can generally pass everything to `infiniteQueryOptions` that you can also pa
 `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
 for.
 
-This overload is selected when `initialData` is set.
+This overload is selected when `initialData` is known to be defined.
 
 ### Type Parameters
 

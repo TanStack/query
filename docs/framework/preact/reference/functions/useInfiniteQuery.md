@@ -14,7 +14,7 @@ Defined in: [packages/preact-query/src/useInfiniteQuery.ts:63](https://github.co
 The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
 `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
 
-This overload is selected when `initialData` is set.
+This overload is selected when `initialData` is known to be defined.
 
 ### Type Parameters
 
