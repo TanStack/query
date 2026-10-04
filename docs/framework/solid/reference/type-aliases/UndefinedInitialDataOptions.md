@@ -7,7 +7,7 @@ title: UndefinedInitialDataOptions
 type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:19](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L19)
+Defined in: [packages/solid-query/src/queryOptions.ts:21](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L21)
 
 The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
 `undefined` while the query is `pending`. `queryOptions` itself accepts and returns a plain object (its

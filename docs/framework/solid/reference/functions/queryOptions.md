@@ -11,7 +11,7 @@ redirect_from:
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L86)
+Defined in: [packages/solid-query/src/queryOptions.ts:92](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L92)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -90,7 +90,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/solid-query/src/queryOptions.ts:134](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L134)
+Defined in: [packages/solid-query/src/queryOptions.ts:140](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L140)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
