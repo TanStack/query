@@ -2376,7 +2376,7 @@ export interface DefaultOptions<TError = DefaultError> {
   >
   /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
-  /** Default options used when hydrating queries; see {@link HydrateOptions}. */
+  /** Default options used when hydrating queries and mutations; see {@link HydrateOptions}. */
   hydrate?: HydrateOptions['defaultOptions']
   /** Default options used when dehydrating the client's caches; see {@link DehydrateOptions}. */
   dehydrate?: DehydrateOptions
