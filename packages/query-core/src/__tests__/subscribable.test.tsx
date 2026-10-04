@@ -7,11 +7,11 @@ class SubscribableTest extends Subscribable<Listener> {
   onSubscribeSpy = vi.fn()
   onUnsubscribeSpy = vi.fn()
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     this.onSubscribeSpy()
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     this.onUnsubscribeSpy()
   }
 }
