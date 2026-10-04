@@ -93,6 +93,9 @@ export type QueryCacheNotifyEvent =
 
 type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 
+/**
+ * The store a `QueryCache` keeps its queries in, keyed by query hash.
+ */
 export interface QueryStore {
   has: (queryHash: string) => boolean
   set: (queryHash: string, query: Query) => void
