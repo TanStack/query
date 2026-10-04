@@ -3,7 +3,7 @@ id: InvalidateOptions
 title: InvalidateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:890](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L890)
+Defined in: [packages/query-core/src/types.ts:914](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L914)
 
 Options of `queryClient.invalidateQueries`, applied to the refetch that follows the invalidation.
 

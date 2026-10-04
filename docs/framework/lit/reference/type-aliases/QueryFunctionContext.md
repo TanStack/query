@@ -7,7 +7,7 @@ title: QueryFunctionContext
 type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? object : object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:224](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L224)
+Defined in: [packages/query-core/src/types.ts:233](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L233)
 
 The object passed to `queryFn`: the `QueryClient`, the `queryKey`, an `AbortSignal` that aborts
 when the query is cancelled, the query's `meta`, and for infinite queries the `pageParam` of the

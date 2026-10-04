@@ -9,7 +9,14 @@ type RuleKey = keyof typeof rules
  * `recommendedStrict`, and the flat `flat/recommended` and `flat/recommended-strict`.
  */
 export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
+  /**
+   * The rules of the plugin, keyed by rule name.
+   */
   rules: Record<RuleKey, RuleModule<any, any, any>>
+  /**
+   * The shareable configs: the legacy `recommended` and `recommendedStrict`, and the flat
+   * `flat/recommended` and `flat/recommended-strict`.
+   */
   configs: {
     recommended: ESLint.ConfigData
     recommendedStrict: ESLint.ConfigData

@@ -61,7 +61,7 @@ import type { TemplateResult } from 'lit'
  */
 export class QueryClientProvider extends LitElement {
   /** @internal */
-  static properties = {
+  static override properties = {
     client: { attribute: false },
   }
 
@@ -89,7 +89,7 @@ export class QueryClientProvider extends LitElement {
    * connected.
    * @internal
    */
-  connectedCallback(): void {
+  override connectedCallback(): void {
     super.connectedCallback()
     const client = this.requireClient()
     this.contextProvider.setValue(client)
@@ -100,7 +100,7 @@ export class QueryClientProvider extends LitElement {
    * Unmounts the client when the element is disconnected.
    * @internal
    */
-  disconnectedCallback(): void {
+  override disconnectedCallback(): void {
     this.unmountClient(this.mountedClient)
     super.disconnectedCallback()
   }
@@ -112,7 +112,9 @@ export class QueryClientProvider extends LitElement {
    * client is unmounted and the new one is provided and mounted.
    * @throws {Error} If `client` is unset while the provider is connected.
    */
-  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+  protected override willUpdate(
+    changedProperties: Map<PropertyKey, unknown>,
+  ): void {
     if (!changedProperties.has('client')) {
       return
     }
@@ -148,7 +150,7 @@ export class QueryClientProvider extends LitElement {
    * @internal
    * @returns A `<slot>` that renders the provider's children.
    */
-  render(): TemplateResult {
+  override render(): TemplateResult {
     return html`<slot></slot>`
   }
 

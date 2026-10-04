@@ -7,7 +7,7 @@ title: defaultShouldDehydrateMutation
 function defaultShouldDehydrateMutation(mutation: Mutation): boolean;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:203](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L203)
+Defined in: [packages/query-core/src/hydration.ts:209](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L209)
 
 The default `shouldDehydrateMutation` predicate used by `dehydrate`. Only dehydrates mutations that are
 currently paused (e.g. paused by `networkMode` while offline).
