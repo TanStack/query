@@ -26,6 +26,9 @@ type CombineFn<TCombinedResult> = (
   result: Array<QueryObserverResult>,
 ) => TCombinedResult
 
+/**
+ * Options for a `QueriesObserver` that apply to all of its queries at once.
+ */
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {

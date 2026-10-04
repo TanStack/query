@@ -112,6 +112,10 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
   fetchStatus: FetchStatus
 }
 
+/**
+ * The context passed to a {@link QueryBehavior}'s `onFetch`, which can replace `fetchFn` to change
+ * how the query fetches (e.g. to fetch pages for an infinite query).
+ */
 export interface FetchContext<
   TQueryFnData,
   TError,
@@ -127,6 +131,9 @@ export interface FetchContext<
   state: QueryState<TData, TError>
 }
 
+/**
+ * Customizes how a query fetches, e.g. the behavior that fetches the pages of an infinite query.
+ */
 export interface QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -139,12 +146,22 @@ export interface QueryBehavior<
   ) => void
 }
 
+/**
+ * The direction an infinite query fetches in: `'forward'` for the next page, `'backward'` for the
+ * previous one.
+ */
 export type FetchDirection = 'forward' | 'backward'
 
+/**
+ * Metadata for a fetch, e.g. the direction when an infinite query fetches more pages.
+ */
 export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
+/**
+ * Options for a single fetch of a query.
+ */
 export interface FetchOptions<TData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
@@ -191,6 +208,10 @@ interface SetStateAction<TData, TError> {
   state: Partial<QueryState<TData, TError>>
 }
 
+/**
+ * The actions a query dispatches to update its state, e.g. when it starts fetching, fails, or
+ * succeeds.
+ */
 export type Action<TData, TError> =
   | ContinueAction
   | ErrorAction<TError>

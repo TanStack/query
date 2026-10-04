@@ -1,5 +1,8 @@
 import { isServer as defaultIsServer } from './utils'
 
+/**
+ * A function that returns whether the code is running on the server.
+ */
 export type IsServerValue = () => boolean
 
 let isServerFn: IsServerValue = () => defaultIsServer
