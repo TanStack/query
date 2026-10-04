@@ -83,6 +83,10 @@ export function createBaseQuery<
   // those props and widen `notifyOnChangeProps` for every consumer. Relies on
   // `QueryObserver` always notifying on `error` changes when `throwOnError` is set.
   let rawResult = $state.raw(getRawResult())
+  /**
+   * Reads the observer's current result, without the property tracking of `createResult`.
+   * @returns The observer's current result.
+   */
   function getRawResult() {
     return observer.getCurrentResult()
   }
