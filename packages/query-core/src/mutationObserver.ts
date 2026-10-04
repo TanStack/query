@@ -128,7 +128,7 @@ export class MutationObserver<
     }
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (this.listeners.size === 1 && this.#currentMutation) {
       this.#currentMutation.addObserver(this)
 
@@ -136,7 +136,7 @@ export class MutationObserver<
     }
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.#currentMutation?.removeObserver(this)
     }
