@@ -9,8 +9,8 @@ type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey,
 
 Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L23)
 
-The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
-may be `undefined` while the query is `pending`.
+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
+be `undefined` — `data` may be `undefined` while the query is `pending`.
 
 ## Type Declaration
 
