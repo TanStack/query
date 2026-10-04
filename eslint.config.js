@@ -22,6 +22,15 @@ export default defineConfig([
     rules: {
       'jsdoc/check-tag-names': ['error', { definedTags: ['defaultValue'] }],
       'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          contexts: [
+            'ExportNamedDeclaration > TSInterfaceDeclaration',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration',
+          ],
+        },
+      ],
       'jsdoc/require-param': ['error', { checkDestructured: false }],
       'jsdoc/check-template-names': 'error',
       'jsdoc/informative-docs': 'error',
