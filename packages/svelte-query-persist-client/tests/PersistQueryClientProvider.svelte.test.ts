@@ -60,7 +60,7 @@ const createMockErrorPersister = (
 }
 
 describe('PersistQueryClientProvider', () => {
-  it('restores cache from persister', async () => {
+  it('should restore cache from persister', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()

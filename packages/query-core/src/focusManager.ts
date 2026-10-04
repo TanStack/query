@@ -36,13 +36,13 @@ export class FocusManager extends Subscribable<Listener> {
     }
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (!this.#cleanup) {
       this.setEventListener(this.#setup)
     }
   }
 
-  protected onUnsubscribe() {
+  protected override onUnsubscribe() {
     if (!this.hasListeners()) {
       this.#cleanup?.()
       this.#cleanup = undefined
@@ -55,7 +55,8 @@ export class FocusManager extends Subscribable<Listener> {
    * receives a `setFocused` callback: call it with a `boolean` to manually
    * set the focus state, or with no arguments to re-evaluate the current
    * focus state and notify subscribers.
-   *
+   * @param setup - Receives the `setFocused` callback, registers the event listener, and may return
+   * a cleanup function that is called when the listener is replaced or no longer needed.
    * @example
    * ```ts
    * import { focusManager } from '@tanstack/query-core'
@@ -89,7 +90,7 @@ export class FocusManager extends Subscribable<Listener> {
   /**
    * `setFocused` can be used to manually set the focus state. Set `undefined`
    * to fall back to the default focus check.
-   *
+   * @param focused - The focus state, or `undefined` to use the default focus check.
    * @example
    * ```ts
    * import { focusManager } from '@tanstack/query-core'
@@ -124,6 +125,7 @@ export class FocusManager extends Subscribable<Listener> {
 
   /**
    * `isFocused` can be used to get the current focus state.
+   * @returns The focus state set with `setFocused`, or otherwise whether the document is visible.
    */
   isFocused(): boolean {
     if (typeof this.#focused === 'boolean') {

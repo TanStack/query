@@ -7,7 +7,7 @@ title: QueryFunction
 type QueryFunction<T, TQueryKey, TPageParam> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L129)
+Defined in: [packages/query-core/src/types.ts:183](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L183)
 
 ## Type Parameters
 

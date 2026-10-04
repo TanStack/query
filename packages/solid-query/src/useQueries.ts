@@ -210,7 +210,6 @@ type QueriesResults<
  * will be used.
  * @returns The combined result. Without `combine`, this is an array with all the query results, in the same
  * order as the input. When `combine` is provided, this is the value returned by `combine` instead.
- *
  * @example
  * ```tsx
  * import { For } from 'solid-js'
@@ -238,7 +237,6 @@ type QueriesResults<
  *   )
  * }
  * ```
- *
  * @example
  * Combining results into a single value:
  * ```tsx

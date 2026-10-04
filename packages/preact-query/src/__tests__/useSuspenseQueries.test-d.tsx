@@ -7,7 +7,7 @@ import { queryOptions } from '../queryOptions'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 
 describe('UseSuspenseQueries config object overload', () => {
-  it('TData should always be defined', () => {
+  it('should always define TData', () => {
     const query1 = {
       queryKey: queryKey(),
       queryFn: () => {
@@ -34,7 +34,7 @@ describe('UseSuspenseQueries config object overload', () => {
     expectTypeOf(query2Data).toEqualTypeOf<string>()
   })
 
-  it('TData should be defined when passed through queryOptions', () => {
+  it('should define TData when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: queryKey(),
       queryFn: () => {
@@ -71,7 +71,7 @@ describe('UseSuspenseQueries config object overload', () => {
     expectTypeOf(query2Data).toEqualTypeOf<boolean>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('should not have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const queryResults = useSuspenseQueries({
       queries: [
         {
@@ -117,7 +117,7 @@ describe('UseSuspenseQueries config object overload', () => {
     )
   })
 
-  it('TData should have correct type when conditional skipToken is passed', () => {
+  it('should have correct TData type when conditional skipToken is passed', () => {
     const queryResults = useSuspenseQueries({
       queries: [
         {
@@ -198,7 +198,7 @@ describe('UseSuspenseQueries config object overload', () => {
     >()
   })
 
-  it('queryOptions with initialData works on useSuspenseQueries', () => {
+  it('should work with queryOptions with initialData on useSuspenseQueries', () => {
     const query1 = queryOptions({
       queryKey: queryKey(),
       queryFn: () => 'Query Data',
@@ -211,7 +211,7 @@ describe('UseSuspenseQueries config object overload', () => {
     expectTypeOf(query1Data).toEqualTypeOf<string>()
   })
 
-  it('queryOptions with skipToken in queryFn should not work on useSuspenseQueries', () => {
+  it('should not work with queryOptions with skipToken in queryFn on useSuspenseQueries', () => {
     assertType(
       useSuspenseQueries({
         queries: [

@@ -53,7 +53,7 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  it('cleanup (removeEventListener) should not be called if window is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
     windowSpy.mockImplementation(
       () => undefined as unknown as Window & typeof globalThis,
@@ -76,7 +76,7 @@ describe('focusManager', () => {
     windowSpy.mockRestore()
   })
 
-  it('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
+  it('should not call cleanup (removeEventListener) if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error

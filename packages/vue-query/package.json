@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.104.0",
+  "version": "5.104.1",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "node ../../node_modules/typescript/lib/tsc.js --project tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
-    "test:types": "vue-demi-switch 3 && pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types": "vue-demi-switch 3 && npm-run-all --serial test:types:*",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
     "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts58 --tsBuildInfoFile .cache/test-types/ts58.tsbuildinfo",
@@ -66,9 +66,10 @@
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "@vue/composition-api": "1.7.2",
-    "eslint-plugin-vue": "^10.11.1",
-    "unplugin-vue": "^8.0.0",
-    "vue": "^3.5.43",
+    "eslint-plugin-vue": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-vue": "catalog:",
+    "vue": "catalog:",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
   },

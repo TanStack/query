@@ -13,7 +13,7 @@ import type { MaybeRefDeep } from './types'
  * `queryClient.getMutationCache()` — `QueryClient` constructs one of these by default.
  */
 export class MutationCache extends MC {
-  find<
+  override find<
     TData = unknown,
     TError = DefaultError,
     TVariables = any,
@@ -24,7 +24,9 @@ export class MutationCache extends MC {
     return super.find(cloneDeepUnref(filters))
   }
 
-  findAll(filters: MaybeRefDeep<MutationFilters> = {}): Array<Mutation> {
+  override findAll(
+    filters: MaybeRefDeep<MutationFilters> = {},
+  ): Array<Mutation> {
     return super.findAll(cloneDeepUnref(filters))
   }
 }
