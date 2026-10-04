@@ -226,11 +226,18 @@ export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 > {
+  /**
+   * The array of query options to run, one query per element.
+   */
   queries:
     | readonly [...QueriesOptions<T>]
     | readonly [
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
+  /**
+   * Combines the results of all the queries into a single value, which `injectQueries` returns
+   * instead of the results array.
+   */
   combine?: (result: QueriesResults<T>) => TCombinedResult
 }
 
