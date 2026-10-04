@@ -102,6 +102,10 @@ export class QueryObserver<
     this.setOptions(options)
   }
 
+  /**
+   * Binds the methods of the result (`refetch`) to the observer, so they keep working when destructured
+   * from it. Subclasses override it to bind their own result methods as well.
+   */
   protected bindMethods(): void {
     this.refetch = this.refetch.bind(this)
   }
@@ -457,6 +461,12 @@ export class QueryObserver<
     ])
   }
 
+  /**
+   * Fetches the observed query and updates the result once the fetch settles. Used by `refetch` and,
+   * in `InfiniteQueryObserver`, to fetch more pages.
+   * @param fetchOptions - Options for this fetch. `cancelRefetch` defaults to `true`.
+   * @returns A promise that resolves with the updated result.
+   */
   protected fetch(
     fetchOptions: ObserverFetchOptions,
   ): Promise<QueryObserverResult<TData, TError>> {
@@ -568,6 +578,13 @@ export class QueryObserver<
     }
   }
 
+  /**
+   * Computes the result for a query and options from the query's state, applying `select`,
+   * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
+   * @param query - The query to compute the result for.
+   * @param options - The observer options to compute the result with.
+   * @returns The computed result.
+   */
   protected createResult(
     query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
     options: QueryObserverOptions<
