@@ -12,7 +12,7 @@ Defined in: [packages/angular-query-experimental/src/types.ts:235](https://githu
 The type of `mutate`, as returned by `injectMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
 through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes
-`injectMutation` rethrow them.
+`injectMutation` rethrow them after emitting them on `ngZone.onError`.
 
 ## Type Parameters
 

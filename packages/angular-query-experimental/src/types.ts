@@ -225,7 +225,7 @@ export interface CreateMutationOptions<
  * The type of `mutate`, as returned by `injectMutation`. Forwards the variables (and an optional per-call
  * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
  * through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes
- * `injectMutation` rethrow them.
+ * `injectMutation` rethrow them after emitting them on `ngZone.onError`.
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
  * @template TVariables - The type of the variable passed to `mutate`.
