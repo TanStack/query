@@ -3,7 +3,7 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:314](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L314)
+Defined in: [packages/angular-query-experimental/src/types.ts:315](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L315)
 
 The `isSuccess`/`isError`/`isPending`/`isIdle` methods on a mutation result. Each is both a `Signal`
 (its current boolean value is read reactively without calling it) and a type-guard function you can
