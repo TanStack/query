@@ -5,8 +5,8 @@ import type { RuleModule } from '@typescript-eslint/utils/ts-eslint'
 type RuleKey = keyof typeof rules
 
 /**
- * The ESLint plugin object: its `rules`, and the legacy and flat `recommended` and
- * `recommended-strict` configs.
+ * The ESLint plugin object: its `rules`, and its configs — the legacy `recommended` and
+ * `recommendedStrict`, and the flat `flat/recommended` and `flat/recommended-strict`.
  */
 export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
