@@ -6,6 +6,10 @@ import type { QueryFilters } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 
+/**
+ * The filters accepted by `useIsFetching`: {@link QueryFilters} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseIsFetchingFilters =
   MaybeRefDeep<QueryFilters> | (() => MaybeRefDeep<QueryFilters>)
 

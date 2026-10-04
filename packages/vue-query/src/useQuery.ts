@@ -14,11 +14,19 @@ import type {
   UseQueryOptions,
 } from './queryOptions'
 
+/**
+ * The result of `useQuery` when `initialData` is omitted or may be `undefined` — `data` may be `undefined`
+ * while the query is `pending`. See {@link UseBaseQueryReturnType}.
+ */
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError
 >
 
+/**
+ * The result of `useQuery` when `initialData` is set — `data` is never `undefined` (unless a `select` changes
+ * `TData` to include `undefined`).
+ */
 export type UseQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,

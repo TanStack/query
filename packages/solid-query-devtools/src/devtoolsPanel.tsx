@@ -5,6 +5,9 @@ import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
+/**
+ * The props of `SolidQueryDevtoolsPanel`, which renders the devtools panel inline.
+ */
 export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient

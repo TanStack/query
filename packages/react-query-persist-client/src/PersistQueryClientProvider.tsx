@@ -9,6 +9,10 @@ import { IsRestoringProvider, QueryClientProvider } from '@tanstack/react-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/react-query'
 
+/**
+ * The props of `PersistQueryClientProvider`: the props of `QueryClientProvider`, plus the
+ * `persistOptions` and callbacks for when restoring succeeds or fails.
+ */
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => Promise<unknown> | unknown

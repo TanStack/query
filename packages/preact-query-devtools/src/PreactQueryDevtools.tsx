@@ -10,6 +10,10 @@ import type {
 import type { QueryClient } from '@tanstack/preact-query'
 import type { VNode } from 'preact'
 
+/**
+ * The props of `PreactQueryDevtools`, which renders the devtools with a toggle button that opens
+ * them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
