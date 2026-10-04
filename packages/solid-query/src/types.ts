@@ -262,6 +262,16 @@ export type UseMutationOptions<
   TOnMutateResult = unknown,
 > = Accessor<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
 
+/**
+ * The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
+ * `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+ * through the mutation result, not thrown.
+ * @template TData - The type your mutation function resolves to.
+ * @template TError - The type of errors your mutation function may throw.
+ * @template TVariables - The type of the variable passed to `mutate`.
+ * @template TOnMutateResult - The type returned by `onMutate`, passed to `onSuccess`/`onError`/`onSettled` as
+ * their `onMutateResult` parameter — useful for optimistic-update rollback data.
+ */
 export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,

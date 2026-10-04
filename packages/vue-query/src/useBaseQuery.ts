@@ -24,6 +24,10 @@ import type { UseQueryOptions } from './queryOptions'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
+/**
+ * The result of the query composables: every property of the observer result wrapped in a `Ref`, except
+ * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense`.
+ */
 export type UseBaseQueryReturnType<
   TData,
   TError,

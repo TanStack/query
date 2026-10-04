@@ -10,6 +10,10 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
+/**
+ * The props of `ReactQueryDevtools`, which renders the devtools with a toggle button that opens
+ * them.
+ */
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open

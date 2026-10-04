@@ -13,6 +13,10 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
 
+/**
+ * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
+ * except that `queryFn` can't be `skipToken`.
+ */
 export type UsePrefetchInfiniteQueryOptions<
   TQueryFnData,
   TError,
