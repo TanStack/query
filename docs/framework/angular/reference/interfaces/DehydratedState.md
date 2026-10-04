@@ -11,7 +11,7 @@ that has already been fetched, avoiding a redundant fetch on the client.
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="mutations"></a> `mutations` | `DehydratedMutation`[] |
-| <a id="queries"></a> `queries` | `DehydratedQuery`[] |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="mutations"></a> `mutations` | `DehydratedMutation`[] | The dehydrated mutations, by default only the paused ones. |
+| <a id="queries"></a> `queries` | `DehydratedQuery`[] | The dehydrated queries, by default only the successful ones. |

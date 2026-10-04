@@ -10,7 +10,7 @@ function dehydrateQuery(
    shouldRedactErrors?: (error: unknown) => boolean): DehydratedQuery;
 ```
 
-Defined in: [packages/query-core/src/hydration.ts:172](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L172)
+Defined in: [packages/query-core/src/hydration.ts:178](https://github.com/TanStack/query/blob/main/packages/query-core/src/hydration.ts#L178)
 
 Dehydrates a single `Query` into a serializable `DehydratedQuery` snapshot. Note that most query config (e.g.
 `queryFn`, `staleTime`) is not dehydrated but instead meant to be configured again when consuming the
