@@ -7,7 +7,7 @@ title: DefinedCreateQueryResult
 type DefinedCreateQueryResult<TData, TError, TState> = BaseQueryNarrowing<TData, TError> & MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, "safely">>;
 ```
 
-Defined in: [packages/angular-query-experimental/src/types.ts:168](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L168)
+Defined in: [packages/angular-query-experimental/src/types.ts:177](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L177)
 
 The result of `injectQuery` when `initialData` is set — `data` is never `undefined`. Same shape as
 [DefinedQueryObserverResult](DefinedQueryObserverResult.md) from `@tanstack/query-core`, but value fields are exposed as a
