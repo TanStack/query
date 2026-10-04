@@ -78,6 +78,9 @@ type CreateStatusBasedQueryResult<
  * @template TError - The type of errors your `queryFn` may throw.
  */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+  /**
+   * Returns `true` if the query is in the `success` state, narrowing the result to that state.
+   */
   isSuccess: (
     this: CreateBaseQueryResult<TData, TError>,
   ) => this is CreateBaseQueryResult<
@@ -85,6 +88,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
     TError,
     CreateStatusBasedQueryResult<'success', TData, TError>
   >
+  /**
+   * Returns `true` if the query is in the `error` state, narrowing the result to that state.
+   */
   isError: (
     this: CreateBaseQueryResult<TData, TError>,
   ) => this is CreateBaseQueryResult<
@@ -92,6 +98,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
     TError,
     CreateStatusBasedQueryResult<'error', TData, TError>
   >
+  /**
+   * Returns `true` if the query is in the `pending` state, narrowing the result to that state.
+   */
   isPending: (
     this: CreateBaseQueryResult<TData, TError>,
   ) => this is CreateBaseQueryResult<
@@ -318,6 +327,9 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > {
+  /**
+   * Whether the mutation is in the `success` state. Calling it narrows the result to that state.
+   */
   isSuccess: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -335,6 +347,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `error` state. Calling it narrows the result to that state.
+   */
   isError: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -352,6 +367,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `pending` state. Calling it narrows the result to that state.
+   */
   isPending: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
@@ -369,6 +387,9 @@ export interface BaseMutationNarrowing<
       >
     >
   >
+  /**
+   * Whether the mutation is in the `idle` state. Calling it narrows the result to that state.
+   */
   isIdle: SignalFunction<
     (
       this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,

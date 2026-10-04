@@ -23,8 +23,17 @@ export type QueryErrorClearResetFunction = () => void
  * it and to check whether a reset was requested.
  */
 export interface QueryErrorResetBoundaryValue {
+  /**
+   * Clears the reset state, so queries know not to try again until the boundary is reset again.
+   */
   clearReset: QueryErrorClearResetFunction
+  /**
+   * Returns whether the boundary has been reset and not yet cleared.
+   */
   isReset: QueryErrorIsResetFunction
+  /**
+   * Resets any query errors within the boundary, so queries know they can try again.
+   */
   reset: QueryErrorResetFunction
 }
 

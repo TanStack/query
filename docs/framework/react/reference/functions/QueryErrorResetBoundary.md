@@ -9,7 +9,7 @@ redirect_from:
 function QueryErrorResetBoundary(props: QueryErrorResetBoundaryProps): Element;
 ```
 
-Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:151](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L151)
+Defined in: [packages/react-query/src/QueryErrorResetBoundary.tsx:160](https://github.com/TanStack/query/blob/main/packages/react-query/src/QueryErrorResetBoundary.tsx#L160)
 
 When using `suspense` or `throwOnError` in your queries, you need a way to let queries know that you want to
 try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can

@@ -26,8 +26,8 @@ The type of errors your `queryFn` may throw.
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="iserror"></a> `isError` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>` |
-| <a id="ispending"></a> `isPending` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>` |
-| <a id="issuccess"></a> `isSuccess` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>` |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="iserror"></a> `isError` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>` | Returns `true` if the query is in the `error` state, narrowing the result to that state. |
+| <a id="ispending"></a> `isPending` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>` | Returns `true` if the query is in the `pending` state, narrowing the result to that state. |
+| <a id="issuccess"></a> `isSuccess` | (`this`: [`CreateBaseQueryResult`](../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>) => `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"success", TData, TError>>` | Returns `true` if the query is in the `success` state, narrowing the result to that state. |
