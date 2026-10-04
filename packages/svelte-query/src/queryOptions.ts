@@ -7,6 +7,10 @@ import type {
 } from '@tanstack/query-core'
 import type { CreateQueryOptions } from './types.js'
 
+/**
+ * The options accepted by the `queryOptions` overload selected when `initialData` is omitted or may be
+ * `undefined` — `data` may be `undefined` while the query is `pending`.
+ */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -19,6 +23,10 @@ export type UndefinedInitialDataOptions<
     | NonUndefinedGuard<TQueryFnData>
 }
 
+/**
+ * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
+ * `undefined` (unless a `select` changes `TData` to include `undefined`).
+ */
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,

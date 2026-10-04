@@ -3,6 +3,9 @@ import { SvelteSet, createSubscriber } from 'svelte/reactivity'
 type VoidFn = () => void
 type Subscriber = (update: VoidFn) => void | VoidFn
 
+/**
+ * An object holding a value in its `current` property, e.g. a reactive value backed by `$state`.
+ */
 export type Box<T> = { current: T }
 
 export class ReactiveValue<T> implements Box<T> {

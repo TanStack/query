@@ -7,7 +7,11 @@ title: CreateMutateFunction
 type CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:103](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L103)
+Defined in: [packages/svelte-query/src/types.ts:112](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L112)
+
+The type of `mutate`, as returned by `createMutation`. Forwards the variables (and an optional per-call
+`onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
+through the mutation result, not thrown.
 
 ## Type Parameters
 
