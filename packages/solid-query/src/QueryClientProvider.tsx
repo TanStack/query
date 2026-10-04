@@ -38,6 +38,12 @@ export const useQueryClient = (queryClient?: QueryClient) => {
   return client()
 }
 
+/**
+ * Resolves the `QueryClient` to use: the given one, or else the one from the nearest
+ * `QueryClientProvider`.
+ * @param queryClient - Returns a custom `QueryClient`, if any.
+ * @returns An accessor that returns the resolved client. It throws if neither client is available.
+ */
 export const useQueryClientResolver = (
   queryClient?: Accessor<QueryClient | undefined>,
 ): Accessor<QueryClient> => {

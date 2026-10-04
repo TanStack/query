@@ -71,6 +71,10 @@ export class MutationObserver<
     this.#updateResult()
   }
 
+  /**
+   * Binds the methods of the result (`mutate` and `reset`) to the observer, so they keep working when
+   * destructured from it.
+   */
   protected bindMethods(): void {
     this.mutate = this.mutate.bind(this)
     this.reset = this.reset.bind(this)

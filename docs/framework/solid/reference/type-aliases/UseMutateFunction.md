@@ -7,11 +7,12 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/solid-query/src/types.ts:275](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L275)
+Defined in: [packages/solid-query/src/types.ts:276](https://github.com/TanStack/query/blob/main/packages/solid-query/src/types.ts#L276)
 
 The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
-through the mutation result, not thrown.
+through the mutation result instead of being thrown by `mutate`, unless `throwOnError` makes `useMutation`
+rethrow them.
 
 ## Type Parameters
 
