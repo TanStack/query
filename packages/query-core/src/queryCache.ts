@@ -97,10 +97,25 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
  * The store a `QueryCache` keeps its queries in, keyed by query hash.
  */
 export interface QueryStore {
+  /**
+   * Returns whether a query with the given hash is stored.
+   */
   has: (queryHash: string) => boolean
+  /**
+   * Stores a query under its hash.
+   */
   set: (queryHash: string, query: Query) => void
+  /**
+   * Returns the query with the given hash, if any.
+   */
   get: (queryHash: string) => Query | undefined
+  /**
+   * Removes the query with the given hash.
+   */
   delete: (queryHash: string) => void
+  /**
+   * Returns an iterator over all stored queries.
+   */
   values: () => IterableIterator<Query>
 }
 
