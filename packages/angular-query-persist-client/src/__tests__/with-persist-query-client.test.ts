@@ -152,7 +152,7 @@ describe('withPersistQueryClient', () => {
   })
 
   it.todo(
-    '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
+    'should transition injectQueries to an idle state (once injectQueries is functional)',
   )
 
   it('should show initialData while restoring', async () => {

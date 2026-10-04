@@ -23,7 +23,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:40](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L40)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. A
 `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with
@@ -101,7 +101,7 @@ export class SavingIndicator {
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-Defined in: [packages/angular-query-experimental/src/mutation-options.ts:98](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L98)
+Defined in: [packages/angular-query-experimental/src/mutation-options.ts:94](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L94)
 
 You can generally pass everything to `mutationOptions` that you can also pass to `injectMutation`. No
 `mutationKey` is required on this overload — use this when you don't need to target the mutation via a
@@ -141,13 +141,13 @@ The mutation options to use, identical to what you'd pass to `injectMutation`, w
 
 The same options object, unchanged.
 
-### See
-
-[injectMutation](injectMutation.md) to run the mutation these options describe.
-
 ### Remarks
 
 See the other overload's example for looking a mutation up via `injectMutationState`.
+
+### See
+
+[injectMutation](injectMutation.md) to run the mutation these options describe.
 
 ### Example
 

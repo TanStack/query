@@ -23,7 +23,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQueries.ts:413](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L413)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:407](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L407)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -295,7 +295,7 @@ function ErrorBoundary({
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/preact-query/src/useSuspenseQueries.ts:593](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L593)
+Defined in: [packages/preact-query/src/useSuspenseQueries.ts:584](https://github.com/TanStack/query/blob/main/packages/preact-query/src/useSuspenseQueries.ts#L584)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.

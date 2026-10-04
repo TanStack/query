@@ -58,6 +58,7 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -85,6 +86,7 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -121,6 +123,7 @@ describe('mutationOptions', () => {
 
       readonly isMutating = useIsMutating(this, {}, queryClient)
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -162,6 +165,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -189,6 +193,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -213,6 +218,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -246,6 +252,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -280,6 +287,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -320,6 +328,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -350,6 +359,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -389,6 +399,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -435,6 +446,7 @@ describe('mutationOptions', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)

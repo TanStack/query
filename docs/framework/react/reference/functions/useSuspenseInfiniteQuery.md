@@ -9,7 +9,7 @@ redirect_from:
 function useSuspenseInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseSuspenseInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseInfiniteQuery.ts:104](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseInfiniteQuery.ts#L104)
+Defined in: [packages/react-query/src/useSuspenseInfiniteQuery.ts:102](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseInfiniteQuery.ts#L102)
 
 The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
 `enabled`, and `placeholderData`.

@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:105](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L105)
+Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:101](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L101)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
@@ -113,7 +113,7 @@ function Projects() {
 function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object): InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
 ```
 
-Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:174](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L174)
+Defined in: [packages/solid-query/src/infiniteQueryOptions.ts:168](https://github.com/TanStack/query/blob/main/packages/solid-query/src/infiniteQueryOptions.ts#L168)
 
 You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
 These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.

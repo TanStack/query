@@ -25,9 +25,9 @@ also support delays longer than the ~24-day maximum of the global `setTimeout`.
 
 ## Properties
 
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="clearinterval"></a> `clearInterval` | `readonly` | (`intervalId`: `TTimerId` \| `undefined`) => `void` |
-| <a id="cleartimeout"></a> `clearTimeout` | `readonly` | (`timeoutId`: `TTimerId` \| `undefined`) => `void` |
-| <a id="setinterval"></a> `setInterval` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |
-| <a id="settimeout"></a> `setTimeout` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` |
+| Property | Modifier | Type | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="clearinterval"></a> `clearInterval` | `readonly` | (`intervalId`: `TTimerId` \| `undefined`) => `void` | Cancels an interval scheduled with `setInterval`. |
+| <a id="cleartimeout"></a> `clearTimeout` | `readonly` | (`timeoutId`: `TTimerId` \| `undefined`) => `void` | Cancels a timeout scheduled with `setTimeout`. |
+| <a id="setinterval"></a> `setInterval` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` | Schedules `callback` to run every `delay` milliseconds, like the global `setInterval`. |
+| <a id="settimeout"></a> `setTimeout` | `readonly` | (`callback`: [`TimeoutCallback`](TimeoutCallback.md), `delay`: `number`) => `TTimerId` | Schedules `callback` to run once after `delay` milliseconds, like the global `setTimeout`. |

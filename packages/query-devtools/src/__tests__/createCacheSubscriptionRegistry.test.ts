@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { createRoot, createSignal } from 'solid-js'
 import { createCacheSubscriptionRegistry } from '../createCacheSubscriptionRegistry'
 
-it('skips disposed subscriptions without dropping other queued updates', () => {
+it('should skip disposed subscriptions without dropping other queued updates', () => {
   const registry = createCacheSubscriptionRegistry<number, undefined>()
   const queued: Array<() => void> = []
   const [firstValue, setFirstValue] = createSignal(0)

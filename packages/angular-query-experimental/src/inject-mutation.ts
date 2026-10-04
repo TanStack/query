@@ -25,6 +25,9 @@ import type {
   CreateMutationResult,
 } from './types'
 
+/**
+ * Options for `injectMutation`, passed after the function that returns the mutation options.
+ */
 export interface InjectMutationOptions {
   /**
    * The `Injector` in which to create the mutation.
@@ -37,14 +40,6 @@ export interface InjectMutationOptions {
 /**
  * Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
  * `injectMutation` is the function for that. Unlike queries, mutations are not run automatically.
- *
- * @remarks `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a
- * second argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to
- * the shared mutation definition. Callbacks defined in `injectMutationFn` fire for every mutation; per-call
- * callbacks fire only for the latest call you've made — `mutateAsync` gives you a promise per call instead,
- * so you can await `Promise.all`/`Promise.allSettled` over several calls and see each one's outcome.
- * @see {@link mutationOptions} to share these options across multiple `injectMutation` call sites, or to look
- * the mutation up elsewhere via its `mutationKey` (e.g. with `injectMutationState`).
  * @param injectMutationFn - A function that returns mutation options. Similar to `computed` from Angular,
  * this function runs in the reactive context, so signals read inside it drive the mutation's options.
  * @param options - Additional configuration
@@ -52,7 +47,13 @@ export interface InjectMutationOptions {
  * (e.g. `mutation.data()`) — while function fields (`mutate`, `mutateAsync`, `reset`) are called directly,
  * unchanged. `isSuccess`/`isError`/`isPending`/`isIdle` are type-guard methods you can call to narrow whether
  * `data` is defined.
- *
+ * @remarks `mutate`/`mutateAsync` also accept per-call `onSuccess`/`onError`/`onSettled` callbacks as a
+ * second argument, useful for triggering call-site side effects (e.g. navigation) without coupling them to
+ * the shared mutation definition. Callbacks defined in `injectMutationFn` fire for every mutation; per-call
+ * callbacks fire only for the latest call you've made — `mutateAsync` gives you a promise per call instead,
+ * so you can await `Promise.all`/`Promise.allSettled` over several calls and see each one's outcome.
+ * @see {@link mutationOptions} to share these options across multiple `injectMutation` call sites, or to look
+ * the mutation up elsewhere via its `mutationKey` (e.g. with `injectMutationState`).
  * @example
  * ```angular-ts
  * @Component({
@@ -75,7 +76,6 @@ export interface InjectMutationOptions {
  *   }))
  * }
  * ```
- *
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```angular-ts
@@ -109,7 +109,6 @@ export interface InjectMutationOptions {
  *   }))
  * }
  * ```
- *
  * @example
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a promise per
  * call instead, so you can wait for all of them when they succeed:
@@ -137,7 +136,6 @@ export interface InjectMutationOptions {
  *   }
  * }
  * ```
- *
  * @example
  * If some of the mutations above can fail independently of the others, and you want to know which ones did —
  * rather than losing that information the moment the first one rejects — swap `Promise.all` for

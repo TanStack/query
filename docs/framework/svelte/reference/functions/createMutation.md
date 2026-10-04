@@ -7,7 +7,7 @@ title: createMutation
 function createMutation<TData, TError, TVariables, TContext>(options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>, queryClient?: Accessor<QueryClient>): CreateMutationResult<TData, TError, TVariables, TContext>;
 ```
 
-Defined in: [packages/svelte-query/src/createMutation.svelte.ts:171](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.svelte.ts#L171)
+Defined in: [packages/svelte-query/src/createMutation.svelte.ts:165](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.svelte.ts#L165)
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects.
 `createMutation` is the function for that.

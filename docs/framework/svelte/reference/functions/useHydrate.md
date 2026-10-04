@@ -10,7 +10,7 @@ function useHydrate(
    queryClient?: QueryClient): void;
 ```
 
-Defined in: [packages/svelte-query/src/useHydrate.ts:33](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L33)
+Defined in: [packages/svelte-query/src/useHydrate.ts:31](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useHydrate.ts#L31)
 
 Adds a previously dehydrated `state` into the `queryClient` (from the nearest context, or the one
 passed explicitly). If the client already contains data, the new queries will be intelligently merged based

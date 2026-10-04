@@ -3,7 +3,10 @@ id: QueryObserverBaseResult
 title: QueryObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:823](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L823)
+Defined in: [packages/query-core/src/types.ts:958](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L958)
+
+The properties shared by every state of a query result, like `data`, `error`, `status`, the
+`is*` flags, and `refetch`. Each `QueryObserver*Result` narrows them for one state.
 
 ## Extended by
 

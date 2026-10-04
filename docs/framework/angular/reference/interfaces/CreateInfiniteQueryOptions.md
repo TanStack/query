@@ -3,7 +3,7 @@ id: CreateInfiniteQueryOptions
 title: CreateInfiniteQueryOptions
 ---
 
-Defined in: [packages/angular-query-experimental/src/types.ts:121](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L121)
+Defined in: [packages/angular-query-experimental/src/types.ts:126](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L126)
 
 The options accepted by `injectInfiniteQuery`. Same as [CreateBaseQueryOptions](CreateBaseQueryOptions.md), minus `suspense` —
 which `angular-query-experimental` doesn't support, unlike `react-query` — extends

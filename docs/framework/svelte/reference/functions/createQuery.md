@@ -25,7 +25,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:55](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L55)
+Defined in: [packages/svelte-query/src/createQuery.ts:53](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L53)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -112,7 +112,7 @@ since `initialData` guarantees data upfront). `isSuccess`/`isError` are derived 
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:129](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L129)
+Defined in: [packages/svelte-query/src/createQuery.ts:124](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L124)
 
 Subscribes to a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 The query runs when the options call for it — `enabled: false` skips the initial fetch.
@@ -220,7 +220,11 @@ The same query, checking `isPending`/`isError` instead of `status` — pick whic
 function createQuery<TQueryFnData, TError, TData, TQueryKey>(options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: Accessor<QueryClient>): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/svelte-query/src/createQuery.ts:255](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L255)
+Defined in: [packages/svelte-query/src/createQuery.ts:249](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L249)
+
+Fallback overload for options whose `initialData` presence isn't statically known — for example, an
+object typed as [CreateQueryOptions](../type-aliases/CreateQueryOptions.md) rather than an object literal. Prefer one of the other
+overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
 
 ### Type Parameters
 
