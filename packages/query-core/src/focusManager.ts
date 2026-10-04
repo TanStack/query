@@ -36,13 +36,13 @@ export class FocusManager extends Subscribable<Listener> {
     }
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (!this.#cleanup) {
       this.setEventListener(this.#setup)
     }
   }
 
-  protected onUnsubscribe() {
+  protected override onUnsubscribe() {
     if (!this.hasListeners()) {
       this.#cleanup?.()
       this.#cleanup = undefined

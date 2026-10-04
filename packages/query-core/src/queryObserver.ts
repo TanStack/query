@@ -110,7 +110,7 @@ export class QueryObserver<
     this.refetch = this.refetch.bind(this)
   }
 
-  protected onSubscribe(): void {
+  protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
@@ -124,7 +124,7 @@ export class QueryObserver<
     }
   }
 
-  protected onUnsubscribe(): void {
+  protected override onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.destroy()
     }

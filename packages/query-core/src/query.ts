@@ -371,7 +371,7 @@ export class Query<
     }
   }
 
-  protected optionalRemove() {
+  protected override optionalRemove() {
     if (!this.observers.length && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
@@ -436,7 +436,7 @@ export class Query<
    * the cache.
    * @see {@link Query#cancel}
    */
-  destroy(): void {
+  override destroy(): void {
     super.destroy()
 
     this.cancel({ silent: true })
