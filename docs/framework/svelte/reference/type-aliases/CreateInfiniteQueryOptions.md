@@ -7,7 +7,7 @@ title: CreateInfiniteQueryOptions
 type CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:54](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L54)
+Defined in: [packages/svelte-query/src/types.ts:58](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L58)
 
 Options for createInfiniteQuery
 

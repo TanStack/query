@@ -2,7 +2,7 @@ import type { CreateQueryOptions } from '@tanstack/lit-query'
 
 export const DATA_QUERY_KEY = ['ssr-example-data'] as const
 export const DEFAULT_MESSAGE = 'Hello from SSR!'
-export const QUERY_STALE_TIME = 30_000
+export const QUERY_STALE_TIME = 30000
 
 export type DataResponse = {
   message: string

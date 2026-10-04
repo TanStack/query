@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "5.104.0",
+  "version": "5.104.1",
   "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -59,11 +59,13 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@eslint-react/eslint-plugin": "catalog:",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/react-query": "workspace:*",
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   },

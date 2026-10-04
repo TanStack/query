@@ -240,7 +240,7 @@ describe('useIsMutating', () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

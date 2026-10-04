@@ -26,7 +26,6 @@ let defaultClient: QueryClient | undefined
  *
  * `QueryClientProvider` calls this automatically while it is connected. Prefer
  * passing an explicit client or rendering under a provider when possible.
- *
  * @param client - The query client to register as the current default.
  */
 export function registerDefaultQueryClient(client: QueryClient): void {
@@ -39,7 +38,6 @@ export function registerDefaultQueryClient(client: QueryClient): void {
  * `registerDefaultQueryClient`.
  *
  * `QueryClientProvider` calls this automatically when it disconnects.
- *
  * @param client - The query client registration to release.
  */
 export function unregisterDefaultQueryClient(client: QueryClient): void {
@@ -65,7 +63,6 @@ export function unregisterDefaultQueryClient(client: QueryClient): void {
 /**
  * Returns the registered default `QueryClient`, if exactly one default client is
  * available.
- *
  * @returns The default query client, or `undefined` when there is no registered
  * client or more than one registered client.
  */
@@ -77,10 +74,19 @@ export function getDefaultQueryClient(): QueryClient | undefined {
   return defaultClient
 }
 
+/**
+ * Creates the error thrown when no `QueryClient` is available.
+ * @returns A new `Error` explaining that no `QueryClient` is available.
+ */
 export function createMissingQueryClientError(): Error {
   return new Error(missingQueryClientMessage)
 }
 
+/**
+ * Creates the error thrown when multiple `QueryClient`s are mounted and the default one would be
+ * ambiguous.
+ * @returns A new `Error` explaining that the default `QueryClient` is ambiguous.
+ */
 function createAmbiguousQueryClientError(): Error {
   return new Error(ambiguousQueryClientMessage)
 }
@@ -92,8 +98,9 @@ function createAmbiguousQueryClientError(): Error {
  * This helper is useful outside a Lit reactive controller when a single
  * provider is mounted. It throws if no client is registered or if multiple
  * clients are mounted and the default would be ambiguous.
- *
  * @returns The single registered query client.
+ * @throws {Error} If no `QueryClient` is registered, or if multiple are
+ * mounted and the default is ambiguous.
  */
 export function useQueryClient(): QueryClient {
   const client = getDefaultQueryClient()
@@ -110,7 +117,6 @@ export function useQueryClient(): QueryClient {
 
 /**
  * Resolves an explicit `QueryClient` or falls back to `useQueryClient`.
- *
  * @param explicit - Optional client supplied by the caller.
  * @returns The explicit client when provided, otherwise the current default
  * client.

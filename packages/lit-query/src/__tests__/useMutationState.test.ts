@@ -4,19 +4,14 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
-import { createQueryController } from '../createQueryController.js'
-import { useIsFetching } from '../useIsFetching.js'
-import { useIsMutating } from '../useIsMutating.js'
 import { useMutationState } from '../useMutationState.js'
-import { generateElementName } from './test-utils.js'
-import type { IsFetchingAccessor } from '../useIsFetching.js'
-import type { IsMutatingAccessor } from '../useIsMutating.js'
+import { generateElementName } from './utils.js'
 import type { MutationStateAccessor } from '../useMutationState.js'
 
 const providerTagName = generateElementName()
 customElements.define(providerTagName, QueryClientProvider)
 
-describe('useIsFetching/useIsMutating/useMutationState', () => {
+describe('useMutationState', () => {
   let queryClient: QueryClient
   let container: HTMLElement
 
@@ -35,6 +30,10 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
   it('should not request another update when stable mutation state selectors refresh during host update', async () => {
     class Host extends LitElement {
+      static override properties = { count: { type: Number } }
+
+      declare count: number
+
       updatesRequested = 0
 
       readonly mutationStates = useMutationState<string>(
@@ -51,11 +50,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         this.updatesRequested += 1
         super.requestUpdate(...args)
       }
-
-      forceUpdate(): void {
-        super.requestUpdate()
-      }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -63,19 +59,16 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual([])
 
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        host.forceUpdate()
+        host.count = i
         await host.updateComplete
-        await Promise.resolve()
       }
-
-      expect(host.updatesRequested).toBe(0)
+      expect(host.updatesRequested).toBe(5)
       expect(mutationStates()).toEqual([])
     } finally {
       mutationStates.destroy()
@@ -107,6 +100,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         super.requestUpdate(...args)
       }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     const mutationStates = host.mutationStates
@@ -114,8 +108,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     try {
       container.append(host)
       await host.updateComplete
-
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
       expect(mutationStates()).toEqual(['idle'])
 
       host.updatesRequested = 0
@@ -126,9 +119,8 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
           mutation,
           action: { type: 'pause' } as never,
         })
-        await Promise.resolve()
+        await vi.advanceTimersByTimeAsync(0)
       }
-
       expect(host.updatesRequested).toBe(0)
       expect(mutationStates()).toEqual(['idle'])
     } finally {
@@ -136,29 +128,15 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     }
   })
 
-  it('should keep pre-connect placeholders zero/empty until a provider binds', async () => {
-    const key = queryKey()
+  it('should keep the pre-connect placeholder empty until a provider binds', async () => {
     const mutationKey = queryKey()
 
     class Consumer extends LitElement {
-      readonly queryKey = key
       readonly mutationKey = mutationKey
-
-      readonly query = createQueryController(this, {
-        queryKey: this.queryKey,
-        queryFn: () => sleep(10).then(() => 'query-ok'),
-        retry: false,
-      })
 
       readonly mutation = createMutationController(this, {
         mutationKey: this.mutationKey,
         mutationFn: () => sleep(10).then(() => 'mutation-ok'),
-      })
-
-      readonly isFetching = useIsFetching(this, { queryKey: this.queryKey })
-
-      readonly isMutating = useIsMutating(this, {
-        mutationKey: this.mutationKey,
       })
 
       readonly mutationStatuses = useMutationState<string>(this, {
@@ -166,12 +144,10 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.query().status).toBe('pending')
-    expect(consumer.isFetching()).toBe(0)
-    expect(consumer.isMutating()).toBe(0)
     expect(consumer.mutationStatuses()).toEqual([])
 
     const provider = document.createElement(
@@ -179,33 +155,20 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
-    expect(consumer.isFetching()).toBe(1)
-    await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
-    expect(consumer.isFetching()).toBe(0)
-
     consumer.mutation.mutate()
-    expect(consumer.isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.isMutating()).toBe(0)
     expect(consumer.mutationStatuses()).toContain('success')
 
-    consumer.query.destroy()
     consumer.mutation.destroy()
-    consumer.isFetching.destroy()
-    consumer.isMutating.destroy()
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
   it('should prefer an explicit client over the provider context', async () => {
-    const key = queryKey()
     const mutationKey = queryKey()
     const providerClient = new QueryClient()
 
@@ -215,18 +178,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     provider.client = providerClient
 
     class Consumer extends LitElement {
-      readonly queryKey = key
       readonly mutationKey = mutationKey
-
-      readonly query = createQueryController(
-        this,
-        {
-          queryKey: this.queryKey,
-          queryFn: () => sleep(10).then(() => 'query-ok'),
-          retry: false,
-        },
-        queryClient,
-      )
 
       readonly mutation = createMutationController(
         this,
@@ -234,18 +186,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
           mutationKey: this.mutationKey,
           mutationFn: () => sleep(10).then(() => 'mutation-ok'),
         },
-        queryClient,
-      )
-
-      readonly isFetching = useIsFetching(
-        this,
-        { queryKey: this.queryKey },
-        queryClient,
-      )
-
-      readonly isMutating = useIsMutating(
-        this,
-        { mutationKey: this.mutationKey },
         queryClient,
       )
 
@@ -258,78 +198,37 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
-    expect(consumer.isFetching()).toBe(1)
-    await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
-
     consumer.mutation.mutate()
-    expect(consumer.isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.isMutating()).toBe(0)
-    expect(
-      queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
-        .data,
-    ).toBe('query-ok')
-    expect(
-      providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
-    ).toBeUndefined()
-    expect(
-      queryClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
-    ).toBeGreaterThan(0)
-    expect(
-      providerClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
-    ).toBe(0)
+    expect(consumer.mutationStatuses()).toEqual(['success'])
 
-    consumer.query.destroy()
     consumer.mutation.destroy()
-    consumer.isFetching.destroy()
-    consumer.isMutating.destroy()
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
-  it('should track fetch/mutate counters and mutation state', async () => {
-    const key = queryKey()
-
-    class Host extends LitElement {
-      readonly query = createQueryController(
-        this,
-        {
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            return 'done'
-          },
-        },
-        queryClient,
-      )
-
+  it('should track mutation state', async () => {
+    class Producer extends LitElement {
       readonly mutation = createMutationController(
         this,
         {
-          mutationFn: async (value: number) => {
-            await sleep(10)
-            return value + 10
-          },
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
         },
         queryClient,
       )
+    }
 
-      readonly isFetching = useIsFetching(this, {}, queryClient)
-      readonly isMutating = useIsMutating(this, {}, queryClient)
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
       readonly mutationStatuses = useMutationState<string>(
         this,
         {
@@ -340,149 +239,160 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
       override render() {
         const statuses = this.mutationStatuses().join(', ') || 'none'
-        return html`
-          <p>fetching: ${this.isFetching()}</p>
-          <p>mutating: ${this.isMutating()}</p>
-          <p>statuses: ${statuses}</p>
-        `
+        return html`<p>statuses: ${statuses}</p>`
       }
     }
-    customElements.define(generateElementName(), Host)
-    const host = new Host()
-    container.append(host)
-    const { query, mutation, isFetching, isMutating, mutationStatuses } = host
 
-    await vi.advanceTimersByTimeAsync(0)
-    expect(isFetching()).toBe(1)
-    expect(host.shadowRoot).toHaveTextContent('fetching: 1')
-    await vi.advanceTimersByTimeAsync(10)
-    expect(query().isSuccess).toBe(true)
-    expect(isFetching()).toBe(0)
-    expect(host.shadowRoot).toHaveTextContent('fetching: 0')
+    customElements.define(generateElementName(), Host)
+    const producer = new Producer()
+    const host = new Host()
+    container.append(producer, host)
+    const { mutation } = producer
+    const { mutationStatuses } = host
 
     mutation.mutate(1)
-    expect(isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(0)
-    expect(host.shadowRoot).toHaveTextContent('mutating: 1')
     expect(host.shadowRoot).toHaveTextContent('statuses: pending')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating()).toBe(0)
     expect(mutationStatuses()).toContain('success')
-    expect(host.shadowRoot).toHaveTextContent('mutating: 0')
     expect(host.shadowRoot).toHaveTextContent('statuses: success')
   })
 
-  it('should track filters and filter reactivity in useIsFetching', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-
-    let activeFilter: { queryKey?: ReadonlyArray<string> } = {
-      queryKey: key1,
+  it('should return the current mutation states when connected after a mutation started', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
     }
+
+    customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
-      readonly query1 = createQueryController(
+      readonly mutationStates = useMutationState(
         this,
         {
-          queryKey: key1,
-          queryFn: () => sleep(10).then(() => 'a'),
+          filters: { status: 'pending' },
         },
         queryClient,
       )
 
-      readonly query2 = createQueryController(
-        this,
-        {
-          queryKey: key2,
-          queryFn: () => sleep(20).then(() => 'b'),
-        },
-        queryClient,
-      )
-
-      readonly isFetchingAll = useIsFetching(this, {}, queryClient)
-      readonly isFetchingFiltered = useIsFetching(
-        this,
-        () => activeFilter,
-        queryClient,
-      )
+      override render() {
+        return html`<p>pending: ${this.mutationStates().length}</p>`
+      }
     }
+
     customElements.define(generateElementName(), Host)
+    const producer = new Producer()
     const host = new Host()
+    container.append(producer)
+    const { mutation } = producer
+    await producer.updateComplete
+
+    mutation.mutate(1)
     container.append(host)
-    const { isFetchingAll, isFetchingFiltered } = host
-
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingAll()).toBe(2)
-    expect(isFetchingFiltered()).toBe(1)
-
-    activeFilter = { queryKey: key2 }
-    host.requestUpdate()
-    await host.updateComplete
-
-    expect(isFetchingFiltered()).toBe(1)
+    expect(host.shadowRoot).toHaveTextContent('pending: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(1)
-    expect(isFetchingFiltered()).toBe(1)
-    await vi.advanceTimersByTimeAsync(10)
-    expect(isFetchingAll()).toBe(0)
-    expect(isFetchingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('pending: 0')
   })
 
-  it('should track mutation filters and reactivity in useIsMutating', async () => {
-    const mutationKey1 = queryKey()
-    const mutationKey2 = queryKey()
-    let activeFilter: { mutationKey?: ReadonlyArray<string> } = {
-      mutationKey: mutationKey1,
+  it('should not process mutation cache updates while disconnected', async () => {
+    class Producer extends LitElement {
+      readonly mutation = createMutationController(
+        this,
+        {
+          mutationFn: (value: number) => sleep(10).then(() => value + 10),
+        },
+        queryClient,
+      )
     }
+
+    customElements.define(generateElementName(), Producer)
 
     class Host extends LitElement {
-      readonly mutationA = createMutationController(
+      updatesRequested = 0
+
+      readonly mutationStatuses = useMutationState<string>(
         this,
         {
-          mutationKey: mutationKey1,
-          mutationFn: () => sleep(10).then(() => 1),
+          select: (item) => item.state.status,
         },
         queryClient,
       )
 
-      readonly mutationB = createMutationController(
-        this,
-        {
-          mutationKey: mutationKey2,
-          mutationFn: () => sleep(20).then(() => 2),
-        },
-        queryClient,
-      )
-
-      readonly isMutatingAll = useIsMutating(this, {}, queryClient)
-      readonly isMutatingFiltered = useIsMutating(
-        this,
-        () => activeFilter,
-        queryClient,
-      )
+      override requestUpdate(
+        ...args: Parameters<LitElement['requestUpdate']>
+      ): void {
+        this.updatesRequested += 1
+        super.requestUpdate(...args)
+      }
     }
+
     customElements.define(generateElementName(), Host)
+    const producer = new Producer()
     const host = new Host()
-    container.append(host)
-    const { mutationA, mutationB, isMutatingAll, isMutatingFiltered } = host
-
-    mutationA.mutate()
-    mutationB.mutate()
-    await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingAll()).toBe(2)
-    expect(isMutatingFiltered()).toBe(1)
-
-    activeFilter = { mutationKey: mutationKey2 }
-    host.requestUpdate()
+    container.append(producer, host)
+    const { mutation } = producer
     await host.updateComplete
 
-    expect(isMutatingFiltered()).toBe(1)
+    host.remove()
+    await host.updateComplete
+    const updatesAfterDisconnect = host.updatesRequested
+
+    mutation.mutate(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutatingAll()).toBe(1)
-    expect(isMutatingFiltered()).toBe(1)
+    expect(host.updatesRequested).toBe(updatesAfterDisconnect)
+  })
+
+  it('should return the states of all mutations when options are omitted', async () => {
+    class Producer extends LitElement {
+      readonly mutation1 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data1'),
+      })
+
+      readonly mutation2 = createMutationController(this, {
+        mutationKey: queryKey(),
+        mutationFn: () => sleep(10).then(() => 'data2'),
+      })
+    }
+
+    customElements.define(generateElementName(), Producer)
+
+    class Host extends LitElement {
+      readonly mutationStates = useMutationState(this)
+
+      override render() {
+        const statuses = this.mutationStates()
+          .map((state) => state.status)
+          .join(', ')
+        return html`<p>statuses: ${statuses || 'none'}</p>`
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const provider = document.createElement(
+      providerTagName,
+    ) as QueryClientProvider
+    provider.client = queryClient
+    const producer = new Producer()
+    const host = new Host()
+    provider.append(producer, host)
+    container.append(provider)
+    await provider.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('statuses: none')
+
+    producer.mutation1.mutate()
+    producer.mutation2.mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(host.shadowRoot).toHaveTextContent('statuses: pending, pending')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isMutatingAll()).toBe(0)
-    expect(isMutatingFiltered()).toBe(0)
+    expect(host.shadowRoot).toHaveTextContent('statuses: success, success')
   })
 
   it('should select and filter by mutation key/status in useMutationState', async () => {
@@ -520,7 +430,13 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const statuses = this.mutationStatuses().join(', ') || 'none'
+        return html`<p>statuses: ${statuses}</p>`
+      }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -529,6 +445,7 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     const promiseA = mutationA.mutateAsync(undefined)
     await vi.advanceTimersByTimeAsync(10)
     await expect(promiseA).resolves.toBe('ok')
+
     await Promise.all([
       expect(mutationB.mutateAsync(undefined)).rejects.toThrow(
         'state-b-failure',
@@ -536,12 +453,13 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       vi.advanceTimersByTimeAsync(10),
     ])
     expect(mutationStatuses()).toEqual(['success'])
+    expect(host.shadowRoot).toHaveTextContent('statuses: success')
 
     activeFilter = { mutationKey: mutationKey2 }
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationStatuses()).toEqual(['error'])
+    expect(host.shadowRoot).toHaveTextContent('statuses: error')
   })
 
   it('should refresh useMutationState when the select closure changes on host update', async () => {
@@ -568,7 +486,13 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         },
         queryClient,
       )
+
+      override render() {
+        const labels = this.mutationLabels().join(', ') || 'none'
+        return html`<p>labels: ${labels}</p>`
+      }
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -578,61 +502,37 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     await vi.advanceTimersByTimeAsync(10)
     await expect(promise).resolves.toBe('ok')
     expect(mutationLabels()).toEqual(['before'])
+    expect(host.shadowRoot).toHaveTextContent('labels: before')
 
     label = 'after'
     host.requestUpdate()
     await host.updateComplete
-
     expect(mutationLabels()).toEqual(['after'])
+    expect(host.shadowRoot).toHaveTextContent('labels: after')
 
     mutation.destroy()
     mutationLabels.destroy()
   })
 
-  it('should fail read-only helpers after the handshake and recover under a provider', async () => {
-    const key = queryKey()
+  it('should fail after the handshake and recover under a provider', async () => {
     const mutationKey = queryKey()
 
     class Consumer extends LitElement {
-      readonly queryKey = key
       readonly mutationKey = mutationKey
-
-      readonly query = createQueryController(this, {
-        queryKey: this.queryKey,
-        queryFn: () => sleep(10).then(() => 'query-ok'),
-        retry: false,
-      })
-
-      readonly mutation = createMutationController(this, {
-        mutationKey: this.mutationKey,
-        mutationFn: () => sleep(10).then(() => 'mutation-ok'),
-      })
-
-      readonly isFetching = useIsFetching(this, { queryKey: this.queryKey })
-
-      readonly isMutating = useIsMutating(this, {
-        mutationKey: this.mutationKey,
-      })
 
       readonly mutationStatuses = useMutationState<string>(this, {
         filters: { mutationKey: this.mutationKey },
         select: (mutation) => mutation.state.status,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
     const consumer = new Consumer()
 
-    expect(consumer.query().status).toBe('pending')
-    expect(consumer.isFetching()).toBe(0)
-    expect(consumer.isMutating()).toBe(0)
     expect(consumer.mutationStatuses()).toEqual([])
 
     container.append(consumer)
-
     await vi.advanceTimersByTimeAsync(0)
-    expect(() => consumer.query()).toThrow(/No QueryClient available/)
-    expect(() => consumer.isFetching()).toThrow(/No QueryClient available/)
-    expect(() => consumer.isMutating()).toThrow(/No QueryClient available/)
     expect(() => consumer.mutationStatuses()).toThrow(
       /No QueryClient available/,
     )
@@ -642,42 +542,20 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     ) as QueryClientProvider
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
 
-    expect(consumer.isFetching()).toBe(1)
-    await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
-    expect(consumer.isFetching()).toBe(0)
-    expect(consumer.isMutating()).toBe(0)
     expect(consumer.mutationStatuses()).toEqual([])
 
-    consumer.query.destroy()
-    consumer.mutation.destroy()
-    consumer.isFetching.destroy()
-    consumer.isMutating.destroy()
     consumer.mutationStatuses.destroy()
     provider.remove()
-    await Promise.resolve()
   })
 
-  it('should not throw for read-only helpers on an already-connected host with an explicit client', async () => {
-    const key = queryKey()
+  it('should not throw on an already-connected host with an explicit client', async () => {
     const mutationKey = queryKey()
 
     class Producer extends LitElement {
-      readonly query = createQueryController(
-        this,
-        {
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => 'query-ok'),
-          retry: false,
-        },
-        queryClient,
-      )
-
       readonly mutation = createMutationController(
         this,
         {
@@ -687,22 +565,18 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
         queryClient,
       )
     }
+
     customElements.define(generateElementName(), Producer)
     const producer = new Producer()
     container.append(producer)
     const producerMutation = producer.mutation
 
-    await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.isFetching()).toBe(1)
-
     producerMutation.mutate()
-    expect(queryClient.isMutating()).toBe(1)
 
     class Host extends LitElement {
-      isFetching?: IsFetchingAccessor
-      isMutating?: IsMutatingAccessor
       mutationStatuses?: MutationStateAccessor<string>
     }
+
     customElements.define(generateElementName(), Host)
     const host = new Host()
     container.append(host)
@@ -710,8 +584,6 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
 
     // Lit calls hostConnected immediately when a controller is added to an
     // already-connected host
-    host.isFetching = useIsFetching(host, {}, queryClient)
-    host.isMutating = useIsMutating(host, {}, queryClient)
     host.mutationStatuses = useMutationState<string>(
       host,
       {
@@ -720,20 +592,11 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
       },
       queryClient,
     )
-    const { isFetching, isMutating, mutationStatuses } = host
-
-    await Promise.resolve()
-    await Promise.resolve()
-    expect(isFetching()).toBe(1)
-    expect(isMutating()).toBe(1)
+    const { mutationStatuses } = host
     expect(mutationStatuses()).toContain('pending')
     await vi.advanceTimersByTimeAsync(10)
-    expect(isFetching()).toBe(0)
-    expect(isMutating()).toBe(0)
     expect(mutationStatuses()).toContain('success')
 
-    isFetching.destroy()
-    isMutating.destroy()
     mutationStatuses.destroy()
     producerMutation.destroy()
   })
