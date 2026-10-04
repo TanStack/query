@@ -7,7 +7,7 @@ title: Accessor
 type Accessor<T> = T | () => T;
 ```
 
-Defined in: [packages/lit-query/src/accessor.ts:13](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L13)
+Defined in: [packages/lit-query/src/accessor.ts:12](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L12)
 
 A value that can be passed directly or read from a zero-argument getter.
 

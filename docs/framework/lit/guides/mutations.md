@@ -110,9 +110,11 @@ The accessor includes `reset`:
 
 ```ts
 html`
-  ${mutation.isError
-    ? html`<button @click=${() => this.addTodo.reset()}>Clear error</button>`
-    : null}
+  ${
+    mutation.isError
+      ? html`<button @click=${() => this.addTodo.reset()}>Clear error</button>`
+      : null
+  }
 `
 ```
 

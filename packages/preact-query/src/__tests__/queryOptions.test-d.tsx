@@ -251,18 +251,15 @@ describe('queryOptions', () => {
   })
 
   it('should allow optional initialData object', () => {
-    const testFn = (id?: string) => {
-      const options = queryOptions({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve('something string'),
-        initialData: id ? 'initial string' : undefined,
-      })
-      expectTypeOf(options.initialData).toExtend<
-        InitialDataFunction<string> | string | undefined
-      >()
-    }
-    testFn('id')
-    testFn()
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
   })
 
   it('should be passable to UseQueryOptions', () => {

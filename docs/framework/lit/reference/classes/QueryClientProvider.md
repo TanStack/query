@@ -3,7 +3,7 @@ id: QueryClientProvider
 title: QueryClientProvider
 ---
 
-Defined in: [packages/lit-query/src/QueryClientProvider.ts:64](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L64)
+Defined in: [packages/lit-query/src/QueryClientProvider.ts:62](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L62)
 
 Lit element that provides a `QueryClient` to descendant Lit Query
 controllers through Lit context.
@@ -68,7 +68,7 @@ const view = html`
 new QueryClientProvider(): QueryClientProvider;
 ```
 
-Defined in: [packages/lit-query/src/QueryClientProvider.ts:82](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L82)
+Defined in: [packages/lit-query/src/QueryClientProvider.ts:80](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L80)
 
 #### Returns
 
@@ -88,7 +88,7 @@ LitElement.constructor
 client: QueryClient;
 ```
 
-Defined in: [packages/lit-query/src/QueryClientProvider.ts:76](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L76)
+Defined in: [packages/lit-query/src/QueryClientProvider.ts:74](https://github.com/TanStack/query/blob/main/packages/lit-query/src/QueryClientProvider.ts#L74)
 
 The `QueryClient` provided to descendant controllers and global fallback
 helpers while this provider is connected.

@@ -7,7 +7,7 @@ title: getQueryClientContext
 function getQueryClientContext(): QueryClient;
 ```
 
-Defined in: [packages/svelte-query/src/context.ts:14](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/context.ts#L14)
+Defined in: [packages/svelte-query/src/context.ts:13](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/context.ts#L13)
 
 Retrieves the `QueryClient` set on Svelte's context by `QueryClientProvider` (or by
 [setQueryClientContext](setQueryClientContext.md) directly). This is what [useQueryClient](useQueryClient.md) calls internally.

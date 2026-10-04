@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.103.2",
+  "version": "5.104.1",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -66,12 +66,12 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@solidjs/testing-library": "^0.8.10",
+    "@solidjs/testing-library": "catalog:",
     "@tanstack/query-test-utils": "workspace:*",
-    "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.7",
-    "unplugin-solid": "^2.0.0",
-    "vite-plugin-solid": "^2.11.6"
+    "solid-js": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-solid": "catalog:",
+    "vite-plugin-solid": "catalog:"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"

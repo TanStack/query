@@ -5,6 +5,7 @@ import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
+import type { InitialDataFunction } from '@tanstack/query-core'
 
 // Regression test for exported queryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -169,7 +170,7 @@ describe('queryOptions', () => {
     expectTypeOf(data2).toEqualTypeOf<Promise<number>>()
   })
 
-  it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+  it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -190,7 +191,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('TData should have undefined in the union when initialData is NOT provided', () => {
+  it('should have undefined in the TData union when initialData is NOT provided', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -208,7 +209,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+  it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -227,7 +228,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
-  it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+  it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
     const key = queryKey()
     const { data, isSuccess } = reactive(
       useQuery(
@@ -248,7 +249,7 @@ describe('queryOptions', () => {
     }
   })
 
-  it('data should not have undefined when initialData is provided', () => {
+  it('should not have undefined in data when initialData is provided', () => {
     const key = queryKey()
     const { data } = reactive(
       useQuery(
@@ -260,6 +261,18 @@ describe('queryOptions', () => {
     )
 
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
   })
 
   it('should allow accessing queryFn and other properties on the returned options object', () => {

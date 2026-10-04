@@ -3,7 +3,7 @@ id: UseBaseQueryOptions
 title: UseBaseQueryOptions
 ---
 
-Defined in: [packages/preact-query/src/types.ts:46](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L46)
+Defined in: [packages/preact-query/src/types.ts:45](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L45)
 
 The options shared by `useQuery` and `useSuspenseQuery`. Extends [QueryObserverOptions](QueryObserverOptions.md) from
 `@tanstack/query-core` with the `preact-query`-specific `subscribed` option.

@@ -8,6 +8,13 @@ import type {
 } from '@tanstack/query-core'
 import type { MutationStateOptions, MutationTypeFromResult } from './types.js'
 
+/**
+ * Collects the mutations in the cache that match `options.filters`, mapped with `options.select`
+ * (or to their state, by default).
+ * @param mutationCache - The mutation cache to read.
+ * @param options - The `filters` to match and the `select` function to map each mutation with.
+ * @returns The selected value of every matching mutation.
+ */
 function getResult<
   TResult = MutationState,
   TMutation extends Mutation<any, any, any, any> =
@@ -27,15 +34,14 @@ function getResult<
 }
 
 /**
- * `useMutationState` gives you access to all mutations (matching the given `filters`), including ones that
- * were created by a different component or hook instance, or even ones no longer mounted.
- *
+ * `useMutationState` is a function that gives you access to all mutations in the `MutationCache`. You can pass
+ * `filters` ({@link MutationFilters}) to narrow down your mutations, and `select` to transform the mutation
+ * state.
  * @param options - The `filters` to narrow down matched mutations, and an optional `select` to transform the
  * mutation state.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns An Array of whatever `select` returns for each matching mutation.
- *
  * @example
  * Get all variables of all running mutations:
  * ```svelte
@@ -50,7 +56,6 @@ function getResult<
  *
  * {pendingVariables.length} posts saving...
  * ```
- *
  * @example
  * Get all data for specific mutations via the `mutationKey`:
  * ```svelte
@@ -76,7 +81,6 @@ function getResult<
  *   Create post ({savedPosts.length} saved so far)
  * </button>
  * ```
- *
  * @example
  * Access the latest mutation data via the `mutationKey`. Each invocation of `mutate` adds a new entry to the
  * mutation cache for `gcTime` milliseconds — check the last item that `useMutationState` returns to get the

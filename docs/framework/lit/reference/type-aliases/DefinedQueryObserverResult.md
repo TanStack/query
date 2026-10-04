@@ -9,7 +9,9 @@ type DefinedQueryObserverResult<TData, TError> =
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1049](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1049)
+Defined in: [packages/query-core/src/types.ts:1383](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1383)
+
+A query result that always has `data`: the success and refetch error states.
 
 ## Type Parameters
 

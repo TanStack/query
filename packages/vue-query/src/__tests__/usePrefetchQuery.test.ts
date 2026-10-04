@@ -96,7 +96,6 @@ describe('usePrefetchQuery', () => {
 
     keyRef.value = 'second'
     await nextTick()
-
     expect(querySpy).toHaveBeenCalledTimes(2)
     expect(querySpy).toHaveBeenNthCalledWith(2, {
       queryKey: [...key, 'second'],
@@ -106,7 +105,9 @@ describe('usePrefetchQuery', () => {
 
   it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnMock = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     try {
       usePrefetchQuery(
@@ -117,11 +118,11 @@ describe('usePrefetchQuery', () => {
         new QueryClient(),
       )
 
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(consoleWarnMock).toHaveBeenCalledWith(
         'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     } finally {
-      warnSpy.mockRestore()
+      consoleWarnMock.mockRestore()
       vi.unstubAllEnvs()
     }
   })

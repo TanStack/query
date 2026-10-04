@@ -19,7 +19,6 @@ import type {
  * The plain, unwrapped options that `queryOptions` hands back, and what `useQuery`, `useQueries`, and the
  * `queryClient` methods see once `ref`s have been resolved. To pass options in, use
  * {@link UseQueryOptions}, which accepts the same options as `ref`s and `computed`s too.
- *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -34,21 +33,22 @@ export type QueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = {
-  [Property in keyof QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >]: Property extends 'enabled'
-    ?
-        | MaybeRefOrGetter<boolean | undefined>
-        | (() => QueryBooleanOption<
-            TQueryFnData,
-            TError,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >)
+  [
+    Property in keyof QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+  ]: Property extends 'enabled'
+    ? | MaybeRefOrGetter<boolean | undefined>
+      | (() => QueryBooleanOption<
+          TQueryFnData,
+          TError,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >)
     : Property extends 'queryKey'
       ? MaybeRefOrGetter<TQueryKey>
       : QueryObserverOptions<
@@ -80,7 +80,6 @@ type SkipTokenForUseQuery = symbol
  * to `queryOptions`/`useQuery` already has a stable reference across reactive updates. An inline `select`
  * created inside a whole-options getter is recreated — and so can change reference — every time that getter
  * re-evaluates.
- *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -96,13 +95,15 @@ export type UseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = MaybeRef<
   {
-    [Property in keyof QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >]: Property extends 'enabled' | 'queryKey'
+    [
+      Property in keyof QueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
+    ]: Property extends 'enabled' | 'queryKey'
       ? QueryOptions<
           TQueryFnData,
           TError,
@@ -156,14 +157,12 @@ type WithDefinedInitialData<TQueryFnData> = {
    * cache. Unlike `queryKey`/`enabled`, this is not reactive — it isn't re-evaluated on `ref` changes.
    */
   initialData:
-    | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+    NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 /**
  * The options accepted by the `queryOptions` overload selected when no `initialData` is set — `data` may be
  * `undefined` while the query is `pending`.
- *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -180,7 +179,6 @@ export type UndefinedInitialQueryOptions<
 /**
  * The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
  * `undefined` (unless a `select` changes `TData` to include `undefined`).
- *
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -194,6 +192,10 @@ export type DefinedInitialQueryOptions<
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> &
   WithDefinedInitialData<TQueryFnData>
 
+/**
+ * The options returned by the `queryOptions` overload selected when `initialData` is omitted or may be
+ * `undefined`, with the `queryKey` tagged with the query's data and error types.
+ */
 export type UndefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -203,6 +205,10 @@ export type UndefinedInitialQueryOptionsWithDataTag<
   WithUndefinedInitialData<TQueryFnData> &
   QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
 
+/**
+ * The options returned by the `queryOptions` overload selected when `initialData` is set, with the
+ * `queryKey` tagged with the query's data and error types.
+ */
 export type DefinedInitialQueryOptionsWithDataTag<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -219,12 +225,10 @@ export type DefinedInitialQueryOptionsWithDataTag<
  *
  * This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
  * a `select` changes `TData` to include `undefined`).
- *
- * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link DefinedInitialQueryOptions} to use — everything you can pass to `useQuery`, with
  * `initialData` set.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -255,12 +259,10 @@ export function queryOptions<
  * Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
  * function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries`/`fetchQuery` always
  * read the current values instead of the ones captured when the options were created.
- *
- * @see {@link useQuery} to run a query with these options.
  * @param options - A function returning the {@link DefinedInitialQueryOptions} to use, re-evaluated on demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred data
  * type.
- *
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -302,11 +304,9 @@ export function queryOptions<
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
  * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
  * is the query key to generate options for.
- *
- * @see {@link useQuery} to run a query with these options.
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- *
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * A parameterized factory, so the same options object can be reused per `id`:
  * ```vue
@@ -343,13 +343,11 @@ export function queryOptions<
  * function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
  * to changes, and so `queryClient` methods like `invalidateQueries`/`fetchQuery` always read the current
  * values instead of the ones captured when the options were created.
- *
- * @see {@link useQuery} to run a query with these options.
  * @param options - A function returning the {@link UndefinedInitialQueryOptions} to use, re-evaluated on
  * demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred
  * data type.
- *
+ * @see {@link useQuery} to run a query with these options.
  * @example
  * ```vue
  * <script setup lang="ts">
@@ -369,7 +367,6 @@ export function queryOptions<
  * queryClient.invalidateQueries(postOptions())
  * </script>
  * ```
- *
  * @example
  * A parameterized factory that disables the query, type safe, until `postId` is set. The whole-options getter
  * re-evaluates `queryFn` on every change to `postId`. `queryFn` can also be a `computed`, but never a bare
