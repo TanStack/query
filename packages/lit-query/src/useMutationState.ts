@@ -160,14 +160,12 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
  * the selection can follow reactive host state. If `queryClient` is omitted,
  * the controller resolves the client from the nearest connected
  * `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the mutation cache
  * subscription.
  * @param options - Mutation state filters and optional selector.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the selected mutation state array.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

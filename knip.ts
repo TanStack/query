@@ -13,9 +13,9 @@ export default {
       ignore: ['scripts/prepack.js'],
       // Strict mode excludes optional dependencies. Read the declared names
       // so removing a declaration still causes an unlisted dependency error.
-      ignoreDependencies: Object.keys(
-        angularQuery.optionalDependencies ?? {},
-      ).map((dependency) => `${dependency}!`),
+      ignoreDependencies: Object.keys(angularQuery.optionalDependencies).map(
+        (dependency) => `${dependency}!`,
+      ),
     },
     'packages/query-codemods': {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],

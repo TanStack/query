@@ -9,7 +9,7 @@ import {
   useQueryClient,
 } from '../index.js'
 import { QueryClientProvider } from '../QueryClientProvider.js'
-import { generateElementName } from './test-utils.js'
+import { generateElementName } from './utils.js'
 
 const tagName = generateElementName()
 customElements.define(tagName, QueryClientProvider)
@@ -34,7 +34,6 @@ describe('QueryClientProvider/context', () => {
   it('should register and unregister the default query client for public helpers', async () => {
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = queryClient
-
     container.append(provider)
     await provider.updateComplete
 
@@ -42,7 +41,6 @@ describe('QueryClientProvider/context', () => {
     expect(resolveQueryClient()).toBe(queryClient)
 
     provider.remove()
-    await Promise.resolve()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -55,7 +53,6 @@ describe('QueryClientProvider/context', () => {
     const providerB = document.createElement(tagName) as QueryClientProvider
     providerA.client = queryClient
     providerB.client = queryClient
-
     container.append(providerA)
     container.append(providerB)
     await providerA.updateComplete
@@ -64,11 +61,10 @@ describe('QueryClientProvider/context', () => {
     expect(useQueryClient()).toBe(queryClient)
 
     providerB.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(useQueryClient()).toBe(queryClient)
 
     providerA.remove()
-    await Promise.resolve()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -79,7 +75,6 @@ describe('QueryClientProvider/context', () => {
     const providerB = document.createElement(tagName) as QueryClientProvider
     providerA.client = clientA
     providerB.client = clientB
-
     container.append(providerA)
     container.append(providerB)
     await providerA.updateComplete
@@ -92,12 +87,10 @@ describe('QueryClientProvider/context', () => {
     )
 
     providerB.remove()
-    await Promise.resolve()
     expect(getDefaultQueryClient()).toBe(clientA)
     expect(useQueryClient()).toBe(clientA)
 
     providerA.remove()
-    await Promise.resolve()
   })
 
   it('should require an explicit client before connect', () => {
@@ -119,7 +112,6 @@ describe('QueryClientProvider/context', () => {
 
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
-
     container.append(provider)
     await provider.updateComplete
 
@@ -129,31 +121,76 @@ describe('QueryClientProvider/context', () => {
     expect(unmountB).toHaveBeenCalledTimes(0)
 
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
     provider.client = clientB
     await provider.updateComplete
+
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(0)
 
     container.append(provider)
     await provider.updateComplete
-
     expect(mountA).toHaveBeenCalledTimes(1)
     expect(unmountA).toHaveBeenCalledTimes(1)
     expect(mountB).toHaveBeenCalledTimes(1)
     expect(unmountB).toHaveBeenCalledTimes(0)
 
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmountB).toHaveBeenCalledTimes(1)
 
     mountA.mockRestore()
     unmountA.mockRestore()
     mountB.mockRestore()
     unmountB.mockRestore()
+  })
+
+  it('should unmount the initial client when the client is replaced before the first update', async () => {
+    const clientA = new QueryClient()
+    const clientB = new QueryClient()
+
+    const mountA = vi.spyOn(clientA, 'mount')
+    const unmountA = vi.spyOn(clientA, 'unmount')
+    const mountB = vi.spyOn(clientB, 'mount')
+    const unmountB = vi.spyOn(clientB, 'unmount')
+
+    const provider = document.createElement(tagName) as QueryClientProvider
+    provider.client = clientA
+    container.append(provider)
+
+    provider.client = clientB
+    await provider.updateComplete
+
+    expect(mountA).toHaveBeenCalledTimes(1)
+    expect(unmountA).toHaveBeenCalledTimes(1)
+    expect(mountB).toHaveBeenCalledTimes(1)
+    expect(unmountB).toHaveBeenCalledTimes(0)
+    expect(useQueryClient()).toBe(clientB)
+
+    provider.remove()
+    expect(unmountB).toHaveBeenCalledTimes(1)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
+
+    mountA.mockRestore()
+    unmountA.mockRestore()
+    mountB.mockRestore()
+    unmountB.mockRestore()
+  })
+
+  it('should not throw when the client is cleared on a disconnected provider', async () => {
+    const provider = document.createElement(tagName) as QueryClientProvider
+    provider.client = queryClient
+    container.append(provider)
+    await provider.updateComplete
+
+    provider.remove()
+    provider.client = undefined as unknown as QueryClient
+
+    await expect(provider.updateComplete).resolves.toBe(true)
+    expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
@@ -168,13 +205,13 @@ describe('QueryClientProvider/context', () => {
         retry: false,
       })
     }
+
     customElements.define(generateElementName(), Consumer)
 
     const provider = document.createElement(tagName) as QueryClientProvider
     const consumer = new Consumer()
     provider.client = queryClient
     provider.append(consumer)
-
     container.append(provider)
     await provider.updateComplete
     await consumer.updateComplete
@@ -186,6 +223,7 @@ describe('QueryClientProvider/context', () => {
     expect(consumer.query().data).toBe('ok')
 
     provider.client = undefined as unknown as QueryClient
+
     await expect(provider.updateComplete).rejects.toThrow(
       /No QueryClient available/,
     )
@@ -199,7 +237,7 @@ describe('QueryClientProvider/context', () => {
 
     consumer.query.destroy()
     provider.remove()
-    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(0)
     expect(unmount).toHaveBeenCalledTimes(1)
 
     mount.mockRestore()

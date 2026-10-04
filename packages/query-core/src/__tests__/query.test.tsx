@@ -510,7 +510,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
-  it('cancelling a resolved query should not have any effect', async () => {
+  it('should not have any effect when cancelling a resolved query', async () => {
     const key = queryKey()
     await queryClient
       .query({
@@ -524,7 +524,7 @@ describe('query', () => {
     expect(query.state.data).toBe('data')
   })
 
-  it('cancelling a rejected query should not have any effect', async () => {
+  it('should not have any effect when cancelling a rejected query', async () => {
     const key = queryKey()
     const error = new Error('error')
 
@@ -570,7 +570,7 @@ describe('query', () => {
     expect(query.promise).toBeUndefined()
   })
 
-  it('the previous query status should be kept when refetching', async () => {
+  it('should keep the previous query status when refetching', async () => {
     const key = queryKey()
 
     await queryClient
@@ -600,7 +600,7 @@ describe('query', () => {
     expect(query.state.status).toBe('error')
   })
 
-  it('queries with gcTime 0 should be removed immediately after unsubscribing', async () => {
+  it('should remove queries with gcTime 0 immediately after unsubscribing', async () => {
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -710,7 +710,7 @@ describe('query', () => {
     expect(query?.getObserversCount()).toEqual(0)
   })
 
-  it('stores meta object in query', async () => {
+  it('should store meta object in query', async () => {
     const meta = {
       it: 'works',
     }
@@ -731,7 +731,7 @@ describe('query', () => {
     expect(query.options.meta).toBe(meta)
   })
 
-  it('updates meta object on change', async () => {
+  it('should update meta object on change', async () => {
     const meta = {
       it: 'works',
     }
@@ -751,7 +751,7 @@ describe('query', () => {
     expect(query.options.meta).toBeUndefined()
   })
 
-  it('can use default meta', async () => {
+  it('should use default meta', async () => {
     const meta = {
       it: 'works',
     }
@@ -768,7 +768,7 @@ describe('query', () => {
     expect(query.meta).toBe(meta)
   })
 
-  it('provides meta object inside query function', async () => {
+  it('should provide meta object inside query function', async () => {
     const meta = {
       it: 'works',
     }
@@ -884,7 +884,7 @@ describe('query', () => {
     expect(query.state).toBe(previousState)
   })
 
-  it('fetch should not dispatch "fetch" query is already fetching', async () => {
+  it('should not dispatch "fetch" from fetch if query is already fetching', async () => {
     const key = queryKey()
 
     const queryFn = () => sleep(10).then(() => 'data')
@@ -917,7 +917,7 @@ describe('query', () => {
     unsubscribe()
   })
 
-  it('fetch should throw an error if the queryFn is not defined', async () => {
+  it('should throw an error from fetch if the queryFn is not defined', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -937,7 +937,7 @@ describe('query', () => {
     unsubscribe()
   })
 
-  it('fetch should dispatch an error if the queryFn returns undefined', async () => {
+  it('should dispatch an error from fetch if the queryFn returns undefined', async () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     consoleErrorMock.mockImplementation(() => undefined)
     const key = queryKey()
@@ -1005,7 +1005,7 @@ describe('query', () => {
     }
   })
 
-  it('constructor should call initialDataUpdatedAt if defined as a function', async () => {
+  it('should call initialDataUpdatedAt in constructor if defined as a function', async () => {
     const key = queryKey()
 
     const initialDataUpdatedAtSpy = vi.fn()
@@ -1040,7 +1040,7 @@ describe('query', () => {
     })
   })
 
-  it('queries should be garbage collected even if they never fetched', async () => {
+  it('should garbage collect queries even if they never fetched', async () => {
     const key = queryKey()
 
     queryClient.setQueryDefaults(key, { gcTime: 10 })

@@ -166,7 +166,7 @@ describe('queryCache', () => {
   })
 
   describe('find', () => {
-    it('find should filter correctly', async () => {
+    it('should filter correctly with find', async () => {
       const key = queryKey()
       void queryClient
         .query({
@@ -179,7 +179,7 @@ describe('queryCache', () => {
       expect(query.state.data).toBe('data1')
     })
 
-    it('find should filter correctly with exact set to false', async () => {
+    it('should filter correctly with find when exact is set to false', async () => {
       const key = queryKey()
       void queryClient
         .query({

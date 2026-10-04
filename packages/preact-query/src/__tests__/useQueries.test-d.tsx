@@ -10,7 +10,7 @@ import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   describe('config object overload', () => {
-    it('TData should always be defined when initialData is provided as an object', () => {
+    it('should always define TData when initialData is provided as an object', () => {
       const query1 = {
         queryKey: queryKey(),
         queryFn: () => {
@@ -45,7 +45,7 @@ describe('useQueries', () => {
       expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
     })
 
-    it('TData should be defined when passed through queryOptions', () => {
+    it('should define TData when passed through queryOptions', () => {
       const options = queryOptions({
         queryKey: queryKey(),
         queryFn: () => {
@@ -85,7 +85,7 @@ describe('useQueries', () => {
       expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
     })
 
-    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+    it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
       const queryResults = useQueries({
         queries: [
           {
@@ -130,7 +130,7 @@ describe('useQueries', () => {
       })
     })
 
-    it('TData should have correct type when conditional skipToken is passed', () => {
+    it('should have correct TData type when conditional skipToken is passed', () => {
       const queryResults = useQueries({
         queries: [
           {

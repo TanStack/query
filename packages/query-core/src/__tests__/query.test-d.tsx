@@ -21,7 +21,7 @@ import type {
 } from '../query'
 
 class CustomError extends Error {
-  name = 'CustomError' as const
+  override name = 'CustomError' as const
 }
 
 describe('query', () => {
