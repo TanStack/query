@@ -122,12 +122,33 @@ export interface FetchContext<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
+  /**
+   * The function that runs the fetch. By default it calls `queryFn`; `onFetch` can replace it.
+   */
   fetchFn: () => unknown | Promise<unknown>
+  /**
+   * The options of this fetch.
+   */
   fetchOptions?: FetchOptions
+  /**
+   * The `AbortSignal` that aborts when the fetch is cancelled.
+   */
   signal: AbortSignal
+  /**
+   * The options of the query.
+   */
   options: QueryOptions<TQueryFnData, TError, TData, any>
+  /**
+   * The `QueryClient` the query belongs to.
+   */
   client: QueryClient
+  /**
+   * The key of the query.
+   */
   queryKey: TQueryKey
+  /**
+   * The state of the query when the fetch starts.
+   */
   state: QueryState<TData, TError>
 }
 
@@ -140,6 +161,9 @@ export interface QueryBehavior<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
+  /**
+   * Called before each fetch of the query, e.g. to replace `fetchFn` in the context.
+   */
   onFetch: (
     context: FetchContext<TQueryFnData, TError, TData, TQueryKey>,
     query: Query,
@@ -156,6 +180,9 @@ export type FetchDirection = 'forward' | 'backward'
  * Metadata for a fetch, e.g. the direction when an infinite query fetches more pages.
  */
 export interface FetchMeta {
+  /**
+   * Set when an infinite query fetches another page, with the direction to fetch in.
+   */
   fetchMore?: { direction: FetchDirection }
 }
 
@@ -163,8 +190,19 @@ export interface FetchMeta {
  * Options for a single fetch of a query.
  */
 export interface FetchOptions<TData = unknown> {
+  /**
+   * If `true`, an in-flight fetch is cancelled before starting a new one, when the query already
+   * has data. Otherwise, the in-flight fetch is reused.
+   */
   cancelRefetch?: boolean
+  /**
+   * Metadata of the fetch, stored in the query's `fetchMeta` state.
+   */
   meta?: FetchMeta
+  /**
+   * A promise to use for the first attempt instead of calling `fetchFn`, e.g. a pending promise
+   * restored by `hydrate`.
+   */
   initialPromise?: Promise<TData>
 }
 
