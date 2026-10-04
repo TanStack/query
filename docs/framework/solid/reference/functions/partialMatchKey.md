@@ -7,7 +7,7 @@ title: partialMatchKey
 function partialMatchKey(a: readonly unknown[], b: readonly unknown[]): boolean;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:339](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L339)
+Defined in: [packages/query-core/src/utils.ts:343](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L343)
 
 Checks if key `b` partially matches with key `a`.
 

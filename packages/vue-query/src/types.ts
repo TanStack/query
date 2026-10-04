@@ -81,6 +81,9 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
+/**
+ * The `vue-query`-specific `shallow` option, accepted by query and mutation options.
+ */
 export type ShallowOption = {
   /**
    * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
@@ -88,6 +91,10 @@ export type ShallowOption = {
   shallow?: boolean
 }
 
+/**
+ * The options of a mutation. Same as {@link MutationObserverOptions} from `@tanstack/query-core`, minus the
+ * internal `_defaulted` flag, plus the `shallow` option.
+ */
 export type MutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -99,6 +106,11 @@ export type MutationOptions<
 > &
   ShallowOption
 
+/**
+ * The default options of a `QueryClient`, applied to every query (`queries`), mutation
+ * (`mutations`), `hydrate`, and `dehydrate` call unless overridden. Query and mutation defaults also
+ * accept the `shallow` option.
+ */
 export interface DefaultOptions<TError = DefaultError> {
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
     ShallowOption
@@ -108,6 +120,10 @@ export interface DefaultOptions<TError = DefaultError> {
   dehydrate?: DehydrateOptions
 }
 
+/**
+ * The options of `new QueryClient()`: the `queryCache` and `mutationCache` to use, and the
+ * `defaultOptions` for its queries and mutations.
+ */
 export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache

@@ -28,6 +28,10 @@ type MutationResult<TData, TError, TVariables, TOnMutateResult> =
     'mutate' | 'reset'
   >
 
+/**
+ * The options accepted by `useMutation`: {@link MutationOptions} as a plain object, a `ref`, or a reactive
+ * getter.
+ */
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -50,6 +54,10 @@ type MutateSyncFunction<
   >
 ) => void
 
+/**
+ * The result of `useMutation`: the {@link MutationObserverResult} properties wrapped in `Ref`s, plus the
+ * fire-and-forget `mutate`, the awaitable `mutateAsync`, and `reset`.
+ */
 export type UseMutationReturnType<
   TData,
   TError,
