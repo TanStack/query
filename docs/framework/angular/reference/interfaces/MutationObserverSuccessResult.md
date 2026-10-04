@@ -3,10 +3,9 @@ id: MutationObserverSuccessResult
 title: MutationObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1558](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1558)
+Defined in: [packages/query-core/src/types.ts:1785](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1785)
 
-The raw state stored on a `Mutation` instance. This is the underlying state
-that observer results (e.g. `MutationObserverResult`) are derived from.
+A mutation result in the `success` state after the mutation succeeded.
 
 ## Extends
 

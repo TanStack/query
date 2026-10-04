@@ -7,7 +7,10 @@ title: MutateFunction
 type MutateFunction<TData, TError, TVariables, TOnMutateResult> = (...rest: MutateFunctionRest<TData, TError, TVariables, TOnMutateResult>) => Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1421](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1421)
+Defined in: [packages/query-core/src/types.ts:1632](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1632)
+
+The `mutate` function of a `MutationObserver`: runs the mutation with the given variables and
+resolves with its data.
 
 ## Type Parameters
 

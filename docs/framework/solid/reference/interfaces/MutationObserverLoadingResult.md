@@ -3,10 +3,9 @@ id: MutationObserverLoadingResult
 title: MutationObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1516](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1516)
+Defined in: [packages/query-core/src/types.ts:1737](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1737)
 
-The raw state stored on a `Mutation` instance. This is the underlying state
-that observer results (e.g. `MutationObserverResult`) are derived from.
+A mutation result in the `pending` state while the mutation runs.
 
 ## Extends
 

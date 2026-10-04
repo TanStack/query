@@ -3,7 +3,10 @@ id: ResetOptions
 title: ResetOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:778](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L778)
+Defined in: [packages/query-core/src/types.ts:895](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L895)
+
+Options of `queryClient.resetQueries`, applied to the refetch of the active queries after the
+reset.
 
 ## Extends
 
