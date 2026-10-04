@@ -44,6 +44,7 @@ export interface DevtoolsErrorType {
 /**
  * The options shared by every devtools entry point: the `client` to inspect, the adapter's
  * `queryFlavor` and `version` shown in the header, and the display options.
+ * `onClose` is only used by the panel entry point.
  */
 export interface QueryDevtoolsProps {
   readonly client: QueryClient
