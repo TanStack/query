@@ -17,9 +17,21 @@ import type {
  * A single query as stored by {@link experimental_createQueryPersister}.
  */
 export interface PersistedQuery {
+  /**
+   * The `buster` the query was saved with. Entries with a different `buster` are discarded.
+   */
   buster: string
+  /**
+   * The hash of the query.
+   */
   queryHash: string
+  /**
+   * The key of the query.
+   */
   queryKey: QueryKey
+  /**
+   * The state of the query, including its data and when it was last updated.
+   */
   state: QueryState
 }
 
@@ -33,9 +45,21 @@ export type MaybePromise<T> = T | Promise<T>
  * or return promises.
  */
 export interface AsyncStorage<TStorageValue = string> {
+  /**
+   * Reads the value stored under `key`, or `null`/`undefined` if there is none.
+   */
   getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
+  /**
+   * Stores `value` under `key`.
+   */
   setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
+  /**
+   * Removes the value stored under `key`.
+   */
   removeItem: (key: string) => MaybePromise<void>
+  /**
+   * Returns all stored key-value pairs. Required for removing expired entries in bulk.
+   */
   entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 

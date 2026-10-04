@@ -100,7 +100,13 @@ interface DehydratedQuery {
  * that has already been fetched, avoiding a redundant fetch on the client.
  */
 export interface DehydratedState {
+  /**
+   * The dehydrated mutations, by default only the paused ones.
+   */
   mutations: Array<DehydratedMutation>
+  /**
+   * The dehydrated queries, by default only the successful ones.
+   */
   queries: Array<DehydratedQuery>
 }
 
