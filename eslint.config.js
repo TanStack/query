@@ -26,8 +26,12 @@ export default defineConfig([
         'error',
         {
           contexts: [
+            'ExportDefaultDeclaration > ArrowFunctionExpression',
+            'ExportDefaultDeclaration > ClassDeclaration',
+            'ExportNamedDeclaration > ClassDeclaration',
             'ExportNamedDeclaration > TSInterfaceDeclaration',
             'ExportNamedDeclaration > TSTypeAliasDeclaration',
+            'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > ArrowFunctionExpression',
           ],
         },
       ],

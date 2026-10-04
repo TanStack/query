@@ -16,8 +16,17 @@ export type Promisable<T> = T | PromiseLike<T>
  * Saves, restores, and removes a {@link PersistedClient} in a storage.
  */
 export interface Persister {
+  /**
+   * Saves the persisted client to the storage.
+   */
   persistClient: (persistClient: PersistedClient) => Promisable<void>
+  /**
+   * Reads the persisted client from the storage, or `undefined` if nothing was saved.
+   */
   restoreClient: () => Promisable<PersistedClient | undefined>
+  /**
+   * Removes the persisted client from the storage.
+   */
   removeClient: () => Promisable<void>
 }
 
@@ -26,8 +35,18 @@ export interface Persister {
  * `buster`.
  */
 export interface PersistedClient {
+  /**
+   * When the client was saved, in milliseconds since the epoch. Compared with `maxAge` on restore.
+   */
   timestamp: number
+  /**
+   * The `buster` the client was saved with. A persisted client with a different `buster` is
+   * discarded.
+   */
   buster: string
+  /**
+   * The dehydrated cache of the `QueryClient`.
+   */
   clientState: DehydratedState
 }
 
