@@ -28,6 +28,7 @@ export default defineConfig([
           contexts: [
             'ExportDefaultDeclaration > ArrowFunctionExpression',
             'ExportDefaultDeclaration > ClassDeclaration',
+            'ExportDefaultDeclaration > ClassDeclaration > ClassBody > MethodDefinition:not([accessibility="private"]):not([key.type="PrivateIdentifier"]):not([kind="constructor"]):not([override=true])',
             'ExportNamedDeclaration > ClassDeclaration',
             'ExportNamedDeclaration > ClassDeclaration > ClassBody > MethodDefinition:not([accessibility="private"]):not([key.type="PrivateIdentifier"]):not([kind="constructor"]):not([override=true])',
             'ExportNamedDeclaration > TSInterfaceDeclaration',
