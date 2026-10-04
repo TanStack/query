@@ -13,7 +13,7 @@ Matches any type that has been tagged with [DataTag](DataTag.md), whatever its d
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="property-datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` |
-| <a id="property-datatagsymbol"></a> `[dataTagSymbol]` | `any` |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` | The error type the key was tagged with. |
+| <a id="property-datatagsymbol"></a> `[dataTagSymbol]` | `any` | The data type the key was tagged with. |

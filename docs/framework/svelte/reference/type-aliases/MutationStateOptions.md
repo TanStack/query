@@ -23,7 +23,7 @@ Options for useMutationState
 
 ## Properties
 
-| Property | Type |
-| ------ | ------ |
-| <a id="property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) |
-| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | The filters that select the mutations to return the state of. |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |
