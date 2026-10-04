@@ -8,8 +8,8 @@ import {
   QueryClient,
   QueryClientProvider,
   dehydrate,
-  useIsHydrating,
   noop,
+  useIsHydrating,
   useQuery,
 } from '..'
 import type { hydrate } from '@tanstack/query-core'
@@ -562,10 +562,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['revisit-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['revisit-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -586,10 +588,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch (like React Router loader on subsequent visit)
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['revisit-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['revisit-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -624,10 +628,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['value-true-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['value-true-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -648,10 +654,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['value-true-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['value-true-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -684,10 +692,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['function-true-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['function-true-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -708,10 +718,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['function-true-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['function-true-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -744,10 +756,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['value-false-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['value-false-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -767,10 +781,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['value-false-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['value-false-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -802,10 +818,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['function-false-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['function-false-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -825,10 +843,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['function-false-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['function-false-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -860,10 +880,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['always-refetch-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['always-refetch-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -883,10 +905,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch (like React Router loader on subsequent visit)
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['always-refetch-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['always-refetch-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -926,10 +950,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache (simulating initial page visit)
-    queryClient.prefetchQuery({
-      queryKey: ['function-refetch-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['function-refetch-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -949,10 +975,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['function-refetch-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['function-refetch-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -988,10 +1016,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
-    queryClient.prefetchQuery({
-      queryKey: ['stale-hydration-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['stale-hydration-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -1012,10 +1042,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['stale-hydration-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['stale-hydration-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1051,8 +1083,8 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch multiple queries
-    queryClient.prefetchQuery({ queryKey: ['multi-1'], queryFn: queryFn1 })
-    queryClient.prefetchQuery({ queryKey: ['multi-2'], queryFn: queryFn2 })
+    queryClient.query({ queryKey: ['multi-1'], queryFn: queryFn1 }).catch(noop)
+    queryClient.query({ queryKey: ['multi-2'], queryFn: queryFn2 }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -1080,14 +1112,18 @@ describe('React hydration', () => {
 
     // Simulate server prefetch for multiple queries
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['multi-1'],
-      queryFn: () => sleep(10).then(() => 'server-1'),
-    })
-    serverQueryClient.prefetchQuery({
-      queryKey: ['multi-2'],
-      queryFn: () => sleep(10).then(() => 'server-2'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['multi-1'],
+        queryFn: () => sleep(10).then(() => 'server-1'),
+      })
+      .catch(noop)
+    serverQueryClient
+      .query({
+        queryKey: ['multi-2'],
+        queryFn: () => sleep(10).then(() => 'server-2'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1137,10 +1173,12 @@ describe('React hydration', () => {
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['new-query-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['new-query-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1171,10 +1209,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache with newer data
-    queryClient.prefetchQuery({
-      queryKey: ['older-data-test'],
-      queryFn: () => sleep(10).then(() => 'newer-client-data'),
-    })
+    queryClient
+      .query({
+        queryKey: ['older-data-test'],
+        queryFn: () => sleep(10).then(() => 'newer-client-data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -1222,18 +1262,22 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
-    queryClient.prefetchQuery({
-      queryKey: ['removed-query-test-memo'],
-      queryFn: () => sleep(10).then(() => 'initial-data'),
-    })
+    queryClient
+      .query({
+        queryKey: ['removed-query-test-memo'],
+        queryFn: () => sleep(10).then(() => 'initial-data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['removed-query-test-memo'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['removed-query-test-memo'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1288,18 +1332,22 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
-    queryClient.prefetchQuery({
-      queryKey: ['removed-query-test-effect'],
-      queryFn: () => sleep(10).then(() => 'initial-data'),
-    })
+    queryClient
+      .query({
+        queryKey: ['removed-query-test-effect'],
+        queryFn: () => sleep(10).then(() => 'initial-data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['removed-query-test-effect'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['removed-query-test-effect'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1359,19 +1407,23 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
-    queryClient.prefetchQuery({
-      queryKey: ['unmount-cleanup-test'],
-      queryFn,
-    })
+    queryClient
+      .query({
+        queryKey: ['unmount-cleanup-test'],
+        queryFn,
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['unmount-cleanup-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['unmount-cleanup-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
@@ -1410,10 +1462,12 @@ describe('React hydration', () => {
 
     // Create a new dehydrated state with newer data for second mount
     const serverQueryClient2 = new QueryClient()
-    serverQueryClient2.prefetchQuery({
-      queryKey: ['unmount-cleanup-test'],
-      queryFn: () => sleep(10).then(() => 'second-server-data'),
-    })
+    serverQueryClient2
+      .query({
+        queryKey: ['unmount-cleanup-test'],
+        queryFn: () => sleep(10).then(() => 'second-server-data'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState2 = dehydrate(serverQueryClient2)
 
@@ -1441,10 +1495,12 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // Populate the cache so the dehydrated query is treated as "existing".
-    queryClient.prefetchQuery({
-      queryKey: ['self-clear-test'],
-      queryFn: () => sleep(10).then(() => 'cached'),
-    })
+    queryClient
+      .query({
+        queryKey: ['self-clear-test'],
+        queryFn: () => sleep(10).then(() => 'cached'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     // Advance time so the server prefetch below produces a newer `dataUpdatedAt`
@@ -1452,10 +1508,12 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['self-clear-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['self-clear-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     // The same dehydrated state object is reused across renders, matching how it
     // is typically passed once from the server.
@@ -1514,20 +1572,24 @@ describe('React hydration', () => {
     const queryClient = new QueryClient()
 
     // Populate the cache with older data (simulating a first page visit).
-    queryClient.prefetchQuery({
-      queryKey: ['mismatch-test'],
-      queryFn: () => sleep(10).then(() => 'cached'),
-    })
+    queryClient
+      .query({
+        queryKey: ['mismatch-test'],
+        queryFn: () => sleep(10).then(() => 'cached'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     // Advance time so the server prefetch below is newer than the cache.
     await vi.advanceTimersByTimeAsync(10)
 
     const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['mismatch-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
+    serverQueryClient
+      .query({
+        queryKey: ['mismatch-test'],
+        queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
