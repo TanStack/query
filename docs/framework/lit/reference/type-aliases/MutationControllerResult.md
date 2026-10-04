@@ -3,8 +3,6 @@ id: MutationControllerResult
 title: MutationControllerResult
 ---
 
-# Type Alias: MutationControllerResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type MutationControllerResult<TData, TError, TVariables, TOnMutateResult> = MutationObserverResult<TData, TError, TVariables, TOnMutateResult>;
 ```
@@ -21,7 +19,7 @@ Result object produced by a Lit mutation controller.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

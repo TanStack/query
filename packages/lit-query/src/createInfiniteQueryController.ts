@@ -1,23 +1,19 @@
-import {
-  InfiniteQueryObserver,
-  type DefaultError,
-  type DefaultedInfiniteQueryObserverOptions,
-  type InfiniteData,
-  type InfiniteQueryObserverOptions,
-  type InfiniteQueryObserverResult,
-  type QueryKey,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefaultedInfiniteQueryObserverOptions,
+  InfiniteData,
+  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverResult,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createInfiniteQueryController`.
@@ -62,6 +58,11 @@ export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createPendingInfiniteQueryResult<
   TData,
   TError,
@@ -109,7 +110,6 @@ function createPendingInfiniteQueryResult<
     isFetchingNextPage: false,
     isFetchPreviousPageError: false,
     isFetchingPreviousPage: false,
-    promise: Promise.resolve(undefined as never),
   } as unknown as InfiniteQueryObserverResult<TData, TError>
 }
 
@@ -365,7 +365,6 @@ class InfiniteQueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the infinite query
  * subscription.
  * @param options - Infinite query observer options, or a getter that returns
@@ -374,7 +373,6 @@ class InfiniteQueryController<
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest infinite query result with page helper
  * methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

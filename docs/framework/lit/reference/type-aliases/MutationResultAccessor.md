@@ -3,13 +3,11 @@ id: MutationResultAccessor
 title: MutationResultAccessor
 ---
 
-# Type Alias: MutationResultAccessor\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & object;
 ```
 
-Defined in: [packages/lit-query/src/createMutationController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L38)
+Defined in: [packages/lit-query/src/createMutationController.ts:34](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L34)
 
 Accessor returned by `createMutationController`.
 
@@ -33,7 +31,7 @@ Removes the controller from its Lit host and unsubscribes observers.
 ### mutate()
 
 ```ts
-mutate: (variables, options?) => void;
+mutate: (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
 Starts the mutation and swallows the returned promise.
@@ -42,13 +40,9 @@ Throws synchronously if no `QueryClient` can be resolved.
 
 #### Parameters
 
-##### variables
+##### args
 
-`TVariables`
-
-##### options?
-
-`MutateOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+...`Parameters`\<[`MutateFunction`](MutateFunction.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
 
 #### Returns
 

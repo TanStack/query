@@ -90,6 +90,7 @@ import { LitElement } from 'lit'
 import {
   QueryClient,
   createQueryController,
+  noop,
   queryOptions,
 } from '@tanstack/lit-query'
 
@@ -107,7 +108,7 @@ class TodosView extends LitElement {
   private readonly todos = createQueryController(this, todosOptions())
 }
 
-void queryClient.prefetchQuery(todosOptions())
+void queryClient.query(todosOptions()).catch(noop)
 ```
 
 The branded `queryKey` returned from `queryOptions` also helps APIs like `queryClient.getQueryData` understand the data type.

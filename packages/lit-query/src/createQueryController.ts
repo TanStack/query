@@ -1,22 +1,18 @@
-import {
-  QueryObserver,
-  type DefaultError,
-  type DefaultedQueryObserverOptions,
-  type QueryKey,
-  type QueryObserverOptions,
-  type QueryObserverResult,
-} from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-import type { ReactiveControllerHost } from 'lit'
-import {
-  createValueAccessor,
-  readAccessor,
-  type Accessor,
-  type ValueAccessor,
-} from './accessor.js'
+import { QueryObserver } from '@tanstack/query-core'
+import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import type { Accessor, ValueAccessor } from './accessor.js'
+import type {
+  DefaultError,
+  DefaultedQueryObserverOptions,
+  QueryClient,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from '@tanstack/query-core'
+import type { ReactiveControllerHost } from 'lit'
 
 /**
  * Options accepted by `createQueryController`.
@@ -50,6 +46,11 @@ export type QueryResultAccessor<TData, TError> = ValueAccessor<
   destroy: () => void
 }
 
+/**
+ * Returns the result used while no `QueryClient` is available: `'pending'` and idle, with methods
+ * that reject with the missing client error.
+ * @returns A new result object in that state.
+ */
 function createPendingQueryResult<TData, TError>(): QueryObserverResult<
   TData,
   TError
@@ -84,7 +85,6 @@ function createPendingQueryResult<TData, TError>(): QueryObserverResult<
       TData,
       TError
     >['refetch'],
-    promise: Promise.resolve(undefined as never),
   } as unknown as QueryObserverResult<TData, TError>
 }
 
@@ -301,13 +301,7 @@ class QueryController<
     this.queryClient = resolvedClient
     const defaulted = resolvedClient.defaultQueryOptions(
       readAccessor(this.options),
-    ) as DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    )
     ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =
       'optimistic'
     return defaulted
@@ -323,14 +317,12 @@ class QueryController<
  *
  * If `queryClient` is omitted, the controller resolves the client from the
  * nearest connected `QueryClientProvider`.
- *
  * @param host - The Lit reactive controller host that owns the query
  * subscription.
  * @param options - Query observer options, or a getter that returns options.
  * @param queryClient - Optional explicit query client. Provide this for
  * controllers that should not resolve a client from Lit context.
  * @returns An accessor for the latest query result with query helper methods.
- *
  * @example
  * ```ts
  * import { LitElement, html } from 'lit'

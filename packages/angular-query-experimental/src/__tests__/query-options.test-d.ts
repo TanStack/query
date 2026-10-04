@@ -1,7 +1,21 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
+import {
+  QueryClient,
+  dataTagSymbol,
+  injectQuery,
+  queryOptions,
+  skipToken,
+} from '..'
 import type { Signal } from '@angular/core'
+import type { InitialDataFunction } from '@tanstack/query-core'
+
+// Regression test for exported queryOptions inference under declaration emit.
+// TypeScript should be able to name the return type without expanding the
+// internal data tag symbols into the consumer's .d.ts output.
+export const exportedQueryOptions = queryOptions({
+  queryKey: ['invalid'],
+})
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -43,6 +57,18 @@ describe('queryOptions', () => {
       { id: string; title: string } | undefined
     >()
   })
+
+  it('should allow optional initialData object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve('something string'),
+      initialData: Math.random() > 0.5 ? 'initial string' : undefined,
+    })
+
+    expectTypeOf(options.initialData).toExtend<
+      InitialDataFunction<string> | string | undefined
+    >()
+  })
 })
 
 it('should work when passed to injectQuery', () => {
@@ -63,8 +89,51 @@ it('should work when passed to fetchQuery', () => {
     queryFn: () => Promise.resolve(5),
   })
 
+  // eslint-disable-next-line no-restricted-syntax -- grandfathered direct test
   const data = new QueryClient().fetchQuery(options)
   assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query with select', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+    select: (data) => data.toString(),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<string>>(data)
+})
+
+it('should work when passed to query with enabled: false', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+    enabled: false,
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query with skipToken', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: skipToken,
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<unknown>>(data)
 })
 
 it('should tag the queryKey with the result type of the QueryFn', () => {
@@ -118,6 +187,19 @@ it('should return the proper type when passed to getQueryData', () => {
   expectTypeOf(data).toEqualTypeOf<number | undefined>()
 })
 
+it('should return the proper type when passed to getQueryState', () => {
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
+    queryFn: () => Promise.resolve(5),
+  })
+
+  const queryClient = new QueryClient()
+  const state = queryClient.getQueryState(tagged)
+
+  expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
+})
+
 it('should properly type updaterFn when passed to setQueryData', () => {
   const key = queryKey()
   const { queryKey: tagged } = queryOptions({
@@ -151,4 +233,30 @@ it('should properly type value when passed to setQueryData', () => {
   const data = queryClient.setQueryData(tagged, 5)
 
   expectTypeOf(data).toEqualTypeOf<number | undefined>()
+})
+
+it('should infer even if there is a conditional skipToken', () => {
+  const key = queryKey()
+  const options = queryOptions({
+    queryKey: key,
+    queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+  })
+
+  const queryClient = new QueryClient()
+  const data = queryClient.getQueryData(options.queryKey)
+
+  expectTypeOf(data).toEqualTypeOf<number | undefined>()
+})
+
+it('should infer to unknown if we disable a query with just a skipToken', () => {
+  const key = queryKey()
+  const options = queryOptions({
+    queryKey: key,
+    queryFn: skipToken,
+  })
+
+  const queryClient = new QueryClient()
+  const data = queryClient.getQueryData(options.queryKey)
+
+  expectTypeOf(data).toEqualTypeOf<unknown>()
 })

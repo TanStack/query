@@ -18,7 +18,7 @@ replace:
 import { injectQuery } from '@tanstack/angular-query-experimental'
 
 // Make a specific query retry a certain number of times
-const result = injectQuery(() => ({
+const todoQuery = injectQuery(() => ({
   queryKey: ['todos', 1],
   queryFn: fetchTodoListPage,
   retry: 10, // Will retry failed requests 10 times before displaying an error
@@ -56,7 +56,7 @@ Though it is not recommended, you can obviously override the `retryDelay` functi
 [//]: # 'Example3'
 
 ```ts
-const result = injectQuery(() => ({
+const todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: fetchTodoList,
   retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries

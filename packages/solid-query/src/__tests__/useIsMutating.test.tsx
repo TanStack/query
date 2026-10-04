@@ -66,7 +66,6 @@ describe('useIsMutating', () => {
     renderWithClient(queryClient, () => <Page />)
 
     await vi.advanceTimersByTimeAsync(150)
-
     expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
@@ -107,7 +106,6 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
-
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -151,7 +149,6 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
-
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -191,12 +188,59 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
+  it('should resubscribe when a custom queryClient changes', async () => {
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+    const [client, setClient] = createSignal(queryClient1)
+    const mutationCache1 = queryClient1.getMutationCache()
+    const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
+    const unsubscribe1 = vi.fn()
+
+    vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
+      const cleanup = originalSubscribe1(listener)
+
+      return () => {
+        unsubscribe1()
+        cleanup()
+      }
+    })
+
+    function Page() {
+      const isMutating = useIsMutating(undefined, client)
+
+      return <div>mutating: {isMutating()}</div>
+    }
+
+    const rendered = render(() => <Page />)
+
+    const firstMutation = queryClient1.getMutationCache().build(queryClient1, {
+      mutationFn: () => sleep(20).then(() => 'data1'),
+    })
+    const firstMutationPromise = firstMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    setClient(queryClient2)
+    expect(unsubscribe1).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    const secondMutation = queryClient2.getMutationCache().build(queryClient2, {
+      mutationFn: () => sleep(20).then(() => 'data2'),
+    })
+    const secondMutationPromise = secondMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(20)
+    await Promise.all([firstMutationPromise, secondMutationPromise])
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+  })
+
   // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
     class MutationCacheMock extends QueryCore.MutationCache {
-      subscribe(listener: any) {
+      override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }

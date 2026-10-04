@@ -1,0 +1,44 @@
+---
+id: keepPreviousData
+title: keepPreviousData
+---
+
+```ts
+function keepPreviousData<T>(previousData: T | undefined): T | undefined;
+```
+
+Defined in: [packages/query-core/src/utils.ts:582](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L582)
+
+Intended to be passed as a query's `placeholderData` option, for example
+`placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
+query key is fetching, it keeps displaying the previously fetched data until the new data arrives.
+
+## Type Parameters
+
+### T
+
+`T`
+
+## Parameters
+
+### previousData
+
+The data of the previous query key, passed by the observer.
+
+`T` | `undefined`
+
+## Returns
+
+`T` \| `undefined`
+
+The previous data, unchanged.
+
+## Example
+
+```ts
+new QueryObserver(queryClient, {
+  queryKey: ['posts', page],
+  queryFn: () => fetchPosts(page),
+  placeholderData: keepPreviousData,
+})
+```

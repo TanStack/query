@@ -1,16 +1,13 @@
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
+import {
+  QueryClient,
+  createQuery,
+  keepPreviousData,
+  noop,
+} from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import Base from './Base.svelte'
 import Counter from './Counter.svelte'
@@ -48,19 +45,6 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      if (query.isPending) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<null>()
-      } else if (query.isLoadingError) {
-        expectTypeOf(query.data).toEqualTypeOf<undefined>()
-        expectTypeOf(query.error).toEqualTypeOf<Error>()
-      } else {
-        expectTypeOf(query.data).toEqualTypeOf<string>()
-        expectTypeOf(query.error).toEqualTypeOf<Error | null>()
-      }
-
-      const promise1 = query.promise
-
       expect(query).toEqual({
         data: undefined,
         dataUpdatedAt: 0,
@@ -87,8 +71,8 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
+
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
       expect(query).toEqual({
@@ -117,10 +101,7 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'success',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
-
-      expect(promise1).toBe(query.promise)
     }),
   )
 
@@ -175,7 +156,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[1]).toEqual({
@@ -204,7 +184,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'pending',
         fetchStatus: 'fetching',
-        promise: expect.any(Promise),
       })
 
       expect(states[2]).toEqual({
@@ -233,7 +212,6 @@ describe('createQuery', () => {
         refetch: expect.any(Function),
         status: 'error',
         fetchStatus: 'idle',
-        promise: expect.any(Promise),
       })
     }),
   )
@@ -241,10 +219,12 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('prefetched'),
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => Promise.resolve('prefetched'),
+      })
+      .catch(noop)
 
     const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -271,6 +251,29 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetchedAfterMount')).toHaveTextContent(
       'true',
     )
+  })
+
+  it('should keep initialData visible alongside the error when a refetch fails', async () => {
+    const key = queryKey()
+
+    const rendered = render(Base, {
+      props: {
+        queryClient,
+        options: () => ({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
+          initialData: 'initial',
+          retry: false,
+        }),
+      },
+    })
+
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByTestId('data')).toHaveTextContent('initial')
+    expect(rendered.getByTestId('status')).toHaveTextContent('error')
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -301,7 +304,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(1)
   })
 
@@ -332,7 +334,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(2)
   })
 
@@ -362,7 +363,6 @@ describe('createQuery', () => {
 
     resolve('resolved')
     await promise
-
     expect(fetchCount).toBe(1)
   })
 
@@ -381,7 +381,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('data')
   })
@@ -542,7 +541,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('test')
     // queryFn should be called since nothing has been fetched yet
@@ -587,7 +585,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('test')
   })
@@ -610,7 +607,6 @@ describe('createQuery', () => {
     })
 
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Select Error')
@@ -634,7 +630,6 @@ describe('createQuery', () => {
     // Initial: pending
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
@@ -645,13 +640,12 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
   })
 
-  it('keeps up-to-date with query key changes', async () => {
+  it('should keep up-to-date with query key changes', async () => {
     const key = queryKey()
 
     const rendered = render(Counter, {
@@ -669,7 +663,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
@@ -680,7 +673,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('fetching')
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
@@ -703,7 +695,6 @@ describe('createQuery', () => {
 
     // Initial
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
 
@@ -712,7 +703,6 @@ describe('createQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /^refetch$/i }))
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
   })
@@ -753,6 +743,7 @@ describe('createQuery', () => {
 
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(false)
+
       query.refetch()
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data?.[1]?.done).toBe(true)
@@ -794,7 +785,9 @@ describe('createQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('set')
+
     queryClient.refetchQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('fetched')
   })
@@ -820,6 +813,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
     queryClient.invalidateQueries({ queryKey: key })
+
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
@@ -896,7 +890,6 @@ describe('createQuery', () => {
     // Enabled query fetches
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -928,7 +921,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('false')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -970,7 +962,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('true')
     expect(rendered.getByTestId('isSuccess')).toHaveTextContent('true')
     expect(rendered.getByTestId('isPlaceholderData')).toHaveTextContent('false')
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('0')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
@@ -1081,13 +1072,14 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    const prefetchPromise = queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => sleep(10).then(() => 'prefetch'),
-    })
+    const prefetchPromise = queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'prefetch'),
+      })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
-
     expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
     // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
     await vi.advanceTimersByTimeAsync(10)
@@ -1236,7 +1228,6 @@ describe('createQuery', () => {
 
       // Wait for refetch to complete
       await vi.advanceTimersByTimeAsync(20)
-
       expect(states.length).toBe(2)
       expect(states[0]).toBe(undefined)
       expect(states[1]).toBe('test')
@@ -1483,10 +1474,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1516,10 +1509,12 @@ describe('createQuery', () => {
     const key = queryKey()
 
     // Prefetch the query
-    await queryClient.prefetchQuery({
-      queryKey: key,
-      queryFn: () => 'prefetched',
-    })
+    await queryClient
+      .query({
+        queryKey: key,
+        queryFn: () => 'prefetched',
+      })
+      .catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1547,7 +1542,7 @@ describe('createQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleMock = vi
+    const consoleErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -1566,7 +1561,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('status')).toHaveTextContent('error')
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
 
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {
@@ -1613,7 +1608,6 @@ describe('createQuery', () => {
 
       currentClient = queryClient2
       flushSync()
-
       expect(
         queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
       ).toEqual(key)
@@ -1628,14 +1622,11 @@ describe('createQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(queryFn).toHaveBeenCalledTimes(0)
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')

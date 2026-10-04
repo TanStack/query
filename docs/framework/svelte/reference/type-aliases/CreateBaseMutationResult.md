@@ -3,15 +3,17 @@ id: CreateBaseMutationResult
 title: CreateBaseMutationResult
 ---
 
-# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
-
 ```ts
 type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Override<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, {
   mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>;
 }> & object;
 ```
 
-Defined in: [packages/svelte-query/src/types.ts:114](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L114)
+Defined in: [packages/svelte-query/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L139)
+
+The result of `createMutation`. Same as [MutationObserverResult](MutationObserverResult.md) from `@tanstack/query-core`, with
+`mutate` narrowed to the fire-and-forget [CreateMutateFunction](CreateMutateFunction.md) signature, plus the added
+`mutateAsync`.
 
 ## Type Declaration
 
@@ -29,7 +31,7 @@ mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResul
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TVariables
 

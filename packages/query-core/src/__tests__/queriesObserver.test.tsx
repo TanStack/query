@@ -30,11 +30,9 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-
     await vi.advanceTimersByTimeAsync(0)
 
     unsubscribe()
-
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
@@ -48,7 +46,6 @@ describe('queriesObserver', () => {
       { queryKey: key2, queryFn: queryFn2 },
     ])
     const unsubscribe = observer.subscribe(() => undefined)
-
     await vi.advanceTimersByTimeAsync(0)
 
     const queries = observer.getQueries()
@@ -74,7 +71,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
     queryClient.setQueryData(key2, 3)
     unsubscribe()
@@ -116,7 +112,6 @@ describe('queriesObserver', () => {
       { queryKey: key2, queryFn: queryFn2 },
     ])
     const unsubscribe = observer.subscribe(() => undefined)
-
     await vi.advanceTimersByTimeAsync(0)
 
     const observers = observer.getObservers()
@@ -142,7 +137,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
 
@@ -152,6 +146,7 @@ describe('queriesObserver', () => {
     expect(
       queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
     ).toEqual(key2)
+
     unsubscribe()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
@@ -193,7 +188,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([
       { queryKey: key2, queryFn: queryFn2 },
@@ -243,7 +237,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([
       { queryKey: key1, queryFn: queryFn1 },
@@ -288,7 +281,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe(() => undefined)
 
     unsubscribe()
-
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
   })
@@ -309,7 +301,6 @@ describe('queriesObserver', () => {
     const unsubscribe2 = observer.subscribe(subscription2Handler)
 
     unsubscribe1()
-
     await vi.advanceTimersByTimeAsync(20)
 
     // 1 call: pending
@@ -349,7 +340,6 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
 
     unsubscribe()
@@ -737,6 +727,41 @@ describe('queriesObserver', () => {
     expect(combined1).toBe(combined2)
   })
 
+  it.each([
+    ['zero', 0],
+    ['negative zero', -0],
+    ['NaN', Number.NaN],
+    ['false', false],
+    ['empty string', ''],
+    ['null', null],
+    ['undefined', undefined],
+    ['zero bigint', 0n],
+  ])(
+    'should cache the falsy combined result %s when nothing has changed',
+    (_name, value) => {
+      const combine = vi.fn(() => value)
+      const key = queryKey()
+      const queries = [{ queryKey: key, queryFn: () => 1 }]
+      const observer = new QueriesObserver<typeof value>(queryClient, queries, {
+        combine,
+      })
+
+      const [raw1, getCombined1] = observer.getOptimisticResult(
+        queries,
+        combine,
+      )
+      getCombined1(raw1)
+
+      const [raw2, getCombined2] = observer.getOptimisticResult(
+        queries,
+        combine,
+      )
+      getCombined2(raw2)
+
+      expect(combine).toHaveBeenCalledTimes(1)
+    },
+  )
+
   it('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -770,6 +795,10 @@ describe('queriesObserver', () => {
     expect(trackPropSpy).toHaveBeenCalledWith('status')
     expect(trackPropSpy).toHaveBeenCalledTimes(3)
 
+    void trackedResults[1]!.status
+
+    expect(trackPropSpy).toHaveBeenCalledTimes(4)
+
     trackPropSpy.mockRestore()
   })
 
@@ -788,9 +817,7 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(results[results.length - 1]).toMatchObject([
       { status: 'success', data: 1 },
       { status: 'success', data: 2 },

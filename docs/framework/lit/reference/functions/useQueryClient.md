@@ -3,13 +3,11 @@ id: useQueryClient
 title: useQueryClient
 ---
 
-# Function: useQueryClient()
-
 ```ts
 function useQueryClient(): QueryClient;
 ```
 
-Defined in: [packages/lit-query/src/context.ts:98](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L98)
+Defined in: [packages/lit-query/src/context.ts:105](https://github.com/TanStack/query/blob/main/packages/lit-query/src/context.ts#L105)
 
 Resolves the current default `QueryClient` registered by a connected
 `QueryClientProvider`.
@@ -20,6 +18,11 @@ clients are mounted and the default would be ambiguous.
 
 ## Returns
 
-`QueryClient`
+[`QueryClient`](../classes/QueryClient.md)
 
 The single registered query client.
+
+## Throws
+
+If no `QueryClient` is registered, or if multiple are
+mounted and the default is ambiguous.

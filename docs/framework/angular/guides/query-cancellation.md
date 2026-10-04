@@ -32,7 +32,7 @@ postQuery = injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-query = injectQuery(() => ({
+todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: async ({ signal }) => {
     const todosResponse = await fetch('/todos', {
@@ -63,7 +63,7 @@ query = injectQuery(() => ({
 ```ts
 import axios from 'axios'
 
-const query = injectQuery(() => ({
+const todosQuery = injectQuery(() => ({
   queryKey: ['todos'],
   queryFn: ({ signal }) =>
     axios.get('/todos', {
@@ -86,7 +86,7 @@ You might want to cancel a query manually. For example, if the request takes a l
   template: `<button (click)="onCancel()">Cancel</button>`,
 })
 export class TodosComponent {
-  query = injectQuery(() => ({
+  readonly todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: async ({ signal }) => {
       const resp = await fetch('/todos', { signal })
@@ -94,7 +94,7 @@ export class TodosComponent {
     },
   }))
 
-  queryClient = inject(QueryClient)
+  readonly queryClient = inject(QueryClient)
 
   onCancel() {
     this.queryClient.cancelQueries(['todos'])

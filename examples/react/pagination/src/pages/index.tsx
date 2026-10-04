@@ -3,6 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  noop,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -42,10 +43,12 @@ function Example() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient.prefetchQuery({
-        queryKey: ['projects', page + 1],
-        queryFn: () => fetchProjects(page + 1),
-      })
+      queryClient
+        .query({
+          queryKey: ['projects', page + 1],
+          queryFn: () => fetchProjects(page + 1),
+        })
+        .catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 

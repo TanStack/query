@@ -10,6 +10,7 @@ import {
   QueryClient,
   injectQuery,
   keepPreviousData,
+  noop,
 } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { ProjectsService } from '../services/projects.service'
@@ -40,11 +41,13 @@ export class ExampleComponent {
 
     untracked(() => {
       if (!isPlaceholderData && data?.hasMore) {
-        void this.queryClient.prefetchQuery({
-          queryKey: ['projects', newPage],
-          queryFn: () =>
-            lastValueFrom(this.projectsService.getProjects(newPage)),
-        })
+        void this.queryClient
+          .query({
+            queryKey: ['projects', newPage],
+            queryFn: () =>
+              lastValueFrom(this.projectsService.getProjects(newPage)),
+          })
+          .catch(noop)
       }
     })
   })

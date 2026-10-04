@@ -11,6 +11,7 @@ import {
   QueryClientProvider,
   dehydrate,
   hydrate,
+  noop,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -49,8 +50,8 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on success', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 
@@ -72,10 +73,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: successKey,
-      queryFn: () => fetchDataSuccess('success'),
-    })
+    await prefetchClient
+      .query({
+        queryKey: successKey,
+        queryFn: () => fetchDataSuccess('success'),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -113,19 +116,19 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
 
     expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
@@ -149,10 +152,12 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery({
-      queryKey: errorKey,
-      queryFn: () => fetchDataError(),
-    })
+    await prefetchClient
+      .query({
+        queryKey: errorKey,
+        queryFn: () => fetchDataError(),
+      })
+      .catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -188,7 +193,7 @@ describe('Server side rendering with de/rehydration', () => {
       el,
     )
 
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await vi.advanceTimersByTimeAsync(50)
@@ -199,12 +204,12 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = vi.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockImplementation(() => undefined)
 
     const fetchDataSuccess = vi.fn<typeof fetchData>(fetchData)
 
@@ -256,7 +261,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await vi.advanceTimersByTimeAsync(50)
@@ -267,6 +272,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
-    consoleMock.mockRestore()
+    consoleErrorMock.mockRestore()
   })
 })

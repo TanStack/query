@@ -3,9 +3,7 @@ id: QueryFeature
 title: QueryFeature
 ---
 
-# Interface: QueryFeature\<TFeatureKind\>
-
-Defined in: [providers.ts:135](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L135)
+Defined in: [packages/angular-query-experimental/src/providers.ts:126](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L126)
 
 Helper type to represent a Query feature.
 
@@ -17,20 +15,7 @@ Helper type to represent a Query feature.
 
 ## Properties
 
-### ɵkind
-
-```ts
-ɵkind: TFeatureKind;
-```
-
-Defined in: [providers.ts:136](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L136)
-
-***
-
-### ɵproviders
-
-```ts
-ɵproviders: Provider[];
-```
-
-Defined in: [providers.ts:137](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L137)
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="ɵkind"></a> `ɵkind` | `TFeatureKind` | The kind of the feature, e.g. `'Devtools'` or `'PersistQueryClient'`. |
+| <a id="ɵproviders"></a> `ɵproviders` | `Provider`[] | The providers that `provideTanStackQuery` registers for the feature. |

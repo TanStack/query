@@ -3,13 +3,11 @@ id: ValueAccessor
 title: ValueAccessor
 ---
 
-# Type Alias: ValueAccessor\<T\>
-
 ```ts
 type ValueAccessor<T> = () => T & object;
 ```
 
-Defined in: [packages/lit-query/src/accessor.ts:32](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L32)
+Defined in: [packages/lit-query/src/accessor.ts:35](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L35)
 
 A callable accessor with a `current` property for reading the latest
 controller result.

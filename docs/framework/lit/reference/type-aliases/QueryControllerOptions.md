@@ -3,8 +3,6 @@ id: QueryControllerOptions
 title: QueryControllerOptions
 ---
 
-# Type Alias: QueryControllerOptions\<TQueryFnData, TError, TData, TQueryData, TQueryKey\>
-
 ```ts
 type QueryControllerOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>>;
 ```
@@ -21,7 +19,7 @@ Accessor-wrapped options accepted by `createQueryController`.
 
 ### TError
 
-`TError` = `DefaultError`
+`TError` = [`DefaultError`](DefaultError.md)
 
 ### TData
 
@@ -33,4 +31,4 @@ Accessor-wrapped options accepted by `createQueryController`.
 
 ### TQueryKey
 
-`TQueryKey` *extends* `QueryKey` = `QueryKey`
+`TQueryKey` *extends* [`QueryKey`](QueryKey.md) = [`QueryKey`](QueryKey.md)

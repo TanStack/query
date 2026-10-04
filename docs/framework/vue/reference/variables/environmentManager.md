@@ -1,0 +1,64 @@
+---
+id: environmentManager
+title: environmentManager
+---
+
+```ts
+const environmentManager: object;
+```
+
+Defined in: [packages/query-core/src/environmentManager.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/environmentManager.ts#L32)
+
+Manages how TanStack Query detects whether the current runtime should be treated as
+server-side, which disables scheduling refetch timers and changes the default `retry` count
+and `gcTime`. By default, the detection treats a missing `window` (or the presence of a
+`Deno` global) as server.
+
+Override this for runtimes where that default detection would give the wrong answer — for
+example, a Service Worker, where `window` is undefined even though the environment should
+behave like a client.
+
+## Type Declaration
+
+### isServer()
+
+```ts
+isServer: () => boolean;
+```
+
+Returns whether the current runtime should be treated as a server environment.
+
+#### Returns
+
+`boolean`
+
+`true` if the runtime is treated as a server.
+
+### setIsServer()
+
+```ts
+setIsServer(isServerValue: IsServerValue): void;
+```
+
+Overrides the server check globally.
+
+#### Parameters
+
+##### isServerValue
+
+`IsServerValue`
+
+A function that returns whether the runtime should be treated as a
+server.
+
+#### Returns
+
+`void`
+
+## Example
+
+```ts
+import { environmentManager } from '@tanstack/query-core'
+
+environmentManager.setIsServer(() => false)
+```

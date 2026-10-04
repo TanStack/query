@@ -11,7 +11,7 @@ and you'll also get type inference and type safety for all of them.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient)
+  private readonly http = inject(HttpClient)
 
   updatePost(id: number) {
     return mutationOptions({
