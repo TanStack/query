@@ -177,10 +177,20 @@ export const mutationSortFns: Record<string, MutationSortFn> = {
   'last updated': mutationDateSort,
 }
 
+/**
+ * Converts a length in `rem` to pixels, using the root element's font size.
+ * @param rem - The length in `rem`.
+ * @returns The length in pixels.
+ */
 export const convertRemToPixels = (rem: number) => {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
+/**
+ * Tracks the user's `prefers-color-scheme` setting.
+ * @returns An accessor of `'light'` or `'dark'`, updated when the setting
+ * changes.
+ */
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
 
@@ -333,8 +343,12 @@ export const deleteNestedDataByPath = (
   return oldData
 }
 
-// Sets up the goober stylesheet
-// Adds a nonce to the style tag if needed
+/**
+ * Sets up the goober stylesheet with a `nonce`, for pages with a Content Security Policy. Without a
+ * `nonce`, it does nothing and goober creates the stylesheet itself.
+ * @param nonce - The nonce to set on the style tag.
+ * @param target - The shadow root to add the style tag to, instead of `document.head`.
+ */
 export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
   if (!nonce) return // Goober reads window.__nonce__ every time it creates or accesses its style
   // element (el.nonce = window.__nonce__). Without this, goober overwrites the
