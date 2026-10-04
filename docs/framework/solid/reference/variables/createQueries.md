@@ -23,8 +23,13 @@ Having the same query key more than once in the array of query objects may cause
 between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired
 structure.
 
-The `combine` option can be used to combine the results of the queries into a single value. The result will
-be structurally shared to be as referentially stable as possible.
+The `combine` option can be used to combine the results of the queries into a single value, such as an
+array or an object. The result will be structurally shared to be as referentially stable as possible.
+
+Inside a `<Suspense>` boundary, reading `data` of a query that has no data yet suspends until none of the
+queries are loading, so the boundary waits for all of them. When `throwOnError` asks to throw, reading
+`data` throws the error to the nearest `<ErrorBoundary>`. With `combine`, reading any value of the combined
+result does the same instead, since the result can have any shape.
 
 `placeholderData` is supported here too, but unlike `useQuery`, it doesn't receive information from
 previously rendered queries, because the number of queries can differ between renders.
@@ -37,34 +42,7 @@ previously rendered queries, because the number of queries can differ between re
 
 ### TCombinedResult
 
-`TCombinedResult` *extends* 
-  \| \[\]
-  \| \[
-  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>\]
-  \| (
-  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `Error`\>
-  \| [`QueryObserverRefetchErrorResult`](../interfaces/QueryObserverRefetchErrorResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverSuccessResult`](../interfaces/QueryObserverSuccessResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverLoadingErrorResult`](../interfaces/QueryObserverLoadingErrorResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverLoadingResult`](../interfaces/QueryObserverLoadingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPendingResult`](../interfaces/QueryObserverPendingResult.md)\<`unknown`, `unknown`\>
-  \| [`QueryObserverPlaceholderResult`](../interfaces/QueryObserverPlaceholderResult.md)\<`unknown`, `unknown`\>)[] = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
+`TCombinedResult` *extends* `object` = `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<`Head`\>, `GetResults`\<`Head`\>\] : \[`...Tail[]`\] *extends* \[`Head`, `...Tail[]`\] ? \[`...Tail[]`\] *extends* \[\] ? \[\] : \[`...Tail[]`\] *extends* \[`Head`\] ? \[`GetResults`\<...\>, `GetResults`\<...\>, `GetResults`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : \[`...(...)[]`\] : \[...\{ \[K in string \| number \| symbol\]: GetResults\<(...)\[(...)\]\> \}\[\]\] : \{ \[K in string \| number \| symbol\]: GetResults\<T\[K\<K\>\]\> \}
 
 ## Parameters
 
