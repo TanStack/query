@@ -171,6 +171,11 @@ export const rule = createRule({
   }),
 })
 
+/**
+ * Builds the suggestion that adds the missing dependencies to an array query key.
+ * @param params - The query key node, the missing paths and their text, and the source code.
+ * @returns The suggestion, or none if the query key is not an array literal.
+ */
 function buildSuggestions(params: {
   queryKeyNode: TSESTree.Node
   missingPaths: Array<string>
@@ -215,6 +220,13 @@ function buildSuggestions(params: {
   ]
 }
 
+/**
+ * Follows variable references and `as` assertions from a query key node to the expression it comes
+ * from.
+ * @param queryKeyNode - The query key node to start from.
+ * @param context - The rule context, used to resolve variables.
+ * @returns The innermost node that is neither a resolvable variable nor an `as` assertion.
+ */
 function dereferenceVariablesAndTypeAssertions(
   queryKeyNode: TSESTree.Node,
   context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,

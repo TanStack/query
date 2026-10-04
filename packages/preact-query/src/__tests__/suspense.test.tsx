@@ -78,7 +78,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -104,7 +103,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(10)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -130,7 +128,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(1500)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -156,7 +153,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(500)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -182,7 +178,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -208,7 +203,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 
@@ -234,7 +228,6 @@ describe('Suspense Timer Tests', () => {
     )
 
     await vi.advanceTimersByTimeAsync(2000)
-
     expect(fetchCount.count).toBe(1)
   })
 })

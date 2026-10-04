@@ -7,7 +7,7 @@ title: IsMutatingAccessor
 type IsMutatingAccessor = ValueAccessor<number> & object;
 ```
 
-Defined in: [packages/lit-query/src/useIsMutating.ts:17](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L17)
+Defined in: [packages/lit-query/src/useIsMutating.ts:13](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L13)
 
 Accessor returned by `useIsMutating`.
 

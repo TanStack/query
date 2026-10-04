@@ -24,6 +24,10 @@ import type { UseQueryOptions } from './queryOptions'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 import type { MaybeRefOrGetter } from './types'
 
+/**
+ * The result of the query composables: every property of the observer result wrapped in a `Ref`, except
+ * the `refetch`, `fetchNextPage`, and `fetchPreviousPage` functions, plus `suspense`.
+ */
 export type UseBaseQueryReturnType<
   TData,
   TError,
@@ -58,11 +62,11 @@ type UseQueryOptionsGeneric<
 
 /**
  * Base implementation shared by `useQuery` and `useInfiniteQuery`.
- *
  * @param Observer - The observer class from query-core (`QueryObserver` or `InfiniteQueryObserver`).
  * @param options - A `ref`, plain value, or reactive getter resolving to the query options.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
+ * @returns The query result as `ref`s, plus the `suspense` function.
  */
 export function useBaseQuery<
   TQueryFnData,

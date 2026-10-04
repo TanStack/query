@@ -3,7 +3,7 @@ id: UseQueryOptions
 title: UseQueryOptions
 ---
 
-Defined in: [packages/preact-query/src/types.ts:164](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L164)
+Defined in: [packages/preact-query/src/types.ts:159](https://github.com/TanStack/query/blob/main/packages/preact-query/src/types.ts#L159)
 
 The options accepted by `useQuery`. Same as [UseBaseQueryOptions](UseBaseQueryOptions.md), minus `suspense` (which
 `preact-query` derives from which hook you call rather than exposing as an option).

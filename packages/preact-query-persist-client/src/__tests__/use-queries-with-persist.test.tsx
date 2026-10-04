@@ -48,11 +48,11 @@ describe('useQueries with persist and memoized combine (preact)', () => {
     vi.useRealTimers()
   })
 
-  it('updates UI when combine is memoized with persisted results', async () => {
+  it('should update UI when combine is memoized with persisted results', async () => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: {
-          staleTime: 30_000,
+          staleTime: 30000,
           gcTime: 1000 * 60 * 60 * 24,
         },
       },
@@ -111,7 +111,7 @@ describe('useQueries with persist and memoized combine (preact)', () => {
         queries: [1, 2, 3].map((id) => ({
           queryKey: ['post', id],
           queryFn: () => sleep(100).then(() => id),
-          staleTime: 30_000,
+          staleTime: 30000,
         })),
         combine: useCallback(
           (results: Array<QueryObserverResult<number, Error>>) => ({
@@ -149,7 +149,6 @@ describe('useQueries with persist and memoized combine (preact)', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(0)
     })
-
     expect(rendered.getByTestId('pending').textContent).toBe('false')
     expect(rendered.getByTestId('data').textContent).toBe('1,2,3')
   })

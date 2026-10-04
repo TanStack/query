@@ -234,6 +234,7 @@ describe('VueQueryPlugin', () => {
       const mountSpy = vi.spyOn(customClient, 'mount')
 
       VueQueryPlugin.install(appMock, { queryClient: customClient })
+
       expect(mountSpy).not.toHaveBeenCalled()
     })
   })
@@ -291,9 +292,7 @@ describe('VueQueryPlugin', () => {
       })
 
       expect(customClient.isRestoring?.value).toBe(true)
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
     })
 
@@ -309,7 +308,6 @@ describe('VueQueryPlugin', () => {
       })
 
       expect(clientPersisterOnSuccess).not.toHaveBeenCalled()
-
       await vi.advanceTimersByTimeAsync(10)
       expect(clientPersisterOnSuccess).toHaveBeenCalledTimes(1)
       expect(clientPersisterOnSuccess).toHaveBeenCalledWith(customClient)
@@ -328,6 +326,7 @@ describe('VueQueryPlugin', () => {
       expect(persisterUnmount).not.toHaveBeenCalled()
 
       appMock._unmount()
+
       expect(persisterUnmount).toHaveBeenCalledTimes(1)
     })
 
@@ -371,9 +370,7 @@ describe('VueQueryPlugin', () => {
       expect(query.isFetching.value).toBe(false)
       expect(query.data.value).toStrictEqual(undefined)
       expect(queryFn).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
       expect(queryFn).toHaveBeenCalledTimes(0)
@@ -439,9 +436,7 @@ describe('VueQueryPlugin', () => {
       expect(queries.value[0].isFetching).toBe(false)
       expect(queries.value[0].data).toStrictEqual(undefined)
       expect(queryFn).toHaveBeenCalledTimes(0)
-
       await vi.advanceTimersByTimeAsync(0)
-
       expect(customClient.isRestoring?.value).toBe(false)
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
       expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })

@@ -114,7 +114,6 @@ describe('useMutationState', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Variables: ["pending"]')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
@@ -181,15 +180,11 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-
     expect(
       rendered.getByText('Data: ["pending","pending"]'),
     ).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(10)
-
     expect(rendered.getByText('Data: []')).toBeInTheDocument()
   })
 })

@@ -10,7 +10,7 @@ function useIsMutating(
    queryClient?: QueryClient): IsMutatingAccessor;
 ```
 
-Defined in: [packages/lit-query/src/useIsMutating.ts:147](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L147)
+Defined in: [packages/lit-query/src/useIsMutating.ts:141](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L141)
 
 Creates a Lit reactive controller that tracks how many matching mutations are
 currently pending.

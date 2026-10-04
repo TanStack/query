@@ -58,7 +58,7 @@ describe('PersistQueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  it('restores cache from persister', async () => {
+  it('should restore cache from persister', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
@@ -490,7 +490,6 @@ describe('PersistQueryClientProvider', () => {
     )
 
     expect(onSuccess).toHaveBeenCalledTimes(0)
-
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
     expect(onSuccess).toHaveBeenCalledTimes(1)

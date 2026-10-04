@@ -96,7 +96,6 @@ describe('usePrefetchQuery', () => {
 
     keyRef.value = 'second'
     await nextTick()
-
     expect(querySpy).toHaveBeenCalledTimes(2)
     expect(querySpy).toHaveBeenNthCalledWith(2, {
       queryKey: [...key, 'second'],

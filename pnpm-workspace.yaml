@@ -12,6 +12,55 @@ trustPolicyExclude:
   - 'ua-parser-js@1.0.41' # Socket score 100/100; popular and healthy.
   - 'undici-types@6.21.0' # Socket score 100/100; popular and healthy.
 
+catalog:
+  typescript: 6.0.3
+  '@typescript-eslint/parser': ^8.71.0
+  '@typescript-eslint/rule-tester': ^8.71.0
+  eslint: ^9.36.0
+
+  # react
+  '@eslint-react/eslint-plugin': ^5.23.3
+  '@testing-library/react': ^16.1.0
+  '@types/react': ^19.2.7
+  '@types/react-dom': ^19.2.3
+  '@vitejs/plugin-react': ^6.1.1
+  eslint-plugin-react-hooks: ^7.1.1
+  react: ^19.2.1
+  react-dom: ^19.2.1
+
+  # preact
+  '@preact/preset-vite': ^2.10.6
+  '@testing-library/preact': ^3.2.4
+  eslint-config-preact: ^2.0.0
+  preact: ^10.29.8
+
+  # solid
+  '@solidjs/testing-library': ^0.8.10
+  solid-js: ^1.9.15
+  unplugin-solid: ^2.0.0
+  vite-plugin-solid: ^2.11.14
+
+  # svelte
+  '@sveltejs/package': ^2.5.8
+  '@sveltejs/vite-plugin-svelte': ^7.3.1
+  '@testing-library/svelte': ^5.2.8
+  eslint-plugin-svelte: ^3.23.0
+  svelte: ^5.57.1
+  svelte-check: ^4.4.5
+
+  # vue
+  eslint-plugin-vue: ^10.11.1
+  unplugin-vue: ^8.0.0
+  vue: ^3.5.43
+
+  # angular
+  '@analogjs/vite-plugin-angular': ^2.7.5
+  '@angular/common': ^20.0.0
+  '@angular/compiler': ^20.0.0
+  '@angular/core': ^20.0.0
+  '@angular/platform-browser': ^20.0.0
+  '@testing-library/angular': ^18.0.0
+
 packages:
   - 'packages/*'
   - 'integrations/*'
@@ -27,8 +76,8 @@ packages:
 
 overrides:
   'chokidar': '5.0.0'
-  '@types/react': '^19.2.7'
-  '@types/react-dom': '^19.2.3'
+  '@types/react': 'catalog:'
+  '@types/react-dom': 'catalog:'
   '@types/node': '^22.15.3'
   esbuild: '^0.28.2'
 
