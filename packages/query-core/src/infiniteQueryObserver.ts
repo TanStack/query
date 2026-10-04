@@ -51,12 +51,12 @@ export class InfiniteQueryObserver<
   TQueryKey
 > {
   // Type override
-  subscribe!: Subscribable<
+  override subscribe!: Subscribable<
     InfiniteQueryObserverListener<TData, TError>
   >['subscribe']
 
   // Type override
-  getCurrentResult!: ReplaceReturnType<
+  override getCurrentResult!: ReplaceReturnType<
     QueryObserver<
       TQueryFnData,
       TError,
@@ -68,7 +68,7 @@ export class InfiniteQueryObserver<
   >
 
   // Type override
-  protected fetch!: ReplaceReturnType<
+  protected override fetch!: ReplaceReturnType<
     QueryObserver<
       TQueryFnData,
       TError,
@@ -92,7 +92,7 @@ export class InfiniteQueryObserver<
     super(client, options)
   }
 
-  protected bindMethods(): void {
+  protected override bindMethods(): void {
     super.bindMethods()
     this.fetchNextPage = this.fetchNextPage.bind(this)
     this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
@@ -105,7 +105,7 @@ export class InfiniteQueryObserver<
    * implementation.
    * @param options - The new infinite query observer options.
    */
-  setOptions(
+  override setOptions(
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -126,7 +126,7 @@ export class InfiniteQueryObserver<
    * @param options - The defaulted infinite query observer options to compute the result for.
    * @returns The result for the given options.
    */
-  getOptimisticResult(
+  override getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -204,7 +204,7 @@ export class InfiniteQueryObserver<
     })
   }
 
-  protected createResult(
+  protected override createResult(
     query: Query<
       TQueryFnData,
       TError,
