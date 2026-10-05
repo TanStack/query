@@ -833,6 +833,9 @@ async function addReferenceDetails(outputDir: string) {
     for (const entry of tables.filter((table) => table.parameter)) {
       const heading = `\n### ${entry.parameter}\n`
       const start = parametersSummary.indexOf(heading)
+      if (start === -1) {
+        continue
+      }
       const next = parametersSummary
         .slice(start + heading.length)
         .search(/\n#{1,3} /)
