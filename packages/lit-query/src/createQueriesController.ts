@@ -366,7 +366,7 @@ class QueriesController<
     this.tryInitializeExplicitClient(queryClient)
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -375,12 +375,12 @@ class QueriesController<
     this.subscribe()
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (!this.shouldRefreshOnHostUpdate()) {
       return
     }
@@ -390,7 +390,7 @@ class QueriesController<
     }
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient() || !this.connectedState) {
       return
     }
