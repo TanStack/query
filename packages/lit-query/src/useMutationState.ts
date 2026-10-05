@@ -50,7 +50,7 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
     this.result = this.computeState()
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       this.setMutationState([])
       return
@@ -60,13 +60,13 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
     this.setMutationState(this.computeState())
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribe?.()
     this.unsubscribe = undefined
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (!this.shouldRefreshOnHostUpdate()) {
       return
     }
@@ -74,7 +74,7 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
     this.setMutationState(this.syncClient() ? this.computeState() : [])
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient()) {
       this.setMutationState([])
       return
