@@ -12,8 +12,8 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOpti
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-- [`QueryOptions` → `QueryOptions`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
-- [`QueryOptions` → `QueryOptions`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`ReturnType<DefinedInitialDataOptions>` → `ReturnType<DefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`ReturnType<UndefinedInitialDataOptions>` → `ReturnType<UndefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

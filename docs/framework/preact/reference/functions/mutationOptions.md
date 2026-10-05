@@ -10,8 +10,8 @@ function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Wi
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-- [`WithRequired` → `WithRequired`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `useMutationState`.
-- [`Omit` → `Omit`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters, such as `status`.
+- [`WithRequired<UseMutationOptions>` → `WithRequired<UseMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `useMutationState`.
+- [`Omit<UseMutationOptions>` → `Omit<UseMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters, such as `status`.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

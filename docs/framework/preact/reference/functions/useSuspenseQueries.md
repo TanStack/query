@@ -10,8 +10,8 @@ function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: Q
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-- [`object` → `TCombinedResult`](#call-signature-1): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
-- [`object` → `TCombinedResult`](#call-signature-2): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
+- [`{ queries, combine }` → `TCombinedResult`](#call-signature-1): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
+- [`{ queries, combine }` → `TCombinedResult`](#call-signature-2): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

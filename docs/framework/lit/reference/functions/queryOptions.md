@@ -11,9 +11,9 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSki
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, never> & object & object;
 ```
 
-- [`DefinedInitialDataOptions` → `Omit`](#call-signature-1): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
-- [`UnusedSkipTokenOptions` → `OmitKeyof`](#call-signature-2): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
-- [`UndefinedInitialDataOptions` → `QueryObserverOptions`](#call-signature-3): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & { queryKey }`](#call-signature-1): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+- [`UnusedSkipTokenOptions` → `UnusedSkipTokenOptions & { queryKey }`](#call-signature-2): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
+- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & { queryKey }`](#call-signature-3): Brands query options so the `queryKey` carries the query function data and error types across TanStack Query APIs.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

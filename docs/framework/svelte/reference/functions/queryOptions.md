@@ -10,8 +10,8 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedIn
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-- [`DefinedInitialDataOptions` → `CreateQueryOptions`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
-- [`UndefinedInitialDataOptions` → `CreateQueryOptions`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & QueryKeyWithDataTag`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `createQuery`. These options can be shared across `createQuery` calls and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 

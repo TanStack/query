@@ -10,8 +10,8 @@ function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Wi
 function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
 ```
 
-- [`WithRequired` → `WithRequired`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`. This overload requires `mutationKey`, so the resulting options can be looked up elsewhere (e.g. with `useMutationState`).
-- [`Omit` → `Omit`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`.
+- [`WithRequired<CreateMutationOptions>` → `WithRequired<CreateMutationOptions>`](#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`. This overload requires `mutationKey`, so the resulting options can be looked up elsewhere (e.g. with `useMutationState`).
+- [`Omit<CreateMutationOptions>` → `Omit<CreateMutationOptions>`](#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `createMutation`.
 
 See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 
