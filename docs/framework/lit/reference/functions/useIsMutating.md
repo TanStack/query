@@ -34,6 +34,12 @@ subscription.
 
 Mutation filters, or a getter that returns mutation filters.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`MutationFilters`](../interfaces/MutationFilters.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

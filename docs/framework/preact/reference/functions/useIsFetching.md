@@ -20,6 +20,19 @@ the background (useful for app-wide loading indicators).
 
 The [QueryFilters](../interfaces/QueryFilters.md) to narrow down the matched queries.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="filters-property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="filters-property-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="filters-property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="filters-property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="filters-property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

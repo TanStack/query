@@ -55,6 +55,12 @@ subscription.
 
 Mutation observer options, or a getter that returns options.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationObserverOptions`](../interfaces/MutationObserverOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

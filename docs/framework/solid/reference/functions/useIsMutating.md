@@ -22,6 +22,12 @@ The `useIsMutating` primitive returns the `number` of mutations that your applic
 
 An accessor returning the [MutationFilters](../interfaces/MutationFilters.md) to narrow down the matched mutations.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`MutationFilters`](../interfaces/MutationFilters.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 `Accessor`\<[`QueryClient`](../classes/QueryClient.md)\>

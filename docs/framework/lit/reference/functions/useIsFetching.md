@@ -34,6 +34,12 @@ subscription.
 
 Query filters, or a getter that returns query filters.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

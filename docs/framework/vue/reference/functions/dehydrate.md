@@ -30,11 +30,31 @@ The client whose cache is dehydrated.
 Controls which queries and mutations are included and how their data and errors
 are transformed. Each option falls back to the client's `defaultOptions.dehydrate`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-serializedata"></a> `serializeData?` | `TransformerFn` | Transforms a query's `data` before it is dehydrated. Useful for non-JSON-serializable data. |
+| <a id="options-property-shoulddehydratemutation"></a> `shouldDehydrateMutation?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `boolean` | Predicate to decide whether a given `Mutation` should be dehydrated. Defaults to `defaultShouldDehydrateMutation`. |
+| <a id="options-property-shoulddehydratequery"></a> `shouldDehydrateQuery?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | Predicate to decide whether a given `Query` should be dehydrated. Defaults to `defaultShouldDehydrateQuery`. |
+| <a id="options-property-shouldredacterrors"></a> `shouldRedactErrors?` | (`error`: `unknown`) => `boolean` | Predicate to decide whether a query's error should be redacted before dehydration. Errors are redacted (replaced with a generic `Error('redacted')`) unless this function is provided and returns `false` for the given error, in which case the original error is kept. |
+
 ## Returns
 
 [`DehydratedState`](../interfaces/DehydratedState.md)
 
 The dehydrated state, with the included `queries` and `mutations`.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-mutations"></a> `mutations` | `DehydratedMutation`[] | The dehydrated mutations, by default only the paused ones. |
+| <a id="result-property-queries"></a> `queries` | `DehydratedQuery`[] | The dehydrated queries, by default only the successful ones. |
 
 ## Example
 

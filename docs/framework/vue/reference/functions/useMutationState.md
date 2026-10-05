@@ -40,6 +40,12 @@ themselves depend on other reactive state.
 The `filters` to narrow down matched mutations, and an optional `select` to transform the
 mutation state.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`MutationStateOptions`](../type-aliases/MutationStateOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](../classes/QueryClient.md)

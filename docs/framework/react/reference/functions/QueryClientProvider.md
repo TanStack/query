@@ -24,6 +24,15 @@ comes back online).
 
 The `client` to provide, and the `children` that get access to it.
 
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children?` | `React.ReactNode` | The components that get access to the provided `QueryClient`. |
+| <a id="props-property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |
+
 ## Returns
 
 `Element`
