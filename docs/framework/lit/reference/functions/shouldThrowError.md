@@ -25,10 +25,10 @@ resolves to `false`).
 
 ### throwOnError
 
+`boolean` \| `T` \| `undefined`
+
 The `throwOnError` option: a boolean, a function that decides per error, or
 `undefined`.
-
-`boolean` | `T` | `undefined`
 
 ### params
 

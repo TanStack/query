@@ -15,5 +15,5 @@ The props accepted by `QueryClientProvider`.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="children"></a> `children` | `Snippet` | The children that can use the provided `QueryClient`. |
-| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | The `QueryClient` to provide to the children. |
+| <a id="property-children"></a> `children` | `Snippet` | The children that can use the provided `QueryClient`. |
+| <a id="property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | The `QueryClient` to provide to the children. |

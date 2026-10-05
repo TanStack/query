@@ -11,4 +11,4 @@ The base shape of the events that the query and mutation caches send to their li
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` | The kind of event, e.g. `'added'`, `'removed'`, or `'updated'`. |
+| <a id="property-type"></a> `type` | \| `"added"` \| `"removed"` \| `"updated"` \| `"observerAdded"` \| `"observerRemoved"` \| `"observerResultsUpdated"` \| `"observerOptionsUpdated"` | The kind of event, e.g. `'added'`, `'removed'`, or `'updated'`. |

@@ -31,14 +31,14 @@ const unsubscribe = queryCache.subscribe((event) => {
 ### Constructor
 
 ```ts
-new QueryCache(config: QueryCacheConfig): QueryCache;
+new QueryCache(config?: QueryCacheConfig): QueryCache;
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:143](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L143)
 
 #### Parameters
 
-##### config
+##### config?
 
 [`QueryCacheConfig`](../interfaces/QueryCacheConfig.md) = `{}`
 
@@ -229,7 +229,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 ### findAll()
 
 ```ts
-findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
+findAll(filters?: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:349](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L349)
@@ -242,7 +242,7 @@ information about queries in rare scenarios.
 
 #### Parameters
 
-##### filters
+##### filters?
 
 [`QueryFilters`](../interfaces/QueryFilters.md)\<`any`\> = `{}`
 
@@ -439,13 +439,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 

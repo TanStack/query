@@ -1,13 +1,12 @@
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { dirname, resolve } from 'node:path'
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
 const typedocConfigPackageJson =
   require.resolve('@tanstack/typedoc-config/package.json')
-const typedocConfigDir = dirname(typedocConfigPackageJson)
 const typedocConfigRequire = createRequire(typedocConfigPackageJson)
 const TypeDoc = await import(typedocConfigRequire.resolve('typedoc'))
 
@@ -146,7 +145,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     plugin: [
       'typedoc-plugin-markdown',
       'typedoc-plugin-frontmatter',
-      resolve(typedocConfigDir, './src/typedoc-custom-settings.js'),
+      '@tanstack/typedoc-config/typedoc-custom-settings',
     ],
     hideGenerator: true,
     readme: 'none',
@@ -175,6 +174,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     sourceLinkTemplate:
       'https://github.com/TanStack/query/blob/{gitRevision}/{path}#L{line}',
     gitRevision: 'main',
+    displayBasePath: resolve(__dirname, '..'),
     entryPoints: pkg.entryPoints,
     tsconfig: pkg.tsconfig,
     ...(pkg.exclude && { exclude: pkg.exclude }),

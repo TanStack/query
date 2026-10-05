@@ -26,5 +26,5 @@ one (to its state, by default).
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="filters"></a> `filters?` | `VueMutationFilters` | The filters that select the mutations to return the state of. |
-| <a id="select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |
+| <a id="property-filters"></a> `filters?` | `VueMutationFilters` | The filters that select the mutations to return the state of. |
+| <a id="property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |

@@ -17,4 +17,4 @@ state and resume automatically when their turn comes. Mutations with no scope al
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="id"></a> `id` | `string` | The scope's identifier. Mutations with the same `id` run one after another. |
+| <a id="property-id"></a> `id` | `string` | The scope's identifier. Mutations with the same `id` run one after another. |

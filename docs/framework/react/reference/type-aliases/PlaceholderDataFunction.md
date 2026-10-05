@@ -33,11 +33,12 @@ Defined in: [packages/query-core/src/types.ts:268](https://github.com/TanStack/q
 
 ### previousData
 
-`TQueryData` | `undefined`
+`TQueryData` \| `undefined`
 
 ### previousQuery
 
-[`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\> | `undefined`
+  \| [`Query`](../classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\>
+  \| `undefined`
 
 ## Returns
 

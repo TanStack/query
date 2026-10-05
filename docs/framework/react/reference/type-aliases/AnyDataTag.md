@@ -15,5 +15,5 @@ Matches any type that has been tagged with [DataTag](DataTag.md), whatever its d
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` | The error type the key was tagged with. |
-| <a id="datatagsymbol"></a> `[dataTagSymbol]` | `any` | The data type the key was tagged with. |
+| <a id="property-datatagerrorsymbol"></a> `[dataTagErrorSymbol]` | `any` | The error type the key was tagged with. |
+| <a id="property-datatagsymbol"></a> `[dataTagSymbol]` | `any` | The data type the key was tagged with. |

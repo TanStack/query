@@ -11,4 +11,4 @@ Options for `injectQuery`, passed after the function that returns the query opti
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="injector"></a> `injector?` | `Injector` | The `Injector` in which to create the query. If this is not provided, the current injection context will be used instead (via `inject`). |
+| <a id="property-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the query. If this is not provided, the current injection context will be used instead (via `inject`). |

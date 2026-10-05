@@ -13,4 +13,4 @@ omit it to use the current time.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="updatedat"></a> `updatedAt?` | `number` | The timestamp to record the data with, instead of the current time. Staleness is measured from it. |
+| <a id="property-updatedat"></a> `updatedAt?` | `number` | The timestamp to record the data with, instead of the current time. Staleness is measured from it. |

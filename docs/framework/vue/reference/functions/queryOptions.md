@@ -118,13 +118,7 @@ A function returning the [DefinedInitialQueryOptions](../type-aliases/DefinedIni
 A function that returns the same options object, typed so that `queryKey` carries the inferred data
 type.
 
-```ts
-(): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
-```
-
-#### Returns
-
-[`DefinedInitialQueryOptionsWithDataTag`](../type-aliases/DefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`DefinedInitialQueryOptionsWithDataTag`](../type-aliases/DefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### See
 
@@ -260,13 +254,7 @@ demand.
 A function that returns the same options object, typed so that `queryKey` carries the inferred
 data type.
 
-```ts
-(): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
-```
-
-#### Returns
-
-[`UndefinedInitialQueryOptionsWithDataTag`](../type-aliases/UndefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`UndefinedInitialQueryOptionsWithDataTag`](../type-aliases/UndefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### See
 

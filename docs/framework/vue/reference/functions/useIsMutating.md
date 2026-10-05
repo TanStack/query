@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 ```ts
-function useIsMutating(filters: UseIsMutatingFilters, queryClient?: QueryClient): Ref<number>;
+function useIsMutating(filters?: UseIsMutatingFilters, queryClient?: QueryClient): Ref<number>;
 ```
 
 Defined in: [packages/vue-query/src/useMutationState.ts:54](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L54)
@@ -19,7 +19,7 @@ the filters themselves depend on other reactive state.
 
 ## Parameters
 
-### filters
+### filters?
 
 [`UseIsMutatingFilters`](../type-aliases/UseIsMutatingFilters.md) = `{}`
 
