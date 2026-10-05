@@ -3,22 +3,6 @@ id: queryOptions
 title: queryOptions
 ---
 
-## Overview
-
-```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
-```
-
-- [`DefinedInitialDataOptions` → `Omit`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UnusedSkipTokenOptions` → `OmitKeyof`](#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
-- [`UndefinedInitialDataOptions` → `CreateQueryOptions`](#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `injectQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchQuery`. `options.queryKey` is required and is the query key to generate options for.
-
-See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
-
-<a id="call-signature-1"></a>
-
 ## Call Signature
 
 ```ts
@@ -101,8 +85,6 @@ export class Posts {
 }
 ```
 
-<a id="call-signature-2"></a>
-
 ## Call Signature
 
 ```ts
@@ -179,8 +161,6 @@ export class Post {
   readonly postQuery = injectQuery(() => postOptions(this.id()))
 }
 ```
-
-<a id="call-signature-3"></a>
 
 ## Call Signature
 
@@ -292,25 +272,3 @@ export class Post {
   readonly postQuery = injectQuery(() => postOptions(this.postId()))
 }
 ```
-
-<a id="parameters-summary"></a>
-
-## Parameters
-
-### options
-
-[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
-
-The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `injectQuery`.
-
-<a id="options-properties"></a>
-
-#### `options` properties
-
-Built from [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md#properties). See the type above for what it changes.
-
-<a id="returns-summary"></a>
-
-## Returns
-
-The same options object, typed so that `queryKey` carries the inferred data type.

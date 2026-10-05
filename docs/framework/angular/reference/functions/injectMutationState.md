@@ -34,14 +34,6 @@ in the reactive context, so signals read inside it re-narrow the matched mutatio
 
 Additional configuration
 
-<a id="options-properties"></a>
-
-#### `options` properties
-
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="options-injector"></a> `injector?` | `Injector` | The `Injector` in which to create the mutation state signal. If this is not provided, the current injection context will be used instead (via `inject`). |
-
 ## Returns
 
 `Signal`\<`TResult`[]\>

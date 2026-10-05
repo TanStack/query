@@ -21,17 +21,6 @@ If a `mutationKey` filter is provided but the mutation has no `mutationKey` of i
 
 The filters to check the mutation against.
 
-<a id="filters-properties"></a>
-
-#### `filters` properties
-
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="filters-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
-| <a id="filters-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
-| <a id="filters-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](../classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
-| <a id="filters-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
-
 ### mutation
 
 [`Mutation`](../classes/Mutation.md)\<`any`, `any`\>
