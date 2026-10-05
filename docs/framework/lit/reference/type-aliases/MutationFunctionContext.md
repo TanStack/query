@@ -16,6 +16,6 @@ The object passed to `mutationFn` and the mutation callbacks: the `QueryClient`,
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | The `QueryClient` the mutation runs in. |
-| <a id="meta"></a> `meta` | [`MutationMeta`](MutationMeta.md) \| `undefined` | The `meta` of the mutation options. |
-| <a id="mutationkey"></a> `mutationKey?` | [`MutationKey`](MutationKey.md) | The `mutationKey` of the mutation options, if set. |
+| <a id="property-client"></a> `client` | [`QueryClient`](../classes/QueryClient.md) | The `QueryClient` the mutation runs in. |
+| <a id="property-meta"></a> `meta` | [`MutationMeta`](MutationMeta.md) \| `undefined` | The `meta` of the mutation options. |
+| <a id="property-mutationkey"></a> `mutationKey?` | [`MutationKey`](MutationKey.md) | The `mutationKey` of the mutation options, if set. |

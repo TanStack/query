@@ -30,4 +30,4 @@ An object whose `queryKey` is tagged with [DataTag](DataTag.md), like the option
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="querykey"></a> `queryKey` | [`DataTag`](DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\> | The query key, tagged with the query's data and error types. |
+| <a id="property-querykey"></a> `queryKey` | [`DataTag`](DataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\> | The query key, tagged with the query's data and error types. |

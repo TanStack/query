@@ -133,7 +133,7 @@ class QueryController<
     this.assignObserverResult(observer.getOptimisticResult(defaulted))
   }
 
-  protected onConnected(): void {
+  protected override onConnected(): void {
     if (!this.syncClient()) {
       return
     }
@@ -146,12 +146,12 @@ class QueryController<
     }
   }
 
-  protected onDisconnected(): void {
+  protected override onDisconnected(): void {
     this.unsubscribeObserver()
     this.syncClient()
   }
 
-  protected onHostUpdate(): void {
+  protected override onHostUpdate(): void {
     if (typeof this.options !== 'function') {
       return
     }
@@ -159,7 +159,7 @@ class QueryController<
     this.refreshOptions()
   }
 
-  protected onQueryClientChanged(): void {
+  protected override onQueryClientChanged(): void {
     if (!this.syncClient()) {
       return
     }

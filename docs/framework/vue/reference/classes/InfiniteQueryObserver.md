@@ -126,7 +126,7 @@ Defined in: [packages/query-core/src/queryObserver.ts:88](https://github.com/Tan
 
 ***
 
-### subscribe()
+### subscribe
 
 ```ts
 subscribe: (listener: InfiniteQueryObserverListener) => () => void;
@@ -150,13 +150,7 @@ Called on each update, with whatever the subclass passes to its subscribers.
 
 A function that removes the listener.
 
-```ts
-(): void;
-```
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Example
 
@@ -414,7 +408,7 @@ Returns `true` while at least one listener is registered, `false` once they have
 ### refetch()
 
 ```ts
-refetch(options: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
+refetch(options?: RefetchOptions): Promise<QueryObserverResult<TData, TError>>;
 ```
 
 Defined in: [packages/query-core/src/queryObserver.ts:387](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L387)
@@ -424,7 +418,7 @@ the resulting `QueryObserverResult`.
 
 #### Parameters
 
-##### options
+##### options?
 
 [`RefetchOptions`](../interfaces/RefetchOptions.md) = `{}`
 
@@ -571,9 +565,33 @@ access themselves (e.g. through their own reactivity system) instead of via the 
 
 ##### key
 
-The name of the property that was read.
+  \| `"error"`
+  \| `"data"`
+  \| `"isError"`
+  \| `"isPending"`
+  \| `"isLoading"`
+  \| `"isLoadingError"`
+  \| `"isRefetchError"`
+  \| `"isSuccess"`
+  \| `"isPlaceholderData"`
+  \| `"status"`
+  \| `"dataUpdatedAt"`
+  \| `"errorUpdatedAt"`
+  \| `"failureCount"`
+  \| `"failureReason"`
+  \| `"errorUpdateCount"`
+  \| `"isFetched"`
+  \| `"isFetchedAfterMount"`
+  \| `"isFetching"`
+  \| `"isInitialLoading"`
+  \| `"isPaused"`
+  \| `"isRefetching"`
+  \| `"isStale"`
+  \| `"isEnabled"`
+  \| `"refetch"`
+  \| `"fetchStatus"`
 
-`"error"` | `"data"` | `"isError"` | `"isPending"` | `"isLoading"` | `"isLoadingError"` | `"isRefetchError"` | `"isSuccess"` | `"isPlaceholderData"` | `"status"` | `"dataUpdatedAt"` | `"errorUpdatedAt"` | `"failureCount"` | `"failureReason"` | `"errorUpdateCount"` | `"isFetched"` | `"isFetchedAfterMount"` | `"isFetching"` | `"isInitialLoading"` | `"isPaused"` | `"isRefetching"` | `"isStale"` | `"isEnabled"` | `"refetch"` | `"fetchStatus"`
+The name of the property that was read.
 
 #### Returns
 

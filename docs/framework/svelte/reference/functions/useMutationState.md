@@ -4,7 +4,7 @@ title: useMutationState
 ---
 
 ```ts
-function useMutationState<TResult, TMutation>(options: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
+function useMutationState<TResult, TMutation>(options?: MutationStateOptions<TResult, TMutation>, queryClient?: QueryClient): TResult[];
 ```
 
 Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:103](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.svelte.ts#L103)
@@ -25,7 +25,7 @@ state.
 
 ## Parameters
 
-### options
+### options?
 
 [`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`, `TMutation`\> = `{}`
 

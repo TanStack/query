@@ -16,7 +16,7 @@ result. The attached methods delegate to the active mutation observer.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;
@@ -28,7 +28,7 @@ Removes the controller from its Lit host and unsubscribes observers.
 
 `void`
 
-### mutate()
+### mutate
 
 ```ts
 mutate: (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;

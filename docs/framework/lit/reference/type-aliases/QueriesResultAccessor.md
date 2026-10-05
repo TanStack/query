@@ -16,7 +16,7 @@ value.
 
 ## Type Declaration
 
-### destroy()
+### destroy
 
 ```ts
 destroy: () => void;

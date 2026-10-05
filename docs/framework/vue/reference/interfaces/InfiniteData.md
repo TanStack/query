@@ -22,5 +22,5 @@ The data shape of an infinite query: every page fetched so far, plus the page pa
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="pageparams"></a> `pageParams` | `TPageParam`[] | The page param each page was fetched with, aligned by index with `pages`. |
-| <a id="pages"></a> `pages` | `TData`[] | The data of every page fetched so far, in order. |
+| <a id="property-pageparams"></a> `pageParams` | `TPageParam`[] | The page param each page was fetched with, aligned by index with `pages`. |
+| <a id="property-pages"></a> `pages` | `TData`[] | The data of every page fetched so far, in order. |

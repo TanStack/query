@@ -14,7 +14,7 @@ Defined in: [packages/query-core/src/types.ts:791](https://github.com/TanStack/q
 ### ~~revalidateIfStale?~~
 
 ```ts
-optional revalidateIfStale: boolean;
+optional revalidateIfStale?: boolean;
 ```
 
 ## Type Parameters
