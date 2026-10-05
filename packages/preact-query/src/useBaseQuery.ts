@@ -81,9 +81,12 @@ export function useBaseQuery<
   }
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
+  const subscribed = options.subscribed !== false
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
-    : 'optimistic'
+    : subscribed
+      ? 'optimistic'
+      : undefined
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
@@ -101,7 +104,7 @@ export function useBaseQuery<
   // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  const shouldSubscribe = !isRestoring && subscribed
   useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
