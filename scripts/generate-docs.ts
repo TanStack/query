@@ -156,7 +156,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     hidePageTitle: true,
     useCodeBlocks: true,
     // `parametersFormat` and `typeDeclarationFormat` are deliberately left as lists: the first
-    // inlines the huge conditional types of `useQueries` into a single cell and drops `@default`
+    // puts the huge conditional types of `useQueries` into a single cell and drops `@default`
     // blocks, and the second collapses `@example` code blocks onto one line, which swallows the
     // following statement into a `//` comment.
     interfacePropertiesFormat: 'table',
