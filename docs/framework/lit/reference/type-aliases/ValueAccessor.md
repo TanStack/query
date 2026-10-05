@@ -4,7 +4,9 @@ title: ValueAccessor
 ---
 
 ```ts
-type ValueAccessor<T> = () => T & object;
+type ValueAccessor<T> = () => T & {
+  current: T;
+};
 ```
 
 Defined in: [packages/lit-query/src/accessor.ts:35](https://github.com/TanStack/query/blob/main/packages/lit-query/src/accessor.ts#L35)

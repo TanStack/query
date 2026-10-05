@@ -8,8 +8,12 @@ redirect_from:
 ## Overview
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData: TQueryFnData | (() => TQueryFnData);
+}): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?: undefined;
+}): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 - [`ReturnType<DefinedInitialDataOptions>` → `ReturnType<DefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
@@ -22,7 +26,9 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData: TQueryFnData | (() => TQueryFnData);
+}): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:86](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L86)
@@ -56,7 +62,9 @@ a `select` changes `TData` to include `undefined`).
 
 #### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData`: `TQueryFnData` \| (() => `TQueryFnData`);
+\}
 
 The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` set.
 
@@ -103,7 +111,9 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?: undefined;
+}): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:134](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L134)
@@ -134,7 +144,9 @@ is the query key to generate options for.
 
 #### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData?`: `undefined`;
+\}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 
@@ -182,7 +194,9 @@ function Post(props: { id: string }) {
 
 ### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData?`: `undefined`;
+\}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 

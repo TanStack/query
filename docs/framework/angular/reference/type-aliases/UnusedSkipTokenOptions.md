@@ -4,7 +4,9 @@ title: UnusedSkipTokenOptions
 ---
 
 ```ts
-type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object;
+type UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> = OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & {
+  queryFn?: Exclude<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>["queryFn"], SkipToken | undefined>;
+};
 ```
 
 Defined in: [packages/angular-query-experimental/src/query-options.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L48)

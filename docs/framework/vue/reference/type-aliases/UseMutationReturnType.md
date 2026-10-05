@@ -4,7 +4,11 @@ title: UseMutationReturnType
 ---
 
 ```ts
-type UseMutationReturnType<TData, TError, TVariables, TOnMutateResult, TResult> = ToRefs<Readonly<TResult>> & object;
+type UseMutationReturnType<TData, TError, TVariables, TOnMutateResult, TResult> = ToRefs<Readonly<TResult>> & {
+  mutate: MutateSyncFunction<TData, TError, TVariables, TOnMutateResult>;
+  mutateAsync: MutateFunction<TData, TError, TVariables, TOnMutateResult>;
+  reset: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>["reset"];
+};
 ```
 
 Defined in: [packages/vue-query/src/useMutation.ts:61](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutation.ts#L61)

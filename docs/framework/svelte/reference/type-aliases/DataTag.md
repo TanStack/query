@@ -4,7 +4,10 @@ title: DataTag
 ---
 
 ```ts
-type DataTag<TType, TValue, TError> = TType extends AnyDataTag ? TType : TType & object;
+type DataTag<TType, TValue, TError> = TType extends AnyDataTag ? TType : TType & {
+  [dataTagErrorSymbol]: TError;
+  [dataTagSymbol]: TValue;
+};
 ```
 
 Defined in: [packages/query-core/src/types.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L136)

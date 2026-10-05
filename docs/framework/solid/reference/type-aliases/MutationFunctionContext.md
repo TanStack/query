@@ -4,7 +4,11 @@ title: MutationFunctionContext
 ---
 
 ```ts
-type MutationFunctionContext = object;
+type MutationFunctionContext = {
+  client: QueryClient;
+  meta: MutationMeta | undefined;
+  mutationKey?: MutationKey;
+};
 ```
 
 Defined in: [packages/query-core/src/types.ts:1849](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1849)

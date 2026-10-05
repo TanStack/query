@@ -4,7 +4,9 @@ title: QueriesResultAccessor
 ---
 
 ```ts
-type QueriesResultAccessor<TCombinedResult> = ValueAccessor<TCombinedResult> & object;
+type QueriesResultAccessor<TCombinedResult> = ValueAccessor<TCombinedResult> & {
+  destroy: () => void;
+};
 ```
 
 Defined in: [packages/lit-query/src/createQueriesController.ts:213](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueriesController.ts#L213)

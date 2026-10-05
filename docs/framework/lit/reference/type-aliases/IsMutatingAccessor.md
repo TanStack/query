@@ -4,7 +4,9 @@ title: IsMutatingAccessor
 ---
 
 ```ts
-type IsMutatingAccessor = ValueAccessor<number> & object;
+type IsMutatingAccessor = ValueAccessor<number> & {
+  destroy: () => void;
+};
 ```
 
 Defined in: [packages/lit-query/src/useIsMutating.ts:13](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsMutating.ts#L13)

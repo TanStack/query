@@ -4,7 +4,11 @@ title: DefinedInitialDataInfiniteOptions
 ---
 
 ```ts
-type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
+type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+  initialData:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+     | undefined;
+};
 ```
 
 Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L106)

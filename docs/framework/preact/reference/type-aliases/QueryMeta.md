@@ -4,7 +4,9 @@ title: QueryMeta
 ---
 
 ```ts
-type QueryMeta = Register extends object ? TQueryMeta extends Record<string, unknown> ? TQueryMeta : Record<string, unknown> : Record<string, unknown>;
+type QueryMeta = Register extends {
+  queryMeta: infer TQueryMeta;
+} ? TQueryMeta extends Record<string, unknown> ? TQueryMeta : Record<string, unknown> : Record<string, unknown>;
 ```
 
 Defined in: [packages/query-core/src/types.ts:328](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L328)

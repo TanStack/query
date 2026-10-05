@@ -4,7 +4,21 @@ title: QueryFunctionContext
 ---
 
 ```ts
-type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? object : object;
+type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? {
+  client: QueryClient;
+  direction?: unknown;
+  meta: QueryMeta | undefined;
+  pageParam?: unknown;
+  queryKey: TQueryKey;
+  signal: AbortSignal;
+} : {
+  client: QueryClient;
+  direction: FetchDirection;
+  meta: QueryMeta | undefined;
+  pageParam: TPageParam;
+  queryKey: TQueryKey;
+  signal: AbortSignal;
+};
 ```
 
 Defined in: [packages/query-core/src/types.ts:233](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L233)

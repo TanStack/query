@@ -4,7 +4,10 @@ title: MutationStateOptions
 ---
 
 ```ts
-type MutationStateOptions<TResult, TMutation> = object;
+type MutationStateOptions<TResult, TMutation> = {
+  filters?: VueMutationFilters;
+  select?: (mutation: TMutation) => TResult;
+};
 ```
 
 Defined in: [packages/vue-query/src/useMutationState.ts:97](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useMutationState.ts#L97)

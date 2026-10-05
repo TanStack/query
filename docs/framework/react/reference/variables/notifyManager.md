@@ -7,7 +7,14 @@ redirect_from:
 ---
 
 ```ts
-const notifyManager: object;
+const notifyManager: {
+  batch: <T>(callback: () => T) => T;
+  batchCalls: <T>(callback: BatchCallsCallback<T>) => BatchCallsCallback<T>;
+  schedule: (callback: NotifyCallback) => void;
+  setBatchNotifyFunction: (fn: BatchNotifyFunction) => void;
+  setNotifyFunction: (fn: NotifyFunction) => void;
+  setScheduler: (fn: ScheduleFunction) => void;
+};
 ```
 
 Defined in: [packages/query-core/src/notifyManager.ts:154](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L154)

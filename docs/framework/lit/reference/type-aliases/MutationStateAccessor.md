@@ -4,7 +4,9 @@ title: MutationStateAccessor
 ---
 
 ```ts
-type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & object;
+type MutationStateAccessor<TResult> = ValueAccessor<TResult[]> & {
+  destroy: () => void;
+};
 ```
 
 Defined in: [packages/lit-query/src/useMutationState.ts:29](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useMutationState.ts#L29)

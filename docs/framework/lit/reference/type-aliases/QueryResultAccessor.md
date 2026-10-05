@@ -4,7 +4,11 @@ title: QueryResultAccessor
 ---
 
 ```ts
-type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & object;
+type QueryResultAccessor<TData, TError> = ValueAccessor<QueryObserverResult<TData, TError>> & {
+  destroy: () => void;
+  refetch: QueryObserverResult<TData, TError>["refetch"];
+  suspense: () => Promise<QueryObserverResult<TData, TError>>;
+};
 ```
 
 Defined in: [packages/lit-query/src/createQueryController.ts:38](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createQueryController.ts#L38)

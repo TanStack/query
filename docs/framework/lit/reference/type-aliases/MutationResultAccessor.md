@@ -4,7 +4,12 @@ title: MutationResultAccessor
 ---
 
 ```ts
-type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & object;
+type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> = ValueAccessor<MutationObserverResult<TData, TError, TVariables, TOnMutateResult>> & {
+  destroy: () => void;
+  mutate: (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
+  mutateAsync: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>["mutate"];
+  reset: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>["reset"];
+};
 ```
 
 Defined in: [packages/lit-query/src/createMutationController.ts:34](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createMutationController.ts#L34)

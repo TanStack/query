@@ -4,7 +4,9 @@ title: IsFetchingAccessor
 ---
 
 ```ts
-type IsFetchingAccessor = ValueAccessor<number> & object;
+type IsFetchingAccessor = ValueAccessor<number> & {
+  destroy: () => void;
+};
 ```
 
 Defined in: [packages/lit-query/src/useIsFetching.ts:13](https://github.com/TanStack/query/blob/main/packages/lit-query/src/useIsFetching.ts#L13)

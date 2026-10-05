@@ -4,7 +4,9 @@ title: QueryKeyWithDataTag
 ---
 
 ```ts
-type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = object;
+type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>;
+};
 ```
 
 Defined in: [packages/query-core/src/types.ts:151](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L151)

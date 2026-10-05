@@ -4,7 +4,9 @@ title: UndefinedInitialDataOptions
 ---
 
 ```ts
-type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object>;
+type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Accessor<QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?: undefined;
+}>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:19](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L19)

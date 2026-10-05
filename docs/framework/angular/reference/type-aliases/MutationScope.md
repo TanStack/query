@@ -4,7 +4,9 @@ title: MutationScope
 ---
 
 ```ts
-type MutationScope = object;
+type MutationScope = {
+  id: string;
+};
 ```
 
 Defined in: [packages/query-core/src/types.ts:1826](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1826)

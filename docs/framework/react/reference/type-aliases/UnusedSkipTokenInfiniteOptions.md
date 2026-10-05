@@ -4,7 +4,9 @@ title: UnusedSkipTokenInfiniteOptions
 ---
 
 ```ts
-type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
+type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & {
+  queryFn?: Exclude<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
+};
 ```
 
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:62](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L62)

@@ -4,7 +4,12 @@ title: InfiniteQueryResultAccessor
 ---
 
 ```ts
-type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & object;
+type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<InfiniteQueryObserverResult<TData, TError>> & {
+  destroy: () => void;
+  fetchNextPage: InfiniteQueryObserverResult<TData, TError>["fetchNextPage"];
+  fetchPreviousPage: InfiniteQueryObserverResult<TData, TError>["fetchPreviousPage"];
+  refetch: InfiniteQueryObserverResult<TData, TError>["refetch"];
+};
 ```
 
 Defined in: [packages/lit-query/src/createInfiniteQueryController.ts:45](https://github.com/TanStack/query/blob/main/packages/lit-query/src/createInfiniteQueryController.ts#L45)

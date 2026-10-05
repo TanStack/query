@@ -4,7 +4,10 @@ title: MutationStateOptions
 ---
 
 ```ts
-type MutationStateOptions<TResult, TMutation> = object;
+type MutationStateOptions<TResult, TMutation> = {
+  filters?: MutationFilters;
+  select?: (mutation: TMutation) => TResult;
+};
 ```
 
 Defined in: [packages/svelte-query/src/types.ts:180](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L180)

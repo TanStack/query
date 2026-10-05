@@ -4,7 +4,10 @@ title: UndefinedInitialDataInfiniteOptions
 ---
 
 ```ts
-type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
+type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+  initialData?:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+     | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
+};
 ```
 
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:23](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L23)

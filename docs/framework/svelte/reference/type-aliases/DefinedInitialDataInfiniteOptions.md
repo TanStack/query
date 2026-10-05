@@ -4,7 +4,10 @@ title: DefinedInitialDataInfiniteOptions
 ---
 
 ```ts
-type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
+type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+  initialData:   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
+};
 ```
 
 Defined in: [packages/svelte-query/src/infiniteQueryOptions.ts:40](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/infiniteQueryOptions.ts#L40)

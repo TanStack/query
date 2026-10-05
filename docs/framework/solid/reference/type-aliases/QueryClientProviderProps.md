@@ -4,7 +4,10 @@ title: QueryClientProviderProps
 ---
 
 ```ts
-type QueryClientProviderProps = object;
+type QueryClientProviderProps = {
+  children?: JSX.Element;
+  client: QueryClient;
+};
 ```
 
 Defined in: [packages/solid-query/src/QueryClientProvider.tsx:69](https://github.com/TanStack/query/blob/main/packages/solid-query/src/QueryClientProvider.tsx#L69)

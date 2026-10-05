@@ -4,7 +4,10 @@ title: UndefinedInitialDataOptions
 ---
 
 ```ts
-type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & object;
+type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+  initialData?:   | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+     | NonUndefinedGuard<TQueryFnData>;
+};
 ```
 
 Defined in: [packages/lit-query/src/queryOptions.ts:57](https://github.com/TanStack/query/blob/main/packages/lit-query/src/queryOptions.ts#L57)
