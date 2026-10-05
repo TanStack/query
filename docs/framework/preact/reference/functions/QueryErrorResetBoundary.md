@@ -27,7 +27,7 @@ The `children` to render.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="props-children"></a> `children` | \| `ComponentChildren` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
+| <a id="props-property-children"></a> `children` | \| `ComponentChildren` \| [`QueryErrorResetBoundaryFunction`](../type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
 
 ## Returns
 

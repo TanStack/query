@@ -47,8 +47,8 @@ Mutation state filters and optional selector.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="options-filters"></a> `filters?` | [`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
-| <a id="options-select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |
+| <a id="options-property-filters"></a> `filters?` | [`Accessor`](../type-aliases/Accessor.md)\<[`MutationFilters`](../interfaces/MutationFilters.md)\> | Filters used to select mutations from the mutation cache. |
+| <a id="options-property-select"></a> `select?` | (`mutation`: [`Mutation`](../classes/Mutation.md)) => `TResult` | Maps each matching mutation to the value returned by the accessor. |
 
 ### queryClient?
 

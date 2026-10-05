@@ -3,6 +3,22 @@ id: infiniteQueryOptions
 title: infiniteQueryOptions
 ---
 
+## Overview
+
+```ts
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+```
+
+- [`DefinedInitialDataInfiniteOptions` → `CreateInfiniteQueryOptions`](#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenInfiniteOptions` → `OmitKeyof`](#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataInfiniteOptions` → `CreateInfiniteQueryOptions`](#call-signature-3): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -93,6 +109,8 @@ export class Projects {
   readonly projectsQuery = injectInfiniteQuery(() => projectsOptions)
 }
 ```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
@@ -189,6 +207,8 @@ export class Comments {
 }
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
@@ -283,3 +303,26 @@ export class Comments {
   readonly commentsQuery = injectInfiniteQuery(() => commentsOptions(this.postId()))
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataInfiniteOptions`](../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The [UndefinedInitialDataInfiniteOptions](../type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to
+`injectInfiniteQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`CreateInfiniteQueryOptions`](../interfaces/CreateInfiniteQueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+The same options object, typed so that `queryKey` carries the inferred data type.

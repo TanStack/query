@@ -38,8 +38,8 @@ mutation state.
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="options-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | The filters that select the mutations to return the state of. |
-| <a id="options-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |
+| <a id="options-property-filters"></a> `filters?` | [`MutationFilters`](../interfaces/MutationFilters.md) | The filters that select the mutations to return the state of. |
+| <a id="options-property-select"></a> `select?` | (`mutation`: `TMutation`) => `TResult` | Maps each matching mutation to the value returned for it. Defaults to the mutation's `state`. |
 
 ### queryClient?
 

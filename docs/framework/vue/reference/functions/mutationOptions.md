@@ -333,10 +333,4 @@ demand.
 
 A function that returns the same options object, unchanged.
 
-```ts
-(): Omit<MutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
-```
-
-#### Returns
-
-`Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+() => `Omit`\<[`MutationOptions`](../type-aliases/MutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>

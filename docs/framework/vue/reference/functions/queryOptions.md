@@ -342,10 +342,4 @@ demand.
 A function that returns the same options object, typed so that `queryKey` carries the inferred
 data type.
 
-```ts
-(): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
-```
-
-#### Returns
-
-[`UndefinedInitialQueryOptionsWithDataTag`](../type-aliases/UndefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`UndefinedInitialQueryOptionsWithDataTag`](../type-aliases/UndefinedInitialQueryOptionsWithDataTag.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>

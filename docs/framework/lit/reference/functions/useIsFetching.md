@@ -38,14 +38,7 @@ Query filters, or a getter that returns query filters.
 
 #### `filters` properties
 
-| Property | Type | Default value | Description |
-| ------ | ------ | ------ | ------ |
-| <a id="filters-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
-| <a id="filters-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
-| <a id="filters-predicate"></a> `predicate?` | (`query`: [`Query`](../classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
-| <a id="filters-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
-| <a id="filters-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
-| <a id="filters-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
+Built from [`QueryFilters`](../interfaces/QueryFilters.md#properties). See the type above for what it changes.
 
 ### queryClient?
 
