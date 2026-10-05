@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import ts from 'typescript'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const require = createRequire(import.meta.url)
@@ -300,6 +301,100 @@ async function typeNameInCode(outputDir: string, code: string) {
       }
     }
   }
+}
+
+// The parameter and return types of the declaration a call signature's "Defined in" line points to, as
+// written in the source. The rendered code loses aliases that TypeScript flattens into an intersection,
+// e.g. `Options<T> & QueryKeyWithDataTag<T>` becomes the members of `Options` followed by the tag.
+const sourceFiles = new Map<string, ts.SourceFile>()
+async function declaredSignatureTypes(signature: string) {
+  const location = signature.match(/^Defined in: \[([^\]]+):(\d+)\]/m)
+  if (!location) {
+    return undefined
+  }
+  const [, file, line] = location
+  let source = sourceFiles.get(file!)
+  if (!source) {
+    const text = await readFile(resolve(__dirname, '..', file!), 'utf8').catch(
+      () => undefined,
+    )
+    if (text === undefined) {
+      return undefined
+    }
+    source = ts.createSourceFile(file!, text, ts.ScriptTarget.Latest, true)
+    sourceFiles.set(file!, source)
+  }
+  let found: ts.SignatureDeclaration | undefined
+  const visit = (node: ts.Node) => {
+    if (found) {
+      return
+    }
+    if (
+      ts.isFunctionLike(node) &&
+      'parameters' in node &&
+      source.getLineAndCharacterOfPosition(node.getStart()).line ===
+        Number(line) - 1
+    ) {
+      found = node
+      return
+    }
+    ts.forEachChild(node, visit)
+  }
+  visit(source)
+  return found && { parameter: found.parameters[0]?.type, returns: found.type }
+}
+
+// Types that only transform their first type argument, so a label keeps that argument to stay
+// meaningful, e.g. `Omit<UseMutationOptions>` instead of `Omit`.
+const typeTransforms = new Set([
+  'Awaited',
+  'DistributiveOmit',
+  'NonNullable',
+  'Omit',
+  'OmitKeyof',
+  'Partial',
+  'Readonly',
+  'Required',
+  'ReturnType',
+  'WithRequired',
+])
+
+// The label of a declared type: the members of an intersection or union joined, a getter's result, the
+// keys of an object type, or the name looked up through the same wrappers as `typeNameInCode`.
+async function declaredTypeLabel(
+  outputDir: string,
+  node: ts.TypeNode,
+): Promise<string | undefined> {
+  if (ts.isParenthesizedTypeNode(node)) {
+    return declaredTypeLabel(outputDir, node.type)
+  }
+  if (ts.isIntersectionTypeNode(node) || ts.isUnionTypeNode(node)) {
+    const members = await Promise.all(
+      node.types.map((member) => declaredTypeLabel(outputDir, member)),
+    )
+    return members.every(Boolean)
+      ? members.join(ts.isIntersectionTypeNode(node) ? ' & ' : ' | ')
+      : undefined
+  }
+  if (ts.isFunctionTypeNode(node) && node.parameters.length === 0) {
+    const result = await declaredTypeLabel(outputDir, node.type)
+    return result && `() => ${result}`
+  }
+  if (ts.isTypeLiteralNode(node)) {
+    const keys = node.members
+      .map((member) => member.name?.getText())
+      .filter(Boolean)
+    return keys.length > 0 ? `{ ${keys.join(', ')} }` : undefined
+  }
+  if (
+    ts.isTypeReferenceNode(node) &&
+    typeTransforms.has(node.typeName.getText()) &&
+    node.typeArguments?.[0]
+  ) {
+    const target = await declaredTypeLabel(outputDir, node.typeArguments[0])
+    return target && `${node.typeName.getText()}<${target}>`
+  }
+  return typeNameInCode(outputDir, node.getText())
 }
 
 // The property table for the first type line that has one.
@@ -673,12 +768,21 @@ async function addReferenceDetails(outputDir: string) {
               !block.startsWith('```') &&
               !block.startsWith('Defined in:'),
           )
+        const declared = await declaredSignatureTypes(signature)
         const label = (
           await Promise.all(
             [
-              code.match(/\((?:\w+\??): ([\s\S]*)/)?.[1],
-              code.match(/\): ([\s\S]*)/)?.[1],
-            ].map((type) => type && typeNameInCode(outputDir, type)),
+              [
+                declared?.parameter,
+                code.match(/\((?:\w+\??): ([\s\S]*)/)?.[1],
+              ] as const,
+              [declared?.returns, code.match(/\): ([\s\S]*)/)?.[1]] as const,
+            ].map(async ([node, type]) =>
+              node
+                ? ((await declaredTypeLabel(outputDir, node)) ??
+                  (type && typeNameInCode(outputDir, type)))
+                : type && typeNameInCode(outputDir, type),
+            ),
           )
         )
           .filter(Boolean)
