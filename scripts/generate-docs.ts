@@ -182,6 +182,36 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     out: outputDir,
   })
 
+  // TypeScript flattens an alias out of an intersection, so `Options<T> & QueryKeyWithDataTag<T>`
+  // would render as the members of `Options` followed by the tag. Convert declared intersections from
+  // the source instead, so signatures keep the alias names they were written with.
+  app.converter.on(
+    TypeDoc.Converter.EVENT_CREATE_SIGNATURE,
+    (
+      context: InstanceType<typeof TypeDoc.Context>,
+      signature: InstanceType<typeof TypeDoc.SignatureReflection>,
+      declaration?: ts.Node,
+    ) => {
+      if (!declaration || !ts.isFunctionLike(declaration)) {
+        return
+      }
+      const scope = context.withScope(signature)
+      if (declaration.type && ts.isIntersectionTypeNode(declaration.type)) {
+        signature.type = scope.converter.convertType(scope, declaration.type)
+      }
+      declaration.parameters.forEach((parameter, index) => {
+        const reflection = signature.parameters?.[index]
+        if (
+          reflection &&
+          parameter.type &&
+          ts.isIntersectionTypeNode(parameter.type)
+        ) {
+          reflection.type = scope.converter.convertType(scope, parameter.type)
+        }
+      })
+    },
+  )
+
   const project = await app.convert()
 
   // `outputDir` was emptied above, so a failed conversion would otherwise leave it that way and
