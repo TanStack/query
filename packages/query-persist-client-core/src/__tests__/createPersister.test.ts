@@ -528,6 +528,22 @@ describe('createPersister', () => {
   })
 
   describe('retrieveQuery', () => {
+    it.each(['null', '{}', '{"state":null}'])(
+      'should remove malformed entry %s without restoring it',
+      async (value) => {
+        const storage = getFreshStorage()
+        const { persister, queryHash, storageKey } = setupPersister(['foo'], {
+          storage,
+        })
+
+        await storage.setItem(storageKey, value)
+
+        const restoredData = await persister.retrieveQuery(queryHash)
+        expect(restoredData).toBeUndefined()
+        expect(await storage.getItem(storageKey)).toBeUndefined()
+      },
+    )
+
     it('should return the persisted data when called without a restore callback', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryHash, queryKey } = setupPersister(
@@ -591,6 +607,31 @@ describe('createPersister', () => {
       await persister.persisterGc()
       expect(await storage.entries()).toHaveLength(1)
     })
+
+    it.each(['null', '{}', '{"state":null}'])(
+      'should remove malformed entry %s and continue garbage collection',
+      async (value) => {
+        const storage = getFreshStorage()
+        const { persister, client, queryKey, storageKey } = setupPersister(
+          ['foo'],
+          { storage },
+        )
+        const malformedKey = `${PERSISTER_KEY_PREFIX}-["malformed"]`
+        const expiredKey = `${PERSISTER_KEY_PREFIX}-["expired"]`
+
+        await storage.setItem(malformedKey, value)
+        client.setQueryData(['expired'], 'expired', { updatedAt: 1 })
+        await persister.persistQueryByKey(['expired'], client)
+        client.setQueryData(queryKey, null)
+        await persister.persistQueryByKey(queryKey, client)
+        const persistedData = await storage.getItem(storageKey)
+
+        await persister.persisterGc()
+        expect(await storage.getItem(malformedKey)).toBeUndefined()
+        expect(await storage.getItem(expiredKey)).toBeUndefined()
+        expect(await storage.entries()).toEqual([[storageKey, persistedData]])
+      },
+    )
   })
 
   describe('restoreQueries', () => {
@@ -728,6 +769,30 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
       expect(client.getQueryCache().getAll()).toHaveLength(0)
     })
+
+    it.each(['null', '{}', '{"state":null}'])(
+      'should remove malformed entry %s and restore the next query',
+      async (value) => {
+        const storage = getFreshStorage()
+        const { persister, client, queryKey, storageKey } = setupPersister(
+          ['foo'],
+          { storage },
+        )
+        const malformedKey = `${PERSISTER_KEY_PREFIX}-["malformed"]`
+
+        await storage.setItem(malformedKey, value)
+        client.setQueryData(queryKey, null)
+        await persister.persistQueryByKey(queryKey, client)
+        const persistedData = await storage.getItem(storageKey)
+        client.clear()
+
+        await persister.restoreQueries(client)
+        expect(await storage.getItem(malformedKey)).toBeUndefined()
+        expect(await storage.entries()).toEqual([[storageKey, persistedData]])
+        expect(client.getQueryCache().getAll()).toHaveLength(1)
+        expect(client.getQueryData(queryKey)).toBeNull()
+      },
+    )
   })
 
   describe('removeQueries', () => {
