@@ -610,6 +610,7 @@ describe('createQueries', () => {
                 queryKey: key,
                 queryFn: fn
                   ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                      // oxlint-disable-next-line vitest-js/valid-expect
                       expectTypeOf<TQueryKey>(ctx.queryKey)
                       return (
                         fn as QueryFunction<TQueryFnData, TQueryKey>
