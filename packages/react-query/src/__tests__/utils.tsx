@@ -32,7 +32,7 @@ export function Blink({
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks-js/set-state-in-effect
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {

@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",
     "compile": "node ../../node_modules/typescript/lib/tsc.js --project tsconfig.json",
-    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:oxlint": "oxlint ./src",
     "test:types": "vue-demi-switch 3 && npm-run-all --serial test:types:*",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts56 --tsBuildInfoFile .cache/test-types/ts56.tsbuildinfo",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts57 --tsBuildInfoFile .cache/test-types/ts57.tsbuildinfo",
@@ -66,7 +66,6 @@
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "@vue/composition-api": "1.7.2",
-    "eslint-plugin-vue": "catalog:",
     "typescript": "catalog:",
     "unplugin-vue": "catalog:",
     "vue": "catalog:",
