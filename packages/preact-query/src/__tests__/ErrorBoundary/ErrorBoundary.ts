@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<
     return { didCatch: true, error }
   }
 
-  resetErrorBoundary(...args: any[]) {
+  resetErrorBoundary(...args: Array<any>) {
     const { error } = this.state
 
     if (error !== null) {
@@ -126,7 +126,7 @@ export class ErrorBoundary extends Component<
   }
 }
 
-function hasArrayChanged(a: any[] = [], b: any[] = []) {
+function hasArrayChanged(a: Array<any> = [], b: Array<any> = []) {
   return (
     a.length !== b.length || a.some((item, index) => !Object.is(item, b[index]))
   )

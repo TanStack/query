@@ -1153,9 +1153,7 @@ describe('useSuspenseQuery', () => {
     function Page() {
       return (
         <div>
-          <button
-            onClick={() => queryClient.setQueryData(key, undefined as any)}
-          >
+          <button onClick={() => queryClient.setQueryData(key, undefined)}>
             set undefined
           </button>
           <Suspense fallback="loading">
