@@ -118,7 +118,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
+    // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
     expect(states.length).toBe(2)
@@ -131,7 +131,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
-    // eslint-disable-next-line cspell/spellchecker
+    // oxlint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({

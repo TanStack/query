@@ -157,7 +157,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -171,7 +171,7 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
@@ -275,17 +275,17 @@ describe('infiniteQueryOptions', () => {
     // deprecated methods to be removed in v6
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.ensureQueryData(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchQuery(options),
     )
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchQuery(options),
     )
   })

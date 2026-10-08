@@ -118,7 +118,7 @@ export class QueryClient extends QC {
       EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.ensureQueryData(cloneDeepUnref(options))
   }
 
@@ -366,7 +366,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
@@ -401,7 +401,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
@@ -523,7 +523,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
@@ -579,7 +579,7 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<void> {
-    // eslint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
+    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered deprecated wrapper implementation
     return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 
