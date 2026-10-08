@@ -3,7 +3,7 @@ id: HydrationBoundaryProps
 title: HydrationBoundaryProps
 ---
 
-Defined in: [packages/react-query/src/HydrationBoundary.tsx:16](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L16)
+Defined in: [packages/react-query/src/HydrationBoundary.tsx:76](https://github.com/TanStack/query/blob/main/packages/react-query/src/HydrationBoundary.tsx#L76)
 
 The props accepted by `HydrationBoundary`.
 

@@ -3,7 +3,7 @@ id: InfiniteQueryObserverOptions
 title: InfiniteQueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:677](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L677)
+Defined in: [packages/query-core/src/types.ts:684](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L684)
 
 The options of an `InfiniteQueryObserver`: [QueryObserverOptions](QueryObserverOptions.md) whose query data is
 [InfiniteData](InfiniteData.md), plus the page param options.

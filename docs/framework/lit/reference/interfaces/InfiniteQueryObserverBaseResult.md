@@ -3,7 +3,7 @@ id: InfiniteQueryObserverBaseResult
 title: InfiniteQueryObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1403](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1403)
+Defined in: [packages/query-core/src/types.ts:1410](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1410)
 
 The properties shared by every state of an infinite query result: those of
 [QueryObserverBaseResult](QueryObserverBaseResult.md), plus `fetchNextPage`, `fetchPreviousPage`, and the flags about

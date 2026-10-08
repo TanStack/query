@@ -3,7 +3,7 @@ id: MutationObserverSuccessResult
 title: MutationObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:2291](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2291)
+Defined in: [packages/query-core/src/types.ts:2298](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2298)
 
 A mutation result in the `success` state after the mutation succeeded.
 

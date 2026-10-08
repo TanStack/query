@@ -3,7 +3,7 @@ id: MutationObserverLoadingResult
 title: MutationObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:2195](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2195)
+Defined in: [packages/query-core/src/types.ts:2202](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2202)
 
 A mutation result in the `pending` state while the mutation runs.
 

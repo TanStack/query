@@ -3,7 +3,7 @@ id: MutationObserverErrorResult
 title: MutationObserverErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:2243](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2243)
+Defined in: [packages/query-core/src/types.ts:2250](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L2250)
 
 A mutation result in the `error` state after the mutation failed.
 

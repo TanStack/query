@@ -3,7 +3,7 @@ id: QueryObserverLoadingErrorResult
 title: QueryObserverLoadingErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1184](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1184)
+Defined in: [packages/query-core/src/types.ts:1191](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1191)
 
 A query result in the `error` state when the first fetch failed, so there is no data.
 
