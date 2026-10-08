@@ -95,7 +95,6 @@ export function streamedQuery<
 
     let result = initialValue
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     let cancelled = false as boolean
     const streamFnContext = addConsumeAwareSignal<
       OmitKeyof<typeof context, 'signal'>
