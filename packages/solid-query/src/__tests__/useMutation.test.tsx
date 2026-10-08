@@ -1499,7 +1499,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
 

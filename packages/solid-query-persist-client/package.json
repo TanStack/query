@@ -68,6 +68,7 @@
     "@solidjs/testing-library": "catalog:",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
+    "eslint-plugin-solid": "catalog:",
     "solid-js": "catalog:",
     "typescript": "catalog:",
     "unplugin-solid": "catalog:",

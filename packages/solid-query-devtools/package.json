@@ -66,6 +66,7 @@
   "devDependencies": {
     "@solidjs/testing-library": "catalog:",
     "@tanstack/solid-query": "workspace:*",
+    "eslint-plugin-solid": "catalog:",
     "solid-js": "catalog:",
     "typescript": "catalog:",
     "unplugin-solid": "catalog:",

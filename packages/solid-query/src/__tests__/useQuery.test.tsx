@@ -471,10 +471,10 @@ describe('useQuery', () => {
       )
     }
 
-    function Component({ value }: { value: string }) {
+    function Component(props: { value: string }) {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data: ' + value),
+        queryFn: () => sleep(10).then(() => 'data: ' + props.value),
         gcTime: 0,
       }))
       createRenderEffect(() => {
@@ -2685,7 +2685,7 @@ describe('useQuery', () => {
         setActTimeout(() => {
           setCount(1)
         }, 10)
-      }, [])
+      })
 
       return null
     }

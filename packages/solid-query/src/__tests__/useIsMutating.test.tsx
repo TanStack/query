@@ -179,7 +179,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(() => <Page></Page>)
+    const rendered = render(() => <Page />)
 
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
