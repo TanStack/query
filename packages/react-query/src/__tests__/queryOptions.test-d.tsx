@@ -195,6 +195,34 @@ describe('queryOptions', () => {
     })
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
+  it('should preserve discriminated union narrowing in setQueryData updaterFn', () => {
+    type Data =
+      | { kind: 'a'; value: number; requiredA: number }
+      | { kind: 'b'; value: number; requiredB: number }
+
+    const { queryKey: tagged } = queryOptions({
+      queryKey: queryKey(),
+      queryFn: (): Promise<Data> =>
+        Promise.resolve({
+          kind: 'a',
+          value: 1,
+          requiredA: 1,
+        }),
+    })
+
+    const queryClient = new QueryClient()
+    queryClient.setQueryData(tagged, (prev) => {
+      if (!prev || prev.kind !== 'a') {
+        return prev
+      }
+
+      expectTypeOf(prev).toEqualTypeOf<Extract<Data, { kind: 'a' }>>()
+      return { ...prev, value: prev.value + 1 }
+    })
+
+    // @ts-expect-error updater input should be inferred from the tagged query key
+    queryClient.setQueryData(tagged, (prev: string | undefined) => prev)
+  })
   it('should properly type value when passed to setQueryData', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: queryKey(),
