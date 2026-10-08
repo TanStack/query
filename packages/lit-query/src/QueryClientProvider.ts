@@ -133,7 +133,8 @@ export class QueryClientProvider extends LitElement {
     }
 
     const previousClient = changedProperties.get('client') as
-      QueryClient | undefined
+      | QueryClient
+      | undefined
     if (previousClient && previousClient !== nextClient && this.isConnected) {
       this.unmountClient(previousClient)
     }

@@ -40,11 +40,7 @@ export class SsrApp extends LitElement {
       color: #1f2937;
       display: block;
       font-family:
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        'Segoe UI',
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
         sans-serif;
       max-width: 32rem;
       padding: 1.5rem;

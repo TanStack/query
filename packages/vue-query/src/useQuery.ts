@@ -305,6 +305,7 @@ export function useQuery<
   >,
   queryClient?: QueryClient,
 ):
-  UseQueryReturnType<TData, TError> | UseQueryDefinedReturnType<TData, TError> {
+  | UseQueryReturnType<TData, TError>
+  | UseQueryDefinedReturnType<TData, TError> {
   return useBaseQuery(QueryObserver, options, queryClient)
 }

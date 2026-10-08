@@ -741,7 +741,8 @@ describe('skipToken', () => {
 describe('ensureQueryFn', () => {
   it('should accept a SkipToken in queryFn but never return one', () => {
     const queryFn = skipToken as
-      QueryFunction<number, readonly ['key']> | SkipToken
+      | QueryFunction<number, readonly ['key']>
+      | SkipToken
 
     expectTypeOf<
       Parameters<typeof ensureQueryFn<number, readonly ['key']>>[0]['queryFn']
