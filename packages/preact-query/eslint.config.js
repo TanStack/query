@@ -21,6 +21,11 @@ export default defineConfig([
       'no-import-assign': 'off',
       // TS-aware version handles overloads correctly
       '@typescript-eslint/no-redeclare': 'error',
+    },
+  },
+  {
+    files: ['**/__tests__/**'],
+    rules: {
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
